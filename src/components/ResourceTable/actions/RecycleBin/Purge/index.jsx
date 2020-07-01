@@ -27,11 +27,12 @@ export default {
         }?`,
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Purge',
             onClick: purgeResource,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

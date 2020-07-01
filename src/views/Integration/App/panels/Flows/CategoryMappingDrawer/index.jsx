@@ -265,7 +265,7 @@ function CategoryMappings({
   if (!generateFields) {
     return (
       <Loader open hideBackDrop>
-        {`Loading ${sectionId}  metadata`}
+        Loading
         <Spinner />
       </Loader>
     );
@@ -634,7 +634,7 @@ function CategoryMappingDrawer({ integrationId, parentUrl }) {
           </div>
         ) : (
           <Loader open hideBackDrop>
-            Loading Mappings.
+            Loading
             <Spinner />
           </Loader>
         )}

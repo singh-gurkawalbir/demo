@@ -9,10 +9,10 @@ import ResourceReferences from '../../../ResourceReferences';
 
 export default {
   label: (rowData, actionProps) => {
-    if (actionProps.resourceType === 'accesstokens') {
-      return 'Delete API token';
+    if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
+      return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
-    return `Delete ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
+    return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
   component: function DeleteResource({ resourceType, rowData = {} }) {
@@ -29,8 +29,8 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
-      if (resourceType === 'accesstokens') {
-        type = 'API token';
+      if (['accesstokens', 'apis'].includes(resourceType)) {
+        type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {
         type =
         resourceType && resourceType.indexOf('/licenses') >= 0
@@ -43,11 +43,12 @@ export default {
         message: `Are you sure you want to delete this ${type}?`,
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
             label: 'Delete',
             onClick: deleteResource,
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

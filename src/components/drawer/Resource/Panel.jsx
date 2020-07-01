@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
-import { isNewId } from '../../../utils/resource';
+import { isNewId, multiStepSaveResourceTypes } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
@@ -44,8 +44,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 0, 3),
   },
   appLogo: {
-    paddingRight: theme.spacing(6),
+    paddingRight: theme.spacing(2),
     marginTop: theme.spacing(-0.5),
+    marginRight: theme.spacing(4),
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+
   },
   title: {
     display: 'flex',
@@ -123,7 +126,7 @@ const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
   if (isConnectionFixFromImpExp && resourceType === 'connections') {
     return 'Fix offline connection';
   }
-  if (resourceType === 'accesstokens') {
+  if (['accesstokens', 'apis'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
 
@@ -209,10 +212,10 @@ export default function Panel(props) {
     }
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType =
-      getStagedValue('/adaptorType') || (resource && resource.adaptorType);
-    const assistant =
-      getStagedValue('/assistant') || (resource && resource.assistant);
+    const adaptorType = resourceType === 'connections'
+      ? getStagedValue('type') || resource?.type
+      : getStagedValue('/adaptorType') || resource?.adaptorType;
+    const assistant = getStagedValue('/assistant') || resource?.assistant;
 
     if (adaptorType === 'WebhookExport') {
       return (
@@ -233,14 +236,10 @@ export default function Panel(props) {
 
     return assistant || adaptorType;
   });
-  const isMultiStepSaveResource = [
-    'imports',
-    'exports',
-    'connections',
-    'pageGenerator',
-    'pageProcessor',
-  ].includes(resourceType);
-  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save';
+  // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
+  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
+  const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
+  const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
 
   function lookupProcessorResourceType() {
     if (!stagedProcessor || !stagedProcessor.patch) {
@@ -317,9 +316,20 @@ export default function Panel(props) {
       // so move to step 2 of the form...
 
       dispatch(actions.resource.created(resourceId, id));
+      // Incase of a resource with single step save, when skipFormClose is passed
+      // redirect to the updated URL with new resourceId as we do incase of edit - check else part
+      if (skipFormClose && !isMultiStepSaveResource) {
+        return props.history.replace(
+          generatePath(match.path, {
+            id: newResourceId || id,
+            resourceType,
+            operation,
+          })
+        );
+      }
+      // In other cases , close the drawer
       onClose();
     } else {
-      // For web hook generate URL case
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
       if (skipFormClose) {
@@ -340,8 +350,7 @@ export default function Panel(props) {
   }
 
   const showApplicationLogo =
-    flowId &&
-    ['exports', 'imports'].includes(resourceType) &&
+    ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
   const requiredResources = determineRequiredResources(resourceType);
   const title = useMemo(
@@ -354,7 +363,22 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-
+  const [showNotificationToaster, setShowNotificationToaster] = useState(false);
+  const onCloseNotificationToaster = () => {
+    setShowNotificationToaster(false);
+  };
+  // will be patching useTechAdaptorForm for assistants if export/import is not supported
+  // based on this value, will be showing banner on the new export/import creation
+  // using isNew as dependency and this will be false for export/import form
+  useEffect(() => {
+    if (!isNew) {
+      const useTechAdaptorForm = stagedProcessor?.patch?.find(
+        p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+      );
+      setShowNotificationToaster(!!useTechAdaptorForm?.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew]);
   return (
     <>
       <div className={classes.root}>
@@ -395,8 +419,11 @@ export default function Panel(props) {
             resourceId={id}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
+            submitButtonColor={submitButtonColor}
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
+            showNotificationToaster={showNotificationToaster}
+            onCloseNotificationToaster={onCloseNotificationToaster}
             {...props}
           />
         </LoadResources>

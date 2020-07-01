@@ -345,6 +345,9 @@ export default {
       id: 'save',
     },
     {
+      id: 'saveandclose'
+    },
+    {
       id: 'cancel',
     },
   ],

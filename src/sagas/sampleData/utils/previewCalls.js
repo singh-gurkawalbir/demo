@@ -90,7 +90,7 @@ export function* pageProcessorPreview({
     const previewData = yield call(apiCallWithRetry, {
       path: '/pageProcessors/preview',
       opts: { method: 'POST', body },
-      message: 'Fetching flows Preview',
+      message: 'Loading',
       hidden,
     });
 
@@ -139,7 +139,7 @@ export function* exportPreview({
     const previewData = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'POST', body },
-      message: 'Fetching Exports Preview',
+      message: 'Loading',
       hidden,
     });
 

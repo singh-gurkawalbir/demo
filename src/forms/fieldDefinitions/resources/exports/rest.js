@@ -104,7 +104,6 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    required: true,
     label: 'Link header relation',
     visibleWhenAll: [
       {

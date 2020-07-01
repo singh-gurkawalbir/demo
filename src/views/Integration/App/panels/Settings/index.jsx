@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Route,
@@ -10,8 +10,11 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import { isEqual } from 'lodash';
 import * as selectors from '../../../../../reducers';
 import GeneralSection from './sections/General';
+import ConfigureSettings from './sections/ConfigureSettings';
+import PanelHeader from '../../../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,14 +49,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '10px',
   },
 }));
-const allSections = [
-  {
-    path: 'general',
-    label: 'General',
-    Section: GeneralSection,
-    id: 'general',
-  },
-];
 
 export default function SettingsPanel({
   integrationId,
@@ -65,15 +60,40 @@ export default function SettingsPanel({
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
+  const flowSections = useSelector(state => {
+    const sections = selectors.integrationAppFlowSections(state, integrationId, storeId);
+    return sections.reduce((newArray, s) => {
+      if (!!s.fields || !!s.sections) {
+        newArray.push({
+          path: s.titleId,
+          label: s.title,
+          Section: 'FlowsConfiguration',
+          id: s.titleId
+        });
+      }
+      return newArray;
+    }, []);
+  }, isEqual);
+
+  const allSections = useMemo(() => ([
+    {
+      path: 'common',
+      label: 'General',
+      Section: GeneralSection,
+      id: 'common',
+    },
+    ...flowSections
+  ]), [flowSections]);
+
   const filterTabs = [];
 
   if (hideGeneralTab) {
-    filterTabs.push('general');
+    filterTabs.push('common');
   }
 
-  const availableSections = allSections.filter(sec =>
+  const availableSections = useMemo(() => allSections.filter(sec =>
     !filterTabs.includes(sec.id)
-  );
+  ), [allSections, filterTabs]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -122,13 +142,23 @@ export default function SettingsPanel({
         </div>
         <div className={classes.content}>
           <Switch>
-            {availableSections.map(({ path, Section }) => (
+            {availableSections.map(({ path, Section, label }) => (
               <Route key={path} path={`${match.url}/${path}`}>
-                <Section
-                  integrationId={integrationId}
-                  storeId={storeId}
-                  {...sectionProps}
-                />
+                {Section === 'FlowsConfiguration' ? (
+                  <>
+                    <PanelHeader title={`Configure all ${label} flows`} />
+                    <ConfigureSettings
+                      integrationId={integrationId}
+                      storeId={storeId}
+                      sectionId={path}
+                      parentUrl={match.url}
+                      />
+                  </>) : <Section
+                    integrationId={integrationId}
+                    storeId={storeId}
+                    {...sectionProps}
+                />}
+
               </Route>
             ))}
           </Switch>

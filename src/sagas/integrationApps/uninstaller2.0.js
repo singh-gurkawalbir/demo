@@ -83,7 +83,7 @@ export function* requestSteps({ id }) {
       path,
       timeout: 5 * 60 * 1000,
       opts: { method: 'GET' },
-      message: 'Fetching uninstall steps',
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.api.failure(path, 'GET', error && error.message, false));

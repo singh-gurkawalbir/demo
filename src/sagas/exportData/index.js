@@ -40,7 +40,7 @@ function* getData({ kind, identifier: id, resource }) {
     const res = yield call(apiCallWithRetry, {
       path,
       opts: { method, body },
-      message: `Fetching ${kind} export`,
+      message: 'Loading',
       hidden: true,
     });
 

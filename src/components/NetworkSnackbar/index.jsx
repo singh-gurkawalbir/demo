@@ -25,8 +25,8 @@ const Dismiss = props =>
   );
 
 export const ErroredMessageList = ({ messages }) =>
-  messages && messages.length > 0
-    ? messages.map((msg, index) => (
+  messages?.length
+    ? messages.filter(msg => !!msg).map((msg, index) => (
       <Fragment key={msg}>
         {
             // Check if the message contains html elements, render it as html
@@ -40,7 +40,7 @@ export const ErroredMessageList = ({ messages }) =>
       </Fragment>
     ))
     : null;
-const LOADING_MSG = 'Loading… What do you call 8 Hobbits? A Hobbyte.';
+const LOADING_MSG = 'Loading';
 const RETRY_MSG = 'Retrying… Hold your breath….';
 const Notifications = ({ allLoadingOrErrored }) => {
   if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;

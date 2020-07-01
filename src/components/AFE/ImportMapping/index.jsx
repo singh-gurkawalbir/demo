@@ -80,6 +80,8 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
   },
   importMappingButtonGroup: {
+    display: 'flex',
+    justifyContent: 'space-between',
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
     padding: '16px 0px',
@@ -146,9 +148,6 @@ export default function ImportMapping(props) {
   // TODO: Change to return status and comparison could be made here for progress/completed
   const saveInProgress = useSelector(
     state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
-  );
-  const saveCompleted = useSelector(
-    state => selectors.mappingsSaveStatus(state, editorId).saveCompleted
   );
   const [state, setState] = useState({
     localMappings: [],
@@ -291,7 +290,7 @@ export default function ImportMapping(props) {
         );
       }
     },
-    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType]
+    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType, disabled]
   );
 
   const handleClose = () => {
@@ -442,6 +441,36 @@ export default function ImportMapping(props) {
         </div>
         <ButtonGroup
           className={classes.importMappingButtonGroup}>
+          <div>
+            <>
+              <MappingSaveButton
+                id={editorId}
+                disabled={!!(disabled || saveInProgress)}
+                color="primary"
+                dataTest="saveImportMapping"
+                submitButtonLabel="Save"
+                flowId={flowId}
+          />
+              <MappingSaveButton
+                id={editorId}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseImportMapping"
+                onClose={handleClose}
+                disabled={!!(disabled || saveInProgress)}
+                submitButtonLabel="Save & close"
+                flowId={flowId}
+          />
+              <Button
+                variant="text"
+                data-test="saveImportMapping"
+                disabled={!!saveInProgress}
+                onClick={handleClose}>
+                Cancel
+              </Button>
+            </>
+          </div>
+
           {showPreviewPane && (
             <Button
               variant="outlined"
@@ -452,32 +481,6 @@ export default function ImportMapping(props) {
               Preview
             </Button>
           )}
-          <MappingSaveButton
-            id={editorId}
-            disabled={!!(disabled || saveInProgress)}
-            color="primary"
-            dataTest="saveImportMapping"
-            submitButtonLabel="Save"
-            flowId={flowId}
-          />
-          <MappingSaveButton
-            id={editorId}
-            variant="outlined"
-            color="secondary"
-            dataTest="saveAndCloseImportMapping"
-            onClose={handleClose}
-            disabled={!!(disabled || saveInProgress)}
-            showOnlyOnChanges
-            submitButtonLabel="Save & close"
-            flowId={flowId}
-          />
-          <Button
-            variant="text"
-            data-test="saveImportMapping"
-            disabled={!!saveInProgress}
-            onClick={handleClose}>
-            {saveCompleted ? 'Close' : 'Cancel'}
-          </Button>
         </ButtonGroup>
       </div>
       {showPreviewPane && (

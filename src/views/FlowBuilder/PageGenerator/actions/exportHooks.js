@@ -43,9 +43,8 @@ function ExportHooks({ flowId, isViewMode, resource, onClose, open }) {
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }));
-      onClose();
     },
-    [dispatch, onClose, resource, resourceId, flowId]
+    [dispatch, resource, resourceId, flowId]
   );
   const handleDrawerClose = useCallback(() => onClose(false), [onClose]);
 

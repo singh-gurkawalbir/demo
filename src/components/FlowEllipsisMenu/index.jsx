@@ -29,13 +29,13 @@ const useStyles = makeStyles(theme => ({
 }));
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
-  clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
   schedule: { action: 'schedule', label: 'Schedule', Icon: CalendarIcon },
   mapping: { action: 'mapping', label: 'Edit mapping', Icon: MappingIcon },
   audit: { action: 'audit', label: 'View audit log', Icon: AuditIcon },
-  references: { action: 'references', label: 'View references', Icon: RefIcon },
+  references: { action: 'references', label: 'Used by', Icon: RefIcon },
   download: { action: 'download', label: 'Download flow', Icon: DownloadIcon },
-  delete: { action: 'delete', label: 'Delete', Icon: TrashIcon },
+  clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
+  delete: { action: 'delete', label: 'Delete flow', Icon: TrashIcon },
 };
 
 export default function FlowEllipsisMenu({ flowId, exclude }) {
@@ -121,11 +121,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
             buttons: [
               {
-                label: 'Cancel',
-              },
-              {
                 label: 'Detach',
                 onClick: detachFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
               },
             ],
           });
@@ -158,11 +159,12 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             message: 'Are you sure you want to delete this flow?',
             buttons: [
               {
-                label: 'Cancel',
-              },
-              {
                 label: 'Delete',
                 onClick: deleteFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
               },
             ],
           });
@@ -217,10 +219,6 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  if (integrationId && permission.detach) {
-    availableActions.push(allActions.detach);
-  }
-
   if (!flowDetails._connectorId || flowDetails.showMapping) {
     availableActions.push(allActions.mapping);
   }
@@ -230,10 +228,11 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
 
-  if (permission.clone) availableActions.push(allActions.clone);
-
   availableActions.push(allActions.download);
-
+  if (permission.clone) availableActions.push(allActions.clone);
+  if (integrationId && permission.detach) {
+    availableActions.push(allActions.detach);
+  }
   if (permission.delete) availableActions.push(allActions.delete);
 
   // remove any actions that have explicitly been excluded.

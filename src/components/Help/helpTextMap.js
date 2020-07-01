@@ -10,6 +10,8 @@ export default {
     'Check this box if your trading partner requires that the MDN signature be verified. Otherwise, integrator.io will not attempt to verify the signature.',
   'connection.partnerrequireasynchronousmdns':
     'Check this box if your trading partner requires MDNs to be sent asynchronously. By default, integrator.io is configured to send MDNs synchronously.',
+  'connection.as2.contentBasedFlowRouter':
+    'The AS2 connection you selected is being used by other listeners. Script based routing rules must be defined to route inbound files received to the correct flows.',
   'export.as2.contentBasedFlowRouter':
     'The AS2 connection you selected is being used by other listeners. Script based routing rules must be defined to route inbound files received to the correct flows.',
   'export.netsuite.distributed.executionContext': 'This is a required field to specify the exact execution context values for which a record should be exported in real-time. For example, it is very common for a real-time export to run only for \'User Interface\' and \'Web Store\' changes. These values both represent actual end users manually submitting changes to NetSuite (like a user editing and saving a customer record in the browser, or a shopper submitting an order via the web store), and these manual data changes are normally small and also important to propagate quickly to other applications (i.e. new web orders probably need to get sent to the shipping API asap). Execution context values like \'CSV Import\' are risky to enable because (1) you will slow down your mass update due to the overhead of sending data to an external system one record at a time, and (2) you may inadvertently flood your integration with way too many individual records that don\'t need to be synced right away (where a scheduled data flow would have been a better fit).',
@@ -288,6 +290,8 @@ export default {
     'Please enter your Shopify account version, for example 2020-01.For more information check the <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
   'shopify.connection.http.auth.basic.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
   'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.',
+  'concurinvoice.connection.http.unencrypted.username': 'Please enter the value of <b>id</b> which appears in the redirected popup page URL after signin to integrator.io.',
+  'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.',
   'stripe.connection.http.auth.token.token':
     'The secret key of your Stripe account.',
   'twilio.connection.http.auth.basic.username':
@@ -950,6 +954,7 @@ export default {
     "This is your MWS account's signing key.  When making a request to Amazon MWS integrator.io will sign the request with this key and add a 'Signature' header to the request.  If you do not know this value please go to mws.amazon.com and follow the API and Developer Guides to sign up for the service and retrieve this key.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.",
   'connection.amazonmws.marketplaceRegion':
     'This is the region where the Amazon seller account is based.  Select the country or continent where your seller account is based (North America and Europe are unified seller regions).',
+  'connection.mode': 'Select cloud if you are connecting to a publicly accessible application like Salesforce, Slack, etc... Select on-premise if you are connecting to an application that is behind a firewall like a database or custom HTTP endpoint.  Connecting to an on-premise application requires installing an agent behind your firewall.',
   'connector._id':
     'System generated primary unique identifier for the connector.  For API users, this value should be used for GET and PUT requests.',
   'connector.name':
@@ -1280,7 +1285,7 @@ export default {
   'flow.description':
     'Describe your flow in more detail here so that other users can understand the business problem you are solving, and also how your integration solution works. Be sure to highlight any nuances that a user who will make changes in the future might need to know about.',
   'flow.schedule':
-    'It is a cron (time-based job scheduler). You can set scheduling for flow execution',
+    'Your flow will be run on schedule according to this cron expression.',
   'flow.lastModified':
     'System generated datetime to track the last time this resource was modified.',
   'flow._exportId':
@@ -1826,7 +1831,7 @@ export default {
   'connection.ftpType':
     'The file transfer protocol using which you want to establish the FTP connection.\nThe following protocols are available:\n<bold>FTP:</bold> Select FTP if the server that you are connecting to requires an FTP protocol.\nSFTP: Select SFTP if the server that you are connecting to requires an SFTP protocol.\nFTPS: Select FTPS if the sever that you are connecting to requires an FTPS protocol.',
   'connection.connMode':
-    'Select Cloud if you are connecting to an application on the cloud and is publicly accessible. For example, Salesforce, NetSuite. Select On-Premise if you are connecting to a server that is publicly inaccessible and has integrator.io Agent installed on it. For example, Production AWS VPC, MySQL server.',
+    'Select Cloud if you are connecting to an application on the cloud and is publicly accessible. For example, Salesforce, NetSuite. Select On-premise if you are connecting to a server that is publicly inaccessible and has integrator.io Agent installed on it. For example, Production AWS VPC, MySQL server.',
   'connection.rest.authType':
     "integrator.io supports the following authentication types:\n\n<b>Basic:</b> Select Basic if your service implements the HTTP basic authentication strategy. This authentication method adds a Base64 encoded username and password values in the 'authentication' HTTP request header.\n\n<b>Cookie</b>: Select Cookie if your service relies on session-based authentication. Session based authentication is typically implemented by including a unique cookie into the HTTP request header. By selecting this option, the platform will automatically create and insert this cookie into every HTTP request it sends to your application. \n\n<b>Custom:</b> Select Custom for all other types. If you select the Custom authentication method, integrator.io will not perform any special authentication. It is up to the user to configure the HTTP request fields (method, relativeUri, headers, and body) of the import and export models to include {{placeholders}} for any authentication related values. These values can be stored in Encrypted and Unencrypted fields of this connection.\n\n<b>Token:</b>  Select Token if your service relies on token-based authentication. The token may exist in the header, URL, or body of the HTTP request. This method also supports refreshing tokens if the service being called supports it.\n\n<b>OAuth 2.0:</b> Select this value if your application supports the OAuth 2.0 authentication.",
   // TODO:"Duplicated token"
@@ -1949,9 +1954,9 @@ export default {
   'flow.frequency':
     'This field dictates how often your integration flow is run. Please log a support ticket if there is a specific preset frequency that you would like to see added to this list.',
   'flow.startTime':
-    "This field lets you control the first execution time of your flow (i.e. your integration flow will not run before this time), and then subsequent execution times are determined by the 'Frequency' and 'End Time' values set.",
+    'This field lets you control the first scheduled execution time for your flow each day. \n\nPlease note that the start time represents when a flow will get placed into your queue for processing, but the actual run time of your flow may differ based on the load of your queue, or other flows ahead of you in the global integrator.io scheduler. Please note also that the list of available start times is subject to change over time (i.e. this allows Celigo to maintain a global balance across all customers regarding the number of flows starting at any given time).',
   'flow.endTime':
-    'This field lets you control the last scheduled execution of your flow (i.e. your integration flow will not be scheduled after this time).',
+    'This field lets you control the last scheduled execution time for your flow each day.',
   'flow.daysToRunOn':
     'This field lets you configure the specific day(s) you would like this integration flow to run on.',
   'flow.type':
@@ -1998,7 +2003,7 @@ export default {
   'fb.pg.exports.hooks':
     'Define a ‘hook’ here to use custom code to process records returned by the export before the records are passed along to downstream applications.',
   'fb.pg.exports.schedule':
-    'Define schedule to run export which overrides the flow schedule',
+    "Define a 'schedule override' here to run this export/transfer on its own schedule.",
   'fb.pg.exports.as2routing':
     'AS2 Exports which share a connection require routing rules to be in place so that incoming messages can be properly routed to the correct flow. This export has a shared AS2 connection and thus needs routing rules to be in place.',
   'fb.pp.exports.transform':

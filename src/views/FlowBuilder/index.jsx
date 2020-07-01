@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -67,10 +67,15 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
+    background: theme.palette.background.paper,
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing(0, 0, 3, 3),
+    backgroundColor: theme.palette.background.default,
   },
   processorContainer: {
     display: 'flex',
@@ -87,22 +92,19 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    minHeight: 48,
+    padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
-  },
-  sourceTitle: {
-    marginBottom: theme.spacing(3),
+
   },
   destinationTitle: {
-    width: 320,
     marginLeft: 100,
-    marginBottom: theme.spacing(3),
+    justifyContent: 'flex-start',
   },
   generatorRoot: {
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(0, 0, 3, 3),
-    minWidth: 429,
+    backgroundColor: theme.palette.background.default,
+    minWidth: 460,
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
@@ -138,6 +140,15 @@ const useStyles = makeStyles(theme => ({
     height: 30,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
+  },
+  roundBtn: {
+    borderRadius: '50%',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    width: 18,
+    height: 18,
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -210,7 +221,7 @@ function FlowBuilder() {
     },
     [dispatch, flowId, isNewFlow]
   );
-  const handleMove = useCallback(
+  const handleMovePP = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -220,6 +231,17 @@ function FlowBuilder() {
       patchFlow('/pageProcessors', newOrder);
     },
     [pageProcessors, patchFlow]
+  );
+  const handleMovePG = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageGenerators[dragIndex];
+      const newOrder = [...pageGenerators];
+
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      patchFlow('/pageGenerators', newOrder);
+    },
+    [pageGenerators, patchFlow]
   );
   const handleDelete = useCallback(
     type => () => index => {
@@ -235,10 +257,6 @@ function FlowBuilder() {
         title: 'Confirm remove',
         message: `Are you sure you want to remove this ${resourceType}?`,
         buttons: [
-          {
-            label: 'Cancel',
-            color: 'secondary',
-          },
           {
             label: 'Remove',
             color: 'primary',
@@ -257,6 +275,10 @@ function FlowBuilder() {
                 patchFlow('/pageGenerators', newOrder);
               }
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -407,7 +429,21 @@ function FlowBuilder() {
   // Replaces the url once the virtual flow resource is
   // persisted and we have the final flow id.
   if (newFlowId) {
-    history.replace(rewriteUrl(newFlowId));
+    const nestedPgOrPpPath = matchPath(location.pathname, {
+      path: `${match.path}/:mode/:resourceType/:resourceId`,
+    });
+
+    if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
+      // Incase of a pg or pp opened ... replace url flowId with newFlowId
+      // @BugFix: IO-16074
+      history.replace(generatePath(nestedPgOrPpPath.path, {
+        ...nestedPgOrPpPath.params,
+        flowId: newFlowId,
+      }));
+    } else {
+      // In all other cases go back to flow url with new FlowId
+      history.replace(rewriteUrl(newFlowId));
+    }
 
     return null;
   }
@@ -553,18 +589,17 @@ function FlowBuilder() {
           {/* CANVAS START */}
           <div
             className={classes.generatorRoot}
-            style={{
-              minHeight: 240 * pageGenerators.length + 70,
-            }}>
+            >
             <Typography
               component="div"
               className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
-              {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
+              {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
               {!isDataLoaderFlow && !isFreeFlow && (
                 <IconButton
                   data-test="addGenerator"
                   disabled={isViewMode}
+                  className={classes.roundBtn}
                   onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
@@ -590,6 +625,7 @@ function FlowBuilder() {
                   index={i}
                   isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
+                  onMove={handleMovePG}
                 />
               ))}
               {!pageGenerators.length && (
@@ -610,12 +646,13 @@ function FlowBuilder() {
               variant="overline">
               {isDataLoaderFlow
                 ? 'DESTINATION APPLICATION'
-                : 'DESTINATION & LOOKUP APPLICATIONS'}
+                : 'DESTINATIONS & LOOKUPS '}
 
               {showAddPageProcessor && !isFreeFlow && (
                 <IconButton
                   disabled={isViewMode}
                   data-test="addProcessor"
+                  className={classes.roundBtn}
                   onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
@@ -644,7 +681,7 @@ function FlowBuilder() {
                   isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
-                  onMove={handleMove}
+                  onMove={handleMovePP}
                 />
               ))}
               {!pageProcessors.length && showAddPageProcessor && (

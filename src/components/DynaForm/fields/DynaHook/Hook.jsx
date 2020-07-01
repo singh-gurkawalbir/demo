@@ -133,15 +133,14 @@ export default function DynaHook(props) {
     setShowCreateScriptDialog(true);
   };
 
-  const handleCreateScriptDialogClose = (shouldCommit, values) => {
-    if (shouldCommit === true) {
-      const options = { dispatch, isNew: true };
+  const handleCreateScriptSave = useCallback(values => {
+    const options = { dispatch, isNew: true };
+    saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
+  }, [dispatch, flowId, tempScriptId]);
 
-      saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
-    }
-
+  const handleCreateScriptDialogClose = useCallback(() => {
     setShowCreateScriptDialog(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (createdScriptId && !isNewScriptIdAssigned) {
@@ -216,6 +215,7 @@ export default function DynaHook(props) {
       {showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
+          onSave={handleCreateScriptSave}
           scriptId={tempScriptId}
           flowId={flowId}
         />

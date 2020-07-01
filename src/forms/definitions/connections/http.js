@@ -28,13 +28,13 @@ export default {
       }
     }
 
-    if (newValues['/http/oauth/encrypted']) {
+    if (newValues['/http/custom/encrypted']) {
       try {
-        newValues['/http/oauth/encrypted'] = JSON.parse(
-          newValues['/http/oauth/encrypted']
+        newValues['/http/custom/encrypted'] = JSON.parse(
+          newValues['/http/custom/encrypted']
         );
       } catch (ex) {
-        newValues['/http/oauth/encrypted'] = undefined;
+        newValues['/http/custom/encrypted'] = undefined;
       }
     }
 
@@ -48,13 +48,13 @@ export default {
       }
     }
 
-    if (newValues['/http/oauth/unencrypted']) {
+    if (newValues['/http/custom/unencrypted']) {
       try {
-        newValues['/http/oauth/unencrypted'] = JSON.parse(
-          newValues['/http/oauth/unencrypted']
+        newValues['/http/custom/unencrypted'] = JSON.parse(
+          newValues['/http/custom/unencrypted']
         );
       } catch (ex) {
-        newValues['/http/oauth/unencrypted'] = undefined;
+        newValues['/http/custom/unencrypted'] = undefined;
       }
     }
 
@@ -109,19 +109,14 @@ export default {
       newValues['/http/auth/token/headerName'] =
         newValues['/http/auth/wsse/headerName'];
     }
-
+    if (newValues['/http/auth/type'] === 'custom') {
+      newValues['/http/encrypted'] =
+        newValues['/http/custom/encrypted'];
+      newValues['/http/unencrypted'] =
+        newValues['/http/custom/unencrypted'];
+    }
     if (newValues['/http/auth/type'] === 'oauth') {
       newValues['/http/auth/oauth/applicationType'] = 'custom';
-      newValues['/http/headers'] = newValues['/http/oauth/headers'];
-      newValues['/http/baseURI'] = newValues['/http/oauth/baseURI'];
-      newValues['/http/mediaType'] = newValues['/http/oauth/mediaType'];
-      newValues['/http/encrypted'] = newValues['/http/oauth/encrypted'];
-      newValues['/http/unencrypted'] = newValues['/http/oauth/unencrypted'];
-      newValues['/http/auth/failStatusCode'] =
-        newValues['/http/auth/oauth/failStatusCode'];
-      newValues['/http/auth/failPath'] = newValues['/http/auth/oauth/failPath'];
-      newValues['/http/auth/failValues'] =
-        newValues['/http/auth/oauth/failValues'];
       newValues['/http/auth/token/location'] =
         newValues['/http/auth/oauth/location'];
       newValues['/http/auth/token/headerName'] =
@@ -142,20 +137,14 @@ export default {
       newValues['/http/auth/failValues'] = undefined;
     }
 
-    delete newValues['/http/oauth/headers'];
-    delete newValues['/http/oauth/baseURI'];
-    delete newValues['/http/oauth/mediaType'];
-    delete newValues['/http/oauth/encrypted'];
-    delete newValues['/http/oauth/unencrypted'];
-    delete newValues['/http/auth/oauth/failStatusCode'];
-    delete newValues['/http/auth/oauth/failPath'];
-    delete newValues['/http/auth/oauth/failValues'];
     delete newValues['/http/auth/oauth/location'];
     delete newValues['/http/auth/oauth/headerName'];
     delete newValues['/http/auth/oauth/scheme'];
     delete newValues['/http/auth/oauth/paramName'];
     delete newValues['/http/oauth/customAuthScheme'];
     delete newValues['/http/auth/wsse/headerName'];
+    delete newValues['/http/custom/encrypted'];
+    delete newValues['/http/cutom/unencrypted'];
 
     return newValues;
   },
@@ -170,7 +159,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -630,16 +619,6 @@ export default {
   },
   actions: [
     {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
-        },
-      ],
-    },
-    {
       id: 'saveandcontinue',
       label: 'Save & continue',
       visibleWhenAll: [
@@ -676,7 +655,31 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
       id: 'cancel',
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
+        },
+      ],
     },
   ],
 };

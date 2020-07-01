@@ -32,7 +32,7 @@ import AddOnsPanel from './panels/AddOns';
 import IntegrationTabs from '../common/Tabs';
 import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
-import integrationAppUtil, { getAdminLevelTabs } from '../../../utils/integrationApps';
+import integrationAppUtil, { getAdminLevelTabs, getIntegrationAppUrlName } from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 
 const allTabs = [
@@ -113,7 +113,7 @@ export default function IntegrationApp(props) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { integrationAppName, integrationId, storeId, tab, match } = props;
+  const { integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelector(state =>
@@ -128,6 +128,8 @@ export default function IntegrationApp(props) {
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
+  const integrationAppName = getIntegrationAppUrlName(integration.name);
+
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
   const addOnState = useSelector(state =>

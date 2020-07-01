@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ShowMoreDrawer(props) {
-  const { count, maxCount, filterKey, pageSize = 25 } = props;
+  const { count, maxCount, filterKey, pageSize = 100 } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));

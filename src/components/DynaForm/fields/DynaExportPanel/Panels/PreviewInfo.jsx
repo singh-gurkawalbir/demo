@@ -67,6 +67,7 @@ export default function PreviewInfo(props) {
     resourceSampleData,
     previewStageDataList,
     panelType,
+    disabled,
   } = props;
   const classes = useStyles();
   // ShowSampleDataStatus Fn shows Preview Status
@@ -110,7 +111,7 @@ export default function PreviewInfo(props) {
             color="secondary"
             className={classes.previewBtn}
             onClick={fetchExportPreviewData}
-            disabled={resourceSampleData.status === 'requested'}
+            disabled={disabled || resourceSampleData.status === 'requested'}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>
