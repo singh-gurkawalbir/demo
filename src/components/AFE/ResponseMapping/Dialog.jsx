@@ -54,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const SaveButton = props => {
-  const { dataTest, disabled, onSave, label, saveInProgress, onClose } = props;
+  const { dataTest, disabled, onSave, label, saveInProgress, onClose, color = 'primary' } = props;
   const handleBtnClick = useCallback(() => {
     onSave();
 
@@ -65,7 +65,7 @@ const SaveButton = props => {
     <Button
       data-test={dataTest}
       variant="outlined"
-      color="secondary"
+      color={color}
       disabled={disabled}
       onClick={handleBtnClick}>
       {saveInProgress ? (
@@ -254,6 +254,7 @@ export default function ResponseMappingDialog(props) {
           {isDirty && (
             <SaveButton
               dataTest="saveAndCloseMapping"
+              color="secondary"
               disabled={disableSave}
               onSave={handleSave}
               onClose={handleClose}
