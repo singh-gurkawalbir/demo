@@ -104,16 +104,7 @@ export default function ToggleEditorDialog(props) {
     fullScreen: props.fullScreen || false,
     activeEditorIndex: 0,
   });
-
-  useEffect(() => {
-    if (props.type) {
-      setState({
-        ...state,
-        activeEditorIndex: props.type === 'expression' ? 0 : 1,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.type]);
+  const [autoEvaluate, setAutoEvaluate] = useState(false);
   const { layout, fullScreen } = state;
   const size = fullScreen ? { height } : { height, width };
   const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
@@ -131,9 +122,9 @@ export default function ToggleEditorDialog(props) {
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
-  const handleAutoPreviewToggle = useCallback(() => {
-    dispatch(actions.editor.patch(activeEditorId, { autoEvaluate: !editor.autoEvaluate }));
-  }, [dispatch, editor.autoEvaluate, activeEditorId]);
+  const handleEvaluateFieldChange = useCallback(() => {
+    setAutoEvaluate(!autoEvaluate);
+  }, [autoEvaluate]);
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
@@ -185,8 +176,8 @@ export default function ToggleEditorDialog(props) {
   );
   const showPreviewAction = useMemo(
     () =>
-      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
-    [editor, editorViolations, hidePreviewAction]
+      !hidePreviewAction && editor && !editorViolations && !autoEvaluate,
+    [editor, editorViolations, hidePreviewAction, autoEvaluate]
   );
   const handleClose = useCallback(() => {
     onClose();
@@ -201,6 +192,22 @@ export default function ToggleEditorDialog(props) {
 
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
+
+  useEffect(() => {
+    if (props.type) {
+      setState({
+        ...state,
+        activeEditorIndex: props.type === 'expression' ? 0 : 1,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.type]);
+
+  useEffect(() => {
+    if (editor.processor) {
+      dispatch(actions.editor.patch(activeEditorId, { autoEvaluate }));
+    }
+  }, [dispatch, activeEditorId, autoEvaluate, editor.processor]);
 
   return (
     <Dialog
@@ -310,7 +317,7 @@ export default function ToggleEditorDialog(props) {
             disabled={disabled}
             hideLabelSpacing
             id="disableAutoPreview"
-            onFieldChange={handleAutoPreviewToggle}
+            onFieldChange={handleEvaluateFieldChange}
             label="Enable auto-preview"
             value={!!editor.autoEvaluate}
           />
