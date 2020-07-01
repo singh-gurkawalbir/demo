@@ -31,7 +31,7 @@ export default function InstallIntegrationDrawer() {
           <Preview />
         </Route>
         <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-          <Setup />
+          <Setup handleClose={handleClose} />
         </Route>
         <Route path={`${match.url}/${rootPath}`}>
           <UploadFile />
