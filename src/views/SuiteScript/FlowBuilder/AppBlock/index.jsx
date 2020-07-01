@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import { useHistory, useLocation } from 'react-router-dom';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import BubbleSvg from '../../../FlowBuilder/BubbleSvg';
 import ResourceButton from '../ResourceButton';
+import ActionIconButton from '../../../FlowBuilder/ActionIconButton';
+import MapDataIcon from '../../../../components/icons/MapDataIcon';
+import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -129,7 +133,12 @@ export default function AppBlock({
   resource,
 }) {
   const classes = useStyles();
+  const location = useLocation();
+  const history = useHistory();
   let application;
+  const openMapping = useCallback(() => {
+    history.push(`${location.pathname}/mapping`);
+  }, [history, location.pathname]);
 
   if (
     resource &&
@@ -145,6 +154,24 @@ export default function AppBlock({
   if (application === 'fileCabinet') {
     application = 'netsuite';
   }
+
+
+  const action = useMemo(() => {
+    const {import: importRes} = resource;
+    if (importRes.mapping) {
+      return (
+        <>
+          <ActionIconButton
+            variant="middle"
+            helpText={helpTextMap['fb.pp.imports.importMapping']}
+            onClick={openMapping}
+            data-test="mapping">
+            <MapDataIcon />
+          </ActionIconButton>
+        </>
+      );
+    }
+  }, [openMapping, resource]);
 
   return (
     <div className={clsx(classes.root, className)}>
@@ -166,6 +193,9 @@ export default function AppBlock({
         </div>
         <div className={classes.buttonContainer}>
           <ResourceButton onClick={onBlockClick} variant={blockType} />
+          <div className={classes.middleActionContainer}>
+            {action}
+          </div>
         </div>
       </div>
     </div>

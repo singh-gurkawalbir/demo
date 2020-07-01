@@ -23,6 +23,7 @@ import OnOffCell from '../../../components/ResourceTable/metadata/suiteScript/fl
 import RunCell from '../../../components/ResourceTable/metadata/suiteScript/flows/RunCell';
 import DeleteCell from '../../../components/ResourceTable/metadata/suiteScript/flows/DeleteCell';
 import actions from '../../../actions';
+import SuiteScriptMappingDrawer from '../Mappings/Drawer';
 
 const useStyles = makeStyles((theme) => ({
   actions: {
@@ -208,6 +209,11 @@ function FlowBuilder() {
         ssLinkedConnectionId={ssLinkedConnectionId}
         flowId={flowId}
       />
+      <SuiteScriptMappingDrawer
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+        flowId={flowId}
+        />
       <CeligoPageBar
         title={
           <EditableText

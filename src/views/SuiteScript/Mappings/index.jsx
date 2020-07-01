@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -459,17 +458,11 @@ const SuiteScriptMapping = (props) => {
 };
 
 export default function SuiteScriptMappingWrapper(props) {
+  const {ssLinkedConnectionId, integrationId, flowId} = props;
   const dispatch = useDispatch();
-  const match = useRouteMatch();
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
 
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
-  const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
-  const integrationId = str1[str1.length - 1];
-  const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
-  const ssLinkedConnectionId = str2[str2.length - 1];
-  const flowId = match.params && match.params.flowId;
-
   const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const requestImportSampleData = useCallback(
