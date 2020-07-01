@@ -112,9 +112,9 @@ export default function Integration(props) {
   const { confirmDialog } = useConfirmDialog();
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
-      selectors.canEditSettingsForm(state, 'integrations', integrationId, integrationId);
+      selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
     const hasSettingsForm =
-      selectors.hasSettingsForm(state, 'integrations', integrationId);
+      selectors.hasSettingsForm(state, 'integrations', (childId || integrationId));
 
     return !canEditSettingsForm && !hasSettingsForm;
   });
@@ -185,12 +185,7 @@ export default function Integration(props) {
     state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
-  const currentChildMode = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', childId);
-
-    return integration && integration.mode;
-  });
-  const defaultChild = ((children.find(s => s.value !== integrationId) || {})
+  const defaultChild = ((children.find(s => (s.value !== integrationId && s.mode === 'settings')) || {})
     .value) || integrationId;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
@@ -446,16 +441,7 @@ export default function Integration(props) {
     );
   }
   let redirectToPage;
-  if (currentChildMode === 'install') {
-    redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
-    );
-  } else if (currentChildMode === 'uninstall') {
-    // TODO: update the uninstall route to point to v2 route
-    redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
-    );
-  } else if (installSteps && installSteps.length && mode === 'install') {
+  if (installSteps && installSteps.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );

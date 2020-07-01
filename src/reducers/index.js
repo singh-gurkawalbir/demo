@@ -1740,7 +1740,7 @@ export function integrationChildren(state, integrationId) {
 
   children.push({ value: integrationId, label: integration.name });
   childIntegrations.forEach(ci => {
-    children.push({ value: ci._id, label: ci.name });
+    children.push({ value: ci._id, label: ci.name, mode: ci.mode });
   });
 
   return children;
