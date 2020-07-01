@@ -67,6 +67,9 @@ const useStyles = makeStyles(theme => ({
   editorToggleContainer: {
     marginRight: theme.spacing(2),
   },
+  autoPreview: {
+    margin: theme.spacing(0, 2, 0, 2),
+  }
 }));
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
@@ -195,14 +198,6 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
-          <DynaCheckbox
-            disabled={disabled}
-            hideLabelSpacing
-            id="disableAutoPreview"
-            onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-preview"
-            value={!!editor.autoEvaluate}
-          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -288,14 +283,25 @@ export default function EditorDialog(props) {
             Cancel
           </Button>
         </div>
-        {showPreviewAction && (
+        <div>
+          <DynaCheckbox
+            disabled={disabled}
+            hideLabelSpacing
+            id="disableAutoPreview"
+            onFieldChange={handleAutoPreviewToggle}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
+          {showPreviewAction && (
           <Button
             data-test="previewEditorResult"
             variant="outlined"
+            className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
-        )}
+          )}
+        </div>
       </DialogActions>
     </Dialog>
   );
