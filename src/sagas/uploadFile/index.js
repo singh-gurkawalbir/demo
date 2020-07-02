@@ -128,6 +128,7 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
     actions.file.processedFile({
       fileId,
       file: fileContent,
+      rawFile: file,
       fileProps: { name, size, fileType },
     })
   );

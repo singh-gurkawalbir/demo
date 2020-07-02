@@ -1024,10 +1024,11 @@ const file = {
       fileType,
       fileProps,
     }),
-  processedFile: ({ fileId, file, fileProps }) =>
+  processedFile: ({ fileId, file, rawFile, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
       fileId,
       file,
+      rawFile,
       fileProps,
     }),
   processError: ({ fileId, error }) =>

@@ -38,6 +38,13 @@ export default function IntegrationSettingsSaveButton(props) {
         values = formValues;
       }
 
+      const fileField = Object.keys(values).find(key => values[key].file && values[key].type === 'file');
+      if (fileField) {
+        const fileContents = values[fileField];
+        values['/sampleData'] = fileContents.file;
+        values['/rowDelimiter'] = fileContents.rowDelimiter || '\n';
+        values[fileField] = fileContents.fileProps;
+      }
       const allValuesWithFlowId = { ...values, '/flowId': flowId };
 
       dispatch(
