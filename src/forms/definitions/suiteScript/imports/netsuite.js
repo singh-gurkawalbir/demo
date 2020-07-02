@@ -27,30 +27,27 @@ export default {
     return null;
   },
   fieldMap: {
-    importData: { fieldId: 'importData' },
     'import.netsuite.recordType': {
       fieldId: 'import.netsuite.recordType',
     },
     'import.netsuite.operation': { fieldId: 'import.netsuite.operation' },
+    'import.netsuite.ignoreExisting': {fieldId: 'import.netsuite.ignoreExisting'},
+    'import.netsuite.ignoreMissing': {fieldId: 'import.netsuite.ignoreMissing'},
     'import.netsuite.internalIdLookup.expression': {
       fieldId: 'import.netsuite.internalIdLookup.expression',
-      defaultValue: r =>
-        r &&
-        r.import &&
-        r.import.netsuite &&
-        r.import.netsuite.internalIdLookup &&
-        r.import.netsuite.internalIdLookup.expression &&
-        JSON.stringify(r.import.netsuite.internalIdLookup.expression),
+      defaultValue: r => JSON.stringify(r?.import?.netsuite?.internalIdLookup?.expression),
     },
   },
   layout: {
     type: 'column',
     containers: [
       {
+        title: 'How would you like the data imported?',
         fields: [
-          'importData',
           'import.netsuite.recordType',
           'import.netsuite.operation',
+          'import.netsuite.ignoreExisting',
+          'import.netsuite.ignoreMissing',
           'import.netsuite.internalIdLookup.expression',
         ],
         type: 'collapse',

@@ -49,6 +49,12 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-salesforce-id-field': data =>
+    data
+      .filter(
+        item => item.type === 'text' && !item.sublist && !item.id.startsWith('celigo_')
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'suitescript-bodyField': data =>
     data
       .filter(
