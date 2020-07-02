@@ -810,16 +810,19 @@ export function* saveAndContinueResourceForm(params) {
 
 export function* saveResourceWithDefinitionID({
   formValues,
-  definitionId,
+  fileDefinitionDetails,
   flowId,
   skipClose = false,
 }) {
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
-
+  const { definitionId, resourcePath } = fileDefinitionDetails;
   delete newValues['/file/filedefinition/rules'];
   newValues['/file/type'] = 'filedefinition';
   newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;
+  if (resourceType === 'exports') {
+    newValues['/file/fileDefinition/resourcePath'] = resourcePath;
+  }
   yield put(
     actions.resourceForm.submit(
       resourceType,

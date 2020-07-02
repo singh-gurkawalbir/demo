@@ -1788,7 +1788,7 @@ export function integrationChildren(state, integrationId) {
 
   children.push({ value: integrationId, label: integration.name });
   childIntegrations.forEach(ci => {
-    children.push({ value: ci._id, label: ci.name });
+    children.push({ value: ci._id, label: ci.name, mode: ci.mode });
   });
 
   return children;
@@ -5322,3 +5322,51 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
 export function suiteScriptConnections(state, ssLinkedConnectionId) {
   return fromData.suiteScriptConnections(state && state.data, ssLinkedConnectionId);
 }
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
+  if (definitionId && format) {
+    template = fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
+};
