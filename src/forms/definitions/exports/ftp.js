@@ -433,7 +433,6 @@ export default {
               'ftp.directoryPath',
               'ftp.fileNameStartsWith',
               'ftp.fileNameEndsWith',
-              'ftp.backupDirectoryPath',
             ],
           },
           {

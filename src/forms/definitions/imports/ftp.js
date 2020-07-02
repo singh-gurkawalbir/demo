@@ -313,9 +313,6 @@ export default {
     'ftp.inProgressFileName': {
       fieldId: 'ftp.inProgressFileName',
     },
-    'ftp.backupDirectoryPath': {
-      fieldId: 'ftp.backupDirectoryPath',
-    },
     'ftp.blobFileName': {
       fieldId: 'ftp.blobFileName',
     },
@@ -393,7 +390,6 @@ export default {
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',
-          'ftp.backupDirectoryPath',
         ],
       },
     ],
