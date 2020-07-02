@@ -4760,34 +4760,30 @@ export const redirectUrlToResourceListingPage = (
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
-export function showHTTPAssistantMappingPreview(state, resouceId) {
-  const resourceData = resource(state, 'imports', resouceId);
-  const { _integrationId, _connectionId } = resourceData;
+export function httpAssistantSupportsMappingPreview(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importRes;
 
-  if (_integrationId && resourceData.http) {
+  if (_integrationId && http) {
     const connection = resource(state, 'connections', _connectionId);
-
-    return (
-      resourceData.http.requestMediaType === 'xml' ||
-        connection.http.mediaType === 'xml'
-    );
+    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
   }
 
   return false;
 }
 
-export function mappingPreviewType(state, resourceId) {
-  const resourceData = resource(state, 'imports', resourceId);
+export function mappingPreviewType(state, importId) {
+  const importRes = resource(state, 'imports', importId);
 
-  if (!resourceData) return;
-  const { adaptorType } = resourceData;
+  if (!importRes) return;
+  const { adaptorType } = importRes;
 
   if (adaptorType === 'NetSuiteDistributedImport') {
     return 'netsuite';
   } if (adaptorType === 'SalesforceImport') {
     const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
       state,
-      resourceId
+      importId
     );
 
     if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
@@ -4798,9 +4794,9 @@ export function mappingPreviewType(state, resourceId) {
       }
     }
   } else if (resourceData.http) {
-    const showHttpAssistant = showHTTPAssistantMappingPreview(
+    const showHttpAssistant = httpAssistantSupportsMappingPreview(
       state,
-      resourceId
+      importId
     );
 
     if (showHttpAssistant) {
