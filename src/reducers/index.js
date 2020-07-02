@@ -4760,7 +4760,50 @@ export const redirectUrlToResourceListingPage = (
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+export function httpAssistantSupportsMappingPreview(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importRes;
 
+  if (_integrationId && http) {
+    const connection = resource(state, 'connections', _connectionId);
+    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
+  }
+
+  return false;
+}
+
+export function mappingPreviewType(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+
+  if (!importRes) return;
+  const { adaptorType } = importRes;
+
+  if (adaptorType === 'NetSuiteDistributedImport') {
+    return 'netsuite';
+  } if (adaptorType === 'SalesforceImport') {
+    const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
+      state,
+      importId
+    );
+
+    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
+      const { searchLayoutable } = masterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        return 'salesforce';
+      }
+    }
+  } else if (importRes.http) {
+    const showHttpAssistant = httpAssistantSupportsMappingPreview(
+      state,
+      importId
+    );
+
+    if (showHttpAssistant) {
+      return 'http';
+    }
+  }
+}
 export function retryDataContext(state, retryId) {
   return fromSession.retryDataContext(state && state.session, retryId);
 }
