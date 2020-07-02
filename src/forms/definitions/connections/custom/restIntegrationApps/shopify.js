@@ -120,6 +120,7 @@ export default {
       fieldId: 'rest.basicAuth.password',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
+    
     'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
