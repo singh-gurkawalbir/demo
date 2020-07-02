@@ -4774,6 +4774,7 @@ export const rdbmsConnectionType = (state, connectionId) => {
 * Definition rules are fetched in 2 ways
 * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
 * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
 */
 export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
   const { resourcePath, definitionId, format } = options;
