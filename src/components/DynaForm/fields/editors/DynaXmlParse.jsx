@@ -162,6 +162,7 @@ export default function DynaXmlParse({
   const [currentOptions, setCurrentOptions] = useState(options);
   const [showEditor, setShowEditor] = useState(false);
   const [form, setForm] = useState(getForm(options));
+  const [formKey, setFormKey] = useState(1);
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
@@ -191,13 +192,19 @@ export default function DynaXmlParse({
 
   const handleClose = (shouldCommit, editorValues = {}) => {
     console.log(editorValues);
-    // setForm()
+
+    if (shouldCommit) {
+      setForm(getForm(editorValues));
+      setFormKey(formKey + 1);
+    }
+
     setShowEditor(false);
   };
 
   const handleOptionsChange = useCallback(
     (newOptions, isValid) => {
-      setCurrentOptions(newOptions);
+      setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
+      // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
@@ -206,11 +213,8 @@ export default function DynaXmlParse({
       } else {
         onFieldChange(id, parsersValue);
       }
-      // dispatch(
-      //   action.formFieldChange(formId, fieldId, newValue, shouldTouch, isValid)
-      // );
     },
-    [] // [id, onFieldChange]
+    [id, onFieldChange]
   );
 
   return (
@@ -229,7 +233,7 @@ export default function DynaXmlParse({
       <div className={classes.launchContainer}>
         <FormLabel className={classes.label}>XML parser helper</FormLabel>
         <Button
-          data-test={id}
+          data-test={`parse-helper-${id}`}
           variant="outlined"
           color="secondary"
           className={classes.button}
@@ -239,11 +243,11 @@ export default function DynaXmlParse({
         <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
       </div>
       <DynaForm
-        key={`xml-parse-${id}`}
+        key={formKey}
         onChange={handleOptionsChange}
         disabled={disabled}
         fieldMeta={form}
-          />
+      />
     </div>
   );
 }
