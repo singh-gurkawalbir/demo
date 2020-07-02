@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { differenceWith, isEqual } from 'lodash';
 import util from '../../../../utils/json';
 
@@ -29,17 +30,16 @@ export default {
   },
   dirty: editor => {
     const {
-      // eslint-disable-next-line camelcase
       _init_rule = [],
       data,
-      initData,
+      _init_data,
       rule = [],
       optionalSaveParams = {},
     } = editor || {};
     const { processorKey } = optionalSaveParams;
 
     // in case of response transformation, data change is considered as editor change
-    if (processorKey === 'responseTransform' && initData !== data) {
+    if (processorKey === 'responseTransform' && _init_data !== data) {
       return true;
     }
 
