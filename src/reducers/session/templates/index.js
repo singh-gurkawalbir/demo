@@ -130,6 +130,12 @@ export default function reducer(state = {}, action) {
         }
 
         break;
+      case actionTypes.TEMPLATE.INSTALL_FAILURE:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+        draft[templateId].isInstallFailed = true;
+        break;
     }
   });
 }

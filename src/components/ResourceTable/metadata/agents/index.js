@@ -3,8 +3,7 @@ import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import AgentDownloadInstaller from '../../../AgentDownloadInstaller';
 import AgentToken from '../../../AgentToken';
-import AgentStatus from '../../../AgentStatus';
-import { formatLastModified } from '../../../CeligoTable/util';
+import { formatLastModified, onlineStatus } from '../../../CeligoTable/util';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import GenerateToken from '../../actions/GenerateToken';
 import Edit from '../../actions/Edit';
@@ -23,12 +22,7 @@ export default {
       },
       orderBy: 'name',
     },
-    {
-      heading: 'Status',
-      value(r) {
-        return <AgentStatus agentId={r._id} />;
-      },
-    },
+    { heading: 'Status', value: r => onlineStatus(r) },
     {
       heading: 'Last updated',
       width: '150px', // minimum width to prevent heading to wrap.

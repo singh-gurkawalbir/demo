@@ -27,14 +27,14 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 130,
+    minWidth: 150,
   },
   lineLeft: {
     minWidth: 50,
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 150,
+    marginTop: 85,
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
   pending: {

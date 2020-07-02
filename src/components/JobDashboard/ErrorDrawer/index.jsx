@@ -37,6 +37,7 @@ export default function ErrorDrawer({
   numError = 0,
   numResolved = 0,
   onClose,
+  integrationName,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -101,7 +102,8 @@ export default function ErrorDrawer({
     job = flowJob?.children?.find(j => j._id === childJobId);
   }
 
-  let title = flowJob?.name;
+  const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
+  let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
   if (job?.name) title += ` > ${job.name}`;
 
   return (

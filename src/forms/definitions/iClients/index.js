@@ -16,12 +16,17 @@ export default {
     'amazonmws.secretKey': { fieldId: 'amazonmws.secretKey' },
   },
   layout: {
-    fields: [
-      'name',
-      'oauth2.clientId',
-      'oauth2.clientSecret',
-      'amazonmws.accessKeyId',
-      'amazonmws.secretKey',
+    type: 'box',
+    containers: [
+      {
+        fields: [
+          'name',
+          'oauth2.clientId',
+          'oauth2.clientSecret',
+          'amazonmws.accessKeyId',
+          'amazonmws.secretKey',
+        ],
+      },
     ],
   },
 };
