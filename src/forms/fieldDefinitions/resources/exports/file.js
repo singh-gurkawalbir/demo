@@ -181,6 +181,7 @@ export default {
       'edifact.format',
       'file.fileDefinition.resourcePath',
     ],
+    fileDefinitionResourcePath: r => r?.file?.fileDefinition?.resourcePath,
     userDefinitionId: r =>
       r &&
       r.file &&

@@ -54,7 +54,6 @@ export default function DynaMultiSelect(props) {
     onFieldChange,
     placeholder,
     valueDelimiter,
-    displayEmpty,
     isValid,
     required,
   } = props;
@@ -69,7 +68,7 @@ export default function DynaMultiSelect(props) {
     processedValue = [processedValue];
   }
 
-  let items = options.reduce(
+  const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -104,13 +103,6 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
-  const defaultItem = (
-    <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please select'}
-    </MenuItem>
-  );
-
-  items = [defaultItem, ...items];
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 
@@ -142,7 +134,7 @@ export default function DynaMultiSelect(props) {
           disabled={disabled}
           value={processedValue}
           placeholder={placeholder}
-          displayEmpty={displayEmpty}
+          displayEmpty
           className={classes.wrapper}
           onChange={evt => {
             onFieldChange(id, evt.target.value);
@@ -150,7 +142,7 @@ export default function DynaMultiSelect(props) {
           input={<Input name={name} id={id} />}
           renderValue={selected =>
             !selected || !selected.length ? (
-              <span>{placeholder}</span>
+              <span>{placeholder || 'Please select'}</span>
             ) : (
               <div className={classes.chips}>
                 {selected &&

@@ -1388,8 +1388,6 @@ export default {
   'ftp.requireSocketReUse': {
     type: 'checkbox',
     label: 'Require socket reuse',
-    description:
-      'Note: for security reasons this field must always be re-entered.',
   },
   'ftp.usePgp': {
     type: 'checkbox',

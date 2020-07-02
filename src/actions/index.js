@@ -1300,6 +1300,8 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
+  setNSAssistantFormLoaded: (id, value) =>
+    action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { id, value }),
   refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
   updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
 
@@ -1698,12 +1700,13 @@ const errorManager = {
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
-  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
     action(actionTypes.FLOW.RUN_DATA_LOADER, {
       flowId,
       customStartDate,
       fileContent,
       fileType,
+      fileName,
     }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {

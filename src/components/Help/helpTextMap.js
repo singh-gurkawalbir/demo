@@ -83,8 +83,6 @@ export default {
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
-  'connection.integrator.environment':
-    'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
   'connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
   'connection.integrator.token':
@@ -575,6 +573,7 @@ export default {
   'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
   'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s enviornment.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
