@@ -62,7 +62,7 @@ export default function SelectImport({ flowId }) {
         setImportId(imports[0]._id);
       }
     }
-  }, [imports]);
+  }, []);
 
   if (!flow) {
     return <Typography>No flow exists with id: {flowId}</Typography>;
