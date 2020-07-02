@@ -73,7 +73,22 @@ const useStyles = makeStyles(theme => ({
     },
   },
   autoPreview: {
-    marginLeft: '10px',
+    margin: theme.spacing(0, 1, 0, 1),
+    '&:after': {
+      content: '""',
+      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+      height: '80%',
+      width: 1,
+      position: 'absolute',
+      right: -12,
+    }
+  },
+  previewCheckbox: {
+    marginLeft: 8,
+  },
+  previewBtnContainer: {
+    display: 'flex',
+    minHeight: 29,
   }
 }));
 
@@ -104,7 +119,6 @@ export default function ToggleEditorDialog(props) {
     fullScreen: props.fullScreen || false,
     activeEditorIndex: 0,
   });
-  const [autoEvaluate, setAutoEvaluate] = useState(false);
   const { layout, fullScreen } = state;
   const size = fullScreen ? { height } : { height, width };
   const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
@@ -119,6 +133,9 @@ export default function ToggleEditorDialog(props) {
     [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
+  // TODO: Check for better approach
+  const [autoEvaluate, setAutoEvaluate] = useState(editor.autoEvaluate || false);
+
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
@@ -155,6 +172,8 @@ export default function ToggleEditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
+
+
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
   }, [activeEditorId, dispatch]);
@@ -312,24 +331,29 @@ export default function ToggleEditorDialog(props) {
             Cancel
           </Button>
         </div>
-        <div>
-          <DynaCheckbox
-            disabled={disabled}
-            hideLabelSpacing
-            id="disableAutoPreview"
-            onFieldChange={handleEvaluateFieldChange}
-            label="Enable auto-preview"
-            value={!!editor.autoEvaluate}
-          />
+        <div className={classes.previewBtnContainer}>
           {showPreviewAction && (
           <Button
-            variant="outlined"
             data-test="previewEditorResult"
+            variant="outlined"
+            color="secondary"
             disabled={!!saveInProgress}
             className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
+          )}
+          {!hidePreviewAction && (
+          <div className={classes.previewCheckbox}>
+            <DynaCheckbox
+              disabled={disabled}
+              hideLabelSpacing
+              id="disableAutoPreview"
+              onFieldChange={handleEvaluateFieldChange}
+              label="Auto preview"
+              value={!!editor.autoEvaluate}
+          />
+          </div>
           )}
         </div>
 

@@ -29,7 +29,6 @@ export default function reducer(state = {}, action) {
             isGroupedSampleData,
             salesforceMasterRecordTypeId,
             netsuiteRecordType,
-            showSalesforceNetsuiteAssistant,
             subRecordMappingId,
             importSampleData = [],
             ...additionalOptions
@@ -84,23 +83,10 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             salesforceMasterRecordTypeId,
-            showSalesforceNetsuiteAssistant,
           };
 
           tmp.mappingsCopy = deepClone(tmp.mappings);
           tmp.lookupsCopy = deepClone(tmp.lookups);
-
-          if (
-            resourceData._integrationId &&
-            resourceData.http &&
-            (resourceData.http.requestMediaType === 'xml' ||
-              connection.http.mediaType === 'xml')
-          ) {
-            tmp.httpAssistantPreview = {
-              rule:
-                resourceData && resourceData.http && resourceData.http.body[0],
-            };
-          }
 
           draft[id] = tmp;
         }
@@ -363,6 +349,11 @@ export default function reducer(state = {}, action) {
 
         delete preview.data;
         preview.status = 'error';
+        break;
+      }
+
+      case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED: {
+        draft[id].isNSAssistantFormLoaded = value;
         break;
       }
 

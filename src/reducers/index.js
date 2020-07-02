@@ -1740,7 +1740,7 @@ export function integrationChildren(state, integrationId) {
 
   children.push({ value: integrationId, label: integration.name });
   childIntegrations.forEach(ci => {
-    children.push({ value: ci._id, label: ci.name });
+    children.push({ value: ci._id, label: ci.name, mode: ci.mode });
   });
 
   return children;
@@ -4760,7 +4760,50 @@ export const redirectUrlToResourceListingPage = (
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+export function httpAssistantSupportsMappingPreview(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importRes;
 
+  if (_integrationId && http) {
+    const connection = resource(state, 'connections', _connectionId);
+    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
+  }
+
+  return false;
+}
+
+export function mappingPreviewType(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+
+  if (!importRes) return;
+  const { adaptorType } = importRes;
+
+  if (adaptorType === 'NetSuiteDistributedImport') {
+    return 'netsuite';
+  } if (adaptorType === 'SalesforceImport') {
+    const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
+      state,
+      importId
+    );
+
+    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
+      const { searchLayoutable } = masterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        return 'salesforce';
+      }
+    }
+  } else if (importRes.http) {
+    const showHttpAssistant = httpAssistantSupportsMappingPreview(
+      state,
+      importId
+    );
+
+    if (showHttpAssistant) {
+      return 'http';
+    }
+  }
+}
 export function retryDataContext(state, retryId) {
   return fromSession.retryDataContext(state && state.session, retryId);
 }
@@ -4769,4 +4812,52 @@ export const rdbmsConnectionType = (state, connectionId) => {
   const connection = resource(state, 'connections', connectionId) || {};
 
   return connection.rdbms && connection.rdbms.type;
+};
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
+  if (definitionId && format) {
+    template = fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
 };
