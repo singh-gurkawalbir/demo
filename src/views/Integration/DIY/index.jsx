@@ -185,6 +185,11 @@ export default function Integration(props) {
     state => selectors.integrationChildren(state, integrationId),
     shallowEqual
   );
+  const currentChildMode = useSelector(state => {
+    const integration = selectors.resource(state, 'integrations', childId);
+    return integration?.mode;
+  });
+
   const defaultChild = ((children.find(s => (s.value !== integrationId && s.mode === 'settings')) || {})
     .value) || integrationId;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -441,7 +446,11 @@ export default function Integration(props) {
     );
   }
   let redirectToPage;
-  if (installSteps && installSteps.length && mode === 'install') {
+  if (currentChildMode === 'uninstall') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
+    );
+  } else if (installSteps && installSteps.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );

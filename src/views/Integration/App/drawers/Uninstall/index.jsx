@@ -7,6 +7,7 @@ import Uninstaller2 from './Uninstall2.0';
 const emptyobj = {};
 export default function IntegrationAppUninstallation({ match }) {
   const { integrationId, storeId } = match.params;
+  const initialState = useSelector(state => state?.data?.resources?.integrations);
   const integration =
     useSelector(state => {
       const i = selectors.integrationAppSettings(state, integrationId);
@@ -26,6 +27,10 @@ export default function IntegrationAppUninstallation({ match }) {
   }, shallowEqual
   );
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+  // if integrations are not loaded yet, return null
+  if (!initialState) {
+    return null;
+  }
   if (isFrameWork2) {
     return <Uninstaller2 integration={storeId ? storeIntegration : integration} integrationId={storeId || integrationId} />;
   }

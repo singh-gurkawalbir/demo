@@ -271,7 +271,7 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
-            const storeId = (stores && stores.length)
+            const storeId = stores?.length
               ? stores[0].value
               : undefined;
 
