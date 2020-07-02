@@ -1700,12 +1700,13 @@ const errorManager = {
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
-  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
     action(actionTypes.FLOW.RUN_DATA_LOADER, {
       flowId,
       customStartDate,
       fileContent,
       fileType,
+      fileName,
     }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {

@@ -175,7 +175,7 @@ export default function RunFlowButton({
   const disabled = isNewFlow || !(flowDetails && flowDetails.isRunnable);
 
   useEffect(() => {
-    const { status, file, error } = uploadedFile || {};
+    const { status, file, error, rawFile } = uploadedFile || {};
 
     switch (status) {
       case 'error':
@@ -189,8 +189,9 @@ export default function RunFlowButton({
         dispatch(
           actions.flow.runDataLoader({
             flowId,
+            fileName: rawFile.name,
             fileContent: file,
-            fileType: dataLoaderFileType,
+            fileType: rawFile.type || dataLoaderFileType,
           })
         );
         // Removes uploaded file from session as it is no longer needed once triggered flow run
