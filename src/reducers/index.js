@@ -5256,7 +5256,7 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
       state,
       connectionId: ssLinkedConnectionId,
       commMetaPath,
-      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+      filterKey: 'suiteScriptSalesforce-sObjectMetadata',
     });
 
     return { data, status };

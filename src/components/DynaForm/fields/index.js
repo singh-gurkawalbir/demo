@@ -106,6 +106,7 @@ import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
 import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 
 export default {
   suitescripttable: DyanSuiteScriptTable,
@@ -225,4 +226,5 @@ export default {
   jsonresourcepath: DynaJsonResourcePath,
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
+  suitescriptuploadfile: DynaSuiteScriptUploadFile,
 };

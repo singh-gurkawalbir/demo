@@ -533,6 +533,7 @@ export default {
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
         key, settings
       }),
+
     updateLookups: (lookups) =>
       action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
         lookups
@@ -556,6 +557,9 @@ export default {
       mappings
     }),
     updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
-    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
+    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {}),
+    checkForSFSublistExtractPatch: (key, value) => action(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
+    setSFSubListFieldName: (value) => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
+    patchExtractList: (value) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),
   }
 };
