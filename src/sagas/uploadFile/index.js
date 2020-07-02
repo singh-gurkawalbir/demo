@@ -14,6 +14,7 @@ export function* uploadFile({
   resourceId,
   fileType,
   file,
+  fileName,
   uploadPath,
 }) {
   const path =
@@ -25,13 +26,18 @@ export function* uploadFile({
       path,
       message: 'Getting signed URL for file upload',
     });
+    const headers = {
+      'Content-Type': fileType,
+      'x-amz-server-side-encryption': 'AES256',
+    };
+
+    if (fileName) {
+      headers['Content-Disposition'] = `attachment;filename=${fileName}`;
+    }
 
     yield fetch(response.signedURL, {
       method: 'PUT',
-      headers: {
-        'Content-Type': fileType,
-        'x-amz-server-side-encryption': 'AES256',
-      },
+      headers,
       body: file,
     });
 
@@ -46,10 +52,10 @@ export function* uploadRawData({
   fileName = 'file.txt',
   fileType = 'application/text',
 }) {
-  const uploadPath = `/s3SignedURL?file_name=${fileName}&file_type=${fileType}`;
+  const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(fileName)}&file_type=${fileType}`;
 
   try {
-    const runKey = yield call(uploadFile, { file, fileType, uploadPath });
+    const runKey = yield call(uploadFile, { file, fileType, fileName, uploadPath });
 
     return runKey;
   } catch (e) {
@@ -58,7 +64,7 @@ export function* uploadRawData({
 }
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
-  const uploadPath = `/s3SignedURL?file_name=${file.name}&file_type=${fileType}`;
+  const uploadPath = `/s3SignedURL?file_name=${encodeURI(file.name)}&file_type=${fileType}`;
 
   try {
     const runKey = yield call(uploadFile, { file, fileType, uploadPath });
