@@ -22,6 +22,7 @@ import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import Help from '../../Help';
+import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
@@ -70,6 +71,9 @@ const useStyles = makeStyles(theme => ({
     '& Button:last-child': {
       marginRight: '0px',
     },
+  },
+  autoPreview: {
+    marginLeft: '10px',
   }
 }));
 
@@ -100,16 +104,7 @@ export default function ToggleEditorDialog(props) {
     fullScreen: props.fullScreen || false,
     activeEditorIndex: 0,
   });
-
-  useEffect(() => {
-    if (props.type) {
-      setState({
-        ...state,
-        activeEditorIndex: props.type === 'expression' ? 0 : 1,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.type]);
+  const [autoEvaluate, setAutoEvaluate] = useState(false);
   const { layout, fullScreen } = state;
   const size = fullScreen ? { height } : { height, width };
   const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
@@ -127,6 +122,9 @@ export default function ToggleEditorDialog(props) {
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
+  const handleEvaluateFieldChange = useCallback(() => {
+    setAutoEvaluate(!autoEvaluate);
+  }, [autoEvaluate]);
   const editorViolations = useSelector(state =>
     selectors.editorViolations(state, activeEditorId)
   );
@@ -178,8 +176,8 @@ export default function ToggleEditorDialog(props) {
   );
   const showPreviewAction = useMemo(
     () =>
-      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
-    [editor, editorViolations, hidePreviewAction]
+      !hidePreviewAction && editor && !editorViolations && !autoEvaluate,
+    [editor, editorViolations, hidePreviewAction, autoEvaluate]
   );
   const handleClose = useCallback(() => {
     onClose();
@@ -194,6 +192,22 @@ export default function ToggleEditorDialog(props) {
 
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
+
+  useEffect(() => {
+    if (props.type) {
+      setState({
+        ...state,
+        activeEditorIndex: props.type === 'expression' ? 0 : 1,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.type]);
+
+  useEffect(() => {
+    if (editor.processor) {
+      dispatch(actions.editor.patch(activeEditorId, { autoEvaluate }));
+    }
+  }, [dispatch, activeEditorId, autoEvaluate, editor.processor]);
 
   return (
     <Dialog
@@ -298,15 +312,27 @@ export default function ToggleEditorDialog(props) {
             Cancel
           </Button>
         </div>
-        {showPreviewAction && (
+        <div>
+          <DynaCheckbox
+            disabled={disabled}
+            hideLabelSpacing
+            id="disableAutoPreview"
+            onFieldChange={handleEvaluateFieldChange}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
+          {showPreviewAction && (
           <Button
             variant="outlined"
             data-test="previewEditorResult"
             disabled={!!saveInProgress}
+            className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
-        )}
+          )}
+        </div>
+
       </DialogActions>
     </Dialog>
   );
