@@ -4743,6 +4743,36 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   };
 }
 
+export function suiteScriptFlowConnectionList(
+  state,
+  { ssLinkedConnectionId, flowId }
+) {
+  const flow = suiteScriptResource(state, {
+    resourceType: 'flows',
+    id: flowId,
+    ssLinkedConnectionId,
+  });
+  const connections = suiteScriptResourceList(state, {
+    resourceType: 'connections',
+    ssLinkedConnectionId,
+  });
+  const connectionIdsInUse = [];
+
+  if (flow?.export._connectionId) {
+    connectionIdsInUse.push(flow.export._connectionId);
+  }
+  if (flow?.import?._connectionId) {
+    connectionIdsInUse.push(flow.import._connectionId);
+  }
+  if (isJavaFlow(flow)) {
+    connectionIdsInUse.push('CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
+  }
+
+  return connections.filter(
+    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+  );
+}
+
 export function suiteScriptIntegrationConnectionList(
   state,
   { ssLinkedConnectionId, integrationId }

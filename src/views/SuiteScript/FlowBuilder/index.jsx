@@ -17,7 +17,8 @@ import CalendarIcon from '../../../components/icons/CalendarIcon';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
-import LoadResources from '../../../components/SuiteScript/LoadResources';
+import LoadResources from '../../../components/LoadResources';
+import LoadSuiteScriptResources from '../../../components/SuiteScript/LoadResources';
 import { flowAllowsScheduling } from '../../../utils/suiteScript';
 import OnOffCell from '../../../components/ResourceTable/metadata/suiteScript/flows/OnOffCell';
 import RunCell from '../../../components/ResourceTable/metadata/suiteScript/flows/RunCell';
@@ -186,66 +187,67 @@ function FlowBuilder() {
     },
     [dispatch, flowId, integrationId, ssLinkedConnectionId]
   );
-  const isViewMode = false;
+  const isViewMode = useSelector(state => !selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
-    <LoadResources
-      required
-      ssLinkedConnectionId={ssLinkedConnectionId}
-      integrationId={integrationId}
-      resources="connections,flows,nextFlows"
+    <LoadResources required resources="integrations">
+      <LoadSuiteScriptResources
+        required
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+        resources="connections,flows,nextFlows"
     >
-      <ResourceDrawer
-        flowId={flowId}
-        disabled={isViewMode}
-        integrationId={integrationId}
-        ssLinkedConnectionId={ssLinkedConnectionId}
+        <ResourceDrawer
+          flowId={flowId}
+          disabled={isViewMode}
+          integrationId={integrationId}
+          ssLinkedConnectionId={ssLinkedConnectionId}
       />
-      <ScheduleDrawer
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        flowId={flowId}
+        <ScheduleDrawer
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          flowId={flowId}
       />
-      <SettingsDrawer
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        flowId={flowId}
+        <SettingsDrawer
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          flowId={flowId}
       />
-      <SuiteScriptMappingDrawer
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-        flowId={flowId}
+        <SuiteScriptMappingDrawer
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+          flowId={flowId}
         />
-      <CeligoPageBar
-        title={
-          <EditableText
-            disabled={isViewMode || !flow.editable}
-            text={flow.ioFlowName || flow.name}
+        <CeligoPageBar
+          title={
+            <EditableText
+              disabled={isViewMode || !flow.editable}
+              text={flow.ioFlowName || flow.name}
             // multiline
-            defaultText={`Unnamed (id:${flowId})`}
-            onChange={handleTitleChange}
-            inputClassName={
+              defaultText={`Unnamed (id:${flowId})`}
+              onChange={handleTitleChange}
+              inputClassName={
               drawerOpened
                 ? classes.editableTextInputShift
                 : classes.editableTextInput
             }
           />
         }
-        subtitle={
-          <>
-            {flow.lastModified &&
+          subtitle={
+            <>
+              {flow.lastModified &&
               `Last saved: ${(
                 <DateTimeDisplay dateTime={flow.lastModified} />
               )}`}
-          </>
+            </>
         }
       >
-        <div className={classes.actions}>
-          <OnOffCell ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
-          <RunCell
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            flow={flow}
-            onRunStart={handleRunStart}
+          <div className={classes.actions}>
+            <OnOffCell ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
+            <RunCell
+              ssLinkedConnectionId={ssLinkedConnectionId}
+              flow={flow}
+              onRunStart={handleRunStart}
           />
-          {flowAllowsScheduling(flow) && (
+            {flowAllowsScheduling(flow) && (
             <IconButtonWithTooltip
               tooltipProps={{
                 title: 'Schedule',
@@ -256,26 +258,26 @@ function FlowBuilder() {
             >
               <CalendarIcon />
             </IconButtonWithTooltip>
-          )}
-          <IconButtonWithTooltip
-            tooltipProps={{
-              title: 'Settings',
-              placement: 'bottom',
-            }}
-            disabled={!flow.editable}
-            onClick={handleDrawerClick('settings')}
-            data-test="flowSettings"
+            )}
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Settings',
+                placement: 'bottom',
+              }}
+              disabled={!flow.editable}
+              onClick={handleDrawerClick('settings')}
+              data-test="flowSettings"
           >
-            <SettingsIcon />
-          </IconButtonWithTooltip>
-          <DeleteCell
-            ssLinkedConnectionId={ssLinkedConnectionId}
-            flow={flow}
-            isFlowBuilderView
+              <SettingsIcon />
+            </IconButtonWithTooltip>
+            <DeleteCell
+              ssLinkedConnectionId={ssLinkedConnectionId}
+              flow={flow}
+              isFlowBuilderView
           />
-        </div>
-      </CeligoPageBar>
-      {flow && (
+          </div>
+        </CeligoPageBar>
+        {flow && (
         <div
           className={clsx(classes.canvasContainer, {
             [classes.canvasShift]: drawerOpened,
@@ -357,7 +359,8 @@ function FlowBuilder() {
             />
           </div>
         </div>
-      )}
+        )}
+      </LoadSuiteScriptResources>
     </LoadResources>
   );
 }

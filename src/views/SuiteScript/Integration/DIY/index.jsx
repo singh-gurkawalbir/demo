@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../../reducers';
+import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
@@ -101,14 +102,14 @@ export default function Integration({ match }) {
   return (
     <>
       <ResourceDrawer match={match} />
-
-      <LoadSuiteScriptResources
-        required
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-        resources="tiles,flows,connections">
-        <CeligoPageBar
-          title={
+      <LoadResources required resources="integrations">
+        <LoadSuiteScriptResources
+          required
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+          resources="tiles,flows,connections">
+          <CeligoPageBar
+            title={
             integration && (
               <EditableText
                 disabled={!canEdit}
@@ -124,13 +125,13 @@ export default function Integration({ match }) {
           }
         />
 
-        <IntegrationTabs
-          tabs={tabs}
-          match={match}
-          className={classes.PageWrapper}
+          <IntegrationTabs
+            tabs={tabs}
+            match={match}
+            className={classes.PageWrapper}
         />
-      </LoadSuiteScriptResources>
-
+        </LoadSuiteScriptResources>
+      </LoadResources>
     </>
   );
 }

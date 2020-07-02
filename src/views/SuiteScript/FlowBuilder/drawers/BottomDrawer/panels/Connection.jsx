@@ -17,9 +17,9 @@ export default function ConnectionPanel({ ssLinkedConnectionId, flow }) {
   const classes = useStyles();
   const flowConnections = useSelector(
     state =>
-      selectors.suiteScriptIntegrationConnectionList(state, {
+      selectors.suiteScriptFlowConnectionList(state, {
         ssLinkedConnectionId,
-        integrationId,
+        flowId: flow._id,
       }),
     (left, right) => left.length === right.length
   );
