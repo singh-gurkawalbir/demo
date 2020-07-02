@@ -29,9 +29,11 @@ export default function reducer(state = {}, action) {
           (draft[id] && draft[id].initChangeIdentifier) || 0;
         const saveStatus = draft[id] && draft[id].saveStatus;
         const init = processorLogic.init(processor);
-        const optionsCopy = deepClone(options);
+        const {autoEvaluate: autoEvaluateProp, ...rest} = options;
+        const optionsCopy = deepClone(rest);
         const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
-
+        const autoEvaluate = (draft[id] && 'autoEvaluate' in draft[id]) ?
+          draft[id].autoEvaluate : autoEvaluateProp;
         draft[id] = {
           processor,
           defaultOptions: formattedInitOptions,
@@ -39,7 +41,7 @@ export default function reducer(state = {}, action) {
           lastChange: Date.now(),
           initChangeIdentifier: initChangeIdentifier + 1,
           saveStatus,
-          autoEvaluate: !!(draft[id] && draft[id].autoEvaluate)
+          autoEvaluate,
         };
         break;
       }

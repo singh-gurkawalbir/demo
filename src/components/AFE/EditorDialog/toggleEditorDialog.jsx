@@ -104,7 +104,6 @@ export default function ToggleEditorDialog(props) {
     fullScreen: props.fullScreen || false,
     activeEditorIndex: 0,
   });
-  const [autoEvaluate, setAutoEvaluate] = useState(false);
   const { layout, fullScreen } = state;
   const size = fullScreen ? { height } : { height, width };
   const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
@@ -119,6 +118,9 @@ export default function ToggleEditorDialog(props) {
     [labels]
   );
   const editor = useSelector(state => selectors.editor(state, activeEditorId));
+  // TODO: Check for better approach
+  const [autoEvaluate, setAutoEvaluate] = useState(editor.autoEvaluate || false);
+
   const saveInProgress = useSelector(
     state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
@@ -155,6 +157,8 @@ export default function ToggleEditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
+
+
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));
   }, [activeEditorId, dispatch]);
