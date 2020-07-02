@@ -1862,7 +1862,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -1907,7 +1907,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1963,7 +1963,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1990,7 +1990,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -2007,7 +2007,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
