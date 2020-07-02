@@ -119,7 +119,7 @@ const DynaHttpRequestBody = props => {
     setShowEditor(!showEditor);
   }, [showEditor]);
   // TODO: break into different function. To be done across all editors
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
@@ -135,8 +135,6 @@ const DynaHttpRequestBody = props => {
         onFieldChange(id, template);
       }
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -148,7 +146,8 @@ const DynaHttpRequestBody = props => {
           fieldId={id}
           onFieldChange={onFieldChange}
           lookups={lookups}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           action={action}
           editorType="httpRequestBody"
           flowId={flowId}

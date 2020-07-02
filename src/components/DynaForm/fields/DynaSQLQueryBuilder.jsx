@@ -192,7 +192,7 @@ export default function DynaSQLQueryBuilder(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template, defaultData } = editorValues;
 
@@ -221,8 +221,6 @@ export default function DynaSQLQueryBuilder(props) {
         }
       }
     }
-
-    handleEditorClick();
   };
 
   let lookupField;
@@ -254,7 +252,8 @@ export default function DynaSQLQueryBuilder(props) {
             sampleData={formattedSampleData}
             defaultData={formattedDefaultData}
             onFieldChange={onFieldChange}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={handleEditorClick}
             action={lookupField}
             disabled={disabled}
             showDefaultData={!hideDefaultData}

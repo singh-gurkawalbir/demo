@@ -33,7 +33,7 @@ export default function DynaXmlParse(props) {
 
     return rawData && rawData.data && rawData.data.body;
   });
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
         resourcePath,
@@ -71,8 +71,6 @@ export default function DynaXmlParse(props) {
         )
       );
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -84,7 +82,8 @@ export default function DynaXmlParse(props) {
           mode="xml"
           data={xmlData}
           rule={value}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
         />
       )}

@@ -137,14 +137,12 @@ export default function Editors() {
     },
     [history]
   );
-  const handleClose = useCallback(
+  const handleSave = useCallback(
     (shouldCommit, editorValues) => {
       if (shouldCommit) {
         setRawData(editorValues.data);
         setRawDataKey(rawDataKey + 1);
       }
-
-      setEditorName();
     },
     [rawDataKey]
   );
@@ -156,7 +154,8 @@ export default function Editors() {
             title="Create URL template"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'HttpRequestBodyEditor':
@@ -165,7 +164,8 @@ export default function Editors() {
             title="Create HTTP request body"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'MergeEditor':
@@ -174,7 +174,8 @@ export default function Editors() {
             title="Apply default values"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -185,7 +186,8 @@ export default function Editors() {
             csvEditorType="parse"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -195,7 +197,8 @@ export default function Editors() {
             title="XML parser"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -205,7 +208,8 @@ export default function Editors() {
             title="Transform editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'JavaScriptEditor':
@@ -214,7 +218,8 @@ export default function Editors() {
             title="Javascript editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'FileDefinitionEditor':
@@ -223,7 +228,8 @@ export default function Editors() {
             title="File definition rules"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'SQLQueryBuilderEditor':
@@ -235,7 +241,8 @@ export default function Editors() {
             rule="Select * from {{orderId}}"
             data={rawData}
             defaultData={JSON.stringify({}, null, 2)}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'FilterEditor':
@@ -244,13 +251,14 @@ export default function Editors() {
             title="Filter editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       default:
         return null;
     }
-  }, [editorName, handleClose, rawData]);
+  }, [editorName, handleSave, rawData]);
 
   return (
     <>
