@@ -65,7 +65,7 @@ export default function IntegrationSettingsSaveButton(props) {
 
     return submitComplete || submitFailed;
   });
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     resourceType: 'Integration Settings',
     saveTerminated: submitCompleted,
     onSave,
@@ -75,9 +75,9 @@ export default function IntegrationSettingsSaveButton(props) {
     <DynaAction
       {...props}
       className={classes.actionButton}
-      disabled={disabled || disableSave}
+      disabled={disabled || isSaving}
       onClick={handleSubmitForm}>
-      {disableSave ? 'Saving' : submitButtonLabel}
+      {isSaving ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
 }

@@ -20,7 +20,7 @@ const useStyle = makeStyles(theme => ({
   },
   tabsContainer: {
     minWidth: 150,
-    background: theme.palette.background.default,
+    background: theme.palette.background.paper,
     marginRight: theme.spacing(2),
   },
   MuiTabWrapper: {
