@@ -64,7 +64,7 @@ export function* uploadRawData({
 }
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
-  const uploadPath = `/s3SignedURL?file_name=${encodeURI(file.name)}&file_type=${fileType}`;
+  const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(file.name)}&file_type=${fileType}`;
 
   try {
     const runKey = yield call(uploadFile, { file, fileType, uploadPath });
