@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
+export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -29,6 +29,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
       ssLinkedConnectionId,
     })
   );
+  const isIntegrationApp = useSelector(state => !!selectors.suiteScriptResource(state, {resourceType: 'integrations', id: integrationId, ssLinkedConnectionId})?._connectorId);
   const nextDataFlows = useSelector((state) =>
     selectors.suiteScriptResourceList(state, {
       ssLinkedConnectionId,
@@ -116,7 +117,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
   return (
     <RightDrawer path="settings" title="Settings" width="medium">
       <div className={classes.scheduleContainer}>
-        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode} render>
+        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode || isIntegrationApp} render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
             Save
           </DynaSubmit>

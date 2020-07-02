@@ -1,13 +1,13 @@
 export default {
   uploadFile: {
     type: 'suitescriptuploadfile',
-    placeholder: 'Sample File (that would be exported)',
+    placeholder: 'Sample file (that would be parsed)',
     mode: 'csv',
     required: true,
   },
   'export.file.csv': {
     type: 'suitescriptcsvparse',
-    label: 'Configure CSV Parse Options',
+    label: 'Configure CSV parse options',
     defaultValue: r =>
       (r.export && r.export.file && r.export.file.csv) || {
         rowsToSkip: 0,

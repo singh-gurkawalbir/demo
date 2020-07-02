@@ -65,7 +65,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
         data={flows}
         filterKey={filterKey}
         {...metadata}
-        actionProps={{ ssLinkedConnectionId, integrationId }}
+        actionProps={{ ssLinkedConnectionId, integrationId, isConnector: true }}
         />
     </>
   );

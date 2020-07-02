@@ -32,8 +32,17 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['import.rakuten.method', 'import.ftp.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
         type: 'collapse',
+        containers: [
+          {
+            label: 'How would you like to generate files?',
+            fields: ['import.ftp.fileName', 'import.ftp.fileExtension', 'import.file.csv.columnDelimiter', 'import.file.csv.includeHeader'],
+          },
+          {
+            label: 'Where would you like the files transferred?',
+            fields: ['import.rakuten.method'],
+          },
+        ],
       },
     ],
   },

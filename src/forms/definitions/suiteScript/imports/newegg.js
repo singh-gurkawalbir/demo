@@ -8,8 +8,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['import.newegg.method'],
         type: 'collapse',
+        containers: [
+          {
+            label: 'How would you like the records imported?',
+            fields: ['import.newegg.method'],
+          }
+        ],
       },
     ],
   },

@@ -59,13 +59,17 @@ export default {
       )
     },
     {
-      heading: 'Delete',
-      value: resource => (
-        <DeleteCell
+      heading: !actionProps.isConnector ? 'Delete' : '',
+      value: resource => {
+        if (actionProps.isConnector) {
+          return null;
+        }
+        return (<DeleteCell
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+        );
+      }
     }
   ],
 };

@@ -23,7 +23,6 @@ export default {
     return null;
   },
   fieldMap: {
-    exportData: { fieldId: 'exportData' },
     'export.salesforce.sObjectType': {
       fieldId: 'export.salesforce.sObjectType',
     },
@@ -39,14 +38,24 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'exportData',
-          'export.salesforce.sObjectType',
-          'advanced',
-          'export.salesforce.errorMessageField.id',
-          'export.salesforce.netsuiteIdField',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'Configure real-time export',
+            fields: [
+              'export.salesforce.sObjectType',
+            ],
+            collapsed: false,
+          },
+          {
+            label: 'Advanced',
+            fields: [
+              'export.salesforce.errorMessageField.id',
+              'export.salesforce.netsuiteIdField',
+            ],
+            collapsed: false,
+          }
+        ],
       },
     ],
   },

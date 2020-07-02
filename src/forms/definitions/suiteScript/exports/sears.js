@@ -11,8 +11,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['export.sears.method', 'export.sears.methodConfig'],
         type: 'collapse',
+        containers: [
+          {
+            label: 'What would you like to export?',
+            fields: ['export.sears.method', 'export.sears.methodConfig'],
+          }
+        ],
       },
     ],
   },

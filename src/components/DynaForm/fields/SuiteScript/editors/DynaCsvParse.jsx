@@ -94,7 +94,7 @@ export default function DynaCsvParse(props) {
     <>
       {showEditor && (
         <CsvConfigEditorDialog
-          title="CSV Parse Options"
+          title="CSV parse options"
           id={id + resourceId}
           mode="csv"
           data={csvData}

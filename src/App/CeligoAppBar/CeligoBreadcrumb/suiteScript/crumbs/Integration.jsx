@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import LoadResources from '../../../../components/SuiteScript/LoadResources';
+import * as selectors from '../../../../../reducers';
+import LoadResources from '../../../../../components/SuiteScript/LoadResources';
 
 export default function IntegrationCrumb({ ssLinkedConnectionId, integrationId }) {
   const integration = useSelector(state =>

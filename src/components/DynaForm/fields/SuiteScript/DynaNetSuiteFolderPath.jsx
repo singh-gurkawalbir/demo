@@ -26,17 +26,12 @@ export default function DynaNetSuiteFolderPath(props) {
       ssLinkedConnectionId
     );
 
-    if (
-      connection &&
-      connection.netsuite &&
-      connection.netsuite.dataCenterURLs &&
-      connection.netsuite.dataCenterURLs.systemDomain
-    ) {
-      return connection.netsuite.dataCenterURLs.systemDomain;
-    }
-
-    return null;
+    return connection?.netsuite?.dataCenterURLs?.systemDomain;
   });
+
+  if (!netSuiteSystemDomain) {
+    return null;
+  }
 
   return (
     <Typography variant="body1" className={classes.text}>

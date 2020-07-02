@@ -158,7 +158,7 @@ export default function AppBlock({
 
   const action = useMemo(() => {
     const {import: importRes} = resource;
-    if (importRes.mapping) {
+    if (blockType === 'import' && importRes.mapping) {
       return (
         <>
           <ActionIconButton
@@ -171,7 +171,7 @@ export default function AppBlock({
         </>
       );
     }
-  }, [openMapping, resource]);
+  }, [blockType, openMapping, resource]);
 
   return (
     <div className={clsx(classes.root, className)}>
