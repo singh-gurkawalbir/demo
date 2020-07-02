@@ -109,7 +109,7 @@ export default function DynaNetSuiteLookup(props) {
     <>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
-          title="Lookup criteria"
+          title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={rule}
