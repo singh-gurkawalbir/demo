@@ -35,6 +35,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
       resourceType: 'nextFlows',
     })
   );
+  const isViewMode = useSelector(state => !selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = useMemo(
     () => ({
@@ -115,7 +116,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, flowId }) {
   return (
     <RightDrawer path="settings" title="Settings" width="medium">
       <div className={classes.scheduleContainer}>
-        <DynaForm fieldMeta={fieldMeta} render>
+        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode} render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
             Save
           </DynaSubmit>

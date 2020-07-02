@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
 import { Route } from 'react-router-dom';
 import { Typography, IconButton } from '@material-ui/core';
@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
+import * as selectors from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -98,6 +99,7 @@ export default function Panel(props) {
   const resize = (width, height) => {
     setNotificationPanelHeight(height);
   };
+  const isViewMode = useSelector(state => !selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
     <>
@@ -139,6 +141,7 @@ export default function Panel(props) {
               // onSubmitComplete={handleSubmitComplete}
               onCancel={abortAndClose}
               {...props}
+              disabled={isViewMode}
             />
           </div>
         </LoadSuiteScriptResources>

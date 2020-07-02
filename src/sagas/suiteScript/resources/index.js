@@ -4,6 +4,7 @@ import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import * as selectors from '../../../reducers';
 import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
+import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
 export function* commitStagedChanges({
   resourceType,
@@ -157,9 +158,23 @@ function* featureCheck({
     featureName, (resp && resp.errors && resp.errors.length && resp.errors[0].message) || 'Error'));
 }
 
+export function* resourcesReceived({ resourceType, collection = [] }) {
+  if (resourceType.startsWith('suitescript/connections/')) {
+    const [, , ssLinkedConnectionId] = resourceType.split('/');
+    if (resourceType.endsWith('/tiles')) {
+      /** Load V2 Salesforce - NetSuite connector settings is taking more time, so making the call in advance after loading tiles */
+      const salesforceConnector = collection.find(t => t.isConnector && t.name === SUITESCRIPT_CONNECTORS.find(c => c._id === SUITESCRIPT_CONNECTOR_IDS.salesforce).ssName);
+      if (salesforceConnector) {
+        yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, salesforceConnector._integrationId));
+      }
+    }
+  }
+}
+
 
 export const resourceSagas = [
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestSuiteScriptMetadata),
   takeEvery(actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST, featureCheck),
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, commitStagedChanges),
+  takeEvery(actionTypes.RESOURCE.RECEIVED_COLLECTION, resourcesReceived),
 ];
