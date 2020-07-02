@@ -14,7 +14,26 @@ const PARSERS = {
 };
 
 // Any customization on file options before passing to processor is done here
-export const generateFileParserOptions = (options = {}, type) => {
+export const generateFileParserOptions = (resource) => {
+  const { file } = resource;
+  const { type } = file;
+  const options = file[type] || {};
+
+  if (type === 'xml') {
+    const rules = resource?.parsers?.[0]?.rules || {};
+    return {
+      resourcePath: options.resourcePath,
+      advanced: !rules.V0_json,
+      trimSpaces: rules.trimSpaces,
+      stripNewLineChars: rules.stripNewLineChars,
+      attributePrefix: rules.attributePrefix,
+      textNodeName: rules.textNodeName,
+      listNodes: rules.listNodes?.join('\n'),
+      includeNodes: rules.includeNodes?.join('\n'),
+      excludeNodes: rules.excludeNodes?.join('\n'),
+    };
+  }
+
   if (type === 'csv' || type === 'xlsx') {
     return {
       ...options,
@@ -65,7 +84,8 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = generateFileParserOptions(file[type], type);
+  const options = generateFileParserOptions(resource);
+  // console.log('parseFileData', options);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],

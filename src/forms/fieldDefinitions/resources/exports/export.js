@@ -37,14 +37,7 @@ export default {
     label: 'Name',
     required: true,
   },
-  // adaptor type has export appended to it
-  // strip it off and lowercase the connection type
-  // _connectionId: {
-  //   type: 'text',
-  //   label: 'Connection',
-  //   resourceType: 'connections',
-  //   resourceProp: 'type',
-  // },
+
   description: {
     type: 'text',
     label: 'Description',
@@ -375,6 +368,17 @@ export default {
     type: 'text',
     label: 'Adaptor type',
   },
+  parsers: {
+    label: 'XML parser helper',
+    type: 'xmlparse',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xml'],
+      },
+    ],
+    required: true,
+  },
   // #endregion common
   // #region inputFilter
   'inputFilter.expression.version': {
@@ -543,17 +547,7 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-  // #region parsers
-  // parsers check
-  'parsers.version': {
-    type: 'text',
-    label: 'Parsers version',
-  },
-  'parsers.rules': {
-    type: 'text',
-    label: 'Parsers rules',
-  },
-  // #endregion parsers
+
   // #region filter
   'filter.expression.version': {
     type: 'radiogroup',

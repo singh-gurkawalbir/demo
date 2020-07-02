@@ -1,12 +1,4 @@
-const parseNodes = nodesAsText => {
-  if (!nodesAsText) return;
-
-  const nodes = nodesAsText.split('\n');
-
-  // console.log('parsed node text', nodes);
-
-  return nodes;
-};
+const parseNodes = nodesAsText => nodesAsText?.split('\n');
 
 const requestBody = editor => {
   const rules = {
@@ -34,6 +26,7 @@ const requestBody = editor => {
   return {
     data: editor.data,
     rules,
+    options: { isSimplePath: true },
   };
 };
 

@@ -85,7 +85,7 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
-      // resetting key coloums when hasHeaderRow changes
+      // resetting key columns when hasHeaderRow changes
       if (keyColoumnField.hasHeaderRow !== hasHeaderRowField.value) {
         keyColoumnField.value = [];
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
@@ -155,7 +155,7 @@ export default {
     }
   },
   fieldMap: {
-    name: { fieldId: 'name', required: true },
+    common: { formId: 'common' },
     'file.type': {
       id: 'file.type',
       name: '/file/type',
@@ -208,6 +208,7 @@ export default {
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
+    parsers: { fieldId: 'parsers' },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
@@ -223,18 +224,27 @@ export default {
     type: 'column',
     containers: [
       {
+        type: 'collapse',
         containers: [
           {
+            label: 'General',
+            collapsed: false,
             fields: [
-              'name',
-              'file.type',
-              'uploadFile',
+              'common',
             ],
           },
           {
+            collapsed: true,
+            label: 'How would you like to parse the file?',
             type: 'indent',
+            fields: [
+              'file.type',
+              'uploadFile',
+            ],
             containers: [
               {fields: [
+                'file.xml.resourcePath',
+                'parsers',
                 'file.csvHelper',
                 'file.csv.columnDelimiter',
                 'file.csv.rowDelimiter',
@@ -243,25 +253,17 @@ export default {
                 'file.csv.hasHeaderRow',
                 'file.csv.rowsPerRecord',
                 'file.csv.keyColumns',
+                'file.json.resourcePath',
+                'file.xlsx.hasHeaderRow',
+                'file.xlsx.rowsPerRecord',
+                'file.xlsx.keyColumns'
               ]}
             ]
           },
           {
-            fields: ['file.xml.resourcePath',
-              'file.json.resourcePath',
-              'file.xlsx.hasHeaderRow',
-              'file.xlsx.rowsPerRecord',
-              'file.xlsx.keyColumns']
-          },
-          {
-            type: 'collapse',
-            containers: [
-              {
-                collapsed: true,
-                label: 'Advanced',
-                fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
-              },
-            ],
+            collapsed: true,
+            label: 'Advanced',
+            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
           },
         ],
       },
@@ -271,16 +273,3 @@ export default {
     ]
   },
 };
-/*
-_id: "5dfa9a412f350e4437941144"
-createdAt: "2019-12-18T21:29:37.432Z"
-lastModified: "2019-12-18T21:29:37.442Z"
-apiIdentifier: "ece2037e0d"
-asynchronous: true
-rawData: "runKey uuid"
-type: "simple"
-parsers: []
-sampleData: "category,check,result_status,flagged_resource,flagged_resource_status,status_desc,excluded,excluded_by,last_updated_at↵CloudWatch,ELB CloudWatch Alarm Recommendations,red,api-paysafeescrow-com,red,ELB's without any alarms created,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,ELB CloudWatch Alarm Recommendations,red,paysafeescrow-com,red,ELB's without any alarms created,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,ELB CloudWatch Alarm Recommendations,red,www-paysafeescrow-com,red,ELB's without any alarms created,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,ELB CloudWatch Alarm Recommendations,red,PRD-ELB1,red,ELB's without any alarms created,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,CloudWatch Alarm SNS topic subscription usage,red,NotifyMe,red,Topic without any subscribers,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,CloudWatch Alarm SNS topic subscription usage,red,cw-alerts-PaySAFEEscrow,red,Topic without any subscribers,false,"",2016-10-04 02:14:08 -0400↵CloudWatch,RDS CloudWatch Alarm Recommendations,yellow,psedb,yellow,RDS Instances with some alarms missing,false,"",2016-10-04 02:14:08 -0400↵EC2,EIP's Not Associated,yellow,50.19.95.3,yellow,EIP's are not associated,false,"",2016-10-04 02:14:09 -0400↵EC2,EC2 Instance Classic use,yellow,Win 2008 IIS (i-dfbc15b1),yellow,An EC2 instance is running in EC2-Classic,false,"",2016-10-04 02:14:09 -0400↵EC2,EC2 Instance IAM Profile Use,yellow,Win 2008 IIS (i-dfbc15b1),yellow,IAM Profile is not associated with an EC2 instance,false,"",2016-10-04 02:14:10 -0400"
-file: {encoding: "utf8", output: "records", skipDelete: false, type: "csv",…}
-csv: {columnDelimiter: ",", hasHeaderRow: false, trimSpaces: true, rowsToSkip: 0}
-*/

@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import { makeStyles, Typography, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanel } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import FormView from './FormView';
 import RawView from './RawView';
@@ -103,7 +99,7 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <div className={classes.child}>
+    <div>
       <ExpansionPanel expanded={!isCollapsed}>
         <ExpansionPanelSummary
           data-test={label}
