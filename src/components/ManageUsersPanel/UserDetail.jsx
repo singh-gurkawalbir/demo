@@ -1,13 +1,11 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Switch from '@material-ui/core/Switch';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
-import EditIcon from '../icons/EditIcon';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
@@ -18,8 +16,10 @@ import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import useConfirmDialog from '../ConfirmDialog';
 import CommStatus from '../CommStatus';
-import MoreHorizIcon from '../../components/icons/EllipsisHorizontalIcon';
+import MoreHorizIcon from '../icons/EllipsisHorizontalIcon';
+import CeligoSwitch from '../CeligoSwitch';
 
+// TODO: Refactor this component
 export default function UserDetail(props) {
   const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -55,57 +55,57 @@ export default function UserDetail(props) {
     switch (action) {
       case 'disable':
         confirmDialog({
-          title: 'Confirm',
+          title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
           message: `Are you sure you want to ${
             user.disabled ? 'enable' : 'disable'
           } this user?`,
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: user.disabled ? 'Enable' : 'Disable',
               onClick: () => {
                 disableUser(user._id, user.disabled);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
         break;
       case 'makeOwner':
         confirmDialog({
-          title: 'Transfer Account Ownership',
-          message: [
-            `<b>${user.sharedWithUser.name}</b> (${user.sharedWithUser.email})`,
-            'All owner privileges will be transferred to this user, and your account will be converted to Manager.',
-            'Please click Confirm to proceed with this change.',
-          ].join('<br/>'),
+          title: 'Confirm owner',
+          isHtml: true,
+          message: 'Are you sure you want to make this user the new account owner?  All owner privileges will be transferred to them, and you will be converted to a manager.',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: 'Make owner',
               onClick: () => {
                 makeOwner(user.sharedWithUser.email);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
         break;
       case 'delete':
         confirmDialog({
-          title: 'Confirm',
+          title: 'Confirm delete',
           message: 'Are you sure you want to delete this user?',
           buttons: [
             {
-              label: 'Cancel',
-            },
-            {
-              label: 'Yes',
+              label: 'Delete',
               onClick: () => {
                 deleteUser(user._id);
               },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
             },
           ],
         });
@@ -178,9 +178,17 @@ export default function UserDetail(props) {
     [getMessageForAction, props]
   );
   const { user, integrationId, isAccountOwner } = props;
+  let userAccessLevel = user.accessLevel;
+  if (
+    user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    user.integrationAccessLevel &&
+    user.integrationAccessLevel.length > 0
+  ) {
+    userAccessLevel = USER_ACCESS_LEVELS.TILE;
+  }
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           disable: { action: actionTypes.USER_DISABLE, resourceId: user._id },
@@ -195,6 +203,8 @@ export default function UserDetail(props) {
       <TableRow key={user._id}>
         <TableCell>
           <div>{user.sharedWithUser.name}</div>
+        </TableCell>
+        <TableCell>
           <div>{user.sharedWithUser.email}</div>
         </TableCell>
         <TableCell>
@@ -203,7 +213,7 @@ export default function UserDetail(props) {
               [USER_ACCESS_LEVELS.ACCOUNT_MANAGE]: 'Manage',
               [USER_ACCESS_LEVELS.ACCOUNT_MONITOR]: 'Monitor',
               [USER_ACCESS_LEVELS.TILE]: 'Tile',
-            }[user.accessLevel]}
+            }[userAccessLevel]}
           {integrationId &&
             {
               [INTEGRATION_ACCESS_LEVELS.OWNER]: 'Owner',
@@ -213,86 +223,96 @@ export default function UserDetail(props) {
         </TableCell>
         <TableCell>
           {!integrationId && (
-            <Fragment>
+            <>
               {user.accepted && 'Accepted'}
               {user.dismissed && 'Dismissed'}
               {!user.accepted && !user.dismissed && 'Pending'}
-            </Fragment>
+            </>
           )}
           {integrationId && (
-            <Fragment>
+            <>
               {user.disabled && 'Disabled'}
               {!user.disabled && user.accepted && 'Accepted'}
               {!user.disabled && user.dismissed && 'Dismissed'}
               {!user.disabled && !user.accepted && !user.dismissed && 'Pending'}
-            </Fragment>
+            </>
           )}
         </TableCell>
         {isAccountOwner && (
-          <Fragment>
+          <>
+            <TableCell>
+              <CeligoSwitch
+                data-test="disableUser"
+                disabled={!user.accepted}
+                checked={!user.disabled}
+                onChange={() => {
+                  handleActionClick('disable');
+                }}
+                  />
+
+            </TableCell>
             {integrationId && user._id !== ACCOUNT_IDS.OWN && (
               <TableCell>
-                <IconButton
-                  data-test="editUser"
-                  onClick={() => {
-                    handleActionClick('edit');
-                  }}>
-                  <EditIcon />
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
+                    onClick={() => {
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
                 </IconButton>
               </TableCell>
             )}
 
             {!integrationId && (
-              <Fragment>
-                <TableCell>
-                  <Switch
-                    data-test="disableUser"
-                    checked={!user.disabled}
+            <>
+              <TableCell>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}>
+                  <MenuItem
+                    data-test="changeUserPermissions"
                     onClick={() => {
-                      handleActionClick('disable');
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}>
-                    <MenuItem
-                      data-test="changeUserPermissions"
-                      onClick={() => {
-                        handleActionClick('edit');
-                      }}>
-                      Change permissions
-                    </MenuItem>
-                    <Divider />
-                    {user.accepted && (
-                      <MenuItem
-                        data-test="makeAccountOwner"
-                        onClick={() => {
-                          handleActionClick('makeOwner');
-                        }}>
-                        Make account owner
-                      </MenuItem>
-                    )}
-                    {user.accepted && <Divider />}
-                    <MenuItem
-                      data-test="deleteFromAccount"
-                      onClick={() => {
-                        handleActionClick('delete');
-                      }}>
-                      Delete from account
-                    </MenuItem>
-                  </Menu>
-                  <IconButton onClick={handleClick}>
-                    <MoreHorizIcon />
-                  </IconButton>
-                </TableCell>
-              </Fragment>
+                      handleActionClick('edit');
+                    }}>
+                    Change permissions
+                  </MenuItem>
+                  <Divider />
+                  {user.accepted && (
+                  <MenuItem
+                    data-test="makeAccountOwner"
+                    onClick={() => {
+                      handleActionClick('makeOwner');
+                    }}>
+                    Make account owner
+                  </MenuItem>
+                  )}
+                  {user.accepted && <Divider />}
+                  <MenuItem
+                    data-test="deleteFromAccount"
+                    onClick={() => {
+                      handleActionClick('delete');
+                    }}>
+                    Delete from account
+                  </MenuItem>
+                </Menu>
+                <IconButton onClick={handleClick}>
+                  <MoreHorizIcon />
+                </IconButton>
+              </TableCell>
+            </>
             )}
-          </Fragment>
+          </>
         )}
       </TableRow>
-    </Fragment>
+    </>
   );
 }

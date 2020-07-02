@@ -8,13 +8,15 @@ export default {
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
+      retValues['/http/ping/method'] = 'GET';
+      retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
       retValues['/http/auth/cookie/uri'] = `${
         formValues['/instanceURI']
       }/entity/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
-        formValues[`/http/unencrypted/username`]
-      }","password": "${formValues[`/http/encrypted/password`]}","company": "${
-        formValues[`/http/unencrypted/company`]
+        formValues['/http/unencrypted/username']
+      }","password": "${formValues['/http/encrypted/password']}","company": "${
+        formValues['/http/unencrypted/company']
       }"}`;
       retValues['/http/encrypted/cookieString'] = '';
       retValues['/http/auth/token/token'] = '';
@@ -28,7 +30,7 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
@@ -55,10 +57,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'acumatica',
-      '/http/mediaType': 'json',
-      '/isHTTP': false,
-      '/http/ping/method': 'GET',
-      '/http/ping/relativeURI': '/FinancialPeriod',
+      '/http/mediaType': 'json'
     };
   },
   fieldMap: {
@@ -87,7 +86,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -193,31 +192,57 @@ export default {
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      fieldId: 'application'
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      'http.auth.type',
-      '_agentId',
-      'instanceURI',
-      'oauth.instanceURI',
-      'http.unencrypted.endpointName',
-      'http.unencrypted.endpointVersion',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-      'http.unencrypted.company',
-      'http.auth.oauth.scope',
-      'genericOauthConnector',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.auth.type',
+          'instanceURI',
+          'oauth.instanceURI',
+          'http.unencrypted.endpointName',
+          'http.unencrypted.endpointVersion',
+          'http.unencrypted.username',
+          'http.encrypted.password',
+          'http.unencrypted.company',
+          'http.auth.oauth.scope',
+          'genericOauthConnector'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -230,17 +255,11 @@ export default {
       ],
     },
     {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['cookie'],
-        },
-      ],
+      id: 'cancel',
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, Fragment } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
@@ -11,9 +11,11 @@ import * as selectors from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import RightDrawer from '../../drawer/Right';
-import TextToggle from '../../../components/TextToggle';
-import SettingsFormEditor from './';
+import TextToggle from '../../TextToggle';
+import SettingsFormEditor from '.';
 import { isJsonString } from '../../../utils/string';
+
+const emptyObj = {};
 
 function toggleData(data, mode) {
   if (typeof data === 'string' && !isJsonString(data)) {
@@ -44,9 +46,7 @@ function toggleData(data, mode) {
     finalData = {
       resource: {
         settingsForm: {
-          form: parsedData || {
-            form: { fieldMeta: {}, layout: { fields: [] } },
-          },
+          form: parsedData || { fieldMap: {}, layout: { fields: [] } },
         },
       },
       parentResource: {},
@@ -61,12 +61,19 @@ function toggleData(data, mode) {
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
-    '& > *': {
-      marginRight: theme.spacing(2),
-    },
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   actionSpacer: {
     flexGrow: 100,
+  },
+  wrapper: {
+    '& Button': {
+      marginRight: theme.spacing(2),
+    },
+    '& Button:last-child': {
+      marginRight: 0,
+    },
   },
 }));
 const toggleOptions = [
@@ -81,8 +88,9 @@ export default function EditorDrawer({
   resourceId,
   resourceType,
   disabled,
+  hideSaveAction = false,
 }) {
-  const { form, init = {} } = settingsForm;
+  const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -126,17 +134,18 @@ export default function EditorDrawer({
     }
 
     confirmDialog({
-      title: 'Confirm',
-      message: `You have made changes in the editor. Are you sure you want to discard them?`,
+      title: 'Confirm cancel',
+      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
       buttons: [
         {
-          label: 'No',
-        },
-        {
-          label: 'Yes',
+          label: 'Yes, cancel',
           onClick: onClose,
         },
-      ],
+        {
+          label: 'No, go back',
+          color: 'secondary',
+        },
+      ]
     });
   }, [confirmDialog, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(
@@ -153,14 +162,20 @@ export default function EditorDrawer({
     (isEditorDirty !== undefined && !isEditorDirty);
 
   useEffect(() => {
+    const initForm = form || {
+      fieldMap: {},
+      layout: { fields: [] },
+    };
+    const mode = init._scriptId ? 'script' : 'json';
+
     dispatch(
       actions.editor.init(editorId, 'settingsForm', {
         scriptId: init._scriptId,
         initScriptId: init._scriptId,
         entryFunction: init.function || 'main',
         initEntryFunction: init.function || 'main',
-        data: form,
-        initData: form,
+        data: mode === 'script' ? toggleData(initForm, 'script') : initForm,
+        initData: initForm,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
         autoEvaluateDelay: 200,
@@ -168,7 +183,7 @@ export default function EditorDrawer({
         resourceType,
         settings,
         previewOnSave: true,
-        mode: 'json',
+        mode,
       })
     );
     // we only want to init the editor once per render (onMount)
@@ -179,7 +194,7 @@ export default function EditorDrawer({
   // so lets default to ON.
   const autoEvaluate = editor.autoEvaluate || editor.autoEvaluate === undefined;
   const drawerActions = (
-    <Fragment>
+    <>
       <TextToggle
         value={editor.mode}
         onChange={handleModeToggle}
@@ -197,7 +212,7 @@ export default function EditorDrawer({
         }
         label="Auto preview"
       />
-    </Fragment>
+    </>
   );
 
   return (
@@ -217,6 +232,37 @@ export default function EditorDrawer({
         resourceType={resourceType}
       />
       <div className={classes.actionContainer}>
+        <div className={classes.wrapper}>
+          {!hideSaveAction && (
+          <>
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              submitButtonLabel="Save"
+            />
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="secondary"
+              dataTest="saveAndCloseEditor"
+              disabled={disableSave}
+              onClose={handleSave}
+              submitButtonLabel="Save & close"
+            />
+          </>
+          )}
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
         {!editor.autoEvaluate && (
           <Button
             data-test="previewEditorResult"
@@ -226,23 +272,6 @@ export default function EditorDrawer({
             Preview
           </Button>
         )}
-        <EditorSaveButton
-          id={editorId}
-          variant="outlined"
-          color="primary"
-          dataTest="saveEditor"
-          disabled={disableSave}
-          onClose={handleSave}
-          submitButtonLabel="Save"
-        />
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
       </div>
     </RightDrawer>
   );

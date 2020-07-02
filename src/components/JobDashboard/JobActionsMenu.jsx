@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
@@ -19,6 +19,13 @@ import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
 import * as selectors from '../../reducers';
+import EditIcon from '../icons/EditIcon';
+import RunIcon from '../icons/RunIcon';
+import RefreshIcon from '../icons/RefreshIcon';
+import DownloadIntegrationIcon from '../icons/DownloadIntegrationIcon';
+import CheckmarkIcon from '../icons/CheckmarkIcon';
+import CancelIcon from '../icons/CancelIcon';
+import DownloadIcon from '../icons/DownloadIcon';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -52,15 +59,40 @@ export default function JobActionsMenu({
   ].includes(job.uiStatus);
   const isFlowJob = job.type === JOB_TYPES.FLOW;
   const menuOptions = [];
-
-  if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
-    menuOptions.push({ label: 'Cancel', action: 'cancelJob' });
+  if (!isFlowBuilderView) {
+    if (
+      userPermissionsOnIntegration.flows &&
+      userPermissionsOnIntegration.flows.edit
+    ) {
+      menuOptions.push({ label: 'Edit flow', action: 'editFlow', icon: <EditIcon /> });
+    } else {
+      menuOptions.push({ label: 'View flow', action: 'viewFlow' });
+    }
   }
 
+  if (isJobInProgress || job.status === JOB_STATUS.RETRYING) {
+    menuOptions.push({ label: 'Cancel', action: 'cancelJob', icon: <CancelIcon /> });
+  }
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, job._flowId),
     shallowEqual
   );
+  if (isFlowJob) {
+    if (!isJobInProgress) {
+      if (
+        job.type === JOB_TYPES.FLOW &&
+        job.status !== JOB_STATUS.RETRYING &&
+        flowDetails &&
+        flowDetails.isRunnable
+      ) {
+        menuOptions.push({
+          label: 'Run flow',
+          action: 'runFlow',
+          icon: <RunIcon />
+        });
+      }
+    }
+  }
 
   if (isJobCompleted) {
     if (job.retries && job.retries.length > 0) {
@@ -75,46 +107,32 @@ export default function JobActionsMenu({
         menuOptions.push({
           label: isFlowJob ? 'Retry all' : 'Retry',
           action: 'retryJob',
+          icon: <RefreshIcon />,
         });
       }
-
-      menuOptions.push({ label: 'Mark resolved', action: 'resolveJob' });
+      menuOptions.push({
+        label: 'Mark resolved',
+        action: 'resolveJob',
+        icon: <CheckmarkIcon />
+      });
     }
   }
 
   if (isFlowJob) {
     if (!isJobInProgress) {
-      if (
-        job.type === JOB_TYPES.FLOW &&
-        job.status !== JOB_STATUS.RETRYING &&
-        flowDetails &&
-        flowDetails.isRunnable
-      ) {
-        menuOptions.push({ label: 'Run flow', action: 'runFlow' });
-      }
-
       if (job.files && job.files.length > 0) {
         menuOptions.push({
           label: `${job.files.length > 1 ? 'Download files' : 'Download file'}`,
           action: 'downloadFiles',
+          icon: <DownloadIcon />
         });
       }
 
       menuOptions.push({
         label: 'Download diagnostics',
         action: 'downloadDiagnostics',
+        icon: <DownloadIntegrationIcon />,
       });
-    }
-
-    if (!isFlowBuilderView) {
-      if (
-        userPermissionsOnIntegration.flows &&
-        userPermissionsOnIntegration.flows.edit
-      ) {
-        menuOptions.push({ label: 'Edit flow', action: 'editFlow' });
-      } else {
-        menuOptions.push({ label: 'View flow', action: 'viewFlow' });
-      }
     }
   }
 
@@ -146,15 +164,16 @@ export default function JobActionsMenu({
     [enqueueSnackbar]
   );
 
-  function handleMenuClose() {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
   }
 
-  const handleRunStart = () => {
+  const handleRunStart = useCallback(() => {
+    handleMenuClose();
     setActionsToMonitor({
       ...actionsToMonitor,
       runFlow: {
@@ -163,7 +182,7 @@ export default function JobActionsMenu({
       },
     });
     dispatch(actions.job.paging.setCurrentPage(0));
-  };
+  }, [actionsToMonitor, dispatch, handleMenuClose, job._flowId]);
 
   function handleActionClick(action) {
     handleMenuClose();
@@ -180,15 +199,12 @@ export default function JobActionsMenu({
       }
     } else if (action === 'cancelJob') {
       confirmDialog({
-        title: 'Confirm',
+        title: 'Confirm cancel',
         message:
-          'Are you sure you want to cancel this job? Please note that canceling this job will delete all associated data currently queued for processing.',
+          'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
         buttons: [
           {
-            label: 'No',
-          },
-          {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: () => {
               if (job.status === JOB_STATUS.RETRYING) {
                 if (isFlowJob) {
@@ -230,6 +246,10 @@ export default function JobActionsMenu({
 
               dispatch(actions.job.cancel({ jobId: job._id }));
             },
+          },
+          {
+            label: 'No, go back',
+            color: 'secondary',
           },
         ],
       });
@@ -279,7 +299,9 @@ export default function JobActionsMenu({
       }
 
       enqueueSnackbar({
-        message: `${job.numError} errors retried.`,
+        message: `${
+          job.numError === '1' ? 'error retried.' : 'errors retried.'
+        }`,
         action,
         showUndo: true,
         autoHideDuration: UNDO_TIME.RETRY,
@@ -335,7 +357,7 @@ export default function JobActionsMenu({
   }
 
   return (
-    <Fragment>
+    <>
       {showRetriesDialog && (
         <JobRetriesDialog
           job={job}
@@ -363,6 +385,7 @@ export default function JobActionsMenu({
           if (opt.action === 'runFlow') {
             return (
               <MenuItem key="runFlow">
+                <RunIcon />
                 <RunFlowButton
                   variant="text"
                   flowId={job._flowId}
@@ -378,7 +401,7 @@ export default function JobActionsMenu({
               onClick={() => {
                 handleActionClick(opt.action);
               }}>
-              {opt.label}
+              {opt.icon}{opt.label}
             </MenuItem>
           );
         })}
@@ -390,6 +413,6 @@ export default function JobActionsMenu({
         disabled={menuOptions.length === 0}>
         <EllipsisHorizontallIcon />
       </IconButton>
-    </Fragment>
+    </>
   );
 }

@@ -40,7 +40,7 @@ function* getData({ kind, identifier: id, resource }) {
     const res = yield call(apiCallWithRetry, {
       path,
       opts: { method, body },
-      message: `Fetching ${kind} export`,
+      message: 'Loading',
       hidden: true,
     });
 
@@ -50,8 +50,7 @@ function* getData({ kind, identifier: id, resource }) {
 
     const { data } = res;
 
-    if (!data || !Array.isArray(data))
-      throw new Error('expecting array. try transform?');
+    if (!data || !Array.isArray(data)) throw new Error('expecting array. try transform?');
 
     // if array of primitives, covert to object of label/value
     for (let i = 0; i < data.length; i += 1) {

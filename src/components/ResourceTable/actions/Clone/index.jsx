@@ -1,17 +1,22 @@
-import { Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
-import Icon from '../../../icons/CopyIcon';
-import getRoutePath from '../../../../utils/routePaths';
+import { useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import CopyIcon from '../../../icons/CopyIcon';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 export default {
-  label: 'Clone',
-  component: function Clone({ resourceType, resource }) {
-    return (
-      <Link to={getRoutePath(`clone/${resourceType}/${resource._id}/preview`)}>
-        <IconButton data-test="cloneResource" size="small">
-          <Icon />
-        </IconButton>
-      </Link>
-    );
+  label: (rowData, actionProps) => `Clone ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`,
+  icon: CopyIcon,
+  component: function Clone({ resourceType, rowData = {} }) {
+    const { _id: resourceId } = rowData;
+    const history = useHistory();
+    const openCloneURL = useCallback(() => {
+      history.push((`/pg/clone/${resourceType}/${resourceId}/preview`));
+    }, [history, resourceId, resourceType]);
+
+    useEffect(() => {
+      openCloneURL();
+    }, [openCloneURL]);
+
+    return null;
   },
 };

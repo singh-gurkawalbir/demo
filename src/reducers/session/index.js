@@ -13,11 +13,13 @@ import apiAccessTokens, * as fromApiAccessTokens from './apiAccessTokens';
 import connectionToken, * as fromConnectionToken from './connectionToken';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import sampleData, * as fromSampleData from './sampleData';
+import importSampleData, * as fromImportSampleData from './sampleData/imports';
 import flowData, * as fromFlowData from './sampleData/flows';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import templates, * as fromTemplates from './templates';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
 import resource, * as fromResource from './resource';
+import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import mappings, * as fromMappings from './mappings';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import flows, * as fromFlows from './flows';
@@ -28,8 +30,10 @@ import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import customSettings, * as fromCustomSettings from './customSettings';
+import recycleBin, * as fromRecycleBin from './recycleBin';
 
 export default combineReducers({
+  recycleBin,
   stage,
   filters,
   editors,
@@ -44,7 +48,9 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  importSampleData,
   flowData,
+  flowMetrics,
   integrationApps,
   templates,
   oAuthAuthorize,
@@ -90,6 +96,10 @@ export function tokenRequestLoading(state, resourceId) {
     state && state.connectionToken,
     resourceId
   );
+}
+
+export function recycleBinState(state) {
+  return fromRecycleBin.recycleBinState(state && state.recycleBin);
 }
 
 export function filter(state, name) {
@@ -485,6 +495,13 @@ export function uninstallData(state, id, storeId) {
   );
 }
 
+export function uninstall2Data(state, id) {
+  return fromIntegrationApps.uninstall2Data(
+    state && state.integrationApps,
+    id,
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
@@ -505,6 +522,10 @@ export function createdResourceId(state, tempId) {
 
 export function integratorLicenseActionMessage(state) {
   return fromResource.integratorLicenseActionMessage(state && state.resource);
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromResource.getChildIntegrationId(state && state.resource, parentId);
 }
 
 export function resourceReferences(state) {
@@ -544,6 +565,13 @@ export function getLastExportDateTime(state, flowId) {
   return (
     fromFlows.getLastExportDateTime(state && state.flows, flowId) ||
     lastExportDateTime
+  );
+}
+
+export function retryDataContext(state, retryId) {
+  return fromErrorManagement.retryDataContext(
+    state && state.errorManagement,
+    retryId
   );
 }
 
@@ -616,4 +644,20 @@ export function customSettingsForm(state, resourceId) {
     resourceId
   );
 }
+
+export function flowMetricsData(state, flowId, measurement) {
+  return fromFlowMetrics.flowMetricsData(
+    state && state.flowMetrics,
+    flowId,
+    measurement
+  );
+}
+
+export function integrationAppImportMetadata(state, importId) {
+  return fromImportSampleData.integrationAppImportMetadata(
+    state && state.importSampleData,
+    importId
+  );
+}
+
 // #endregion

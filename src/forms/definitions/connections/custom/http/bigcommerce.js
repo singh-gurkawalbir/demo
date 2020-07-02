@@ -32,7 +32,12 @@ export default {
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
-      retValues['/http/headers'] = undefined;
+      retValues['/http/headers'] = [
+        {
+          name: 'X-Auth-Client',
+          value: '{{{connection.oauth2.clientId}}}',
+        },
+      ];
     } else {
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
@@ -138,43 +143,82 @@ export default {
     },
     genericOauthConnector: {
       formId: 'genericOauthConnector',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
         'store_v2_content',
+        'store_content_checkout',
         'store_v2_customers',
-        'store_v2_default',
-        'store_v2_information_read_only',
+        'store_v2_customers_login',
+        'store_v2_information',
         'store_v2_marketing',
         'store_v2_orders',
+        'store_v2_transactions',
+        'store_payments_access_token_create',
+        'store_payments_methods_read',
         'store_v2_products',
-        'users_basic_information',
+        'store_themes_manage',
+        'store_cart',
+        'store_checkout',
+        'store_sites',
+        'store_channel_settings',
+        'store_channel_listings',
+        'store_storefront_api',
+        'store_storefront_api_customer_impersonation'
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    application: {
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.auth.token.token',
-      'http.unencrypted.clientId',
-      'storeHash',
-      'http.auth.oauth.scope',
-      'genericOauthConnector',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.auth.token.token',
+          'http.unencrypted.clientId',
+          'storeHash',
+          'http.auth.oauth.scope',
+          'genericOauthConnector'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -187,17 +231,11 @@ export default {
       ],
     },
     {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic'],
-        },
-      ],
+      id: 'cancel',
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

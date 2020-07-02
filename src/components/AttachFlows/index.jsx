@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../reducers';
@@ -65,7 +65,7 @@ export default function AttachFlows({ onClose, integrationId }) {
 
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>
-      <div>Attach Flows</div>
+      <div>Attach flows</div>
       <div>
         <LoadResources
           required

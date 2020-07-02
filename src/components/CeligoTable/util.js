@@ -1,8 +1,8 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import TimeAgo from 'react-timeago';
 import { Typography } from '@material-ui/core';
+import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
@@ -10,7 +10,7 @@ import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
-  <Fragment>
+  <>
     <Link
       to={
         resourceType === 'connectorLicenses'
@@ -22,7 +22,7 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
         : resource.name || resource._id}
     </Link>
     {resource.shared && <Typography>Shared</Typography>}
-  </Fragment>
+  </>
 );
 
 export const GetResourceReferenceLink = ({ r }) => {
@@ -51,15 +51,22 @@ export const useGetConnectorName = resource => {
 
   if (resourceType === 'exports' || resourceType === 'imports') {
     return getApp(connection && connection.rdbms && connection.rdbms.type).name;
-  } else if (resource && resource.rdbms && resource.rdbms.type) {
+  }
+  if (resource && resource.rdbms && resource.rdbms.type) {
     return getApp(resource.rdbms.type).name;
   }
 
   return 'RDBMS';
 };
+export const useGetScriptName = id => {
+  const script = useSelector(state =>
+    selectors.resource(state, 'scripts', id)
+  );
+  return (script && script.name) || id;
+};
 
 export const formatLastModified = lastModified => (
-  <TimeAgo date={lastModified} />
+  <CeligoTimeAgo date={lastModified} />
 );
 
 export const onlineStatus = r => (
@@ -74,4 +81,5 @@ export default {
   useGetConnectorName,
   getResourceLink,
   onlineStatus,
+  useGetScriptName,
 };

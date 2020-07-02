@@ -1,5 +1,7 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES } from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
 import { isProduction } from '../../utils';
+import { isNewId } from '../../../utils/resource';
+import { applicationsList } from '../../../constants/applications';
 
 export default {
   // #region common
@@ -42,6 +44,23 @@ export default {
     type: 'text',
     label: 'Name',
     defaultDisabled: r => !!r._connectorId,
+    required: true,
+  },
+  application: {
+    id: 'application',
+    type: 'text',
+    label: 'Application',
+    defaultValue: r => {
+      const isNew = isNewId(r._id);
+      if (isNew) {
+        return r.application;
+      }
+      const applications = applicationsList();
+      const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
+      const app = applications.find(a => a.id === application) || {};
+      return app.name;
+    },
+    defaultDisabled: true,
   },
   assistant: {
     type: 'select',
@@ -428,7 +447,7 @@ export default {
   },
   'rest.tokenParam': {
     type: 'text',
-    label: 'Rest token param',
+    label: 'REST token param',
   },
   'rest.scope': {
     type: 'selectscopes',
@@ -436,15 +455,15 @@ export default {
   },
   'rest.scopeDelimiter': {
     type: 'text',
-    label: 'Rest scope delimiter',
+    label: 'REST scope delimiter',
   },
   'rest.refreshToken': {
     type: 'text',
-    label: 'Rest refresh token',
+    label: 'REST refresh token',
   },
   'rest.oauthTokenURI': {
     type: 'text',
-    label: 'Rest oauth token URI',
+    label: 'REST oauth token URI',
   },
   'rest.disableStrictSSL': {
     type: 'checkbox',
@@ -466,7 +485,7 @@ export default {
   },
   'rest.authURI': {
     type: 'text',
-    label: 'Rest auth URI',
+    label: 'REST auth URI',
   },
   'rest.authHeader': {
     type: 'text',
@@ -475,7 +494,7 @@ export default {
   },
   'rest.retryHeader': {
     type: 'text',
-    label: 'Rest retry header',
+    label: 'REST retry header',
   },
   'rest.authScheme': {
     type: 'select',
@@ -556,11 +575,11 @@ export default {
   },
   'rest.oauth.accessTokenPath': {
     type: 'text',
-    label: 'Rest oauth access token path',
+    label: 'REST oauth access token path',
   },
   'rest.oauth.grantType': {
     type: 'radiogroup',
-    label: 'Rest oauth grant type',
+    label: 'REST oauth grant type',
     options: [
       {
         items: [
@@ -572,12 +591,12 @@ export default {
   },
   'rest.oauth.username': {
     type: 'text',
-    label: 'Rest oauth username',
+    label: 'REST oauth username',
   },
   'rest.oauth.password': {
     type: 'text',
     inputType: 'password',
-    label: 'Rest oauth password',
+    label: 'REST oauth password',
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
@@ -600,7 +619,7 @@ export default {
   },
   'rest.refreshTokenURI': {
     type: 'text',
-    label: 'Rest refresh token URI',
+    label: 'REST refresh token URI',
   },
   'rest.refreshTokenPath': {
     type: 'text',
@@ -628,7 +647,7 @@ export default {
   },
   'rest.info': {
     type: 'text',
-    label: 'Rest info',
+    label: 'REST info',
   },
   'rest.pingRelativeURI': {
     type: 'text',
@@ -646,14 +665,14 @@ export default {
   },
   'rest.pingFailurePath': {
     type: 'text',
-    label: 'Rest ping failure path',
+    label: 'REST ping failure path',
   },
   'rest.pingFailureValues': {
     type: 'text',
     keyName: 'name',
     valueName: 'value',
     valueType: 'array',
-    label: 'Rest ping failure values',
+    label: 'REST ping failure values',
   },
   'rest.concurrencyLevel': {
     type: 'select',
@@ -811,7 +830,7 @@ export default {
   },
   'http.retryHeader': {
     type: 'text',
-    label: 'Retry header',
+    label: 'Retry-after HTTP response header name',
   },
   'http.ping.relativeURI': {
     type: 'text',
@@ -902,7 +921,7 @@ export default {
   },
   'http.auth.oauth.tokenURI': {
     type: 'text',
-    label: 'Access token url',
+    label: 'Access token URL',
   },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
@@ -919,7 +938,7 @@ export default {
   },
   'http.auth.oauth.authURI': {
     type: 'text',
-    label: 'Authentication url',
+    label: 'Authentication URL',
   },
   'http.auth.oauth.clientCredentialsLocation': {
     type: 'select',
@@ -999,9 +1018,8 @@ export default {
   },
   'http.auth.oauth.callbackURL': {
     type: 'text',
-    label: 'Callback url',
+    label: 'Callback URL',
     defaultDisabled: true,
-    visible: !isProduction(),
     defaultValue: () => {
       if (isProduction()) {
         return 'https://integrator.io/connection/oauth2callback';
@@ -1015,7 +1033,7 @@ export default {
   },
   'http.auth.token.revoke.uri': {
     type: 'text',
-    label: 'Revoke token url',
+    label: 'Revoke token URL',
   },
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
@@ -1197,11 +1215,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'API rate limits',
+    label: 'Non-standard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail status code',
+    label: 'HTTP status code for rate limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1210,16 +1228,17 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to rate limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Fail values',
+    label: 'Rate limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Limit',
+    label: 'Wait time in between HTTP requests',
+    endAdornment: 'milliseconds',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1247,15 +1266,20 @@ export default {
   },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
+    placeholder: 'SSL certificate:',
     label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.cert',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
+    placeholder: 'SSL client key:',
     label: 'SSL client key',
+    helpKey: 'connection.http.clientCertificates.key',
   },
   'http.clientCertificates.passphrase': {
     type: 'text',
     label: 'SSL passphrase',
+    helpKey: 'connection.http.clientCertificates.passphrase',
   },
   // #endregion http
   // #region ftp
@@ -1353,6 +1377,10 @@ export default {
     type: 'checkbox',
     label: 'User directory is root',
   },
+  'ftp.tradingPartner': {
+    type: 'checkbox',
+    label: 'External trading partner?',
+  },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
     label: 'Use implicit ftps',
@@ -1424,6 +1452,20 @@ export default {
     description:
       'Note: for security reasons this field must always be re-entered.',
   },
+  'ftp.concurrencyLevel': {
+    label: 'Concurrency level',
+    type: 'select',
+    options: [
+      {
+        items: [
+          { label: '1', value: 1 },
+          { label: '2', value: 2 },
+          { label: '3', value: 3 },
+          { label: '4', value: 4 },
+        ],
+      },
+    ],
+  },
   // #endregion ftp
   // #region s3
   's3.accessKeyId': {
@@ -1467,7 +1509,7 @@ export default {
   },
   'as2.partnerStationInfo.mdn.verifyMDNSignature': {
     type: 'checkbox',
-    label: 'MDN signature verification',
+    label: 'Partner requires MDN signature verification',
   },
   'as2.userStationInfo.mdn.mdnURL': {
     type: 'text',
@@ -1833,35 +1875,25 @@ export default {
   as2url: {
     type: 'select',
     label: 'AS2 url',
-    options: [
-      {
-        items: [
-          {
-            label: 'http://api.staging.integrator.io/v1/as2',
-            value: 'http://api.staging.integrator.io/v1/as2',
-          },
-          {
-            label: 'https://api.staging.integrator.io/v1/as2',
-            value: 'https://api.staging.integrator.io/v1/as2',
-          },
-        ],
-      },
+    options: [{
+      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
+    }
     ],
-    value: 'https://api.staging.integrator.io/v1/as2',
+    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',
-    label: 'Require mdns from partners?',
+    label: 'Require MDNs from partners?',
     value: 'Yes',
   },
   requireasynchronousmdns: {
     type: 'labelvalue',
-    label: 'Require asynchronous mdns?',
+    label: 'Require asynchronous MDNs?',
     value: 'No',
   },
   partnerrequireasynchronousmdns: {
     type: 'checkbox',
-    label: 'Partner requires asynchronous mdns?',
+    label: 'Partner requires asynchronous MDNs?',
   },
   'as2.userStationInfo.ipAddresses': {
     type: 'labelvalue',
@@ -2076,11 +2108,13 @@ export default {
     ],
   },
   'as2.contentBasedFlowRouter': {
-    type: 'hook',
-    label: '',
+    type: 'routingrules',
+    label: 'Routing rules editor',
     required: false,
     editorResultMode: 'text',
     hookStage: 'contentBasedFlowRouter',
+    helpKey: 'connection.as2.contentBasedFlowRouter',
+    title: 'Choose a script and function name to use for determining AS2 message routing',
     preHookData: {
       httpHeaders: {
         'as2-from': 'OpenAS2_appA',
@@ -2170,7 +2204,7 @@ export default {
   },
   'netsuite.dataCenterURLs': {
     type: 'text',
-    label: 'NetSuite data center urls',
+    label: 'NetSuite data center URLs',
   },
   'netsuite.accountName': {
     type: 'text',
@@ -2369,7 +2403,7 @@ export default {
     type: 'select',
     label: 'Concurrency level',
     defaultValue: r =>
-      (r && r.salesforce && r.salesforce.concurrencyLevel) || 5,
+      r && r.salesforce && r.salesforce.concurrencyLevel ? r && r.salesforce && r.salesforce.concurrencyLevel : 5,
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -2430,6 +2464,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2437,6 +2472,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
+    visible: r => !(r && r._connectorId)
   },
   'wrapper.concurrencyLevel': {
     type: 'select',
@@ -2530,10 +2566,12 @@ export default {
   'dynamodb.aws.accessKeyId': {
     type: 'text',
     label: 'Access key ID',
+    required: true,
   },
   'dynamodb.aws.secretAccessKey': {
     type: 'text',
     label: 'Secret access key',
+    required: true,
   },
   // #endregion dynamodb
   settings: {

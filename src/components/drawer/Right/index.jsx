@@ -14,24 +14,25 @@ import * as selectors from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
+import Help from '../../Help';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   drawerPaper_default: {
     background: theme.palette.background.default,
   },
   titleBar: {
-    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
+    background: theme.palette.background.default,
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
@@ -41,6 +42,8 @@ const useStyles = makeStyles(theme => ({
   },
   contentContainer: {
     margin: theme.spacing(1, 2),
+    position: 'relative',
+    height: '100%',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -50,6 +53,9 @@ const useStyles = makeStyles(theme => ({
   },
   medium: {
     width: 660,
+  },
+  default: {
+    width: 824,
   },
   large: {
     width: 995,
@@ -65,6 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   tall: {
     marginTop: theme.appBarHeight,
+    paddingBottom: theme.appBarHeight,
   },
   short: {
     marginTop: theme.appBarHeight + theme.pageBarHeight,
@@ -72,18 +79,22 @@ const useStyles = makeStyles(theme => ({
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
   },
   popperMaxWidthView: {
     maxWidth: 250,
     maxHeight: 300,
     overflowY: 'auto',
   },
+  helpTextButton: {
+    padding: 0,
+  },
 }));
 
 export default function RightDrawer({
   title,
   path,
-  width = 'small',
+  width = 'default',
   height = 'short',
   type = 'legacy',
   hideBackButton = false,
@@ -92,6 +103,8 @@ export default function RightDrawer({
   infoText,
   actions,
   variant = 'persistent',
+  helpTitle,
+  helpKey,
   ...rest
 }) {
   const classes = useStyles();
@@ -113,7 +126,17 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
-  const fullPath = `${match.url}/${path}`;
+
+  let fullPath;
+  if (typeof path === 'string' || typeof path === 'number') {
+    fullPath = `${match.url}/${path}`;
+  } else if (Array.isArray(path)) {
+    fullPath = path.map(p => `${match.url}/${p}`);
+  } else {
+    // bad path datatype... don't know what do do.. render nothing.
+    return null;
+  }
+
   const { isExact } = matchPath(location.pathname, fullPath) || {};
   const showBackButton = !isExact && !hideBackButton;
 
@@ -151,8 +174,16 @@ export default function RightDrawer({
                 <BackArrowIcon />
               </IconButton>
             )}
-            <Typography variant="h3" className={classes.title}>
+            <Typography variant="h4" className={classes.title}>
               {title}
+              {helpKey && (
+                <Help
+                  title={helpTitle}
+                  className={classes.helpTextButton}
+                  helpKey={helpKey}
+                  fieldId={helpKey}
+                />
+              )}
               {infoText && <InfoIconButton info={infoText} />}
             </Typography>
             {actions}

@@ -95,7 +95,7 @@ export function* fetchResourceDataForNewFlowResource({
   return getFormattedResourceForPreview(newResource);
 }
 
-export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
+export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refresh }) {
   const resourceMap = {};
   const resourceList = flow[type];
 
@@ -140,7 +140,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors }) {
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow }
+            { resource, flow, refresh }
           );
         }
       }
@@ -173,76 +173,72 @@ export function* requestSampleDataForImports({
   hidden = true,
   sampleDataStage,
 }) {
-  try {
-    switch (sampleDataStage) {
-      case 'flowInput': {
-        yield call(fetchPageProcessorPreview, {
-          flowId,
-          _pageProcessorId: resourceId,
-          resourceType,
-          hidden,
-          previewType: sampleDataStage,
-        });
-        break;
-      }
-
-      case 'sampleResponse': {
-        const { merged: resource } = yield select(
-          resourceData,
-          'imports',
-          resourceId,
-          SCOPES.VALUE
-        );
-
-        try {
-          // @TODO Raghu: Handle sample response as a XML
-          const { sampleResponseData = '' } = resource;
-          const sampleResponse = isJsonString(sampleResponseData)
-            ? JSON.parse(sampleResponseData)
-            : sampleResponseData;
-
-          yield put(
-            actions.flowData.receivedPreviewData(
-              flowId,
-              resourceId,
-              sampleResponse,
-              'sampleResponse'
-            )
-          );
-        } catch (e) {
-          yield put(
-            actions.flowData.receivedPreviewData(
-              flowId,
-              resourceId,
-              {},
-              'sampleResponse'
-            )
-          );
-        }
-
-        break;
-      }
-
-      case 'responseTransform':
-      case 'importMappingExtract':
-      case 'importMapping':
-      case 'responseMappingExtract':
-      case 'responseMapping':
-      case 'postResponseMap':
-      case 'preMap': {
-        yield call(requestProcessorData, {
-          flowId,
-          resourceId,
-          resourceType: 'imports',
-          processor: sampleDataStage,
-        });
-        break;
-      }
-
-      default:
+  switch (sampleDataStage) {
+    case 'flowInput': {
+      yield call(fetchPageProcessorPreview, {
+        flowId,
+        _pageProcessorId: resourceId,
+        resourceType,
+        hidden,
+        previewType: sampleDataStage,
+      });
+      break;
     }
-  } catch (e) {
-    throw e;
+
+    case 'sampleResponse': {
+      const { merged: resource } = yield select(
+        resourceData,
+        'imports',
+        resourceId,
+        SCOPES.VALUE
+      );
+
+      try {
+        // @TODO Raghu: Handle sample response as a XML
+        const { sampleResponseData = '' } = resource;
+        const sampleResponse = isJsonString(sampleResponseData)
+          ? JSON.parse(sampleResponseData)
+          : sampleResponseData;
+
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            sampleResponse,
+            'sampleResponse'
+          )
+        );
+      } catch (e) {
+        yield put(
+          actions.flowData.receivedPreviewData(
+            flowId,
+            resourceId,
+            {},
+            'sampleResponse'
+          )
+        );
+      }
+
+      break;
+    }
+
+    case 'responseTransform':
+    case 'importMappingExtract':
+    case 'importMapping':
+    case 'responseMappingExtract':
+    case 'responseMapping':
+    case 'postResponseMap':
+    case 'preMap': {
+      yield call(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType: 'imports',
+        processor: sampleDataStage,
+      });
+      break;
+    }
+
+    default:
   }
 }
 
@@ -259,30 +255,26 @@ export function* requestSampleDataForExports({
     resourceType
   );
 
-  try {
-    if (['flowInput', 'raw'].includes(sampleDataStage)) {
-      if (isPageGeneratorExport) {
-        yield call(fetchPageGeneratorPreview, {
-          flowId,
-          _pageGeneratorId: resourceId,
-        });
-      } else {
-        yield call(fetchPageProcessorPreview, {
-          flowId,
-          _pageProcessorId: resourceId,
-          previewType: sampleDataStage,
-        });
-      }
-    } else {
-      yield call(requestProcessorData, {
+  if (['flowInput', 'raw'].includes(sampleDataStage)) {
+    if (isPageGeneratorExport) {
+      yield call(fetchPageGeneratorPreview, {
         flowId,
-        resourceId,
-        resourceType,
-        processor: sampleDataStage,
+        _pageGeneratorId: resourceId,
+      });
+    } else {
+      yield call(fetchPageProcessorPreview, {
+        flowId,
+        _pageProcessorId: resourceId,
+        previewType: sampleDataStage,
       });
     }
-  } catch (e) {
-    throw e;
+  } else {
+    yield call(requestProcessorData, {
+      flowId,
+      resourceId,
+      resourceType,
+      processor: sampleDataStage,
+    });
   }
 }
 
@@ -386,27 +378,23 @@ export function* getFlowStageData({
     stage,
   });
 
-  try {
-    // @BugFix 13750: Check for received status to make an api call or fetch from above
-    // Used to be !flowStageData.status but there can be a case where status is requested, so safe to check for received status
-    if (flowStageData.status !== 'received') {
-      yield call(requestSampleData, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage,
-        isInitialized,
-      });
-      flowStageData = yield select(getSampleDataWrapper, {
-        flowId,
-        resourceId,
-        resourceType,
-        stage,
-      });
-    }
-
-    return flowStageData.data;
-  } catch (e) {
-    throw e;
+  // @BugFix 13750: Check for received status to make an api call or fetch from above
+  // Used to be !flowStageData.status but there can be a case where status is requested, so safe to check for received status
+  if (flowStageData.status !== 'received') {
+    yield call(requestSampleData, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+      isInitialized,
+    });
+    flowStageData = yield select(getSampleDataWrapper, {
+      flowId,
+      resourceId,
+      resourceType,
+      stage,
+    });
   }
+
+  return flowStageData.data;
 }

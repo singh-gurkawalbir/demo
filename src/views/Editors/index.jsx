@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Drawer, List } from '@material-ui/core';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
@@ -10,55 +10,54 @@ import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
-import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
-import { safeParse, hashCode } from '../../utils/string';
+import { safeParse } from '../../utils/string';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
 const editors = [
   {
     name: 'UrlEditor',
-    label: 'Url Editor',
+    label: 'Url editor',
     description:
       'This editor lets you create and test url templates against your raw data.',
   },
   {
     name: 'HttpRequestBodyEditor',
-    label: 'Http Request Body',
+    label: 'Build HTTP request body',
     description:
       'This editor lets you create and test json or xml templates against your raw data.',
   },
   {
     name: 'MergeEditor',
-    label: 'Merge Editor',
+    label: 'Merge editor',
     description:
       'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
   },
   {
     name: 'CsvParseEditor',
-    label: 'CSV Parser',
+    label: 'CSV parser',
     description: 'This processor converts comma separated values into JSON.',
   },
   {
     name: 'XmlParseEditor',
-    label: 'XML Parser',
+    label: 'XML parser',
     description:
       'This processor wll convert XML to JSON controlled by an set of parse options.',
   },
 
   {
     name: 'TransformEditor',
-    label: 'Transform Editor',
+    label: 'Transform editor',
     description:
       'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
   },
 
   {
     name: 'JavaScriptEditor',
-    label: 'JavaScript Editor',
+    label: 'JavaScript editor',
     description:
       'This processor allows a user to run javascript safely in our secure jsruntime environment.',
   },
@@ -70,24 +69,24 @@ const editors = [
   },
   {
     name: 'SQLQueryBuilderEditor',
-    label: 'SQL Query Builder Editor',
+    label: 'SQL Query Builder editor',
     description:
       'This processor allows user to build Sql Query using handlerbars and json as input to it',
   },
   {
     name: 'JSONEditor',
-    label: 'JSON Editor',
+    label: 'JSON editor',
     description: 'This processor allows user to edit JSON Object',
   },
   {
     name: 'FilterEditor',
-    label: 'Filter Editor',
+    label: 'Filter editor',
     description:
       'This editor allows a user to visually define an expression for filtering records.',
   },
   {
     name: 'SettingsFormEditor',
-    label: 'Settings Form Editor',
+    label: 'Settings form editor',
     description:
       'This editor allows a user to build a custom form by providing a form definition as JSON and/or a javascript init function.',
   },
@@ -126,9 +125,11 @@ export default function Editors() {
   const [editorName, setEditorName] = useState();
   const [rawData, setRawData] = useState();
   const [rawDataKey, setRawDataKey] = useState(1);
+  const [drawerKey, setDrawerKey] = useState(0);
   const handleEditorChange = useCallback(
     editorName => {
       if (editorName === 'SettingsFormEditor') {
+        setDrawerKey(drawerKey => drawerKey + 1);
         history.push('editors/editSettings');
       }
 
@@ -161,7 +162,7 @@ export default function Editors() {
       case 'HttpRequestBodyEditor':
         return (
           <HttpRequestBodyEditorDialog
-            title="Create HTTP Request Body"
+            title="Create HTTP request body"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -170,7 +171,7 @@ export default function Editors() {
       case 'MergeEditor':
         return (
           <MergeEditorDialog
-            title="Apply Default Values"
+            title="Apply default values"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -180,7 +181,7 @@ export default function Editors() {
       case 'CsvParseEditor':
         return (
           <CsvConfigEditorDialog
-            title="Delimited File Parser"
+            title="Delimited file parser"
             csvEditorType="parse"
             id={editorName}
             data={rawData}
@@ -191,7 +192,7 @@ export default function Editors() {
       case 'XmlParseEditor':
         return (
           <XmlParseEditorDialog
-            title="XML Parser"
+            title="XML parser"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -201,7 +202,7 @@ export default function Editors() {
       case 'TransformEditor':
         return (
           <TransformEditorDialog
-            title="Transform Editor"
+            title="Transform editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -210,7 +211,7 @@ export default function Editors() {
       case 'JavaScriptEditor':
         return (
           <JavaScriptEditorDialog
-            title="Javascript Editor"
+            title="Javascript editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -228,7 +229,7 @@ export default function Editors() {
       case 'SQLQueryBuilderEditor':
         return (
           <SqlQueryBuilderEditorDialog
-            title="SQL Query Builder"
+            title="SQL query builder"
             id={editorName}
             sampleData={rawData}
             rule="Select * from {{orderId}}"
@@ -237,25 +238,10 @@ export default function Editors() {
             onClose={handleClose}
           />
         );
-      case 'JSONEditor':
-        return (
-          <JsonEditorDialog
-            value={rawData}
-            title="JSON Editor"
-            id={editorName}
-            onClose={() => {
-              this.handleEditorChange(null);
-            }}
-            onChange={value => {
-              // eslint-disable-next-line
-              console.log(value);
-            }}
-          />
-        );
       case 'FilterEditor':
         return (
           <FilterEditorDialog
-            title="Filter Editor"
+            title="Filter editor"
             id={editorName}
             data={rawData}
             onClose={handleClose}
@@ -265,11 +251,10 @@ export default function Editors() {
         return null;
     }
   }, [editorName, handleClose, rawData]);
-  const drawerKey = hashCode(rawData);
 
   return (
-    <Fragment>
-      <CeligoPageBar title="Developer playground" />
+    <>
+      <CeligoPageBar title="Dev playground" />
 
       <div className={classes.appFrame}>
         <Drawer
@@ -298,12 +283,13 @@ export default function Editors() {
       <SettingsFormEditorDrawer
         key={drawerKey}
         editorId="settingsForm"
+        hideSaveAction="true"
         // resourceId={resourceId}
         // resourceType={resourceType}
         settingsForm={{ form: safeParse(rawData) }}
         // eslint-disable-next-line react/jsx-handler-names
         onClose={history.goBack}
       />
-    </Fragment>
+    </>
   );
 }

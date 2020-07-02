@@ -1,6 +1,7 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
+import InfoIconButton from '../InfoIconButton';
 
 export default function ResourceDrawerLink({
   resourceType,
@@ -23,7 +24,7 @@ export default function ResourceDrawerLink({
   if (disabled) return linkLabel;
 
   return (
-    <Fragment>
+    <>
       <Link
         onClick={onClick}
         // if a user clicks to open a resource drawer (when the drawer is already opened),
@@ -37,7 +38,8 @@ export default function ResourceDrawerLink({
         to={`${match.url}/edit/${resourceType}/${resource._id}`}>
         {linkLabel}
       </Link>
+      { resource.description && <InfoIconButton info={resource.description} size="xs" />}
       {resource.shared && <Typography>Shared</Typography>}
-    </Fragment>
+    </>
   );
 }

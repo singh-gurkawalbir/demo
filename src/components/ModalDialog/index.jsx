@@ -1,4 +1,6 @@
+import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
+import clsx from 'clsx';
 import DialogActions from '@material-ui/core/DialogActions';
 import { Button, Typography } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -8,12 +10,16 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
+  dialogTitle: {
+    display: 'flex',
+  },
   actionButton: {
     float: 'right',
     textTransform: 'inherit',
   },
   titleText: {
     maxWidth: '95%',
+    flex: 1,
     wordBreak: 'break-word',
   },
   closeButton: {
@@ -57,7 +63,9 @@ export default function ModalDialog({
       fullScreen={fullScreen}
       PaperProps={{ className: classes.paper }}>
       {children[0] && (
-        <DialogTitle className={classes[minWidth]} disableTypography>
+        <DialogTitle
+          className={clsx(classes.dialogTitle, classes[minWidth])}
+          disableTypography>
           <Typography variant="h3" className={classes.titleText}>
             {children[0]}
           </Typography>
@@ -71,6 +79,8 @@ export default function ModalDialog({
           )}
           {!onClose && actionHandler && (
             <Button
+              variant="outlined"
+              color="secondary"
               className={classes.actionButton}
               onClick={actionHandler}
               data-test={actionLabel}>

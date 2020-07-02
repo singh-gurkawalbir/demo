@@ -54,6 +54,10 @@ export default {
       }
     }
 
+    if (newValues['/inputMode'] !== 'blob') {
+      delete newValues['/blobKeyPath'];
+    }
+
     delete newValues['/inputMode'];
 
     return {
@@ -144,11 +148,6 @@ export default {
     'salesforce.contentVersion.pathOnClient': {
       fieldId: 'salesforce.contentVersion.pathOnClient',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
     'salesforce.sObjectType': { fieldId: 'salesforce.sObjectType' },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     'salesforce.operation': { fieldId: 'salesforce.operation' },
@@ -220,50 +219,54 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'inputMode',
-      'apiType',
-      'salesforce.api',
-      'importData',
-      'salesforce.lookups',
-      'salesforce.sObjectType',
-      'salesforce.operation',
-      'salesforce.blobsObjectType',
-      'salesforce.blobOperation',
-      'salesforce.attachment.id',
-      'salesforce.attachment.name',
-      'salesforce.attachment.parentId',
-      'salesforce.attachment.contentType',
-      'salesforce.attachment.description',
-      'salesforce.attachment.isPrivate',
-      'salesforce.document.id',
-      'salesforce.document.name',
-      'salesforce.document.folderId',
-      'salesforce.document.contentType',
-      'salesforce.document.developerName',
-      'salesforce.document.isInternalUseOnly',
-      'salesforce.document.isPublic',
-      'salesforce.contentVersion.contentDocumentId',
-      'salesforce.contentVersion.title',
-      'salesforce.contentVersion.pathOnClient',
-      'salesforce.contentVersion.tagCsv',
-      'salesforce.contentVersion.contentLocation',
-      'salesforce.compositeOperation',
-      'ignoreExisting',
-      'ignoreMissing',
-      'salesforce.idLookup.whereClause',
-      'salesforce.upsert.externalIdField',
-      'salesforce.idLookup.extract',
-      'dataMappings',
-      'blobKeyPath',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
+        fields: [
+          'salesforce.api',
+          'salesforce.lookups',
+          'salesforce.sObjectType',
+          'salesforce.operation',
+          'salesforce.blobsObjectType',
+          'salesforce.blobOperation',
+          'salesforce.attachment.id',
+          'salesforce.attachment.name',
+          'salesforce.attachment.parentId',
+          'salesforce.attachment.contentType',
+          'salesforce.attachment.description',
+          'salesforce.attachment.isPrivate',
+          'salesforce.document.id',
+          'salesforce.document.name',
+          'salesforce.document.folderId',
+          'salesforce.document.contentType',
+          'salesforce.document.developerName',
+          'salesforce.document.isInternalUseOnly',
+          'salesforce.document.isPublic',
+          'salesforce.contentVersion.contentDocumentId',
+          'salesforce.contentVersion.title',
+          'salesforce.contentVersion.pathOnClient',
+          'salesforce.contentVersion.tagCsv',
+          'salesforce.contentVersion.contentLocation',
+          'salesforce.compositeOperation',
+          'ignoreExisting',
+          'ignoreMissing',
+          'salesforce.idLookup.whereClause',
+          'salesforce.upsert.externalIdField',
+          'salesforce.idLookup.extract',
+        ],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

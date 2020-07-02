@@ -15,7 +15,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/headers': [
       {
-        name: 'authorization',
+        name: 'Authorization',
         value:
           'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
       },
@@ -25,7 +25,7 @@ export default {
       },
       {
         name: 'wm_qos.correlation_id',
-        value: `{{{dateFormat 'X'}}}`,
+        value: "{{{dateFormat 'X'}}}",
       },
     ],
     '/http/auth/token/refreshMethod': 'POST',
@@ -43,6 +43,19 @@ export default {
       {
         name: 'Content-Type',
         value: 'application/x-www-form-urlencoded',
+      },
+      {
+        name: 'Authorization',
+        value:
+          'Basic {{{base64Encode (join ":" connection.http.unencrypted.clientId connection.http.encrypted.clientSecret)}}}',
+      },
+      {
+        name: 'wm_svc.name',
+        value: 'Walmart Marketplace',
+      },
+      {
+        name: 'wm_qos.correlation_id',
+        value: "{{{dateFormat 'X'}}}",
       },
     ],
   }),
@@ -92,18 +105,21 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'environment',
-      'http.unencrypted.clientId',
-      'http.encrypted.clientSecret',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment',
+          'http.unencrypted.clientId',
+          'http.encrypted.clientSecret'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

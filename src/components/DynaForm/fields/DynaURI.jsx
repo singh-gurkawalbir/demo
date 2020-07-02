@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ActionButton from '../../ActionButton';
 import ScriptsIcon from '../../icons/ScriptsIcon';
@@ -11,9 +11,10 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
     marginTop: theme.spacing(4),
+    background: 'transparent',
   },
   dynaURIWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
 }));
 
@@ -45,14 +46,14 @@ export default function DynaURI(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <div>
           <DynaEditorWithFlowSampleData
             title={editorTitle}
             fieldId={id}
             onClose={handleClose}
-            editorType="url"
+            editorType="uri"
             flowId={flowId}
             resourceId={resourceId}
             resourceType={resourceType}
@@ -76,6 +77,6 @@ export default function DynaURI(props) {
           <ScriptsIcon />
         </ActionButton>
       </div>
-    </Fragment>
+    </>
   );
 }

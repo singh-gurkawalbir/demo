@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -17,6 +17,7 @@ import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import InfoIconButton from '../../components/InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,11 +124,17 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: r => r.doc.name || r.doc._id,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && (r.doc.name || r.doc._id)}
+            <InfoIconButton info={r.doc.description} size="xs" />
+          </>
+        );
+      },
       orderBy: 'name',
     },
     { heading: 'Type', value: r => r.model },
-    { heading: 'Description', value: r => r.doc.description },
   ];
 
   useEffect(() => {
@@ -280,21 +287,21 @@ export default function ClonePreview(props) {
       fields:
         resourceType === 'flows'
           ? [
-              'name',
-              'environment',
-              'integration',
-              'description',
-              'message',
-              'components',
-            ]
+            'name',
+            'environment',
+            'integration',
+            'description',
+            'message',
+            'components',
+          ]
           : [
-              'tag',
-              'name',
-              'environment',
-              'description',
-              'message',
-              'components',
-            ],
+            'tag',
+            'name',
+            'environment',
+            'description',
+            'message',
+            'components',
+          ],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -379,19 +386,22 @@ export default function ClonePreview(props) {
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title="Cloning" infoText={cloningDescription} />
-      <Fragment>
+      <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
               fieldMeta={fieldMeta}
               optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit data-test="clone" onClick={clone}>
+              <DynaSubmit
+                skipDisableButtonForFormTouched
+                data-test="clone"
+                onClick={clone}>
                 {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
               </DynaSubmit>
             </DynaForm>
           </Grid>
         </Grid>
-      </Fragment>
+      </>
     </LoadResources>
   );
 }

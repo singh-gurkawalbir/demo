@@ -1,14 +1,15 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useCallback, useMemo, useEffect, Fragment } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import HttpRequestBodyEditorDialog from '../../../components/AFE/HttpRequestBodyEditor/Dialog';
-import UrlEditorDialog from '../../../components/AFE/UrlEditor/Dialog';
+import HttpRequestBodyEditorDialog from '../../AFE/HttpRequestBodyEditor/Dialog';
+import UrlEditorDialog from '../../AFE/UrlEditor/Dialog';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
+import CsvConfigEditorDialog from '../../AFE/CsvConfigEditor/Dialog';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
@@ -67,8 +68,7 @@ const DynaEditorWithFlowSampleData = ({
   const formattedRule = useMemo(() => {
     if (editorType === 'httpRequestBody' && !rule && templateVersion === 1) {
       // load sample template when rule is not yet defined
-      if (props.contentType === 'json')
-        return getJSONSampleTemplate((sampleData && sampleData.data) || []);
+      if (props.contentType === 'json') return getJSONSampleTemplate((sampleData && sampleData.data) || []);
 
       return getXMLSampleTemplate((sampleData && sampleData.data) || []);
     }
@@ -83,8 +83,8 @@ const DynaEditorWithFlowSampleData = ({
   }, [flowId, loadEditorSampleData]);
 
   return (
-    <Fragment>
-      {editorType === 'httpRequestBody' ? (
+    <>
+      {editorType === 'httpRequestBody' && (
         <HttpRequestBodyEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
@@ -95,7 +95,8 @@ const DynaEditorWithFlowSampleData = ({
           editorVersion={templateVersion}
           onVersionToggle={handleEditorVersionToggle}
         />
-      ) : (
+      )}
+      {editorType === 'uri' && (
         <UrlEditorDialog
           {...props}
           id={`${resourceId}-${fieldId}`}
@@ -107,7 +108,24 @@ const DynaEditorWithFlowSampleData = ({
           onVersionToggle={handleEditorVersionToggle}
         />
       )}
-    </Fragment>
+      {editorType === 'csvGenerate' && (
+        <CsvConfigEditorDialog
+          {...props}
+          /** rule to be passed as json */
+          rule={formattedRule}
+          title="CSV generator helper"
+          id={`${resourceId}-${fieldId}`}
+          mode="csv"
+          data={JSON.stringify(sampleData, null, 2)}
+          resourceType={resourceType}
+          csvEditorType="generate"
+          showVersionToggle={isEditorV2Supported}
+          isSampleDataLoading={sampleDataRequestStatus === 'requested'}
+          editorVersion={templateVersion}
+          onVersionToggle={handleEditorVersionToggle}
+      />
+      )}
+    </>
   );
 };
 

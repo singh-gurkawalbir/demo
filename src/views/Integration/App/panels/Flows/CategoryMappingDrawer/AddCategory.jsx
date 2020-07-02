@@ -1,6 +1,6 @@
 import { Drawer, makeStyles, Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   useRouteMatch,
   useHistory,
@@ -14,19 +14,25 @@ import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../../components/LoadResources';
 import DrawerTitleBar from './TitleBar';
 import Spinner from '../../../../../../components/Spinner';
-import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
+import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: '60%',
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    // boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
     zIndex: theme.zIndex.drawer + 1,
   },
   form: {
-    maxHeight: `calc(100vh - 180px)`,
+    maxHeight: 'calc(100vh - 180px)',
     padding: theme.spacing(2, 3),
+  },
+  addCategoryDrawerForm: {
+    padding: '16px 24px',
+  },
+  addCategoryDrawerFormActions: {
+    margin: '0px 24px',
   },
 }));
 
@@ -35,7 +41,6 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
   const { flowId } = match.params;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const history = useHistory();
   const metadataLoaded = useSelector(
     state => !!selectors.categoryMapping(state, integrationId, flowId)
@@ -68,14 +73,10 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
           grandchildCategory,
         })
       );
-      enqueueSnackbar({
-        variant: 'success',
-        message: `You have successfully added a new ${uiAssistant} category! Congratulations!`,
-        persist: false,
-      });
+
       handleClose();
     },
-    [dispatch, enqueueSnackbar, flowId, handleClose, integrationId, uiAssistant]
+    [dispatch, flowId, handleClose, integrationId]
   );
   const fieldMeta = {
     fieldMap: {
@@ -84,6 +85,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         name: 'category',
         type: 'select',
         label: 'Choose Category',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: true,
         defaultValue: '',
         options: [
@@ -99,6 +102,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'childCategory',
         name: 'childCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: uiAssistant !== 'jet',
         defaultValue: '',
         label: 'Choose Sub-category',
@@ -109,6 +114,8 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         id: 'grandchildCategory',
         name: 'grandchildCategory',
         type: 'select',
+        // Todo (Surya) 15333: helpText is needed
+        helpText: 'Helptext is useful to give detailed information',
         required: false,
         visible: false,
         label: 'Choose nested-category',
@@ -217,19 +224,24 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
         <DynaForm
           fieldMeta={fieldMeta}
           formState={formState}
+          className={classes.addCategoryDrawerForm}
           optionsHandler={fieldMeta.optionsHandler}>
-          <DynaSubmit
-            showCustomFormValidations={showCustomFormValidations}
-            data-test="addCategory"
-            onClick={handleSave}>
-            Add Category
-          </DynaSubmit>
-          <Button variant="text" color="primary" onClick={handleClose}>
-            Cancel
-          </Button>
+          <div className={classes.addCategoryDrawerFormActions}>
+            <DynaSubmit
+              showCustomFormValidations={showCustomFormValidations}
+              data-test="addCategory"
+              onClick={handleSave}>
+              Add Category
+            </DynaSubmit>
+            <Button variant="text" color="primary" onClick={handleClose}>
+              Cancel
+            </Button>
+          </div>
         </DynaForm>
       ) : (
-        <Spinner />
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
       )}
     </Drawer>
   );

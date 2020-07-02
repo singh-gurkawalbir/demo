@@ -1,7 +1,6 @@
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useCallback, useMemo } from 'react';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import React, { useCallback, useMemo } from 'react';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
 import {
@@ -14,6 +13,7 @@ import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
 import getHooksMetadata from './hooksMetadata';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   fbContDrawer: {
@@ -33,7 +33,6 @@ export default function Hooks(props) {
     resourceId,
     flowId,
   } = props;
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const classes = useStyles();
   const { merged: resource } = useSelectorMemo(
     selectors.makeResourceDataSelector,
@@ -41,6 +40,7 @@ export default function Hooks(props) {
     resourceId,
     'value'
   );
+
   const fieldMeta = useMemo(
     () =>
       getHooksMetadata(resourceType, resource, {
@@ -102,8 +102,18 @@ export default function Hooks(props) {
     },
     [resourceType]
   );
-  const handleSubmit = useCallback(
-    values => {
+
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/${resourceType}/${resourceId}`,
+      disabled,
+      onSave,
+      onClose: onCancel,
+    }
+  );
+
+  const submitHookValues = useCallback(
+    closeOnSave => values => {
       const selectedValues = {
         hooks: getSelectedHooks(values),
         suiteScriptHooks: getSelectedSuiteScriptHooks(values),
@@ -113,20 +123,16 @@ export default function Hooks(props) {
         selectedValues.hooks.isInvalidHook ||
         selectedValues.suiteScriptHooks.isInvalidHook
       ) {
-        return enqueueSnackbar({
-          message: 'Please fill the mandatory fields',
-          variant: 'error',
-        });
+        return null;
       }
 
-      onSave({
+      submitHandler(closeOnSave)({
         hooks: selectedValues.hooks.selectedHook,
         suiteScriptHooks: selectedValues.suiteScriptHooks.selectedHook,
       });
     },
-    [enqueueSnackbar, getSelectedHooks, getSelectedSuiteScriptHooks, onSave]
+    [getSelectedHooks, getSelectedSuiteScriptHooks, submitHandler]
   );
-
   // console.log('RENDER: Hooks');
 
   return (
@@ -134,10 +140,17 @@ export default function Hooks(props) {
       <div className={classes.fbContDrawer}>
         <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
           <DynaSubmit
-            disabled={disabled}
+            disabled={disableSave}
             data-test={`saveHook-${resourceId}`}
-            onClick={handleSubmit}>
-            Save
+            onClick={submitHookValues()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            disabled={disableSave}
+            color="secondary"
+            data-test={`saveAndCloseHook-${resourceId}`}
+            onClick={submitHookValues(true)}>
+            {defaultLabels.saveAndCloseLabel}
           </DynaSubmit>
           <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
             Cancel

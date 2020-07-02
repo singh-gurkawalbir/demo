@@ -104,7 +104,7 @@ export default {
           id: 'lookup.mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
+          label: 'Options',
           fullWidth: true,
           defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
@@ -141,6 +141,7 @@ export default {
           name: '_method',
           type: 'select',
           label: 'HTTP method',
+          required: true,
           defaultValue: lookup.method,
           options: [
             {
@@ -163,6 +164,7 @@ export default {
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
           defaultValue: lookup.body || '',
+          required: true,
           // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -177,6 +179,7 @@ export default {
           label: 'Resource identifier path',
           placeholder: 'Resource Identifier Path',
           defaultValue: lookup.extract,
+          required: true,
           helpKey: 'mapping.lookup.extract',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -238,6 +241,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
@@ -278,7 +282,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {

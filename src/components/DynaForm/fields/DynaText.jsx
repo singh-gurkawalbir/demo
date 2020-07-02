@@ -1,8 +1,9 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   dynaFieldCopyClipboard: {
     display: 'flex',
     width: '100%',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     '& > div:first-child': {
       flex: 1,
     },
@@ -47,7 +48,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   startAdornmentWrapper: {
-    marginTop: `0px !important`,
+    marginTop: '0px !important',
+  },
+  textAreaField: {
+    '& > .MuiFilledInput-multiline': {
+      paddingRight: theme.spacing(4),
+    },
   },
 }));
 
@@ -169,7 +175,7 @@ function DynaText(props) {
         value={inpValue}
         variant="filled"
         onChange={handleFieldChange}
-        className={clsx(classes.formField, className)}
+        className={clsx(classes.formField, {[classes.textAreaField]: multiline }, className)}
       />
       <ErroredMessageComponent
         isValid={isValid}

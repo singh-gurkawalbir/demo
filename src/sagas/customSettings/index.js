@@ -10,13 +10,16 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   const resource = yield select(selectors.resource, resourceType, resourceId);
 
   if (!resource) return; // nothing to do.
-  const initScriptId =
-    resource.settingsForm &&
-    resource.settingsForm.init &&
-    resource.settingsForm.init._scriptId;
+  let initScriptId; let
+    initFunc;
+  if (resource.settingsForm &&
+    resource.settingsForm.init) {
+    initScriptId = resource.settingsForm.init._scriptId;
+    initFunc = resource.settingsForm.init.function;
+  }
   let metadata = resource.settingsForm && resource.settingsForm.form;
 
-  if (initScriptId) {
+  if (initFunc) {
     // If so, make an API call to initialize the form,
 
     const path = `/${resourceType}/${resourceId}/settingsForm/init`;
@@ -39,11 +42,12 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   // into the respective field’s defaultValue prop.
   let newFieldMeta = metadata;
 
-  if (resource.settings && metadata) {
+  if (resource.settings && metadata && typeof metadata.fieldMap === 'object') {
     newFieldMeta = produce(metadata, draft => {
       Object.keys(draft.fieldMap).forEach(key => {
         const field = draft.fieldMap[key];
 
+        if (!resource.settings[field.name] && field.defaultValue) return;
         field.defaultValue = resource.settings[field.name] || '';
       });
     });

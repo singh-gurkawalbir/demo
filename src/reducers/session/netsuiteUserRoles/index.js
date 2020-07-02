@@ -1,5 +1,6 @@
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
+import { stringCompare } from '../../../utils/sort';
 
 export default (state = {}, action) => {
   const { type, connectionId, userRoles, message } = action;
@@ -39,12 +40,6 @@ export default (state = {}, action) => {
   }
 };
 
-export function sortElements(a, b) {
-  if (!a || !b || !a.label || !b.label) return 0;
-
-  return a.label.localeCompare(b.label);
-}
-
 // #region PUBLIC SELECTORS
 export function netsuiteUserRoles(
   state,
@@ -60,10 +55,9 @@ export function netsuiteUserRoles(
   if (!userRoles) return state[connectionId];
   const envs = Object.keys(userRoles)
     .map(env => ({ label: env, value: env }))
-    .sort(sortElements);
+    .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'environment')
-    return { ...state[connectionId], optionsArr: envs };
+  if (netsuiteResourceType === 'environment') return { ...state[connectionId], optionsArr: envs };
   // get matchings accounts for a user environment
   const allAcc =
     userRoles[env] &&
@@ -80,10 +74,9 @@ export function netsuiteUserRoles(
         label: account.account.name,
         value: account.account.internalId,
       }))
-      .sort(sortElements);
+      .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'account')
-    return { ...state[connectionId], optionsArr: accounts };
+  if (netsuiteResourceType === 'account') return { ...state[connectionId], optionsArr: accounts };
   // get matching roles for a user environment and account
 
   const roles =
@@ -95,10 +88,9 @@ export function netsuiteUserRoles(
         label: account.role.name,
         value: account.role.internalId,
       }))
-      .sort(sortElements);
+      .sort(stringCompare('label'));
 
-  if (netsuiteResourceType === 'role')
-    return { ...state[connectionId], optionsArr: roles };
+  if (netsuiteResourceType === 'role') return { ...state[connectionId], optionsArr: roles };
 
   return { ...state[connectionId], optionsArr: null };
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import { some, reduce } from 'lodash';
-import applications from '../constants/applications';
+import {applicationsList} from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
@@ -8,8 +8,7 @@ import {
 } from './constants';
 
 export const getTemplateUrlName = applications => {
-  if (!applications || !Array.isArray(applications) || !applications.length)
-    return;
+  if (!applications || !Array.isArray(applications) || !applications.length) return;
   function appName(app) {
     return app.charAt(0).toUpperCase() + app.slice(1);
   }
@@ -80,7 +79,7 @@ export default {
       if (conn.type === 'salesforce') {
         salesforceConnFound = true;
       }
-
+      const applications = applicationsList();
       const app =
         applications.find(a => {
           if (conn.assistant) {

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -7,18 +7,26 @@ import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
+import RefreshIcon from '../../../icons/RefreshIcon';
 
-/**
- * TODO: Azhar to check and update the button styles
- */
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    display: 'inline-block !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
+  },
+  loaderSObject: {
+    flexDirection: 'row !important',
+  },
+  loaderSObjectText: {
+    marginRight: theme.spacing(2),
+  },
+  salesForceLookupFilterIcon: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -31,10 +39,18 @@ export default function DynaSalesforceLookupFilters(props) {
     connectionId,
     data,
     options = {},
+    opts = {},
     onFieldChange,
     editorId,
   } = props;
-  const modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
+  let modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
+
+  if (opts.isGroupedSampleData && Array.isArray(data)) {
+    modifiedData = modifiedData.concat(
+      modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
+    );
+  }
+
   const { disableFetch, commMetaPath } = options;
   const handleEditorInit = useCallback(() => {
     dispatch(
@@ -84,26 +100,29 @@ export default function DynaSalesforceLookupFilters(props) {
 
   if (!filters) {
     return (
-      <Typography>
-        Loading SObject Fields.
-        <Spinner />
-      </Typography>
+      <div className={classes.loaderSObject}>
+        <Typography className={classes.loaderSObjectText}>
+          Loading
+        </Typography>
+        <Spinner size={24} />
+      </div>
+
     );
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
-        Click{' '}
+        Refresh search filters
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          here
-        </Button>{' '}
-        to refresh search filters.
+          <RefreshIcon className={classes.salesForceLookupFilterIcon} />
+        </Button>
+
       </div>
       <FilterPanel
         id={id}
@@ -113,6 +132,6 @@ export default function DynaSalesforceLookupFilters(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

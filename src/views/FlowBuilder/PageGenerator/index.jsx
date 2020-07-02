@@ -1,14 +1,14 @@
-import { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { useDrag } from 'react-dnd-cjs';
+import { useDrag, useDrop } from 'react-dnd-cjs';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import applications from '../../../constants/applications';
+import {applicationsList} from '../../../constants/applications';
 import {
   getResourceSubType,
   generateNewId,
@@ -21,29 +21,29 @@ import scheduleAction from './actions/schedule';
 import exportFilterAction from './actions/exportFilter';
 import { actionsMap } from '../../../utils/flows';
 
-/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme. 
-   We use the block const across several components and thus is a maintenance issue to 
+/* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
+   We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 170;
-const lineHeightOffset = 63;
-const lineWidth = 130;
+const blockHeight = 200;
+const lineHeightOffset = 85;
+const lineWidth = 160;
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
-    alignItems: 'center',
-    // marginBottom: theme.spacing(3),
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
     width: lineWidth,
-    marginTop: 67,
+    marginTop: 85,
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    marginTop: -161,
+    marginTop: -blockHeight,
     height: blockHeight + lineHeightOffset,
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
@@ -57,6 +57,7 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
+  onMove,
   onErrors,
   openErrorCount,
   ...pg
@@ -71,6 +72,9 @@ const PageGenerator = ({
     !resourceId
       ? emptyObj
       : selectors.resource(state, resourceType, resourceId) || emptyObj
+  );
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pg._connectionId)
   );
   const isDataLoader =
     pg.application === 'dataLoader' || resource.type === 'simple';
@@ -103,7 +107,44 @@ const PageGenerator = ({
     }),
     canDrag: !isViewMode,
   });
-  const opacity = isDragging ? 0.5 : 1;
+  const opacity = isDragging ? 0.2 : 1;
+  // #region Drag and Drop handlers
+  const [, drop] = useDrop({
+    accept: itemTypes.PAGE_GENERATOR,
+
+    hover(item, monitor) {
+      if (!ref.current) {
+        return;
+      }
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+      onMove(dragIndex, hoverIndex);
+      // eslint-disable-next-line no-param-reassign
+      item.index = hoverIndex;
+    },
+  });
+
+  drag(drop(ref));
+  // #endregion
   const handleBlockClick = useCallback(() => {
     const newId = generateNewId();
 
@@ -128,11 +169,20 @@ const PageGenerator = ({
         }
 
         if (pg._connectionId) {
-          patchSet.push({
-            op: 'add',
-            path: '/_connectionId',
-            value: pg._connectionId,
-          });
+          // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+          // used to populate the same when user opens resource form
+          patchSet.push(
+            {
+              op: 'add',
+              path: '/_connectionId',
+              value: pg._connectionId,
+            },
+            {
+              op: 'add',
+              path: '/rdbmsAppType',
+              value: rdbmsAppType,
+            }
+          );
         }
       }
 
@@ -163,6 +213,7 @@ const PageGenerator = ({
     pg._exportId,
     pg.application,
     pg.webhookOnly,
+    rdbmsAppType,
     resource,
   ]);
   const getApplication = useCallback(() => {
@@ -204,6 +255,7 @@ const PageGenerator = ({
         blockType,
       };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === pg.application) || {};
 
@@ -284,7 +336,6 @@ const PageGenerator = ({
     usedActions,
   ]);
   // #endregion
-
   // console.log('render: <PageGenerator>');
 
   return (
@@ -292,7 +343,7 @@ const PageGenerator = ({
       <AppBlock
         integrationId={integrationId}
         name={blockName}
-        onDelete={!isDataLoader && onDelete}
+        onDelete={!isDataLoader && onDelete(blockName)}
         onErrors={onErrors}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}

@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   // #region resource import
   // #region netsuite
@@ -10,9 +12,10 @@ export default {
     label: 'Description',
   },
   apiIdentifier: {
-    label: 'Invoke this import [post]',
+    label: 'Invoke',
     type: 'apiidentifier',
-    visibleWhen: [{ field: 'apiIdentifier', isNot: [''] }],
+    helpKey: 'apiIdentifier',
+    visible: r => r && !isNewId(r._id),
   },
   // #region ftp
   'ftp.importFrom': {
@@ -29,7 +32,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'CSV', value: 'csv' },
+          { label: 'CSV (or any delimited text file)', value: 'csv' },
           { label: 'JSON', value: 'json' },
           { label: 'XLSX', value: 'xlsx' },
           { label: 'XML', value: 'xml' },

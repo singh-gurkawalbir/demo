@@ -24,10 +24,11 @@ export default (state = {}, action) => {
         steps.forEach(step => {
           let stepIndex = -1;
 
-          if (draft[id] && draft[id].steps)
+          if (draft[id] && draft[id].steps) {
             stepIndex = draft[id].steps.findIndex(
               s => s.installerFunction === step.installerFunction
             );
+          }
 
           if (stepIndex !== -1) {
             draft[id].steps[stepIndex] = {

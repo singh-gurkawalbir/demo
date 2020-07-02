@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DynaSelect from '../DynaSelect';
 import LoadResources from '../../../LoadResources';
 import * as selectors from '../../../../reducers';
@@ -8,10 +8,11 @@ const FileTypeSelect = props => {
   const { userDefinitionId, onFieldChange, id } = props;
   const { value } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
-  // Fetches the selected filedefinition resource by userDefinitionId
-  const userFileDefinition = useSelector(state => {
+  // Fetches the selected file definition format by userDefinitionId
+  const fileDefinitionFormat = useSelector(state => {
     if (userDefinitionId) {
-      return selectors.resource(state, 'filedefinitions', userDefinitionId);
+      const definition = selectors.resource(state, 'filedefinitions', userDefinitionId);
+      return definition && definition.format;
     }
   });
 
@@ -20,21 +21,20 @@ const FileTypeSelect = props => {
     // Incase of file definitions, format is determined by user file definition
     if (
       value === 'filedefinition' &&
-      userFileDefinition &&
+      fileDefinitionFormat &&
       !isDefaultValueChanged
     ) {
-      const { format } = userFileDefinition || {};
       // Incase of EDI X12 format, format value is 'delimited/x12'/'delimited' but Dropdown option has file type (BE Expected) value 'filedefinition'
       // For other formats , 'format' in userFileDefinition and file type value is the same
-      const newValue = ['delimited/x12', 'delimited'].includes(format)
+      const newValue = ['delimited/x12', 'delimited'].includes(fileDefinitionFormat)
         ? 'filedefinition'
-        : format;
+        : fileDefinitionFormat;
 
       onFieldChange(id, newValue, true);
       setIsDefaultValueChanged(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, isDefaultValueChanged, userFileDefinition, value]);
+  }, [id, isDefaultValueChanged, fileDefinitionFormat, value]);
 
   return <DynaSelect {...props} />;
 };

@@ -4,7 +4,7 @@ export default {
   getLookupMetadata: ({
     lookup = {},
     connectionId,
-
+    opts = {},
     extractFields,
   }) => {
     const fieldMeta = {
@@ -32,6 +32,7 @@ export default {
           defaultValue: lookup.sObjectType,
           type: 'refreshableselect',
           filterKey: 'salesforce-sObjects',
+          required: true,
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
           connectionId,
@@ -44,16 +45,19 @@ export default {
           type: 'salesforcelookupfilters',
           label: '',
           connectionId,
+          required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['_sObjectType'],
           visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
           value: lookup.whereClause,
           data: extractFields,
+          opts,
         },
         _whereClauseText: {
           id: '_whereClauseText',
           name: '_whereClauseText',
           label: 'Where clause',
+          required: true,
           type: 'text',
           multiline: true,
           disableText: true,
@@ -65,6 +69,7 @@ export default {
         _resultField: {
           id: '_resultField',
           name: '_resultField',
+          required: true,
           type: 'refreshableselect',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
@@ -115,7 +120,8 @@ export default {
               ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
               : '',
           };
-        } else if (fieldId === '_whereClauseText') {
+        }
+        if (fieldId === '_whereClauseText') {
           const whereClauseField = fields.find(
             field => field.id === '_whereClause'
           );

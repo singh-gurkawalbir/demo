@@ -1,13 +1,17 @@
-import { Fragment, useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton } from '@material-ui/core';
+import { makeStyles, IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
-import { EMPTY_RAW_DATA } from '../../utils/constants';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
+import {
+  EMPTY_RAW_DATA,
+  MAX_DATA_LOADER_FILE_SIZE,
+} from '../../utils/constants';
+import Spinner from '../Spinner';
 
 const useStyles = makeStyles(theme => ({
   fileInput: {
@@ -16,7 +20,53 @@ const useStyles = makeStyles(theme => ({
   blockButton: {
     marginRight: theme.spacing(2),
   },
+  runNowIcon: {
+    marginLeft: theme.spacing(-1),
+    '&:hover': {
+      background: 'none',
+      color: theme.palette.primary.main,
+    }
+  },
 }));
+
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+  const classes = useStyles();
+  if (isRequested) return <Spinner size={20} />;
+
+  if (variant === 'icon') {
+    if (disabled) {
+      return (
+        <IconButton
+          data-test="runFlow"
+          className={classes.runNowIcon}
+          disabled>
+          <RunIcon />
+        </IconButton>
+      );
+    }
+
+    return (
+      <IconButtonWithTooltip
+        className={classes.runNowIcon}
+        tooltipProps={{
+          title: 'Run now',
+          placement: 'bottom',
+        }}
+        disabled={disabled}
+        data-test="runFlow"
+
+        onClick={onRunClick}>
+        <RunIcon />
+      </IconButtonWithTooltip>
+    );
+  }
+
+  return (
+    <span onClick={onRunClick} data-test="runFlow">
+      Run flow
+    </span>
+  );
+}
 
 export default function RunFlowButton({
   flowId,
@@ -34,6 +84,8 @@ export default function RunFlowButton({
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const isIntegrationAppVersion2 = useSelector(state => selectors.isIntegrationAppVersion2(state, flowDetails._integrationId, true));
+
   const isNewFlow = !flowId || flowId.startsWith('new');
   const isDataLoaderFlow = flowDetails.isSimpleImport;
   const dataLoaderFileType = useSelector(state => {
@@ -93,20 +145,13 @@ export default function RunFlowButton({
 
     if (
       flowDetails.isDeltaFlow &&
-      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog)
+      (!flowDetails._connectorId || !!flowDetails.showStartDateDialog || isIntegrationAppVersion2)
     ) {
       setShowDeltaStartDateDialog(true);
     } else {
       handleRunFlow();
     }
-  }, [
-    flowDetails._connectorId,
-    flowDetails.isDeltaFlow,
-    flowDetails.showStartDateDialog,
-    handleRunFlow,
-    hasRunKey,
-    isDataLoaderFlow,
-  ]);
+  }, [flowDetails._connectorId, flowDetails.isDeltaFlow, flowDetails.showStartDateDialog, handleRunFlow, hasRunKey, isDataLoaderFlow, isIntegrationAppVersion2]);
   const handleFileChange = useCallback(
     e => {
       const file = e.target.files[0];
@@ -118,6 +163,7 @@ export default function RunFlowButton({
           fileId: flowId,
           file,
           fileType: dataLoaderFileType,
+          fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
     },
@@ -149,9 +195,7 @@ export default function RunFlowButton({
         );
         // Removes uploaded file from session as it is no longer needed once triggered flow run
         dispatch(actions.file.reset(flowId));
-        enqueueSnackbar({
-          message: `${flowDetails.name} has been added to your queue.`,
-        });
+
 
         if (onRunStart) onRunStart();
         break;
@@ -166,9 +210,11 @@ export default function RunFlowButton({
     onRunStart,
     uploadedFile,
   ]);
+  const isDataLoaderFileProcessRequested =
+    isDataLoaderFlow && uploadedFile && uploadedFile.status;
 
   return (
-    <Fragment>
+    <>
       {showDeltaStartDateDialog && flowDetails.isDeltaFlow && (
         <FlowStartDateDialog
           flowId={flowId}
@@ -176,19 +222,12 @@ export default function RunFlowButton({
           onRun={handleRunFlow}
         />
       )}
-
-      {variant === 'icon' ? (
-        <IconButton
-          disabled={disabled}
-          data-test="runFlow"
-          onClick={handleClick}>
-          <RunIcon />
-        </IconButton>
-      ) : (
-        <span onClick={handleClick} data-test="runFlow">
-          Run flow
-        </span>
-      )}
+      <RunFlowLabel
+        isRequested={isDataLoaderFileProcessRequested}
+        onRunClick={handleClick}
+        variant={variant}
+        disabled={disabled}
+      />
 
       {isDataLoaderFlow && !hasRunKey && (
         <input
@@ -200,6 +239,6 @@ export default function RunFlowButton({
           onChange={handleFileChange}
         />
       )}
-    </Fragment>
+    </>
   );
 }

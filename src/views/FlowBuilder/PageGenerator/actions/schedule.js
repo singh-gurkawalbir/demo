@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from '../../../../components/icons/CalendarIcon';
 import helpTextMap from '../../../../components/Help/helpTextMap';
@@ -25,15 +26,9 @@ function ScheduleDialog({
       minWidth="md"
       maxWidth="md"
       disabled={isViewMode}>
-      <div>Export schedule</div>
+      <div>Flow schedule override</div>
       <div>
-        <FlowSchedule
-          flow={flow}
-          pageGeneratorId={resourceId}
-          onClose={onClose}
-          pg={pg}
-          index={index}
-        />
+        <FlowSchedule flow={flow} onClose={onClose} pg={pg} index={index} />
       </div>
     </ModalDialog>
   );

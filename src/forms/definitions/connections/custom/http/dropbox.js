@@ -7,8 +7,8 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.dropboxapi.com',
     '/http/auth/token/location': 'header',
-    '/http/auth/oauth/authURI': `https://www.dropbox.com/1/oauth2/authorize`,
-    '/http/auth/oauth/tokenURI': `https://api.dropboxapi.com/1/oauth2/token`,
+    '/http/auth/oauth/authURI': 'https://www.dropbox.com/1/oauth2/authorize',
+    '/http/auth/oauth/tokenURI': 'https://api.dropboxapi.com/1/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
@@ -16,12 +16,15 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

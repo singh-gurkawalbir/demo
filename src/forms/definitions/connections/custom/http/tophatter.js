@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'urlencoded',
     '/http/ping/relativeURI': '/products.json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://tophatter.com/merchant_api/v1`,
+    '/http/baseURI': 'https://tophatter.com/merchant_api/v1',
     '/http/auth/token/location': 'url',
     '/http/auth/token/paramName': 'access_token',
   }),
@@ -23,13 +23,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

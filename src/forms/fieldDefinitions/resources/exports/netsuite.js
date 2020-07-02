@@ -4,6 +4,9 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
+    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+    bundleUrlHelp:
+      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
@@ -17,6 +20,9 @@ export default {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
+    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
+    bundleUrlHelp:
+      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
       r &&
@@ -196,10 +202,14 @@ export default {
   },
   'netsuite.netsuiteExportlabel': {
     label: r => {
-      if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-        return 'What would you like to transfer from NetSuite??';
+      if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+        return 'What would you like to transfer?';
+      }
+      if (r.resourceType === 'realtime' || r.type === 'distributed') {
+        return 'Configure real-time export in source application';
+      }
 
-      return 'What would you like to export from NetSuite?';
+      return 'What would you like to export?';
     },
     type: 'labeltitle',
   },
@@ -234,7 +244,7 @@ export default {
   'netsuite.internalId': {
     type: 'text',
     required: true,
-    label: 'Internal ID',
+    label: 'File internal id',
   },
   'netsuite.blob.purgeFileAfterExport': {
     type: 'checkbox',
@@ -270,6 +280,7 @@ export default {
     ],
   },
   'netsuite.restlet.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
@@ -277,6 +288,7 @@ export default {
     connectionId: r => r && r._connectionId,
   },
   'netsuite.webservices.criteria': {
+    helpKey: 'export.netsuite.restlet.criteria',
     type: 'nssearchcriteria',
     label: 'Define search criteria',
     refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],

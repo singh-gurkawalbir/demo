@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
@@ -43,13 +43,13 @@ export default function UploadFile() {
   if (uploadInProgress) {
     return (
       <SystemStatus>
-        <Typography variant="h4">Loading preview...</Typography>
+        <Typography variant="h4">Loading</Typography>
       </SystemStatus>
     );
   }
 
   return (
-    <Fragment>
+    <>
       <Typography variant="h4">Upload</Typography>
       <Typography>Choose a .zip file to begin the installation.</Typography>
       <label htmlFor="fileUpload">
@@ -70,6 +70,6 @@ export default function UploadFile() {
           onChange={handleUploadFileChange}
         />
       </label>
-    </Fragment>
+    </>
   );
 }

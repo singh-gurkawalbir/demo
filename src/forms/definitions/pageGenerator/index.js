@@ -1,10 +1,9 @@
-import applications, {
+import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../constants/applications';
 import { appTypeToAdaptorType } from '../../../utils/resource';
 import { RDBMS_TYPES } from '../../../utils/constants';
-import { sourceOptions } from '../../utils';
 
 export default {
   preSave: ({
@@ -23,6 +22,7 @@ export default {
     if (exportId) {
       return { '/resourceId': exportId };
     }
+    const applications = applicationsList();
 
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
@@ -33,7 +33,10 @@ export default {
       newValues['/type'] = 'webhook';
       newValues['/resourceType'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+
+      if (application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+      } else newValues['/webhook/provider'] = application;
       delete newValues['/_connectionId'];
     } else {
       newValues['/resourceType'] = type;
@@ -48,6 +51,11 @@ export default {
       if (app.assistant) {
         newValues['/assistant'] = app.assistant;
       }
+      // If there is no assistant for the export, we need to show generic adaptor form
+      // we are patching useTechAdaptorForm field to not to show default assistant form
+      if (!app.export && app.assistant) {
+        newValues['/useTechAdaptorForm'] = true;
+      }
     }
 
     return newValues;
@@ -61,15 +69,22 @@ export default {
       appType: 'export',
       placeholder:
         'Choose application or start typing to browse 150+ applications',
-      defaultValue: r => (r && r.application) || '',
+      defaultValue: r => {
+        if (!r) return '';
+
+        return r.rdbmsAppType || r.application || '';
+      },
       required: true,
     },
     type: {
       id: 'type',
       name: 'type',
-      type: 'select',
+      type: 'selectresourcetype',
+      mode: 'source',
       label: 'What would you like to do?',
       required: true,
+      defaultValue: '',
+      placeholder: 'Please select',
       refreshOptionsOnChangesTo: ['application'],
       visibleWhenAll: [
         {
@@ -77,7 +92,6 @@ export default {
           isNot: [''],
         },
       ],
-      helpKey: 'fb.resourceTypeOptions',
     },
     connection: {
       id: 'connection',
@@ -96,7 +110,7 @@ export default {
             ...getWebhookOnlyConnectors().map(connector => connector.id),
           ],
         },
-        { field: 'type', isNot: ['webhook'] },
+        { field: 'type', isNot: ['webhook', ''] },
       ],
       allowNew: true,
       allowEdit: true,
@@ -112,54 +126,37 @@ export default {
       defaultValue: '',
       required: false,
       allowEdit: true,
-      refreshOptionsOnChangesTo: ['application', 'connection', 'type'],
+      refreshOptionsOnChangesTo: [
+        'application',
+        'connection',
+        'type',
+        'exportId',
+      ],
       visibleWhenAll: [
         {
           field: 'application',
-          isNot: [''],
-        },
-        {
-          field: 'connection',
           isNot: [''],
         },
       ],
     },
   },
   layout: {
-    fields: ['application', 'type', 'connection', 'existingExport'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application', 'type', 'connection', 'existingExport'],
+      },
+    ],
   },
 
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
+    const connectionField = fields.find(field => field.id === 'connection');
 
     if (fieldId === 'type') {
-      const typeField = fields.find(field => field.id === 'type');
-      let options = sourceOptions[app.assistant || app.type];
-
-      if (!options) {
-        if (app.assistant && app.webhook) {
-          options = [
-            {
-              label: 'Export records from source application',
-              value: 'exportRecords',
-            },
-            {
-              label: 'Listen for real-time data from source application',
-              value: 'webhook',
-            },
-          ];
-        } else options = sourceOptions.common || [];
-      }
-
-      typeField.value = options && options[0] && options[0].value;
-      typeField.disabled = options && options.length === 1;
-
-      return [
-        {
-          items: options,
-        },
-      ];
+      return { selectedApplication: app };
     }
 
     if (fieldId === 'connection') {
@@ -187,7 +184,6 @@ export default {
     }
 
     if (fieldId === 'exportId') {
-      const connectionField = fields.find(field => field.id === 'connection');
       const exportField = fields.find(field => field.id === 'exportId');
       const type = fields.find(field => field.id === 'type').value;
       const isWebhook =
@@ -237,9 +233,10 @@ export default {
 
       const visible = isWebhook || !!connectionField.value;
       const filter = { $and: expression };
-      let label = isWebhook
-        ? 'Would you like to use an existing listener?'
-        : exportField.label;
+      let label =
+        isWebhook || type === 'realtime'
+          ? 'Would you like to use an existing listener?'
+          : exportField.label;
 
       if (type === 'transferFiles') {
         label = 'Would you like to use an existing transfer?';

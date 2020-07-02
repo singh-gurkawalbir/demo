@@ -1,3 +1,4 @@
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 
@@ -35,7 +36,7 @@ export default {
     },
     {
       heading: 'Version',
-      value: r => (r.updateInProgress ? 'In Progress...' : r.version),
+      value: r => (r.updateInProgress ? 'In progress...' : r.version),
       orderBy: 'version',
     },
   ],

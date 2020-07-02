@@ -47,11 +47,6 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export?',
-    },
     'mongodb.collection': { fieldId: 'mongodb.collection' },
     'mongodb.filter': { fieldId: 'mongodb.filter' },
     'mongodb.projection': { fieldId: 'mongodb.projection' },
@@ -96,19 +91,27 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'exportOneToMany',
-          'exportData',
-          'mongodb.collection',
-          'mongodb.filter',
-          'mongodb.projection',
-          'type',
-          'delta.dateField',
-          'once.booleanField',
-        ],
         type: 'collapse',
         containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common', 'exportOneToMany'],
+          },
+          {
+            collapsed: true,
+            label: 'What would you like to export?',
+            fields: [
+              'mongodb.collection',
+              'mongodb.filter',
+              'mongodb.projection',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: ['type', 'delta.dateField', 'once.booleanField'],
+          },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },

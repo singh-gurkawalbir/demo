@@ -1,8 +1,33 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { FormControl, makeStyles } from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import DynaMultiSelect from './DynaMultiSelect';
-import { extractFieldsFromCsv } from '../../../utils/file';
+import actions from '../../../actions';
+import Spinner from '../../Spinner';
+
+const useStyles = makeStyles(theme => ({
+  keyColumnFormWrapper: {
+    display: 'flex',
+    flexDirection: 'row !important'
+  },
+  spinnerWrapper: {
+    marginLeft: theme.spacing(1),
+    marginTop: theme.spacing(4),
+    alignSelf: 'flex-start',
+  }
+}));
+const getColumns = result => {
+  if (!result || !result.data || !result.data.length) {
+    return [];
+  }
+
+  const sampleRecord = Array.isArray(result.data[0])
+    ? result.data[0][0]
+    : result.data[0];
+
+  return Object.keys(sampleRecord).map(name => ({ label: name, value: name }));
+};
 
 export default function DynaFileKeyColumn(props) {
   const {
@@ -10,56 +35,110 @@ export default function DynaFileKeyColumn(props) {
     id,
     name,
     onFieldChange,
-    value = '',
+    value = [],
     label,
     required,
     resourceId,
+    resourceType,
     isValid,
     helpText,
     helpKey,
     options = {},
   } = props;
-  const [sampleData, setSampleData] = useState(props.sampleData || '');
-  const { data: fileData } = useSelector(state => {
-    const rawData = selectors.getResourceSampleDataWithStatus(
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const [editorInit, setEditorInit] = useState(false);
+  const { data, status: csvParseStatus, result } = useSelector(state =>
+    selectors.editor(state, id)
+  );
+  /*
+   * Fetches Raw data - CSV file to be parsed based on the rules
+   * This field is supported by Csv/Xlsx file types
+   */
+  const { csvData } = useSelector(state => {
+    const { data: rawData, status } = selectors.getResourceSampleDataWithStatus(
       state,
       resourceId,
       'csv'
     );
 
-    return { data: rawData && rawData.data && rawData.data.body };
+    if (!status) {
+      // Incase of resource edit and no file uploaded, show the csv content uploaded last time ( sampleData )
+      const resource = selectors.resource(state, resourceType, resourceId);
+
+      // If the file type is csv before , only then retrieve its content sampleData to show in the editor
+      if (resource && resource.file && resource.file.type === 'csv') {
+        return { csvData: resource.sampleData };
+      }
+    }
+
+    return { csvData: rawData && rawData.body };
   });
 
-  // fileData is updated when user uploads new file
-  if (fileData && fileData !== sampleData) {
-    setSampleData(fileData);
+  const multiSelectOptions = useMemo(() => {
+    const options = getColumns(result);
 
-    onFieldChange(id, []);
-  }
+    if (Array.isArray(value)) {
+      value.forEach(val => {
+        if (!options.find(opt => opt.value === val)) {
+          options.push({ label: val, value: val });
+        }
+      });
+    }
 
-  const getFileHeaderOptions = (fileData = '') => {
-    const headers = extractFieldsFromCsv(fileData, options) || [];
+    return [{ items: options }];
+  }, [result, value]);
 
-    return headers.map(header => ({ label: header.id, value: header.id }));
-  };
+  const handleInit = useCallback(() => {
+    dispatch(actions.editor.init(id, 'csvParser', {
+      data: csvData,
+      rule: options,
+      autoEvaluate: true,
+    }));
+  }, [csvData, dispatch, id, options]);
 
-  const multiSelectOptions = [
-    { items: getFileHeaderOptions(fileData || sampleData) },
-  ];
+
+  useEffect(() => {
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [editorInit, handleInit]);
+
+  useEffect(() => {
+    if (editorInit && csvData && csvData !== data) {
+      dispatch(actions.editor.patch(id, { data: csvData }));
+
+      onFieldChange(id, []);
+    }
+  }, [csvData, data, dispatch, editorInit, id, onFieldChange]);
+
+  useEffect(() => {
+    if (editorInit) {
+      dispatch(actions.editor.patch(id, { ...options }));
+    }
+  }, [dispatch, editorInit, id, options]);
+
 
   return (
-    <DynaMultiSelect
+    <FormControl
+      key={id}
       disabled={disabled}
-      id={id}
-      label={label}
-      value={value}
-      helpText={helpText}
-      helpKey={helpKey}
-      isValid={isValid}
-      name={name}
-      options={multiSelectOptions}
-      required={required}
-      onFieldChange={onFieldChange}
+      className={classes.keyColumnFormWrapper}>
+      <DynaMultiSelect
+        disabled={disabled}
+        id={id}
+        label={label}
+        value={value}
+        helpText={helpText}
+        helpKey={helpKey}
+        isValid={isValid}
+        name={name}
+        options={multiSelectOptions}
+        required={required}
+        onFieldChange={onFieldChange}
     />
+      {csvParseStatus === 'requested' && (<Spinner className={classes.spinnerWrapper} size={24} />)}
+    </FormControl>
   );
 }

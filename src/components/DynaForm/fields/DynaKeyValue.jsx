@@ -1,4 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
+import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
@@ -6,12 +7,10 @@ import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
 import ActionButton from '../../ActionButton';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    // border: 'solid 1px',
-    // borderColor: theme.palette.text.disabled,
-    // backgroundColor: theme.palette.background.default,
     marginTop: theme.spacing(1),
     overflowY: 'off',
   },
@@ -23,6 +22,21 @@ const useStyles = makeStyles(theme => ({
   label: {
     marginBottom: 6,
   },
+  dynaField: {
+    flex: 1,
+  },
+  dynaKeyField: {
+    marginRight: theme.spacing(0.5),
+  },
+  dynaValueField: {
+    marginLeft: theme.spacing(0.5),
+  },
+  dynaKeyValueLabelWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-start',
+
+  }
 }));
 
 /**
@@ -113,7 +127,10 @@ export function KeyValueComponent(props) {
       disabled={disabled}
       data-test={dataTest}
       className={classes.container}>
-      <FormLabel className={classes.label}>{label}</FormLabel>
+      <div className={classes.dynaKeyValueLabelWrapper}>
+        <FormLabel className={classes.label}>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <Fragment key={`${rowInd}-${isKey}`}>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
@@ -127,8 +144,7 @@ export function KeyValueComponent(props) {
                 placeholder={keyName}
                 variant="filled"
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, keyName)
-                }
+                  handleUpdate(r.row, _value, keyName)}
                 labelName={suggestKeyConfig.labelName}
                 valueName={suggestKeyConfig.valueName}
                 options={{ suggestions: suggestKeyConfig.suggestions }}
@@ -145,7 +161,7 @@ export function KeyValueComponent(props) {
                 placeholder={keyName}
                 variant="filled"
                 onChange={handleKeyUpdate(r.row)}
-                fullWidth
+                className={clsx(classes.dynaField, classes.dynaKeyField)}
               />
             )}
 
@@ -161,8 +177,7 @@ export function KeyValueComponent(props) {
                 labelName={suggestValueConfig.labelName}
                 valueName={suggestValueConfig.valueName}
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, valueName)
-                }
+                  handleUpdate(r.row, _value, valueName)}
                 options={{ suggestions: suggestValueConfig.suggestions }}
                 fullWidth
               />
@@ -177,7 +192,7 @@ export function KeyValueComponent(props) {
                 placeholder={valueName}
                 variant="filled"
                 onChange={handleValueUpdate(r.row)}
-                fullWidth
+                className={clsx(classes.dynaField, classes.dynaValueField)}
               />
             )}
 
@@ -199,10 +214,10 @@ export function KeyValueComponent(props) {
           value=""
           id={`new-${keyName}`}
           data-test={`new-${keyName}`}
-          label={keyName}
+          placeholder={keyName}
           variant="filled"
           onChange={handleKeyUpdate()}
-          fullWidth
+          className={clsx(classes.dynaField, classes.dynaKeyField)}
         />
 
         <TextField
@@ -210,10 +225,10 @@ export function KeyValueComponent(props) {
           value=""
           id={`new-${valueName}`}
           data-test={`new-${valueName}`}
-          label={valueName}
+          placeholder={valueName}
           variant="filled"
           onChange={handleValueUpdate()}
-          fullWidth
+          className={clsx(classes.dynaField, classes.dynaValueField)}
         />
 
         {showDelete && (
@@ -235,7 +250,7 @@ export default function DynaKeyValue(props) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <KeyValueComponent
         {...props}
         dataTest={id}
@@ -243,6 +258,6 @@ export default function DynaKeyValue(props) {
         classes={classes}
       />
       <ErroredMessageComponent {...props} />
-    </Fragment>
+    </>
   );
 }

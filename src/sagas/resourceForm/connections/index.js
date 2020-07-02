@@ -96,14 +96,14 @@ export function* netsuiteUserRoles({ connectionId, values }) {
         false
       );
 
-    if (!respSuccess)
+    if (!respSuccess) {
       yield put(
         actions.resource.connections.netsuite.requestUserRolesFailed(
           connectionId,
           'Invalid netsuite credentials provided'
         )
       );
-    else if (values) {
+    } else if (values) {
       // for a new connection we fetch userRoles
       // remove non success user environments
       const successOnlyEnvs = Object.keys(resp)
@@ -117,13 +117,14 @@ export function* netsuiteUserRoles({ connectionId, values }) {
           successOnlyEnvs
         )
       );
-    } else
+    } else {
       yield put(
         actions.resource.connections.netsuite.receivedUserRoles(
           connectionId,
           resp
         )
       );
+    }
   } catch (e) {
     if (e.status === 403 || e.status === 401) {
       return;
@@ -161,10 +162,11 @@ export function* requestToken({ resourceId, fieldId, values }) {
     assistant
   ];
 
-  if (!payloadTransformer || !responseParser)
+  if (!payloadTransformer || !responseParser) {
     throw new Error(
       'No Payload transform function or token transform function provided'
     );
+  }
 
   let reqPayload;
 
@@ -240,13 +242,14 @@ export function* requestToken({ resourceId, fieldId, values }) {
     );
 
     if (assistant === 'grms') {
-      if (resp && !resp.token.Success)
+      if (resp && !resp.token.Success) {
         yield put(
           actions.resource.connections.requestTokenFailed(
             resourceId,
             resp && resp.token.ResponseMessages
           )
         );
+      }
     }
   } catch (e) {
     yield put(
@@ -319,13 +322,14 @@ export function* pingConnectionWithAbort(params) {
   });
 
   // perform submit cleanup
-  if (abortPing)
+  if (abortPing) {
     yield put(
       actions.resource.connections.testCancelled(
         resourceId,
         'Request Cancelled'
       )
     );
+  }
 }
 
 export function* openOAuthWindowForConnection(resourceId) {
@@ -344,11 +348,7 @@ export function* openOAuthWindowForConnection(resourceId) {
     // eslint-disable-next-line no-alert
     window.alert('POPUP blocked');
 
-    try {
-      win.close();
-    } catch (ex) {
-      throw ex;
-    }
+    win.close();
 
     return false;
   }
@@ -473,10 +473,12 @@ export function* pingAndUpdateConnection({ connectionId }) {
   try {
     yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}/ping`,
+      hidden: true
     });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,
+      hidden: true
     });
 
     yield put(actions.resource.received('connections', connectionResource));

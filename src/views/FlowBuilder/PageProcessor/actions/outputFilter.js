@@ -1,4 +1,4 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
@@ -80,6 +80,7 @@ function OutputFilterDialog({
       insertStubKey="filter"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      flowId={flowId}
     />
   );
 }
@@ -87,7 +88,7 @@ function OutputFilterDialog({
 function OutputFilter(props) {
   const { open } = props;
 
-  return <Fragment>{open && <OutputFilterDialog {...props} />}</Fragment>;
+  return <>{open && <OutputFilterDialog {...props} />}</>;
 }
 
 export default {

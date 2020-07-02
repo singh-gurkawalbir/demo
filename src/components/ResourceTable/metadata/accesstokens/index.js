@@ -1,3 +1,4 @@
+import React from 'react';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
 import AuditLogs from '../../actions/AuditLogs';
@@ -6,6 +7,7 @@ import Revoke from '../../actions/AccessTokens/Revoke';
 import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
 import AutoPurgeAt from '../../actions/AccessTokens/AutoPurgeAt';
+import Edit from '../../actions/Edit';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
@@ -18,10 +20,6 @@ export default {
         return <ResourceDrawerLink resourceType="accesstokens" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
     },
     {
       // TODO add permission checks
@@ -54,14 +52,16 @@ export default {
     const isOTT = r._connectorId && !r.autoPurgeAt;
 
     if (r.revoked) {
-      actionItems = [Reactivate, Regenerate, AuditLogs];
+      actionItems = [AuditLogs, Reactivate, Regenerate];
     } else {
-      actionItems = [Revoke, Regenerate, AuditLogs];
+      actionItems = [AuditLogs, Revoke, Regenerate];
     }
 
     if (!isOTT && r.revoked) {
       actionItems.push(Delete);
     }
+    actionItems = [Edit, ...actionItems];
+
 
     return actionItems;
   },

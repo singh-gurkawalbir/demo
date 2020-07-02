@@ -37,7 +37,7 @@ export default {
       '/type': 'http',
       '/assistant': 'slack',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `https://slack.com/api`,
+      '/http/baseURI': 'https://slack.com/api',
       '/http/ping/relativeURI': 'api.test',
       '/http/ping/method': 'GET',
       '/http/ping/successPath': 'ok',
@@ -121,23 +121,23 @@ export default {
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     settings: { fieldId: 'settings' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.auth.oauth.scope',
-      'http.auth.token.token',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.auth.oauth.scope',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
-    {
-      id: 'cancel',
-    },
     {
       id: 'oauth',
       label: 'Save & authorize',
@@ -149,17 +149,38 @@ export default {
       ],
     },
     {
-      id: 'test',
+      id: 'save',
+      label: 'Save',
       visibleWhen: [
         {
           field: 'http.auth.type',
           is: ['token'],
         },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
       ],
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

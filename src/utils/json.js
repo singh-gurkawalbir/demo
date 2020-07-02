@@ -20,10 +20,11 @@ export default {
         }
       });
 
-      if (missingFields.length)
+      if (missingFields.length) {
         errors.push(
           `${missingFields.join(',')} field missing at position ${index}`
         );
+      }
     });
 
     return errors.length ? errors.join('\n') : null;

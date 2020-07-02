@@ -1,4 +1,5 @@
-import CodeEditor from '../../../components/CodeEditor';
+import React from 'react';
+import CodeEditor from '../../CodeEditor';
 
 const defaults = {
   global: {
@@ -15,18 +16,18 @@ const defaults = {
   },
 };
 
-export default function CodePanel(props) {
-  const {
-    name,
-    value,
-    mode,
-    readOnly = false,
-    height,
-    width,
-    onChange,
-    enableAutocomplete,
-    overrides,
-  } = props;
+export default function CodePanel({
+  name,
+  value,
+  mode,
+  readOnly = false,
+  height,
+  width,
+  onChange,
+  enableAutocomplete,
+  overrides,
+  skipDelay,
+}) {
   const config = {
     ...defaults.global,
     ...defaults[mode],
@@ -46,7 +47,6 @@ export default function CodePanel(props) {
 
   return (
     <CodeEditor
-      // ref={c => (this.editor = c)}
       name={name}
       value={safeValue}
       mode={mode}
@@ -59,6 +59,7 @@ export default function CodePanel(props) {
       enableAutocomplete={enableAutocomplete}
       wrap={config.wrap}
       onChange={onChange}
+      skipDelay={skipDelay}
     />
   );
 }

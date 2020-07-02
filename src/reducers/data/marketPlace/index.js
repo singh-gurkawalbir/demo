@@ -1,6 +1,7 @@
 import produce from 'immer';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
+import { stringCompare } from '../../../utils/sort';
 
 const emptySet = [];
 
@@ -42,7 +43,7 @@ export function connectors(state, application, sandbox, licenses) {
         if (
           !hasLicense &&
           moment(l.expires) - moment() > 0 &&
-          l.type === 'connector' &&
+          ((conn.framework === 'twoDotZero') ? (l.type === 'integrationApp') : (l.type === 'connector')) &&
           l._connectorId === conn._id &&
           !l._integrationId &&
           !!l.sandbox === sandbox
@@ -79,7 +80,7 @@ export function templates(state, application) {
   if (application) {
     templates = templates
       .filter(t => t.applications && t.applications.includes(application))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort(stringCompare('name'));
   }
 
   return templates;

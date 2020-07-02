@@ -1,14 +1,15 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
 import { adaptorTypeMap } from '../resource';
+// eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
 import getJSONPaths, {
   getJSONPathArrayWithSpecialCharactersWrapped,
   pickFirstObject,
 } from '../jsonPaths';
-import { isJsonString } from '../../utils/string';
-import connectors from '../../constants/applications';
+import { isJsonString } from '../string';
+import {applicationsList} from '../../constants/applications';
 
 const isCsvOrXlsxResource = resource => {
   const { adaptorType: resourceAdapterType, file } = resource;
@@ -18,8 +19,7 @@ const isCsvOrXlsxResource = resource => {
     (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.FTPImport ||
       adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.S3Import) &&
     (resourceFileType === 'xlsx' || resourceFileType === 'csv')
-  )
-    return true;
+  ) return true;
 
   return false;
 };
@@ -461,9 +461,11 @@ export default {
   getFieldMappingType: value => {
     if (value.lookupName) {
       return 'lookup';
-    } else if ('hardCodedValue' in value) {
+    }
+    if ('hardCodedValue' in value) {
       return 'hardCoded';
-    } else if (value.extract && value.extract.indexOf('{{') !== -1) {
+    }
+    if (value.extract && value.extract.indexOf('{{') !== -1) {
       return 'multifield';
     }
 
@@ -517,7 +519,8 @@ export default {
   getDefaultExpression: value => {
     if (value.extract && value.extract.indexOf('{{') !== -1) {
       return value.extract;
-    } else if (value.extract) {
+    }
+    if (value.extract) {
       return `{{${value.extract}}}`;
     }
   },
@@ -741,9 +744,10 @@ export default {
     }
   },
   getApplicationName: (resource = {}, conn) => {
-    if (resource.assistant) {
+    if (resource.assistant || conn.assistant) {
+      const connectors = applicationsList();
       const assistant = connectors.find(
-        connector => connector.id === resource.assistant
+        connector => (connector.id === resource.assistant || connector.id === conn.assistant)
       );
 
       if (assistant) return assistant.name;
@@ -861,7 +865,7 @@ export default {
       return;
     }
 
-    /* TODO: With support for different application being adding up, 
+    /* TODO: With support for different application being adding up,
       path for mapping to be updated below */
     let mappings = {};
     const { adaptorType } = resourceObj;
@@ -1034,8 +1038,7 @@ export default {
       mappings.fields.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource))
-          _fm.useFirstRow = true;
+        if (isGroupedSampleData && isCsvOrXlsxResource(resource)) _fm.useFirstRow = true;
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
@@ -1311,11 +1314,12 @@ export default {
       return false;
     });
 
-    if (mappingsWithoutGenerates.length)
+    if (mappingsWithoutGenerates.length) {
       return {
         isSuccess: false,
-        errMessage: `One or more generate fields missing`,
+        errMessage: 'One or more generate fields missing',
       };
+    }
     const mappingsWithoutExtract = mappings.filter(mapping => {
       if (!('hardCodedValue' in mapping || mapping.extract)) return true;
 
@@ -1354,13 +1358,14 @@ export default {
     const { jsonPath } = options;
     let extractPaths = getJSONPaths(pickFirstObject(fields));
 
-    if (jsonPath)
+    if (jsonPath) {
       extractPaths = extractPaths
         .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
         .map(f => ({
           ...f,
           id: f.id.replace(`${jsonPath}[*].`, ''),
         }));
+    }
 
     return extractPaths;
   },

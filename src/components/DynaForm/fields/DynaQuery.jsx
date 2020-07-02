@@ -1,6 +1,6 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 import DynaText from './DynaText';
 
 /**
@@ -28,8 +28,8 @@ export default function DynaQuery(props) {
   };
 
   return (
-    <Fragment>
-      <DynaText label={label} value={value} disabled multiline />
+    <>
+      <DynaText {...props} disabled multiline />
       {showEditor && (
         <SqlQueryBuilderEditorDialog
           title="Lookups"
@@ -49,6 +49,6 @@ export default function DynaQuery(props) {
         onClick={handleEditorClick}>
         Define {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

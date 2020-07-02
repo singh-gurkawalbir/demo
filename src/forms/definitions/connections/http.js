@@ -1,6 +1,6 @@
 export default {
   preSave: formValues => {
-    const newValues = Object.assign({}, formValues);
+    const newValues = { ...formValues};
 
     delete newValues['/mode'];
 
@@ -28,13 +28,13 @@ export default {
       }
     }
 
-    if (newValues['/http/oauth/encrypted']) {
+    if (newValues['/http/custom/encrypted']) {
       try {
-        newValues['/http/oauth/encrypted'] = JSON.parse(
-          newValues['/http/oauth/encrypted']
+        newValues['/http/custom/encrypted'] = JSON.parse(
+          newValues['/http/custom/encrypted']
         );
       } catch (ex) {
-        newValues['/http/oauth/encrypted'] = undefined;
+        newValues['/http/custom/encrypted'] = undefined;
       }
     }
 
@@ -48,13 +48,13 @@ export default {
       }
     }
 
-    if (newValues['/http/oauth/unencrypted']) {
+    if (newValues['/http/custom/unencrypted']) {
       try {
-        newValues['/http/oauth/unencrypted'] = JSON.parse(
-          newValues['/http/oauth/unencrypted']
+        newValues['/http/custom/unencrypted'] = JSON.parse(
+          newValues['/http/custom/unencrypted']
         );
       } catch (ex) {
-        newValues['/http/oauth/unencrypted'] = undefined;
+        newValues['/http/custom/unencrypted'] = undefined;
       }
     }
 
@@ -109,19 +109,14 @@ export default {
       newValues['/http/auth/token/headerName'] =
         newValues['/http/auth/wsse/headerName'];
     }
-
+    if (newValues['/http/auth/type'] === 'custom') {
+      newValues['/http/encrypted'] =
+        newValues['/http/custom/encrypted'];
+      newValues['/http/unencrypted'] =
+        newValues['/http/custom/unencrypted'];
+    }
     if (newValues['/http/auth/type'] === 'oauth') {
       newValues['/http/auth/oauth/applicationType'] = 'custom';
-      newValues['/http/headers'] = newValues['/http/oauth/headers'];
-      newValues['/http/baseURI'] = newValues['/http/oauth/baseURI'];
-      newValues['/http/mediaType'] = newValues['/http/oauth/mediaType'];
-      newValues['/http/encrypted'] = newValues['/http/oauth/encrypted'];
-      newValues['/http/unencrypted'] = newValues['/http/oauth/unencrypted'];
-      newValues['/http/auth/failStatusCode'] =
-        newValues['/http/auth/oauth/failStatusCode'];
-      newValues['/http/auth/failPath'] = newValues['/http/auth/oauth/failPath'];
-      newValues['/http/auth/failValues'] =
-        newValues['/http/auth/oauth/failValues'];
       newValues['/http/auth/token/location'] =
         newValues['/http/auth/oauth/location'];
       newValues['/http/auth/token/headerName'] =
@@ -134,30 +129,22 @@ export default {
         newValues['/http/oauth/customAuthScheme'];
     }
 
-    if (!newValues['/http/auth/token/revoke/uri'])
-      delete newValues['/http/auth/token/revoke/uri'];
+    if (!newValues['/http/auth/token/revoke/uri']) delete newValues['/http/auth/token/revoke/uri'];
 
-    if (!newValues['/http/auth/token/revoke/body'])
-      delete newValues['/http/auth/token/revoke/body'];
+    if (!newValues['/http/auth/token/revoke/body']) delete newValues['/http/auth/token/revoke/body'];
 
     if (!newValues['/http/auth/failPath']) {
       newValues['/http/auth/failValues'] = undefined;
     }
 
-    delete newValues['/http/oauth/headers'];
-    delete newValues['/http/oauth/baseURI'];
-    delete newValues['/http/oauth/mediaType'];
-    delete newValues['/http/oauth/encrypted'];
-    delete newValues['/http/oauth/unencrypted'];
-    delete newValues['/http/auth/oauth/failStatusCode'];
-    delete newValues['/http/auth/oauth/failPath'];
-    delete newValues['/http/auth/oauth/failValues'];
     delete newValues['/http/auth/oauth/location'];
     delete newValues['/http/auth/oauth/headerName'];
     delete newValues['/http/auth/oauth/scheme'];
     delete newValues['/http/auth/oauth/paramName'];
     delete newValues['/http/oauth/customAuthScheme'];
     delete newValues['/http/auth/wsse/headerName'];
+    delete newValues['/http/custom/encrypted'];
+    delete newValues['/http/cutom/unencrypted'];
 
     return newValues;
   },
@@ -172,7 +159,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -184,31 +171,25 @@ export default {
     'http.auth.type': { fieldId: 'http.auth.type' },
     'http.headers': {
       fieldId: 'http.headers',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.auth.failStatusCode': {
       fieldId: 'http.auth.failStatusCode',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.auth.failPath': {
       fieldId: 'http.auth.failPath',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.auth.failValues': {
       fieldId: 'http.auth.failValues',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
     },
     'http.encrypted': {
       fieldId: 'http.encrypted',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
@@ -216,7 +197,7 @@ export default {
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     'http.unencrypted': {
       fieldId: 'http.unencrypted',
-      visibleWhen: [{ field: 'http.auth.type', isNot: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -369,80 +350,8 @@ export default {
       fieldId: 'http.auth.oauth.clientCredentialsLocation',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
-    'http.oauth.headers': {
-      id: 'http.oauth.headers',
-      type: 'keyvalue',
-      keyName: 'name',
-      valueName: 'value',
-      valueType: 'keyvalue',
-      defaultValue: r => (r && r.http && r.http.headers) || '',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      label: 'Configure HTTP headers',
-      helpKey: 'connection.http.headers',
-    },
-    'http.auth.oauth.failStatusCode': {
-      id: 'http.auth.oauth.failStatusCode',
-      type: 'text',
-      label: 'Authentication fail status code',
-      helpKey: 'connection.http.auth.failStatusCode',
-      defaultValue: r =>
-        r && r.http && r.http.auth && r.http.auth.failStatusCode,
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      validWhen: [
-        {
-          matchesRegEx: {
-            pattern: '^[\\d]+$',
-            message: 'Only numbers allowed',
-          },
-        },
-      ],
-    },
-    'http.auth.oauth.failPath': {
-      id: 'http.auth.oauth.failPath',
-      type: 'text',
-      label: 'Authentication fail path',
-      helpKey: 'connection.http.auth.failPath',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.failPath,
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http.auth.oauth.failValues': {
-      id: 'http.auth.oauth.failValues',
-      type: 'text',
-      delimiter: ',',
-      helpKey: 'connection.http.auth.failValues',
-      label: 'Authentication fail values',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.failValues,
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http.oauth.baseURI': {
-      id: 'http.oauth.baseURI',
-      type: 'text',
-      label: 'Base uri',
-      required: true,
-      helpKey: 'connection.http.baseURI',
-      defaultValue: r => r && r.http && r.http.baseURI,
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http.oauth.mediaType': {
-      id: 'http.oauth.mediaType',
-      type: 'select',
-      label: 'Media type',
-      required: true,
-      helpKey: 'connection.http.mediaType',
-      defaultValue: r => (r && r.http && r.http.mediaType) || 'json',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-      options: [
-        {
-          items: [
-            { label: 'XML', value: 'xml' },
-            { label: 'JSON', value: 'json' },
-            { label: 'URL Encoded', value: 'urlencoded' },
-          ],
-        },
-      ],
-    },
-    'http.oauth.encrypted': {
-      id: 'http.oauth.encrypted',
+    'http.custom.encrypted': {
+      id: 'http.custom.encrypted',
       type: 'editor',
       mode: 'json',
       label: 'Encrypted',
@@ -450,16 +359,16 @@ export default {
       defaultValue: r =>
         (r && r.http && r.http.encrypted && JSON.stringify(r.http.encrypted)) ||
         '{"field": "value"}',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],
     },
-    'http.oauth.unencrypted': {
+    'http.custom.unencrypted': {
       id: 'http.oauth.unencrypted',
       type: 'editor',
       mode: 'json',
       required: true,
       label: 'Unencrypted',
       helpKey: 'connection.http.unencrypted',
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],
       defaultValue: r =>
         (r &&
           r.http &&
@@ -605,32 +514,46 @@ export default {
       fieldId: 'http.auth.token.revoke.headers',
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'http.auth.type',
-      'http.headers',
-      'http.auth.failStatusCode',
-      'http.auth.failPath',
-      'http.auth.failValues',
-      'http.baseURI',
-      'http.mediaType',
-      'http.encrypted',
-      'http.unencrypted',
-      'httpBasic',
-      'httpToken',
-      'httpCookie',
-      'http.auth.wsse.headerName',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'OAuth authorization settings',
+        label: 'General',
         fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.headers',
+          'http.baseURI',
+          'http.mediaType',
+          'http.auth.failStatusCode',
+          'http.auth.failPath',
+          'http.auth.failValues',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure auth',
+        fields: [
+          'http.auth.type',
+          'httpBasic',
+          'httpToken',
+          'httpCookie',
+          'http.custom.encrypted',
+          'http.custom.unencrypted',
+          'http.auth.wsse.headerName',
           'http.auth.oauth.grantType',
           'http.auth.oauth.callbackURL',
           'http._iClientId',
@@ -640,54 +563,13 @@ export default {
           'http.auth.oauth.scopeDelimiter',
           'http.auth.oauth.tokenURI',
           'http.auth.oauth.clientCredentialsLocation',
-        ],
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'Access Token Parameters',
-            fields: [
-              'http.auth.oauth.accessTokenHeaders',
-              'http.auth.oauth.accessTokenBody',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Refresh Token Parameters',
-            fields: [
-              'http.auth.oauth.refreshHeaders',
-              'http.auth.oauth.refreshBody',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Revoke Token Parameters',
-            fields: [
-              'http.auth.token.revoke.uri',
-              'http.auth.token.revoke.headers',
-              'http.auth.token.revoke.body',
-            ],
-          },
-        ],
-      },
-      {
-        collapsed: true,
-        label: 'HTTP resource settings',
-        fields: [
-          'http.oauth.headers',
-          'http.oauth.baseURI',
-          'http.oauth.mediaType',
-          'http.oauth.encrypted',
-          'http.oauth.unencrypted',
-          'http.auth.oauth.failStatusCode',
-          'http.auth.oauth.failPath',
-          'http.auth.oauth.failValues',
-        ],
-      },
-      {
-        collapsed: true,
-        label: 'How to send token?',
-        fields: [
+          'http.auth.oauth.accessTokenHeaders',
+          'http.auth.oauth.accessTokenBody',
+          'http.auth.oauth.refreshHeaders',
+          'http.auth.oauth.refreshBody',
+          'http.auth.token.revoke.uri',
+          'http.auth.token.revoke.headers',
+          'http.auth.token.revoke.body',
           'http.auth.oauth.location',
           'http.auth.oauth.headerName',
           'http.auth.oauth.scheme',
@@ -697,7 +579,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'API Rate Limits',
+        label: 'Non-standard API rate limiter',
         fields: [
           'http.rateLimit.limit',
           'http.rateLimit.failStatusCode',
@@ -722,28 +604,20 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'Advanced',
         fields: [
           'http.disableStrictSSL',
           'httpAdvanced',
           'http.clientCertificates.key',
           'http.clientCertificates.cert',
           'http.clientCertificates.passphrase',
+          'http.encrypted',
+          'http.unencrypted',
         ],
       },
     ],
   },
   actions: [
-    {
-      id: 'test',
-      label: 'Test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
-        },
-      ],
-    },
     {
       id: 'saveandcontinue',
       label: 'Save & continue',
@@ -772,12 +646,40 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'wsse'],
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          isNot: ['oauth'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
         },
       ],
     },
     {
       id: 'cancel',
+    },
+    {
+      id: 'test',
+      label: 'Test',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token', 'basic', 'custom', 'cookie', 'digest', 'oauth', 'wsse'],
+        },
+      ],
     },
   ],
 };

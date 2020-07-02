@@ -32,7 +32,8 @@ export default (state = [], action) => {
         const sharedAccounts = state.filter(a => a._id !== ACCOUNT_IDS.OWN);
 
         return [ownAccount, ...sharedAccounts];
-      } else if (resourceType === 'shared/ashares') {
+      }
+      if (resourceType === 'shared/ashares') {
         const ownAccounts = state.filter(a => a._id === ACCOUNT_IDS.OWN);
 
         if (!ownAccounts.length) {
@@ -397,6 +398,14 @@ export function accessLevel(state, accountId) {
     return undefined;
   }
 
+  if (
+    account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    account.integrationAccessLevel &&
+    account.integrationAccessLevel.length > 0
+  ) {
+    return USER_ACCESS_LEVELS.TILE;
+  }
+
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
 }
 
@@ -435,6 +444,7 @@ export function permissions(
     'users',
     'exports',
     'imports',
+    'apis',
   ];
   const permissions = {};
 
@@ -579,6 +589,18 @@ export function permissions(
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;
+
+    if (account && account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+      permissions.integrations.none = {
+        accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+        flows: {},
+        connections: {},
+      };
+      permissions.integrations.all = { ...permissions.integrations.none };
+      permissions.integrations.connectors = {
+        ...permissions.integrations.none,
+      };
+    }
 
     if (
       account &&

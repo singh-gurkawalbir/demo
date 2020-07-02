@@ -113,6 +113,18 @@ export const appTheme = createSelector(
   }
 );
 
+export function drawerOpened(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && !!preferences.drawerOpened;
+}
+
+export function expandSelected(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && preferences.expand;
+}
+
 export const editorTheme = createSelector(
   state => state,
   appTheme,
@@ -220,7 +232,7 @@ export const accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile;
+      const { name, email } = profile || {};
 
       return { name, email };
     }

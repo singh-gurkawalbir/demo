@@ -66,7 +66,8 @@ export default {
           if (baseUri) {
             if (baseUri.indexOf('demo.openair.com') !== -1) {
               return 'demo';
-            } else if (baseUri.indexOf('sandbox.openair.com') !== -1) {
+            }
+            if (baseUri.indexOf('sandbox.openair.com') !== -1) {
               return 'sandbox';
             }
 
@@ -117,21 +118,24 @@ export default {
       helpKey: 'openair.connection.http.unencrypted.apiKey',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'environment',
-      'http.unencrypted.companyId',
-      'http.unencrypted.userId',
-      'http.encrypted.password',
-      'http.unencrypted.namespace',
-      'http.unencrypted.apiKey',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment',
+          'http.unencrypted.companyId',
+          'http.unencrypted.userId',
+          'http.encrypted.password',
+          'http.unencrypted.namespace',
+          'http.unencrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

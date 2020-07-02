@@ -37,11 +37,7 @@ export default {
     common: {
       formId: 'common',
     },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the data imported?',
-    },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
@@ -94,23 +90,35 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'importData',
-      'mongodb.method',
-      'mongodb.collection',
-      'ignoreExisting',
-      'mongodb.lookupType',
-      'mongodb.ignoreLookupFilter',
-      'mongodb.filter',
-      'mongodb.upsert',
-      'ignoreMissing',
-      'mongodb.ignoreExtract',
-      'mongodb.document',
-      'mongodb.update',
-      'dataMappings',
-    ],
     type: 'collapse',
-    containers: [],
+    containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
+        fields: [
+          'mongodb.method',
+          'mongodb.collection',
+          'ignoreExisting',
+          'mongodb.lookupType',
+          'mongodb.ignoreLookupFilter',
+          'mongodb.filter',
+          'mongodb.upsert',
+          'ignoreMissing',
+          'mongodb.ignoreExtract',
+          'mongodb.document',
+          'mongodb.update',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
+      },
+    ],
   },
 };

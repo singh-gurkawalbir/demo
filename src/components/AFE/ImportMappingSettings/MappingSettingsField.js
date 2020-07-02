@@ -1,5 +1,5 @@
-import { useState, Fragment } from 'react';
-import ImportMappingSettings from './';
+import React, { useState } from 'react';
+import ImportMappingSettings from '.';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
 
@@ -36,7 +36,7 @@ export default function MappingSettingsField(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {showSettings && (
         <ImportMappingSettings
           application={application}
@@ -62,6 +62,6 @@ export default function MappingSettingsField(props) {
         key="settings">
         <SettingsIcon />
       </ActionButton>
-    </Fragment>
+    </>
   );
 }

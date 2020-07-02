@@ -81,10 +81,6 @@ export function hasData(state, resourceType) {
   return fromResources.hasData(state && state.resources, resourceType);
 }
 
-export function isAgentOnline(state, agentId) {
-  return fromResources.isAgentOnline(state && state.resources, agentId);
-}
-
 export function exportNeedsRouting(state, id) {
   return fromResources.exportNeedsRouting(state && state.resources, id);
 }
@@ -225,8 +221,8 @@ export function flowJobsPagingDetails(state) {
   return fromJobs.flowJobsPagingDetails(state.jobs);
 }
 
-export function flowJobs(state) {
-  return fromJobs.flowJobs(state.jobs);
+export function flowJobs(state, options) {
+  return fromJobs.flowJobs(state.jobs, options);
 }
 
 export function inProgressJobIds(state) {
@@ -265,3 +261,11 @@ export const fileDefinition = (state, definitionId, options) =>
     definitionId,
     options
   );
+
+export function hasSettingsForm(state, resourceType, resourceId) {
+  return fromResources.hasSettingsForm(
+    state && state.resources,
+    resourceType,
+    resourceId
+  );
+}

@@ -737,7 +737,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
 
   if (adaptorType === 'http') {
     Object.keys(operationDetails.response || {}).forEach(
-      prop => (exportDoc.response[prop] = operationDetails.response[prop])
+      prop => { exportDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 
@@ -949,6 +949,11 @@ export function convertToExport({ assistantConfig, assistantData }) {
     }
   }
 
+  /** paging.body should be a string */
+  if (exportDoc.paging && isObject(exportDoc.paging.body)) {
+    exportDoc.paging.body = JSON.stringify(exportDoc.paging.body);
+  }
+
   const assistantMetadata = { resource };
 
   if (version) {
@@ -1140,6 +1145,10 @@ export function convertToReactFormFields({
         readOnly: !!field.readOnly,
       };
 
+      if (fieldDef.readOnly) {
+        fieldDef.defaultDisabled = true;
+      }
+
       if (fieldDef.type === 'textwithflowsuggestion') {
         fieldDef.showLookup = false;
       }
@@ -1163,9 +1172,9 @@ export function convertToReactFormFields({
           {
             items: field.options
               ? field.options.map(opt => ({
-                  label: opt.toString(),
-                  value: opt,
-                }))
+                label: opt.toString(),
+                value: opt,
+              }))
               : [],
           },
         ];
@@ -1717,7 +1726,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     importDoc.response.successPath = operationDetails.successPath;
 
     Object.keys(operationDetails.response || {}).forEach(
-      prop => (importDoc.response[prop] = operationDetails.response[prop])
+      prop => { importDoc.response[prop] = operationDetails.response[prop]; }
     );
   }
 

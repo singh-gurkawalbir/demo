@@ -2,7 +2,7 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-    retValues['/rest/pingRelativeURI'] === '/admin/orders.json';
+    retValues['/rest/pingRelativeURI'] === '/orders.json';
 
     if (retValues['/rest/authType'] === 'oauth') {
       retValues['/rest/tokenLocation'] = 'header';
@@ -27,15 +27,15 @@ export default {
             ? /^(read_|write_)(\w*)/.exec(scope)[2]
             : '';
           const pingURIs = {
-            content: '/admin/articles/authors.json',
-            themes: '/admin/themes.json',
-            products: '/admin/products/count.json',
-            customers: '/admin/customers/count.json',
-            orders: '/admin/orders/count.json',
-            script_tags: '/admin/script_tags/count.json',
-            fulfillments: '/admin/fulfillment_services.json?scope=all',
-            shipping: '/admin/carrier_services.json',
-            users: '/admin/users.json',
+            content: '/articles/authors.json',
+            themes: '/themes.json',
+            products: '/products/count.json',
+            customers: '/customers/count.json',
+            orders: '/orders/count.json',
+            script_tags: '/script_tags/count.json',
+            fulfillments: '/fulfillment_services.json?scope=all',
+            shipping: '/carrier_services.json',
+            users: '/users.json',
           };
 
           retValues['/rest/pingRelativeURI'] = pingURIs[scopeId];
@@ -56,7 +56,9 @@ export default {
       '/type': 'rest',
       '/assistant': 'shopify',
       '/rest/mediaType': 'json',
-      '/rest/baseURI': `https://${formValues['/rest/storeURL']}.myshopify.com`,
+      '/rest/baseURI': `https://${
+        formValues['/rest/storeURL']
+      }.myshopify.com/admin/api/${formValues['/rest/unencrypted/version']}`,
       '/rest/pingMethod': 'GET',
     };
   },
@@ -100,6 +102,15 @@ export default {
         },
       },
     },
+    'rest.unencrypted.version': {
+      fieldId: 'rest.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      required: true,
+      defaultValue: r =>
+        (r && r.rest && r.rest.unencrypted && r.rest.unencrypted.version) ||
+        '2020-01',
+    },
     'rest.basicAuth.username': {
       fieldId: 'rest.basicAuth.username',
       label: 'API key',
@@ -112,47 +123,57 @@ export default {
     'rest.scope': {
       fieldId: 'rest.scope',
       scopes: [
-        'read_content',
-        'write_content',
-        'read_themes',
-        'write_themes',
-        'read_products',
-        'write_products',
-        'read_product_listings',
-        'read_customers',
-        'write_customers',
-        'read_orders',
-        'write_orders',
-        'read_all_orders',
-        'read_draft_orders',
-        'write_draft_orders',
-        'read_inventory',
-        'write_inventory',
-        'read_locations',
-        'read_script_tags',
-        'write_script_tags',
-        'read_fulfillments',
-        'write_fulfillments',
-        'read_shipping',
-        'write_shipping',
-        'read_analytics',
-        'read_users',
-        'write_users',
-        'read_checkouts',
-        'write_checkouts',
-        'read_reports',
-        'write_reports',
-        'read_price_rules',
-        'write_price_rules',
-        'read_marketing_events',
-        'write_marketing_events',
-        'read_resource_feedbacks',
-        'write_resource_feedbacks',
-        'read_shopify_payments_payouts',
-        'unauthenticated_read_product_listings',
-        'unauthenticated_write_checkouts',
-        'unauthenticated_write_customers',
-        'unauthenticated_read_content',
+        {subHeader: 'Shopify scopes',
+          scopes: [
+            'read_content',
+            'write_content',
+            'read_themes',
+            'write_themes',
+            'read_products',
+            'write_products',
+            'read_product_listings',
+            'read_customers',
+            'write_customers',
+            'read_orders',
+            'write_orders',
+            'read_all_orders',
+            'read_draft_orders',
+            'write_draft_orders',
+            'read_inventory',
+            'write_inventory',
+            'read_locations',
+            'read_script_tags',
+            'write_script_tags',
+            'read_fulfillments',
+            'write_fulfillments',
+            'read_shipping',
+            'write_shipping',
+            'read_analytics',
+            'read_checkouts',
+            'write_checkouts',
+            'read_reports',
+            'write_reports',
+            'read_price_rules',
+            'write_price_rules',
+            'read_marketing_events',
+            'write_marketing_events',
+            'read_resource_feedbacks',
+            'write_resource_feedbacks',
+            'read_shopify_payments_payouts',
+            'unauthenticated_read_product_listings',
+            'unauthenticated_write_checkouts',
+            'unauthenticated_write_customers',
+            'unauthenticated_read_content',
+            'read_assigned_fulfillment_orders',
+            'write_assigned_fulfillment_orders',
+          ]
+        },
+        {
+          subHeader: 'Shopify Plus scopes',
+          scopes: [
+            'read_users',
+            'write_users'
+          ]}
       ],
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
@@ -163,30 +184,36 @@ export default {
       'name',
       'rest.authType',
       'rest.storeURL',
+      'rest.unencrypted.version',
       'rest.basicAuth.username',
       'rest.basicAuth.password',
       'rest.scope',
     ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
   actions: [
-    { id: 'cancel' },
     {
       id: 'oauth',
       label: 'Save & authorize',
       visibleWhen: [{ field: 'rest.authType', is: ['oauth'] }],
     },
     {
-      id: 'test',
-      label: 'Test',
+      id: 'save',
+      label: 'Test and save',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
     {
-      id: 'save',
-      label: 'Test and save',
+      id: 'saveandclose',
+      visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
+    },
+    { id: 'cancel' },
+    {
+      id: 'test',
+      mode: 'secondary',
+      label: 'Test',
       visibleWhen: [{ field: 'rest.authType', is: ['basic'] }],
     },
   ],

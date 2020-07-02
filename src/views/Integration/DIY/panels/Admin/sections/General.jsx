@@ -1,6 +1,5 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isObject } from 'lodash';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../reducers';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
@@ -14,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(2),
     '& > div': {
       padding: theme.spacing(3, 0),
+      overflow: 'visible',
     },
   },
 }));
@@ -22,7 +22,7 @@ export default function GeneralSection({ integrationId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
-  const { name, description, settings } =
+  const { name, description } =
     useSelector(state =>
       selectors.resource(state, 'integrations', integrationId)
     ) || {};
@@ -30,80 +30,70 @@ export default function GeneralSection({ integrationId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const fieldMeta = {
-    fieldMap: {
-      name: {
-        id: 'name',
-        helpKey: 'integration.name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: name,
+  const fieldMeta = useMemo(
+    () => ({
+      fieldMap: {
+        name: {
+          id: 'name',
+          helpKey: 'integration.name',
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          defaultValue: name,
+        },
+        description: {
+          id: 'description',
+          helpKey: 'integration.description',
+          name: 'description',
+          type: 'text',
+          multiline: true,
+          maxRows: 5,
+          label: 'Description',
+          defaultValue: description,
+        },
       },
-      description: {
-        id: 'description',
-        helpKey: 'integration.description',
-        name: 'description',
-        type: 'text',
-        multiline: true,
-        maxRows: 5,
-
-        label: 'Description',
-        defaultValue: description,
+      layout: {
+        fields: ['name', 'description'],
       },
-      settings: {
-        id: 'settings',
-        helpKey: 'integration.settings',
-        name: 'settings',
-        type: 'settings',
-        label: 'Settings',
-        defaultValue: settings,
-      },
-    },
-    layout: {
-      fields: ['name', 'description', 'settings'],
-    },
-  };
+    }),
+    [description, name]
+  );
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [name, description, settings]);
-  const handleSubmit = formVal => {
-    let settings;
+  }, [name, description]);
+  const handleSubmit = useCallback(
+    formVal => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/name',
+          value: formVal.name,
+        },
+        {
+          op: 'replace',
+          path: '/description',
+          value: formVal.description,
+        },
+      ];
 
-    if (isObject(formVal.settings)) {
-      ({ settings } = formVal);
-    }
-
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/name',
-        value: formVal.name,
-      },
-      {
-        op: 'replace',
-        path: '/description',
-        value: formVal.description,
-      },
-      {
-        op: 'replace',
-        path: '/settings',
-        value: settings,
-      },
-    ];
-
-    dispatch(
-      actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
-    );
-    dispatch(
-      actions.resource.commitStaged('integrations', integrationId, SCOPES.VALUE)
-    );
-    setCount(count => count + 1);
-  };
+      dispatch(
+        actions.resource.patchStaged(integrationId, patchSet, SCOPES.VALUE)
+      );
+      dispatch(
+        actions.resource.commitStaged(
+          'integrations',
+          integrationId,
+          SCOPES.VALUE
+        )
+      );
+      setCount(count => count + 1);
+    },
+    [dispatch, integrationId]
+  );
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="General" />
 
       <div className={classes.form}>
@@ -119,6 +109,6 @@ export default function GeneralSection({ integrationId }) {
           </DynaSubmit>
         </DynaForm>
       </div>
-    </Fragment>
+    </>
   );
 }

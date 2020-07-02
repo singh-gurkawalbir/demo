@@ -1,7 +1,8 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import ApplicationImg from '../../../../icons/ApplicationImg';
-import applications from '../../../../../constants/applications';
+import {applicationsList} from '../../../../../constants/applications';
 import CloseIcon from '../../../../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function AppPill({ appId, onRemove }) {
   const classes = useStyles();
+  const applications = applicationsList();
   const app = applications.find(a => a.id === appId);
 
   return (

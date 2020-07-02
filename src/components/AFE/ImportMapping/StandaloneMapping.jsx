@@ -1,6 +1,5 @@
-import { useMemo, useEffect, useCallback, useState } from 'react';
+import React, { useMemo, useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
@@ -9,21 +8,7 @@ import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
 import Spinner from '../../Spinner';
-
-const useStyles = makeStyles({
-  spinnerWrapper: {
-    // Todo (Azhar) :spinner wrapper used multiple times so in the next phase will make component
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    margin: 'auto',
-  },
-});
+import SpinnerWrapper from '../../SpinnerWrapper';
 
 export default function StandaloneMapping(props) {
   const {
@@ -35,7 +20,6 @@ export default function StandaloneMapping(props) {
     disabled,
     onClose,
   } = props;
-  const classes = useStyles();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
   const [flowSampleDataState, setFlowSampleDataState] = useState(undefined);
@@ -47,19 +31,20 @@ export default function StandaloneMapping(props) {
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [initTriggered, setInitTriggered] = useState(false);
   const exportResource = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
     const _exportId =
-      flowDetails &&
-      flowDetails.pageGenerators &&
-      flowDetails.pageGenerators.length &&
-      flowDetails.pageGenerators[0]._exportId;
+      flow &&
+      flow.pageGenerators &&
+      flow.pageGenerators.length &&
+      flow.pageGenerators[0]._exportId;
 
     return selectors.resource(state, 'exports', _exportId) || undefined;
   });
   const resourceData = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const isAssistant = !!resourceData.assistant;
+  const isAssistant =
+    !!resourceData.assistant && resourceData.assistant !== 'financialforce';
   const isIntegrationApp = !!resourceData._connectorId;
   const integrationId = resourceData._integrationId;
   const resourceType = ResourceUtil.getResourceSubType(resourceData);
@@ -86,9 +71,9 @@ export default function StandaloneMapping(props) {
     () =>
       subRecordMappingId
         ? mappingUtil.getSubRecordRecordTypeAndJsonPath(
-            resourceData,
-            subRecordMappingId
-          )
+          resourceData,
+          subRecordMappingId
+        )
         : {},
     [resourceData, subRecordMappingId]
   );
@@ -101,17 +86,21 @@ export default function StandaloneMapping(props) {
     })
   );
   const { data: extractFields, status: extractStatus } = sampleDataObj || {};
-  const requestSampleData = useCallback(() => {
+  const requestSampleData = useCallback((refresh = false) => {
     dispatch(
       actions.flowData.requestSampleData(
         flowId,
         resourceId,
         'imports',
         'importMappingExtract',
-        true
+        refresh
       )
     );
   }, [dispatch, flowId, resourceId]);
+
+  const refreshExtractFields = useCallback(
+    () => requestSampleData(true), [requestSampleData]
+  );
 
   useEffect(() => {
     if (
@@ -123,10 +112,10 @@ export default function StandaloneMapping(props) {
   }, [extractStatus, flowSampleDataLoaded]);
 
   useEffect(() => {
-    if (!extractFields) {
+    if (!extractStatus) {
       requestSampleData(false);
     }
-  }, [dispatch, extractFields, flowId, requestSampleData, resourceId]);
+  }, [requestSampleData, extractStatus]);
 
   if (initTriggered && !isEqual(flowSampleDataState, extractFields)) {
     dispatch(actions.mapping.updateFlowData(id, extractFields));
@@ -142,8 +131,7 @@ export default function StandaloneMapping(props) {
   const { data: importSampleData, status: generateStatus } =
     importSampleDataObj || {};
   const salesforceMasterRecordTypeInfo = useSelector(state => {
-    if (isSalesforce)
-      return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+    if (isSalesforce) return selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
   });
   const requestImportSampleData = useCallback(
     (refreshCache = true) => {
@@ -409,29 +397,20 @@ export default function StandaloneMapping(props) {
 
   if (!showMappings || isFetchingDuringInit) {
     return (
-      <div className={classes.spinnerWrapper}>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
     );
   }
 
-  const fetchSalesforceSObjectMetadata = sObject => {
-    dispatch(
-      actions.metadata.request(
-        connectionId,
-        `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObject}`
-      )
-    );
-  };
-
   const optionalHandler = {
-    fetchSalesforceSObjectMetadata,
     refreshGenerateFields: requestImportSampleData,
-    refreshExtractFields: requestSampleData,
+    refreshExtractFields,
   };
   const isGenerateRefreshSupported =
     resourceType.type === ResourceUtil.adaptorTypeMap.SalesforceImport ||
-    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport;
+    resourceType.type === ResourceUtil.adaptorTypeMap.NetSuiteImport ||
+    isIntegrationApp;
 
   return (
     <ImportMapping

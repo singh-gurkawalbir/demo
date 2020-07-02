@@ -1,5 +1,6 @@
-import UrlEditor from './';
-import HandlebarEditorDialog from '../HandlebarEditorDialog';
+import React from 'react';
+import UrlEditor from '.';
+import AFE2EditorDialog from '../AFE2EditorDialog';
 
 export default function UrlEditorDialog(props) {
   const {
@@ -12,14 +13,14 @@ export default function UrlEditorDialog(props) {
     ...rest
   } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,
   };
 
   return (
-    <HandlebarEditorDialog
+    <AFE2EditorDialog
       id={id}
       {...defaults}
       {...rest}
@@ -33,6 +34,6 @@ export default function UrlEditorDialog(props) {
         data={data}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </HandlebarEditorDialog>
+    </AFE2EditorDialog>
   );
 }

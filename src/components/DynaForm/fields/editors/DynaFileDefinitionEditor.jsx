@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,17 +20,19 @@ import FieldHelp from '../../FieldHelp';
  *    customized and saved by user while creation
  */
 const useStyles = makeStyles(theme => ({
-  fileDefinationContainer: {
-    flexDirection: `row !important`,
+  fileDefinitionContainer: {
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
-  fileDefinationBtn: {
+  fileDefinitionBtn: {
     marginRight: theme.spacing(0.5),
   },
-  fileDefinationLabel: {
+  fileDefinitionLabel: {
     marginBottom: 0,
-    marginRight: theme.spacing(1),
+    marginRight: 12,
+    maxWidth: '50%',
+    wordBreak: 'break-word',
   },
 }));
 
@@ -143,19 +145,21 @@ function DynaFileDefinitionEditor(props) {
     if (isRuleChanged) {
       onFieldChange(id, rule, true);
       // Processes the updated sample data and rules on change of format
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: parserType,
-            file: sampleData,
-            editorValues: { rule, data: sampleData },
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
+      if (sampleData) {
+        dispatch(
+          actions.sampleData.request(
+            resourceId,
+            resourceType,
+            {
+              type: parserType,
+              file: sampleData,
+              editorValues: { rule, data: sampleData },
+              formValues: formContext.value,
+            },
+            'file'
+          )
+        );
+      }
       setIsRuleChanged(false);
     }
   }, [
@@ -177,12 +181,12 @@ function DynaFileDefinitionEditor(props) {
   }, [rule]);
 
   return (
-    <Fragment>
-      <div className={classes.fileDefinationContainer}>
+    <>
+      <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
             <FileDefinitionEditorDialog
-              title="File Definition Editor"
+              title={label || 'File definition editor'}
               id={id + resourceId}
               processor={processor}
               data={
@@ -196,21 +200,20 @@ function DynaFileDefinitionEditor(props) {
               disabled={disabled}
             />
           )}
-          <FormLabel className={classes.fileDefinationLabel}>
-            File defination rules:
+          <FormLabel className={classes.fileDefinitionLabel}>
+            {label}:
           </FormLabel>
           <Button
             variant="outlined"
             color="secondary"
-            className={classes.fileDefinationBtn}
+            className={classes.fileDefinitionBtn}
             onClick={handleEditorClick}>
-            {label}
+            Launch
           </Button>
-          {/* TODO: surya we need to add the helptext for the upload file */}
-          <FieldHelp {...props} helpText={label} />
+          <FieldHelp {...props} />
         </LoadResources>
       </div>
-    </Fragment>
+    </>
   );
 }
 

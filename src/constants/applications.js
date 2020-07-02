@@ -1,4 +1,5 @@
 import { isProduction } from '../forms/utils';
+import { stringCompare } from '../utils/sort';
 
 // Schema details:
 // ---------------
@@ -12,18 +13,7 @@ import { isProduction } from '../forms/utils';
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
 
-let localStorageAssistants;
 
-// localStorage is browser specific one. It is breaking testcases. Below code changes are to
-// avoid test case breakages.
-// TODO: Need to see alternate solution here.
-try {
-  localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
-} catch (e) {
-  localStorageAssistants = [];
-}
-
-const assistants = localStorageAssistants;
 const connectors = [
   // tech connectors
   {
@@ -129,7 +119,7 @@ const connectors = [
   },
   {
     id: 'mysql',
-    name: 'My SQL',
+    name: 'MySQL',
     type: 'mysql',
     keywords: 'database,rdbms,db',
     group: 'db',
@@ -182,14 +172,21 @@ const connectors = [
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   {
+    id: 'gainsight',
+    name: 'Gainsight CS',
+    marketPlaceOnly: true,
+  },
+  {
     id: 'aptrinsic',
     name: 'Gainsight PX',
     type: 'rest',
     assistant: 'aptrinsic',
   },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
+  { id: 'sapariba', name: 'SAP Ariba', type: 'http', webhookOnly: true },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
+  { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
   {
     id: '4castplus',
     name: '4CastPlus',
@@ -221,8 +218,8 @@ const connectors = [
     assistant: 'bigcommerce',
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
-  { id: 'box', name: 'Box', type: 'http', assistant: 'box', webhook: true },
-  // { id: 'braintree', name: 'Braintree', type: 'http', assistant: 'braintree' },
+  { id: 'box', name: 'Box', type: 'http', webhookOnly: true },
+  { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
     id: 'redshift',
@@ -243,7 +240,7 @@ const connectors = [
   { id: 'chargify', name: 'Chargify', type: 'rest', assistant: 'chargify' },
   // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'Clover', type: 'http', assistant: 'clover' },
-  // { id: 'concur', name: 'Concur', type: 'rest', assistant: 'concur' },
+  { id: 'concur', name: 'Concur', marketPlaceOnly: true },
   // {
   //   id: 'concurall',
   //   name: 'Concur',
@@ -256,6 +253,20 @@ const connectors = [
     name: 'Concur v4 ',
     type: 'rest',
     assistant: 'concurv4',
+    icon: 'concur',
+  },
+  {
+    id: 'concurexpense',
+    name: 'Concur Expense',
+    type: 'http',
+    assistant: 'concurexpense',
+    icon: 'concur',
+  },
+  {
+    id: 'concurinvoice',
+    name: 'Concur Invoice',
+    type: 'http',
+    assistant: 'concurinvoice',
     icon: 'concur',
   },
   {
@@ -288,8 +299,7 @@ const connectors = [
     id: 'dropbox',
     name: 'Dropbox',
     type: 'rest',
-    assistant: 'dropbox',
-    webhook: true,
+    webhookOnly: true,
   },
   {
     id: 'dunandbradstreet',
@@ -352,7 +362,7 @@ const connectors = [
     assistant: 'gorgias',
   },
   // { id: 'gooddata', name: 'gooddata', type: 'http', assistant: 'gooddata' },
-  // { id: 'google', name: 'Google', type: 'http', assistant: 'google' },
+  { id: 'google', name: 'Google', marketPlaceOnly: true },
   {
     id: 'googleanalytics',
     name: 'Google Analytics',
@@ -419,13 +429,13 @@ const connectors = [
     type: 'rest',
     assistant: 'integratorio',
   },
-  // {
-  //  id: 'intercom',
-  //  name: 'Intercom',
-  // type: 'http',
-  //  assistant: 'intercom',
-  //  webhook: true,
-  // },
+  {
+    id: 'intercom',
+    name: 'Intercom',
+    marketPlaceOnly: true,
+    type: 'http',
+    webhookOnly: true,
+  },
   { id: 'jet', name: 'Jet', type: 'rest', assistant: 'jet' },
   {
     id: 'jira',
@@ -435,6 +445,7 @@ const connectors = [
     webhook: true,
   },
   { id: 'jobvite', name: 'Jobvite', type: 'rest', assistant: 'jobvite' },
+  { id: 'joor', name: 'JOOR', type: 'http', assistant: 'joor' },
   { id: 'klaviyo', name: 'Klaviyo', type: 'rest', assistant: 'klaviyo' },
   {
     id: 'lightspeed',
@@ -637,7 +648,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  // { id: 'segment', name: 'segment', type: 'http', assistant: 'segment', webhook: true },
+  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true },
   {
     id: 'servicenow',
     name: 'ServiceNow',
@@ -733,8 +744,7 @@ const connectors = [
     id: 'travis',
     name: 'Travis CI',
     type: 'http',
-    assistant: 'travis',
-    webhook: true,
+    webhookOnly: true,
   },
   { id: 'trinet', name: 'TriNet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
@@ -753,7 +763,7 @@ const connectors = [
   { id: 'wrike', name: 'Wrike', type: 'http', assistant: 'wrike' },
   { id: 'xcart', name: 'XCart', type: 'http', assistant: 'xcart' },
   // { id: 'yahoo', name: 'Yahoo', type: 'http', assistant: 'yahoo' },
-  // { id: 'yammer', name: 'Yammer', type: 'rest', assistant: 'yammer' },
+  { id: 'yammer', name: 'Yammer', marketPlaceOnly: true},
   {
     id: 'zendesk',
     name: 'Zendesk',
@@ -776,23 +786,29 @@ const connectors = [
   { id: 'zuora', name: 'Zuora', type: 'rest', assistant: 'zuora' },
 ];
 
-connectors.sort((a, b) => {
-  const nameA = a.name ? a.name.toUpperCase() : '';
-  const nameB = b.name ? b.name.toUpperCase() : '';
+connectors.sort(stringCompare('name'));
+const getAssistants = () => {
+  let localStorageAssistants;
 
-  if (nameA < nameB) return -1;
+  // localStorage is browser specific one. It is breaking testcases. Below code changes are to
+  // avoid test case breakages.
+  // TODO: Need to see alternate solution here.
+  try {
+    localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
+  } catch (e) {
+    localStorageAssistants = [];
+  }
 
-  if (nameA > nameB) return 1;
-
-  return 0; // names must be equal
-});
+  return localStorageAssistants;
+};
 
 export const groupApplications = (
   resourceType,
   { appType, isSimpleImport }
 ) => {
-  // Here i need to update Connectors
   const assistantConnectors = connectors.filter(c => !c.assistant);
+  const assistants = getAssistants();
+
 
   if (assistants) {
     assistants.forEach(asst => {
@@ -820,19 +836,12 @@ export const groupApplications = (
     });
   }
 
-  assistantConnectors.sort((a, b) => {
-    const nameA = a.name ? a.name.toUpperCase() : '';
-    const nameB = b.name ? b.name.toUpperCase() : '';
-
-    if (nameA < nameB) return -1;
-
-    if (nameA > nameB) return 1;
-
-    return 0; // names must be equal
-  });
+  assistantConnectors.sort(stringCompare('name'));
 
   let filteredConnectors = assistantConnectors.filter(connector => {
-    const assistant = assistants.find(a => a.id === connector.assistant);
+    if (connector.marketPlaceOnly) {
+      return false;
+    }
 
     if (
       connector.assistant &&
@@ -840,26 +849,12 @@ export const groupApplications = (
       resourceType !== 'connections' &&
       appType
     ) {
-      if (assistant) {
-        if (appType === 'import') {
-          return assistant.import;
-        } else if (appType === 'export') {
-          return assistant.export;
-        }
-
-        return true;
-      }
-
       return true;
     }
 
-    // Do not show FTP import for DataLoader flows
+    // Do not show FTP/S3 import for DataLoader flows
     if (resourceType === 'pageProcessor' && isSimpleImport) {
-      return connector.id !== 'ftp' && !connector.webhookOnly;
-    }
-
-    if (resourceType === 'pageProcessor' && assistant) {
-      return assistant.export || assistant.import;
+      return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
     }
 
     // Webhooks are shown only for exports and for page generators in flow context
@@ -892,17 +887,42 @@ export const groupApplications = (
 };
 /* MISSING WEBHOOK PROVIDERS
   'travis-org',
-  'helpscout', 
+  'helpscout',
   'errorception',
-  'aha', 
-  'pagerduty', 
-  'surveymonkey', 
-  'mailparser-io', 
-  'integrator-extension', 
+  'aha',
+  'pagerduty',
+  'surveymonkey',
+  'mailparser-io',
+  'integrator-extension',
 */
+export const applicationsList = () => {
+  const assistants = getAssistants();
+  const applications = connectors.filter(connector => {
+    const assistant = assistants.find(a => a.id === connector.assistant);
 
-export const getApplicationConnectors = () => connectors.filter(c => !c.group);
-export const getWebhookConnectors = () => connectors.filter(c => !!c.webhook);
+    return !assistant || !connector.assistant;
+  });
+
+  assistants.forEach(asst => {
+    applications.push({
+      id: asst.id,
+      name: asst.name,
+      type: asst.type,
+      assistant: asst.id,
+      export: asst.export,
+      import: asst.import,
+      webhook: asst.webhook,
+    });
+  });
+  return applications;
+};
+
+
+export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
+export const getWebhookConnectors = () => {
+  const applications = applicationsList();
+  return applications.filter(c => !!c.webhook);
+};
 export const getDatabaseConnectors = () =>
   connectors.filter(c => c.group === 'db');
 export const getWebhookOnlyConnectors = () =>
@@ -910,26 +930,10 @@ export const getWebhookOnlyConnectors = () =>
 
 export const getApp = (type, assistant) => {
   const id = assistant || type;
+  const applications = applicationsList();
 
-  return connectors.find(c => c.id === id) || {};
+  return applications.find(c => c.id === id) || {};
 };
 
-const applications = connectors.filter(connector => {
-  const assistant = assistants.find(a => a.id === connector.assistant);
 
-  return !assistant || !connector.assistant;
-});
-
-assistants.forEach(asst => {
-  applications.push({
-    id: asst.id,
-    name: asst.name,
-    type: asst.type,
-    assistant: asst.id,
-    export: asst.export,
-    import: asst.import,
-    webhook: asst.webhook,
-  });
-});
-
-export default applications;
+export default connectors;

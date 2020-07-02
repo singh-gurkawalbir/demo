@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -92,8 +93,7 @@ export default function DynaSoqlQuery(props) {
         <FormLabel htmlFor={id} required={required}>
           {label}
         </FormLabel>
-        {/* Todo (surya): fieldhelp needs helptext */}
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <TextField
         autoComplete="off"

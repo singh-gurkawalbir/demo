@@ -1,6 +1,6 @@
 import MomentDateFnsUtils from '@date-io/moment';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MuiPickersUtilsProvider,
   KeyboardDateTimePicker,
@@ -11,9 +11,11 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 export default function DateTimePicker(props) {
   const { id, label, onFieldChange, value = '', disabled, format } = props;
   const [dateValue, setDateValue] = useState(value || null);
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    onFieldChange(id, moment(dateValue).format(format) || '');
+    onFieldChange(id, moment(dateValue).format(format) || '', !componentMounted);
+    setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue]);
 

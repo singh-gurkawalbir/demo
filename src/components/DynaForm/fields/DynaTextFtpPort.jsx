@@ -1,38 +1,24 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
 import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
-const useStyle = makeStyles(theme => ({
-  root: {
-    display: 'flex !important',
-    flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    transitionProperty: 'border',
-    transitionDuration: theme.transitions.duration.short,
-    transitionTimingFunction: theme.transitions.easing.easeInOut,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'flex-end',
-    borderRadius: 2,
-    '& > Label': {
-      paddingTop: 10,
-    },
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& > *': {
-      padding: [[0, 12]],
-    },
-    '& > div > input': {
-      padding: [[0, 0, 5, 0]],
-    },
+const useStyle = makeStyles({
+  dynaTextFtpFiedWrapper: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'column',
   },
-}));
+  dynaTextFtpFied: {
+    width: '100%',
+  },
+});
 
-export default function DynaTextFtpPort(props) {
+function DynaTextFtpPort(props) {
   const {
+    fields,
     description,
     errorMessages,
     id,
@@ -47,37 +33,64 @@ export default function DynaTextFtpPort(props) {
     disabled,
   } = props;
   const classes = useStyle();
-  let result;
+  const ftptype = fields.find(obj => obj.key === 'ftp.type').value;
 
-  if ([21, 22, 990].includes(value) && options) {
-    result = options;
-  } else {
-    result = value;
-  }
+  useEffect(() => {
+    if ((!value || [21, 22, 990].includes(value)) && options) {
+      onFieldChange(id, options, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ftptype]);
 
-  const handleFieldChange = event => {
-    const { value, name } = event.target;
 
-    if (!name || name !== props.name) return;
+  const handleFieldChange = useCallback(
+    event => {
+      const { value, name } = event.target;
 
-    return onFieldChange(id, value);
-  };
+      if (!name || name !== props.name) return;
+
+      return onFieldChange(id, value);
+    },
+    [id, onFieldChange, props.name]
+  );
 
   return (
-    <TextField
-      autoComplete="off"
-      key={id}
-      type={valueType}
-      name={name}
-      data-test={id}
-      label={label}
-      placeholder={placeholder}
-      helperText={isValid ? description : errorMessages}
-      disabled={disabled}
-      error={!isValid}
-      value={result}
-      onChange={handleFieldChange}
-      className={classes.root}
-    />
+    <FormControl>
+      <div>
+        <FormLabel htmlFor={id} error={!isValid}>
+          {label}
+        </FormLabel>
+        {/* Todo: helpText is needed here */}
+        <FieldHelp {...props} />
+      </div>
+      <div className={classes.dynaTextFtpFiedWrapper}>
+        <TextField
+          autoComplete="off"
+          key={id}
+          type={valueType}
+          name={name}
+          data-test={id}
+          placeholder={placeholder}
+          disabled={disabled}
+          value={value}
+          variant="filled"
+          onChange={handleFieldChange}
+          className={classes.dynaTextFtpFied}
+        />
+        <ErroredMessageComponent
+          isValid={isValid}
+          errorMessages={errorMessages}
+          description={description}
+        />
+      </div>
+    </FormControl>
   );
 }
+
+const WrappedContextConsumer = props => (
+  <FormContext.Consumer>
+    {form => <DynaTextFtpPort {...form} {...props} />}
+  </FormContext.Consumer>
+);
+
+export default WrappedContextConsumer;

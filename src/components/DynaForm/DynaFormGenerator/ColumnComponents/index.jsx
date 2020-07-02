@@ -1,6 +1,7 @@
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { FormContext } from 'react-forms-processor';
-import FormGenerator from '../';
+import FormGenerator from '..';
 import { isAnyFieldVisibleForMeta } from '../../../../forms/utils';
 
 function ColumnComponents(props) {

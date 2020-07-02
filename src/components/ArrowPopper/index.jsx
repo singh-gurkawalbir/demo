@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { ClickAwayListener, Popper, Paper } from '@material-ui/core';
@@ -39,12 +39,10 @@ const useStyles = makeStyles(theme => ({
       height: '1em',
       '&::before': {
         borderWidth: '0 1em 1em 1em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
       },
       '&::after': {
         borderWidth: '0 1.3em 1.3em 1.3em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent ${theme.palette.secondary.lightest} transparent`,
         position: 'absolute',
         top: '-2px',
@@ -60,12 +58,10 @@ const useStyles = makeStyles(theme => ({
       height: '1em',
       '&::before': {
         borderWidth: '1em 1em 0 1em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
       },
       '&::after': {
         borderWidth: '1.3em 1.3em 0 1.3em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `${theme.palette.secondary.lightest} transparent transparent  transparent`,
         position: 'absolute',
         top: '0px',
@@ -81,12 +77,10 @@ const useStyles = makeStyles(theme => ({
       '&::before': {
         marginTop: '0.4em',
         borderWidth: '1em 1em 1em 0',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.background.paper} transparent  transparent`,
       },
       '&::after': {
         borderWidth: '1.3em 1.3em 1.3em 0',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent ${theme.palette.secondary.lightest} transparent transparent`,
         position: 'absolute',
         top: '1px',
@@ -101,13 +95,11 @@ const useStyles = makeStyles(theme => ({
       width: '1em',
       '&::before': {
         borderWidth: '1em 0 1em 1em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
         marginTop: '0.5em',
       },
       '&::after': {
         borderWidth: '1.3em 0 1.3em 1.3em',
-        // eslint-disable-next-line prettier/prettier
         borderColor: `transparent transparent transparent ${theme.palette.secondary.lightest}`,
         position: 'absolute',
         top: '2px',
@@ -146,7 +138,7 @@ export default function ArrowPopper({
         },
       }}>
       <span className={classes.arrow} ref={setArrowEl} />
-      <ClickAwayListener onClickAway={onClose}>
+      <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
         <Paper className={clsx(classes.paper, className)} elevation={1}>
           {children}
         </Paper>

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
 import RightDrawer from '../../Right';
 import UploadFile from './UploadFile';
@@ -31,7 +31,7 @@ export default function InstallIntegrationDrawer() {
           <Preview />
         </Route>
         <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-          <Setup />
+          <Setup handleClose={handleClose} />
         </Route>
         <Route path={`${match.url}/${rootPath}`}>
           <UploadFile />

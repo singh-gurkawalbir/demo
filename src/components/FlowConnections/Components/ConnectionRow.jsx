@@ -1,15 +1,16 @@
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import TimeAgo from 'react-timeago';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography, IconButton } from '@material-ui/core';
 import DebugIcon from '../../icons/DebugIcon';
 import EditIcon from '../../icons/EditIcon';
 import EllipsisMenu from './ConnectionEllipsisMenu';
-import ApplicationImg from '../../../components/icons/ApplicationImg';
-import ResourceDrawer from '../../../components/drawer/Resource';
+import ApplicationImg from '../../icons/ApplicationImg';
+import ResourceDrawer from '../../drawer/Resource';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
+
 import { resourcePermissions } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   block: {
     height: 50,
     width: 50,
-    border: `1px solid black`,
+    border: '1px solid black',
   },
   statusBar: {
     width: 6,
@@ -139,7 +140,7 @@ export default function ConnectionRow({ connection }) {
             </Grid>
             <Grid item xs>
               <Typography variant="caption" component="span">
-                Last updated: <TimeAgo date={lastModified} />
+                Last updated: <CeligoTimeAgo date={lastModified} />
               </Typography>
             </Grid>
           </Grid>

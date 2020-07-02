@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NotificationsSection({ integrationId }) {
+export default function NotificationsSection({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
@@ -36,7 +36,7 @@ export default function NotificationsSection({ integrationId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, integrationId)
+      selectors.integrationResources(state, integrationId, storeId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
@@ -103,7 +103,7 @@ export default function NotificationsSection({ integrationId }) {
   };
 
   const infoTextNotifications =
-    'Get email notifications when your flows encounter any errors as well as whenever one of the connections your flows use goes offline, so you can fix the problem quickly. These notifications are only sent to you; each user will need to enable their own notifications.';
+    'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';
 
   return (
     <div className={classes.root}>
@@ -111,7 +111,7 @@ export default function NotificationsSection({ integrationId }) {
 
       <LoadResources required resources="notifications,flows,connections">
         <div className={classes.form}>
-          <DynaForm fieldMeta={fieldMeta} key={count} render>
+          <DynaForm fieldMeta={fieldMeta} integrationId={integrationId} key={count} render>
             <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
           </DynaForm>
         </div>

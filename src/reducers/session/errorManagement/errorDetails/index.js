@@ -25,8 +25,7 @@ export default (state = {}, action) => {
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST:
         if (!draft[flowId]) draft[flowId] = {};
 
-        if (!draft[flowId][resourceId])
-          draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
+        if (!draft[flowId][resourceId]) draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
         draft[flowId][resourceId][errorType].status = 'requested';
         delete draft[flowId][resourceId][errorType].outdated;
 
@@ -122,6 +121,7 @@ export default (state = {}, action) => {
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         draft[flowId][resourceId][errorType] = {};
+        draft[flowId][resourceId].actions = {};
         break;
       default:
     }

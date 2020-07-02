@@ -1,5 +1,5 @@
 import MomentDateFnsUtils from '@date-io/moment';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
@@ -12,9 +12,11 @@ export default function DatePicker(props) {
   const { id, label, onFieldChange, value = '', disabled } = props;
   const [dateValue, setDateValue] = useState(value || null);
   const format = 'MM/DD/YYYY';
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    onFieldChange(id, moment(dateValue).format(format) || '');
+    onFieldChange(id, moment(dateValue).format(format) || '', !componentMounted);
+    setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue]);
 

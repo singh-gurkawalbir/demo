@@ -16,6 +16,7 @@ export default {
       '/http/baseURI': `https://${formValues['/storeURL']}`,
       '/http/ping/relativeURI': '/ResourceServer/api/v1/Account',
       '/http/ping/method': 'GET',
+      '/http/disableStrictSSL': `${formValues['/environment']}` === 'sandbox',
       '/http/auth/token/location': 'header',
       '/http/auth/token/scheme': 'Bearer',
       '/http/auth/token/headerName': 'Authorization',
@@ -30,6 +31,32 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    environment: {
+      id: 'environment',
+      type: 'select',
+      label: 'Account type',
+      helpKey: 'logisense.connection.environment',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'Production', value: 'production' },
+            { label: 'Sandbox', value: 'sandbox' },
+          ],
+        },
+      ],
+      defaultValue: r => {
+        const disableStrictSSL = r && r.http && r.http.disableStrictSSL;
+
+        if (disableStrictSSL) {
+          if (disableStrictSSL === true) {
+            return 'sandbox';
+          }
+
+          return 'production';
+        }
+      },
+    },
     storeURL: {
       id: 'storeURL',
       startAdornment: 'https://',
@@ -94,20 +121,24 @@ export default {
       defaultValue: '',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'storeURL',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-      'http.encrypted.clientId',
-      'http.auth.token.token',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['environment',
+          'storeURL',
+          'http.unencrypted.username',
+          'http.encrypted.password',
+          'http.encrypted.clientId',
+          'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

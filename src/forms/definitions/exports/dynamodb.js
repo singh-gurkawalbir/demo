@@ -46,11 +46,7 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    exportData: {
-      fieldId: 'exportData',
-      type: 'labeltitle',
-      label: 'What would you like to export from DynamoDB?',
-    },
+
     'dynamodb.region': { fieldId: 'dynamodb.region' },
     'dynamodb.method': { fieldId: 'dynamodb.method' },
     'dynamodb.tableName': { fieldId: 'dynamodb.tableName' },
@@ -127,27 +123,45 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: [
-          'common',
-          'exportData',
-          'dynamodb.region',
-          'dynamodb.method',
-          'dynamodb.tableName',
-          'dynamodb.expressionAttributeNames',
-          'dynamodb.expressionAttributeValues',
-          'dynamodb.keyConditionExpression',
-          'dynamodb.filterExpression',
-          'dynamodb.projectionExpression',
-          'type',
-          'delta.dateField',
-          'once.booleanField',
-          'dynamodb.onceExportPartitionKey',
-          'dynamodb.onceExportSortKey',
+        type: 'collapse',
+        containers: [
+          {
+            collapsed: true,
+            label: 'General',
+            fields: ['common'],
+          },
+          {
+            collapsed: true,
+            label: 'What would you like to export?',
+            fields: [
+              'dynamodb.region',
+              'dynamodb.method',
+              'dynamodb.tableName',
+              'dynamodb.expressionAttributeNames',
+              'dynamodb.expressionAttributeValues',
+              'dynamodb.keyConditionExpression',
+              'dynamodb.filterExpression',
+              'dynamodb.projectionExpression',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: [
+              'type',
+              'delta.dateField',
+              'once.booleanField',
+              'dynamodb.onceExportPartitionKey',
+              'dynamodb.onceExportSortKey',
+            ],
+          },
+          { collapsed: true, label: 'Advanced', fields: ['skipRetries'] },
         ],
       },
       {

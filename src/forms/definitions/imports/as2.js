@@ -1,56 +1,50 @@
-const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-  const fileDefinitionRulesField = fields.find(
-    field => field.id === 'file.filedefinition.rules'
-  );
-  const fileType = fields.find(field => field.id === 'file.type');
-  const fileDefinitionFieldsMap = {
-    filedefinition: 'edix12.format',
-    fixed: 'fixed.format',
-    'delimited/edifact': 'edifact.format',
-  };
-
-  if (
-    fileType &&
-    fileType.value &&
-    !fileDefinitionRulesField.userDefinitionId
-  ) {
-    // Delete existing visibility rules
-    delete fileDefinitionRulesField.visibleWhenAll;
-    delete fileDefinitionRulesField.visibleWhen;
-
-    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === formatFieldType
-      );
-
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
-    } else {
-      fileDefinitionRulesField.visible = false;
-    }
-  } else {
-    // make visibility of format fields false incase of edit mode of file adaptors
-    Object.values(fileDefinitionFieldsMap).forEach(field => {
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === field
-      );
-
-      delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.visible = false;
-    });
-  }
-};
+import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   optionsHandler: (fieldId, fields) => {
+    if (fieldId === 'file.csvHelper') {
+      const includeHeaderField = fields.find(
+        field => field.id === 'file.csv.includeHeader'
+      );
+      const columnDelimiterField = fields.find(
+        field => field.id === 'file.csv.columnDelimiter'
+      );
+      const rowDelimiterField = fields.find(
+        field => field.id === 'file.csv.rowDelimiter'
+      );
+      const replaceNewlineWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceNewlineWithSpace'
+      );
+      const replaceTabWithSpaceField = fields.find(
+        field => field.id === 'file.csv.replaceTabWithSpace'
+      );
+      const truncateLastRowDelimiterField = fields.find(
+        field => field.id === 'file.csv.truncateLastRowDelimiter'
+      );
+      const wrapWithQuotesField = fields.find(
+        field => field.id === 'file.csv.wrapWithQuotes'
+      );
+
+      return {
+        fields: {
+          includeHeader: includeHeaderField && includeHeaderField.value,
+          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
+          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
+          replaceNewlineWithSpace:
+            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
+          replaceTabWithSpace:
+            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
+          truncateLastRowDelimiter: truncateLastRowDelimiterField && truncateLastRowDelimiterField.value,
+          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
+        },
+      };
+    }
     if (fieldId === 'file.filedefinition.rules') {
       let definitionFieldId;
       const fileType = fields.find(field => field.id === 'file.type');
 
       // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
+      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
@@ -62,7 +56,6 @@ export default {
         definitionId: definition && definition.value,
       };
     }
-
     if (fieldId === 'as2.fileNameTemplate') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
@@ -82,9 +75,7 @@ export default {
 
         fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
       }
-    }
-
-    if (fieldId === 'dataURITemplate') {
+    } else if (fieldId === 'dataURITemplate') {
       const nameField = fields.find(field => field.fieldId === 'name');
 
       return {
@@ -113,32 +104,44 @@ export default {
       ...formValues,
     };
 
+    delete newValues['/file/csvHelper'];
+
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
+
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
-      delete newValues['/file/xml/body'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
+      delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/includeHeader'];
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/includeHeader'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/replaceNewlineWithSpace'];
+      delete newValues['/file/csv/replaceTabWithSpace'];
+      delete newValues['/file/csv/wrapWithQuotes'];
       delete newValues['/file/xml/body'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -164,14 +167,18 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
-    importData: {
-      id: 'importData',
-      type: 'labeltitle',
-      label: 'How would you like the files transferred?',
-    },
     distributed: { fieldId: 'distributed', defaultValue: false },
 
-    'file.csv': { fieldId: 'file.csv' },
+    'file.csvHelper': { fieldId: 'file.csvHelper' },
+    'file.csv.includeHeader': { fieldId: 'file.csv.includeHeader' },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
+    'file.csv.replaceNewlineWithSpace': {
+      fieldId: 'file.csv.replaceNewlineWithSpace',
+    },
+    'file.csv.replaceTabWithSpace': { fieldId: 'file.csv.replaceTabWithSpace' },
+    'file.csv.truncateLastRowDelimiter': { fieldId: 'file.csv.truncateLastRowDelimiter' },
+    'file.csv.wrapWithQuotes': { fieldId: 'file.csv.wrapWithQuotes' },
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
     'as2.fileNameTemplate': { fieldId: 'as2.fileNameTemplate' },
     'as2.messageIdTemplate': { fieldId: 'as2.messageIdTemplate' },
@@ -211,26 +218,41 @@ export default {
     },
   },
   layout: {
-    fields: [
-      'common',
-      'importData',
-      'distributed',
-      'file.type',
-      'edifact.format',
-      'fixed.format',
-      'edix12.format',
-      'as2.fileNameTemplate',
-      'as2.messageIdTemplate',
-      'file.xml.body',
-      'file.csv',
-      'file.xlsx.includeHeader',
-      'file.filedefinition.rules',
-      'as2.headers',
-      'dataMappings',
-      'file.lookups',
-    ],
     type: 'collapse',
     containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
+        type: 'indent',
+        fields: [
+          'distributed',
+          'file.type',
+          'edifact.format',
+          'fixed.format',
+          'edix12.format',
+          'as2.fileNameTemplate',
+          'as2.messageIdTemplate',
+          'file.xml.body',
+          'file.xlsx.includeHeader',
+          'file.filedefinition.rules',
+          'as2.headers',
+          'file.lookups',
+        ],
+        containers: [{fields: [
+          'file.csvHelper',
+          'file.csv.includeHeader',
+          'file.csv.columnDelimiter',
+          'file.csv.rowDelimiter',
+          'file.csv.replaceNewlineWithSpace',
+          'file.csv.replaceTabWithSpace',
+          'file.csv.truncateLastRowDelimiter',
+          'file.csv.wrapWithQuotes']}]
+      },
       {
         collapsed: true,
         label: 'Advanced',
@@ -249,8 +271,27 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
       // Button that saves file defs and then submit resource
       id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'saveandclosedefinition',
       visibleWhen: [
         {
           field: 'file.type',

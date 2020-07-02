@@ -64,7 +64,7 @@ export default function XmlParseEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Parsed result" />
+        <PanelTitle title="Parsed output" />
         <CodePanel
           name="result"
           value={result ? result.data[0] : ''}

@@ -1,6 +1,8 @@
-import { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import * as selectors from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
 import FlowSchedule from '../../../../components/FlowSchedule';
 
@@ -11,34 +13,36 @@ const useStyle = makeStyles(theme => ({
     marginTop: -1,
     padding: theme.spacing(-1),
   },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: 2,
-  },
 }));
 
-export default function ScheduleDrawer({
-  integrationId,
-  resourceType,
-  resourceId,
-  flow,
-}) {
+function RoutingWrapper(props) {
   const history = useHistory();
-  const handleClose = useCallback(() => history.goBack(), [history]);
   const classes = useStyle();
+  const match = useRouteMatch();
+  const flowId = props.flowId || match.params.flowId;
+  const flow = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)
+  );
 
-  // TODO: Connector specific things to be added for schedule drawer incase of !isViewMode && isIntegrationApp
+  // TODO: Ashok: Connector specific things to be added for schedule drawer
+  // incase of !isViewMode && isIntegrationApp
   return (
-    <RightDrawer path="schedule" width="medium" title="Flow schedule">
-      <FlowSchedule
-        integrationId={integrationId}
-        resourceType={resourceType}
-        resourceId={resourceId}
-        flow={flow}
-        onClose={handleClose}
-        className={classes.scheduleContainer}
-      />
+    <FlowSchedule
+      flow={flow}
+      // eslint-disable-next-line react/jsx-handler-names
+      onClose={history.goBack}
+      className={classes.scheduleContainer}
+  />
+  );
+}
+
+export default function ScheduleDrawer(props) {
+  return (
+    <RightDrawer
+      path={[':flowId/schedule', 'schedule']}
+      width="medium"
+      title="Flow schedule">
+      <RoutingWrapper {...props} />
     </RightDrawer>
   );
 }

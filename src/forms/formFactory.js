@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import produce from 'immer';
-import masterFieldHash from '../forms/fieldDefinitions';
+import masterFieldHash from './fieldDefinitions';
 import formMeta from './definitions';
 import { getResourceSubType } from '../utils/resource';
 import { REST_ASSISTANTS, RDBMS_TYPES } from '../utils/constants';
@@ -130,8 +130,7 @@ const applyCustomSettings = ({
         field.value &&
         typeof field.value === 'string' &&
         !isJsonString(field.value)
-      )
-        return 'Settings must be a valid JSON';
+      ) return 'Settings must be a valid JSON';
 
       if (field.value && field.value.__invalid) {
         return 'Some of your settings are not valid.';
@@ -213,10 +212,8 @@ const getResourceFormAssets = ({
       if (meta) {
         if (isNew) {
           meta = meta.new;
-        }
-
-        // get edit form meta branch
-        else if (type === 'netsuite') {
+        } else if (type === 'netsuite') {
+          // get edit form meta branch
           meta = meta.netsuiteDistributed;
         } else if (
           type === 'salesforce' &&
@@ -238,7 +235,7 @@ const getResourceFormAssets = ({
           resource &&
           (resource.useParentForm !== undefined
             ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
+            : resource.assistant) && !resource.useTechAdaptorForm
         ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
@@ -282,7 +279,7 @@ const getResourceFormAssets = ({
           resource &&
           (resource.useParentForm !== undefined
             ? !resource.useParentForm && resource.assistant
-            : resource.assistant)
+            : resource.assistant) && !resource.useTechAdaptorForm
         ) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
@@ -302,7 +299,6 @@ const getResourceFormAssets = ({
         } else {
           meta = meta[type];
         }
-
         if (meta) {
           ({ fieldMap, layout, init, preSave, actions } = meta);
         }
@@ -311,6 +307,7 @@ const getResourceFormAssets = ({
       break;
 
     case 'agents':
+    case 'apis':
     case 'scripts':
     case 'accesstokens':
     case 'connectorLicenses':
@@ -338,14 +335,7 @@ const getResourceFormAssets = ({
 
   // Need to be revisited @Surya
   validationHandler = meta && meta.validationHandler;
-  const resourceTypesWithSettings = [
-    'integrations',
-    'exports',
-    'imports',
-    'pageProcessor',
-    'pageGenerator',
-    'connections',
-  ];
+  const resourceTypesWithSettings = ['exports', 'imports', 'connections'];
 
   if (!isNew && resourceTypesWithSettings.includes(resourceType)) {
     ({ fieldMap, layout, preSave, validationHandler } = applyCustomSettings({
@@ -387,10 +377,11 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
     formMeta[resourceType].subForms[f.formId].fieldMap;
 
   // todo: cannot support visibleWhen rule....there is no point propogating that rule
-  if (f.visibleWhen && f.visibleWhenAll)
+  if (f.visibleWhen && f.visibleWhenAll) {
     throw new Error(
       'Incorrect rule, cannot have both a visibleWhen and visibleWhenAll rule in the field view definitions'
     );
+  }
 
   const transformedFieldMap = Object.keys(fieldMapFromSubForm)
     .map(key => {
@@ -401,10 +392,11 @@ const applyVisibilityRulesToSubForm = (f, resourceType) => {
 
       field = { ...masterFields, ...field };
 
-      if (field.visibleWhen && field.visibleWhenAll)
+      if (field.visibleWhen && field.visibleWhenAll) {
         throw new Error(
           'Incorrect rule, master fieldFields cannot have both a visibleWhen and visibleWhenAll rule'
         );
+      }
       const fieldCopy = produce(field, draft => {
         if (f.visibleWhen) {
           draft.visibleWhen = draft.visibleWhen || [];
@@ -469,12 +461,13 @@ const applyingMissedOutFieldMetaProperties = (
     field.helpKey = `${singularResourceType}.${field.id}`;
   }
 
-  if (!field.id || !field.name)
+  if (!field.id || !field.name) {
     throw new Error(
       `Id and name must be provided for a field ${JSON.stringify(
         incompleteField
       )}`
     );
+  }
 
   return field;
 };

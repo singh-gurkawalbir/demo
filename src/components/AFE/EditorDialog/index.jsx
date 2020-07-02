@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, cloneElement } from 'react';
+import React, { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -51,14 +51,25 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(2),
   },
   actions: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
   },
+  wrapper: {
+    '& Button': {
+      marginRight: '10px',
+    },
+    '& Button:last-child': {
+      marginRight: '0px',
+    },
+  },
   editorToggleContainer: {
     marginRight: theme.spacing(2),
   },
+  autoPreview: {
+    margin: theme.spacing(0, 2, 0, 2),
+  }
 }));
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
@@ -81,6 +92,7 @@ export default function EditorDialog(props) {
     hidePreviewAction = false,
     patchOnSave = false,
     toggleAction,
+    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -133,16 +145,17 @@ export default function EditorDialog(props) {
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
       confirmDialog({
-        title: 'Confirm',
-        message: `You have made changes in the editor. Are you sure you want to discard them?`,
+        title: 'Confirm cancel',
+        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
         buttons: [
           {
-            label: 'No',
-          },
-          {
-            label: 'Yes',
+            label: 'Yes, cancel',
             onClick: onClose,
           },
+          {
+            label: 'No, go back',
+            color: 'secondary',
+          }
         ],
       });
     } else {
@@ -185,13 +198,6 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
-          <DynaCheckbox
-            disabled={disabled}
-            id="disableAutoPreview"
-            onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-preview"
-            value={!!editor.autoEvaluate}
-          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -230,46 +236,72 @@ export default function EditorDialog(props) {
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
-        children && cloneElement(children, { layout })}
+        children && cloneElement(children, { layout })
+}
       </DialogContent>
       <DialogActions className={classes.actions}>
-        {showPreviewAction && (
+        <div className={classes.wrapper}>
+          {patchOnSave ? (
+            <>
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="primary"
+                dataTest="saveEditor"
+                disabled={disableSave}
+                submitButtonLabel="Save"
+                flowId={flowId}
+            />
+              <EditorSaveButton
+                id={id}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseEditor"
+                disabled={disableSave}
+                onClose={handleSave(true)}
+                submitButtonLabel="Save & close"
+                flowId={flowId}
+            />
+            </>
+          ) : (
+            <Button
+              variant="outlined"
+              data-test="saveEditor"
+              disabled={disableSave}
+              color="primary"
+              onClick={handleSave(true)}>
+              Save
+            </Button>
+          )}
+
+          <Button
+            variant="text"
+            color="primary"
+            data-test="closeEditor"
+            disabled={!!saveInProgress}
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
+        <div>
+          <DynaCheckbox
+            disabled={disabled}
+            hideLabelSpacing
+            id="disableAutoPreview"
+            onFieldChange={handleAutoPreviewToggle}
+            label="Enable auto-preview"
+            value={!!editor.autoEvaluate}
+          />
+          {showPreviewAction && (
           <Button
             data-test="previewEditorResult"
             variant="outlined"
+            className={classes.autoPreview}
             onClick={handlePreview}>
-            Run
+            Preview
           </Button>
-        )}
-        {patchOnSave ? (
-          <EditorSaveButton
-            id={id}
-            variant="outlined"
-            color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            onClose={handleSave(true)}
-            submitButtonLabel="Save"
-          />
-        ) : (
-          <Button
-            variant="outlined"
-            data-test="saveEditor"
-            disabled={disableSave}
-            color="primary"
-            onClick={handleSave(true)}>
-            Save
-          </Button>
-        )}
-
-        <Button
-          variant="text"
-          color="primary"
-          data-test="closeEditor"
-          disabled={!!saveInProgress}
-          onClick={handleCancelClick}>
-          Cancel
-        </Button>
+          )}
+        </div>
       </DialogActions>
     </Dialog>
   );

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 3, 6, 3),
     marginBottom: theme.spacing(1),
     '& > div:first-child': {
-      height: `calc(100vh - 180px)`,
+      height: 'calc(100vh - 180px)',
     },
   },
   // TODO:check for better way to handle width when drawer open and closes
@@ -127,7 +127,7 @@ function ImportMapping({
         <LoadResources
           required="true"
           resources="imports, exports, connections">
-          <Fragment>
+          <>
             {subrecords && subrecords.length > 0 && !selectedMapping ? (
               <div>
                 <Typography className={classes.text} variant="h5">
@@ -163,7 +163,7 @@ function ImportMapping({
                 }
               />
             )}
-          </Fragment>
+          </>
         </LoadResources>
       </div>
     </Drawer>

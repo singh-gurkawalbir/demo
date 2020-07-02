@@ -14,8 +14,8 @@ export default {
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
     '/http/auth/oauth/tokenURI': 'https://secure-wms.com/AuthServer/api/Token',
     '/http/auth/oauth/accessTokenBody': `{"grant_type": "client_credentials","tpl":"{${
-      formValues[`/http/unencrypted/tpl`]
-    }}", "user_login_id":"${formValues[`/http/unencrypted/userLoginId`]}"}`,
+      formValues['/http/unencrypted/tpl']
+    }}", "user_login_id":"${formValues['/http/unencrypted/userLoginId']}"}`,
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
@@ -41,18 +41,21 @@ export default {
       fieldId: 'http._iClientId',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.tpl',
-      'http.unencrypted.userLoginId',
-      'http._iClientId',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.tpl',
+          'http.unencrypted.userLoginId',
+          'http._iClientId'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };
