@@ -379,7 +379,6 @@ export default {
           'file.xml.body',
           'ftp.blobFileName',
           'file.lookups',
-          'ftp.backupDirectoryPath',
         ],
       },
       {
@@ -394,6 +393,7 @@ export default {
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',
+          'ftp.backupDirectoryPath',
         ],
       },
     ],

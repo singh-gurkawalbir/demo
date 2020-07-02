@@ -321,7 +321,6 @@ export default {
           's3.fileKey',
           'file.xml.body',
           'file.lookups',
-          's3.backupBucket',
         ],
       },
       {
@@ -332,6 +331,7 @@ export default {
           'fileAdvancedSettings',
           'deleteAfterImport',
           'fileApiIdentifier',
+          's3.backupBucket',
         ],
       },
     ],
