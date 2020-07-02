@@ -142,6 +142,9 @@ export default (
               if (!draft[ssLinkedConnectionId].integrations) {
                 draft[ssLinkedConnectionId].integrations = [];
               }
+              if (!draft[ssLinkedConnectionId].settings) {
+                draft[ssLinkedConnectionId].settings = {};
+              }
 
               tiles.forEach(tile => {
                 const integration = {
@@ -220,11 +223,10 @@ export default (
         break;
       case actionTypes.SUITESCRIPT.RESOURCE.RECEIVED:
         {
-          const { ssLinkedConnectionId, resource } = action;
+          const { ssLinkedConnectionId, integrationId, resource } = action;
           if (['exports', 'imports'].includes(resourceType)) {
             resourceType = 'flows';
           }
-
           if (
             draft[ssLinkedConnectionId] &&
             draft[ssLinkedConnectionId][resourceType]
@@ -252,6 +254,8 @@ export default (
                 }
                 draft[ssLinkedConnectionId][resourceType][index] = {...existingIntegration, ...resource};
               }
+            } else if (resourceType === 'settings') {
+              draft[ssLinkedConnectionId].settings[integrationId] = resource;
             } else {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(
                 r => r._id === resource._id
@@ -434,6 +438,7 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
 
   if (!resources) return null;
 
+  if (resourceType === 'settings') { return resources[id]; }
   let match = resources.find(r => r._id === id);
 
   if (!match) {
@@ -486,6 +491,34 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
   // };
 }
 
+
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
+  const integration = resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
+
+  if (!integration) {
+    return null;
+  }
+
+  return produce(integration, draft => {
+    if (!draft.settings) {
+      draft.settings = emptyObject;
+    }
+    if (draft?.sections?.length) {
+      draft.sections.forEach((section) => {
+        if (section?.sections?.length) {
+          section?.sections.forEach((sect) => {
+            // eslint-disable-next-line no-param-reassign
+            sect.title = sect.title || 'Common';
+          });
+        }
+      });
+    }
+
+    if (draft.settings.general) {
+      draft.settings.hasGeneralSettings = true;
+    }
+  });
+}
 export function jobsPagingDetails(state) {
   if (!state || !state.paging || !state.paging.jobs) {
     return emptyObject;
@@ -566,6 +599,7 @@ export function hasData(
 
   const resources = state[ssLinkedConnectionId][resourceType];
 
+  if (resourceType === 'settings') { return !!resources[integrationId]; }
   if (resourceType === 'flows') {
     return resources.filter(r => r._integrationId === integrationId).length > 0;
   }

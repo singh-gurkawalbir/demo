@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import MappingRow from './MappingRow';
@@ -12,6 +11,7 @@ import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
 import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
+import SalesforceSubListDialog from './SalesforceSubList';
 
 const getAppType = (resType) => {
   if (resType === 'netsuite') return 'Netsuite';
@@ -117,6 +117,7 @@ const SuiteScriptMapping = (props) => {
     recordType,
     sObjectType,
     lastModifiedRowKey = '',
+    sfSubListExtractFieldName,
   } = useSelector(state => selectors.suiteScriptMappings(state));
   const salesforceMasterRecordTypeInfo = useSelector(state => selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
     ssLinkedConnectionId,
@@ -125,7 +126,7 @@ const SuiteScriptMapping = (props) => {
     state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
-  const {status: importSampleDataStatus} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus, } = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
@@ -169,12 +170,18 @@ const SuiteScriptMapping = (props) => {
   const handleDelete = useCallback(key => {
     dispatch(actions.suiteScript.mapping.delete(key));
   }, [dispatch]);
+
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
 
-      // check if value changes or user entered something in new row
+      if (field === 'extract' && value.indexOf('_child_') > -1) {
+        dispatch(actions.suiteScript.mapping.checkForSFSublistExtractPatch(key, value));
+        return;
+      }
       if ((!key && value) || (key && _mapping[field] !== value)) {
+        // check if value changes or user entered something in new row
+
         if (key && value === '') {
           if (
             (field === 'extract' && generate === '') ||
@@ -368,7 +375,7 @@ const SuiteScriptMapping = (props) => {
               />
           ))}
           <MappingRow
-            key={`${emptyRowIndex}`}
+            key={`${emptyRowIndex}-${localChangeIdentifier}`}
             index={emptyRowIndex}
             mapping={emptyObj}
             onFieldUpdate={handleFieldUpdate}
@@ -442,22 +449,20 @@ const SuiteScriptMapping = (props) => {
           )}
         </div>
       )}
+      {sfSubListExtractFieldName && (
+        <SalesforceSubListDialog />
+      )}
+
     </div>
   );
 };
 
 export default function SuiteScriptMappingWrapper(props) {
+  const {ssLinkedConnectionId, integrationId, flowId} = props;
   const dispatch = useDispatch();
-  const match = useRouteMatch();
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
 
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
-  const str1 = match.path.match('/(.*)integrations/(.*)/flows/');
-  const integrationId = str1[str1.length - 1];
-  const str2 = match.path.match('/(.*)suitescript/(.*)/integrations/');
-  const ssLinkedConnectionId = str2[str2.length - 1];
-  const flowId = match.params && match.params.flowId;
-
   const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const requestImportSampleData = useCallback(

@@ -55,6 +55,10 @@ export function integrationAppSettings(state, id) {
   return fromResources.integrationAppSettings(state && state.resources, id);
 }
 
+export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
+  return fromSuiteScript.suiteScriptIASettings(state && state.suiteScript, id, ssLinkedConnectionId);
+}
+
 export function defaultStoreId(state, id, store) {
   return fromResources.defaultStoreId(state && state.resources, id, store);
 }
@@ -79,10 +83,6 @@ export function marketPlaceState(state) {
 
 export function hasData(state, resourceType) {
   return fromResources.hasData(state && state.resources, resourceType);
-}
-
-export function isAgentOnline(state, agentId) {
-  return fromResources.isAgentOnline(state && state.resources, agentId);
 }
 
 export function exportNeedsRouting(state, id) {
@@ -225,8 +225,8 @@ export function flowJobsPagingDetails(state) {
   return fromJobs.flowJobsPagingDetails(state.jobs);
 }
 
-export function flowJobs(state) {
-  return fromJobs.flowJobs(state.jobs);
+export function flowJobs(state, options) {
+  return fromJobs.flowJobs(state.jobs, options);
 }
 
 export function inProgressJobIds(state) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
 import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
@@ -18,6 +18,7 @@ import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from './util';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -129,14 +130,15 @@ function JobErrorTable({
     state => selectors.getJobErrorsPreview(state, job._id),
     shallowEqual
   );
+  const jobFilter = useMemo(() => ({ jobId: job._flowJobId }), [job._flowJobId]);
+  const flowJob = useSelectorMemo(selectors.makeFlowJob, jobFilter);
   // Extract errorFile Id from the target Job i.e., one of the children of parent job ( job._flowJobId )
-  const existingErrorFileId = useSelector(state => {
-    const { children = [] } =
-      selectors.flowJob(state, { jobId: job._flowJobId }) || {};
+  const existingErrorFileId = useMemo(() => {
+    const { children = [] } = flowJob || {};
     const childJob = children.find(cJob => cJob._id === job._id) || {};
 
     return childJob.errorFile && childJob.errorFile.id;
-  });
+  }, [flowJob, job._id]);
 
   const jobErrorsData = [];
 

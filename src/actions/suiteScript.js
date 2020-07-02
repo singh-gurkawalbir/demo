@@ -6,6 +6,19 @@ function action(type, payload = {}) {
 }
 
 export default {
+  iaForm: {
+    initComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
+    initClear: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR, {ssLinkedConnectionId, integrationId}),
+    submit: (ssLinkedConnectionId, integrationId, sectionId, values) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT, {ssLinkedConnectionId, integrationId, sectionId, values}),
+    submitComplete: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE, {ssLinkedConnectionId, integrationId}),
+    submitFailed: (ssLinkedConnectionId, integrationId) => action(actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED, {ssLinkedConnectionId, integrationId}),
+  },
+  featureCheck: {
+    request: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST, {ssLinkedConnectionId, integrationId, featureName}),
+    successful: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.SUCCESSFUL, {ssLinkedConnectionId, integrationId, featureName}),
+    failed: (ssLinkedConnectionId, integrationId, featureName, message) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.FAILED, {ssLinkedConnectionId, integrationId, featureName, message}),
+    clear: (ssLinkedConnectionId, integrationId, featureName) => action(actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR, {ssLinkedConnectionId, integrationId, featureName}),
+  },
   resourceForm: {
     init: (
       ssLinkedConnectionId,
@@ -197,6 +210,16 @@ export default {
         }),
         scope,
       }),
+
+    request: (
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    ) => action(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, {
+      resourceType,
+      ssLinkedConnectionId,
+      integrationId,
+    }),
     received: (ssLinkedConnectionId, integrationId, resourceType, resource) =>
       action(actionTypes.SUITESCRIPT.RESOURCE.RECEIVED, {
         resourceType,
@@ -510,6 +533,7 @@ export default {
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
         key, settings
       }),
+
     updateLookups: (lookups) =>
       action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
         lookups
@@ -533,6 +557,9 @@ export default {
       mappings
     }),
     updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
-    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {})
+    clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {}),
+    checkForSFSublistExtractPatch: (key, value) => action(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
+    setSFSubListFieldName: (value) => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
+    patchExtractList: (value) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),
   }
 };

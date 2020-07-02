@@ -3,6 +3,8 @@ import React, { useState, useCallback } from 'react';
 import { Tabs, Tab, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
+import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
+
 import FormGenerator from '..';
 import {
   getAllFormValuesAssociatedToMeta,
@@ -20,7 +22,7 @@ const useStyle = makeStyles(theme => ({
   },
   tabsContainer: {
     minWidth: 150,
-    background: theme.palette.background.default,
+    background: theme.palette.background.paper,
     marginRight: theme.spacing(2),
   },
   MuiTabWrapper: {
@@ -104,7 +106,7 @@ function TabComponent(props) {
 }
 
 function FormWithSave(props) {
-  const { layout, fieldMap, ...rest } = props;
+  const { layout, fieldMap, children, classes, ...rest } = props;
   const postProcessValuesFn = useCallback(
     values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
     [fieldMap, layout]
@@ -115,27 +117,45 @@ function FormWithSave(props) {
       {form => (
         <>
           <FormGenerator {...props} />
-          <IntegrationSettingsSaveButton
-            {...rest}
-            isValid={
-              !isExpansionPanelErrored({ layout, fieldMap }, form.fields)
-            }
-            isFormTouchedForMeta={isAnyFieldTouchedForMeta(
+          {React.cloneElement(children, {
+            ...rest,
+            isValid: !isExpansionPanelErrored({ layout, fieldMap }, form.fields),
+
+            isFormTouchedForMeta: isAnyFieldTouchedForMeta(
               { layout, fieldMap },
               form.fields
-            )}
-            postProcessValuesFn={postProcessValuesFn}
-          />
+            ),
+            postProcessValuesFn
+
+          })}
+
+
         </>
       )}
     </FormContext.Consumer>
   );
 }
 
+export function SuiteScriptTabIAComponent(props) {
+  return (
+    <TabComponent
+      {...props}
+      orientation="horizontal"
+    >
+      <FormWithSave >
+
+        <SuiteScriptSaveButton />
+      </FormWithSave>
+    </TabComponent>
+  );
+}
+
 export function TabIAComponent(props) {
   return (
     <TabComponent {...props}>
-      <FormWithSave />
+      <FormWithSave >
+        <IntegrationSettingsSaveButton />
+      </FormWithSave>
     </TabComponent>
   );
 }
