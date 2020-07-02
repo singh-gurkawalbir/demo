@@ -4793,7 +4793,7 @@ export function mappingPreviewType(state, importId) {
         return 'salesforce';
       }
     }
-  } else if (resourceData.http) {
+  } else if (importRes.http) {
     const showHttpAssistant = httpAssistantSupportsMappingPreview(
       state,
       importId
