@@ -117,6 +117,10 @@ export default {
               value: 'A39IBJ37TRP1C6',
               label: 'A39IBJ37TRP1C6 (AU)',
             },
+            {
+              value: 'A33AVAJ2PDY3EV',
+              label: 'A33AVAJ2PDY3EV (TR)',
+            },
           ],
         },
       ],
