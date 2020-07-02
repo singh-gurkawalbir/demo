@@ -1,4 +1,3 @@
-import isEqual from 'lodash/isEqual';
 
 const requestBody = editor => {
   const rules = {
@@ -27,52 +26,24 @@ const validate = editor => ({
   dataError:
     (!editor.data || !editor.data.length) && 'Must provide some sample data.',
 });
-const dirty = editor => {
-  const { initRule } = editor || {};
-  const keysToMatch = [
-    'rowDelimiter',
-    'columnDelimiter',
-    'keyColumns',
-    'hasHeaderRow',
-    'multipleRowsPerRecord',
-    'trimSpaces',
-    'rowsToSkip',
-  ];
-
-  for (let i = 0; i < keysToMatch.length; i += 1) {
-    const key = keysToMatch[i];
-
-    if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
-      return true;
-    }
-    if (
-      Array.isArray(editor[key]) &&
-      !isEqual(initRule[key], editor[key])
-    ) return true;
-    if (
-      ['string', 'number'].includes(typeof editor[key]) &&
-      initRule[key] !== editor[key]
-    ) return true;
-  }
-
-  return false;
-};
 
 const init = editor => {
   const { rule = {}, ...others } = editor;
 
   rule.multipleRowsPerRecord = !!(rule.keyColumns && rule.keyColumns.length);
-
+  const initRules = {};
+  Object.keys(rule).forEach(key => {
+    initRules[`_init_${key}`] = rule[key];
+  });
   return {
     ...others,
     ...rule,
-    initRule: rule,
+    ...initRules,
   };
 };
 
 export default {
   validate,
   requestBody,
-  dirty,
   init,
 };

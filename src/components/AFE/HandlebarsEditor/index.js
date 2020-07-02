@@ -64,7 +64,7 @@ export default function HandlebarsEditor(props) {
         strict: props.strict,
         autoEvaluateDelay: 500,
         template: props.rule,
-        initTemplate: props.rule,
+        _init_template: props.rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
       })

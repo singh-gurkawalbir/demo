@@ -29,7 +29,8 @@ export default {
   },
   dirty: editor => {
     const {
-      initRule = [],
+      // eslint-disable-next-line camelcase
+      _init_rule = [],
       data,
       initData,
       rule = [],
@@ -42,8 +43,8 @@ export default {
       return true;
     }
 
-    const rulesDiff = differenceWith(initRule, rule, isEqual);
-    const isRulesEqual = initRule.length === rule.length && !rulesDiff.length;
+    const rulesDiff = differenceWith(_init_rule, rule, isEqual);
+    const isRulesEqual = _init_rule.length === rule.length && !rulesDiff.length;
 
     return !isRulesEqual;
   },

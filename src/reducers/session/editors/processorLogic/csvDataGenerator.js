@@ -19,46 +19,22 @@ const validate = editor => ({
     ? 'Must provide some sample data.'
     : util.validateJsonString(editor.data),
 });
-const dirty = editor => {
-  const { initRule } = editor || {};
-  const keysToMatch = [
-    'rowDelimiter',
-    'columnDelimiter',
-    'includeHeader',
-    'truncateLastRowDelimiter',
-    'replaceTabWithSpace',
-    'replaceNewlineWithSpace',
-    'wrapWithQuotes',
-  ];
-
-  for (let i = 0; i < keysToMatch.length; i += 1) {
-    const key = keysToMatch[i];
-
-    if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
-      return true;
-    }
-    if (
-      ['string', 'number'].includes(typeof editor[key]) &&
-      initRule[key] !== editor[key]
-    ) return true;
-  }
-
-  return false;
-};
 
 const init = editor => {
   const { rule = {}, ...others } = editor;
-
+  const initRules = {};
+  Object.keys(rule).forEach(key => {
+    initRules[`_init_${key}`] = rule[key];
+  });
   return {
     ...others,
     ...rule,
-    initRule: rule,
+    ...initRules
   };
 };
 
 export default {
   validate,
   requestBody,
-  dirty,
   init,
 };

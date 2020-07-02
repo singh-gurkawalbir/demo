@@ -35,9 +35,4 @@ export default {
       dataError: getDataError(),
     };
   },
-  dirty: editor => {
-    const { template, initTemplate } = editor || {};
-
-    return template !== initTemplate;
-  },
 };

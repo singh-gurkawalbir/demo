@@ -47,8 +47,8 @@ export default function TransformEditor(props) {
         rule: props.rule,
         resourceId,
         duplicateKeyToValidate: [valueName],
-        initData: props.data,
-        initRule: props.rule,
+        _init_data: props.data,
+        _init_rule: props.rule,
         optionalSaveParams,
       })
     );
