@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ResourceFormWithStatusPanel({ className, showNotificationToaster, assistantName, ...props }) {
+export default function ResourceFormWithStatusPanel({ className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
   const classes = useStyles({
@@ -51,7 +51,7 @@ export default function ResourceFormWithStatusPanel({ className, showNotificatio
           />
         )}
         {showNotificationToaster &&
-          <GenericAdaptorNotification className={classes.notification} assistantName={assistantName} />}
+          <GenericAdaptorNotification className={classes.notification} onClose={onCloseNotificationToaster} />}
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <ResourceForm className={classes.form} {...props} />
