@@ -47,14 +47,18 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'export.netsuite.realtime.recordType',
-          'export.netsuite.realtime.executionContext',
-          'export.netsuite.realtime.executionType',
-          'export.netsuite.realtime.exportType',
-          'export.netsuite.realtime.checkboxField',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'Configure real-time export',
+            fields: [
+              'export.netsuite.realtime.recordType',
+              'export.netsuite.realtime.executionContext',
+              'export.netsuite.realtime.executionType',
+              'export.netsuite.realtime.exportType',
+              'export.netsuite.realtime.checkboxField',
+            ],
+          }],
       },
     ],
   },

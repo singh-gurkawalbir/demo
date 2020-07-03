@@ -1,6 +1,7 @@
 export default {
   'export.salesforce.sObjectType': {
-    label: 'SObjectType',
+    label: 'SObject type',
+    required: true,
     connectionId: r => r.export._connectionId,
     ssLinkedConnectionId: r => r.ssLinkedConnectionId,
     fieldId: 'export.salesforce.sObjectType',

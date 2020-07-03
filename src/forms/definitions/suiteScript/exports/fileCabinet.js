@@ -10,7 +10,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    exportData: { fieldId: 'exportData' },
     'export.fileCabinet.folderHierarchy': {
       fieldId: 'export.fileCabinet.folderHierarchy',
     },
@@ -23,13 +22,22 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'exportData',
-          'export.fileCabinet.folderHierarchy',
-          'uploadFile',
-          'export.file.csv',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'How would you like to parse files?',
+            fields: [
+              'uploadFile',
+              'export.file.csv',
+            ],
+          },
+          {
+            label: 'Where would you like to transfer from?',
+            fields: [
+              'export.fileCabinet.folderHierarchy',
+            ],
+          },
+        ],
       },
     ],
   },

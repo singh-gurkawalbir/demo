@@ -42,15 +42,19 @@ export default {
     type: 'column',
     containers: [
       {
-        title: 'How would you like the data imported?',
-        fields: [
-          'import.netsuite.recordType',
-          'import.netsuite.operation',
-          'import.netsuite.ignoreExisting',
-          'import.netsuite.ignoreMissing',
-          'import.netsuite.internalIdLookup.expression',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'How would you like the records imported?',
+            fields: [
+              'import.netsuite.recordType',
+              'import.netsuite.operation',
+              'import.netsuite.ignoreExisting',
+              'import.netsuite.ignoreMissing',
+              'import.netsuite.internalIdLookup.expression',
+            ],
+          }
+        ],
       },
     ],
   },

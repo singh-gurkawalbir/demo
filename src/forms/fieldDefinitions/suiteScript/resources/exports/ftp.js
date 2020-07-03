@@ -6,6 +6,7 @@ export default {
   },
   'export.file.skipDelete': {
     type: 'checkbox',
-    label: 'Leave File On Server',
+    label: 'Leave file on server',
+    helpKey: 'export.file.skipDelete',
   },
 };

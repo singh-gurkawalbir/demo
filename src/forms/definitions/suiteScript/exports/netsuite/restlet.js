@@ -110,16 +110,26 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'export.netsuite.restlet.recordType',
-          'export.netsuite.restlet.searchId',
-          'export.type',
-          'export.delta.dateField',
-          'export.once.booleanField',
-          'export.valueDelta.exportedField',
-          'export.valueDelta.pendingField',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'What would you like to export?',
+            fields: [
+              'export.netsuite.restlet.recordType',
+              'export.netsuite.restlet.searchId',
+            ],
+          },
+          {
+            label: 'Configure export type',
+            fields: [
+              'export.type',
+              'export.delta.dateField',
+              'export.once.booleanField',
+              'export.valueDelta.exportedField',
+              'export.valueDelta.pendingField',
+            ],
+          }
+        ],
       },
     ],
   },

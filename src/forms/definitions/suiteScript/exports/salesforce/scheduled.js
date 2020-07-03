@@ -21,7 +21,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    exportData: { fieldId: 'exportData' },
     'export.salesforce.soql': {
       fieldId: 'export.salesforce.soql',
     },
@@ -29,31 +28,41 @@ export default {
     'export.salesforce.booleanField': {
       fieldId: 'export.salesforce.booleanField',
     },
-    advanced: {
-      fieldId: 'advanced',
+    'export.salesforce.soqlErrorMessageField.id': {
+      fieldId: 'export.salesforce.soqlErrorMessageField.id',
+      refreshOptionsOnChangesTo: ['export.salesforce.soql'],
       visibleWhenAll: [
         { field: 'export.salesforce.soql', isNot: [''] },
         { field: 'export.salesforce.exportType', isNot: ['delta'] },
       ],
-    },
-    'export.salesforce.soqlErrorMessageField.id': {
-      fieldId: 'export.salesforce.soqlErrorMessageField.id',
-      refreshOptionsOnChangesTo: ['export.salesforce.soql'],
     },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: [
-          'exportData',
-          'export.salesforce.soql',
-          'export.salesforce.exportType',
-          'export.salesforce.booleanField',
-          'advanced',
-          'export.salesforce.soqlErrorMessageField.id',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'What would you like to export?',
+            fields: [
+              'export.salesforce.soql',
+            ],
+          },
+          {
+            label: 'Configure export type',
+            fields: [
+              'export.salesforce.exportType',
+              'export.salesforce.booleanField',
+            ],
+          },
+          {
+            label: 'Advanced',
+            fields: [
+              'export.salesforce.soqlErrorMessageField.id',
+            ],
+          }
+        ],
       },
     ],
   },
