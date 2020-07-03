@@ -1,5 +1,4 @@
 export function getParamValue(fieldId, values = {}) {
-  console.log('getParamValue fie ', fieldId, values);
   let paramValue;
 
   if (values) {
@@ -7,16 +6,12 @@ export function getParamValue(fieldId, values = {}) {
       paramValue = values[fieldId];
     } else {
       const keyParts = fieldId.split('.');
-      console.log('getParamValue keyParts ', keyParts);
 
 
       paramValue = values[keyParts[0]];
 
-      console.log('getParamValue paramValue ', paramValue);
-
       for (let i = 1; paramValue && i < keyParts.length; i += 1) {
         paramValue = paramValue[keyParts[i]];
-        console.log('getParamValue paramValue2 ', paramValue);
       }
     }
   }
