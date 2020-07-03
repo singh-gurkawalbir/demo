@@ -108,10 +108,12 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+
 }));
 
 export default function ArrowPopper({
   children,
+  classes: overrideClasses,
   onClose = () => {}, // default to noop.
   className,
   ...rest
@@ -123,7 +125,7 @@ export default function ArrowPopper({
     <Popper
       {...rest}
       onClose={onClose}
-      className={classes.popper}
+      className={clsx(classes.popper, overrideClasses?.popper)}
       modifiers={{
         flip: {
           enabled: true,
@@ -137,7 +139,7 @@ export default function ArrowPopper({
           element: arrowEl,
         },
       }}>
-      <span className={classes.arrow} ref={setArrowEl} />
+      <span className={clsx(classes.arrow, overrideClasses?.arrow)} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
         <Paper className={clsx(classes.paper, className)} elevation={1}>
           {children}

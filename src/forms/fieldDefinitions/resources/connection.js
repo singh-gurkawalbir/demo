@@ -1860,7 +1860,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -1905,7 +1905,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1961,7 +1961,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1988,7 +1988,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -2005,7 +2005,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -2232,7 +2232,7 @@ export default {
   },
   'netsuite.linkSuiteScriptIntegrator': {
     label: 'Link suitescript integrator',
-    type: 'checkbox',
+    type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
     label: 'IClient',
@@ -2462,7 +2462,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2470,7 +2470,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

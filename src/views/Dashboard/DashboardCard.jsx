@@ -60,7 +60,7 @@ export default function DashboardCard({ sortedTiles }) {
     <>
       {dashboardTiles.map((t, index) => (
         <div key={getTileId(t)}>
-          {t._ioConnectionId ? (
+          {t.ssLinkedConnectionId ? (
             <SuiteScriptTile
               tile={t}
               index={index}

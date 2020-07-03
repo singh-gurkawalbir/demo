@@ -62,6 +62,7 @@ export default function SelectImport({ flowId }) {
         setImportId(imports[0]._id);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!flow) {

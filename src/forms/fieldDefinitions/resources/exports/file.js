@@ -82,6 +82,7 @@ export default {
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',
+    defaultValue: r => (r && r.file && r.file.skipDelete) || false,
   },
   'file.compressionFormat': {
     type: 'select',

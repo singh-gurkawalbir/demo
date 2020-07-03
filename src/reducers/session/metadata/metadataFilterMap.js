@@ -5,6 +5,7 @@ import { stringCompare } from '../../../utils/sort';
 This file consists of filter map which is used to filter netsuite and salesforce metadata
 */
 
+const emptySet = [];
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
@@ -48,6 +49,12 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-salesforce-id-field': data =>
+    data
+      .filter(
+        item => item.type === 'text' && !item.sublist && !item.id.startsWith('celigo_')
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'suitescript-bodyField': data =>
     data
       .filter(
@@ -67,6 +74,14 @@ export default {
       label: item.name,
       value: item.id,
     })),
+  'suitescript-itemCustomNumberColumn': data =>
+    data
+      .filter(
+        item =>
+          ['float', 'integer'].includes(item.type) &&
+          item.id.indexOf('item[*].custcol') === 0
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'webservices-searchFilters': data =>
     data.fields &&
     data.fields.map(item => ({
@@ -110,6 +125,7 @@ export default {
         }))) ||
     [],
   'salesforce-sObject-layout': data => data,
+  'suitescript-salesforce-sObject-layout': data => (data && data.layouts && Array.isArray(data.layouts) && data.layouts.length && data.layouts[0]) || emptySet,
   'salesforce-sObjects': data =>
     data.map(d => ({
       label: d.label,
@@ -186,6 +202,14 @@ export default {
         value: d.name,
       })),
   'salesforce-soqlQuery': data => data,
+  'salesforce-textFields': data =>
+    data.fields &&
+    data.fields
+      .filter(f => ['string', 'textarea'].includes(f.type))
+      .map(d => ({
+        label: d.label,
+        value: d.name,
+      })),
   'salesforce-externalIdFields': data =>
     data.fields &&
     data.fields
@@ -194,6 +218,11 @@ export default {
         label: d.label,
         value: d.name,
       })),
+  'suiteScript-sObjects': data =>
+    data.fields &&
+    data.fields.map(({label, name, picklistValues}) =>
+      ({label, name, options: picklistValues && picklistValues.map(({label, value}) => ({label, value}))})
+    ),
   'salesforce-sObjectCompositeMetadata': (data, options = {}) => {
     const { applicationResource, connectionId } = options;
     const _data = [];
@@ -261,6 +290,115 @@ export default {
     returnVal.searchLayoutable = searchLayoutable;
 
     return returnVal;
+  },
+  'suiteScriptSalesforce-sObjectCompositeMetadata': (data, options = {}) => {
+    const { applicationResource, connectionId, commMetaPath } = options;
+    const _data = [];
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        _data.push({
+          value: field.name,
+          label: field.label,
+          type: field.type,
+          custom: field.custom,
+          triggerable: field.triggerable,
+          picklistValues: field.picklistValues,
+          updateable: field.updateable,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        if (child.relationshipName) {
+          const sObjectMetadataPath = `${commMetaPath.substring(0, commMetaPath.lastIndexOf('/'))}/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][sObjectMetadataPath]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              _data.push({
+                value: `${child.relationshipName}[*].${field.name}`,
+                label: `${child.relationshipName}: ${field.label}`,
+                type: field.type,
+                custom: field.custom,
+                triggerable: field.triggerable,
+                picklistValues: field.picklistValues,
+                updateable: field.updateable,
+              });
+            });
+          } else {
+            _data.push({
+              value: `_child_${child.relationshipName}`,
+              label: `${child.relationshipName} : Fields...`,
+              type: 'childRelationship',
+              childSObject: child.childSObject,
+              relationshipName: child.relationshipName,
+            });
+          }
+        }
+      });
+    }
+
+    return _data;
+  },
+  'suiteScriptSalesforce-sObjectMetadata': (data, options = {}) => {
+    const { applicationResource, connectionId, commMetaPath } = options;
+    const _data = [];
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        _data.push({
+          value: field.name,
+          label: field.label,
+          type: field.type,
+          custom: field.custom,
+          triggerable: field.triggerable,
+          picklistValues: field.picklistValues,
+          updateable: field.updateable,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        if (child.relationshipName) {
+          const sObjectMetadataPath = `${commMetaPath.substring(0, commMetaPath.lastIndexOf('/'))}/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][sObjectMetadataPath]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              _data.push({
+                value: `${child.relationshipName}[*].${field.name}`,
+                label: `${child.relationshipName}: ${field.label}`,
+                type: field.type,
+                custom: field.custom,
+                triggerable: field.triggerable,
+                picklistValues: field.picklistValues,
+                updateable: field.updateable,
+              });
+            });
+          }
+          _data.push({
+            value: `_child_${child.relationshipName}`,
+            label: `${child.relationshipName} : Fields...`,
+            type: 'childRelationship',
+            childSObject: child.childSObject,
+            relationshipName: child.relationshipName,
+          });
+        }
+      });
+    }
+
+    return _data;
   },
   default: data =>
     data &&

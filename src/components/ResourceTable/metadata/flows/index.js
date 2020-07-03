@@ -28,6 +28,7 @@ export default {
               name={r.name}
               description={r.description}
               isFree={r.free}
+
             />
           );
         },

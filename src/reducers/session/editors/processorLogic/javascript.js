@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import util from '../../../../utils/json';
 
 export default {
@@ -19,15 +20,15 @@ export default {
   },
   dirty: editor => {
     const {
-      initScriptId,
+      _init_scriptId,
       scriptId,
       entryFunction,
-      initEntryFunction,
-      initCode,
+      _init_entryFunction,
+      _init_code,
       code,
     } = editor || {};
 
-    if (entryFunction !== initEntryFunction) {
+    if (entryFunction !== _init_entryFunction) {
       return true;
     }
 
@@ -36,18 +37,18 @@ export default {
       // special case check where none is selected as scriptId by default and user types in code section and removes it.
       // TODO: Raghu to check why we have scriptId as undefined when none is selected by default and ''(empty quotes) when user selects none manually
       if (
-        initScriptId === undefined &&
+        _init_scriptId === undefined &&
         (scriptId === '' || scriptId === undefined) &&
         (code === '' || code === undefined)
       ) {
         return false;
       }
 
-      if (initScriptId !== scriptId) {
+      if (_init_scriptId !== scriptId) {
         return true;
       }
     }
 
-    return initCode !== code;
+    return _init_code !== code;
   },
 };

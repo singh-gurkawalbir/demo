@@ -25,7 +25,7 @@ export default function InstallIntegrationDrawer() {
       type="default"
       title="Install integration"
       height="tall"
-      width="large">
+      >
       <Switch>
         <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
           <Preview />
