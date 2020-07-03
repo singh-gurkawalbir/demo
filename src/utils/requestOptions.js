@@ -251,6 +251,28 @@ export default function getRequestOptions(
         opts: { method: 'GET' },
       };
 
+    case actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION: {
+      const qs = [];
+      const {
+        ssLinkedConnectionId,
+        integrationId,
+        ...restOfTheFilters
+      } = filters;
+
+      Object.keys(restOfTheFilters).forEach(k => {
+        if (filters[k]) {
+          qs.push(`${k}=${encodeURIComponent(filters[k])}`);
+        }
+      });
+
+      return {
+        path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs?${qs.join(
+          '&'
+        )}`,
+        opts: { method: 'GET' },
+      };
+    }
+
     default:
       return {};
   }

@@ -322,6 +322,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                       placement="bottom">
                       <Link
                         color="inherit"
+                        className={classes.action}
                         to={getRoutePath(urlToIntegrationUsers)}
                         onClick={handleLinkClick}>
                         <PermissionsManageIcon />

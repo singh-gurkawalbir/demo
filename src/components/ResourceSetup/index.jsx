@@ -55,8 +55,8 @@ export default function ResourceSetupDrawer(props) {
         classes={{
           paper: classes.drawerPaper,
         }}
-        onClose={onClose}>
-        <DrawerTitleBar title={title} />
+        >
+        <DrawerTitleBar title={title} onClose={onClose} />
         <div>
           {addOrSelect ? (
             <AddOrSelect {...props} />
@@ -68,6 +68,7 @@ export default function ResourceSetupDrawer(props) {
               resourceType={resourceType}
               resourceId={resourceId}
               cancelButtonLabel="Cancel"
+              submitButtonLabel="Save & close"
               onSubmitComplete={onSubmitComplete}
               connectionType={connectionType}
               onCancel={onClose}

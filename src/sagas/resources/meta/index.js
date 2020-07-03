@@ -25,6 +25,9 @@ export function* getNetsuiteOrSalesforceMeta({
         addInfo.query
       )}`;
     }
+    if (addInfo.ignoreCache) {
+      path += `${path.indexOf('?') > -1 ? '&' : '?'}ignoreCache=true`;
+    }
   }
 
   try {

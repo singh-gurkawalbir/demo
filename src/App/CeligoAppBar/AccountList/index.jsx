@@ -40,11 +40,17 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  popper: {
-    maxWidth: '250px',
+  accountListPopper: {
+    maxWidth: 250,
+    left: '124px !important',
+    top: '5px !important',
+  },
+  accountListPopperArrow: {
+    left: '110px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    maxWidth: 248,
     '& button': {
       minWidth: 0,
       display: 'none',
@@ -55,6 +61,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&:hover': {
       background: theme.palette.background.paper2,
+      '&:first-child': {
+        borderRadius: [0, 4, 4, 0],
+      },
+      '&:last-child': {
+        borderRadius: [0, 4, 4, 0],
+      },
     },
     '&:last-child': {
       border: 'none',
@@ -95,6 +107,11 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: 250,
+  },
+  itemRootName: {
+    margin: 0,
+    fontSize: 15,
+    lineHeight: '18px',
   },
 }));
 
@@ -182,9 +199,12 @@ export default function AccountList() {
 
       <ArrowPopper
         id="accountList"
-        className={classes.popper}
         open={open}
         anchorEl={anchorEl}
+        classes={{
+          popper: classes.accountListPopper,
+          arrow: classes.accountListPopperArrow
+        }}
         placement="bottom-end"
         onClose={handleClose}>
         <List dense className={classes.listWrapper}>
@@ -202,7 +222,7 @@ export default function AccountList() {
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText>{a.company}</ListItemText>
+              <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
               {a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
