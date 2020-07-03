@@ -32,7 +32,7 @@ export default function InstallTemplateDrawer() {
           <Preview />
         </Route>
         <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-          <Setup />
+          <Setup handleClose={handleClose} />
         </Route>
       </Switch>
     </RightDrawer>

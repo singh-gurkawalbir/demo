@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const webpack = require('webpack')
+const webpack = require('webpack');
 const DotenvPlugin = require('dotenv-webpack');
 const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') }).parsed;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -84,11 +84,11 @@ module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
 
   if (config.mode === 'production' && process.env.NODE_ENV === 'analyze') {
-    config.plugins.push(new BundleAnalyzerPlugin())
+    config.plugins.push(new BundleAnalyzerPlugin());
   } else if (config.mode === 'development') {
     config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.devtool = 'inline-source-map'
-    config.optimization.minimize = false
+    config.devtool = 'inline-source-map';
+    config.optimization.minimize = false;
     const getProxyOpts = () => {
       console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
@@ -133,7 +133,7 @@ module.exports = (env, argv) => {
       return opts;
     };
     const proxyOpts = getProxyOpts();
-    config.output.filename = '[name].js'
+    config.output.filename = '[name].js';
     config.devServer = {
       hot: true,
       contentBase: path.join(__dirname, 'build'),
@@ -157,8 +157,9 @@ module.exports = (env, argv) => {
         '/netSuiteWS': proxyOpts,
         '/netsuiteDA': proxyOpts,
         '/connection': proxyOpts,
+        '/ui': proxyOpts,
       },
-    }
+    };
   }
   return config;
-}
+};

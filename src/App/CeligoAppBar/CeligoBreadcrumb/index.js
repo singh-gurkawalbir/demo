@@ -14,6 +14,7 @@ import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
+import suiteScriptRoutes from './suiteScript';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -102,6 +103,7 @@ const integrationAppRoutes = [
 ];
 // Main route table.
 const routes = [
+  ...suiteScriptRoutes,
   {
     path: '/pg/integrations/:integrationId/',
     breadcrumb: IntegrationCrumb,

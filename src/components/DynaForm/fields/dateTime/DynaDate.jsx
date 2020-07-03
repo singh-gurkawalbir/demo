@@ -11,10 +11,12 @@ import CalendarIcon from '../../../icons/CalendarIcon';
 export default function DatePicker(props) {
   const { id, label, onFieldChange, value = '', disabled } = props;
   const [dateValue, setDateValue] = useState(value || null);
-  const format = 'MM/DD/YYYY';
+  const format = props.format || 'MM/DD/YYYY';
+  const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    onFieldChange(id, moment(dateValue).format(format) || '');
+    onFieldChange(id, moment(dateValue).format(format) || '', !componentMounted);
+    setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue]);
 

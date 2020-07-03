@@ -67,6 +67,24 @@ const useStyles = makeStyles(theme => ({
   editorToggleContainer: {
     marginRight: theme.spacing(2),
   },
+  autoPreview: {
+    margin: theme.spacing(0, 1, 0, 1),
+    '&:after': {
+      content: '""',
+      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+      height: '80%',
+      width: 1,
+      position: 'absolute',
+      right: -12,
+    }
+  },
+  previewCheckbox: {
+    marginLeft: 8,
+  },
+  previewBtnContainer: {
+    display: 'flex',
+    minHeight: 29,
+  }
 }));
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
@@ -195,14 +213,6 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
-          <DynaCheckbox
-            disabled={disabled}
-            hideLabelSpacing
-            id="disableAutoPreview"
-            onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-preview"
-            value={!!editor.autoEvaluate}
-          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -288,14 +298,31 @@ export default function EditorDialog(props) {
             Cancel
           </Button>
         </div>
-        {showPreviewAction && (
+        <div className={classes.previewBtnContainer}>
+          {showPreviewAction && (
           <Button
             data-test="previewEditorResult"
             variant="outlined"
+            color="secondary"
+            disabled={!!saveInProgress}
+            className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
-        )}
+          )}
+          {!hidePreviewAction && (
+            <div className={classes.previewCheckbox}>
+              <DynaCheckbox
+                disabled={disabled}
+                hideLabelSpacing
+                id="disableAutoPreview"
+                onFieldChange={handleAutoPreviewToggle}
+                label="Auto preview"
+                value={!!editor.autoEvaluate}
+          />
+            </div>
+          )}
+        </div>
       </DialogActions>
     </Dialog>
   );

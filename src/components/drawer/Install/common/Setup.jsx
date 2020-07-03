@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Setup() {
+export default function Setup({handleClose}) {
   const match = useRouteMatch();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -32,11 +32,15 @@ export default function Setup() {
     selectors.templateInstallSteps(state, templateId)
   );
   const handleSetupComplete = useCallback(
-    redirectTo => {
-      history.replace(redirectTo);
+    (redirectTo, isInstallFailed) => {
+      if (isInstallFailed && handleClose && typeof handleClose === 'function') {
+        handleClose();
+      } else {
+        history.replace(redirectTo);
+      }
       dispatch(actions.template.clearTemplate(templateId));
     },
-    [dispatch, history, templateId]
+    [dispatch, history, templateId, handleClose]
   );
 
   return (
