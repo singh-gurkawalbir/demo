@@ -91,8 +91,6 @@ export default function UploadFile() {
           <FormLabel required>
             Browse to Zip file
           </FormLabel>
-          {/* Todo (Mounika) : Please add the help text for the label */}
-          <FieldHelp helpText="Just it is a dummy field help text now..." />
         </div>
         <div className={classes.uploadContainer}>
           <label htmlFor="fileUpload">
