@@ -18,6 +18,26 @@ export default {
       },
     ],
   },
+  'http.requestMediaType': {
+    type: 'select',
+    label: 'Request media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'URL ENCODED', value: 'urlencoded' },
+          { label: 'JSON', value: 'json' },
+          { label: 'FORM DATA', value: 'form-data' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'http.errorMediaType': {
     type: 'select',
     label: 'Override error media type',
