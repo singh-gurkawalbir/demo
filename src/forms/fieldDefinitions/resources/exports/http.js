@@ -59,7 +59,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: '^(.*)lastExportDateTime',
+              pattern: 'lastExportDateTime',
             },
           },
         ],
