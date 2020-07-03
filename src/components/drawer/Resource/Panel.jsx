@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
-  Route,
   useLocation,
   generatePath,
   useHistory,
@@ -155,7 +154,7 @@ const useRedirectionToParentRoute = (resourceType, id) => {
 };
 
 export default function Panel(props) {
-  const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
+  const { match, onClose, occupyFullWidth, flowId } = props;
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
   const location = useLocation();
@@ -428,13 +427,6 @@ export default function Panel(props) {
           />
         </LoadResources>
       </div>
-
-      <Route
-        path={`${match.url}${DRAWER_PATH}`}
-        render={props => (
-          <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
-        )}
-      />
     </>
   );
 }
