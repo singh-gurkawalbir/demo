@@ -122,6 +122,7 @@ function FlowBuilder() {
   const [bottomDrawerSize, setBottomDrawerSize] = useState(1);
   const [tabValue, setTabValue] = useState(0);
   const drawerOpened = useSelector((state) => selectors.drawerOpened(state));
+  const isIntegrationApp = useSelector(state => !!selectors.suiteScriptResource(state, {resourceType: 'integrations', id: integrationId, ssLinkedConnectionId})?._connectorId);
   const flow = useSelector(
     (state) =>
       selectors.suiteScriptResourceData(state, {
@@ -199,7 +200,7 @@ function FlowBuilder() {
     >
         <ResourceDrawer
           flowId={flowId}
-          disabled={isViewMode}
+          disabled={isViewMode || isIntegrationApp}
           integrationId={integrationId}
           ssLinkedConnectionId={ssLinkedConnectionId}
       />
@@ -210,6 +211,7 @@ function FlowBuilder() {
         <SettingsDrawer
           ssLinkedConnectionId={ssLinkedConnectionId}
           flowId={flowId}
+          integrationId={integrationId}
       />
         <SuiteScriptMappingDrawer
           ssLinkedConnectionId={ssLinkedConnectionId}
@@ -219,7 +221,7 @@ function FlowBuilder() {
         <CeligoPageBar
           title={
             <EditableText
-              disabled={isViewMode || !flow.editable}
+              disabled={isViewMode || !flow.editable || isIntegrationApp}
               text={flow.ioFlowName || flow.name}
             // multiline
               defaultText={`Unnamed (id:${flowId})`}
@@ -270,11 +272,10 @@ function FlowBuilder() {
           >
               <SettingsIcon />
             </IconButtonWithTooltip>
-            <DeleteCell
+            { !isIntegrationApp && <DeleteCell
               ssLinkedConnectionId={ssLinkedConnectionId}
               flow={flow}
-              isFlowBuilderView
-          />
+              isFlowBuilderView /> }
           </div>
         </CeligoPageBar>
         {flow && (
@@ -318,7 +319,7 @@ function FlowBuilder() {
                   </Typography>
 
                   <div className={classes.generatorContainer}>
-                    <PageGenerator isViewMode={isViewMode} />
+                    <PageGenerator />
                   </div>
                 </div>
                 <div className={classes.processorRoot}>
@@ -330,10 +331,7 @@ function FlowBuilder() {
                     DESTINATION APPLICATION
                   </Typography>
                   <div className={classes.processorContainer}>
-                    <PageProcessor
-                      isViewMode={isViewMode}
-                      isMonitorLevelAccess={false}
-                    />
+                    <PageProcessor />
                   </div>
                 </div>
               </>

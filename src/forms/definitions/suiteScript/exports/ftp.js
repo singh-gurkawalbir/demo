@@ -10,7 +10,6 @@ export default {
     return newValues;
   },
   fieldMap: {
-    exportData: { fieldId: 'exportData' },
     'export.ftp.directoryPath': { fieldId: 'export.ftp.directoryPath' },
     'export.file.skipDelete': { fieldId: 'export.file.skipDelete' },
     uploadFile: { fieldId: 'uploadFile', required: false },
@@ -22,15 +21,33 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: [
-          'exportData',
-          'export.ftp.directoryPath',
-          'export.file.skipDelete',
-          'uploadFile',
-          'export.file.csv',
-        ],
         type: 'collapse',
+        containers: [
+          {
+            label: 'How would you like to parse files?',
+            fields: [
+              'uploadFile',
+              'export.file.csv',
+            ],
+            collapsed: false,
+            type: 'indent',
+          },
+          {
+            label: 'Where would you like to transfer from?',
+            fields: [
+              'export.ftp.directoryPath',
+            ],
+            collapsed: false,
+          },
+          {
+            label: 'Advanced',
+            fields: [
+              'export.file.skipDelete',
+            ],
+          },
+        ],
       },
+
     ],
   },
 };
