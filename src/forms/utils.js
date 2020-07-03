@@ -331,6 +331,7 @@ export const sanitizePatchSet = ({
     console.log(error, newSet, resource);
     // throw new Error('Something wrong with the patchSet operations ', error);
   }
+
   return newSet;
 };
 
