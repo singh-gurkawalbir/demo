@@ -52,6 +52,12 @@ export default {
             },
           },
           {
+            field: 'http.body',
+            matchesRegEx: {
+              pattern: 'lastExportDateTime',
+            },
+          },
+          {
             matchesRegEx: {
               pattern: '^(.*)lastExportDateTime',
             },
