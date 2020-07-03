@@ -171,11 +171,11 @@ export default function EditorDrawer({
     dispatch(
       actions.editor.init(editorId, 'settingsForm', {
         scriptId: init._scriptId,
-        initScriptId: init._scriptId,
+        _init_scriptId: init._scriptId,
         entryFunction: init.function || 'main',
-        initEntryFunction: init.function || 'main',
+        _init_entryFunction: init.function || 'main',
         data: mode === 'script' ? toggleData(initForm, 'script') : initForm,
-        initData: initForm,
+        _init_data: initForm,
         fetchScriptContent: true, // @Adi: what is this?
         autoEvaluate: true,
         autoEvaluateDelay: 200,
