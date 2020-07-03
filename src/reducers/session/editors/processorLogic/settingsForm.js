@@ -53,7 +53,7 @@ export default {
     }
 
     // added JSON.stringify check to consider the object keys' order as well
-    if (!isEqual(parsedData, editor.initData) || (JSON.stringify(parsedData) !== JSON.stringify(editor.initData))) {
+    if (!isEqual(parsedData, editor._init_data) || (JSON.stringify(parsedData) !== JSON.stringify(editor._init_data))) {
       return true;
     }
 
