@@ -7,7 +7,6 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import SpinnerWrapper from '../../../SpinnerWrapper';
-import FieldHelp from '../../../DynaForm/FieldHelp';
 
 
 const useStyles = makeStyles(theme => ({
