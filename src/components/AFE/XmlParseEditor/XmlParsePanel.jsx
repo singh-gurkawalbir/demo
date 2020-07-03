@@ -46,7 +46,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
     excludeNodes,
   } = useSelector(state => {
     const editor = selectors.editor(state, editorId);
-    console.log(editor);
+    // console.log(editor);
     return editor;
   });
   const patchEditor = (option, value) => {

@@ -191,7 +191,7 @@ export default function DynaXmlParse({
   });
 
   const handleClose = (shouldCommit, editorValues = {}) => {
-    console.log(editorValues);
+    // console.log(editorValues);
 
     if (shouldCommit) {
       setForm(getForm(editorValues));
