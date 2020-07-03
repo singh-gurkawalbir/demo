@@ -39,12 +39,11 @@ function MappingDrawer() {
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
   const mappingEditorId = `${importId}-${flowId}`;
-  const showPreview = useSelector(
-    state => {
-      const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = selectors.mapping(state, mappingEditorId);
-      return !!(showSalesforceNetsuiteAssistant || httpAssistantPreview);
-    }
-  );
+  const hasPreviewPanel = useSelector(state => {
+    const mappingPreviewType = selectors.mappingPreviewType(state, importId);
+    return !!mappingPreviewType;
+  });
+
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -54,8 +53,8 @@ function MappingDrawer() {
       open={!!match}
       classes={{
         paper: clsx(classes.drawerPaper, {
-          [classes.fullWidthDrawerClose]: !drawerOpened && showPreview,
-          [classes.fullWidthDrawerOpen]: drawerOpened && showPreview,
+          [classes.fullWidthDrawerClose]: !drawerOpened && hasPreviewPanel,
+          [classes.fullWidthDrawerOpen]: drawerOpened && hasPreviewPanel,
         }),
       }}
       // eslint-disable-next-line react/jsx-handler-names

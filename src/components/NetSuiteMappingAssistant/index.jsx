@@ -15,6 +15,7 @@ const useStyles = makeStyles({
 });
 
 export default function NetSuiteMappingAssistant({
+  mappingId,
   width = '100%',
   height = '100%',
   netSuiteConnectionId,
@@ -27,6 +28,11 @@ export default function NetSuiteMappingAssistant({
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
+  const isNSAssistantFormLoaded = useSelector(state => {
+    const { isNSAssistantFormLoaded } = selectors.mapping(state, mappingId);
+
+    return !!isNSAssistantFormLoaded;
+  });
   const netSuiteRecordMetadata = useSelector(state => {
     const recordTypes = selectors.metadataOptionsAndResources({
       state,
@@ -51,12 +57,17 @@ export default function NetSuiteMappingAssistant({
     }
   }, [dispatch, netSuiteConnectionId, netSuiteRecordMetadata]);
   const [netSuiteFormIsLoading, setNetSuiteFormIsLoading] = useState(false);
-  const [showNetSuiteForm, setShowNetSuiteForm] = useState(false);
   const [suiteletUrl, setSuiteletUrl] = useState();
   const handleSuiteletFrameLoad = () => {
     setNetSuiteFormIsLoading(false);
   };
 
+  const setNSAssistantFormLoaded = useCallback(
+    value => {
+      dispatch(actions.mapping.setNSAssistantFormLoaded(mappingId, value));
+    },
+    [dispatch, mappingId]
+  );
   const handleMessageReceived = useCallback(
     e => {
       if (
@@ -68,7 +79,7 @@ export default function NetSuiteMappingAssistant({
       }
 
       if (e.data.op === 'loadCompleted') {
-        setShowNetSuiteForm(true);
+        setNSAssistantFormLoaded(true);
         document
           .getElementById('netsuiteFormFrame')
           .contentWindow.postMessage(
@@ -87,7 +98,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [connection, onFieldClick]
+    [connection, onFieldClick, setNSAssistantFormLoaded]
   );
 
   useEffect(() => {
@@ -95,11 +106,18 @@ export default function NetSuiteMappingAssistant({
 
     return () => {
       window.removeEventListener('message', handleMessageReceived);
+
+      if (isNSAssistantFormLoaded) setNSAssistantFormLoaded(false);
     };
-  }, [connection, handleMessageReceived]);
+  }, [
+    connection,
+    handleMessageReceived,
+    isNSAssistantFormLoaded,
+    setNSAssistantFormLoaded,
+  ]);
 
   useEffect(() => {
-    if (showNetSuiteForm) {
+    if (isNSAssistantFormLoaded) {
       if (
         data &&
         data.data &&
@@ -121,7 +139,7 @@ export default function NetSuiteMappingAssistant({
         );
       }
     }
-  }, [connection, data, showNetSuiteForm]);
+  }, [connection, data, isNSAssistantFormLoaded]);
 
   const handleLaunchAssistantClick = () => {
     setNetSuiteFormIsLoading(true);
@@ -191,12 +209,12 @@ export default function NetSuiteMappingAssistant({
           height={height}
           url={suiteletUrl}
           onLoad={handleSuiteletFrameLoad}
-          display={showNetSuiteForm ? 'block' : 'none'}
+          display={isNSAssistantFormLoaded ? 'block' : 'none'}
           frameBorder={0}
         />
       )}
 
-      {!showNetSuiteForm && (
+      {!isNSAssistantFormLoaded && (
         <>
           <div className={classes.NetsuiteRules}>
             <Button
