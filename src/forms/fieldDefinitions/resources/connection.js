@@ -2232,7 +2232,7 @@ export default {
   },
   'netsuite.linkSuiteScriptIntegrator': {
     label: 'Link suitescript integrator',
-    type: 'checkbox',
+    type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
     label: 'IClient',
@@ -2462,7 +2462,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2470,7 +2470,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

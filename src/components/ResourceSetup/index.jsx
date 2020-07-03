@@ -55,8 +55,8 @@ export default function ResourceSetupDrawer(props) {
         classes={{
           paper: classes.drawerPaper,
         }}
-        onClose={onClose}>
-        <DrawerTitleBar title={title} />
+        >
+        <DrawerTitleBar title={title} onClose={onClose} />
         <div>
           {addOrSelect ? (
             <AddOrSelect {...props} />
