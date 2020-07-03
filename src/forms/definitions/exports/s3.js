@@ -431,7 +431,6 @@ export default {
               's3.bucket',
               's3.keyStartsWith',
               's3.keyEndsWith',
-              's3.backupBucket'
             ],
           },
           {
