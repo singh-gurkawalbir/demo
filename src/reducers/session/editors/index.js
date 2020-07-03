@@ -105,7 +105,7 @@ export default function reducer(state = {}, action) {
         const editor = draft[id];
         editor.saveStatus = 'completed';
 
-        const initKeys = Object.keys(editor).filter(key => key.indexOf('_init') !== -1);
+        const initKeys = Object.keys(editor).filter(key => key.indexOf('_init_') !== -1);
         initKeys.forEach(initKey => {
           const key = initKey.replace('_init_', '');
           editor[`_init_${key}`] = editor[key];
