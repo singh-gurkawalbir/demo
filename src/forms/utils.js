@@ -316,7 +316,10 @@ export const sanitizePatchSet = ({
     valuePatches.map(p => p.path),
     resource
   );
-  const newSet = [...removePatches, ...missingPatchSet, ...valuePatches];
+  // Though we are adding the missing patches, in some scenarios the path is getting replaced later
+  // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
+  // and operation will resolve this issue.
+  const newSet = [...removePatches, ...sortBy([...missingPatchSet, ...valuePatches], ['path', 'op'])];
   const error = jsonPatch.validate(newSet, resource);
 
   if (error) {
@@ -328,10 +331,7 @@ export const sanitizePatchSet = ({
     console.log(error, newSet, resource);
     // throw new Error('Something wrong with the patchSet operations ', error);
   }
-  // Though we are adding the missing patches, in some scenarios the path is getting replaced later
-  // and it's resulting in referring to the undefined path. Sorting the newSet by path and operation
-  // will resolve this issue.
-  return sortBy(newSet, ['path', 'op']);
+  return newSet;
 };
 
 // #BEGIN_REGION Integration App form utils

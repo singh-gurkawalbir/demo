@@ -367,6 +367,35 @@ describe('Form Utils', () => {
         },
       ];
       const sanitized = sanitizePatchSet({ patchSet, resource });
+      expect(sanitized).toEqual([
+        {
+          op: 'replace',
+          path: '/html',
+          value: {
+            name: 'hello'
+          }
+        },
+        {
+          path: '/html/rateLimit',
+          op: 'add',
+          value: {
+          }
+        },
+        {
+          path: '/html/rateLimit/failValues',
+          op: 'add',
+          value: {
+          }
+        },
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: [
+            'bad',
+            'fail'
+          ]
+        }
+      ]);
       const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
         .newDocument;
       expect(merged).toEqual({
