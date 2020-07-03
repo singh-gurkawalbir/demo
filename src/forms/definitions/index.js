@@ -14,6 +14,7 @@ import connectorLicenses from './connectorLicenses';
 import integrations from './integrations';
 import asyncHelpers from './asyncHelpers';
 import iClients from './iClients';
+import suiteScript from './suiteScript';
 import apis from './apis';
 
 export default {
@@ -33,5 +34,6 @@ export default {
   accesstokens,
   connectorLicenses,
   integrations,
+  suiteScript,
   apis,
 };

@@ -1,17 +1,13 @@
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 
 export const getIntegrationAppUrlName = (
-  integrationAppName,
-  isV2Integration
+  integrationAppName
 ) => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
     return 'integrationApp';
   }
 
-  return (
-    integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '') +
-    (isV2Integration ? 'V2' : '')
-  );
+  return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
 };
 
 export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
@@ -169,6 +165,7 @@ export default {
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
+      step.type === 'ssConnection' ||
       step.sourceConnection ||
       step.type === INSTALL_STEP_TYPES.FORM
     ) {
@@ -240,3 +237,5 @@ export default {
   isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
+
+export const getTitleIdFromSection = (sec) => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

@@ -99,7 +99,7 @@ export default function DynaSalesforceLookup(props) {
     <>
       {showEditor && (
         <SalesforceLookupFilterEditorDialog
-          title="Where Clause"
+          title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={value}

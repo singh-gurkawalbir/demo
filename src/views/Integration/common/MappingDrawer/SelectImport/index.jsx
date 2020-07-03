@@ -62,7 +62,8 @@ export default function SelectImport({ flowId }) {
         setImportId(imports[0]._id);
       }
     }
-  }, [imports]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!flow) {
     return <Typography>No flow exists with id: {flowId}</Typography>;
