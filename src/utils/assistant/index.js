@@ -283,6 +283,9 @@ export function getExportVersionAndResource({
       if (ep) {
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -335,6 +338,9 @@ export function getImportVersionAndResource({
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
         versionAndResource.sampleData = resource.sampleData;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -575,6 +581,9 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
@@ -1409,6 +1418,9 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource, sampleData } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
