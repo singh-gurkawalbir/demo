@@ -105,7 +105,7 @@ export default function Panel(props) {
     <>
       <div className={classes.root}>
         <div className={classes.title}>
-          <Typography variant="h3">{`Edit ${MODEL_PLURAL_TO_LABEL[resourceType]}`}</Typography>
+          <Typography variant="h3">{`Edit ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}</Typography>
           <IconButton
             data-test="closeResourceForm"
             aria-label="Close"

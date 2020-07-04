@@ -42,7 +42,7 @@ export default {
   },
   'sears.sellerId': {
     type: 'text',
-    label: 'Seller id',
+    label: 'Seller ID',
     required: true,
   },
   'sears.username': {
@@ -144,7 +144,7 @@ export default {
   },
   'magento.hostURI': {
     type: 'text',
-    label: 'SOAP url:',
+    label: 'SOAP URL',
     required: true,
   },
   'magento.username': {
@@ -177,7 +177,7 @@ export default {
   },
   'newegg.username': {
     type: 'text',
-    label: 'Seller id',
+    label: 'Seller ID',
     required: true,
   },
   'newegg.password': {
@@ -215,7 +215,7 @@ export default {
   },
   'netsuite.role': {
     type: 'text',
-    label: 'Role id',
+    label: 'Role ID',
     required: true,
     visibleWhen: [
       {
@@ -283,7 +283,7 @@ export default {
   'netsuite.tokenId': {
     type: 'text',
     inputType: 'password',
-    label: 'Token id',
+    label: 'Token ID',
     required: true,
     defaultValue: '',
     description:

@@ -1,16 +1,16 @@
 export default {
   clearCache: {
     type: 'checkbox',
-    label: 'Refresh Integration Caches',
+    label: 'Refresh integration caches',
     defaultValue: false,
   },
   refreshMappings: {
     type: 'checkbox',
-    label: 'Refresh Integration Mappings',
+    label: 'Refresh integration mappings',
     defaultValue: false,
   },
   object: {
-    label: 'Refresh Object',
+    label: 'Refresh object',
     required: true,
     type: 'refreshableselect',
     // filterKey: 'suitescript-recordTypes',
