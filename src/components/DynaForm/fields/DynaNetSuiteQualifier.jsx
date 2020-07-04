@@ -71,14 +71,12 @@ export default function DynaNetSuiteQualifier(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, JSON.stringify(rule));
     }
-
-    handleEditorClick();
   };
 
   let rule = [];
@@ -105,7 +103,8 @@ export default function DynaNetSuiteQualifier(props) {
             title="Field specific qualification criteria"
             id={id}
             value={rule}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={handleEditorClick}
             // disabled={disabled}
             options={options}
           />

@@ -50,7 +50,8 @@ export default function DynaCsvParse(props) {
   const csvData = useSelector(state => selectors.fileSampleData(state, {
     resourceId, resourceType, fileType: 'csv'
   }));
-  const handleClose = (shouldCommit, editorValues = {}) => {
+
+  const handleSave = (shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       const {
         rowsToSkip: rowsToSkipField,
@@ -98,8 +99,6 @@ export default function DynaCsvParse(props) {
         }
       }
     }
-
-    handleEditorClick();
   };
 
   const rule = useMemo(
@@ -159,7 +158,8 @@ export default function DynaCsvParse(props) {
             /** rule to be passed as json */
             rule={rule}
             uploadFileAction={uploadFileAction}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={handleEditorClick}
             disabled={disabled}
           />
         )}

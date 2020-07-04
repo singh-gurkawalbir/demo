@@ -101,6 +101,7 @@ export default function EditorDialog(props) {
     showFullScreen = true,
     width = '70vw',
     height = '50vh',
+    onSave,
     onClose,
     disabled,
     dataTest = 'editor',
@@ -135,18 +136,28 @@ export default function EditorDialog(props) {
     () => dispatch(actions.editor.evaluateRequest(id)),
     [dispatch, id]
   );
+
   const handleSave = useCallback(
-    shouldCommit => () => {
-      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+    (closeOnSave) => {
+      if (!preSaveValidate({ editor, enquesnackbar })) {
         return;
       }
 
-      if (onClose) {
-        onClose(shouldCommit, editor);
+      if (onSave) {
+        onSave(true, editor);
+        dispatch(actions.editor.saveComplete(id));
+      }
+      if (closeOnSave === true && onClose) {
+        onClose();
       }
     },
-    [editor, enquesnackbar, onClose]
+    [editor, enquesnackbar, onSave, onClose, dispatch, id]
   );
+
+  const handleSaveAndClose = useCallback(() => {
+    handleSave(true);
+  }, [handleSave]);
+
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
   }, [dispatch, id]);
@@ -273,20 +284,30 @@ export default function EditorDialog(props) {
                 color="secondary"
                 dataTest="saveAndCloseEditor"
                 disabled={disableSave}
-                onClose={handleSave(true)}
+                onClose={handleSaveAndClose}
                 submitButtonLabel="Save & close"
                 flowId={flowId}
             />
             </>
           ) : (
-            <Button
-              variant="outlined"
-              data-test="saveEditor"
-              disabled={disableSave}
-              color="primary"
-              onClick={handleSave(true)}>
-              Save
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                data-test="saveEditor"
+                disabled={disableSave}
+                color="primary"
+                onClick={handleSave}>
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                data-test="saveAndCloseEditor"
+                disabled={disableSave}
+                color="secondary"
+                onClick={handleSaveAndClose}>
+                Save & close
+              </Button>
+            </>
           )}
 
           <Button

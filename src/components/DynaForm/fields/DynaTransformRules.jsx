@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -54,15 +54,17 @@ export default function DynaTransformRules(props) {
   const { id, resourceId, value, label, onFieldChange, disabled } = props;
   const rule = getTransformRule(value);
   const [showEditor, setShowEditor] = useState(false);
-  const handleClose = (shouldCommit, editorValues) => {
-    setShowEditor(false);
-
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule: newRule } = editorValues;
 
       onFieldChange(id, constructTransformData(rule || [], newRule));
     }
-  };
+  }, [id, onFieldChange, rule]);
+
+  const handleClose = useCallback(() => {
+    setShowEditor(false);
+  }, []);
 
   const toggleEditor = () => {
     setShowEditor(!showEditor);
@@ -76,6 +78,7 @@ export default function DynaTransformRules(props) {
           id={id + resourceId}
           data=""
           rule={rule && rule[0]}
+          onSave={handleSave}
           onClose={handleClose}
           disabled={disabled}
         />
