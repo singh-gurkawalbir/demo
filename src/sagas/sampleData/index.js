@@ -246,8 +246,8 @@ function* fetchExportPreviewData({
       return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
     }
     const fileProps = {
-      type: fileDetails.type,
-      file: fileDetails.body,
+      type: fileDetails?.type,
+      file: fileDetails?.body,
       formValues: values,
     };
     return yield call(processRawData, {
