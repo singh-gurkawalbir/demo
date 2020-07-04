@@ -279,7 +279,6 @@ export default function StandaloneMapping(props) {
 
     if (searchLayoutable) {
       mappingOptions.salesforceMasterRecordTypeId = salesforceMasterRecordTypeId;
-      mappingOptions.showSalesforceNetsuiteAssistant = true;
     }
   }
 
@@ -295,7 +294,6 @@ export default function StandaloneMapping(props) {
 
     options.recordType = recordType;
     mappingOptions.netsuiteRecordType = recordType;
-    mappingOptions.showSalesforceNetsuiteAssistant = true;
   }
 
   if (isAssistant && assistantData) {

@@ -12,17 +12,20 @@ export default {
     applications: { fieldId: 'applications' },
   },
   layout: {
-    fields: [
-      'name',
-      'description',
-      'imageURL',
-      'websiteURL',
-      'contactEmail',
-      '_stackId',
-      'installerFunction',
-      'uninstallerFunction',
-      'updateFunction',
-      'applications',
-    ],
+    type: 'box',
+    containers: [{
+      fields: [
+        'name',
+        'description',
+        'imageURL',
+        'websiteURL',
+        'contactEmail',
+        '_stackId',
+        'installerFunction',
+        'uninstallerFunction',
+        'updateFunction',
+        'applications',
+      ],
+    }]
   },
 };

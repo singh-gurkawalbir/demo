@@ -9,7 +9,7 @@ export default {
     if (actionProps.resourceType === 'templates') {
       return 'Download file';
     }
-    return `Download ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`;
+    return `Download ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
 
   icon: DownloadIcon,

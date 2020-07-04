@@ -85,11 +85,10 @@ export function ResourceTypeFilter(props) {
           name: 'resourceType',
           id: 'resourceType',
         }}>
-        <MenuItem value="" disabled>
+        <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select resource type
         </MenuItem>
         {[
-          [OPTION_ALL.id, OPTION_ALL.label],
           ...resourceTypeFilterOptionsByResourceType[resourceType || 'all'].map(
             rt => [rt, RESOURCE_TYPE_SINGULAR_TO_LABEL[rt]]
           ),

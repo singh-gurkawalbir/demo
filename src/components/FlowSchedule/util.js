@@ -611,16 +611,21 @@ export const getMetadata = ({
       },
     },
     layout: {
-      fields: [
-        'timeZone',
-        'activeTab',
-        'frequency',
-        'startTime',
-        'endTime',
-        'daysToRunOn',
-        'dayToRunOn',
-        'schedule',
-      ]
+      type: 'box',
+      containers: [
+        {
+          fields: [
+            'timeZone',
+            'activeTab',
+            'frequency',
+            'startTime',
+            'endTime',
+            'daysToRunOn',
+            'dayToRunOn',
+            'schedule',
+          ]
+        },
+      ],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'endTime') {

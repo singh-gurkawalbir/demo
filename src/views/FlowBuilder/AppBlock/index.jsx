@@ -29,21 +29,37 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
+    // marginBottom: 'calc(100% - 54px) !important',
   },
   box: {
     width: blockWidth,
     height: blockHeight,
+    position: 'relative',
+    zIndex: 2,
   },
   draggable: { cursor: 'move' },
   name: {
-    margin: theme.spacing(1, 0, 1, 0),
-    height: 50,
+    height: 150,
     overflow: 'hidden',
     width: '100%',
-    alignItems: 'flex-end',
     justifyContent: 'center',
     display: 'flex',
     textAlign: 'center',
+    top: -85,
+    marginBottom: -35,
+    background: theme.palette.background.default,
+    borderRadius: [[0, 0, 20, 20]],
+    position: 'relative',
+    zIndex: 1,
+    padding: theme.spacing(2),
+
+  },
+  containerName: {
+    fontSize: 15,
+    lineHeight: '19px',
+    wordBreak: 'break-word',
+    paddingTop: 84,
+    width: '100%',
   },
   buttonContainer: {
     display: 'flex',
@@ -127,6 +143,9 @@ const useStyles = makeStyles(theme => ({
       fontSize: '12px',
     },
   },
+  tooltipNameFB: {
+    wordWrap: 'break-word',
+  },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
@@ -134,6 +153,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     transition: theme.transitions.create('color'),
     color: 'rgb(0,0,0,0)',
+  },
+  pgContainerName: {
+    background: theme.palette.common.white,
   },
 }));
 
@@ -275,23 +297,6 @@ function AppBlock({
 
   return (
     <div className={clsx(classes.root, className)}>
-      <Typography component="div" className={classes.name} variant="h5">
-        {isTruncated ? (
-          <Tooltip
-            title={name}
-            TransitionComponent={Zoom}
-            placement="top"
-            enterDelay={1000}>
-            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-              {name}
-            </Truncate>
-          </Tooltip>
-        ) : (
-          <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-            {name}
-          </Truncate>
-        )}
-      </Typography>
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}
@@ -361,6 +366,27 @@ function AppBlock({
           </Status>
         ) : null}
       </div>
+      <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
+        <Typography className={classes.containerName}>
+          {isTruncated ? (
+            <Tooltip
+              title={<span className={classes.tooltipNameFB}>{name}</span>}
+              TransitionComponent={Zoom}
+              placement="top"
+              enterDelay={1000}>
+              <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+                {name}
+              </Truncate>
+            </Tooltip>
+          ) : (
+            <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+              {name}
+            </Truncate>
+          )}
+        </Typography>
+      </div>
+
+
     </div>
   );
 }

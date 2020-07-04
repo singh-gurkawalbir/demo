@@ -19,6 +19,11 @@ export default {
     },
   },
   layout: {
-    fields: ['name', 'description'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['name', 'description'],
+      }
+    ],
   },
 };

@@ -99,25 +99,17 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnLicenses &&
-    addOnState.addOns.addOnLicenses.filter(model => {
-      if (supportsMultiStore) {
-        return model.storeId === storeId;
-      }
+  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
+    if (supportsMultiStore) {
+      return model.storeId === storeId;
+    }
 
-      return true;
-    });
+    return true;
+  });
 
   if (subscribedAddOns) {
     subscribedAddOns.forEach((f, i) => {
-      const addon =
-        addOnState &&
-        addOnState.addOns &&
-        addOnState.addOns.addOnMetaData &&
-        addOnState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
 
       subscribedAddOns[i]._id = i;
       subscribedAddOns[i].integrationId = integrationId;
@@ -132,12 +124,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
     });
   }
 
-  const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
-  const hasAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnMetaData &&
-    addOnState.addOns.addOnMetaData.length > 0;
+  const hasSubscribedAddOns = subscribedAddOns?.length > 0;
+  const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;
   const {
     plan,
     createdText,

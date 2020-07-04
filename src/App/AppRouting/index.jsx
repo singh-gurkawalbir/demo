@@ -8,6 +8,9 @@ import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Un
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
 import CloneSetup from '../../views/Clone/Setup';
+import getRoutePath from '../../utils/routePaths';
+import AmpersandRoutesHandler from './AmpersandRoutesHandler';
+import { AMPERSAND_ROUTES } from '../../utils/constants';
 
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
@@ -51,6 +54,30 @@ const ConnectorInstallBase = loadable(() =>
 );
 const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
+);
+
+
+const SuiteScriptIntegration = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
+  )
+);
+
+const SuiteScriptIntegrationApp = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/App'
+  )
+);
+
+const SuiteScriptFlowBuilder = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
+  )
+);
+const SuiteScriptIntegrationAppInstallation = loadable(() =>
+  import(
+    /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/SuiteScript/Integration/App/Install'
+  )
 );
 
 export default function AppRouting() {
@@ -178,6 +205,49 @@ export default function AppRouting() {
         exact
         render={({ history }) => history.replace('/pg/accesstokens')}
         />
+      <Route
+        path={getRoutePath('/suitescript/integrationapps/:integrationAppName/setup')}
+        >
+        <SuiteScriptIntegrationAppInstallation />
+      </Route>
+      <Route
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/suitescript/${match.params.ssLinkedConnectionId}/integrations/${match.params.integrationId}/flows`)
+          );
+        }}
+      />
+      <Route
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId')}
+        exact
+        render={({ history, match }) => {
+          history.replace(
+            getRoutePath(`/suitescript/${match.params.ssLinkedConnectionId}/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`)
+          );
+        }}
+      />
+      <Route
+        path={[
+          getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
+        ]}>
+        <SuiteScriptFlowBuilder />
+      </Route>
+      <Route
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrations/:integrationId/:tab')}
+        component={SuiteScriptIntegration}
+      />
+      <Route
+        path={getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId/:tab')}
+        component={SuiteScriptIntegrationApp}
+      />
+      <Route
+        exact
+        path={[...AMPERSAND_ROUTES]}
+        component={AmpersandRoutesHandler}
+      />
       <Route path="/pg/:resourceType" component={ResourceList} />
       <Route component={NotFound} />
     </Switch>

@@ -61,16 +61,20 @@ export default function RefreshableIntegrationAppSetting(props) {
       const { label } = selectedOption;
 
       // save it as a valueLabel
-      onFieldChange(fieldName, { id: value, label }, true);
+      if (label) {
+        onFieldChange(fieldName, { id: value, label }, true);
+      }
     }
-  }, [fieldName, onFieldChange, options, value, valueAndLabel]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldName, options, value, valueAndLabel]);
 
   useEffect(() => {
     if (!value && newValue && !autofill && disabled) {
       setAutofill(true);
       onFieldChange(fieldName, newValue, true);
     }
-  }, [newValue, autofill, onFieldChange, fieldName, disabled, value]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newValue, autofill, fieldName, disabled, value]);
 
   useEffect(() => {
     if (netSuiteSystemDomain && value && value.id) {

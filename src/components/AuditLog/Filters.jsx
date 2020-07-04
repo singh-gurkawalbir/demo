@@ -117,11 +117,8 @@ class Filters extends Component {
           }}
           value={filters._resourceId}
           onChange={this.handleChange}>
-          <MenuItem value="" disabled>
-            Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
-          </MenuItem>
           <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-            {OPTION_ALL.label}
+            Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
           </MenuItem>
           {menuOptions}
         </CeligoSelect>
@@ -177,11 +174,8 @@ class Filters extends Component {
               }}
               onChange={this.handleChange}
               value={byUser}>
-              <MenuItem value="select user" disabled>
-                Select user
-              </MenuItem>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
-                All
+                Select user
               </MenuItem>
               {users.map(opt => (
                 <MenuItem key={opt._id} value={opt._id}>
@@ -198,11 +192,10 @@ class Filters extends Component {
               }}
               onChange={this.handleChange}
               value={source}>
-              <MenuItem value="" disabled>
+              <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
                 Select source
               </MenuItem>
               {[
-                [OPTION_ALL.id, OPTION_ALL.label],
                 ...Object.keys(AUDIT_LOG_SOURCE_LABELS)
                   .filter(k => {
                     if (!resource) {

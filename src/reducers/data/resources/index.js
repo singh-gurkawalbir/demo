@@ -1,6 +1,5 @@
 import produce from 'immer';
 import { get } from 'lodash';
-import moment from 'moment';
 import { createSelector } from 'reselect';
 import sift from 'sift';
 import actionTypes from '../../../actions/types';
@@ -568,15 +567,17 @@ export function resourceList(
     return typeof value === 'string' ? value : '';
   }
 
-  const matchTest = r => {
+  const stringTest = r => {
     if (!keyword) return true;
-
     const searchableText =
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
         : `${r._id}|${r.name}|${r.description}`;
-
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
+  };
+  const matchTest = (rOrig) => {
+    const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+    return stringTest(r);
   };
 
   const comparer = ({ order, orderBy }) =>
@@ -663,20 +664,6 @@ export const resourceDetailsMap = createSelector(
     return allResources;
   }
 );
-
-// TODO: Vamshi unit tests for selector
-export function isAgentOnline(state, agentId) {
-  if (!state) return false;
-  const matchingAgent =
-    state.agents && state.agents.find(r => r._id === agentId);
-
-  return !!(
-    matchingAgent &&
-    matchingAgent.lastHeartbeatAt &&
-    new Date().getTime() - moment(matchingAgent.lastHeartbeatAt) <=
-      process.env.AGENT_STATUS_INTERVAL
-  );
-}
 
 export function hasSettingsForm(state, resourceType, resourceId) {
   const res = resource(state, resourceType, resourceId);

@@ -235,19 +235,14 @@ export default function ConnectorInstallation(props) {
           props.history.push(
             `/pg/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`
           );
-        } else {
-          dispatch(
-            actions.resource.clearChildIntegration()
+        } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
+          props.history.push(
+            `/pg/integrationapps/${integrationAppName}/${integrationId}`
           );
-          if (integrationInstallSteps && integrationInstallSteps.length > 0) {
-            props.history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}`
-            );
-          } else {
-            props.history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-            );
-          }
+        } else {
+          props.history.push(
+            `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+          );
         }
       }
     }
@@ -276,7 +271,7 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
-            const storeId = stores.length
+            const storeId = stores?.length
               ? stores[0].value
               : undefined;
 

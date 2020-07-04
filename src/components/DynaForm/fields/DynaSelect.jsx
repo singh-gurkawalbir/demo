@@ -17,18 +17,19 @@ const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 48;
 const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
-
+const getLabel = (items, value) => items.find(item => item.value === value)?.label;
 const optionSearch = (search) => ({label, optionSearch}) => search && (
-  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search)) ||
- (typeof label === 'string' && label.toLowerCase().startsWith(search)));
-const useAutoScrollOption = (items, open, listRef) => {
-  const [search, setSearch] = useState('');
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
+ (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
+const useAutoScrollOption = (items, open, listRef, value) => {
+  const label = getLabel(items, value) || '';
+  const [search, setSearch] = useState(label);
   const [scrolIndex, setScrolIndex] = useState(-1);
 
   useEffect(() => {
-    setSearch('');
+    setSearch(label);
     setScrolIndex(-1);
-  }, [open]);
+  }, [open, label]);
 
   useEffect(() => {
     // clear out search result after
@@ -52,12 +53,7 @@ const useAutoScrollOption = (items, open, listRef) => {
       return;
     }
     if (e.key) {
-      setSearch(str => {
-        const tmp = str + e.key;
-
-        // console.log('see ', tmp);
-        return tmp;
-      });
+      setSearch(str => str + e.key);
     }
   }, [items.length, scrolIndex]);
 
@@ -69,7 +65,6 @@ const useAutoScrollOption = (items, open, listRef) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
-  // console.log('matchingIndex ', matchingIndex);
 
   useEffect(() => {
     if (open) {
@@ -80,7 +75,9 @@ const useAutoScrollOption = (items, open, listRef) => {
 
   useEffect(() => {
     if (scrolIndex > 0) {
-      listRef && listRef.current && listRef.current.scrollToItem(scrolIndex);
+      if (scrolIndex + NO_OF_OPTIONS / 2 < items.length) {
+        listRef?.current?.scrollToItem(scrolIndex + (NO_OF_OPTIONS / 2));
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrolIndex]);
@@ -174,7 +171,7 @@ export default function DynaSelect(props) {
     return items;
   }, [isSubHeader, skipSort, options, placeholder]);
 
-  const matchMenuIndex = useAutoScrollOption(items, open, listRef);
+  const matchMenuIndex = useAutoScrollOption(items, open, listRef, value);
   let finalTextValue;
 
   if (value === undefined || value === null) {
@@ -235,11 +232,7 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
-          renderValue={selected => {
-            const item = items.find(item => item.value === selected);
-
-            return item && item.label;
-          }}
+          renderValue={selected => getLabel(items, selected)}
           open={open}
           onOpen={() => {
             setOpen(true);

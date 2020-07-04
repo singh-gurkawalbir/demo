@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -363,18 +363,22 @@ export default function Panel(props) {
       }),
     [id, location.search, resourceLabel, resourceType]
   );
-  // useTechAdaptorForm field we are using for showing banner on the screen incase
-  // import/export assistant is not present and if we are showing generic adaptor
-  function getTechAdaptorFormValue() {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      return resource?.assistant && resource?.useTechAdaptorForm;
+  const [showNotificationToaster, setShowNotificationToaster] = useState(false);
+  const onCloseNotificationToaster = () => {
+    setShowNotificationToaster(false);
+  };
+  // will be patching useTechAdaptorForm for assistants if export/import is not supported
+  // based on this value, will be showing banner on the new export/import creation
+  // using isNew as dependency and this will be false for export/import form
+  useEffect(() => {
+    if (!isNew) {
+      const useTechAdaptorForm = stagedProcessor?.patch?.find(
+        p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+      );
+      setShowNotificationToaster(!!useTechAdaptorForm?.value);
     }
-    const useTechAdaptorForm = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
-    );
-    return !!useTechAdaptorForm?.value;
-  }
-  const showNotificationToaster = getTechAdaptorFormValue();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isNew]);
   return (
     <>
       <div className={classes.root}>
@@ -419,7 +423,7 @@ export default function Panel(props) {
             onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
             showNotificationToaster={showNotificationToaster}
-            assistantName={applicationType}
+            onCloseNotificationToaster={onCloseNotificationToaster}
             {...props}
           />
         </LoadResources>

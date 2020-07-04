@@ -8,13 +8,18 @@ export default {
     applications: { fieldId: 'applications' },
   },
   layout: {
-    fields: [
-      'name',
-      'description',
-      'imageURL',
-      'websiteURL',
-      'contactEmail',
-      'applications',
+    type: 'box',
+    containers: [
+      {
+        fields: [
+          'name',
+          'description',
+          'imageURL',
+          'websiteURL',
+          'contactEmail',
+          'applications',
+        ],
+      },
     ],
   },
 };

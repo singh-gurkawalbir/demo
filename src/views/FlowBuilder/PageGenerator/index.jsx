@@ -24,26 +24,26 @@ import { actionsMap } from '../../../utils/flows';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 170;
-const lineHeightOffset = 63;
-const lineWidth = 130;
+const blockHeight = 200;
+const lineHeightOffset = 85;
+const lineWidth = 160;
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
-    alignItems: 'center',
-    // marginBottom: theme.spacing(3),
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   line: {
     borderBottom: `3px dotted ${theme.palette.divider}`,
     width: lineWidth,
-    marginTop: 67,
+    marginTop: 85,
   },
   firstLine: {
     position: 'relative',
   },
   connectingLine: {
-    marginTop: -161,
+    marginTop: -blockHeight,
     height: blockHeight + lineHeightOffset,
     borderRight: `3px dotted ${theme.palette.divider}`,
   },
@@ -81,6 +81,19 @@ const PageGenerator = ({
   const exportNeedsRouting = useSelector(state =>
     selectors.exportNeedsRouting(state, resourceId)
   );
+  const isMultipleAs2ExportsOfSameConnectionId = useSelector(state => {
+    if (pending) {
+      return false;
+    }
+    const allAS2ExportsMatchingConnId = selectors.resourceList(state, {
+      type: 'exports',
+      filter: {
+        adaptorType: 'AS2Export',
+        _connectionId: resource?._connectionId
+      },
+    });
+    return allAS2ExportsMatchingConnId.filtered > 1;
+  });
   const connectionHasAs2Routing = useSelector(state => {
     if (!resource || resourceType !== 'exports') return false;
 
@@ -298,7 +311,7 @@ const PageGenerator = ({
       if (exportNeedsRouting || connectionHasAs2Routing) {
         generatorActions.push({
           ...as2RoutingAction,
-          isUsed: connectionHasAs2Routing,
+          isUsed: connectionHasAs2Routing || isMultipleAs2ExportsOfSameConnectionId,
         });
       }
 
@@ -334,6 +347,7 @@ const PageGenerator = ({
     isDataLoader,
     pending,
     usedActions,
+    isMultipleAs2ExportsOfSameConnectionId
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');

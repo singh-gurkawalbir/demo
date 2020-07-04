@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
 import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,6 +81,7 @@ function JobTable({
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
+  const [openedJobErrors, setOpenedJobErrors] = useState(false);
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -90,6 +93,11 @@ function JobTable({
   const selectableJobIdsInCurrentPage = selectableJobsInCurrentPage.map(
     j => j._id
   );
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const _JobId = queryParams.get('_jobId');
+  const flowJobId = queryParams.get('_flowJobId');
   const selectedJobIds = Object.keys(selectedJobs).filter(
     jobId => selectedJobs[jobId] && selectedJobs[jobId].selected
   );
@@ -121,23 +129,34 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({
+
+  const handleViewErrorsClick = useCallback(({
     jobId,
     parentJobId,
     showResolved = false,
     numError,
+    includeAll,
     numResolved,
-  }) {
+  }) => {
     setShowErrorDialogFor({
       jobId,
       parentJobId,
       showResolved,
       numError,
+      includeAll,
       numResolved,
     });
 
     history.push(`${match.url}/viewErrors`);
-  }
+  }, [history, match.url]);
+
+  useEffect(() => {
+    if (!openedJobErrors && flowJobId) {
+      dispatch(actions.job.requestFamily({ jobId: flowJobId }));
+      handleViewErrorsClick({jobId: _JobId, parentJobId: flowJobId, includeAll: true});
+      setOpenedJobErrors(true);
+    }
+  }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors]);
 
   function handleErrorDrawerClose() {
     history.goBack();
@@ -189,7 +208,9 @@ function JobTable({
       <ErrorDrawer
         // for now, force tall (default)
         // height={isFlowBuilderView ? 'short' : 'tall'}
+        integrationName={integrationName}
         jobId={showErrorDialogFor.jobId}
+        includeAll={showErrorDialogFor.includeAll}
         parentJobId={showErrorDialogFor.parentJobId}
         showResolved={showErrorDialogFor.showResolved}
         numError={showErrorDialogFor.numError}

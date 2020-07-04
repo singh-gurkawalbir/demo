@@ -599,108 +599,107 @@ export const flowJobsPagingDetails = createSelector(
   })
 );
 
-export const flowJobs = createSelector(
-  state => state && state.paging,
-  state => state && state.flowJobs,
-  state => state && state.bulkRetryJobs,
-  (paging, flowJobs, bulkRetryJobs) => {
-    if (!paging && !flowJobs && !bulkRetryJobs) {
-      return DEFAULT_STATE.flowJobs;
-    }
+export function flowJobs(state, options) {
+  const {paging, flowJobs, bulkRetryJobs} = state;
+  if (!paging && !flowJobs && !bulkRetryJobs) {
+    return DEFAULT_STATE.flowJobs;
+  }
 
-    const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
-      flowJobs,
-      bulkRetryJobs
-    );
+  const flowJobIdsThatArePartOfBulkRetryJobs = getFlowJobIdsThatArePartOfBulkRetryJobs(
+    flowJobs,
+    bulkRetryJobs
+  );
 
-    return flowJobs
+  let allflowJobs = flowJobs;
+  if (!options?.includeAll) {
+    allflowJobs = flowJobs
       .slice(
         paging.currentPage * paging.rowsPerPage,
         (paging.currentPage + 1) * paging.rowsPerPage
-      )
-      .map(job => {
-        const additionalProps = {
-          uiStatus: job.status,
-          duration: getJobDuration(job),
-          doneExporting: !!job.doneExporting,
-          numPagesProcessed: 0,
+      );
+  }
+  return allflowJobs.map(job => {
+    const additionalProps = {
+      uiStatus: job.status,
+      duration: getJobDuration(job),
+      doneExporting: !!job.doneExporting,
+      numPagesProcessed: 0,
+    };
+
+    if (!additionalProps.doneExporting) {
+      if (
+        [
+          JOB_STATUS.COMPLETED,
+          JOB_STATUS.CANCELED,
+          JOB_STATUS.FAILED,
+        ].includes(job.status)
+      ) {
+        additionalProps.doneExporting = true;
+      }
+    }
+
+    if (flowJobIdsThatArePartOfBulkRetryJobs.includes(job._id)) {
+      additionalProps.uiStatus = JOB_STATUS.RETRYING;
+    }
+
+    if (job.children && job.children.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          uiStatus: cJob.status,
+          duration: getJobDuration(cJob),
         };
 
-        if (!additionalProps.doneExporting) {
-          if (
-            [
-              JOB_STATUS.COMPLETED,
-              JOB_STATUS.CANCELED,
-              JOB_STATUS.FAILED,
-            ].includes(job.status)
-          ) {
-            additionalProps.doneExporting = true;
+        if (cJob.type === 'import') {
+          if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
+            additionalChildProps.percentComplete = Math.floor(
+              (cJob.numPagesProcessed * 100) / job.numPagesGenerated
+            );
+          } else {
+            additionalChildProps.percentComplete = 0;
           }
-        }
 
-        if (flowJobIdsThatArePartOfBulkRetryJobs.includes(job._id)) {
-          additionalProps.uiStatus = JOB_STATUS.RETRYING;
-        }
+          additionalProps.numPagesProcessed += parseInt(
+            cJob.numPagesProcessed,
+            10
+          );
 
-        if (job.children && job.children.length > 0) {
-          // eslint-disable-next-line no-param-reassign
-          job.children = job.children.map(cJob => {
-            const additionalChildProps = {
-              uiStatus: cJob.status,
-              duration: getJobDuration(cJob),
-            };
-
-            if (cJob.type === 'import') {
-              if (additionalProps.doneExporting && job.numPagesGenerated > 0) {
-                additionalChildProps.percentComplete = Math.floor(
-                  (cJob.numPagesProcessed * 100) / job.numPagesGenerated
-                );
-              } else {
-                additionalChildProps.percentComplete = 0;
-              }
-
-              additionalProps.numPagesProcessed += parseInt(
-                cJob.numPagesProcessed,
-                10
-              );
-
-              if (
-                cJob.retries &&
+          if (
+            cJob.retries &&
                 cJob.retries.filter(
                   r =>
                     !r.status ||
                     [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(r.status)
                 ).length > 0
-              ) {
-                additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
-                additionalProps.uiStatus = JOB_STATUS.RETRYING;
-              }
+          ) {
+            additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
+            additionalProps.uiStatus = JOB_STATUS.RETRYING;
+          }
 
-              if (cJob.retriable) {
-                additionalProps.retriable = true;
+          if (cJob.retriable) {
+            additionalProps.retriable = true;
 
-                if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
-                  additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
-                }
-              }
+            if (additionalProps.uiStatus === JOB_STATUS.RETRYING) {
+              additionalChildProps.uiStatus = JOB_STATUS.RETRYING;
             }
-
-            if (cJob.retries && cJob.retries.length > 0) {
-              // eslint-disable-next-line no-param-reassign
-              cJob.retries = cJob.retries.map(r => ({
-                ...r,
-                duration: getJobDuration(r),
-              }));
-            }
-
-            return { ...cJob, ...additionalChildProps };
-          });
+          }
         }
 
-        return { ...job, ...additionalProps };
+        if (cJob.retries && cJob.retries.length > 0) {
+          // eslint-disable-next-line no-param-reassign
+          cJob.retries = cJob.retries.map(r => ({
+            ...r,
+            duration: getJobDuration(r),
+          }));
+        }
+
+        return { ...cJob, ...additionalChildProps };
       });
-  }
-);
+    }
+
+    return { ...job, ...additionalProps };
+  });
+}
 
 export const inProgressJobIds = createSelector(
   state => state && state.paging,

@@ -17,8 +17,13 @@ export default function Clone(props) {
     selectors.cloneInstallSteps(state, resourceType, resourceId)
   );
   const handleSetupComplete = useCallback(
-    redirectTo => {
-      history.push(redirectTo);
+    (redirectTo, isInstallFailed) => {
+      // Incase clone is failed, then redirect to the dashboard
+      if (isInstallFailed) {
+        history.replace('/pg/dashboard');
+      } else {
+        history.push(redirectTo);
+      }
       dispatch(actions.template.clearTemplate(`${resourceType}-${resourceId}`));
     },
     [dispatch, history, resourceId, resourceType]

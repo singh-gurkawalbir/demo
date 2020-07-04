@@ -26,6 +26,7 @@ import flows, * as fromFlows from './flows';
 import transfers, * as fromTransfers from './transfers';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import fileUpload, * as fromFileUpload from './fileUpload';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
@@ -60,6 +61,7 @@ export default combineReducers({
   transfers,
   responseMapping,
   fileUpload,
+  suiteScript,
   jobErrorsPreview,
   errorManagement,
   customSettings,
@@ -68,6 +70,13 @@ export default combineReducers({
 });
 
 // #region PUBLIC SELECTORS
+
+export function suiteScriptIAFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSuiteScript.suiteScriptIAFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
+}
 export function netsuiteUserRoles(
   state,
   connectionId,
@@ -207,7 +216,6 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
-
 export function optionsMapFromMetadata(
   state,
   connectionId,
@@ -665,3 +673,102 @@ export function integrationAppImportMetadata(state, importId) {
 }
 
 // #endregion
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormState(state && state.suiteScript, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormSaveProcessTerminated(
+    state && state.suiteScript,
+    {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    }
+  );
+}
+
+export function suiteScriptIAFormSaveProcessTerminated(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormSaveProcessTerminated(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormState(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSuiteScript.isFlowOnOffInProgress(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, _id }
+  );
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromSuiteScript.netsuiteAccountHasSuiteScriptIntegrations(
+    state && state.suiteScript,
+    account
+  );
+}
+
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  return fromSuiteScript.installerData(
+    state && state.suiteScript,
+    id
+  );
+}
+export function suiteScriptMappings(state) {
+  return fromSuiteScript.mappingState(
+    state && state.suiteScript
+  );
+}
+
+export function suitesciptMappingsChanged(state) {
+  return fromSuiteScript.mappingsChanged(
+    state && state.suiteScript
+  );
+}
+
+export function suiteScriptMappingsSaveStatus(state) {
+  return fromSuiteScript.mappingsSaveStatus(
+    state && state.suiteScript
+  );
+}
+
+export function suiteScriptImportSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.importSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
+  );
+}
+export function suiteScriptFlowSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.flowSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
+  );
+}

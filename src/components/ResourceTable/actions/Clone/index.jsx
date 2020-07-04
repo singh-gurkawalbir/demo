@@ -4,7 +4,7 @@ import CopyIcon from '../../../icons/CopyIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 export default {
-  label: (rowData, actionProps) => `Clone ${actionProps && MODEL_PLURAL_TO_LABEL[actionProps.resourceType].toLowerCase()}`,
+  label: (rowData, actionProps) => `Clone ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`,
   icon: CopyIcon,
   component: function Clone({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;

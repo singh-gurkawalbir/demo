@@ -1,6 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
-import { isEqual } from 'lodash';
+import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -10,7 +10,7 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../utils/constants';
+import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
 
@@ -69,7 +69,44 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options, context }) {
+export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
+  if (!isBoolean(link)) {
+    return;
+  }
+  const userPreferences = yield select(selectors.userPreferences);
+  const isLinked =
+    userPreferences &&
+    userPreferences.ssConnectionIds &&
+    userPreferences.ssConnectionIds.includes(connectionId);
+  const userAccessLevel = yield select(selectors.userAccessLevel);
+  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (link) {
+      if (!isLinked) {
+        yield put(
+          actions.user.preferences.update({
+            ssConnectionIds: [...(userPreferences.ssConnectionIds || []), connectionId],
+          })
+        );
+      }
+    } else if (isLinked) {
+      yield put(
+        actions.user.preferences.update({
+          ssConnectionIds: userPreferences.ssConnectionIds.filter(
+            (id) => id !== connectionId
+          ),
+        })
+      );
+    }
+  } else if (link) {
+    if (!isLinked) {
+      yield put(actions.user.org.accounts.addLinkedConnectionId(connectionId));
+    }
+  } else if (isLinked) {
+    yield put(actions.user.org.accounts.deleteLinkedConnectionId(connectionId));
+  }
+}
+
+export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -276,6 +313,14 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
   }
+
+  if (resourceType === 'connections' && merged.type === 'netsuite') {
+    yield call(
+      linkUnlinkSuiteScriptIntegrator,
+      { connectionId: merged._id,
+        link: merged.netsuite.linkSuiteScriptIntegrator }
+    );
+  }
 }
 
 export function* downloadFile({ resourceType, id }) {
@@ -395,6 +440,8 @@ export function* updateIntegrationSettings({
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
       yield put(actions.resource.requestCollection('imports'));
+      // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
+      yield put(actions.resource.requestCollection('exports'));
     }
   }
 
@@ -770,6 +817,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
+  takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
 
   ...metadataSagas,
 ];

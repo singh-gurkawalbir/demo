@@ -4,7 +4,12 @@ export default {
     description: { fieldId: 'description' },
   },
   layout: {
-    fields: ['name', 'description'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['name', 'description'],
+      },
+    ],
   },
   // preSave: formValues => {
   //   const newValues = formValues;

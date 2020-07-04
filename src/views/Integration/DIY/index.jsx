@@ -112,9 +112,9 @@ export default function Integration(props) {
   const { confirmDialog } = useConfirmDialog();
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
-      selectors.canEditSettingsForm(state, 'integrations', integrationId, integrationId);
+      selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
     const hasSettingsForm =
-      selectors.hasSettingsForm(state, 'integrations', integrationId);
+      selectors.hasSettingsForm(state, 'integrations', (childId || integrationId));
 
     return !canEditSettingsForm && !hasSettingsForm;
   });
@@ -187,10 +187,10 @@ export default function Integration(props) {
   );
   const currentChildMode = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', childId);
-
-    return integration && integration.mode;
+    return integration?.mode;
   });
-  const defaultChild = ((children.find(s => s.value !== integrationId) || {})
+
+  const defaultChild = ((children.find(s => (s.value !== integrationId && s.mode === 'settings')) || {})
     .value) || integrationId;
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const currentEnvironment = useSelector(state =>
@@ -205,10 +205,7 @@ export default function Integration(props) {
   const {addOnStatus, hasAddOns} = useSelector(state => {
     const addOnState = selectors.integrationAppAddOnState(state, integrationId);
     return {addOnStatus: addOnState.status,
-      hasAddOns: addOnState &&
-      addOnState.addOns &&
-      addOnState.addOns.addOnMetaData &&
-      addOnState.addOns.addOnMetaData.length > 0};
+      hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
@@ -435,7 +432,7 @@ export default function Integration(props) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/${getIntegrationAppUrlName(name)}/${integrationId}/child/${defaultChild}/${tab ||
+          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
             'settings'}`}
         />
       );
@@ -449,12 +446,7 @@ export default function Integration(props) {
     );
   }
   let redirectToPage;
-  if (currentChildMode === 'install') {
-    redirectToPage = getRoutePath(
-      `integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
-    );
-  } else if (currentChildMode === 'uninstall') {
-    // TODO: update the uninstall route to point to v2 route
+  if (currentChildMode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );

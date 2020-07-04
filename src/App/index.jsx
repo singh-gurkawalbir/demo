@@ -23,6 +23,7 @@ import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
+import CrashReporter from './CrashReporter';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -86,32 +87,34 @@ export default function App() {
 
   return (
     <MuiThemeProvider theme={theme}>
-      {/* the provider has to be pushed out because of new instance html5 instance */}
-      <DndProvider backend={HTML5Backend}>
-        <Fragment key={reloadCount}>
-          <ConfirmDialogProvider>
-            <SnackbarProvider maxSnack={3}>
-              <FontStager />
-              <CssBaseline />
-              <BrowserRouter>
-                <div className={classes.root}>
-                  <NetworkSnackbar />
-                  {/* Headers */}
-                  <Switch>
-                    <Route path="/pg/signin" component={null} />
-                    <Route path="/pg*" component={NonSigninHeaderComponents} />
-                  </Switch>
-                  {/* page content */}
-                  <WithAuth>
-                    <PageContentComponents />
-                  </WithAuth>
-                </div>
-              </BrowserRouter>
-              <ConflictAlertDialog />
-            </SnackbarProvider>
-          </ConfirmDialogProvider>
-        </Fragment>
-      </DndProvider>
+      <CrashReporter>
+        {/* the provider has to be pushed out because of new instance html5 instance */}
+        <DndProvider backend={HTML5Backend}>
+          <Fragment key={reloadCount}>
+            <ConfirmDialogProvider>
+              <SnackbarProvider maxSnack={3}>
+                <FontStager />
+                <CssBaseline />
+                <BrowserRouter>
+                  <div className={classes.root}>
+                    <NetworkSnackbar />
+                    {/* Headers */}
+                    <Switch>
+                      <Route path="/pg/signin" component={null} />
+                      <Route path="/pg*" component={NonSigninHeaderComponents} />
+                    </Switch>
+                    {/* page content */}
+                    <WithAuth>
+                      <PageContentComponents />
+                    </WithAuth>
+                  </div>
+                </BrowserRouter>
+                <ConflictAlertDialog />
+              </SnackbarProvider>
+            </ConfirmDialogProvider>
+          </Fragment>
+        </DndProvider>
+      </CrashReporter>
     </MuiThemeProvider>
   );
 }

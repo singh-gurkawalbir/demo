@@ -141,6 +141,7 @@ export default {
           name: '_method',
           type: 'select',
           label: 'HTTP method',
+          required: true,
           defaultValue: lookup.method,
           options: [
             {
@@ -163,6 +164,7 @@ export default {
           type: 'httprequestbody',
           connectionId: r => r && r._connectionId,
           defaultValue: lookup.body || '',
+          required: true,
           // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -177,6 +179,7 @@ export default {
           label: 'Resource identifier path',
           placeholder: 'Resource Identifier Path',
           defaultValue: lookup.extract,
+          required: true,
           helpKey: 'mapping.lookup.extract',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },

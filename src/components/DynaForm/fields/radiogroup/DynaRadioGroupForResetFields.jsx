@@ -2,7 +2,7 @@ import React from 'react';
 import DynaRadioGroup from './DynaRadioGroup';
 
 export default function DynaRadioGroupForResetFields(props) {
-  const { fieldsToReset, onFieldChange } = props;
+  const { fieldsToReset = [], onFieldChange } = props;
   const updatedOnFieldChange = (id, value) => {
     fieldsToReset.forEach(field => {
       const { type, id: _id } = field;
