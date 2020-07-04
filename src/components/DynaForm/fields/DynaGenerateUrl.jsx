@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const webookRequiredFields = ['webhook.password', 'webhook.username'];
+const webookRequiredFields = ['webhook.password', 'webhook.username', 'webhook.path'];
 
 function GenerateUrl(props) {
   const {

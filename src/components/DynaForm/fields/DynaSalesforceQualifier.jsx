@@ -51,14 +51,12 @@ export default function DynaSalesforceQualifier(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, rule);
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -70,7 +68,8 @@ export default function DynaSalesforceQualifier(props) {
           value={value}
           resourceId={resourceId}
           flowId={flowId}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />

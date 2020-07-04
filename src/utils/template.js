@@ -17,7 +17,7 @@ export const getTemplateUrlName = applications => {
     return `${appName(applications[0])}-${appName(applications[0])}`;
   }
 
-  return applications.map(appName).join('-');
+  return applications.map(appName).join('-').replace(/\./g, '');
 };
 
 export default {

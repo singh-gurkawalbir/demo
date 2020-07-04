@@ -68,6 +68,7 @@ export default function DynaNetSuiteLookupFilters(props) {
     dispatch(
       actions.editor.init(editorId, 'netsuiteLookupFilter', {
         modifiedData,
+        _init_rule: rule,
         rule,
       })
     );
