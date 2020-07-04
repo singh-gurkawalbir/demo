@@ -32,6 +32,8 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'successMediaType',
   'successPath',
   'successValues',
+  'customeTemplateEval',
+  'strictHandlebarEvaluation',
 ]);
 
 export const PARAMETER_LOCATION = Object.freeze({
@@ -98,6 +100,7 @@ export const DEFAULT_PROPS = Object.freeze({
       ignoreMissing: false,
       ignoreLookupName: undefined,
       ignoreExtract: undefined,
+      strictHandlebarEvaluation: false,
     },
   },
 });
@@ -735,6 +738,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
+      customeTemplateEval: operationDetails.customeTemplateEval,
     },
   };
   const exportDoc = {
@@ -1936,6 +1940,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
       'requestMediaType',
       'batchSize',
       'ignoreEmptyNodes',
+      'strictHandlebarEvaluation',
     ].forEach(p => {
       if (operationDetails[p]) {
         if (p === 'batchSize') {
