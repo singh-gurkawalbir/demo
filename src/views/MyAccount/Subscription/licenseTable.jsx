@@ -23,7 +23,7 @@ const agentsFilterConfig = {
   ignoreEnvironmentFilter: true,
 };
 
-export default function Resorces({type, resource, showDialog}) {
+export default function LicenseTable({type, resource, showDialog}) {
   let metadata;
   if (type === 'endpoints') {
     metadata = endpointsMetadata;

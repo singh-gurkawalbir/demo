@@ -7,7 +7,9 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
-import ResourceTable from './ResourceTable';
+import LicenceTable from './licenseTable';
+import NotificationToaster from '../../../components/NotificationToaster';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -123,6 +125,7 @@ export default function Subscription() {
   const licenseActionDetails = useSelector(state =>
     selectors.endpointLicenseWithMetadata(state)
   );
+  const [needMoreNotification, setNeedMoreNotification] = useState(true);
   const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const onStartFreeTrialClick = useCallback(() => {
     setShowStartFreeDialog(true);
@@ -217,7 +220,9 @@ export default function Subscription() {
   const onSandboxAgentsClick = useCallback(() => {
     onResourceDilaogClick('agents', true, 'On-premise agents', licenseEntitlementUsage?.sandbox?.agentUsage?.agents, totalNumberofSandboxAgents, numberofUsedSandboxAgents);
   }, [onResourceDilaogClick, licenseEntitlementUsage?.sandbox?.agentUsage?.agents, totalNumberofSandboxAgents, numberofUsedSandboxAgents]);
-
+  const onCloseNotification = useCallback(() => {
+    setNeedMoreNotification(false);
+  }, [setNeedMoreNotification]);
   const [enquesnackbar] = useEnqueueSnackbar();
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.user.org.accounts.requestLicenseEntitlementUsage());
@@ -306,8 +311,18 @@ export default function Subscription() {
             className={classes.progressBar}
           />
         </div>
-        <ResourceTable type={type} sandbox={sandbox} resource={resource} showDialog={setShowResourceDialog} />
+        <LicenceTable type={type} sandbox={sandbox} resource={resource} showDialog={setShowResourceDialog} />
       </Drawer>
+      {needMoreNotification &&
+      <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
+        <Typography variant="info">Need more flows. Do you use FTP or AS2 connections? Need to support EDI? We`ve got you covered!.
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={onRequestSubscriptionClick}> Upgrade today!
+          </Button>
+        </Typography>
+      </NotificationToaster>}
       <div className={classes.root}>
         {licenseActionDetails && (
         <>
@@ -315,9 +330,6 @@ export default function Subscription() {
             Subscription
           </Typography>
           <div className={classes.block}>
-            <Typography variant="h5" className={classes.subHeading}>
-              Details
-            </Typography>
             <div className={classes.wrapper}>
               <Typography variant="h3">
                 {licenseActionDetails.subscriptionName} plan
