@@ -137,26 +137,33 @@ export default function EditorDialog(props) {
     [dispatch, id]
   );
 
+  const saveEditor = useCallback(() => {
+    if (onSave) {
+      onSave(true, editor);
+    }
+    dispatch(actions.editor.saveComplete(id));
+  }, [dispatch, editor, id, onSave]);
+
+
   const handleSave = useCallback(
-    (closeOnSave) => {
+    () => {
       if (!preSaveValidate({ editor, enquesnackbar })) {
         return;
       }
-
-      if (onSave) {
-        onSave(true, editor);
-        dispatch(actions.editor.saveComplete(id));
-      }
-      if (closeOnSave === true && onClose) {
-        onClose();
-      }
+      saveEditor();
     },
-    [editor, enquesnackbar, onSave, onClose, dispatch, id]
+    [editor, enquesnackbar, saveEditor]
   );
 
   const handleSaveAndClose = useCallback(() => {
-    handleSave(true);
-  }, [handleSave]);
+    if (!preSaveValidate({ editor, enquesnackbar })) {
+      return;
+    }
+    saveEditor();
+    if (onClose) {
+      onClose();
+    }
+  }, [editor, enquesnackbar, saveEditor, onClose]);
 
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
