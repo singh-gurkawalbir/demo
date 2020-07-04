@@ -145,12 +145,13 @@ export default function EditorDialog(props) {
 
       if (onSave) {
         onSave(true, editor);
+        dispatch(actions.editor.saveComplete(id));
       }
       if (closeOnSave === true && onClose) {
         onClose();
       }
     },
-    [editor, enquesnackbar, onSave, onClose]
+    [editor, enquesnackbar, onSave, onClose, dispatch, id]
   );
 
   const handleSaveAndClose = useCallback(() => {
