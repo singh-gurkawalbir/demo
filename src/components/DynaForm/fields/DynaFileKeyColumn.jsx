@@ -55,25 +55,9 @@ export default function DynaFileKeyColumn(props) {
    * Fetches Raw data - CSV file to be parsed based on the rules
    * This field is supported by Csv/Xlsx file types
    */
-  const { csvData } = useSelector(state => {
-    const { data: rawData, status } = selectors.getResourceSampleDataWithStatus(
-      state,
-      resourceId,
-      'csv'
-    );
-
-    if (!status) {
-      // Incase of resource edit and no file uploaded, show the csv content uploaded last time ( sampleData )
-      const resource = selectors.resource(state, resourceType, resourceId);
-
-      // If the file type is csv before , only then retrieve its content sampleData to show in the editor
-      if (resource && resource.file && resource.file.type === 'csv') {
-        return { csvData: resource.sampleData };
-      }
-    }
-
-    return { csvData: rawData && rawData.body };
-  });
+  const csvData = useSelector(state => selectors.fileSampleData(state, {
+    resourceId, resourceType, fileType: 'csv'
+  }));
 
   const multiSelectOptions = useMemo(() => {
     const options = getColumns(result);

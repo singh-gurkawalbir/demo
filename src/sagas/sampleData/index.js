@@ -229,13 +229,8 @@ function* fetchExportPreviewData({
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
   if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
     // extract all details needed for a file sampledata
-    const { data: fileDetails = {} } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
-    const fileProps = {
-      type: fileDetails.type,
-      file: fileDetails.body,
-      formValues: values,
-    };
-    if (!fileDetails.body) {
+    const { data: fileDetails } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
+    if (!fileDetails) {
       // when no file uploaded , try fetching sampleData on resource
       const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
 
@@ -250,6 +245,11 @@ function* fetchExportPreviewData({
       // If the output mode is 'blob' , no data is passed so show empty data
       return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
     }
+    const fileProps = {
+      type: fileDetails.type,
+      file: fileDetails.body,
+      formValues: values,
+    };
     return yield call(processRawData, {
       resourceId,
       resourceType,
