@@ -32,7 +32,7 @@ function ResourceDrawer(props) {
   const match = useRouteMatch();
   const open = !!match;
   const history = useHistory();
-  const { id, resourceType } = (props.match && props.match.params) || {};
+  const { id, resourceType } = (match && match.params) || {};
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -77,15 +77,12 @@ function ResourceDrawer(props) {
       </Drawer>
       {open &&
       <Route
-        path={`${match.url}${DRAWER_PATH}`}
-        render={props => (
-          <ResourceDrawer
-            {...props}
-            flowId={flowId}
-            integrationId={integrationId}
-          />
-        )}
-      />}
+        path={`${match.url}${DRAWER_PATH}`}>
+        <ResourceDrawer
+          flowId={flowId}
+          integrationId={integrationId}
+        />
+      </Route>}
 
     </>
   );
@@ -99,19 +96,11 @@ export default function ResourceDrawerRoute({
 
   return (
     <Route
-      path={`${match.url}/:operation(add|edit)/:resourceType/:id`}
-      // Note that we disable the eslint warning since Route
-      // uses "children" as a prop and this is the intended
-      // use (per their docs)
-      // eslint-disable-next-line react/no-children-prop
-      children={props =>
-        (
-          <ResourceDrawer
-            {...props}
-            flowId={flowId}
-            integrationId={integrationId}
+      path={`${match.url}/:operation(add|edit)/:resourceType/:id`}>
+      <ResourceDrawer
+        flowId={flowId}
+        integrationId={integrationId}
           />
-        )}
-    />
+    </Route>
   );
 }
