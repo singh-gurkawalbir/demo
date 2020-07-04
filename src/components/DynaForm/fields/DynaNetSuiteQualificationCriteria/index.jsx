@@ -51,6 +51,7 @@ export default function DynaNetSuiteQualificationCriteria(props) {
       actions.editor.init(editorId, 'netsuiteQualificationCriteria', {
         data,
         rule: value,
+        _init_rule: value,
       })
     );
   }, [data, dispatch, editorId, value]);

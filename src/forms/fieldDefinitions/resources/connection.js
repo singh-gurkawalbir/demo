@@ -12,12 +12,21 @@ export default {
     filter: r => {
       const expression = [
         { _id: { $ne: r._id } },
-        { _connectorId: { $exists: false } },
       ];
+      if (r._connectorId) {
+        // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
+        expression.push({_connectorId: r._connectorId});
+      } else {
+        // For DIY connection, borrowconcurrency from other diy integrations.
+        expression.push({ _connectorId: { $exists: false } });
+      }
 
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
-      } else expression.push({ type: r.type });
+      } else {
+        // Should not borrow concurrency for ['ftp', 'as2', 's3', 'netsuite']
+        expression.push({ type: ['ftp', 'as2', 's3', 'netsuite'].includes(r.type) ? '' : r.type });
+      }
 
       return {
         $and: expression,

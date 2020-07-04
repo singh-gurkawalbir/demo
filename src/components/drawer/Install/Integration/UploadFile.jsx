@@ -7,7 +7,6 @@ import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import SpinnerWrapper from '../../../SpinnerWrapper';
-import FieldHelp from '../../../DynaForm/FieldHelp';
 
 
 const useStyles = makeStyles(theme => ({
@@ -91,8 +90,6 @@ export default function UploadFile() {
           <FormLabel required>
             Browse to Zip file
           </FormLabel>
-          {/* Todo (Mounika) : Please add the help text for the label */}
-          <FieldHelp helpText="Just it is a dummy field help text now..." />
         </div>
         <div className={classes.uploadContainer}>
           <label htmlFor="fileUpload">
