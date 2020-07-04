@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import References from '../../actions/references';
+import ResourceDrawerLink from '../../../../../components/ResourceDrawerLink';
 
 
 export default {
@@ -7,7 +8,12 @@ export default {
     const columns = [
       {
         heading: 'Agent',
-        value: r => r?.name,
+        value: function ExportDrawerLink(r) {
+          const onClick = useCallback(() => {
+            r && r.showDialog && r.showDialog(false);
+          }, [r]);
+          return <ResourceDrawerLink resourceType="agents" resource={r} onClick={onClick} />;
+        },
         orderBy: 'name',
       },
       {

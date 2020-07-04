@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import References from '../../actions/references';
 import ConnectionResourceDrawerLink from '../../../../../components/ResourceDrawerLink/connection';
 
@@ -9,9 +9,13 @@ export default {
       {
         heading: 'Trading partner',
         value: function ConnectionDrawerLink(resource) {
+          const onClick = useCallback(() => {
+            resource && resource.showDialog && resource.showDialog(false);
+          }, [resource]);
           return (
             <ConnectionResourceDrawerLink
               resource={resource}
+              onClick={onClick}
             />
           );
         },

@@ -8,6 +8,7 @@ import ResourceDrawerLink from '.';
 export default function ConnectionResourceDrawerLink({
   resource,
   integrationId,
+  onClick,
 }) {
   const isEditable = useSelector(
     state =>
@@ -24,6 +25,7 @@ export default function ConnectionResourceDrawerLink({
       resourceType="connections"
       resource={resource}
       disabled={!isEditable}
+      onClick={onClick}
     />
   );
 }

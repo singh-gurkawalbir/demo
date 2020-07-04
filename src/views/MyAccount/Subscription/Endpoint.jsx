@@ -306,7 +306,7 @@ export default function Subscription() {
             className={classes.progressBar}
           />
         </div>
-        <ResourceTable type={type} sandbox={sandbox} resource={resource} />
+        <ResourceTable type={type} sandbox={sandbox} resource={resource} showDialog={setShowResourceDialog} />
       </Drawer>
       <div className={classes.root}>
         {licenseActionDetails && (

@@ -23,7 +23,7 @@ const agentsFilterConfig = {
   ignoreEnvironmentFilter: true,
 };
 
-export default function Resorces({type, resource}) {
+export default function Resorces({type, resource, showDialog}) {
   let metadata;
   if (type === 'endpoints') {
     metadata = endpointsMetadata;
@@ -58,7 +58,7 @@ export default function Resorces({type, resource}) {
       res.connections.forEach(conn => {
         connection = connections.find(c => (c._id === conn._id));
 
-        connection && resourceList.push({...connection});
+        connection && resourceList.push({...connection, showDialog});
       });
     });
   } else if (type === 'flows') {
@@ -70,12 +70,12 @@ export default function Resorces({type, resource}) {
   } else if (type === 'tradingpartners') {
     resource.forEach(res => {
       connection = connections.find(c => (c._id === res._id));
-      connection && resourceList.push({...connection});
+      connection && resourceList.push({...connection, showDialog});
     });
   } else if (type === 'agents') {
     resource.forEach(res => {
       agent = agents.find(a => (a._id === res._id));
-      agent && resourceList.push({...agent});
+      agent && resourceList.push({...agent, showDialog});
     });
   }
 

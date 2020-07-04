@@ -32,6 +32,8 @@ export default function NameCell({
   flowId,
   isIntegrationApp,
   integrationId,
+  onClick,
+  isSubscriptionPage = false,
 }) {
   const classes = useStyles();
   const isDataLoader = useSelector(state =>
@@ -53,13 +55,19 @@ export default function NameCell({
   });
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
-  const flowBuilderTo = isIntegrationApp
+  let flowBuilderTo = isIntegrationApp
     ? `/pg/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`
     : `${flowBuilderPathName}/${flowId}`;
+  if (isSubscriptionPage && !isIntegrationApp) {
+    flowBuilderTo = `/pg/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`;
+  }
 
   return (
     <div className={classes.root}>
-      <Link to={flowBuilderTo}>{flowName}</Link>
+      <Link
+        onClick={onClick}
+        to={flowBuilderTo}>{flowName}
+      </Link>
 
       <InfoIconButton info={description} size="xs" />
 
