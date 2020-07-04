@@ -53,14 +53,12 @@ export default function DynaNetSuiteLookup(props) {
   };
 
   const dispatch = useDispatch();
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, JSON.stringify(rule));
     }
-
-    handleEditorClick();
   };
 
   const extractFields = useSelector(state =>
@@ -113,7 +111,8 @@ export default function DynaNetSuiteLookup(props) {
           id={id}
           data={formattedExtractFields}
           value={rule}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />

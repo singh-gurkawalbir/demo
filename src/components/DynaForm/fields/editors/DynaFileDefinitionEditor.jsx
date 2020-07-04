@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -96,7 +96,7 @@ function DynaFileDefinitionEditor(props) {
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
 
@@ -121,9 +121,11 @@ function DynaFileDefinitionEditor(props) {
         onFieldChange(id, rule);
       }
     }
+  }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
 
+  const handleClose = useCallback(() => {
     setShowEditor(false);
-  };
+  }, [setShowEditor]);
 
   // Effects to update values and sample data
   useEffect(() => {
@@ -181,6 +183,7 @@ function DynaFileDefinitionEditor(props) {
                   : JSON.stringify(props.sampleData, null, 2))
               }
               rule={value}
+              onSave={handleSave}
               onClose={handleClose}
               disabled={disabled}
             />

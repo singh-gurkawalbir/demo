@@ -234,7 +234,7 @@ class SignIn extends Component {
           </div>
 
           <div className={classes.forgotPass}>
-            <Link href="true" className={classes.forgotPass} variant="body2">
+            <Link href="/request-reset" className={classes.forgotPass} variant="body2">
               Forgot password?
             </Link>
           </div>

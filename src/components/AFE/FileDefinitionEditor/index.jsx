@@ -43,7 +43,9 @@ export default function FileDefinitionEditor(props) {
     dispatch(
       actions.editor.init(editorId, processor, {
         rule: props.rule,
+        _init_rule: props.rule,
         data: props.data,
+        _init_data: props.data,
         autoEvaluate: true,
       })
     );

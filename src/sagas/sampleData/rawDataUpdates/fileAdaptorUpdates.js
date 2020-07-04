@@ -46,7 +46,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
       : fileDefinitionData;
   }
 
-  return stage === 'parse' ? rawData : rawData && rawData.body;
+  return stage === 'parse' ? rawData : rawData?.body;
 }
 
 export default function* saveRawDataForFileAdaptors({
@@ -59,8 +59,9 @@ export default function* saveRawDataForFileAdaptors({
     tempResourceId,
     type,
   });
-
-  if (rawData) {
+  // Updated this to check for undefined... as there is a case where user can upload empty file
+  // In which case , we get rawData as '' which is falsy too
+  if (rawData !== undefined) {
     // Raw data is saved as 'sampleData' field in resourceDoc for imports and exports
     return yield call(saveSampleDataOnResource, {
       resourceId,
