@@ -5416,15 +5416,15 @@ export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType
 
 /**
  * Supported File types : csv, json, xml, xlsx
- * Note : Incase of xlsx , if uploaded returns xlsx content but if not
- * the sampledata extracted from resource would be of csv content
- * TODO @Raghu: If need arises, figure out what is needed if fileType is xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
  */
 export function fileSampleData(state, { resourceId, resourceType, fileType}) {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = getResourceSampleDataWithStatus(
     state,
     resourceId,
-    'rawFile'
+    stage,
   );
   if (!rawData) {
     const resourceObj = resource(state, resourceType, resourceId);
