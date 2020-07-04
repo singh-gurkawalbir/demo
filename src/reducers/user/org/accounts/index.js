@@ -135,6 +135,54 @@ const remainingDays = date =>
 
 // #region PUBLIC SELECTORS
 
+export function endpointLicense(state, accountId) {
+  if (!state) {
+    return null;
+  }
+
+  const account = state.find(a => a._id === accountId);
+
+  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
+    return null;
+  }
+
+  const endpointLicense = account.ownerUser.licenses.find(
+    l => l.type === 'endpoint'
+  );
+
+  if (!endpointLicense) {
+    return null;
+  }
+  endpointLicense.hasSandbox =
+  endpointLicense.sandbox || endpointLicense.numSandboxAddOnFlows > 0;
+
+  endpointLicense.hasConnectorSandbox =
+    account.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
+      .length > 0;
+
+  if (endpointLicense.expires) {
+    endpointLicense.status =
+      moment(endpointLicense.expires) > moment() ? 'ACTIVE' : 'EXPIRED';
+
+    if (endpointLicense.status === 'ACTIVE') {
+      endpointLicense.expiresInDays = remainingDays(endpointLicense.expires);
+    }
+  }
+
+  if (
+    endpointLicense.trialEndDate &&
+    (!endpointLicense.expires || moment(endpointLicense.trialEndDate) > moment())
+  ) {
+    endpointLicense.status =
+      moment(endpointLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
+
+    if (endpointLicense.status === 'IN_TRIAL') {
+      endpointLicense.expiresInDays = remainingDays(endpointLicense.trialEndDate);
+    }
+  }
+
+  return endpointLicense;
+}
 // #region INTEGRATOR LICENSE
 export function integratorLicense(state, accountId) {
   if (!state) {

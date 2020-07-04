@@ -536,6 +536,10 @@ export function getNumEnabledFlows(state) {
   return fromResource.getNumEnabledFlows(state && state.resource);
 }
 
+export function getLicenseEntitlementUsage(state) {
+  return fromResource.getLicenseEntitlementUsage(state && state.resource);
+}
+
 export function assistantData(state, { adaptorType, assistant }) {
   return fromMetadata.assistantData(state && state.metadata, {
     adaptorType,

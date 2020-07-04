@@ -18,7 +18,7 @@ const Profile = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
 );
 const Subscription = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription')
+  import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription/index')
 );
 const Audit = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')

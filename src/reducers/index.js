@@ -194,6 +194,10 @@ export function getNumEnabledFlows(state) {
   return fromSession.getNumEnabledFlows(state && state.session);
 }
 
+export function getLicenseEntitlementUsage(state) {
+  return fromSession.getLicenseEntitlementUsage(state && state.session);
+}
+
 export function resourceFormSaveProcessTerminated(
   state,
   resourceType,
@@ -2162,6 +2166,11 @@ export function integratorLicense(state) {
 
   return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
 }
+export function endpointLicense(state) {
+  const preferences = userPreferences(state);
+
+  return fromUser.endpointLicense(state.user, preferences.defaultAShareId);
+}
 
 export function diyLicense(state) {
   const preferences = userPreferences(state);
@@ -2241,9 +2250,7 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-
-export function integratorLicenseWithMetadata(state) {
-  const license = integratorLicense(state);
+export function licenseWithMetadata(license) {
   const licenseActionDetails = { ...license };
   const nameMap = {
     none: 'None',
@@ -2259,7 +2266,7 @@ export function integratorLicenseWithMetadata(state) {
   }
 
   licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
   licenseActionDetails.inTrial = false;
 
   if (licenseActionDetails.tier === 'free') {
@@ -2432,7 +2439,13 @@ export function integratorLicenseWithMetadata(state) {
 
   return licenseActionDetails;
 }
+export function integratorLicenseWithMetadata(state) {
+  return licenseWithMetadata(integratorLicense(state));
+}
 
+export function endpointLicenseWithMetadata(state) {
+  return licenseWithMetadata(endpointLicense(state));
+}
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
   const license = integratorLicenseWithMetadata(state);

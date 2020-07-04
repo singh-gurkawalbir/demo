@@ -38,6 +38,12 @@ export function integratorLicense(state, accountId) {
     accountId
   );
 }
+export function endpointLicense(state, accountId) {
+  return fromAccounts.endpointLicense(
+    state && state.org && state.org.accounts,
+    accountId
+  );
+}
 
 export function diyLicense(state, accountId) {
   return fromAccounts.diyLicense(

@@ -50,6 +50,10 @@ export default function reducer(state = {}, action) {
       return produce(state, draft => {
         draft.numEnabledFlows = response;
       });
+    case actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED:
+      return produce(state, draft => {
+        draft.licenseEntitlementUsage = response;
+      });
     case actionTypes.CLEAR_CHILD_INTEGRATION:
       return produce(state, draft => {
         draft.parentChildMap = undefined;
@@ -127,6 +131,17 @@ export const getNumEnabledFlows = createSelector(
       numEnabledSandboxFlows: numEnabledFlows.numEnabledSandboxFlows || 0,
       numEnabledFreeFlows: numEnabledFlows.numEnabledFreeFlows || 0,
     };
+  }
+);
+
+export const getLicenseEntitlementUsage = createSelector(
+  state => state && state.licenseEntitlementUsage,
+  licenseEntitlementUsage => {
+    if (!licenseEntitlementUsage) {
+      return null;
+    }
+
+    return licenseEntitlementUsage;
   }
 );
 // #endregion

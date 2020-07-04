@@ -464,6 +464,23 @@ export function* requestNumEnabledFlows() {
 
   yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
 }
+export function* requestLicenseEntitlementUsage() {
+  const { path, opts } = getRequestOptions(
+    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST
+  );
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (error) {
+    return yield put(actions.api.failure(path, 'GET', error, false));
+  }
+
+  yield put(actions.user.org.accounts.receivedLicenseEntitlementUsage(response));
+}
 
 export const userSagas = [
   takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
@@ -483,6 +500,10 @@ export const userSagas = [
   takeEvery(actionTypes.DEFAULT_ACCOUNT_SET, requestSharedStackNotifications),
   takeEvery(actionTypes.SHARED_NOTIFICATION_ACCEPT, acceptSharedInvite),
   takeEvery(actionTypes.SHARED_NOTIFICATION_REJECT, rejectSharedInvite),
+  takeEvery(
+    actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST,
+    requestLicenseEntitlementUsage
+  ),
   takeEvery(
     actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST,
     requestNumEnabledFlows
