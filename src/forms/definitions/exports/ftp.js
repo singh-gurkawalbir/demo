@@ -126,6 +126,8 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
+    const fileType = fields.find(field => field.id === 'file.type');
+
     if (fieldId === 'file.xlsx.keyColumns') {
       const keyColoumnField = fields.find(
         field => field.id === 'file.xlsx.keyColumns'
@@ -146,9 +148,9 @@ export default {
 
       return {
         hasHeaderRow: hasHeaderRowField.value,
+        fileType: fileType.value
       };
     }
-    const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
@@ -227,6 +229,7 @@ export default {
         trimSpaces: trimSpacesField && trimSpacesField.value,
         rowsToSkip: rowsToSkipField && rowsToSkipField.value,
         hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+        fileType: fileType.value
       };
 
       return options;
