@@ -90,7 +90,7 @@ export default {
     helpKey: 'import.salesforce.upsert.externalField',
   },
   'import.salesforce.salesforceIdField': {
-    label: 'Store Salesforce Id back in NetSuite field',
+    label: 'Store Salesforce ID back in NetSuite field',
     type: 'refreshableselect',
     filterKey: 'suitescript-salesforce-id-field',
     required: false,
