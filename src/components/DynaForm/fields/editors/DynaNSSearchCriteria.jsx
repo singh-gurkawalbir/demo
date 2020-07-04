@@ -61,12 +61,10 @@ export default function DynaNSSearchCriteria(props) {
     if (recordType) onFetch();
   }, [onFetch, recordType]);
 
-  const handleClose = (shouldCommit, _value) => {
+  const handleSave = (shouldCommit, _value) => {
     if (shouldCommit) {
       onFieldChange(id, _value);
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -81,7 +79,8 @@ export default function DynaNSSearchCriteria(props) {
             valueName: 'value',
             labelName: 'label',
           }}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
         />
       )}
