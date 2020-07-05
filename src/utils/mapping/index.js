@@ -1155,18 +1155,16 @@ export default {
         }
       }
 
-      if (mapping.extract) {
-        if (
-          mapping.extract.indexOf('*.') === 0 &&
+      if (mapping.extract &&
+        mapping.extract.indexOf('*.') === 0 &&
           useFirstRowSupported &&
           !mapping.useFirstRow
-        ) {
-          mapping.extract = `*.${wrapTextForSpecialChars(
-            mapping.extract.slice(2)
-          )}`;
-        } else {
-          mapping.extract = wrapTextForSpecialChars(mapping.extract);
-        }
+      ) {
+        mapping.extract = `*.${wrapTextForSpecialChars(
+          mapping.extract.slice(2)
+        )}`;
+      } else {
+        mapping.extract = wrapTextForSpecialChars(mapping.extract);
       }
 
       list ? list.fields.push(mapping) : fields.push(mapping);
