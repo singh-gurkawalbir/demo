@@ -368,6 +368,8 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
+  } else if (newField.type === 'matchingCriteria') {
+    newField.type = 'matchingcriteria';
   } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
   } else if (newField.type === 'multiselect' && newField.supportsRefresh) {

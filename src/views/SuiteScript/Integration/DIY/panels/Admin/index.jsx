@@ -14,6 +14,7 @@ import * as selectors from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
 import LegacySection from './sections/Legacy';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
+import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,7 +51,7 @@ const allSections = [
     path: 'general',
     label: 'General',
     Section: GeneralSection,
-    id: 'general',
+    id: 'genSettings',
   },
   {
     path: 'legacy',
@@ -128,11 +129,13 @@ function AdminPanel({ ssLinkedConnectionId, integrationId }) {
         </div>
         <div className={classes.content}>
           <Switch>
-            {availableSections.map(({ path, Section }) => (
+            {availableSections.map(({ path, Section, id}) => (
               <Route key={path} path={`${match.url}/${path}`}>
                 <Section
                   ssLinkedConnectionId={ssLinkedConnectionId}
                   integrationId={integrationId}
+                  sectionId={path}
+                  id={id}
                 />
               </Route>
             ))}
@@ -152,13 +155,12 @@ export default function AdminPanelWithLoad({ ssLinkedConnectionId, integrationId
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      {hasSettingsMetadata &&
-
-      <AdminPanel
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-
- />}
+      {hasSettingsMetadata ?
+        <AdminPanel
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+        /> :
+        <Spinner />}
     </LoadSuiteScriptResources>
   );
 }

@@ -106,8 +106,10 @@ import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
 import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 
 export default {
+  matchingcriteria: DynaMatchingCriteriaWithModal,
   suitescripttable: DyanSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,

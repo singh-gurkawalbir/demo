@@ -8,7 +8,7 @@ import {
   defaultPatchSetConverter,
 } from '../../../forms/utils';
 import factory from '../../../forms/formFactory';
-import { commitStagedChanges } from '../resources';
+import { commitStagedChanges, requestSuiteScriptMetadata } from '../resources';
 import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
@@ -284,13 +284,15 @@ function* suiteScriptSubmitIA({
 
   try {
     yield call(apiCallWithRetry, {path, opts});
-    yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
   } catch (error) {
-    yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
+    return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
   }
 
   // refetch settings with latest doc
-  yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId));
+  const isSuccessful = yield call(requestSuiteScriptMetadata, {resourceType: 'settings', ssLinkedConnectionId, integrationId});
+  if (!isSuccessful) { return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId)); }
+
+  return yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
 }
 
 export const resourceFormSagas = [

@@ -35,17 +35,15 @@ export default (state = {}, action) => {
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT:
         if (!draft[key])draft[key] = {};
-        delete draft[key].submitFailed;
-        delete draft[key].submitComplete;
+        draft[key].status = 'saving';
 
 
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE:
-        draft[key].submitComplete = true;
-
+        draft[key].status = 'success';
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED:
-        draft[key].submitFailed = true;
+        draft[key].status = 'failed';
         break;
       default:
     }
@@ -66,16 +64,13 @@ export function suiteScriptIAFormState(
   return state[key] || {};
 }
 
-export function suiteScriptIAFormSaveProcessTerminated(
+export function suiteScriptIAFormSaving(
   state,
   { ssLinkedConnectionId, integrationId }
 ) {
   if (!state) return false;
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
-  if (!state[key]) return false;
-  const { submitFailed, submitComplete, submitAborted } = state[key];
-
-  return !!(submitFailed || submitComplete || submitAborted);
+  return !!(state?.[key]?.status === 'success');
 }
 // #endregion

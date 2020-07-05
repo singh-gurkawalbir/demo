@@ -116,7 +116,7 @@ export function* commitStagedChanges({
 }
 
 
-function* requestSuiteScriptMetadata({
+export function* requestSuiteScriptMetadata({
   resourceType,
   ssLinkedConnectionId,
   integrationId,
@@ -128,8 +128,9 @@ function* requestSuiteScriptMetadata({
     const resource = yield call(apiCallWithRetry, {path, opts});
     yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resource));
   } catch (error) {
-    return true;
+    return false;
   }
+  return true;
 }
 
 function* featureCheck({
@@ -143,8 +144,8 @@ function* featureCheck({
   let resp;
   try {
     resp = yield call(apiCallWithRetry, {path, opts});
-    if (resp.success) {
-      yield put(actions.suiteScript.featureCheck.successful(ssLinkedConnectionId,
+    if (resp?.success) {
+      return yield put(actions.suiteScript.featureCheck.successful(ssLinkedConnectionId,
         integrationId,
         featureName));
     }
@@ -154,7 +155,7 @@ function* featureCheck({
 
   yield put(actions.suiteScript.featureCheck.failed(ssLinkedConnectionId,
     integrationId,
-    featureName, (resp && resp.errors && resp.errors.length && resp.errors[0].message) || 'Error'));
+    featureName, (resp?.errors?.length && resp?.errors?.[0]?.message) || 'Error'));
 }
 
 

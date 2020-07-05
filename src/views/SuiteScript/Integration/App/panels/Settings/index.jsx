@@ -16,6 +16,7 @@ import GeneralSection from '../../../DIY/panels/Admin/sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
+import Spinner from '../../../../../../components/Spinner';
 
 
 const useStyles = makeStyles(theme => ({
@@ -69,7 +70,7 @@ function SettingsPanelComponent({
   const flowSections = useSelector(state => {
     const sections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
     return sections.reduce((newArray, s) => {
-      if (!!s.fields || !!s.sections) {
+      if (!!s.fields || !!s.sections?.length) {
         newArray.push({
           path: s.titleId,
           label: s.title,
@@ -86,7 +87,7 @@ function SettingsPanelComponent({
       path: 'general',
       label: 'General',
       Section: GeneralSection,
-      id: 'general',
+      id: 'genSettings',
     },
     ...flowSections
   ]), [flowSections]);
@@ -148,7 +149,7 @@ function SettingsPanelComponent({
         </div>
         <div className={classes.content}>
           <Switch>
-            {availableSections.map(({ path, Section, label }) => (
+            {availableSections.map(({ path, Section, label, id }) => (
               <Route key={path} path={`${match.url}/${path}`}>
                 {Section === 'FlowsConfiguration' ? (
                   <>
@@ -157,10 +158,13 @@ function SettingsPanelComponent({
                       integrationId={integrationId}
                       ssLinkedConnectionId={ssLinkedConnectionId}
                       sectionId={path}
+                      id={id}
                       />
                   </>) : <Section
                     integrationId={integrationId}
                     ssLinkedConnectionId={ssLinkedConnectionId}
+                    sectionId={path}
+                    id={id}
                     {...sectionProps}
                 />}
 
@@ -184,12 +188,12 @@ export default function SettingsPanel({ ssLinkedConnectionId, integrationId }) {
     <div className={classes.root}>
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
 
-      {hasSettingsMetadata &&
-      <SettingsPanelComponent
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
+      {hasSettingsMetadata ?
+        <SettingsPanelComponent
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
 
-          />}
+          /> : <Spinner />}
 
     </div>
   );
