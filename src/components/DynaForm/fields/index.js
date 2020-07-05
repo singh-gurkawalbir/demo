@@ -107,6 +107,7 @@ import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
+import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 
 export default {
   suitescripttable: DyanSuiteScriptTable,
@@ -227,4 +228,5 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
 };
