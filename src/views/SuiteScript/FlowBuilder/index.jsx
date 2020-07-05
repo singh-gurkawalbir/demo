@@ -191,7 +191,7 @@ function FlowBuilder() {
   const isViewMode = useSelector(state => !selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
-    <LoadResources required resources="integrations">
+    <LoadResources required resources="integrations,connections">
       <LoadSuiteScriptResources
         required
         ssLinkedConnectionId={ssLinkedConnectionId}

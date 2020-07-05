@@ -8,7 +8,7 @@ export function* saveSampleDataOnResource({
   rawData,
   resourceType,
 }) {
-  if (!resourceId || !rawData) return;
+  if (!resourceId || rawData === undefined) return;
   const patchSet = [
     {
       op: 'add',

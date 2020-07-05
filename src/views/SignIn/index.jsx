@@ -72,7 +72,7 @@ export default function Signin(props) {
           </Typography>
           <Typography variant="body2" className={classes.subTitle}>
             Don&apos;t have an account?
-            <Link href="true" className={classes.link}>
+            <Link href="/signup" className={classes.link}>
               Sign up
             </Link>
           </Typography>

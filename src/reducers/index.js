@@ -5415,3 +5415,24 @@ export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType
 
   return { sampleData: formattedSampleData, rule };
 };
+
+/**
+ * Supported File types : csv, json, xml, xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
+ */
+export function fileSampleData(state, { resourceId, resourceType, fileType}) {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    stage,
+  );
+  if (!rawData) {
+    const resourceObj = resource(state, resourceType, resourceId);
+    if (resourceObj?.file?.type === fileType) {
+      return resourceObj.sampleData;
+    }
+  }
+  return rawData?.body;
+}
