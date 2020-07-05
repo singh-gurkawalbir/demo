@@ -25,7 +25,7 @@ export function* saveMappings({ id, context }) {
     subRecordMappingId,
   } = yield select(selectors.mapping, id);
   let _mappings = mappings.map(
-    ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
+    ({ index, hardCodedValueTmp, key, rowIdentifier, ...others }) => others
   );
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,

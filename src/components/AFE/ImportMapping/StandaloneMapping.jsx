@@ -263,6 +263,7 @@ export default function StandaloneMapping(props) {
     isComposite,
   };
   const mappingOptions = {
+    exportResource,
     resourceData,
     adaptorType: resourceType.type,
     isGroupedSampleData,

@@ -744,3 +744,7 @@ export function getConnectionType(resource) {
 
   return type;
 }
+
+export function isNetSuiteBatchExport(exportRes) {
+  return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
+}
