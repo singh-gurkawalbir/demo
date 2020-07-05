@@ -183,6 +183,21 @@ export const reset = (flow, index, isPageGenerator) => {
   }
 };
 
+export const resetStagesForFlowResource = (flow, index, stages = [], isPageGenerator) => {
+  const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
+  const resourceId = resource._exportId || resource._importId;
+  const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
+  const resourceIds = keys(flow[resourceMap]);
+  if (resourceIds.includes(resourceId)) {
+    stages.forEach(stage => {
+      if (flow[resourceMap][resourceId][stage]) {
+        // eslint-disable-next-line no-param-reassign
+        flow[resourceMap][resourceId][stage] = {};
+      }
+    });
+  }
+};
+
 export const compare = (currentList = [], updatedList = []) => {
   const changedIndex = updatedList.findIndex((item, index) => {
     const currentItem = currentList[index] || {};
