@@ -1,6 +1,6 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
-import { adaptorTypeMap, isNetSuiteBatchExport} from '../resource';
+import { adaptorTypeMap } from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -10,7 +10,6 @@ import getJSONPaths, {
 } from '../jsonPaths';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
-
 
 const isCsvOrXlsxResource = resource => {
   const { adaptorType: resourceAdapterType, file } = resource;
@@ -924,8 +923,6 @@ export default {
     netsuiteRecordType,
     options = {},
   }) => {
-    const {exportResource} = options;
-
     let _mappings = mappings;
 
     if (options.integrationApp) {
@@ -971,14 +968,12 @@ export default {
           isGroupedSampleData,
           useFirstRowSupported: true,
           resource,
-          exportResource,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
           useFirstRowSupported: false,
           resource,
-          exportResource,
         });
       default:
     }
@@ -1035,7 +1030,6 @@ export default {
     isGroupedSampleData,
     useFirstRowSupported = false,
     resource = {},
-    exportResource = {}
   }) => {
     let tempFm;
     const toReturn = [];
@@ -1056,13 +1050,7 @@ export default {
             ? [lm.generate, tempFm.generate].join('[*].')
             : tempFm.generate;
 
-          if (['FTPImport', 'S3Import'].includes(resource.adaptorType) && exportResource && ['csv', 'xlsx'].includes(resource.file.type) && isNetSuiteBatchExport(exportResource)) {
-            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-              tempFm.extract = tempFm.extract.substr('*.'.length);
-            } else {
-              tempFm.useFirstRow = true;
-            }
-          } else if (useFirstRowSupported && isGroupedSampleData) {
+          if (useFirstRowSupported && isGroupedSampleData) {
             if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
               tempFm.extract = tempFm.extract.substr('*.'.length);
             } else {
@@ -1155,10 +1143,11 @@ export default {
         }
       }
 
-      if (mapping.extract &&
+      if (
+        mapping.extract &&
         mapping.extract.indexOf('*.') === 0 &&
-          useFirstRowSupported &&
-          !mapping.useFirstRow
+        useFirstRowSupported &&
+        !mapping.useFirstRow
       ) {
         mapping.extract = `*.${wrapTextForSpecialChars(
           mapping.extract.slice(2)
