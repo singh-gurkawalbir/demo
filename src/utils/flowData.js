@@ -16,6 +16,7 @@ import {
   IMPORT_RESPONSE_MAPPING_EXTRACTS,
 } from './responseMapping';
 import arrayUtils from './array';
+import jsonUtils from './json';
 import { isIntegrationApp } from './flows';
 import { isJsonString } from './string';
 
@@ -30,6 +31,11 @@ const sampleDataStage = {
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
   },
+  /**
+   * flowInput, InputFilter
+   * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
+   * raw, transform, outputFilter
+   */
   imports: {
     inputFilter: 'flowInput',
     preMap: 'flowInput',
@@ -43,6 +49,10 @@ const sampleDataStage = {
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
+  /**
+   * flowInput, inputFilter
+   * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   */
 };
 
 /*
@@ -347,4 +357,36 @@ export const getFormattedResourceForPreview = (
   }
 
   return resource;
+};
+
+// /**
+//  * @input patchSet
+//  * @input resourceType
+//  * @outPut stage
+//  */
+// export const getResourceStageUpdatedFromPatch = (patch, resourceType) => {
+//   return 'transform';
+// };
+
+/**
+ * @input stage
+ * @input resourceType : supports imports, exports
+ * @outPut listOfStages []
+ */
+export const getSubsequentStages = (stage, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return [];
+  }
+  const stageMap = sampleDataStage[resourceType];
+  const nextStages = [];
+  const keys = jsonUtils.getObjectKeysFromValue(stageMap, stage);
+  if (!keys.length) {
+    return [];
+  }
+  nextStages.push(...keys);
+  for (let i = 0; i < keys.length; i += 1) {
+    const currStage = keys[i];
+    nextStages.push(...(getSubsequentStages(currStage, resourceType)));
+  }
+  return nextStages;
 };
