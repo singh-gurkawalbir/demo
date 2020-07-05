@@ -48,14 +48,12 @@ export default function DynaSalesforceLookup(props) {
   };
 
   const dispatch = useDispatch();
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, rule);
     }
-
-    handleEditorClick();
   };
 
   const extractFields = useSelector(state =>
@@ -101,11 +99,12 @@ export default function DynaSalesforceLookup(props) {
     <>
       {showEditor && (
         <SalesforceLookupFilterEditorDialog
-          title="Where Clause"
+          title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={value}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />

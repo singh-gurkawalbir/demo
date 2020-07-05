@@ -11,15 +11,8 @@ export default function ResourceDrawerLink({
   onClick,
 }) {
   const match = useRouteMatch();
-  const isEditable = useSelector(
-    state => {
-      const cp = selectors.resourcePermissions(
-        state,
-        'connections',
-        ssLinkedConnectionId,
-      );
-      return cp.edit;
-    }
+  const isManageLevelUser = useSelector(
+    state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId)
   );
 
   // nothing we can do without both type and resource...
@@ -27,7 +20,7 @@ export default function ResourceDrawerLink({
 
   const linkLabel = resource.ioFlowName || resource.name || resource._id || 'unknown';
 
-  if (!isEditable || disabled) return linkLabel;
+  if (!isManageLevelUser || disabled) return linkLabel;
 
   return (
     <>

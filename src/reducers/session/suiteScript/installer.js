@@ -13,12 +13,12 @@ export default (state = {}, action) => {
     if (!id) {
       return;
     }
-    if (!draft[id]) {
-      draft[id] = {};
-    }
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.SUITESCRIPT.INSTALLER.INIT_STEPS:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         connector = SUITESCRIPT_CONNECTORS.find(s => s._id === id);
         if (connector) {
           draft[id].steps = [...connector.installSteps];
@@ -27,6 +27,9 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.FAILED:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].error = error;
         break;
 
@@ -35,14 +38,23 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.LINKED_CONNECTION:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].ssLinkedConnectionId = ssLinkedConnectionId;
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_INTEGRATION_ID:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id].ssIntegrationId = ssIntegrationId;
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.SS_CONNECTION:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
         draft[id][connectionId] = doc;
         break;
 

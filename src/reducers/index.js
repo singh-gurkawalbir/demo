@@ -1788,7 +1788,7 @@ export function integrationChildren(state, integrationId) {
 
   children.push({ value: integrationId, label: integration.name });
   childIntegrations.forEach(ci => {
-    children.push({ value: ci._id, label: ci.name });
+    children.push({ value: ci._id, label: ci.name, mode: ci.mode });
   });
 
   return children;
@@ -4744,6 +4744,36 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   };
 }
 
+export function suiteScriptFlowConnectionList(
+  state,
+  { ssLinkedConnectionId, flowId }
+) {
+  const flow = suiteScriptResource(state, {
+    resourceType: 'flows',
+    id: flowId,
+    ssLinkedConnectionId,
+  });
+  const connections = suiteScriptResourceList(state, {
+    resourceType: 'connections',
+    ssLinkedConnectionId,
+  });
+  const connectionIdsInUse = [];
+
+  if (flow?.export._connectionId) {
+    connectionIdsInUse.push(flow.export._connectionId);
+  }
+  if (flow?.import?._connectionId) {
+    connectionIdsInUse.push(flow.import._connectionId);
+  }
+  if (isJavaFlow(flow)) {
+    connectionIdsInUse.push('CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
+  }
+
+  return connections.filter(
+    c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
+  );
+}
+
 export function suiteScriptIntegrationConnectionList(
   state,
   { ssLinkedConnectionId, integrationId }
@@ -5044,7 +5074,50 @@ export const redirectUrlToResourceListingPage = (
 
 export const exportData = (state, identifier) =>
   fromSession.exportData(state && state.session, identifier);
+export function httpAssistantSupportsMappingPreview(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importRes;
 
+  if (_integrationId && http) {
+    const connection = resource(state, 'connections', _connectionId);
+    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
+  }
+
+  return false;
+}
+
+export function mappingPreviewType(state, importId) {
+  const importRes = resource(state, 'imports', importId);
+
+  if (!importRes) return;
+  const { adaptorType } = importRes;
+
+  if (adaptorType === 'NetSuiteDistributedImport') {
+    return 'netsuite';
+  } if (adaptorType === 'SalesforceImport') {
+    const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
+      state,
+      importId
+    );
+
+    if (masterRecordTypeInfo && masterRecordTypeInfo.data) {
+      const { searchLayoutable } = masterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        return 'salesforce';
+      }
+    }
+  } else if (importRes.http) {
+    const showHttpAssistant = httpAssistantSupportsMappingPreview(
+      state,
+      importId
+    );
+
+    if (showHttpAssistant) {
+      return 'http';
+    }
+  }
+}
 export function retryDataContext(state, retryId) {
   return fromSession.retryDataContext(state && state.session, retryId);
 }
@@ -5257,7 +5330,7 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
       state,
       connectionId: ssLinkedConnectionId,
       commMetaPath,
-      filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
+      filterKey: 'suiteScriptSalesforce-sObjectMetadata',
     });
 
     return { data, status };
@@ -5292,4 +5365,73 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
 
 export function suiteScriptConnections(state, ssLinkedConnectionId) {
   return fromData.suiteScriptConnections(state && state.data, ssLinkedConnectionId);
+}
+/*
+* Definition rules are fetched in 2 ways
+* 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
+* 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
+* TODO @Raghu: Refactor this selector to be more clear
+*/
+export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+  const { resourcePath, definitionId, format } = options;
+  let template;
+  if (definitionId && format) {
+    template = fileDefinition(state, definitionId, {
+      format,
+      resourceType,
+    });
+  } else if (userDefinitionId) {
+    // selector to get that resource based on userDefId
+    template = resource(state, 'filedefinitions', userDefinitionId);
+  }
+
+  if (!template) return {};
+  const { sampleData, ...fileDefinitionRules } = template;
+  // Stringify rules as the editor expects a string
+  let rule;
+  let formattedSampleData;
+
+  if (resourceType === 'imports') {
+    rule = JSON.stringify(fileDefinitionRules, null, 2);
+    formattedSampleData =
+        sampleData &&
+        JSON.stringify(
+          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
+          null,
+          2
+        );
+  } else {
+    rule = JSON.stringify(
+      {
+        resourcePath: resourcePath || '',
+        fileDefinition: fileDefinitionRules,
+      },
+      null,
+      2
+    );
+    formattedSampleData = sampleData;
+  }
+
+  return { sampleData: formattedSampleData, rule };
+};
+
+/**
+ * Supported File types : csv, json, xml, xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
+ */
+export function fileSampleData(state, { resourceId, resourceType, fileType}) {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    stage,
+  );
+  if (!rawData) {
+    const resourceObj = resource(state, resourceType, resourceId);
+    if (resourceObj?.file?.type === fileType) {
+      return resourceObj.sampleData;
+    }
+  }
+  return rawData?.body;
 }

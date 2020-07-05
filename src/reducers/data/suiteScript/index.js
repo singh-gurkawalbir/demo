@@ -10,7 +10,8 @@ export default (
   state = { paging: { jobs: { rowsPerPage: 10, currentPage: 0 } } },
   action
 ) => {
-  const { type, resourceType } = action;
+  const { type } = action;
+  let { resourceType } = action;
 
   if (!type || resourceType === 'refreshlegacycontrolpanel') {
     return state;
@@ -223,6 +224,9 @@ export default (
       case actionTypes.SUITESCRIPT.RESOURCE.RECEIVED:
         {
           const { ssLinkedConnectionId, integrationId, resource } = action;
+          if (['exports', 'imports'].includes(resourceType)) {
+            resourceType = 'flows';
+          }
           if (
             draft[ssLinkedConnectionId] &&
             draft[ssLinkedConnectionId][resourceType]
@@ -231,13 +235,13 @@ export default (
 
             if (resourceType === 'flows') {
               const flowId = generateUniqueFlowId(resource._id, resource.type);
-              index = draft[ssLinkedConnectionId][resourceType].findIndex(
+              index = draft[ssLinkedConnectionId].flows.findIndex(
                 r =>
                   r._id === flowId &&
                   r._integrationId === resource._integrationId
               );
               if (index > -1) {
-                draft[ssLinkedConnectionId][resourceType][index] = {...resource, _id: flowId, ssLinkedConnectionId};
+                draft[ssLinkedConnectionId].flows[index] = {...resource, _id: flowId, ssLinkedConnectionId};
               }
             } else if (resourceType === 'integrations') {
               index = draft[ssLinkedConnectionId][resourceType].findIndex(

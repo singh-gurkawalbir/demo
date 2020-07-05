@@ -9,21 +9,17 @@ export default function DynaLinkSuiteScriptIntegrator(props) {
   const dispatch = useDispatch();
   const { resourceContext, onFieldChange } = props;
 
-  const canLinkSuiteScriptIntegrator = useSelector((state) =>
+  const canLinkSuiteScriptIntegrator = useSelector(state =>
     selectors.canLinkSuiteScriptIntegrator(state, resourceContext.resourceId)
   );
 
-  const isSuiteScriptLinkedConnection = useSelector((state) => {
+  const isSuiteScriptLinkedConnection = useSelector(state => {
     const preferences = selectors.userPreferences(state);
-    return (
-      preferences &&
-      preferences.ssConnectionIds &&
-      preferences.ssConnectionIds.includes(resourceContext.resourceId)
-    );
+    return preferences?.ssConnectionIds?.includes(resourceContext.resourceId);
   });
 
   const hasIntegrations = useSelector(
-    (state) =>
+    state =>
       selectors.netsuiteAccountHasSuiteScriptIntegrations(
         state,
         resourceContext.resourceId

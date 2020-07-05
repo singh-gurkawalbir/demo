@@ -52,7 +52,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* runDataLoader({ flowId, fileContent, fileType }) {
+export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
   const flow = yield select(selectors.resource, 'flows', flowId);
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
@@ -61,11 +61,11 @@ export function* runDataLoader({ flowId, fileContent, fileType }) {
 
     if (exp && exp.type === 'simple') {
       if (fileContent) {
-        const dataLoaderFileType = fileTypeToApplicationTypeMap[fileType];
+        const dataLoaderFileType = fileTypeToApplicationTypeMap[fileType] || fileType;
         // Incase of JSON, we need to stringify the content to pass while uploading
         const rawDataKey = yield call(uploadRawData, {
           file: fileType === 'json' ? JSON.stringify(fileContent) : fileContent,
-          fileName: `file.${fileType}`,
+          fileName: fileName || `file.${fileType}`,
           fileType: dataLoaderFileType,
         });
         const options = {

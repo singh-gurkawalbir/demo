@@ -32,6 +32,8 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'successMediaType',
   'successPath',
   'successValues',
+  'customeTemplateEval',
+  'strictHandlebarEvaluation',
 ]);
 
 export const PARAMETER_LOCATION = Object.freeze({
@@ -98,6 +100,7 @@ export const DEFAULT_PROPS = Object.freeze({
       ignoreMissing: false,
       ignoreLookupName: undefined,
       ignoreExtract: undefined,
+      strictHandlebarEvaluation: false,
     },
   },
 });
@@ -283,6 +286,9 @@ export function getExportVersionAndResource({
       if (ep) {
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -335,6 +341,9 @@ export function getImportVersionAndResource({
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
         versionAndResource.sampleData = resource.sampleData;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -575,6 +584,9 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
@@ -726,6 +738,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
+      customeTemplateEval: operationDetails.customeTemplateEval,
     },
   };
   const exportDoc = {
@@ -1409,6 +1422,9 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource, sampleData } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
@@ -1924,6 +1940,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
       'requestMediaType',
       'batchSize',
       'ignoreEmptyNodes',
+      'strictHandlebarEvaluation',
     ].forEach(p => {
       if (operationDetails[p]) {
         if (p === 'batchSize') {

@@ -107,6 +107,7 @@ import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
+import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 
 export default {
   matchingcriteria: DynaMatchingCriteriaWithModal,
@@ -227,4 +228,5 @@ export default {
   jsonresourcepath: DynaJsonResourcePath,
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
+  suitescriptuploadfile: DynaSuiteScriptUploadFile,
 };

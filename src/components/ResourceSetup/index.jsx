@@ -68,6 +68,7 @@ export default function ResourceSetupDrawer(props) {
               resourceType={resourceType}
               resourceId={resourceId}
               cancelButtonLabel="Cancel"
+              submitButtonLabel="Save & close"
               onSubmitComplete={onSubmitComplete}
               connectionType={connectionType}
               onCancel={onClose}

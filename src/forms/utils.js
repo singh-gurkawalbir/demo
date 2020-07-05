@@ -1,5 +1,5 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 import { C_LOCKED_FIELDS } from '../utils/constants';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
@@ -316,7 +316,10 @@ export const sanitizePatchSet = ({
     valuePatches.map(p => p.path),
     resource
   );
-  const newSet = [...removePatches, ...missingPatchSet, ...valuePatches];
+  // Though we are adding the missing patches, in some scenarios the path is getting replaced later
+  // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
+  // and operation will resolve this issue.
+  const newSet = [...removePatches, ...sortBy([...missingPatchSet, ...valuePatches], ['path', 'op'])];
   const error = jsonPatch.validate(newSet, resource);
 
   if (error) {
@@ -368,6 +371,7 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
+    newField.isIAField = true;
   } else if (newField.type === 'matchingCriteria') {
     newField.type = 'matchingcriteria';
   } else if (newField.type === 'select' && newField.supportsRefresh) {

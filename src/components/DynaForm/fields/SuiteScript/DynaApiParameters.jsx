@@ -38,7 +38,7 @@ const ApiParametersModal = props => {
     onFieldChange,
     value,
   } = props;
-  const { fieldMap, layout } = convertToReactFormFields({
+  const fieldMeta = convertToReactFormFields({
     apiMethodMetadata,
     value,
   });
@@ -51,11 +51,7 @@ const ApiParametersModal = props => {
   return (
     <ModalDialog show onClose={onClose}>
       <span>API parameters</span>
-      <DynaForm
-        fieldMeta={{
-          fieldMap,
-          layout,
-        }}>
+      <DynaForm fieldMeta={fieldMeta}>
         <div>
           <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
           <Button

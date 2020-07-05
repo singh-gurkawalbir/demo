@@ -49,6 +49,12 @@ export default {
           item.id.indexOf('.') === -1
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-salesforce-id-field': data =>
+    data
+      .filter(
+        item => item.type === 'text' && !item.sublist && !item.id.startsWith('celigo_')
+      )
+      .map(item => ({ label: item.name, value: item.id })),
   'suitescript-bodyField': data =>
     data
       .filter(
@@ -334,6 +340,60 @@ export default {
               relationshipName: child.relationshipName,
             });
           }
+        }
+      });
+    }
+
+    return _data;
+  },
+  'suiteScriptSalesforce-sObjectMetadata': (data, options = {}) => {
+    const { applicationResource, connectionId, commMetaPath } = options;
+    const _data = [];
+
+    if (data && data.fields) {
+      data.fields.forEach(field => {
+        _data.push({
+          value: field.name,
+          label: field.label,
+          type: field.type,
+          custom: field.custom,
+          triggerable: field.triggerable,
+          picklistValues: field.picklistValues,
+          updateable: field.updateable,
+        });
+      });
+    }
+
+    if (data.childRelationships && data.childRelationships.length) {
+      data.childRelationships.forEach(child => {
+        if (child.relationshipName) {
+          const sObjectMetadataPath = `${commMetaPath.substring(0, commMetaPath.lastIndexOf('/'))}/${child.childSObject}`;
+          const { data: childSObject } =
+            (applicationResource &&
+              applicationResource[connectionId] &&
+              applicationResource[connectionId][sObjectMetadataPath]) ||
+            {};
+
+          if (childSObject && childSObject.fields.length) {
+            childSObject.fields.forEach(field => {
+              _data.push({
+                value: `${child.relationshipName}[*].${field.name}`,
+                label: `${child.relationshipName}: ${field.label}`,
+                type: field.type,
+                custom: field.custom,
+                triggerable: field.triggerable,
+                picklistValues: field.picklistValues,
+                updateable: field.updateable,
+              });
+            });
+          }
+          _data.push({
+            value: `_child_${child.relationshipName}`,
+            label: `${child.relationshipName} : Fields...`,
+            type: 'childRelationship',
+            childSObject: child.childSObject,
+            relationshipName: child.relationshipName,
+          });
         }
       });
     }

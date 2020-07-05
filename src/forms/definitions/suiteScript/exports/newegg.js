@@ -11,8 +11,13 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['export.newegg.method', 'export.newegg.methodConfig'],
         type: 'collapse',
+        containers: [
+          {
+            label: 'What would you like to export?',
+            fields: ['export.newegg.method', 'export.newegg.methodConfig'],
+          }
+        ],
       },
     ],
   },

@@ -226,8 +226,8 @@ describe('getExportVersionAndResource', () => {
     [{}, undefined, undefined, {}],
     [{}, undefined, undefined, { versions: [] }],
     [{}, undefined, undefined, someAssistantData],
-    [{ version: 'v1', resource: 'r11' }, 'v1', 'ep1', someAssistantData],
-    [{ version: 'v2', resource: 'r21' }, undefined, 'ep1', someAssistantData],
+    [{ version: 'v1', resource: 'r11', operation: 'ep1' }, 'v1', 'ep1', someAssistantData],
+    [{ version: 'v2', resource: 'r21', operation: 'ep1' }, undefined, 'ep1', someAssistantData],
     [{}, 'someVersion', 'ep1', someAssistantData],
     [
       { version: 'v1', resource: 'r11' },
@@ -236,7 +236,7 @@ describe('getExportVersionAndResource', () => {
       someAssistantData,
     ],
     [
-      { version: 'v1', resource: 'r12' },
+      { version: 'v1', resource: 'r12', operation: 'r12_ep1' },
       undefined,
       'r12_ep1',
       someAssistantData,
@@ -248,7 +248,7 @@ describe('getExportVersionAndResource', () => {
       someAssistantData,
     ],
     [
-      { version: 'v2', resource: 'r22' },
+      { version: 'v2', resource: 'r22', operation: 'r22_ep1' },
       undefined,
       'r22_ep1',
       someAssistantData,

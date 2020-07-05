@@ -9,6 +9,8 @@ import InfoIconButton from '../../../../InfoIconButton';
 const useStyles = makeStyles(theme => ({
   root: {
     // display: 'flex',
+    maxWidth: 300,
+    wordWrap: 'break-word',
   },
   freeTag: {
     margin: theme.spacing(1),

@@ -53,14 +53,14 @@ export default function JavaScriptEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'javascript', {
         scriptId,
-        initScriptId: scriptId,
+        _init_scriptId: scriptId,
         fetchScriptContent: true,
         entryFunction: entryFunction || 'main',
         data: props.data,
         context,
-        initData: props.data,
+        _init_data: props.data,
         autoEvaluateDelay: 500,
-        initEntryFunction: entryFunction || 'main',
+        _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
       })
     );

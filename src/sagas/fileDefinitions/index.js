@@ -64,6 +64,7 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClos
     formValues.resourceType === 'imports'
       ? definitionRules
       : definitionRules.fileDefinition;
+  const resourcePath = formValues.resourceType === 'exports' ? definitionRules.resourcePath : '';
   let definitionId = (fileDefinition && fileDefinition._id) || generateNewId();
   const patchSet = jsonPatch.compare({}, fileDefinition);
 
@@ -78,10 +79,14 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClos
     definitionId = yield select(selectors.createdResourceId, definitionId);
   }
 
-  // // Once definition is saved, save the resource with the id
+  const fileDefinitionDetails = {
+    definitionId,
+    resourcePath
+  };
+  // Once definition is saved, save the resource with the id
   yield call(saveResourceWithDefinitionID, {
     formValues,
-    definitionId,
+    fileDefinitionDetails,
     flowId,
     skipClose
   });

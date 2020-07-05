@@ -189,8 +189,8 @@ export function* saveMappings() {
   });
   if (lookups) {
     patchSet.push({
-      op: lookups ? 'replace' : 'add',
-      path: importType === 'netsuite' ? '/import/netsuite/lookups' : '/import/salesforce/lookups',
+      op: importRes[importType] && importRes[importType].lookups ? 'replace' : 'add',
+      path: `/import/${importType}/lookups`,
       value: lookups,
     });
   }
@@ -275,6 +275,20 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   }
 }
 
+export function* checkForSFSublistExtractPatch({key, value}) {
+  const {
+    ssLinkedConnectionId, integrationId, flowId,
+  } = yield select(selectors.suiteScriptMappings);
+  const {data: flowSampleData} = yield select(selectors.suiteScriptFlowSampleData, {ssLinkedConnectionId, integrationId, flowId});
+
+  const childRelationshipField =
+  flowSampleData && flowSampleData.find(field => field.value === value);
+  if (childRelationshipField && childRelationshipField.childSObject) {
+    yield put(actions.suiteScript.mapping.setSFSubListFieldName(value));
+    yield put(actions.suiteScript.mapping.updateLastFieldTouched(key));
+  }
+}
+
 export function* updateImportSampleData() {
   // identify sample data change
   const {
@@ -334,6 +348,7 @@ export const mappingSagas = [
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.REFRESH_GENEREATES, refreshGenerates),
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
+  takeEvery(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, checkForSFSublistExtractPatch),
 
 
 ];

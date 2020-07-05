@@ -16,7 +16,6 @@ import AccountList from './AccountList';
 import EnvironmentToggle from './EnvironmentToggle';
 // import ThemeToggle from './ThemeToggle';
 import CeligoBreadcrumb from './CeligoBreadcrumb';
-import CeligoSuiteScriptBreadcrumb from './CeligoSuiteScriptBreadcrumb';
 
 const useStyles = makeStyles(theme => ({
   celigoLogo: {
@@ -102,7 +101,7 @@ export default function CeligoAppBar() {
             [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar className="topBar" variant="dense">
-            {pathname.includes('/suitescript/') ? <CeligoSuiteScriptBreadcrumb location={pathname} /> : <CeligoBreadcrumb location={pathname} />}
+            <CeligoBreadcrumb location={pathname} />
             <ul className={classes.topBarActions}>
               {/* <li>
                 <GlobalSearch />

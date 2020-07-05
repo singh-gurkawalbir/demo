@@ -35,6 +35,7 @@ export default {
       },
     ],
     defaultValue: r => (r && r.export && r.export.type) || 'all',
+    required: true,
   },
   'export.delta.dateField': {
     id: 'export.delta.dateField',

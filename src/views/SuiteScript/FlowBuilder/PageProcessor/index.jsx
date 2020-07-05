@@ -37,6 +37,9 @@ const PageProcessor = ({ history, match }) => {
     })
   );
   const handleBlockClick = useCallback(() => {
+    if (resource?.import?.type === 'magento') {
+      return;
+    }
     const to = `${match.url}/edit/imports/${flowId}`;
 
     if (match.isExact) {
@@ -44,7 +47,7 @@ const PageProcessor = ({ history, match }) => {
     } else {
       history.replace(to);
     }
-  }, [flowId, history, match.isExact, match.url]);
+  }, [flowId, history, match.isExact, match.url, resource?.import?.type]);
 
   return (
     <div className={classes.ppContainer}>

@@ -5,6 +5,22 @@ import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
 
+function findRowDelimiter(sampleData) {
+  let rowDelimiter;
+  if (sampleData && typeof sampleData === 'string') {
+    if (sampleData.indexOf('\n\r') > -1) {
+      rowDelimiter = '\n\r';
+    } else if (sampleData.indexOf('\r\n') > -1) {
+      rowDelimiter = '\r\n';
+    } else if (sampleData.indexOf('\r') > -1) {
+      rowDelimiter = '\r';
+    } else if (sampleData.indexOf('\n') > -1) {
+      rowDelimiter = '\n';
+    }
+  }
+  return rowDelimiter;
+}
+
 function DynaUploadFile(props) {
   const {
     options = '',
@@ -14,6 +30,7 @@ function DynaUploadFile(props) {
     resourceType,
     formContext,
     onFieldChange,
+    isIAField,
     placeholder,
     persistData = false,
   } = props;
@@ -27,12 +44,26 @@ function DynaUploadFile(props) {
   );
 
   useEffect(() => {
-    const { status, file, fileType, name } = uploadedFile || {};
+    const { status, file, rawFile, fileType, name } = uploadedFile || {};
 
     if (status === 'received') {
       setFileName(name);
+      if (isIAField) {
+        onFieldChange(id, {
+          file,
+          type: 'file',
+          rawFile,
+          rowDelimiter: findRowDelimiter(file),
+          fileProps: {
+            name: rawFile.name,
+            size: rawFile.size,
+            type: rawFile.type
+          }
+        });
+      } else {
+        onFieldChange(id, file);
+      }
 
-      onFieldChange(id, file);
       dispatch(
         actions.sampleData.request(
           resourceId,

@@ -216,12 +216,9 @@ export default function IntegrationApp(props) {
   const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(
     tag => {
-      const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
+      const patchSet = tag ? [{ op: 'replace', path: '/tag', value: tag }] : [{ op: 'remove', path: '/tag'}];
 
-      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged('integrations', integrationId, 'value')
-      );
+      dispatch(actions.resource.patch('integrations', integrationId, patchSet));
     },
     [dispatch, integrationId]
   );

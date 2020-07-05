@@ -1,6 +1,7 @@
 export default {
   'export.salesforce.sObjectType': {
-    label: 'SObjectType',
+    label: 'SObject type',
+    required: true,
     connectionId: r => r.export._connectionId,
     ssLinkedConnectionId: r => r.ssLinkedConnectionId,
     fieldId: 'export.salesforce.sObjectType',
@@ -10,7 +11,7 @@ export default {
       `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.export._connectionId}/sObjectTypes`,
   },
   'export.salesforce.errorMessageField.id': {
-    label: 'Log Error Messages Back in Salesforce',
+    label: 'Log error messages back in Salesforce',
     fieldId: 'export.salesforce.errorMessageField.id',
     type: 'refreshableselect',
     filterKey: 'salesforce-textFields',
@@ -18,7 +19,7 @@ export default {
     visibleWhenAll: [{ field: 'export.salesforce.sObjectType', isNot: [''] }],
   },
   'export.salesforce.netsuiteIdField': {
-    label: 'Store NetSuite Id Back in Salesforce',
+    label: 'Store NetSuite ID back in Salesforce',
     fieldId: 'export.salesforce.netsuiteIdField',
     type: 'refreshableselect',
     filterKey: 'salesforce-textFields',
@@ -26,7 +27,7 @@ export default {
     visibleWhenAll: [{ field: 'export.salesforce.sObjectType', isNot: [''] }],
   },
   'export.salesforce.soql': {
-    label: 'SOQL Query',
+    label: 'SOQL query',
     fieldId: 'export.salesforce.soql',
     type: 'suitescriptsoqlquery',
     connectionId: r => r.export._connectionId,
@@ -72,7 +73,7 @@ export default {
     ],
   },
   'export.salesforce.soqlErrorMessageField.id': {
-    label: 'Log Error Messages Back in Salesforce',
+    label: 'Log error messages back in Salesforce',
     fieldId: 'export.salesforce.soqlErrorMessageField.id',
     type: 'suitescriptsalesforcerefreshableselect',
     connectionId: r => r.export._connectionId,

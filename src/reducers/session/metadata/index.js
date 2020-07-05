@@ -100,8 +100,11 @@ export default (
       case actionTypes.METADATA.RECEIVED_ERROR: {
         const defaultError = 'Error occured';
 
+        // In some case we are calling sagas directly from another sagas. And it will not route through REQUEST reducer action
+        if (!draft.application[connectionId]) {
+          draft.application[connectionId] = {};
+        }
         if (
-          draft.application[connectionId] &&
           draft.application[connectionId][key] &&
           draft.application[connectionId][key].status === 'refreshed'
         ) {

@@ -9,6 +9,7 @@ import CustomSettingsIcon from '../../../../components/icons/CustomSettingsIcon'
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
+import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../reducers';
 import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
@@ -99,14 +100,14 @@ export default function Integration({ match }) {
   return (
     <>
       <ResourceDrawer match={match} />
-
-      <LoadSuiteScriptResources
-        required
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-        resources="tiles,flows,connections">
-        <CeligoPageBar
-          title={
+      <LoadResources required resources="integrations">
+        <LoadSuiteScriptResources
+          required
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+          resources="tiles,flows,connections">
+          <CeligoPageBar
+            title={
             integration && (
               <EditableText
                 disabled={!canEdit}
@@ -122,16 +123,16 @@ export default function Integration({ match }) {
           }
         />
 
-        <IntegrationTabs
-          tabs={tabs}
-          match={match}
-          className={classes.PageWrapper}
+          <IntegrationTabs
+            tabs={tabs}
+            match={match}
+            className={classes.PageWrapper}
         />
-        {/* Add Suitescript flow related component */}
-        <SuiteScriptMappingDrawer
+          {/* Add Suitescript flow related component */}
+          <SuiteScriptMappingDrawer
         />
-      </LoadSuiteScriptResources>
-
+        </LoadSuiteScriptResources>
+      </LoadResources>
     </>
   );
 }

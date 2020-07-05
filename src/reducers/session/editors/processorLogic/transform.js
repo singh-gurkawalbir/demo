@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { differenceWith, isEqual } from 'lodash';
 import util from '../../../../utils/json';
 
@@ -29,21 +30,21 @@ export default {
   },
   dirty: editor => {
     const {
-      initRule = [],
+      _init_rule = [],
       data,
-      initData,
+      _init_data,
       rule = [],
       optionalSaveParams = {},
     } = editor || {};
     const { processorKey } = optionalSaveParams;
 
     // in case of response transformation, data change is considered as editor change
-    if (processorKey === 'responseTransform' && initData !== data) {
+    if (processorKey === 'responseTransform' && _init_data !== data) {
       return true;
     }
 
-    const rulesDiff = differenceWith(initRule, rule, isEqual);
-    const isRulesEqual = initRule.length === rule.length && !rulesDiff.length;
+    const rulesDiff = differenceWith(_init_rule, rule, isEqual);
+    const isRulesEqual = _init_rule.length === rule.length && !rulesDiff.length;
 
     return !isRulesEqual;
   },

@@ -126,6 +126,8 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
+    const fileType = fields.find(field => field.id === 'file.type');
+
     if (fieldId === 'file.xlsx.keyColumns') {
       const keyColoumnField = fields.find(
         field => field.id === 'file.xlsx.keyColumns'
@@ -146,9 +148,9 @@ export default {
 
       return {
         hasHeaderRow: hasHeaderRowField.value,
+        fileType: fileType.value
       };
     }
-    const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'uploadFile') {
       return fileType.value;
@@ -227,6 +229,7 @@ export default {
         trimSpaces: trimSpacesField && trimSpacesField.value,
         rowsToSkip: rowsToSkipField && rowsToSkipField.value,
         hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
+        fileType: fileType.value,
       };
 
       return options;
@@ -270,6 +273,7 @@ export default {
     's3.bucket': { fieldId: 's3.bucket' },
     's3.keyStartsWith': { fieldId: 's3.keyStartsWith' },
     's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
+    's3.backupBucket': { fieldId: 's3.backupBucket' },
     'file.type': { fieldId: 'file.type' },
     uploadFile: {
       fieldId: 'uploadFile',
@@ -325,7 +329,62 @@ export default {
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
     },
-    fileAdvancedSettings: { formId: 'fileAdvancedSettings' },
+    fileMetadata: {
+      id: 'fileMetadata',
+      type: 'checkbox',
+      label: 'File metadata only',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['blob'],
+        },
+      ],
+      defaultValue: r => r && r.file && r.file.output === 'metadata',
+    },
+    'file.decompressFiles': {
+      id: 'file.decompressFiles',
+      type: 'checkbox',
+      label: 'Decompress files',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.output',
+          is: ['records'],
+        },
+      ],
+      defaultValue: r => !!(r && r.file && r.file.compressionFormat),
+    },
+    'file.compressionFormat': {
+      fieldId: 'file.compressionFormat',
+      visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
+    },
+    'file.skipDelete': { fieldId: 'file.skipDelete' },
+    'file.encoding': { fieldId: 'file.encoding' },
+    pageSize: {
+      fieldId: 'pageSize',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+      visibleWhen: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    skipRetries: {
+      fieldId: 'skipRetries',
+    },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     exportPanel: {
       fieldId: 'exportPanel',
     },
@@ -380,7 +439,16 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['fileAdvancedSettings'],
+            fields: ['fileMetadata',
+              'file.decompressFiles',
+              'file.compressionFormat',
+              'file.skipDelete',
+              's3.backupBucket',
+              'file.encoding',
+              'pageSize',
+              'dataURITemplate',
+              'skipRetries',
+              'apiIdentifier'],
           },
         ],
       },

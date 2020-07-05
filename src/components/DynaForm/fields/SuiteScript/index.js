@@ -4,6 +4,8 @@ import DynaNetSuiteFolderPath from './DynaNetSuiteFolderPath';
 import DynaSoqlQuery from './DynaSoqlQuery';
 import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaApiParameters from './DynaApiParameters';
+import DynaNetSuiteUpsertField from './DynaNetSuiteUpsertField';
+import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 
 export default {
   suitescriptapimethod: DynaApiMethod,
@@ -12,4 +14,6 @@ export default {
   suitescriptsoqlquery: DynaSoqlQuery,
   suitescriptsalesforcerefreshableselect: DynaSalesforceRefreshableSelect,
   suitescriptapiparameters: DynaApiParameters,
+  suitescriptnetsuiteupsertfield: DynaNetSuiteUpsertField,
+  suitescriptnetsuitelookup: DynaNetSuiteLookup,
 };

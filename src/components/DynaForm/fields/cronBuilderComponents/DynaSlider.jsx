@@ -1,8 +1,20 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import React, { useCallback, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 
+const useStyles = makeStyles((theme) => ({
+  titleSlider: {
+    paddingTop: theme.spacing(1),
+    marginLeft: theme.spacing(-1),
+    fontWeight: 'bold',
+  },
+  sliderWrapper: {
+    padding: theme.spacing(1, 2),
+  },
+}));
 function DynaSlider(props) {
+  const classes = useStyles();
   const {
     id,
     value,
@@ -34,8 +46,8 @@ function DynaSlider(props) {
   }, [id]);
 
   return (
-    <>
-      <Typography>{`Every ${sliderVal} ${unit}`} </Typography>
+    <div className={classes.sliderWrapper}>
+      <Typography className={classes.titleSlider}>{`Every ${sliderVal} ${unit}`} </Typography>
       <Slider
         value={parseInt(sliderVal, 10)}
         onChange={(evt, value) => {
@@ -46,7 +58,7 @@ function DynaSlider(props) {
         min={min}
         max={max}
       />
-    </>
+    </div>
   );
 }
 

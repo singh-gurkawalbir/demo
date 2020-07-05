@@ -38,9 +38,9 @@ export const suiteScriptResourceKey = ({
 }) => `${ssLinkedConnectionId}-${resourceType}-${resourceId}`;
 
 export const isJavaFlow = flow =>
-  (flow.locationQualifier && trim(flow.locationQualifier).length > 0) ||
+  flow && ((flow.locationQualifier && trim(flow.locationQualifier).length > 0) ||
           ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) &&
-            !flow.hasConfiguration);
+            !flow.hasConfiguration));
 
 export const flowType = flow => {
   if (isJavaFlow(flow)) {
