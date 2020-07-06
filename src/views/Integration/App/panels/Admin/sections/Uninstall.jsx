@@ -8,6 +8,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -53,11 +54,11 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
               );
             } else {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
               );
             }
           },

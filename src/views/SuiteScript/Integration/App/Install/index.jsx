@@ -248,7 +248,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   const handleBackClick = useCallback(e => {
     e.preventDefault();
-    history.push('/pg/marketplace');
+    history.push(getRoutePath('/marketplace'));
   }, [history]);
 
   const handleSubmitComplete = useCallback((connectionId) => {
