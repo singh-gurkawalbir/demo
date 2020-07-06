@@ -14,11 +14,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   gridImgWrapper: {
-    // Todo (Azhar): Add SVG image to the cdn and change the url
-    // background: `center / contain no-repeat url('../../static/images/gridDots.svg'), ${theme.palette.background.default} `,
-    background: `right / contain no-repeat url('../../static/images/gridDots.svg'), ${theme.palette.primary.main} }`,
-    // padding: theme.spacing(2),
-    // backgroundOrigin: 'content-box, padding-box',
+    background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/pg/static/images/public-pages.svg'), ${theme.palette.background.default}`,
+    padding: theme.spacing(2),
+    backgroundOrigin: 'content-box, padding-box',
 
     [theme.breakpoints.down('sm')]: {
       display: 'none',
@@ -40,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingBottom: theme.spacing(2),
+    position: 'relative',
   },
   signinWrapperContent: {
     display: 'flex',
