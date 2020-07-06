@@ -56,7 +56,7 @@ export default function DynaFileKeyColumn(props) {
    * This field is supported by Csv/Xlsx file types
    */
   const csvData = useSelector(state => selectors.fileSampleData(state, {
-    resourceId, resourceType, fileType: 'csv'
+    resourceId, resourceType, fileType: options.fileType || 'csv'
   }));
 
   const multiSelectOptions = useMemo(() => {

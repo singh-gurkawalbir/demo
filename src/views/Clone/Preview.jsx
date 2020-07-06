@@ -365,7 +365,7 @@ export default function ClonePreview(props) {
           }
         )
       );
-      props.history.push(`/pg/clone/${resourceType}/${resourceId}/setup`);
+      props.history.push(getRoutePath(`/clone/${resourceType}/${resourceId}/setup`));
     } else {
       dispatch(
         actions.template.installStepsReceived(

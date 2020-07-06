@@ -24,6 +24,7 @@ import HelpCenterIcon from '../../components/icons/HelpCenterIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
 import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
+import getRoutePath from '../../utils/routePaths';
 
 export default function menuItems(
   userProfile,
@@ -39,15 +40,15 @@ export default function menuItems(
       Icon: HomeIcon,
       path: '/',
       routeProps: {
-        path: ['/pg', '/pg/dashboard'],
+        path: [getRoutePath(''), getRoutePath('/dashboard')],
         exact: true,
       },
     },
     {
       label: 'Tools',
       routeProps: [
-        '/pg/integrations/:integrationId/flowBuilder',
-        '/pg/integrations/:integrationId/dataLoader',
+        getRoutePath('/integrations/:integrationId/flowBuilder'),
+        getRoutePath('/integrations/:integrationId/dataLoader'),
       ],
       Icon: ToolsIcon,
       children: [
@@ -55,13 +56,13 @@ export default function menuItems(
           label: 'Flow builder',
           Icon: FlowBuilderIcon,
           path: '/integrations/none/flowBuilder/new',
-          routeProps: '/pg/integrations/:integrationId/flowBuilder',
+          routeProps: getRoutePath('/integrations/:integrationId/flowBuilder'),
         },
         {
           label: 'Data loader',
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
-          routeProps: '/pg/integrations/:integrationId/dataloader',
+          routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
         },
         {
           label: 'Dev playground',
@@ -74,17 +75,17 @@ export default function menuItems(
       label: 'Resources',
       Icon: ResourcesIcon,
       routeProps: [
-        '/pg/exports',
-        '/pg/imports',
-        '/pg/connections',
-        '/pg/scripts',
-        '/pg/agents',
-        '/pg/stacks',
-        '/pg/templates',
-        '/pg/connectors',
-        '/pg/recycleBin',
-        '/pg/accessTokens',
-        '/pg/apis',
+        getRoutePath('/exports'),
+        getRoutePath('/imports'),
+        getRoutePath('/connections'),
+        getRoutePath('/scripts'),
+        getRoutePath('/agents'),
+        getRoutePath('/stacks'),
+        getRoutePath('/templates'),
+        getRoutePath('/connectors'),
+        getRoutePath('/recycleBin'),
+        getRoutePath('/accessTokens'),
+        getRoutePath('/apis'),
       ],
       children: [
         { label: 'Connections', path: '/connections', Icon: ConnectionsIcon },

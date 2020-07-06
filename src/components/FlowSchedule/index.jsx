@@ -30,7 +30,7 @@ export default function FlowSchedule({
   );
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', flow._integrationId)
+    selectors.resource(state, 'integrations', flow?._integrationId)
   );
   const exp = useSelector(state =>
     selectors.resource(state, 'exports', pg && pg._exportId)

@@ -372,6 +372,8 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
     newField.isIAField = true;
+  } else if (newField.type === 'matchingCriteria') {
+    newField.type = 'matchingcriteria';
   } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
   } else if (newField.type === 'multiselect' && newField.supportsRefresh) {

@@ -578,11 +578,9 @@ export default {
         }
 
         if (r.http.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.http.method.length > 1) {
+          if (r.http.method.length > 1 && r.http.requestType) {
             return r.http.requestType[1];
-          }
-
-          return r.http.requestType[0];
+          } if (r.http.requestType) { return r.http.requestType[0]; }
         }
 
         return '';

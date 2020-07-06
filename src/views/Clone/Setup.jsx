@@ -5,6 +5,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
+import getRoutePath from '../../utils/routePaths';
 
 export default function Clone(props) {
   const { resourceType, resourceId } = props.match.params;
@@ -20,7 +21,7 @@ export default function Clone(props) {
     (redirectTo, isInstallFailed) => {
       // Incase clone is failed, then redirect to the dashboard
       if (isInstallFailed) {
-        history.replace('/pg/dashboard');
+        history.replace(getRoutePath('/dashboard'));
       } else {
         history.push(redirectTo);
       }

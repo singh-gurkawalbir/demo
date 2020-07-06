@@ -9,7 +9,9 @@ import metadata from '../../../../../../components/ResourceTable/metadata/suiteS
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
-import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
+import Spinner from '../../../../../../components/Spinner';
+import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
+import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   listItem: {
     color: theme.palette.text.primary,
@@ -133,12 +135,12 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         resources="flows">
-        {hasSettingsMetadata &&
-        <FlowPanel
-          ssLinkedConnectionId={ssLinkedConnectionId}
-          integrationId={integrationId}
+        {hasSettingsMetadata ?
+          <FlowPanel
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
 
-        />}
+        /> : <><SpinnerWrapper><Spinner /></SpinnerWrapper></>}
 
       </LoadSuiteScriptResources>
     </div>

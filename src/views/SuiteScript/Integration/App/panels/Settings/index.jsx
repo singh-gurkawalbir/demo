@@ -1,21 +1,22 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import {
-  Route,
-  Switch,
-  NavLink,
-  useRouteMatch,
-  Redirect,
-} from 'react-router-dom';
+import { Divider, List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { isEqual } from 'lodash';
-import * as selectors from '../../../../../../reducers';
-import GeneralSection from '../../../DIY/panels/Admin/sections/General';
-import ConfigureSettings from './sections/ConfigureSettings';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import {
+  NavLink,
+
+  Redirect, Route,
+  Switch,
+
+  useRouteMatch
+} from 'react-router-dom';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
+import Spinner from '../../../../../../components/Spinner';
+import * as selectors from '../../../../../../reducers';
+import ConfigureSettings from './sections/ConfigureSettings';
+import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
 
 
 const useStyles = makeStyles(theme => ({
@@ -61,15 +62,10 @@ function SettingsPanelComponent({
   const match = useRouteMatch();
 
 
-  const hideGeneralTab = useSelector(
-    state => !selectors.suiteScriptGeneralSettings(state, integrationId, ssLinkedConnectionId,
-    )
-  );
-
-  const flowSections = useSelector(state => {
-    const sections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
+  const availableSections = useSelector(state => {
+    const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
     return sections.reduce((newArray, s) => {
-      if (!!s.fields || !!s.sections) {
+      if (!!s.fields || !!s.sections?.length) {
         newArray.push({
           path: s.titleId,
           label: s.title,
@@ -80,26 +76,6 @@ function SettingsPanelComponent({
       return newArray;
     }, []);
   }, isEqual);
-
-  const allSections = useMemo(() => ([
-    {
-      path: 'general',
-      label: 'General',
-      Section: GeneralSection,
-      id: 'general',
-    },
-    ...flowSections
-  ]), [flowSections]);
-
-  const filterTabs = [];
-
-  if (hideGeneralTab) {
-    filterTabs.push('general');
-  }
-
-  const availableSections = useMemo(() => allSections.filter(sec =>
-    !filterTabs.includes(sec.id)
-  ), [allSections, filterTabs]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -148,7 +124,7 @@ function SettingsPanelComponent({
         </div>
         <div className={classes.content}>
           <Switch>
-            {availableSections.map(({ path, Section, label }) => (
+            {availableSections.map(({ path, Section, label, id }) => (
               <Route key={path} path={`${match.url}/${path}`}>
                 {Section === 'FlowsConfiguration' ? (
                   <>
@@ -157,10 +133,13 @@ function SettingsPanelComponent({
                       integrationId={integrationId}
                       ssLinkedConnectionId={ssLinkedConnectionId}
                       sectionId={path}
+                      id={id}
                       />
                   </>) : <Section
                     integrationId={integrationId}
                     ssLinkedConnectionId={ssLinkedConnectionId}
+                    sectionId={path}
+                    id={id}
                     {...sectionProps}
                 />}
 
@@ -184,12 +163,12 @@ export default function SettingsPanel({ ssLinkedConnectionId, integrationId }) {
     <div className={classes.root}>
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
 
-      {hasSettingsMetadata &&
-      <SettingsPanelComponent
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
+      {hasSettingsMetadata ?
+        <SettingsPanelComponent
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
 
-          />}
+          /> : <Spinner />}
 
     </div>
   );

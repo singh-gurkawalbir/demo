@@ -5,6 +5,7 @@ import { makeStyles, Chip } from '@material-ui/core';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import * as selectors from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
+import getRoutePath from '../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,12 +56,10 @@ export default function NameCell({
   });
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
-  let flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`
-    : `${flowBuilderPathName}/${flowId}`;
-  if (isSubscriptionPage && !isIntegrationApp) {
-    flowBuilderTo = `/pg/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`;
-  }
+
+  const flowBuilderTo = isIntegrationApp
+    ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
+    : getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
 
   return (
     <div className={classes.root}>

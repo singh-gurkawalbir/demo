@@ -10,6 +10,9 @@ import actions from '../../actions';
 
 const contentWrapper = {
   minWidth: 432,
+  marginBottom: -104,
+  paddingTop: 24,
+
 };
 const ExpiredSessionContent = () => (
   <>

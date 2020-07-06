@@ -302,7 +302,7 @@ export default function CeligoDrawer() {
                   className={clsx(classes.listItem, {
                     [classes.activeItem]:
                       expand !== label &&
-                      matchPath(location.pathname, routeProps || `/pg${path}`),
+                      matchPath(location.pathname, routeProps || getRoutePath(`${path}`)),
                   })}
                   component={children ? undefined : component || Link}
                   {...getHrefProps(href, path)}
@@ -348,7 +348,7 @@ export default function CeligoDrawer() {
                               {
                                 [classes.activeItem]: matchPath(
                                   location.pathname,
-                                  routeProps || `/pg${path}`
+                                  routeProps || getRoutePath(`${path}`)
                                 ),
                               }
                             )}

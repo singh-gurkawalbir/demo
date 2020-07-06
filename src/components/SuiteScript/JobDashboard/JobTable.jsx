@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   checkFlow: {
     paddingLeft: 40,
+    width: '2%',
   },
   tablePaginationRoot: { float: 'right' },
   name: {
