@@ -19,6 +19,7 @@ import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -106,7 +107,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     // Also note we want to replace vs push because a user may be
     // sitting on a page with the deleted flowId in the url.
     // we do not want a browser history to contain the deleted flow id.
-    history.replace(`/pg/integrations/${integrationId || 'none'}`);
+    history.replace(getRoutePath(`/integrations/${integrationId || 'none'}`));
   }, [dispatch, history, integrationId, flowId]);
 
   const detachFlow = useCallback(() => {
@@ -135,22 +136,22 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'schedule':
           if (flowDetails._connectorId) {
             history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           } else if (templateName) {
             history.push(
-              `/pg/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           } else {
             history.push(
-              `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           }
 
           break;
 
         case 'clone':
-          history.push(`/pg/clone/flows/${flowId}/preview`);
+          history.push(getRoutePath(`/clone/flows/${flowId}/preview`));
           break;
 
         case 'delete':

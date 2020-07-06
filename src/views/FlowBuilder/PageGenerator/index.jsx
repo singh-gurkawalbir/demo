@@ -81,7 +81,7 @@ const PageGenerator = ({
   const exportNeedsRouting = useSelector(state =>
     selectors.exportNeedsRouting(state, resourceId)
   );
-  const isMultipleAs2ExportsOfSameConnectionId = useSelector(state => {
+  const multipleAs2ExportsOfSameConnectionId = useSelector(state => {
     if (pending) {
       return false;
     }
@@ -311,7 +311,7 @@ const PageGenerator = ({
       if (exportNeedsRouting || connectionHasAs2Routing) {
         generatorActions.push({
           ...as2RoutingAction,
-          isUsed: connectionHasAs2Routing || isMultipleAs2ExportsOfSameConnectionId,
+          isUsed: connectionHasAs2Routing || multipleAs2ExportsOfSameConnectionId,
         });
       }
 
@@ -347,7 +347,7 @@ const PageGenerator = ({
     isDataLoader,
     pending,
     usedActions,
-    isMultipleAs2ExportsOfSameConnectionId
+    multipleAs2ExportsOfSameConnectionId
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');

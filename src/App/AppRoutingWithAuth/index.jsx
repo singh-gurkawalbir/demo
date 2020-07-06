@@ -65,7 +65,7 @@ export function AppRoutingWithAuth(props) {
   if (isAuthenticated) {
     if (isSignInRoute) {
       const { state: routeState } = location;
-      const redirectedTo = (routeState && routeState.attemptedRoute) || '/pg';
+      const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
 
       return <Redirect to={{ pathname: redirectedTo, search: routeState?.search }} />;
     }

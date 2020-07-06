@@ -1,13 +1,16 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
-import { FormStateManager } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
+import { ActionsFactory } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
-import useSuiteScriptIAFormWithHandleClose from '../../../../../../../hooks/suiteScript/useSuiteScriptIAFormWithHandleClose';
 import * as selectors from '../../../../../../../reducers';
+import Loader from '../../../../../../../components/Loader';
+import Spinner from '../../../../../../../components/Spinner';
+
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -45,6 +48,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+const SavingMask = () => (
+  <Loader open>
+    <Typography variant="h4">Saving...</Typography>
+    <Spinner color="primary" />
+  </Loader>);
+
 export const SuiteScriptForm = (props) => {
   const dispatch = useDispatch();
 
@@ -56,19 +65,33 @@ export const SuiteScriptForm = (props) => {
     };
   }, [dispatch, integrationId, ssLinkedConnectionId]);
 
+  const {status} = useSelector(state => selectors.suiteScriptIAFormState(state, {
+    ssLinkedConnectionId,
+    integrationId,
+  }));
+
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (status === 'success') setCount(count => count + 1);
+  }, [status]);
   return (
-    <FormStateManager
-      {...props}
-/>);
+    <>
+      {status === 'saving' && <SavingMask />}
+      <ActionsFactory
+        key={count}
+        {...props}
+    />
+    </>
+  );
 };
 
-export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, sectionId }) {
+export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id }) {
   const classes = useStyles();
   const section = useSelector(state => {
     const flowSections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
 
     return flowSections.find(s => s.titleId === sectionId);
-  });
+  }, shallowEqual);
   const flowSettingsMeta = useSelector(
     state =>
       selectors.suiteScriptIASectionMetadata(
@@ -90,11 +113,14 @@ export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, s
     [flowSettingsMeta, integrationId, ssLinkedConnectionId]
   );
 
-
-  const { formState, handleClose } = useSuiteScriptIAFormWithHandleClose(
-    integrationId, ssLinkedConnectionId,
+  const formState = useSelector(
+    state =>
+      selectors.suiteScriptIAFormState(
+        state,
+        {integrationId, ssLinkedConnectionId}
+      ),
+    shallowEqual
   );
-
 
   return (
     <LoadSuiteScriptResources
@@ -105,8 +131,7 @@ export default function ConfigureDrawer({ ssLinkedConnectionId, integrationId, s
       <SuiteScriptForm
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
-        sectionId={sectionId}
-        onSubmitComplete={handleClose}
+        sectionId={id}
         formState={formState}
         className={clsx(classes.configureDrawerform, {
           [classes.configureDrawerCamForm]: section.sections,

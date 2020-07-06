@@ -3215,6 +3215,8 @@ export function isEditorV2Supported(state, resourceId, resourceType) {
   return [
     'HTTPImport',
     'HTTPExport',
+    'RESTImport',
+    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
@@ -4563,6 +4565,7 @@ export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
   return sections.map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
   }));
 }
 
@@ -4851,11 +4854,11 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
-export function suiteScriptIAFormSaveProcessTerminated(
+export function suiteScriptIAFormSaving(
   state,
   { ssLinkedConnectionId, integrationId }
 ) {
-  return fromSession.suiteScriptIAFormSaveProcessTerminated(
+  return fromSession.suiteScriptIAFormSaving(
     state && state.session,
     { ssLinkedConnectionId, integrationId }
   );

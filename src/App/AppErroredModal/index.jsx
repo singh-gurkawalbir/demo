@@ -5,6 +5,7 @@ import { Typography, Button } from '@material-ui/core';
 import ModalDialog from '../../components/ModalDialog';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 function AppErroredModal({ history }) {
   const appErrored = useSelector(state => selectors.appErrored(state));
@@ -25,7 +26,7 @@ function AppErroredModal({ history }) {
         color="primary"
         onClick={() => {
           dispatch(actions.app.clearError());
-          history.replace('/pg');
+          history.replace(getRoutePath(''));
           window.location.reload();
         }}>
         Reload

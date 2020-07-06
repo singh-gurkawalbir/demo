@@ -1,11 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLoadingSnackbarOnSave } from '.';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
-
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -14,6 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+
 const SuiteScriptIASettingsSaveButton = props => {
   const {
     submitButtonLabel = 'Submit',
@@ -21,11 +20,12 @@ const SuiteScriptIASettingsSaveButton = props => {
     sectionId,
     ssLinkedConnectionId,
     integrationId,
+    ...rest
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const saveTerminated = useSelector(state =>
-    selectors.suiteScriptIAFormSaveProcessTerminated(state, {
+  const saving = useSelector(state =>
+    selectors.suiteScriptIAFormSaving(state, {
       ssLinkedConnectionId,
       integrationId,
     })
@@ -38,18 +38,19 @@ const SuiteScriptIASettingsSaveButton = props => {
     },
     [dispatch, integrationId, sectionId, ssLinkedConnectionId]
   );
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
-    saveTerminated,
-    onSave,
-  });
 
   return (
     <DynaAction
-      {...props}
+      {...rest}
+      showCustomFormValidations={() => {
+        dispatch(
+          actions.suiteScript.iaForm.showFormValidations(ssLinkedConnectionId, integrationId)
+        );
+      }}
       className={classes.actionButton}
-      disabled={disabled || disableSave}
-      onClick={handleSubmitForm}>
-      {disableSave ? 'Saving' : submitButtonLabel}
+      disabled={disabled || saving}
+      onClick={onSave}>
+      {saving ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
 };
