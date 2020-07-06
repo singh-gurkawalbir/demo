@@ -14,3 +14,5 @@ export default function getRoutePath(path = '') {
 
   return `${prefix + pagePath}`;
 }
+
+window.getRoutePath = getRoutePath;

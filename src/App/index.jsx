@@ -51,7 +51,7 @@ function NonSigninHeaderComponents(props) {
 export const PageContentComponents = () => (
   <Switch>
     <Route path={getRoutePath('/signin')} component={Signin} />
-    <Route path={getRoutePath('/*')} component={PageContent} />
+    <Route path={[getRoutePath('/*'), getRoutePath('/')]} component={PageContent} />
   </Switch>
 );
 

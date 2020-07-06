@@ -85,7 +85,7 @@ export default function AppRouting() {
   return (
     <Switch>
       <Route
-        path={getRoutePath('/')}
+        path="/pg"
         exact
         render={({ history }) => history.replace(getRoutePath('/dashboard'))}
         />
