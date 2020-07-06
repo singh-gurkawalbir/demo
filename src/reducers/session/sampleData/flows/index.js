@@ -186,32 +186,6 @@ export default function (state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RESET: {
-        const flow = draft[flowId];
-
-        if (!flow) break;
-        // Fetch first occurence of resourceId usage in flow
-        const pageGeneratorIndexToReset = flow.pageGenerators.findIndex(
-          pg => pg._exportId === resourceId
-        );
-
-        // given a resourceId -- resets itself and  all linked pps or pgs after that
-        if (pageGeneratorIndexToReset > -1) {
-          reset(flow, pageGeneratorIndexToReset, true);
-          break;
-        }
-
-        const pageProcessorIndexToReset = flow.pageProcessors.findIndex(
-          pp => pp._exportId === resourceId || pp._importId === resourceId
-        );
-
-        if (pageProcessorIndexToReset > -1) {
-          reset(flow, pageProcessorIndexToReset);
-        }
-
-        break;
-      }
-
       case actionTypes.FLOW_DATA.RESET_STAGES: {
         const flow = draft[flowId];
         if (!flow) break;
@@ -244,7 +218,7 @@ export default function (state = {}, action) {
           } else {
             // at this index, reset resource for all the passed stages
             resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages);
-            // then pass index+1 to reset everything
+            // then pass index+1 to reset everything for other resources
             reset(flow, pageProcessorIndexToReset + 1);
           }
         }
