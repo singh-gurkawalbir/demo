@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
@@ -25,9 +24,9 @@ function SiliconValleyDashboardLink({ssLinkedConnectionId, isGeneralSection}) {
 
   return (
     <div>
-      <Link href={`${systemDomainUrl}${URL}`} target="_blank">
+      <a href={`${systemDomainUrl}${URL}`} rel="noreferrer" target="_blank">
         Go to Silicon Valley Bank Dashboard
-      </Link>
+      </a>
     </div>
   );
 }
