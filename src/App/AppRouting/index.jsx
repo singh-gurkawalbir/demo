@@ -105,6 +105,7 @@ export default function AppRouting() {
         component={CloneSetup}
         />
       <Route
+        // eslint-disable-next-line no-useless-escape
         path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId')}
         exact
         render={({ history, match }) =>
@@ -170,6 +171,7 @@ export default function AppRouting() {
       <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
           // templateName has structure of application2-application2 will contain atleast 5 characters
+        // eslint-disable-next-line no-useless-escape
         path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId/:tab')}
         component={Integration}
         />
