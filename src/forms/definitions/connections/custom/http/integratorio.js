@@ -33,7 +33,6 @@ export default {
       '/http/ping/method': 'GET',
       '/http/baseURI': baseURI,
       '/http/ping/relativeURI': '/v1/connections',
-      '/http/ping/successPath': 'name',
     };
   },
   fieldMap: {
