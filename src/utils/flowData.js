@@ -383,7 +383,7 @@ export const getFormattedResourceForPreview = (
  * @input resourceType
  * @outPut stage /  undefined
  * The stage returned is used to determine what parts of resource's stages need to be updated
- * If none of the below paths are matched, returns nothing which implies reset the entire resource's state
+ * If none of the below paths are matched, returns undefined which implies reset the entire resource's state
  */
 export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
@@ -421,3 +421,16 @@ export const getSubsequentStages = (stage, resourceType) => {
   }
   return nextStages;
 };
+
+/**
+ * @param {array} patch - patch set for the resource updated
+ * returns Bool whether to update sample data or not
+ * If the patch is of rawData / any specific stage which implies change happened outside resourceForm
+ * No need of sample data update
+ * TODO @Raghu: Add intelligence to analyse patchSet and update only if specific fields in resourceForm gets updated
+ * As of now any field change in the resourceForm triggers sample data update
+ */
+export const shouldUpdateResourceSampleData = (patch = []) =>
+  patch.length &&
+  !isRawDataPatchSet(patch) &&
+  !getResourceStageUpdatedFromPatch(patch);
