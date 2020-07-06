@@ -85,7 +85,7 @@ export const SuiteScriptForm = (props) => {
   );
 };
 
-export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id }) {
+export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id, integrationAppName}) {
   const classes = useStyles();
   const section = useSelector(state => {
     const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
@@ -120,7 +120,7 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
       integrationId={integrationId}
       resources="flows">
       <SuiteScriptForm
-        isGeneralSection={section?.title === 'General'}
+        isSFNSGeneralSection={section?.title === 'General' && integrationAppName === 'sfns'}
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         sectionId={id}

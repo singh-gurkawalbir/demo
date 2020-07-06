@@ -14,13 +14,13 @@ const useStyles = makeStyles(theme => ({
 
 
 const URL = '/app/site/hosting/scriptlet.nl?script=customscript_celigo_svb_dashboard&deploy=customdeploy_celigo_svb_dashboard';
-function SiliconValleyDashboardLink({ssLinkedConnectionId, isGeneralSection}) {
+function SiliconValleyDashboardLink({ssLinkedConnectionId, isSFNSGeneralSection}) {
   const connection = useSelector(state => selectors.resource(state, 'connections', ssLinkedConnectionId)
   );
 
   const systemDomainUrl = connection?.netsuite?.dataCenterURLs?.systemDomain;
 
-  if (!systemDomainUrl || !isGeneralSection) { return null; }
+  if (!systemDomainUrl || !isSFNSGeneralSection) { return null; }
 
   return (
     <div>
