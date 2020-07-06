@@ -63,9 +63,10 @@ export default function DynaMatchingCriteriaWithModal(props) {
 
   const [allValues, setAllValues] = useState(value || content);
 
-
+  const [componentMounted, setComponentMounted] = useState(false);
   useEffect(() => {
-    onFieldChange(id, allValues);
+    onFieldChange(id, allValues, !componentMounted);
+    setComponentMounted(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allValues, id]);
 

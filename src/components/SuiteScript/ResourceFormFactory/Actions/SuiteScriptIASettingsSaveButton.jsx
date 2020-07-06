@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
@@ -13,9 +14,27 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+const URL = '/app/site/hosting/scriptlet.nl?script=customscript_celigo_svb_dashboard&deploy=customdeploy_celigo_svb_dashboard';
+function SiliconValleyDashboardLink({ssLinkedConnectionId, isGeneralSection}) {
+  const connection = useSelector(state => selectors.resource(state, 'connections', ssLinkedConnectionId)
+  );
+
+  const systemDomainUrl = connection?.netsuite?.dataCenterURLs?.systemDomain;
+
+  if (!systemDomainUrl || !isGeneralSection) { return null; }
+
+  return (
+    <div>
+      <Link href={`${systemDomainUrl}${URL}`} target="_blank">
+        Go to Silicon Valley Bank Dashboard
+      </Link>
+    </div>
+  );
+}
+
 const SuiteScriptIASettingsSaveButton = props => {
   const {
-    submitButtonLabel = 'Submit',
+    submitButtonLabel = 'Save',
     disabled = false,
     sectionId,
     ssLinkedConnectionId,
@@ -40,18 +59,21 @@ const SuiteScriptIASettingsSaveButton = props => {
   );
 
   return (
-    <DynaAction
-      {...rest}
-      showCustomFormValidations={() => {
-        dispatch(
-          actions.suiteScript.iaForm.showFormValidations(ssLinkedConnectionId, integrationId)
-        );
-      }}
-      className={classes.actionButton}
-      disabled={disabled || saving}
-      onClick={onSave}>
-      {saving ? 'Saving' : submitButtonLabel}
-    </DynaAction>
+    <>
+      <SiliconValleyDashboardLink {...props} />
+      <DynaAction
+        {...rest}
+        showCustomFormValidations={() => {
+          dispatch(
+            actions.suiteScript.iaForm.showFormValidations(ssLinkedConnectionId, integrationId)
+          );
+        }}
+        className={classes.actionButton}
+        disabled={disabled || saving}
+        onClick={onSave}>
+        {saving ? 'Saving' : submitButtonLabel}
+      </DynaAction>
+    </>
   );
 };
 
