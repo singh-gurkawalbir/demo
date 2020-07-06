@@ -234,6 +234,10 @@ export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
   if (!patchSet.length) return {};
+  // There is a case when we update flow just to update lastModified property
+  // In that case, no need of any update for flowData
+  if (patchSet.find(patch => patch.path === '/lastModified')) return {};
+  // Analyse patches and update stages updated
   const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
   const updates = {
     sequence: false,
