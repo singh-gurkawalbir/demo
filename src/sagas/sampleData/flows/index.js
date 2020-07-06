@@ -123,7 +123,7 @@ export function* requestSampleData({
 
   if (refresh) {
     // refresh prop resets the entire state from this resourceId in flow state to fetch again
-    yield put(actions.flowData.reset(flowId, resourceId));
+    yield put(actions.flowData.resetStages(flowId, resourceId));
   }
 
   // Updates preProcessedData for the processors
