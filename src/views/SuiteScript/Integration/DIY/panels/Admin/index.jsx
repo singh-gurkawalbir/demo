@@ -1,20 +1,18 @@
 import { List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, {useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   NavLink,
   Redirect, Route,
   Switch,
   useRouteMatch
 } from 'react-router-dom';
-import GeneralSection from './sections/General';
-import actions from '../../../../../../actions';
+import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
+import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';
-import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
-import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,24 +59,6 @@ const allSections = [
   },
 ];
 
-export const useLoadSuiteScriptSettings = ({
-  ssLinkedConnectionId,
-  integrationId,
-}) => {
-  const dispatch = useDispatch();
-
-  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
-    ssLinkedConnectionId,
-    integrationId,
-    resourceType: 'settings',
-  }));
-  useEffect(() => {
-    if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return {hasSettingsMetadata};
-};
 function AdminPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
@@ -147,20 +127,16 @@ function AdminPanel({ ssLinkedConnectionId, integrationId }) {
 }
 
 export default function AdminPanelWithLoad({ ssLinkedConnectionId, integrationId }) {
-  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
-
   return (
     <LoadSuiteScriptResources
       required
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      {hasSettingsMetadata ?
-        <AdminPanel
-          ssLinkedConnectionId={ssLinkedConnectionId}
-          integrationId={integrationId}
+      <AdminPanel
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
         /> :
-        <Spinner />}
     </LoadSuiteScriptResources>
   );
 }
