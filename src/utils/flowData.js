@@ -374,14 +374,26 @@ export const getFormattedResourceForPreview = (
   return resource;
 };
 
-// /**
-//  * @input patchSet
-//  * @input resourceType
-//  * @outPut stage
-//  */
-// export const getResourceStageUpdatedFromPatch = (patch, resourceType) => {
-//   return 'transform';
-// };
+/**
+ * @input patchSet
+ * @input resourceType
+ * @outPut stage /  undefined
+ * The stage returned is used to determine what parts of resource's stages need to be updated
+ * If none of the below paths are matched, returns nothing which implies reset the entire resource's state
+ */
+export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
+  const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
+  if (patchSetPath === '/transform') return 'transform';
+  if (patchSetPath === '/filter') return 'outputFilter';
+  if (patchSetPath === '/inputFilter') return 'inputFilter';
+  if (patchSetPath === '/hooks') {
+    if (patchSetValue.preSavePage) return 'preSavePage';
+    if (patchSetValue.preMap) return 'preMap';
+    if (patchSetValue.postMap) return 'postMap';
+  }
+  if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
+  if (patchSetPath === '/mapping') return 'importMapping';
+};
 
 /**
  * @input stage
