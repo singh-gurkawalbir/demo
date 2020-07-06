@@ -167,28 +167,9 @@ export default function DynaXmlParse({
     setShowEditor(!showEditor);
   }, [showEditor]);
 
-  // const dispatch = useDispatch();
-
-  // Fetches Raw data - file to be parsed based on the rules
-  const data = useSelector(state => {
-    const { data, status } = selectors.getResourceSampleDataWithStatus(
-      state,
-      resourceId,
-      'raw'
-    );
-
-    if (!status) {
-      // Incase of resource edit and no file uploaded, show the csv content uploaded last time ( sampleData )
-      const resource = selectors.resource(state, resourceType, resourceId);
-
-      // If the file type is csv before , only then retrieve its content sampleData to show in the editor
-      if (resource?.file?.type === 'xml') {
-        return resource.sampleData;
-      }
-    }
-
-    return data?.body;
-  });
+  const data = useSelector(state => selectors.fileSampleData(state, {
+    resourceId, resourceType, fileType: 'xml'
+  }));
 
   const handleClose = (shouldCommit, editorValues = {}) => {
     // console.log(editorValues);

@@ -38,6 +38,13 @@ export default function IntegrationSettingsSaveButton(props) {
         values = formValues;
       }
 
+      const fileField = Object.keys(values).find(key => values[key]?.file && values[key]?.type === 'file');
+      if (fileField) {
+        const fileContents = values[fileField];
+        values['/sampleData'] = fileContents?.file;
+        values['/rowDelimiter'] = fileContents?.rowDelimiter || '\n';
+        values[fileField] = fileContents?.fileProps;
+      }
       const allValuesWithFlowId = { ...values, '/flowId': flowId };
 
       dispatch(
@@ -65,7 +72,7 @@ export default function IntegrationSettingsSaveButton(props) {
 
     return submitComplete || submitFailed;
   });
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     resourceType: 'Integration Settings',
     saveTerminated: submitCompleted,
     onSave,
@@ -75,9 +82,9 @@ export default function IntegrationSettingsSaveButton(props) {
     <DynaAction
       {...props}
       className={classes.actionButton}
-      disabled={disabled || disableSave}
+      disabled={disabled || isSaving}
       onClick={handleSubmitForm}>
-      {disableSave ? 'Saving' : submitButtonLabel}
+      {isSaving ? 'Saving' : submitButtonLabel}
     </DynaAction>
   );
 }

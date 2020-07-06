@@ -100,7 +100,7 @@ export default function DynaHook(props) {
 
     setShowEditor(!showEditor);
   }, [requestForPreHookData, showEditor]);
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
 
@@ -110,8 +110,6 @@ export default function DynaHook(props) {
         function: entryFunction,
       });
     }
-
-    handleEditorClick();
   };
 
   const handleFieldChange = field => (event, fieldValue) => {
@@ -205,7 +203,8 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           context={scriptContext}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           resultMode={editorResultMode}
           optionalSaveParams={optionalSaveParams}
           flowId={flowId}

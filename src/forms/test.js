@@ -347,6 +347,61 @@ describe('Form Utils', () => {
         path: '/html/a',
       });
     });
+
+    test('result patch set should succeed in patching resource when there are add and replace patches not in an order', () => {
+      const resource = {
+        html: {
+          name: 'abc',
+        },
+      };
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/html',
+          value: {name: 'hello'},
+        },
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: ['bad', 'fail'],
+        },
+      ];
+      const sanitized = sanitizePatchSet({ patchSet, resource });
+      expect(sanitized).toEqual([
+        {
+          op: 'replace',
+          path: '/html',
+          value: {
+            name: 'hello'
+          }
+        },
+        {
+          path: '/html/rateLimit',
+          op: 'add',
+          value: {
+          }
+        },
+        {
+          path: '/html/rateLimit/failValues',
+          op: 'add',
+          value: {
+          }
+        },
+        {
+          op: 'replace',
+          path: '/html/rateLimit/failValues',
+          value: [
+            'bad',
+            'fail'
+          ]
+        }
+      ]);
+      const merged = jsonPatch.applyPatch(resource, sanitized, false, true)
+        .newDocument;
+      expect(merged).toEqual({
+        html: { name: 'hello', rateLimit: { failValues: ['bad', 'fail'] } },
+      });
+    });
   });
 
   describe('getPatchPathFromCustomForms', () => {

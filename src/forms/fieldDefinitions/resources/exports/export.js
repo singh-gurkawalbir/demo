@@ -101,7 +101,7 @@ export default {
     type: 'radiogroup',
     label: 'One to many',
     helpKey: 'oneToMany',
-    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
+    defaultValue: r => ((r?.oneToMany === 'true') ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
       {

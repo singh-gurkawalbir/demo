@@ -232,7 +232,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe('/pg/dashboard');
+      expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
       expect(history.location.state).toBe(undefined);
     });
   });
@@ -250,7 +250,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {
-          pathname: '/pg',
+          pathname: getRoutePath(''),
         },
       ],
     });
@@ -264,7 +264,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       })
     );
 
-    expect(history.location.pathname).toBe('/pg/dashboard');
+    expect(history.location.pathname).toBe(getRoutePath('/dashboard'));
   });
 
   const loggedOut = {
@@ -280,11 +280,11 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {
-          pathname: '/pg',
+          pathname: getRoutePath(''),
         },
       ],
     });
-    const { queryByLabelText } = render(
+    const { getByPlaceholderText } = render(
       reduxRouterWrappedComponent({
         Component: wrappedHistory,
         componentProps: loggedOut,
@@ -294,7 +294,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(queryByLabelText('Email')).toBeTruthy();
-    expect(queryByLabelText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
   });
 });

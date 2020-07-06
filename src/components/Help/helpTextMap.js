@@ -83,8 +83,6 @@ export default {
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
-  'connection.integrator.environment':
-    'Please select your environment here. Select Sandbox if the account is created on https://staging.integrator.io. Select Production if the account is created on https://integrator.io.',
   'connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
   'connection.integrator.token':
@@ -575,6 +573,7 @@ export default {
   'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
   'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s enviornment.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -834,6 +833,7 @@ export default {
     'Set this field to override the default port number. In most cases, this field can be left empty. Only on rare occasions are FTP/SFTP/FTPS servers configured to run on alternate ports.',
   'connection.ftp.usePassiveMode':
     'This field tells integrator.io to use Passive Mode instead of Active Mode when connecting to a FTP or FTPS server.  This field is enabled by default; un-check this checkbox if you want to use Active Mode instead.  If Active Mode is used your FTP or FTPS server must accept traffic from the inbound port range 15000-15100.  Note that this field is only relevant for FTP or FTPS connections, and will be ignored for SFTP.  If you want to know the difference between Active and Passive Modes there is a good explanation here: <a href="http://www.jscape.com/blog/bid/80512/Active-v-s-Passive-FTP-Simplified" target="_blank"/>http://www.jscape.com/blog/bid/80512/Active-v-s-Passive-FTP-Simplified</a>',
+  'connection.ftp.tradingPartner': 'Set this flag to indicate that the FTP site represents an external trading partner. Doing so will ensure that this endpoint counts against the Trading Partners entitlement of your <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> license.',
   'connection.ftp.entryParser':
     "This optional field can be used to explicity identify the system specific FTP/SFTP/FTPS implementation. In most cases no value should be selected; you only need to set this field if your FTP/SFTP/FTPS server is an uncommon type (not Windows or Linux), or it does not support the 'SYST' command.  Possible values are: ['UNIX', 'UNIX-TRIM', 'VMS', 'WINDOWS', 'OS/2', 'OS/400', 'AS/400', 'MVS', 'UNKNOWN-TYPE', 'NETWARE', 'MACOS-PETER']",
   'connection.ftp.authKey':
@@ -1111,6 +1111,7 @@ export default {
     "Use this field to specify a key postfix that will be used to filter which files in the S3 bucket that will be exported (vs not). For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be exported (like myFile-test.csv). Please note that you must specify the file extension for this filter to work correctly.",
   'export.http.successMediaType':
     'The success media type indicates the format of the data received from all successful (HTTP) requests.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats. Amazon MWS for example, is an XML service that returns CSV data for some of its reports.',
+  'export.http.requestMediaType': 'The request media type indicates the format of the content within the HTTP request body sent to the service. Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats. Ariba for example, has some endpoints that require multipart/form-data as request data, but sends zip of csv files as response.',
   'export.http.errorMediaType':
     'The error media type indicates the format of the response data received from all unsuccessful (HTTP) requests.  This refers to all responses with non-2xx HTTP status codes.  Typically APIs will only support one media type (data format) and will publish that info right at the top of their API guides. This is an optional override of the media type associated with the connection in case the API has route specific data formats.  Amazon MWS for example, has some endpoints that return CSV data, but send error responses in XML.',
   'export.http.relativeURI':
@@ -1243,6 +1244,7 @@ export default {
     "Use this field to specify a file name prefix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test' then only files where the name starts with 'test' will be transferred (like test-myFile.csv).",
   'export.ftp.fileNameEndsWith':
     "Use this field to specify a file name postfix that will be used to filter which files in the FTP folder will be transferred (vs not).  For example, if you set this value to 'test.csv' then only files where the name ends with 'test.csv' will be transferred (like myFile-test.csv).  Please note that you must specify the file extension for this filter to work correctly",
+  'export.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be moved after successful transfer.',
   'export.file.batchSize': 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'export.s3.region':
     "Name of the amazon s3 region to the location where the request is being made. If not set, by default 'us-east-1' is selected",
@@ -1669,6 +1671,7 @@ export default {
   'export.netsuite.restlet.searchInternalId':
     "To use a private NetSuite Saved Search please tell us the Internal Id of the Saved Search here (should be a numeric value) .  One way to obtain this value is to navigate to the Saved Search in the NetSuite UI and then in the browser URL you should see a numeric searchId field (i.e. searchid=123456 and then just use the numeric part 123456).  Another way to obtain this value is by editing the Saved Search and then in the 'ID' field there should be a numeric value that you can extract (i.e. customsearch123456 and then just use the numeric part 123456).  Please contact NetSuite support if you need more guidance finding your Saved Search Internal Ids.",
   'export.netsuite.hooks.preSend': '',
+  'export.s3.backupBucket': 'Specify the bucket name where files will be moved after successful transfer.',
   'export.s3.bucket': 'The Amazon S3 folder path. For example, Mysite/Orders.',
   'export.salesforce.sObjectType': 'Use this field to specify which Salesforce sObject type you would like to export.  You can choose any standard sObject type (i.e. account, opportunity, contact) or any custom sObject type as long as the sObject type supports Salesforce triggers. Please note that this list of sObject types is also dependent on the permissions associated with the Salesforce connection being used. Also, if you add any new custom sObject types to your Salesforce account, or if there are any changes to the permissions associated with the connection being used, you can use the refresh icon to regenerate the list.',
   'export.webhook.url': 'If a URL has not been generated yet, please use the \'Generate URL\' link to generate a public URL for this webhook listener, and then you will need to share this URL with the webhook provider (i.e. through that provider\'s UI or API).  Saying this another way, each webhook provider like GitHub, Shopify, etc... will support a mechanism to configure a URL where you want webhook data sent, and please provide them with this generated URL here.',
@@ -2148,5 +2151,10 @@ export default {
   filterExpression: 'Use this field to filter out any reference list by entering the "where" clause of SOQL query. This expression will be added as a part of the SOQL query in the where clause while fetching the childSObjectType. If no filter is added, IO will send all the child SObjects in the export data. Ex: If you would like to only export Contacts whose LastName has "Bond" in it, set the expression as "LastName=`Bond` ".',
   orderBy: 'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
   'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...",
+  'mapping.suitescript.netsuite.lookup.searchField': 'Field name that is provided to the lookups defined, using this field name the respective field from the record will be extracted out and provided for the respective field in the import system.',
+  'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
+  'mapping.lookup.default': 'This holds the default value to be set for the extract field.',
+  'mapping.suitescript.lookup.useNull': 'Please check this field if you want to use \'null\' as the default lookup value. This value will be used if your lookup does not find anything.',
+  'mapping.suitescript.lookup.useEmptyString': 'Please check this field if you want to use \'\' (i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything.'
   // #region UI help text
 };

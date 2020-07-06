@@ -67,6 +67,25 @@ const useStyles = makeStyles(theme => ({
   editorToggleContainer: {
     marginRight: theme.spacing(2),
   },
+  autoPreview: {
+    margin: theme.spacing(0, 1, 0, 1),
+    '&:after': {
+      content: '""',
+      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+      height: '80%',
+      width: 1,
+      position: 'absolute',
+      right: -12,
+    }
+  },
+  previewCheckbox: {
+    marginLeft: 8,
+    alignSelf: 'center',
+  },
+  previewBtnContainer: {
+    display: 'flex',
+    minHeight: 29,
+  }
 }));
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
@@ -83,6 +102,7 @@ export default function EditorDialog(props) {
     showFullScreen = true,
     width = '70vw',
     height = '50vh',
+    onSave,
     onClose,
     disabled,
     dataTest = 'editor',
@@ -117,18 +137,35 @@ export default function EditorDialog(props) {
     () => dispatch(actions.editor.evaluateRequest(id)),
     [dispatch, id]
   );
+
+  const saveEditor = useCallback(() => {
+    if (onSave) {
+      onSave(true, editor);
+    }
+    dispatch(actions.editor.saveComplete(id));
+  }, [dispatch, editor, id, onSave]);
+
+
   const handleSave = useCallback(
-    shouldCommit => () => {
-      if (shouldCommit && !preSaveValidate({ editor, enquesnackbar })) {
+    () => {
+      if (!preSaveValidate({ editor, enquesnackbar })) {
         return;
       }
-
-      if (onClose) {
-        onClose(shouldCommit, editor);
-      }
+      saveEditor();
     },
-    [editor, enquesnackbar, onClose]
+    [editor, enquesnackbar, saveEditor]
   );
+
+  const handleSaveAndClose = useCallback(() => {
+    if (!preSaveValidate({ editor, enquesnackbar })) {
+      return;
+    }
+    saveEditor();
+    if (onClose) {
+      onClose();
+    }
+  }, [editor, enquesnackbar, saveEditor, onClose]);
+
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
   }, [dispatch, id]);
@@ -195,14 +232,6 @@ export default function EditorDialog(props) {
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
           <Typography variant="h5">{title}</Typography>
-          <DynaCheckbox
-            disabled={disabled}
-            hideLabelSpacing
-            id="disableAutoPreview"
-            onFieldChange={handleAutoPreviewToggle}
-            label="Enable auto-preview"
-            value={!!editor.autoEvaluate}
-          />
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -263,20 +292,30 @@ export default function EditorDialog(props) {
                 color="secondary"
                 dataTest="saveAndCloseEditor"
                 disabled={disableSave}
-                onClose={handleSave(true)}
+                onClose={handleSaveAndClose}
                 submitButtonLabel="Save & close"
                 flowId={flowId}
             />
             </>
           ) : (
-            <Button
-              variant="outlined"
-              data-test="saveEditor"
-              disabled={disableSave}
-              color="primary"
-              onClick={handleSave(true)}>
-              Save
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                data-test="saveEditor"
+                disabled={disableSave}
+                color="primary"
+                onClick={handleSave}>
+                Save
+              </Button>
+              <Button
+                variant="outlined"
+                data-test="saveAndCloseEditor"
+                disabled={disableSave}
+                color="secondary"
+                onClick={handleSaveAndClose}>
+                Save & close
+              </Button>
+            </>
           )}
 
           <Button
@@ -288,14 +327,31 @@ export default function EditorDialog(props) {
             Cancel
           </Button>
         </div>
-        {showPreviewAction && (
+        <div className={classes.previewBtnContainer}>
+          {showPreviewAction && (
           <Button
             data-test="previewEditorResult"
             variant="outlined"
+            color="secondary"
+            disabled={!!saveInProgress}
+            className={classes.autoPreview}
             onClick={handlePreview}>
             Preview
           </Button>
-        )}
+          )}
+          {!hidePreviewAction && (
+            <div className={classes.previewCheckbox}>
+              <DynaCheckbox
+                disabled={disabled}
+                hideLabelSpacing
+                id="disableAutoPreview"
+                onFieldChange={handleAutoPreviewToggle}
+                label="Auto preview"
+                value={!!editor.autoEvaluate}
+          />
+            </div>
+          )}
+        </div>
       </DialogActions>
     </Dialog>
   );

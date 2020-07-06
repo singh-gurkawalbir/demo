@@ -88,8 +88,7 @@ function getRawData(resourceData) {
 // It returns file's raw data stage with the associated file type
 function getRawFileData(resourceData) {
   if (resourceData.rawFile) return resourceData.rawFile;
-
-  return getRawData(resourceData);
+  return DEFAULT_VALUE;
 }
 
 function getParsedData(resourceData) {

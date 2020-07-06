@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
@@ -45,7 +45,7 @@ function DynaWebhookTokenGenerator(props) {
   const finalResourceId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
-  const handleGenerateClick = () => {
+  const handleGenerateClick = useCallback(() => {
     const tokenValue = v4().replace(/-/g, '');
 
     setToken(tokenValue);
@@ -56,17 +56,19 @@ function DynaWebhookTokenGenerator(props) {
     const formValuesCopy = deepClone(formValues);
 
     formValuesCopy[name] = tokenValue;
-    dispatch(
-      actions.resourceForm.submit(
-        'exports',
-        resourceId,
-        formValuesCopy,
-        null,
-        true
-      )
-    );
-    setUrl(true);
-  };
+    if (formValues?.['/webhook/path']) {
+      dispatch(
+        actions.resourceForm.submit(
+          'exports',
+          resourceId,
+          formValuesCopy,
+          null,
+          true
+        )
+      );
+      setUrl(true);
+    }
+  }, [dispatch, formValues, id, name, onFieldChange, resourceId, setFieldIds]);
 
   useEffect(() => {
     value && setToken(value);

@@ -91,6 +91,7 @@ import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
+import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaDataURITemplate from './DynaDataURITemplate';
@@ -101,9 +102,18 @@ import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
+import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
+import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
+import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
+import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 
 export default {
+  matchingcriteria: DynaMatchingCriteriaWithModal,
+  suitescripttable: DyanSuiteScriptTable,
+  featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
@@ -207,6 +217,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  ...SuiteScript,
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,
   concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
@@ -216,5 +227,8 @@ export default {
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
   jsonresourcepath: DynaJsonResourcePath,
+  linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
+  suitescriptuploadfile: DynaSuiteScriptUploadFile,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
 };

@@ -142,6 +142,7 @@ export const DynaTable = props => {
     metadata = {},
     id,
     touched,
+    disableDeleteRows,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
@@ -336,7 +337,9 @@ export const DynaTable = props => {
                         id={`suggest-${r.id}-${arr.row}`}
                         value={r.value}
                         isValid={
-                          !(touched && optionsMap[index].required && !r.value)
+                          !touched || !optionsMap[index].required ||
+                          (rowIndex === rowCollection.length - 1 ||
+                            (optionsMap[index].required && r.value))
                         }
                         errorMessages="Please select a value"
                         options={r.options || []}
@@ -404,6 +407,7 @@ export const DynaTable = props => {
                   key="delete_button"
                   className={classes.dynaTableActions}>
                   <ActionButton
+                    disabled={disableDeleteRows}
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}

@@ -37,6 +37,11 @@ export default {
           criteria: newValues['/netsuite/webservices/criteria'],
         },
       ];
+      newValues['/netsuite/restlet'] = undefined;
+      delete newValues['/netsuite/restlet/criteria'];
+      newValues['/netsuite/distributed'] = undefined;
+      delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/executionType'];
     }
 
     if (netsuiteType === 'search') {
@@ -120,7 +125,7 @@ export default {
         newValues['/netsuite/distributed/qualifier']
       );
     } catch (ex) {
-      newValues['/netsuite/distributed/qualifier'] = undefined;
+      delete newValues['/netsuite/distributed/qualifier'];
     }
 
     return newValues;

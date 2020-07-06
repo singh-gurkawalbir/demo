@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Button,
   Dialog,
@@ -52,6 +52,7 @@ export default function SearchCriteriaDialog(props) {
     id,
     title = 'Search Criteria',
     value = [],
+    onSave,
     onClose,
     disabled,
     width = '80vw',
@@ -63,8 +64,8 @@ export default function SearchCriteriaDialog(props) {
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
-  const handleClose = shouldCommit => {
-    if (onClose) {
+  const handleSave = useCallback(() => {
+    if (onSave) {
       if (searchCriteria && searchCriteria.length) {
         const _criteria = searchCriteria.map(s => {
           const { searchValue2Enabled, rowIdentifier, ...sc } = s;
@@ -72,10 +73,15 @@ export default function SearchCriteriaDialog(props) {
           return sc;
         });
 
-        onClose(shouldCommit, _criteria);
-      } else onClose(shouldCommit, []);
+        onSave(true, _criteria);
+      } else onSave(true, []);
     }
-  };
+  }, [onSave, searchCriteria]);
+
+  const handleSaveAndClose = useCallback(() => {
+    handleSave();
+    onClose();
+  }, [handleSave, onClose]);
 
   const size = fullScreen ? { height } : { height, width };
   const handleFullScreenClick = () => setFullScreeen(!fullScreen);
@@ -84,7 +90,7 @@ export default function SearchCriteriaDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open
-      onClose={() => handleClose()}
+      onClose={onClose}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
@@ -118,14 +124,22 @@ export default function SearchCriteriaDialog(props) {
           data-test="saveEditor"
           disabled={disabled}
           color="primary"
-          onClick={() => handleClose(true)}>
+          onClick={handleSave}>
           Save
+        </Button>
+        <Button
+          variant="outlined"
+          data-test="saveEditor"
+          disabled={disabled}
+          color="secondary"
+          onClick={handleSaveAndClose}>
+          Save & close
         </Button>
         <Button
           variant="text"
           color="primary"
           data-test="closeEditor"
-          onClick={() => handleClose()}>
+          onClick={onClose}>
           Cancel
         </Button>
       </DialogActions>

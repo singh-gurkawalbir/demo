@@ -1,7 +1,7 @@
 import { select, call } from 'redux-saga/effects';
 import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
 import { saveSampleDataOnResource } from './utils';
-import { isJsonString } from '../../../utils/string';
+import { safeParse } from '../../../utils/string';
 
 function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   // Incase of FTP, raw data to be saved in the data in Raw Stage ( file content )
@@ -42,11 +42,11 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     const fileDefinitionData = rawData && rawData.body;
 
     return type === 'imports'
-      ? isJsonString(fileDefinitionData) && JSON.parse(fileDefinitionData)
+      ? safeParse(fileDefinitionData)
       : fileDefinitionData;
   }
 
-  return stage === 'parse' ? rawData : rawData && rawData.body;
+  return stage === 'parse' ? rawData : rawData?.body;
 }
 
 export default function* saveRawDataForFileAdaptors({
@@ -59,8 +59,9 @@ export default function* saveRawDataForFileAdaptors({
     tempResourceId,
     type,
   });
-
-  if (rawData) {
+  // Updated this to check for undefined... as there is a case where user can upload empty file
+  // In which case , we get rawData as '' which is falsy too
+  if (rawData !== undefined) {
     // Raw data is saved as 'sampleData' field in resourceDoc for imports and exports
     return yield call(saveSampleDataOnResource, {
       resourceId,

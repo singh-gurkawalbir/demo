@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import EditIcon from '../../../../icons/EditIcon';
 import * as selectors from '../../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-
+import getRoutePath from '../../../../../utils/routePaths';
 
 export default {
   label: 'Edit flow',
@@ -34,7 +34,7 @@ export default {
     });
     const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
     const flowBuilderTo = isIntegrationApp
-      ? `/pg/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`
+      ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
       : `${flowBuilderPathName}/${flowId}`;
 
     useEffect(() => {

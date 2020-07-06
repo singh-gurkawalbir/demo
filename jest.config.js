@@ -4,9 +4,6 @@ module.exports = {
   roots: [
     '<rootDir>/src'
   ],
-  setupFiles: [
-    'react-app-polyfill/jsdom'
-  ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
     '^.+\\.css$': '<rootDir>/jest/cssTransform.js',

@@ -32,6 +32,7 @@ import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
+import getRoutePath from '../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -233,21 +234,16 @@ export default function ConnectorInstallation(props) {
         ) {
           setIsSetupComplete(false);
           props.history.push(
-            `/pg/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`
+            getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
+          );
+        } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
+          props.history.push(
+            getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
           );
         } else {
-          dispatch(
-            actions.resource.clearChildIntegration()
+          props.history.push(
+            getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
           );
-          if (integrationInstallSteps && integrationInstallSteps.length > 0) {
-            props.history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}`
-            );
-          } else {
-            props.history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-            );
-          }
         }
       }
     }
@@ -276,7 +272,7 @@ export default function ConnectorInstallation(props) {
         {
           label: 'Uninstall',
           onClick: () => {
-            const storeId = stores.length
+            const storeId = stores?.length
               ? stores[0].value
               : undefined;
 
@@ -292,20 +288,20 @@ export default function ConnectorInstallation(props) {
               // if url contains '/child/xxx' use that id as store id
               if (index === -1) {
                 history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
                 );
               } else {
                 history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (supportsMultiStore) {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
               );
             } else {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
               );
             }
           },

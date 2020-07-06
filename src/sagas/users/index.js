@@ -465,6 +465,50 @@ export function* requestNumEnabledFlows() {
   yield put(actions.user.org.accounts.receivedNumEnabledFlows(response));
 }
 
+export function* addSuiteScriptLinkedConnection({ connectionId }) {
+  const path = `/preferences/ssConnectionIds/${connectionId}`;
+  const opts = { method: 'PUT', body: {} };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not link suitescript integrator'
+      )
+    );
+  }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
+}
+
+export function* deleteSuiteScriptLinkedConnection({ connectionId }) {
+  const path = `/preferences/ssConnectionIds/${connectionId}`;
+  const opts = { method: 'DELETE', body: {} };
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+  } catch (e) {
+    return yield put(
+      actions.api.failure(
+        path,
+        opts.method,
+        'Could not unlink suitescript integrator'
+      )
+    );
+  }
+
+  yield put(actions.resource.requestCollection('shared/ashares'));
+}
+
 export const userSagas = [
   takeLatest(actionTypes.UNLINK_WITH_GOOGLE, unlinkWithGoogle),
   takeLatest(actionTypes.UPDATE_PROFILE, updateProfile),
@@ -488,4 +532,12 @@ export const userSagas = [
     requestNumEnabledFlows
   ),
   takeLatest(actionTypes.LICENSE_UPDATE_REQUEST, requestLicenseUpdate),
+  takeEvery(
+    actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION,
+    addSuiteScriptLinkedConnection
+  ),
+  takeEvery(
+    actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION,
+    deleteSuiteScriptLinkedConnection
+  ),
 ];

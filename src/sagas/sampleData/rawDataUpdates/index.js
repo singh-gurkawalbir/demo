@@ -4,8 +4,8 @@ import actions from '../../../actions';
 import { resource, resourceFormState, resourceData } from '../../../reducers';
 import {
   getAddedLookupInFlow,
-  isRawDataPatchSet,
   getPreviewStageData,
+  shouldUpdateResourceSampleData,
 } from '../../../utils/flowData';
 import {
   isFileAdaptor,
@@ -131,8 +131,7 @@ function* onResourceUpdate({
   master = {},
   patch = [],
 }) {
-  // If it is a raw data patch set on need to update again
-  if (resourceType === 'exports' && patch.length && !isRawDataPatchSet(patch)) {
+  if (resourceType === 'exports' && shouldUpdateResourceSampleData(patch)) {
     const { flowId } = yield select(
       resourceFormState,
       resourceType,
@@ -174,8 +173,7 @@ function* onResourceUpdate({
     }
   }
 
-  // If it is a raw data patch set on need to update again
-  if (resourceType === 'imports' && patch.length && !isRawDataPatchSet(patch)) {
+  if (resourceType === 'imports' && shouldUpdateResourceSampleData(patch)) {
     const { merged: importResource = {} } = yield select(
       resourceData,
       'imports',

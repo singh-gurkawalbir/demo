@@ -5,10 +5,13 @@ import { makeStyles, Chip } from '@material-ui/core';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import * as selectors from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
+import getRoutePath from '../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   root: {
     // display: 'flex',
+    maxWidth: 300,
+    wordWrap: 'break-word',
   },
   freeTag: {
     margin: theme.spacing(1),
@@ -52,7 +55,7 @@ export default function NameCell({
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
   const flowBuilderTo = isIntegrationApp
-    ? `/pg/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`
+    ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
     : `${flowBuilderPathName}/${flowId}`;
 
   return (
