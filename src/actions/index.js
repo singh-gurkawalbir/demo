@@ -1213,14 +1213,15 @@ const flowData = {
       stage,
       refresh,
     }),
-  reset: (flowId, resourceId) =>
-    action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
+  resetStages: (flowId, resourceId, stages = []) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
-  updateFlowsForResource: (resourceId, resourceType) =>
+  updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
     action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
+      stagesToReset
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
   updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
