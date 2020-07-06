@@ -15,6 +15,7 @@ import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
 import Help from '../../Help';
+import getRoutePath from '../../../utils/routePaths';
 
 const bannerHeight = 57;
 const useStyles = makeStyles(theme => ({
@@ -113,7 +114,7 @@ export default function RightDrawer({
   const location = useLocation();
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
+  const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
   const handleBack = useCallback(() => {
     // else, just go back in browser history...
     history.goBack();

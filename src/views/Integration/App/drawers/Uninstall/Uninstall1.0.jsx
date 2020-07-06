@@ -91,7 +91,7 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
       if (mode !== 'uninstall') {
         dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
         history.push(
-          `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+          getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
         );
       } else {
         dispatch(

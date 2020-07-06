@@ -15,6 +15,7 @@ import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
+import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -105,7 +106,7 @@ const integrationAppRoutes = [
 const routes = [
   ...suiteScriptRoutes,
   {
-    path: '/pg/integrations/:integrationId/',
+    path: getRoutePath('/integrations/:integrationId/'),
     breadcrumb: IntegrationCrumb,
     childRoutes: [
       {
@@ -125,16 +126,16 @@ const routes = [
     ],
   },
   {
-    path: '/pg/connectors/:connectorId/connectorLicenses',
+    path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
     breadcrumb: () => 'Licenses',
   },
   {
-    path: '/pg/connectors/:connectorId/installBase',
+    path: getRoutePath('/connectors/:connectorId/installBase'),
     breadcrumb: () => 'Install base',
   },
-  { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
+  { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
-    path: '/pg/integrationapps/:integrationAppName/:integrationId',
+    path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
       ...integrationAppRoutes,
@@ -146,13 +147,13 @@ const routes = [
     ],
   },
   {
-    path: '/pg/templates/:integrationAppName/:integrationId',
+    path: getRoutePath('/templates/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
   },
-  { path: '/pg/templates', breadcrumb: () => 'Templates' },
+  { path: getRoutePath('/templates'), breadcrumb: () => 'Templates' },
 
   {
-    path: '/pg/connectors/:integrationId/settings',
+    path: getRoutePath('/connectors/:integrationId/settings'),
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
       { path: '/users', breadcrumb: () => 'Users' },
@@ -184,7 +185,7 @@ const routes = [
     ],
   },
   {
-    path: '/pg/marketplace',
+    path: getRoutePath('/marketplace'),
     breadcrumb: () => 'Marketplace',
     childRoutes: [
       { path: '/:app', breadcrumb: MarketplaceCrumb },
@@ -199,7 +200,7 @@ const routes = [
     ],
   },
   {
-    path: '/pg/clone',
+    path: getRoutePath('/clone'),
     childRoutes: [
       {
         path: '/:resourceType/:resourceId',
@@ -211,10 +212,10 @@ const routes = [
       },
     ],
   },
-  { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
-  { path: '/pg/apis', breadcrumb: () => 'My APIs' },
+  { path: getRoutePath('/recycleBin'), breadcrumb: () => 'Recycle-bin' },
+  { path: getRoutePath('/apis'), breadcrumb: () => 'My APIs' },
   {
-    path: '/pg/myAccount',
+    path: getRoutePath('/myAccount'),
     breadcrumb: () => 'My account',
     childRoutes: [
       { path: '/users', breadcrumb: () => 'Users' },
@@ -225,13 +226,13 @@ const routes = [
     ],
   },
 
-  { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
+  { path: getRoutePath('/accesstokens'), breadcrumb: () => 'API tokens' },
   // Dev tools
-  { path: '/pg/resources', breadcrumb: () => 'Resources' },
-  { path: '/pg/editors', breadcrumb: () => 'Dev playground' },
-  { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
+  { path: getRoutePath('/resources'), breadcrumb: () => 'Resources' },
+  { path: getRoutePath('/editors'), breadcrumb: () => 'Dev playground' },
+  { path: getRoutePath('/permissions'), breadcrumb: () => 'Permission explorer' },
   {
-    path: '/pg/:resourceType',
+    path: getRoutePath('/:resourceType'),
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
   },
 ];
@@ -321,7 +322,7 @@ export default function CeligoBreadcrumb({ location }) {
     selectors.shouldShowAppRouting(state)
   );
   const breadcrumbs = [
-    { url: '/pg', breadcrumb: () => 'Home' },
+    { url: getRoutePath(''), breadcrumb: () => 'Home' },
     ...parseUrl(location, shouldShowAppRouting ? routes : []),
   ];
 

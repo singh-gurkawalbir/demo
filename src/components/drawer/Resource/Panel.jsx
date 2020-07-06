@@ -18,6 +18,7 @@ import Close from '../../icons/CloseIcon';
 import Back from '../../icons/BackArrowIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
+import getRoutePath from '../../../utils/routePaths';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = (url) => !!matchPath(url, {
@@ -298,7 +299,7 @@ export default function Panel(props) {
 
       if (resourceType === 'integrations') {
         return props.history.replace(
-          `/pg/${resourceType}/${newResourceId}/flows`
+          getRoutePath(`/${resourceType}/${newResourceId}/flows`)
         );
       }
 

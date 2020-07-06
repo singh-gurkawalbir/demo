@@ -5,6 +5,7 @@ import shortid from 'shortid';
 import * as selectors from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
+import getRoutePath from '../../utils/routePaths';
 
 export default function AmpersandRoutesHandler({ match }) {
   const {
@@ -26,120 +27,120 @@ export default function AmpersandRoutesHandler({ match }) {
   }
 
   switch (match.path) {
-    case '/pg/flows/create':
-    case '/pg/orchestrations/create':
-    case '/pg/flow-builder/v1_5/create':
+    case getRoutePath('/flows/create'):
+    case getRoutePath('/orchestrations/create'):
+    case getRoutePath('/flow-builder/v1_5/create'):
       return <Redirect
-        to={`/pg/integrations/none/flowBuilder/new-${shortid.generate()}`}
+        to={getRoutePath(`/integrations/none/flowBuilder/new-${shortid.generate()}`)}
       />;
-    case '/pg/integrations/create':
+    case getRoutePath('/integrations/create'):
       return <Redirect
-        to={`/pg/dashboard/add/integrations/new-${shortid.generate()}`}
+        to={getRoutePath(`/dashboard/add/integrations/new-${shortid.generate()}`)}
       />;
-    case '/pg/:resourceType/create':
+    case getRoutePath('/:resourceType/create'):
       return <Redirect
-        to={`/pg/${match.params.resourceType}/add/${match.params.resourceType}/new-${shortid.generate()}`}
+        to={getRoutePath(`/${match.params.resourceType}/add/${match.params.resourceType}/new-${shortid.generate()}`)}
       />;
-    case '/pg/:resourceType/:resourceId/edit':
+    case getRoutePath('/:resourceType/:resourceId/edit'):
       return <Redirect
-        to={`/pg/${match.params.resourceType}/edit/${match.params.resourceType}/${match.params.connectorId}`}
+        to={getRoutePath(`/${match.params.resourceType}/edit/${match.params.resourceType}/${match.params.connectorId}`)}
         />;
-    case '/pg/data-loader':
+    case getRoutePath('/data-loader'):
       return <Redirect
-        to={`/pg/integrations/none/dataLoader/new-${shortid.generate()}`}
+        to={getRoutePath(`/integrations/none/dataLoader/new-${shortid.generate()}`)}
       />;
-    case '/pg/integrations/:integrationId/data-loader':
+    case getRoutePath('/integrations/:integrationId/data-loader'):
       return <Redirect
-        to={`/pg/integrations/${integrationId}/dataLoader/new-${shortid.generate()}`}
+        to={getRoutePath(`/integrations/${integrationId}/dataLoader/new-${shortid.generate()}`)}
       />;
-    case '/pg/integrations/:integrationId/data-loader/:flowId/edit':
+    case getRoutePath('/integrations/:integrationId/data-loader/:flowId/edit'):
       return <Redirect
-        to={`/pg/integrations/${match.params.integrationId}/dataLoader/${match.params.flowId}}`}
+        to={getRoutePath(`/integrations/${match.params.integrationId}/dataLoader/${match.params.flowId}}`)}
       />;
-    case '/pg/integrations/:integrationId/flow-builder/v1_5/:flowId/create':
-    case '/pg/integrations/:integrationId/flows/:flowId/edit':
-    case '/pg/integrations/:integrationId/flow-builder/v1_5/:flowId/edit':
-    case '/pg/integrations/:integrationId/orchestrations/:flowId/edit':
-    case '/pg/integrations/:integrationId/orchestrations/:flowId/exports/create':
+    case getRoutePath('/integrations/:integrationId/flow-builder/v1_5/:flowId/create'):
+    case getRoutePath('/integrations/:integrationId/flows/:flowId/edit'):
+    case getRoutePath('/integrations/:integrationId/flow-builder/v1_5/:flowId/edit'):
+    case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/edit'):
+    case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/exports/create'):
       return <Redirect
-        to={`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}`}
+        to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}`)}
       />;
-    case '/pg/integrations/:integrationId/orchestrations/:flowId/:resourceType/create':
+    case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/create'):
       return <Redirect
-        to={`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/add/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/new=${shortid.generate()}`}
+        to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/add/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/new=${shortid.generate()}`)}
     />;
-    case '/pg/integrations/:integrationId/orchestrations/:flowId/:resourceType/:resourceId/edit':
+    case getRoutePath('/integrations/:integrationId/orchestrations/:flowId/:resourceType/:resourceId/edit'):
       return <Redirect
-        to={`/pg/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/edit/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/${match.params.resourceId}`}
+        to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/${match.params.flowId}}/edit/${match.params.resourceType === 'exports' ? 'pageGenerator' : 'pageProcessor'}/${match.params.resourceId}`)}
     />;
-    case '/pg/integrations/:integrationId/flows/create':
-    case '/pg/integrations/:_integrationId/orchestrations/create':
-    case '/pg/integrations/:integrationId/flow-builder/v1_5/create':
+    case getRoutePath('/integrations/:integrationId/flows/create'):
+    case getRoutePath('/integrations/:_integrationId/orchestrations/create'):
+    case getRoutePath('/integrations/:integrationId/flow-builder/v1_5/create'):
       return <Redirect
-        to={`/pg/integrations/${match.params.integrationId}/flowBuilder/new-${shortid.generate()}`}
+        to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/new-${shortid.generate()}`)}
       />;
-    case '/pg/connectors/:connectorId/licenses':
+    case getRoutePath('/connectors/:connectorId/licenses'):
       return <Redirect
-        to={`/pg/connectors/${match.params.connectorId}/connectorLicenses`}
+        to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses`)}
       />;
-    case '/pg/connectors/:connectorId/licenses/create':
+    case getRoutePath('/connectors/:connectorId/licenses/create'):
       return <Redirect
-        to={`/pg/connectors/${match.params.connectorId}/connectorLicenses/add/connectorLicenses/new-${shortid.generate()}`}
+        to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses/add/connectorLicenses/new-${shortid.generate()}`)}
       />;
-    case '/pg/connectors/:connectorId/licenses/:licenseId/edit':
+    case getRoutePath('/connectors/:connectorId/licenses/:licenseId/edit'):
       return <Redirect
-        to={`/pg/connectors/${match.params.connectorId}/connectorLicenses/edit/connectorLicenses/${match.params.licenseId}`}
+        to={getRoutePath(`/connectors/${match.params.connectorId}/connectorLicenses/edit/connectorLicenses/${match.params.licenseId}`)}
       />;
-    case '/pg/clone/integrations/:_integrationId/:resourceType/:resourceId/preview':
+    case getRoutePath('/clone/integrations/:_integrationId/:resourceType/:resourceId/preview'):
       return <Redirect
-        to={`/pg/clone/${match.params.resourceType}/${match.params.resourceId}/preview`}
+        to={getRoutePath(`/clone/${match.params.resourceType}/${match.params.resourceId}/preview`)}
         />;
-    case '/pg/clone/integrations/:_integrationId/:resourceType/:resourceId/setup':
+    case getRoutePath('/clone/integrations/:_integrationId/:resourceType/:resourceId/setup'):
       return <Redirect
-        to={`/pg/clone/${match.params.resourceType}/${match.params.resourceId}/setup`}
+        to={getRoutePath(`/clone/${match.params.resourceType}/${match.params.resourceId}/setup`)}
       />;
-    case '/pg/my-account/audit-log':
+    case getRoutePath('/my-account/audit-log'):
       return <Redirect
-        to="/pg/myAccount/audit"
+        to={getRoutePath('/myAccount/audit')}
       />;
-    case '/pg/my-account':
-    case '/pg/my-account/:section':
+    case getRoutePath('/my-account'):
+    case getRoutePath('/my-account/:section'):
       return <Redirect
-        to={`/pg/myAccount/${match.params.section || 'profile'}`}
+        to={getRoutePath(`/myAccount/${match.params.section || 'profile'}`)}
       />;
-    case '/pg/connectors/:integrationId/add-new-store-for-connector':
+    case getRoutePath('/connectors/:integrationId/add-new-store-for-connector'):
       return <Redirect
-        to={`/pg/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`}
+        to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`)}
       />;
-    case '/pg/connectors/:integrationId/settings':
+    case getRoutePath('/connectors/:integrationId/settings'):
       return <Redirect
-        to={`/pg/integrationapps/${integrationAppName}/${integrationId}/flows`}
+        to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)}
       />;
-    case '/pg/connectors/:integrationId/setup':
+    case getRoutePath('/connectors/:integrationId/setup'):
       return <Redirect
-        to={`/pg/integrationapps/${integrationAppName}/${integrationId}/setup`}
+        to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/setup`)}
       />;
-    case '/pg/connectors/:integrationId/settings/tokens/:accessTokenId/:accessTokenAction':
+    case getRoutePath('/connectors/:integrationId/settings/tokens/:accessTokenId/:accessTokenAction'):
       if (accessTokenAction === 'audit') {
         return <Redirect
-          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/flows`}
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)}
       />;
       }
       return <Redirect
-        to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken/edit/accesstokens/${accessTokenId}`}
+        to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken/edit/accesstokens/${accessTokenId}`)}
       />;
 
-    case '/pg/connectors/:integrationId/flows/:flowId/mapping':
+    case getRoutePath('/connectors/:integrationId/flows/:flowId/mapping'):
       if (childId) {
         return <Redirect
-          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows/Product/${flowId}/utilityMapping/commonAttributes`}
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows/Product/${flowId}/utilityMapping/commonAttributes`)}
          />;
       }
       return <Redirect
-        to={`/pg/integrationapps/${integrationAppName}/${integrationId}/flows`}
+        to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)}
       />;
 
     default:
-      return <Redirect to="/pg/dashboard" />;
+      return <Redirect to={getRoutePath('/dashboard')} />;
   }
 }

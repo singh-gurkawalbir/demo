@@ -24,6 +24,8 @@ import { getDomain } from '../utils/resource';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
 import CrashReporter from './CrashReporter';
+import getRoutePath from '../utils/routePaths';
+
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -48,8 +50,8 @@ function NonSigninHeaderComponents(props) {
 
 export const PageContentComponents = () => (
   <Switch>
-    <Route path="/pg/signin" component={Signin} />
-    <Route path="/pg*" component={PageContent} />
+    <Route path={getRoutePath('/signin')} component={Signin} />
+    <Route path={getRoutePath('/*')} component={PageContent} />
   </Switch>
 );
 
@@ -100,8 +102,8 @@ export default function App() {
                     <NetworkSnackbar />
                     {/* Headers */}
                     <Switch>
-                      <Route path="/pg/signin" component={null} />
-                      <Route path="/pg*" component={NonSigninHeaderComponents} />
+                      <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
                     </Switch>
                     {/* page content */}
                     <WithAuth>
