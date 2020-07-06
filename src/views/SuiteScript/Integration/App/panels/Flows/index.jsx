@@ -9,8 +9,8 @@ import metadata from '../../../../../../components/ResourceTable/metadata/suiteS
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
-import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
 import Spinner from '../../../../../../components/Spinner';
+import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {

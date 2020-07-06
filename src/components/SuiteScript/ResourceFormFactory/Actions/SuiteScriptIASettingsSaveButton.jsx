@@ -59,6 +59,7 @@ const SuiteScriptIASettingsSaveButton = props => {
 
   return (
     <>
+      {/* SiliconValleyDashboardLink renders a hyperlink and it should be above the general settings save button  */}
       <SiliconValleyDashboardLink {...props} />
       <DynaAction
         {...rest}

@@ -15,8 +15,8 @@ import {
 import PanelHeader from '../../../../../../components/PanelHeader';
 import Spinner from '../../../../../../components/Spinner';
 import * as selectors from '../../../../../../reducers';
-import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
 import ConfigureSettings from './sections/ConfigureSettings';
+import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
 
 
 const useStyles = makeStyles(theme => ({
