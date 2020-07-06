@@ -10,6 +10,7 @@ import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/L
 import * as selectors from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
 import { useLoadSuiteScriptSettings } from '../../../DIY/panels/Admin';
+import Spinner from '../../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -133,12 +134,12 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         resources="flows">
-        {hasSettingsMetadata &&
-        <FlowPanel
-          ssLinkedConnectionId={ssLinkedConnectionId}
-          integrationId={integrationId}
+        {hasSettingsMetadata ?
+          <FlowPanel
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
 
-        />}
+        /> : <Spinner />}
 
       </LoadSuiteScriptResources>
     </div>

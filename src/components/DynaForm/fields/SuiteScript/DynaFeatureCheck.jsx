@@ -8,7 +8,6 @@ import { COMM_STATES } from '../../../../reducers/comms/networkComms';
 import actions from '../../../../actions';
 import Spinner from '../../../Spinner';
 
-
 export default function DynaFeatureCheck(props) {
   const dispatch = useDispatch();
   const { ssLinkedConnectionId, _integrationId: integrationId, featureName, onFieldChange: fieldChange, id, value} = props;

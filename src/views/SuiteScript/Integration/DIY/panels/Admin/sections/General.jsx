@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
 export default function GeneralSection({
   ssLinkedConnectionId,
   integrationId,
+  id,
 }) {
   const classes = useStyles();
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
@@ -33,7 +34,6 @@ export default function GeneralSection({
       })
   );
   const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
-
 
   const flowSettingsMeta = useSelector(
     state =>
@@ -54,7 +54,6 @@ export default function GeneralSection({
     ),
     [flowSettingsMeta, integrationId, ssLinkedConnectionId]
   );
-
   const formState = useSelector(
     state =>
       selectors.suiteScriptIAFormState(
@@ -79,6 +78,7 @@ export default function GeneralSection({
           resourceId={integrationId}
           submitButtonLabel="Save"
           disabled={!canEdit}
+          sectionId={id}
         />
       </div>
     </>
