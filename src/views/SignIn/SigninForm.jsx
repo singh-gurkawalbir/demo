@@ -1,7 +1,7 @@
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { Typography, Button, Link, FormLabel } from '@material-ui/core';
+import { Typography, Button, Link} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -38,12 +38,13 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginBottom: 20,
+    marginTop: theme.spacing(1),
   },
   editableFields: {
     textAlign: 'center',
     width: '100%',
     maxWidth: 500,
+    marginBottom: 125,
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
@@ -54,16 +55,17 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
-    marginBottom: 0,
+    marginBottom: 10,
   },
   alertMsg: {
-    marginTop: theme.spacing(0.5),
     fontSize: 12,
     textAlign: 'left',
     marginLeft: 0,
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    marginTop: theme.spacing(-2),
+    marginBottom: 0,
     '& > svg': {
       fill: theme.palette.error.main,
       fontSize: theme.spacing(2),
@@ -76,7 +78,8 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   },
   forgotPass: {
     color: theme.palette.primary.dark,
-    marginBottom: theme.spacing(5),
+    textAlign: 'right',
+    marginBottom: theme.spacing(3),
   },
   googleBtn: {
     borderRadius: 4,
@@ -97,13 +100,13 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     '&:before': {
       content: '""',
       width: '40%',
-      borderTop: '2px solid',
+      borderTop: '1px solid',
       borderColor: theme.palette.secondary.lightest,
     },
     '&:after': {
       content: '""',
       width: '40%',
-      borderTop: '2px solid',
+      borderTop: '1px solid',
       borderColor: theme.palette.secondary.lightest,
     },
   },
@@ -196,48 +199,41 @@ class SignIn extends Component {
     return (
       <div className={classes.editableFields}>
         <form onSubmit={this.handleOnSubmit}>
-          <div className={classes.wrapper}>
-            <FormLabel htmlFor="email" className={classes.label}>
-              Email
-            </FormLabel>
-            <TextField
-              data-test="email"
-              id="email"
-              type="email"
-              variant="filled"
-              value={dialogOpen ? userEmail : email}
-              onChange={this.handleOnChangeEmail}
-              className={classes.textField}
-              disabled={dialogOpen}
+
+          <TextField
+            data-test="email"
+            id="email"
+            type="email"
+            variant="filled"
+            placeholder="Email"
+            value={dialogOpen ? userEmail : email}
+            onChange={this.handleOnChangeEmail}
+            className={classes.textField}
+            disabled={dialogOpen}
             />
-          </div>
-          <div className={classes.wrapper}>
-            <FormLabel htmlFor="password" className={classes.label}>
-              Password
-            </FormLabel>
-            <TextField
-              data-test="password"
-              id="password"
-              type="password"
-              variant="filled"
-              className={classes.textField}
+          <TextField
+            data-test="password"
+            id="password"
+            variant="filled"
+            type="password"
+            placeholder="Password"
+            className={classes.textField}
             />
-            {error && (
-              <Typography
-                color="error"
-                component="div"
-                variant="h5"
-                className={classes.alertMsg}>
-                <ErrorIcon /> {error}
-              </Typography>
-            )}
-          </div>
 
           <div className={classes.forgotPass}>
             <Link href="/request-reset" className={classes.forgotPass} variant="body2">
               Forgot password?
             </Link>
           </div>
+          {error && (
+          <Typography
+            color="error"
+            component="div"
+            variant="h5"
+            className={classes.alertMsg}>
+            <ErrorIcon /> {error}
+          </Typography>
+          )}
           <Button
             data-test="submit"
             variant="contained"

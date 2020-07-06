@@ -284,7 +284,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         },
       ],
     });
-    const { queryByLabelText } = render(
+    const { getByPlaceholderText } = render(
       reduxRouterWrappedComponent({
         Component: wrappedHistory,
         componentProps: loggedOut,
@@ -294,7 +294,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(queryByLabelText('Email')).toBeTruthy();
-    expect(queryByLabelText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email')).toBeTruthy();
+    expect(getByPlaceholderText('Password')).toBeTruthy();
   });
 });
