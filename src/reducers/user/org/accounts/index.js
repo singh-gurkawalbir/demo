@@ -180,6 +180,15 @@ export function endpointLicense(state, accountId) {
       endpointLicense.expiresInDays = remainingDays(endpointLicense.trialEndDate);
     }
   }
+  endpointLicense.totalNumberofProductionEndpoints = endpointLicense?.endpoint?.production?.numEndpoints + endpointLicense?.endpoint?.production?.numAddOnEndpoints;
+  endpointLicense.totalNumberofProductionFlows = endpointLicense?.endpoint?.production?.numFlows + endpointLicense?.endpoint?.production?.numAddOnFlows;
+  endpointLicense.totalNumberofProductionTradingPartners = endpointLicense?.endpoint?.production?.numTradingPartners + endpointLicense?.endpoint?.production?.numAddOnTradingPartners;
+  endpointLicense.totalNumberofProductionAgents = endpointLicense?.endpoint?.production?.numAgents + endpointLicense?.endpoint?.production?.numAddOnAgents;
+
+  endpointLicense.totalNumberofSandboxEndpoints = endpointLicense?.endpoint?.sandbox?.numEndpoints + endpointLicense?.endpoint?.sandbox?.numAddOnEndpoints;
+  endpointLicense.totalNumberofSandboxFlows = endpointLicense?.endpoint?.sandbox?.numFlows + endpointLicense?.endpoint?.sandbox?.numAddOnFlows;
+  endpointLicense.totalNumberofSandboxTradingPartners = endpointLicense?.endpoint?.sandbox?.numTradingPartners + endpointLicense?.endpoint?.sandbox?.numAddOnTradingPartners;
+  endpointLicense.totalNumberofSandboxAgents = endpointLicense?.endpoint?.sandbox?.numAgents + endpointLicense?.endpoint?.sandbox?.numAddOnAgents;
 
   return endpointLicense;
 }

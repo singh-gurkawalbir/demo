@@ -19,8 +19,8 @@ const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 const getLabel = (items, value) => items.find(item => item.value === value)?.label;
 const optionSearch = (search) => ({label, optionSearch}) => search && (
-  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
- (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
+  (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(typeof search === 'function' && search.toLowerCase())) ||
+ (typeof label === 'string' && label.toLowerCase().startsWith(typeof search === 'function' && search.toLowerCase())));
 const useAutoScrollOption = (items, open, listRef, value) => {
   const label = getLabel(items, value) || '';
   const [search, setSearch] = useState(label);

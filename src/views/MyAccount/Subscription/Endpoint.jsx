@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress, Drawer} from '@material-ui/core';
+import { Typography, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
-import LicenceTable from './licenseTable';
 import NotificationToaster from '../../../components/NotificationToaster';
+import Progressbar from './Progressbar';
+import LicenceTable from './licenseTable';
+import RightDrawer from '../../../components/drawer/Right';
 
 
 const useStyles = makeStyles(theme => ({
@@ -111,22 +113,30 @@ const useStyles = makeStyles(theme => ({
 export default function Subscription() {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const capitalize = s => {
     if (typeof s !== 'string') return '';
 
     return s.charAt(0).toUpperCase() + s.slice(1);
   };
-  const [showResourceDialog, setShowResourceDialog] = useState(false);
-  const [sandbox, setSandbox] = useState(false);
-  const [type, setType] = useState('');
+  const titleMap = {
+    endpoints: 'Endpoint apps',
+    flows: 'Integration flows',
+    tradingpartners: 'Trading partners',
+    agents: 'On-premise agents',
+  };
   const [title, setTitle] = useState('');
-  const [resource, setResource] = useState('');
+
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const licenseActionDetails = useSelector(state =>
     selectors.endpointLicenseWithMetadata(state)
   );
-  const [needMoreNotification, setNeedMoreNotification] = useState(true);
   const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
+  const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
+  const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
+  const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
+
   const onStartFreeTrialClick = useCallback(() => {
     setShowStartFreeDialog(true);
   }, [setShowStartFreeDialog]);
@@ -151,7 +161,6 @@ export default function Subscription() {
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
     setUpgradeRequested(true);
-
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch]);
   const onRequestTrialExtensionClick = useCallback(() => {
@@ -163,67 +172,18 @@ export default function Subscription() {
     return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
   }, [dispatch]);
 
-  const [totalResources, setTotalResources] = useState(0);
-  const [totalUsedResources, setTotalUsedResources] = useState(0);
-
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
-  const totalNumberofEndpoints = licenseActionDetails?.endpoint?.production?.numEndpoints + licenseActionDetails?.endpoint?.production?.numAddOnEndpoints;
-  const totalNumberofFlows = licenseActionDetails?.endpoint?.production?.numFlows + licenseActionDetails?.endpoint?.production?.numAddOnFlows;
-  const totalNumberofTradingPartners = licenseActionDetails?.endpoint?.production?.numTradingPartners + licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners;
-  const totalNumberofAgents = licenseActionDetails?.endpoint?.production?.numAgents + licenseActionDetails?.endpoint?.production?.numAddOnAgents;
-
-  const totalNumberofSandboxEndpoints = licenseActionDetails?.endpoint?.sandbox?.numEndpoints + licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints;
-  const totalNumberofSandboxFlows = licenseActionDetails?.endpoint?.sandbox?.numFlows + licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows;
-  const totalNumberofSandboxTradingPartners = licenseActionDetails?.endpoint?.sandbox?.numTradingPartners + licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners;
-  const totalNumberofSandboxAgents = licenseActionDetails?.endpoint?.sandbox?.numAgents + licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents;
-
-
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
   const numberofUsedTradingPartners = licenseEntitlementUsage?.production?.tradingPartnerUsage?.numConsumed;
   const numberofUsedAgents = licenseEntitlementUsage?.production?.agentUsage?.numActive;
-
   const numberofUsedSandboxEndpoints = licenseEntitlementUsage?.sandbox?.endpointUsage?.numConsumed;
   const numberofUsedSandboxFlows = licenseEntitlementUsage?.sandbox?.flowUsage?.numEnabled;
   const numberofUsedSandboxTradingPartners = licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed;
   const numberofUsedSandboxAgents = licenseEntitlementUsage?.sandbox?.agentUsage?.numActive;
-  const onResourceDilaogClick = useCallback((type, sandbox, title, resource, totalResources, totalUsedResources) => {
-    setShowResourceDialog(true);
-    setType(type);
-    setSandbox(sandbox);
-    setTitle(title);
-    setResource(resource);
-    setTotalResources(totalResources);
-    setTotalUsedResources(totalUsedResources);
-  }, [setShowResourceDialog]);
-  const onProductionEndpointsClick = useCallback(() => {
-    onResourceDilaogClick('endpoints', false, 'Endpoint apps', licenseEntitlementUsage?.production?.endpointUsage?.endpoints, totalNumberofEndpoints, numberofUsedEndpoints);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.production?.endpointUsage?.endpoints, totalNumberofEndpoints, numberofUsedEndpoints]);
-  const onProductionFlowsClick = useCallback(() => {
-    onResourceDilaogClick('flows', false, 'Integration flows', licenseEntitlementUsage?.production?.flowUsage?.flows, totalNumberofFlows, numberofUsedFlows);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.production?.flowUsage?.flows, totalNumberofFlows, numberofUsedFlows]);
-  const onProductionTradingPartnersClick = useCallback(() => {
-    onResourceDilaogClick('tradingpartners', false, 'Trading partners', licenseEntitlementUsage?.production?.tradingPartnerUsage?.tradingPartners, totalNumberofTradingPartners, numberofUsedTradingPartners);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.production?.tradingPartnerUsage?.tradingPartners, totalNumberofTradingPartners, numberofUsedTradingPartners]);
-  const onProductionAgentsClick = useCallback(() => {
-    onResourceDilaogClick('agents', false, 'On-premise agents', licenseEntitlementUsage?.production?.agentUsage?.agents, totalNumberofAgents, numberofUsedAgents);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.production?.agentUsage?.agents, totalNumberofAgents, numberofUsedAgents]);
-  const onSandboxEndpointsClick = useCallback(() => {
-    onResourceDilaogClick('endpoints', true, 'Endpoint apps', licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints, totalNumberofSandboxEndpoints, numberofUsedSandboxEndpoints);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.sandbox?.endpointUsage?.endpoints, totalNumberofSandboxEndpoints, numberofUsedSandboxEndpoints]);
-  const onSandboxFlowsClick = useCallback(() => {
-    onResourceDilaogClick('flows', true, 'Integration flows', licenseEntitlementUsage?.sandbox?.flowUsage?.flows, totalNumberofSandboxFlows, numberofUsedSandboxFlows);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.sandbox?.flowUsage?.flows, totalNumberofSandboxFlows, numberofUsedSandboxFlows]);
-  const onSandboxTradingPartnersClick = useCallback(() => {
-    onResourceDilaogClick('tradingpartners', true, 'Trading partners', licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.tradingPartners, totalNumberofSandboxTradingPartners, numberofUsedSandboxTradingPartners);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.tradingPartners, totalNumberofSandboxTradingPartners, numberofUsedSandboxTradingPartners]);
-  const onSandboxAgentsClick = useCallback(() => {
-    onResourceDilaogClick('agents', true, 'On-premise agents', licenseEntitlementUsage?.sandbox?.agentUsage?.agents, totalNumberofSandboxAgents, numberofUsedSandboxAgents);
-  }, [onResourceDilaogClick, licenseEntitlementUsage?.sandbox?.agentUsage?.agents, totalNumberofSandboxAgents, numberofUsedSandboxAgents]);
   const onCloseNotification = useCallback(() => {
     setNeedMoreNotification(false);
   }, [setNeedMoreNotification]);
-  const [enquesnackbar] = useEnqueueSnackbar();
   const requestLicenseEntitlementUsage = useCallback(() => {
     dispatch(actions.user.org.accounts.requestLicenseEntitlementUsage());
   }, [dispatch]);
@@ -233,20 +193,18 @@ export default function Subscription() {
       requestLicenseEntitlementUsage();
     }
   }, [requestLicenseEntitlementUsage, licenseEntitlementUsage]);
-  const integratorLicenseActionMessage = useSelector(state =>
-    selectors.integratorLicenseActionMessage(state)
-  );
-
-  useEffect(() => {
-    if (integratorLicenseActionMessage) {
-      enquesnackbar({ message: integratorLicenseActionMessage });
-    }
-  }, [enquesnackbar, integratorLicenseActionMessage]);
 
   const onDrawerClose = useCallback(() => {
-    setShowResourceDialog(false);
     setShowStartFreeDialog(false);
   }, []);
+  const onCloseExpireMessage = useCallback(() => {
+    setShowExpireMessage(false);
+  }, []);
+  const handleClose = useCallback(() => {
+    history.push(match?.url);
+  }, [history, match?.url]);
+
+  onCloseExpireMessage;
   if (!licenseEntitlementUsage) return null;
 
 
@@ -291,29 +249,14 @@ export default function Subscription() {
           </div>
         </div>
       </Drawer>
-      <Drawer
-        anchor="right"
-        open={showResourceDialog}
-        classes={{
-          paper: classes.drawerPaper,
-        }}>
-        <DrawerTitleBar
-          onClose={onDrawerClose}
-          title={title}
-        />
-        <div className={classes.linearProgressWrapper}>
-          <div>Using {totalUsedResources} of {totalResources}</div>
-          <LinearProgress
-            color="primary"
-            value={(totalUsedResources / totalResources) * 100}
-            variant="determinate"
-            thickness={10}
-            className={classes.progressBar}
-          />
-        </div>
-        <LicenceTable type={type} sandbox={sandbox} resource={resource} showDialog={setShowResourceDialog} />
-      </Drawer>
-      {needMoreNotification &&
+      <RightDrawer
+        path=":env/:type"
+        height="tall"
+        title={titleMap[title]}
+        onClose={handleClose}>
+        <LicenceTable />
+      </RightDrawer>
+      { !showExpireMessage && needMoreNotification &&
       <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
         <Typography variant="info">Need more flows. Do you use FTP or AS2 connections? Need to support EDI? We`ve got you covered!.
           <Button
@@ -321,6 +264,17 @@ export default function Subscription() {
             color="secondary"
             onClick={onRequestSubscriptionClick}> Upgrade today!
           </Button>
+        </Typography>
+      </NotificationToaster>}
+      {showExpireMessage &&
+      <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
+        <Typography variant="info">Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet, upgrade now
+          <Button
+            variant="text"
+            color="secondary"
+            onClick={onRequestSubscriptionClick}> Upgrade now
+          </Button>
+          and keep them all!
         </Typography>
       </NotificationToaster>}
       <div className={classes.root}>
@@ -406,12 +360,12 @@ export default function Subscription() {
                       )}
                   </div>
               )}
-              <div>{totalNumberofEndpoints + totalNumberofSandboxEndpoints} endpoint apps</div>
-              <div>{totalNumberofTradingPartners + totalNumberofSandboxTradingPartners} trading partners</div>
+              <div>{licenseActionDetails?.totalNumberofProductionEndpoints + licenseActionDetails?.totalNumberofSandboxEndpoints} endpoint apps</div>
+              <div>{licenseActionDetails?.totalNumberofProductionTradingPartners + licenseActionDetails?.totalNumberofSandboxTradingPartners} trading partners</div>
               <div>API management {licenseActionDetails?.endpoint?.apiManagement ? 'Enabled' : 'Disabled'}</div>
               <div>Autopilot  {licenseActionDetails?.autopilot ? 'Enabled' : 'Disabled'} </div>
-              <div>{totalNumberofFlows + totalNumberofSandboxFlows} integration flows</div>
-              <div>{totalNumberofAgents + totalNumberofSandboxAgents} on-premise agents</div>
+              <div>{licenseActionDetails?.totalNumberofProductionFlows + licenseActionDetails?.totalNumberofSandboxFlows} integration flows</div>
+              <div>{licenseActionDetails?.totalNumberofProductionAgents + licenseActionDetails?.totalNumberofSandboxAgents} on-premise agents</div>
               <div>Sandbox {licenseActionDetails?.sandbox ? 'Enabled' : 'Disabled'}</div>
             </div>
           </div>
@@ -419,134 +373,78 @@ export default function Subscription() {
             <div>
               <div className={classes.wrapper}>
                 <Typography variant="h3">
-                  Production Usage
+                  Production usage
                 </Typography>
 
                 <div>
                   <div className={classes.linearProgressWrapper}>
-                    <div>Endpoint apps: {numberofUsedEndpoints} of {totalNumberofEndpoints}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedEndpoints / totalNumberofEndpoints) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onProductionEndpointsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>Integration flows: {numberofUsedFlows} of {totalNumberofFlows}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedFlows / totalNumberofFlows) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onProductionFlowsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>Trading partners: {numberofUsedTradingPartners} of {totalNumberofTradingPartners}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedTradingPartners / totalNumberofTradingPartners) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onProductionTradingPartnersClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>On-premise agents: {numberofUsedAgents} of {totalNumberofAgents}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedAgents / totalNumberofAgents) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onProductionAgentsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
+                    <Progressbar
+                      usedCount={numberofUsedEndpoints}
+                      totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
+                      env="production"
+                      type="endpoints"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedFlows}
+                      totalCount={licenseActionDetails?.totalNumberofProductionFlows}
+                      env="production"
+                      type="flows"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedTradingPartners}
+                      totalCount={licenseActionDetails?.totalNumberofProductionTradingPartners}
+                      env="production"
+                      type="tradingpartners"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedAgents}
+                      totalCount={licenseActionDetails?.totalNumberofProductionAgents}
+                      env="production"
+                      type="agents"
+                      setTitle={setTitle}
+                    />
                   </div>
                 </div>
               </div>
               {licenseActionDetails?.sandbox && (
               <div className={classes.wrapper}>
                 <Typography variant="h3">
-                  Sandbox Usage
+                  Sandbox usage
                 </Typography>
 
                 <div>
                   <div className={classes.linearProgressWrapper}>
-                    <div>Endpoint apps: {numberofUsedSandboxEndpoints} of {totalNumberofSandboxEndpoints}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedSandboxEndpoints / totalNumberofSandboxEndpoints) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onSandboxEndpointsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>Integration flows: {numberofUsedSandboxFlows} of {totalNumberofSandboxFlows}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedSandboxFlows / totalNumberofSandboxFlows) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onSandboxFlowsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>Trading partners: {numberofUsedSandboxTradingPartners} of {totalNumberofSandboxTradingPartners}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedSandboxTradingPartners / totalNumberofSandboxTradingPartners) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onSandboxTradingPartnersClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
-                    <div>On-premise agents: {numberofUsedSandboxAgents} of {totalNumberofSandboxAgents}</div>
-                    <LinearProgress
-                      color="primary"
-                      value={(numberofUsedSandboxAgents / totalNumberofSandboxAgents) * 100}
-                      variant="determinate"
-                      thickness={10}
-                      className={classes.progressBar}
-                          />
-                    <Button
-                      onClick={onSandboxAgentsClick}
-                      variant="outlined"
-                      color="primary">
-                      List!
-                    </Button>
+                    <Progressbar
+                      usedCount={numberofUsedSandboxEndpoints}
+                      totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
+                      env="sandbox"
+                      type="endpoints"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedSandboxFlows}
+                      totalCount={licenseActionDetails.totalNumberofSandboxFlows}
+                      env="sandbox"
+                      type="flows"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedSandboxTradingPartners}
+                      totalCount={licenseActionDetails.totalNumberofSandboxTradingPartners}
+                      env="sandbox"
+                      type="tradingpartners"
+                      setTitle={setTitle}
+                    />
+                    <Progressbar
+                      usedCount={numberofUsedSandboxAgents}
+                      totalCount={licenseActionDetails.totalNumberofSandboxAgents}
+                      env="sandbox"
+                      type="agents"
+                      setTitle={setTitle}
+                    />
                   </div>
                 </div>
               </div>

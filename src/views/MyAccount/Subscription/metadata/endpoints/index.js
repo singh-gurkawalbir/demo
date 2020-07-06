@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { ConnectorNameComp } from '../../../../../components/ResourceTable/metadata';
 import References from '../../actions/references';
 import ConnectionResourceDrawerLink from '../../../../../components/ResourceDrawerLink/connection';
@@ -10,13 +10,9 @@ export default {
       {
         heading: 'Instances',
         value: function ConnectionDrawerLink(resource) {
-          const onClick = useCallback(() => {
-            resource && resource.showDialog && resource.showDialog(false);
-          }, [resource]);
           return (
             <ConnectionResourceDrawerLink
               resource={resource}
-              onClick={onClick}
             />
           );
         },
