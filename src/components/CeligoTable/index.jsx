@@ -35,13 +35,13 @@ const useStyles = makeStyles(theme => ({
     '& > td:last-child': {
       minWidth: '125px',
     },
-    '& > td:last-child > div': {
-      display: 'none',
-    },
-    '&:hover > td:last-child > div': {
-      display: 'flex',
-      justifyContent: 'center',
-    },
+    // '& > td:last-child > div': {
+    //   display: 'none',
+    // },
+    // '&:hover > td:last-child > div': {
+    //   display: 'flex',
+    //   justifyContent: 'center',
+    // },
     '&:hover > td:last-child > svg': {
       display: 'none',
     },
