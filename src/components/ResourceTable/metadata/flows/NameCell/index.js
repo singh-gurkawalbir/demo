@@ -34,7 +34,6 @@ export default function NameCell({
   isIntegrationApp,
   integrationId,
   onClick,
-  isSubscriptionPage = false,
 }) {
   const classes = useStyles();
   const isDataLoader = useSelector(state =>
