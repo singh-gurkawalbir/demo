@@ -1,9 +1,11 @@
 
 import { put, select, takeLatest, call } from 'redux-saga/effects';
+import { deepClone } from 'fast-json-patch/lib/core';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
+import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -31,7 +33,11 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
       { refreshCache, ignoreCache: true }
     ));
-  } else if (exportType === 'fileCabinet') {
+  } else if (['fileCabinet', 'ftp'].includes(exportType)) {
+    const _exp = deepClone(exportConfig);
+    _exp.file.type = 'csv';
+    const previewData = yield call(requestFileAdaptorSampleData, {resource: _exp});
+    yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData}));
     // ftp => export.sampleData
   } else if (['rakuten', 'sears', 'newegg'].includes(exportType)) {
     let method;
