@@ -361,7 +361,10 @@ export default {
       fieldId: 'file.compressionFormat',
       visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
     },
-    'file.skipDelete': { fieldId: 'file.skipDelete' },
+    'file.skipDelete': { fieldId: 'file.skipDelete',
+      disabledWhen: [
+        { field: 's3.backupBucket', isNot: [''] },
+      ], },
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: {
       fieldId: 'pageSize',
