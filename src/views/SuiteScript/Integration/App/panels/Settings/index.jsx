@@ -60,6 +60,7 @@ function SettingsPanelComponent({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const {integrationAppName} = match?.params;
 
 
   const availableSections = useSelector(state => {
@@ -130,12 +131,14 @@ function SettingsPanelComponent({
                   <>
                     <PanelHeader title={`Configure all ${label} flows`} />
                     <ConfigureSettings
+                      integrationAppName={integrationAppName}
                       integrationId={integrationId}
                       ssLinkedConnectionId={ssLinkedConnectionId}
                       sectionId={path}
                       id={id}
                       />
                   </>) : <Section
+                    integrationAppName={integrationAppName}
                     integrationId={integrationId}
                     ssLinkedConnectionId={ssLinkedConnectionId}
                     sectionId={path}
