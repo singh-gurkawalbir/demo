@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId, disabled } = props;
+  const { editorId, disabled, rule } = props;
   const classes = useStyles();
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -39,17 +39,18 @@ export default function XmlParseEditor(props) {
         data: props.data,
         // since we may be sharing the same editorId, we need to force
         // all default values.
-        V0_json: props.rule.V0_json === true || false,
-        trimSpaces: props.rule.trimSpaces,
-        stripNewLineChars: props.rule.stripNewLineChars,
-        attributePrefix: props.rule.attributePrefix,
-        textNodeName: props.rule.textNodeName,
-        listNodes: props.rule.listNodes,
-        includeNodes: props.rule.includeNodes,
-        excludeNodes: props.rule.excludeNodes,
+        V0_json: rule.V0_json === true || false,
+        resourcePath: rule.resourcePath,
+        trimSpaces: rule.trimSpaces,
+        stripNewLineChars: rule.stripNewLineChars,
+        attributePrefix: rule.attributePrefix,
+        textNodeName: rule.textNodeName,
+        listNodes: rule.listNodes,
+        includeNodes: rule.includeNodes,
+        excludeNodes: rule.excludeNodes,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props.data, rule]);
 
   useEffect(() => handleInit(), [handleInit]);
 

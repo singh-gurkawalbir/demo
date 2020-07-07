@@ -19,8 +19,10 @@ const PARSERS = {
  * as we infer props on resource form while editing
  */
 export const generateFileParserOptionsFromResource = (resource = {}, type) => {
-  const { type: fileType } = resource.file || {};
-  const fields = (resource.file && resource.file[fileType]) || {};
+  const fileType = resource?.file?.type;
+  const fields = resource?.file?.[fileType] || {};
+  // console.log(fileType, resource);
+
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(type)) {
@@ -38,7 +40,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
     };
   }
 
-  if (type === 'xml') {
+  if (fileType === 'xml') {
     const rules = resource?.parsers?.[0]?.rules || {};
     const { listNodes, includeNodes, excludeNodes, ...rest} = rules;
 
@@ -74,14 +76,14 @@ export function* parseFileData({ sampleData, resource }) {
     ...options,
   };
 
-  // console.log('parseFileData', processorData);
+  console.log('parseFileData', processorData);
 
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
-    // console.log(processedData);
+    console.log(processedData);
     return processedData;
   } catch (e) {
     // Handle errors

@@ -8,6 +8,7 @@ import DynaForm from '../..';
 import FieldHelp from '../../FieldHelp';
 
 const getParserValue = ({
+  resourcePath,
   V0_json,
   attributePrefix,
   trimSpaces,
@@ -28,18 +29,33 @@ const getParserValue = ({
   if (includeNodes) rules.includeNodes = includeNodes.split('\n');
   if (excludeNodes) rules.excludeNodes = excludeNodes.split('\n');
 
-  return [
+  const value = [
     {
       type: 'xml',
       version: 1,
       rules
     },
   ];
+
+  // This value is not actually part of the `parsers` schema, but we
+  // need to place it somewhere such that the parent form preSave can find
+  // it and properly add it to the exports.file.xml.resourcePath schema field.
+  value.resourcePath = resourcePath;
+
+  return value;
 };
 
 const visibleWhen = [{ field: 'V0_json', is: ['false'] }];
 const getForm = options => ({
   fieldMap: {
+    resourcePath: {
+      id: 'resourcePath',
+      name: 'resourcePath',
+      label: 'Resource path',
+      type: 'text',
+      defaultValue: options?.resourcePath || '',
+      required: true,
+    },
     V0_json: {
       id: 'V0_json',
       name: 'V0_json',
@@ -158,31 +174,34 @@ export default function DynaXmlParse({
   disabled,
 }) {
   const classes = useStyles();
-  const options = value?.[0]?.rules;
-  const [currentOptions, setCurrentOptions] = useState(options);
   const [showEditor, setShowEditor] = useState(false);
-  const [form, setForm] = useState(getForm(options));
   const [formKey, setFormKey] = useState(1);
+  const resourcePath = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
+  const options = { resourcePath, ...value?.[0]?.rules};
+  const [form, setForm] = useState(getForm(options));
+  const [currentOptions, setCurrentOptions] = useState(options);
+  const data = useSelector(state =>
+    selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
+
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
 
-  const data = useSelector(state => selectors.fileSampleData(state, {
-    resourceId, resourceType, fileType: 'xml'
-  }));
-
-  const handleClose = (shouldCommit, editorValues = {}) => {
-    // console.log(editorValues);
+  const handleEditorSave = (shouldCommit, editorValues = {}) => {
+    // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
       setForm(getForm(editorValues));
       setFormKey(formKey + 1);
+      onFieldChange(id, getParserValue(editorValues));
     }
-
-    setShowEditor(false);
   };
 
-  const handleOptionsChange = useCallback(
+  const handleEditorClose = () => {
+    setShowEditor(false);
+  };
+  const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
       // console.log('optionsChange', newOptions);
@@ -207,7 +226,8 @@ export default function DynaXmlParse({
           data={data}
           resourceType={resourceType}
           rule={currentOptions}
-          onClose={handleClose}
+          onSave={handleEditorSave}
+          onClose={handleEditorClose}
           disabled={disabled}
         />
       )}
@@ -225,7 +245,7 @@ export default function DynaXmlParse({
       </div>
       <DynaForm
         key={formKey}
-        onChange={handleOptionsChange}
+        onChange={handleFormChange}
         disabled={disabled}
         fieldMeta={form}
       />

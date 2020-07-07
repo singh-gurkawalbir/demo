@@ -2,6 +2,7 @@ import { MAX_DATA_LOADER_FILE_SIZE } from '../../../utils/constants';
 
 export default {
   preSave: formValues => {
+    // console.log(formValues);
     const newValues = { ...formValues };
     delete newValues['/file/csvHelper'];
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
@@ -20,7 +21,7 @@ export default {
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
@@ -45,6 +46,7 @@ export default {
       delete newValues['/file/xlsx/keyColumns'];
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
+      newValues['/file/xml/resourcePath'] = newValues['/parsers']?.resourcePath;
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
       newValues['/file/xml'] = undefined;
@@ -57,7 +59,7 @@ export default {
       delete newValues['/file/csv/hasHeaderRow'];
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
       newValues['/file/json'] = undefined;
@@ -65,7 +67,7 @@ export default {
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/fileDefinition/resourcePath'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -210,7 +212,7 @@ export default {
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
+    // 'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
     parsers: { fieldId: 'parsers' },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
@@ -246,7 +248,7 @@ export default {
             ],
             containers: [
               {fields: [
-                'file.xml.resourcePath',
+                // 'file.xml.resourcePath', // moved into 'parsers' input
                 'parsers',
                 'file.csvHelper',
                 'file.csv.columnDelimiter',
