@@ -120,7 +120,7 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
       integrationId={integrationId}
       resources="flows">
       <SuiteScriptForm
-        isSFNSGeneralSection={section?.title === 'General' && integrationAppName === 'sfns'}
+        isSVBNSGeneralSection={section?.title === 'General' && integrationAppName === 'svbns'}
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         sectionId={id}
