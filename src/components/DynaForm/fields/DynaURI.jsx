@@ -35,14 +35,12 @@ export default function DynaURI(props) {
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -52,7 +50,8 @@ export default function DynaURI(props) {
           <DynaEditorWithFlowSampleData
             title={editorTitle}
             fieldId={id}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={handleEditorClick}
             editorType="uri"
             flowId={flowId}
             resourceId={resourceId}

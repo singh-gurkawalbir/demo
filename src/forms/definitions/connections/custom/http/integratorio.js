@@ -9,9 +9,9 @@ export default {
       baseURI = 'https://api.eu.integrator.io';
       retValues['/integrator/environment'] = undefined;
     } else if (isProduction()) {
-      baseURI = 'https://integrator.io';
+      baseURI = 'https://api.integrator.io';
     } else {
-      baseURI = 'https://staging.integrator.io';
+      baseURI = 'https://api.staging.integrator.io';
     }
     retValues['/http/headers'] = [
       {

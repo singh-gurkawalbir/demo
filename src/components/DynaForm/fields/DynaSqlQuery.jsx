@@ -82,14 +82,12 @@ export default function DynaSqlQuery(props) {
     }
   }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
 
-  const handleUpdate = (shouldCommit, editorVal) => {
+  const handleSave = (shouldCommit, editorVal) => {
     if (shouldCommit) {
       const { template } = editorVal;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
   };
 
   const editorDialog = (
@@ -104,7 +102,8 @@ export default function DynaSqlQuery(props) {
           id={`${id}-inline`}
           rule={value}
           sampleData={JSON.stringify(sampleData, null, 2)}
-          onClose={handleUpdate}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
           showDefaultData={false}
         />

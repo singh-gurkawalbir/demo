@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
-import { isProduction } from '../../utils';
+import { isProduction, isEuRegion } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
 
@@ -12,12 +12,21 @@ export default {
     filter: r => {
       const expression = [
         { _id: { $ne: r._id } },
-        { _connectorId: { $exists: false } },
       ];
+      if (r._connectorId) {
+        // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
+        expression.push({_connectorId: r._connectorId});
+      } else {
+        // For DIY connection, borrowconcurrency from other diy integrations.
+        expression.push({ _connectorId: { $exists: false } });
+      }
 
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
-      } else expression.push({ type: r.type });
+      } else {
+        // Should not borrow concurrency for ['ftp', 'as2', 's3', 'netsuite']
+        expression.push({ type: ['ftp', 'as2', 's3', 'netsuite'].includes(r.type) ? '' : r.type });
+      }
 
       return {
         $and: expression,
@@ -1022,6 +1031,9 @@ export default {
     defaultDisabled: true,
     defaultValue: () => {
       if (isProduction()) {
+        if (isEuRegion()) {
+          return 'https://eu.integrator.io/connection/oauth2callback';
+        }
         return 'https://integrator.io/connection/oauth2callback';
       }
 
@@ -1860,7 +1872,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -1905,7 +1917,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1961,7 +1973,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -1988,7 +2000,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'DES', value: 'DES' },
           { label: 'RC2', value: 'RC2' },
           { label: '3DES', value: '3DES' },
@@ -2005,7 +2017,7 @@ export default {
     options: [
       {
         items: [
-          { label: 'NONE', value: 'NONE' },
+          { label: 'None', value: 'NONE' },
           { label: 'SHA1', value: 'SHA1' },
           { label: 'MD5', value: 'MD5' },
           { label: 'SHA256', value: 'SHA256' },
@@ -2232,7 +2244,7 @@ export default {
   },
   'netsuite.linkSuiteScriptIntegrator': {
     label: 'Link suitescript integrator',
-    type: 'checkbox',
+    type: 'linksuitescriptintegrator',
   },
   'netsuite._iClientId': {
     label: 'IClient',
@@ -2462,7 +2474,7 @@ export default {
     type: 'text',
     label: 'Ping function',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper._stackId': {
     label: 'Stack',
@@ -2470,7 +2482,7 @@ export default {
     placeholder: 'Please select a stack',
     resourceType: 'stacks',
     required: true,
-    visible: r => !(r && r._connectorId)
+    visible: r => !(r && r._connectorId),
   },
   'wrapper.concurrencyLevel': {
     type: 'select',

@@ -40,14 +40,12 @@ export default function DynaCsvGenerate(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       Object.keys(fields).forEach(key => {
         onFieldChange(`file.csv.${key}`, editorValues[key]);
       });
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -60,7 +58,8 @@ export default function DynaCsvGenerate(props) {
           csvEditorType="generate"
           /** rule to be passed as json */
           rule={fields}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
           flowId={flowId}
           editorType="csvGenerate"

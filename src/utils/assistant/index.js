@@ -32,6 +32,8 @@ const OVERWRITABLE_PROPERTIES = Object.freeze([
   'successMediaType',
   'successPath',
   'successValues',
+  'customeTemplateEval',
+  'strictHandlebarEvaluation',
 ]);
 
 export const PARAMETER_LOCATION = Object.freeze({
@@ -98,6 +100,7 @@ export const DEFAULT_PROPS = Object.freeze({
       ignoreMissing: false,
       ignoreLookupName: undefined,
       ignoreExtract: undefined,
+      strictHandlebarEvaluation: false,
     },
   },
 });
@@ -283,6 +286,9 @@ export function getExportVersionAndResource({
       if (ep) {
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -335,6 +341,9 @@ export function getImportVersionAndResource({
         versionAndResource.version = version.version;
         versionAndResource.resource = resource.id;
         versionAndResource.sampleData = resource.sampleData;
+        if (ep.id) {
+          versionAndResource.operation = ep.id;
+        }
       }
     });
   });
@@ -575,6 +584,9 @@ export function convertFromExport({ exportDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
@@ -726,6 +738,7 @@ export function convertToExport({ assistantConfig, assistantData }) {
       ...cloneDeep(DEFAULT_PROPS.EXPORT.HTTP),
       successMediaType: operationDetails.successMediaType,
       errorMediaType: operationDetails.errorMediaType,
+      customeTemplateEval: operationDetails.customeTemplateEval,
     },
   };
   const exportDoc = {
@@ -1041,28 +1054,36 @@ export function convertToReactFormFields({
   const fieldDetailsMap = {};
   const actualFieldIdToGeneratedFieldIdMap = {};
   const paramValues = { ...value };
-  const anyParamValuesSet = isEmpty(paramValues);
+  let anyParamValuesSet = false;
+
+  paramMeta.fields && paramMeta.fields.forEach(field => {
+    if (field.type === 'repeat' && field.indexed) {
+      const fieldValue = [];
+
+      each(value, (v, k) => {
+        if (
+          k &&
+          k.startsWith(field.id) &&
+          k.split('.').length > 1 &&
+          !isNaN(parseInt(last(k.split('.')), 10))
+        ) {
+          fieldValue.push(v);
+        }
+      });
+      if (fieldValue.length > 0) {
+        paramValues[field.id] = fieldValue;
+      }
+      if (!field.defaultValue) {
+        // eslint-disable-next-line no-param-reassign
+        field.defaultValue = [];
+      }
+    }
+  });
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      // if (field.readOnly) {
-      //   return true;
-      // }
-
-      if (field.type === 'repeat' && field.indexed) {
-        const fieldValue = [];
-
-        each(value, (v, k) => {
-          if (
-            k &&
-            k.startsWith(field.id) &&
-            k.split('.').length > 1 &&
-            !isNaN(parseInt(last(k.split('.')), 10))
-          ) {
-            fieldValue.push(v);
-          }
-        });
-        paramValues[field.id] = fieldValue;
+      if (!field.readOnly && Object.prototype.hasOwnProperty.call(paramValues, field.id) && paramValues[field.id] !== field.defaultValue) {
+        anyParamValuesSet = true;
       }
 
       /** There are some issues with forms processor if field id/name contains special chars like . and [] */
@@ -1102,10 +1123,6 @@ export function convertToReactFormFields({
 
   paramMeta.fields &&
     paramMeta.fields.forEach(field => {
-      // if (field.readOnly) {
-      //   return true;
-      // }
-
       const fieldId = actualFieldIdToGeneratedFieldIdMap[field.id];
       const { inputType, type } = fieldDetailsMap[fieldId];
       const paramValue = getParamValue({
@@ -1119,10 +1136,10 @@ export function convertToReactFormFields({
       /**
        * Set default values only if there are no values for any params set.(IO-12293)
        */
-      let { defaultValue } = anyParamValuesSet ? field : {};
+      let { defaultValue } = !anyParamValuesSet ? field : {};
 
       if (
-        anyParamValuesSet &&
+        !anyParamValuesSet &&
         paramValue === undefined &&
         paramMeta.defaultValuesForDeltaExport &&
         Object.prototype.hasOwnProperty.call(
@@ -1409,6 +1426,9 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
       });
 
       ({ version, resource, sampleData } = versionAndResource);
+      if (versionAndResource.operation) {
+        ({ operation } = versionAndResource);
+      }
     }
   }
 
@@ -1924,6 +1944,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
       'requestMediaType',
       'batchSize',
       'ignoreEmptyNodes',
+      'strictHandlebarEvaluation',
     ].forEach(p => {
       if (operationDetails[p]) {
         if (p === 'batchSize') {

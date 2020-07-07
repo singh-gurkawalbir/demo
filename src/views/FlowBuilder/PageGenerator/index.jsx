@@ -81,6 +81,19 @@ const PageGenerator = ({
   const exportNeedsRouting = useSelector(state =>
     selectors.exportNeedsRouting(state, resourceId)
   );
+  const multipleAs2ExportsOfSameConnectionId = useSelector(state => {
+    if (pending) {
+      return false;
+    }
+    const allAS2ExportsMatchingConnId = selectors.resourceList(state, {
+      type: 'exports',
+      filter: {
+        adaptorType: 'AS2Export',
+        _connectionId: resource?._connectionId
+      },
+    });
+    return allAS2ExportsMatchingConnId.filtered > 1;
+  });
   const connectionHasAs2Routing = useSelector(state => {
     if (!resource || resourceType !== 'exports') return false;
 
@@ -298,7 +311,7 @@ const PageGenerator = ({
       if (exportNeedsRouting || connectionHasAs2Routing) {
         generatorActions.push({
           ...as2RoutingAction,
-          isUsed: connectionHasAs2Routing,
+          isUsed: connectionHasAs2Routing || multipleAs2ExportsOfSameConnectionId,
         });
       }
 
@@ -334,6 +347,7 @@ const PageGenerator = ({
     isDataLoader,
     pending,
     usedActions,
+    multipleAs2ExportsOfSameConnectionId
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');

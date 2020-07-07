@@ -208,5 +208,6 @@ export default {
     'hubspot',
     'azureactivedirectory',
     'outreach',
+    'slack'
   ],
 };

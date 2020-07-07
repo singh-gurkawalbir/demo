@@ -27,4 +27,12 @@ export default {
     label: 'Key ends with',
     editorTitle: 'Build Key ends with',
   },
+  's3.backupBucket': {
+    type: 'text',
+    label: 'Move file to',
+    helpKey: 'export.s3.backupBucket',
+    disabledWhen: [
+      { field: 'file.skipDelete', is: [true] },
+    ],
+  },
 };

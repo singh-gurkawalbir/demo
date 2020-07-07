@@ -6,6 +6,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import * as selectors from '../../../../../reducers';
 import RunFlowButton from '../../../../RunFlowButton';
 import RemoveMargin from '../RemoveMargin';
+import getRoutePath from '../../../../../utils/routePaths';
 
 export default function RunCell({
   flowId,
@@ -54,19 +55,19 @@ export default function RunCell({
     if (isIntegrationApp) {
       if (storeId) {
         history.push(
-          `/pg/integrationapps/${appName}/${integrationId}/child/${storeId}/dashboard`
+          getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${storeId}/dashboard`)
         );
       } else {
         history.push(
-          `/pg/integrationapps/${appName}/${integrationId}/dashboard`
+          getRoutePath(`/integrationapps/${appName}/${integrationId}/dashboard`)
         );
       }
     } else if (templateName) {
       history.push(
-        `/pg/templates/${templateName}/${integrationId || 'none'}/dashboard`
+        getRoutePath(`/templates/${templateName}/${integrationId || 'none'}/dashboard`)
       );
     } else {
-      history.push(`/pg/integrations/${integrationId || 'none'}/dashboard`);
+      history.push(getRoutePath(`/integrations/${integrationId || 'none'}/dashboard`));
     }
   }, [
     appName,

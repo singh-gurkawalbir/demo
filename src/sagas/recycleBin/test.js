@@ -6,6 +6,7 @@ import { restore, purge } from '.';
 import { recycleBinDependencies } from '../../constants/resource';
 import { getResourceCollection } from '../resources';
 import * as selectors from '../../reducers';
+import getRoutePath from '../../utils/routePaths';
 
 describe('restore saga', () => {
   const resourceType = 'exports';
@@ -35,7 +36,7 @@ describe('restore saga', () => {
     expect(saga.next().value).toEqual(
       select(selectors.redirectUrlToResourceListingPage, 'export', resourceId)
     );
-    const redirectTo = '/pg/exports';
+    const redirectTo = getRoutePath('/exports');
 
     expect(saga.next(redirectTo).value).toEqual(
       put(actions.recycleBin.restoreRedirectUrl(redirectTo))

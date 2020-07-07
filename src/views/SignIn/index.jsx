@@ -14,14 +14,17 @@ const useStyles = makeStyles(theme => ({
     },
   },
   gridImgWrapper: {
-    background: `right / contain no-repeat url("https://integrator-ui-resources.s3.amazonaws.com/pg/static/images/gridDots.svg"), ${theme.palette.primary.main} `,
+    background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
+    padding: theme.spacing(2),
+    backgroundOrigin: 'content-box, padding-box',
+
     [theme.breakpoints.down('sm')]: {
       display: 'none',
     },
   },
   logo: {
     width: 150,
-    marginBottom: theme.spacing(10),
+    marginBottom: theme.spacing(5),
     '& > svg': {
       fill: theme.palette.primary.dark,
     },
@@ -31,24 +34,28 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
   },
   signinWrapper: {
-    background: theme.palette.background.paper2,
+    background: theme.palette.background.paper,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingBottom: theme.spacing(2),
+    position: 'relative',
   },
   signinWrapperContent: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     width: 300,
-    marginTop: '23%',
+    marginTop: '50%',
+    height: '100%',
   },
   title: {
-    marginBottom: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+    fontSize: 30,
+    lineHeight: '40px',
   },
-  subTitle: {
-    marginBottom: 12,
+  signupLink: {
+    position: 'absolute',
+    bottom: theme.spacing(8),
   },
   signInForm: {
     [theme.breakpoints.down('xs')]: {
@@ -67,20 +74,20 @@ export default function Signin(props) {
           <div className={classes.logo}>
             <CeligoLogo />
           </div>
-          <Typography variant="h2" className={classes.title}>
+          <Typography variant="h3" className={classes.title}>
             Sign in
-          </Typography>
-          <Typography variant="body2" className={classes.subTitle}>
-            Don&apos;t have an account?
-            <Link href="true" className={classes.link}>
-              Sign up
-            </Link>
           </Typography>
           <SigninForm
             {...props}
             dialogOpen={false}
             className={classes.signInForm}
           />
+          <Typography variant="body2" className={classes.signupLink}>
+            Don&apos;t have an account?
+            <Link href="true" className={classes.link}>
+              Sign up
+            </Link>
+          </Typography>
         </div>
       </div>
       <div className={classes.gridImgWrapper} />

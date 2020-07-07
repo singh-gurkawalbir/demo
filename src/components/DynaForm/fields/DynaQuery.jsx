@@ -17,14 +17,12 @@ export default function DynaQuery(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -37,7 +35,8 @@ export default function DynaQuery(props) {
           id={`lookupQueryBuilder-${id}`}
           rule={value || defaultQueryValue}
           sampleData={sampleData}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
           showDefaultData={false}
         />

@@ -88,7 +88,9 @@ export default {
     if (retValues['/http/response/successPath'] === '') {
       retValues['/http/response/successPath'] = undefined;
     }
-
+    if (retValues['/http/response/successValues'] === '') {
+      retValues['/http/response/successValues'] = undefined;
+    }
     if (
       retValues['/http/response/failValues'] &&
       !retValues['/http/response/failValues'].length
@@ -98,6 +100,9 @@ export default {
 
     if (retValues['/http/response/failPath'] === '') {
       retValues['/http/response/failPath'] = undefined;
+    }
+    if (retValues['/http/response/failValues'] === '') {
+      retValues['/http/response/failValues'] = undefined;
     }
 
     if (
@@ -121,7 +126,9 @@ export default {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
-
+    if (retValues['/http/requestMediaType'] === ' ') {
+      retValues['/http/requestMediaType'] = undefined;
+    }
     delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
@@ -307,6 +314,7 @@ export default {
     'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.body': { fieldId: 'http.body' },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
+    'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
@@ -663,6 +671,7 @@ export default {
               'file.csv.keyColumns',
               'file.csvHelper',
               'http.errorMediaType',
+              'http.requestMediaType',
             ],
           },
           {

@@ -216,12 +216,9 @@ export default function IntegrationApp(props) {
   const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
   const handleTagChangeHandler = useCallback(
     tag => {
-      const patchSet = [{ op: 'replace', path: '/tag', value: tag }];
+      const patchSet = tag ? [{ op: 'replace', path: '/tag', value: tag }] : [{ op: 'remove', path: '/tag'}];
 
-      dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
-      dispatch(
-        actions.resource.commitStaged('integrations', integrationId, 'value')
-      );
+      dispatch(actions.resource.patch('integrations', integrationId, patchSet));
     },
     [dispatch, integrationId]
   );
@@ -240,7 +237,7 @@ export default function IntegrationApp(props) {
   );
   const handleAddNewStoreClick = useCallback(() => {
     history.push(
-      `/pg/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`
+      getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`)
     );
   }, [history, integrationAppName, integrationId]);
 
@@ -263,8 +260,8 @@ export default function IntegrationApp(props) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
-            'flows'}`}
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
+            'flows'}`)}
         />
       );
     }
