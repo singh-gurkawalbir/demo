@@ -3215,6 +3215,8 @@ export function isEditorV2Supported(state, resourceId, resourceType) {
   return [
     'HTTPImport',
     'HTTPExport',
+    'RESTImport',
+    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
@@ -4567,17 +4569,24 @@ export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
   }));
 }
 
-export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
-  if (!state) return null;
+export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+
   const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
-
+  let selectedGeneral = general;
   if (Array.isArray(general)) {
-    return general.find(s => s.title === 'General');
+    selectedGeneral = general.find(s => s.title === 'General');
   }
-  return general;
-}
 
+  return (selectedGeneral
+    ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
+      ...sections] : sections).map(sec => ({
+    ...sec,
+    titleId: getTitleIdFromSection(sec),
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+  }));
+}
 
 export function suiteScriptResourceStatus(
   state,

@@ -1,6 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
-import { getSampleDataStage, reset, compare } from '../../../../utils/flowData';
+import { getSampleDataStage, reset, resetStagesForFlowResource, compare } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
 
 export default function (state = {}, action) {
@@ -17,6 +17,7 @@ export default function (state = {}, action) {
     processor,
     processedData,
     stage,
+    stages,
     error,
   } = action;
 
@@ -185,9 +186,8 @@ export default function (state = {}, action) {
         break;
       }
 
-      case actionTypes.FLOW_DATA.RESET: {
+      case actionTypes.FLOW_DATA.RESET_STAGES: {
         const flow = draft[flowId];
-
         if (!flow) break;
         // Fetch first occurence of resourceId usage in flow
         const pageGeneratorIndexToReset = flow.pageGenerators.findIndex(
@@ -196,7 +196,15 @@ export default function (state = {}, action) {
 
         // given a resourceId -- resets itself and  all linked pps or pgs after that
         if (pageGeneratorIndexToReset > -1) {
-          reset(flow, pageGeneratorIndexToReset, true);
+          if (!stages.length) {
+            reset(flow, pageGeneratorIndexToReset, true);
+          } else {
+            // at this index, reset resource for all the passed stages
+            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, true);
+            // then pass index+1 to reset everything
+            reset(flow, pageGeneratorIndexToReset + 1, true);
+          }
+
           break;
         }
 
@@ -205,7 +213,14 @@ export default function (state = {}, action) {
         );
 
         if (pageProcessorIndexToReset > -1) {
-          reset(flow, pageProcessorIndexToReset);
+          if (!stages.length) {
+            reset(flow, pageProcessorIndexToReset);
+          } else {
+            // at this index, reset resource for all the passed stages
+            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages);
+            // then pass index+1 to reset everything for other resources
+            reset(flow, pageProcessorIndexToReset + 1);
+          }
         }
 
         break;

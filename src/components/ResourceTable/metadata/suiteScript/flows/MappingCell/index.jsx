@@ -4,6 +4,7 @@ import MapDataIcon from '../../../../../icons/MapDataIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
 import { flowSupportsMapping } from '../../../../../../utils/suiteScript';
 import SuiteScriptMappingDrawer from '../../../../../../views/SuiteScript/Mappings/Drawer';
+import RemoveMargin from '../RemoveMargin';
 
 export default function MappingCell({flow}) {
   const history = useHistory();
@@ -19,11 +20,13 @@ export default function MappingCell({flow}) {
 
   return (
     <>
-      <IconButtonWithTooltip
-        tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
-        onClick={handleClick}>
-        <MapDataIcon />
-      </IconButtonWithTooltip>
+      <RemoveMargin>
+        <IconButtonWithTooltip
+          tooltipProps={{title: 'Edit mappings', placement: 'bottom'}}
+          onClick={handleClick}>
+          <MapDataIcon />
+        </IconButtonWithTooltip>
+      </RemoveMargin>
       <SuiteScriptMappingDrawer
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}

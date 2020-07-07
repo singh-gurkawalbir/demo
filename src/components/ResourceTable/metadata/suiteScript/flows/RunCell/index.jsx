@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import * as selectors from '../../../../../../reducers';
 import RunFlowButton from '../../../../../SuiteScript/RunFlowButton';
 import getRoutePath from '../../../../../../utils/routePaths';
+import RemoveMargin from '../RemoveMargin';
 
 export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
   const history = useHistory();
@@ -26,6 +27,8 @@ export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
   }, [onRunStart, integrationAppName, history, ssLinkedConnectionId, flow._integrationId]);
 
   return (
-    <RunFlowButton ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} onRunStart={handleOnRunStart} />
+    <RemoveMargin>
+      <RunFlowButton ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} onRunStart={handleOnRunStart} />
+    </RemoveMargin>
   );
 }

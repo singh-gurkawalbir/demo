@@ -1,7 +1,7 @@
 import { select, call } from 'redux-saga/effects';
 import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
 import { saveSampleDataOnResource } from './utils';
-import { isJsonString } from '../../../utils/string';
+import { safeParse } from '../../../utils/string';
 
 function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   // Incase of FTP, raw data to be saved in the data in Raw Stage ( file content )
@@ -42,7 +42,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     const fileDefinitionData = rawData && rawData.body;
 
     return type === 'imports'
-      ? isJsonString(fileDefinitionData) && JSON.parse(fileDefinitionData)
+      ? safeParse(fileDefinitionData)
       : fileDefinitionData;
   }
 

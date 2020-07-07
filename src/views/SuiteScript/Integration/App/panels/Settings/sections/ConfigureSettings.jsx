@@ -85,32 +85,23 @@ export const SuiteScriptForm = (props) => {
   );
 };
 
-export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id }) {
+export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id, integrationAppName}) {
   const classes = useStyles();
   const section = useSelector(state => {
-    const flowSections = selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId);
+    const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
 
-    return flowSections.find(s => s.titleId === sectionId);
+    return sections.find(s => s.titleId === sectionId);
   }, shallowEqual);
-  const flowSettingsMeta = useSelector(
-    state =>
-      selectors.suiteScriptIASectionMetadata(
-        state,
-        integrationId,
-        ssLinkedConnectionId,
-        sectionId,
-      ),
-    shallowEqual
-  );
+
   const translatedMeta = useMemo(
     () => integrationSettingsToDynaFormMetadata(
-      flowSettingsMeta,
+      section,
       integrationId,
       true,
       {isSuiteScriptIntegrator: true},
       ssLinkedConnectionId
     ),
-    [flowSettingsMeta, integrationId, ssLinkedConnectionId]
+    [integrationId, section, ssLinkedConnectionId]
   );
 
   const formState = useSelector(
@@ -129,6 +120,7 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
       integrationId={integrationId}
       resources="flows">
       <SuiteScriptForm
+        isSVBNSGeneralSection={section?.title === 'General' && integrationAppName === 'svbns'}
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         sectionId={id}

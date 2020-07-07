@@ -108,6 +108,7 @@ import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
+import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 
 export default {
   matchingcriteria: DynaMatchingCriteriaWithModal,
@@ -229,4 +230,5 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
 };
