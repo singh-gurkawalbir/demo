@@ -76,14 +76,14 @@ export function* parseFileData({ sampleData, resource }) {
     ...options,
   };
 
-  console.log('parseFileData', processorData);
+  // console.log('parseFileData', processorData);
 
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
-    console.log(processedData);
+    // console.log(processedData);
     return processedData;
   } catch (e) {
     // Handle errors
