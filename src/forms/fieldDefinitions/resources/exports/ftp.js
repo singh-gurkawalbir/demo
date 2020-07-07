@@ -16,10 +16,12 @@ export default {
     editorTitle: 'Build file name ends with',
   },
   'ftp.backupDirectoryPath': {
-    type: 'textforsetfields',
-    setFieldIds: ['file.skipDelete'],
+    type: 'text',
     label: 'Move file to',
     helpKey: 'export.ftp.backupDirectoryPath',
+    disabledWhen: [
+      { field: 'file.skipDelete', is: [true] },
+    ],
   },
   // #region transform
   'transform.expression.rules': {
