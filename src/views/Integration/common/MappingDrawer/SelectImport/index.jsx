@@ -74,7 +74,11 @@ export default function SelectImport({ flowId }) {
   if (importId) {
     return <Redirect push={false} to={`${match.url}/${importId}`} />;
   }
-
+  imports.sort((i1, i2) => {
+    const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
+    const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
+    return i1index - i2index;
+  });
   const flowName = flow.name || flow._id;
 
   if (imports.length === 0) {
