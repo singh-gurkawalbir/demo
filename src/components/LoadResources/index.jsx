@@ -1,8 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
+import Loader from '../Loader';
+import Spinner from '../Spinner';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
@@ -37,5 +39,5 @@ export default function LoadResources({ children, resources, required }) {
     return children || null;
   }
 
-  return null;
+  return <Loader open >Loading...<Spinner /></Loader>;
 }
