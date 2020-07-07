@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   gridImgWrapper: {
-    background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/pg/static/images/public-pages.svg'), ${theme.palette.background.default}`,
+    background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
     padding: theme.spacing(2),
     backgroundOrigin: 'content-box, padding-box',
 
