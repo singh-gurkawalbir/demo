@@ -133,10 +133,6 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   return (
     <div className={classes.root}>
       <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
-      {/* <SuiteScriptMappingDrawer
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-        /> */}
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
       <LoadSuiteScriptResources
         required
