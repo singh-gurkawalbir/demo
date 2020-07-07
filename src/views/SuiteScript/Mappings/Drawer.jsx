@@ -4,9 +4,9 @@ import RightDrawer from '../../../components/drawer/Right';
 import SuiteScriptMapping from '.';
 
 export default function SuiteScriptMappingDrawer(props) {
+  const {ssLinkedConnectionId, integrationId} = props;
   const match = useRouteMatch();
   const flowId = props.flowId || match.params.flowId;
-  const {ssLinkedConnectionId, integrationId} = props;
   const history = useHistory();
   const handleClose = useCallback(() => {
     history.goBack();
