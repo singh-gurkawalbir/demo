@@ -419,6 +419,7 @@ export default function Panel(props) {
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            isFlowBuilderView={!!flowId}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             submitButtonColor={submitButtonColor}

@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ResourceFormWithStatusPanel({ className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
+export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
   const { resourceType, resourceId } = props;
   const [notificationPanelHeight, setNotificationPanelHeight] = useState(0);
   const classes = useStyles({
@@ -47,6 +47,7 @@ export default function ResourceFormWithStatusPanel({ className, showNotificatio
         {['exports', 'imports', 'connections'].includes(resourceType) && (
           <ConnectionStatusPanel
             resourceType={resourceType}
+            isFlowBuilderView={isFlowBuilderView}
             resourceId={resourceId}
           />
         )}
