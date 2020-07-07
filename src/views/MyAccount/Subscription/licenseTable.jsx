@@ -96,9 +96,7 @@ export default function LicenseTable() {
       },
     }
   };
-  const {resource} = data[env][type];
-  const {totalResources} = data[env][type];
-  const {totalUsedResources} = data[env][type];
+  const {resource, totalResources, totalUsedResources} = data[env][type];
 
   let metadata;
   if (type === 'endpoints') {
