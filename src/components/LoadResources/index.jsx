@@ -39,5 +39,18 @@ export default function LoadResources({ children, resources, required }) {
     return children || null;
   }
 
-  return <Loader open >Loading...<Spinner /></Loader>;
+  return (
+    <Loader open >
+      {resourceStatus.map(r => (
+        <div key={r.resourceType}>
+          {r.isLoading ?
+            (
+              <>
+                <Spinner size={16} />{' '} Loading {r.resourceType}
+              </>
+            ) :
+            (` ✔ Loaded ${r.resourceType} `)}
+        </div>)
+      )}
+    </Loader>);
 }
