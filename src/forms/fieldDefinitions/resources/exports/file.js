@@ -81,7 +81,7 @@ export default {
   },
   'file.skipDelete': {
     type: 'checkbox',
-    label: 'Leave file on server',
+    label: 'Leave file in the current directory path',
     defaultValue: r => (r && r.file && r.file.skipDelete) || false,
   },
   'file.compressionFormat': {
