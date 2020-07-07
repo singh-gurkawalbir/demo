@@ -99,22 +99,20 @@ export default function DynaSettings(props) {
 
   // We are not in edit mode, devs and non-devs alike should see the settings form if it exists.
   return (
-    <div>
-      <ExpansionPanel expanded={!isCollapsed}>
-        <ExpansionPanelSummary
-          data-test={label}
-          className={classes.summaryContainer}
-          onClick={handleExpandClick}
-          expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.summaryLabel}>{label}</Typography>
-          {!isCollapsed && (
-            <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
-          )}
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails >
-          {renderSettings()}
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    </div>
+    <ExpansionPanel expanded={!isCollapsed}>
+      <ExpansionPanelSummary
+        data-test={label}
+        className={classes.summaryContainer}
+        onClick={handleExpandClick}
+        expandIcon={<ExpandMoreIcon />}>
+        <Typography className={classes.summaryLabel}>{label}</Typography>
+        {!isCollapsed && (
+        <FormBuilderButton resourceType={resourceType} resourceId={resourceId} integrationId={integrationId} />
+        )}
+      </ExpansionPanelSummary>
+      <ExpansionPanelDetails >
+        {renderSettings()}
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
   );
 }
