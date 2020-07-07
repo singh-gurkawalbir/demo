@@ -7,6 +7,7 @@ import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import getRoutePath from '../../../../../../utils/routePaths';
+import RemoveMargin from '../RemoveMargin';
 
 export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderView}) {
   const history = useHistory();
@@ -41,11 +42,15 @@ export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderVie
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
-    <IconButtonWithTooltip
-      tooltipProps={{title: 'Delete', placement: 'bottom'}}
-      onClick={handleClick}
-      disabled={!isManageLevelUser}>
-      <TrashIcon />
-    </IconButtonWithTooltip>
+    <>
+      <RemoveMargin>
+        <IconButtonWithTooltip
+          tooltipProps={{title: 'Delete', placement: 'bottom'}}
+          onClick={handleClick}
+          disabled={!isManageLevelUser}>
+          <TrashIcon />
+        </IconButtonWithTooltip>
+      </RemoveMargin>
+    </>
   );
 }

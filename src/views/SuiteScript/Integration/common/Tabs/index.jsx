@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(3),
-    overflow: 'scroll',
+    overflow: 'auto',
   },
   tab: {
     minWidth: theme.spacing(13.75),
