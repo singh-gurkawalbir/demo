@@ -189,6 +189,11 @@ export function endpointLicense(state, accountId) {
   endpointLicense.totalNumberofSandboxAgents = endpointLicense?.endpoint?.sandbox?.numAgents + endpointLicense?.endpoint?.sandbox?.numAddOnAgents;
   endpointLicense.hasSandbox = endpointLicense.sandbox || endpointLicense.totalNumberofSandboxFlows > 0;
 
+  endpointLicense.totalNumberofEndpoints = endpointLicense.totalNumberofProductionEndpoints + endpointLicense.totalNumberofSandboxEndpoints;
+  endpointLicense.totalNumberofFlows = endpointLicense.totalNumberofProductionFlows + endpointLicense.totalNumberofSandboxFlows;
+  endpointLicense.totalNumberofTradingPartners = endpointLicense.totalNumberofProductionTradingPartners + endpointLicense.totalNumberofSandboxTradingPartners;
+  endpointLicense.totalNumberofAgents = endpointLicense.totalNumberofProductionAgents + endpointLicense.totalNumberofSandboxAgents;
+
   return endpointLicense;
 }
 // #region INTEGRATOR LICENSE

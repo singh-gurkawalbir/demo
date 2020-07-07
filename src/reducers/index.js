@@ -2425,7 +2425,7 @@ export function licenseWithMetadata(license) {
   licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
 
   if (licenseActionDetails.inTrial) {
-    licenseActionDetails.subscriptionName = '30 day Free Trial';
+    licenseActionDetails.subscriptionName = 'Free trial';
   }
 
   licenseActionDetails.expirationDate = licenseActionDetails.expires;
@@ -2535,6 +2535,8 @@ export function licenseWithMetadata(license) {
     toReturn.actions = ['request-upgrade'];
   } else if (licenseActionDetails.tier !== 'enterprise') {
     toReturn.actions = ['request-upgrade'];
+  } else {
+    toReturn.actions = ['add-more-flows'];
   }
 
   licenseActionDetails.subscriptionActions = toReturn;

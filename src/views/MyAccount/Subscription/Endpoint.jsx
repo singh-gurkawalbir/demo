@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
@@ -11,6 +12,8 @@ import NotificationToaster from '../../../components/NotificationToaster';
 import Progressbar from './Progressbar';
 import LicenceTable from './licenseTable';
 import RightDrawer from '../../../components/drawer/Right';
+import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
+import useConfirmDialog from '../../../components/ConfirmDialog';
 
 
 const useStyles = makeStyles(theme => ({
@@ -68,6 +71,7 @@ const useStyles = makeStyles(theme => ({
   },
   bold: {
     fontWeight: 'bold',
+    paddingRight: theme.spacing(0.5),
   },
   normal: {
     fontWeight: 'normal',
@@ -108,13 +112,104 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  subscriptionBox: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  subscriptionHeading: {
+    fontSize: 20,
+    lineHeight: '20px',
+    paddingBottom: 14,
+  },
+  subscriptionSubHeading: {
+    fontSize: 15,
+    margin: [[12, 0]],
+  },
+  subscriptionUpgradeLink: {
+    color: theme.palette.primary.main,
+    fontSize: 15,
+    lineHeight: '17px',
+    padding: 6,
+    fontWeight: 'bold',
+  },
+  subscriptionNotificationToaster: {
+    marginBottom: 12,
+  },
+  subscriptionMessage: {
+    lineHeight: '20px',
+    fontSize: 15,
+  },
+  subscriptionBoxInner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  subscriptionBoxInnerLeft: {
+    maxWidth: '88%',
+    wordBreak: 'break-word',
+  },
+  subscriptionUpgradeBtn: {
+    minWidth: '140px',
+    minHeight: theme.spacing(4),
+    alignSelf: 'flex-start',
+  },
+  subscriptionFeaturesItems: {
+    maxWidth: '80%',
+    flexWrap: 'wrap',
+    '& li': {
+      display: 'inline-flex',
+      border: 'none',
+      marginRight: 90,
+      marginBottom: 12,
+    },
+  },
+  enableIcon: {
+    color: theme.palette.success.light,
+    marginRight: theme.spacing(0.5),
+    fontSize: 20,
+  },
+  subscriptionFeatureEnabled: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  featureText: {
+    fontSize: 15,
+    lineHeight: '22px',
+  },
+  featureTextDisabled: {
+    color: theme.palette.secondary.contrastText,
+  },
+  subscriptionFeatures: {
+    paddingTop: theme.spacing(2),
+  },
+  productionUsageWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(2),
+  },
+  productionUsageInfo: {
+    width: 200,
+    wordBreak: 'break-word',
+  },
+  productionProgressBar: {
+    minWidth: 560,
+    marginRight: theme.spacing(2),
+  },
+  productionUsageListLink: {
+    color: theme.palette.primary.light,
+    paddingLeft: theme.spacing(1),
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+  }
 }));
 
-export default function Subscription() {
+export default function Endpoint() {
   const dispatch = useDispatch();
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
+  const { confirmDialog } = useConfirmDialog();
   const capitalize = s => {
     if (typeof s !== 'string') return '';
 
@@ -148,30 +243,39 @@ export default function Subscription() {
 
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch, setShowStartFreeDialog]);
-  const onRequestSubscriptionClick = useCallback(() => {
+  const onTrialUpgradeClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
     setUpgradeRequested(true);
-
+    confirmDialog({
+      title: 'Upgrade and keep all my flows running',
+      message: 'Great idea. Who wants to stop the magic?.We`ll be in touch shortly to get you upgraded!',
+      buttons: [
+        {
+          label: 'Close',
+        },
+      ],
+    });
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
-  }, [dispatch]);
+  }, [dispatch, confirmDialog]);
+
   const onRequestUpgradeClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
     );
     setUpgradeRequested(true);
+    confirmDialog({
+      title: 'I need more flows!',
+      message: 'You are an integration master!. We`ll be in touch shortly to get you upgraded!.',
+      buttons: [
+        {
+          label: 'Close',
+        },
+      ],
+    });
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
-  }, [dispatch]);
-  const onRequestTrialExtensionClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setUpgradeRequested(true);
-
-    return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
-  }, [dispatch]);
-
+  }, [dispatch, confirmDialog]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
   const numberofUsedEndpoints = licenseEntitlementUsage?.production?.endpointUsage?.numConsumed;
   const numberofUsedFlows = licenseEntitlementUsage?.production?.flowUsage?.numEnabled;
@@ -256,204 +360,221 @@ export default function Subscription() {
         onClose={handleClose}>
         <LicenceTable />
       </RightDrawer>
-      { !showExpireMessage && needMoreNotification &&
-      <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
-        <Typography variant="info">Need more flows. Do you use FTP or AS2 connections? Need to support EDI? We`ve got you covered!.
-          <Button
-            variant="text"
-            color="secondary"
-            onClick={onRequestSubscriptionClick}> Upgrade today!
-          </Button>
-        </Typography>
-      </NotificationToaster>}
-      {showExpireMessage &&
-      <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
-        <Typography variant="info">Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet, upgrade now
-          <Button
-            variant="text"
-            color="secondary"
-            onClick={onRequestSubscriptionClick}> Upgrade now
-          </Button>
-          and keep them all!
-        </Typography>
-      </NotificationToaster>}
-      <div className={classes.root}>
-        {licenseActionDetails && (
-        <>
-          <Typography variant="h4" className={classes.heading}>
-            Subscription
+      {!showExpireMessage && needMoreNotification && (
+      <div className={classes.subscriptionNotificationToaster}>
+        <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>
+          <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
+            Need more flows? Do you use FTP or AS2 connections? Need to support EDI? We’ve got you covered!
+            <Button
+              data-test="upgradeSubscription"
+              variant="text"
+              color="primary"
+              onClick={onRequestUpgradeClick}
+              className={classes.subscriptionUpgradeLink}
+              >
+              Upgrade today!
+            </Button>
           </Typography>
-          <div className={classes.block}>
-            <div className={classes.wrapper}>
-              <Typography variant="h3">
-                {licenseActionDetails.subscriptionName} plan
+        </NotificationToaster>
+      </div>)}
+      {showExpireMessage &&
+      <div className={classes.subscriptionNotificationToaster}>
+        <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
+          <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
+            Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet, upgrade now
+            <Button
+              data-test="upgradeSubscription"
+              variant="text"
+              color="primary"
+              onClick={onTrialUpgradeClick}
+              className={classes.subscriptionUpgradeLink}
+              > Upgrade now
+            </Button>
+            and keep them all!
+          </Typography>
+        </NotificationToaster>
+      </div>}
+      <Typography variant="h4" className={classes.heading}>
+        Subscription
+      </Typography>
+      <div className={classes.subscriptionBox}>
+        <div className={classes.subscriptionBoxInner}>
+          <div className={classes.subscriptionBoxInnerLeft}>
+            <Typography className={classes.subscriptionHeading}>
+              {licenseActionDetails.subscriptionName} plan
+            </Typography>
+            <ul className={classes.itemsList}>
+              <li>
+                <span className={classes.bold}>Status:</span>
+                {capitalize(licenseActionDetails.status)}
+              </li>
+              <li>
+                <span className={classes.bold}> Expires on:</span>
+                {licenseActionDetails.expirationDate || 'N/A'} <span>{} </span>
+              </li>
+              <li>
+                <span className={classes.bold}> Customer success plan:</span>
+                {capitalize(licenseActionDetails.supportTier || 'N/A')}
+              </li>
+            </ul>
+            <div className={classes.subscriptionFeatures}>
+              <Typography variant="h6" className={classes.subscriptionSubHeading}>
+                Features Include:
               </Typography>
-              <ul className={classes.itemsList}>
-                <li className={classes.bold}>
-                  Status: {capitalize(licenseActionDetails.status)}
-                </li>
-                <li>
-                  <span className={classes.bold}>Expires:&nbsp;</span>
-
-                  {licenseActionDetails.expirationDate || 'N/A'}
-                </li>
-                <li>
-                  <span className={classes.bold}>
-                    Customer success plan:&nbsp;
-                  </span>
-                  {capitalize(licenseActionDetails.supportTier || 'N/A')}
-                </li>
-              </ul>
-              {licenseActionDetails &&
+              <div className={classes.subscriptionFeaturesList} >
+                <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                  <li className={classes.subscriptionFeatureEnabled}>
+                    {licenseActionDetails?.totalNumberofEndpoints && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofEndpoints)})}> {licenseActionDetails?.totalNumberofEndpoints} Endpoint apps</Typography>
+                  </li>
+                  <li>
+                    {licenseActionDetails?.totalNumberofTradingPartners && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofTradingPartners)})}>{licenseActionDetails?.totalNumberofTradingPartners} Trading partners</Typography>
+                  </li>
+                  <li>
+                    {licenseActionDetails?.autopilot && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.autopilot)})}>Autopilot</Typography>
+                  </li>
+                  <li>
+                    {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
+                  </li>
+                  <li className={classes.subscriptionFeatureEnabled}>
+                    <CheckMarkIcon className={classes.enableIcon} />
+                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofFlows)})}>{licenseActionDetails?.totalNumberofFlows} Integration flows</Typography>
+                  </li>
+                  <li>
+                    {licenseActionDetails?.totalNumberofAgents && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofAgents)})}>{licenseActionDetails?.totalNumberofAgents} On-premise agents</Typography>
+                  </li>
+                  <li>
+                    {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.endpoint?.apiManagement)})}>API Management</Typography>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {licenseActionDetails &&
                 licenseActionDetails.subscriptionActions &&
                 licenseActionDetails.subscriptionActions.actions &&
                 licenseActionDetails.subscriptionActions.actions.length > 0 && (
-                  <div className={classes.block}>
-                    <Typography variant="h4" className={classes.subHeading}>
-                      Want to upgrade ?
-                    </Typography>
+                  <div>
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'start-free-trial'
                       ) > -1 && (
                         <Button
                           onClick={onStartFreeTrialClick}
+                          className={classes.subscriptionUpgradeBtn}
                           color="primary"
                           variant="outlined">
                           Go unlimited for 30days!
                         </Button>
                       )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
+                      {(licenseActionDetails.subscriptionActions.actions.indexOf(
+                        'request-upgrade'
+                      ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
                         'request-subscription'
-                      ) > -1 && (
+                      ) > -1) && (
                         <Button
-                          onClick={onRequestSubscriptionClick}
+                          onClick={onRequestUpgradeClick}
                           disabled={upgradeRequested}
+                          className={classes.subscriptionUpgradeBtn}
                           color="primary"
                           variant="outlined">
-                          Request subscription
+                          Upgrade
                         </Button>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-upgrade'
+                        'add-more-flows'
                       ) > -1 && (
                         <Button
                           onClick={onRequestUpgradeClick}
                           disabled={upgradeRequested}
+                          className={classes.subscriptionUpgradeBtn}
                           color="primary"
                           variant="outlined">
-                          Request upgrade
+                          Add more flows
                         </Button>
                       )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && <span>-or-</span>}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-trial-extension'
-                      ) > -1 && (
-                        <Button
-                          onClick={onRequestTrialExtensionClick}
-                          disabled={upgradeRequested}
-                          color="primary"
-                          variant="outlined">
-                          Request trial extension
-                        </Button>
-                      )}
-                  </div>
-              )}
-              <div>{licenseActionDetails?.totalNumberofProductionEndpoints + licenseActionDetails?.totalNumberofSandboxEndpoints} endpoint apps</div>
-              <div>{licenseActionDetails?.totalNumberofProductionTradingPartners + licenseActionDetails?.totalNumberofSandboxTradingPartners} trading partners</div>
-              <div>API management {licenseActionDetails?.endpoint?.apiManagement ? 'Enabled' : 'Disabled'}</div>
-              <div>Autopilot  {licenseActionDetails?.autopilot ? 'Enabled' : 'Disabled'} </div>
-              <div>{licenseActionDetails?.totalNumberofProductionFlows + licenseActionDetails?.totalNumberofSandboxFlows} integration flows</div>
-              <div>{licenseActionDetails?.totalNumberofProductionAgents + licenseActionDetails?.totalNumberofSandboxAgents} on-premise agents</div>
-              <div>Sandbox {licenseActionDetails?.sandbox ? 'Enabled' : 'Disabled'}</div>
-            </div>
-          </div>
-          <div className={classes.block}>
-            <div>
-              <div className={classes.wrapper}>
-                <Typography variant="h3">
-                  Production usage
-                </Typography>
-
-                <div>
-                  <div className={classes.linearProgressWrapper}>
-                    <Progressbar
-                      usedCount={numberofUsedEndpoints}
-                      totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
-                      env="production"
-                      type="endpoints"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedFlows}
-                      totalCount={licenseActionDetails?.totalNumberofProductionFlows}
-                      env="production"
-                      type="flows"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedTradingPartners}
-                      totalCount={licenseActionDetails?.totalNumberofProductionTradingPartners}
-                      env="production"
-                      type="tradingpartners"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedAgents}
-                      totalCount={licenseActionDetails?.totalNumberofProductionAgents}
-                      env="production"
-                      type="agents"
-                      setTitle={setTitle}
-                    />
-                  </div>
-                </div>
-              </div>
-              {licenseActionDetails?.sandbox && (
-              <div className={classes.wrapper}>
-                <Typography variant="h3">
-                  Sandbox usage
-                </Typography>
-
-                <div>
-                  <div className={classes.linearProgressWrapper}>
-                    <Progressbar
-                      usedCount={numberofUsedSandboxEndpoints}
-                      totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
-                      env="sandbox"
-                      type="endpoints"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedSandboxFlows}
-                      totalCount={licenseActionDetails.totalNumberofSandboxFlows}
-                      env="sandbox"
-                      type="flows"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedSandboxTradingPartners}
-                      totalCount={licenseActionDetails.totalNumberofSandboxTradingPartners}
-                      env="sandbox"
-                      type="tradingpartners"
-                      setTitle={setTitle}
-                    />
-                    <Progressbar
-                      usedCount={numberofUsedSandboxAgents}
-                      totalCount={licenseActionDetails.totalNumberofSandboxAgents}
-                      env="sandbox"
-                      type="agents"
-                      setTitle={setTitle}
-                    />
-                  </div>
-                </div>
-              </div>
-              )}
-            </div>
-          </div>
-        </>
-        )}
+                  </div>)}
+        </div>
       </div>
+      <div className={classes.subscriptionBox}>
+        <div className={classes.subscriptionBoxInner}>
+          <div className={classes.subscriptionBoxInnerLeft}>
+            <Typography className={classes.subscriptionHeading}>
+              Production usage
+            </Typography>
+            <Progressbar
+              usedCount={numberofUsedEndpoints}
+              totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
+              env="production"
+              type="endpoints"
+              setTitle={setTitle}
+            />
+            <Progressbar
+              usedCount={numberofUsedFlows}
+              totalCount={licenseActionDetails?.totalNumberofProductionFlows}
+              env="production"
+              type="flows"
+              setTitle={setTitle}
+                    />
+            <Progressbar
+              usedCount={numberofUsedTradingPartners}
+              totalCount={licenseActionDetails?.totalNumberofProductionTradingPartners}
+              env="production"
+              type="tradingpartners"
+              setTitle={setTitle}
+                    />
+            <Progressbar
+              usedCount={numberofUsedAgents}
+              totalCount={licenseActionDetails?.totalNumberofProductionAgents}
+              env="production"
+              type="agents"
+              setTitle={setTitle}
+                    />
+          </div>
+        </div>
+      </div>
+      {licenseActionDetails?.sandbox && (
+      <div className={classes.subscriptionBox}>
+        <div className={classes.subscriptionBoxInner}>
+          <div className={classes.subscriptionBoxInnerLeft}>
+            <Typography className={classes.subscriptionHeading}>
+              Sandbox usage
+            </Typography>
+            <Progressbar
+              usedCount={numberofUsedSandboxEndpoints}
+              totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
+              env="sandbox"
+              type="endpoints"
+              setTitle={setTitle}
+                    />
+            <Progressbar
+              usedCount={numberofUsedSandboxFlows}
+              totalCount={licenseActionDetails.totalNumberofSandboxFlows}
+              env="sandbox"
+              type="flows"
+              setTitle={setTitle}
+                    />
+            <Progressbar
+              usedCount={numberofUsedSandboxTradingPartners}
+              totalCount={licenseActionDetails.totalNumberofSandboxTradingPartners}
+              env="sandbox"
+              type="tradingpartners"
+              setTitle={setTitle}
+                    />
+            <Progressbar
+              usedCount={numberofUsedSandboxAgents}
+              totalCount={licenseActionDetails.totalNumberofSandboxAgents}
+              env="sandbox"
+              type="agents"
+              setTitle={setTitle}
+                    />
+          </div>
+        </div>
+      </div>)}
     </>
   );
 }

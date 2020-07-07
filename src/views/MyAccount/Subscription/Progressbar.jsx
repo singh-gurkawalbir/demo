@@ -1,16 +1,38 @@
 import React, {useCallback} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { LinearProgress} from '@material-ui/core';
+import { LinearProgress, Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import clsx from 'clsx';
+
 
 const useStyles = makeStyles(theme => ({
+  featureText: {
+    fontSize: 15,
+    lineHeight: '22px',
+  },
+  featureTextDisabled: {
+    color: theme.palette.secondary.contrastText,
+  },
   progressBar: {
     height: 10,
     borderRadius: 10,
     maxWidth: '75%',
     backgroundColor: theme.palette.secondary.lightest,
-  }
+  },
+  productionUsageWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(2),
+  },
+  productionUsageInfo: {
+    width: 200,
+    wordBreak: 'break-word',
+  },
+  productionProgressBar: {
+    minWidth: 560,
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default function ProgressBar({ usedCount, totalCount, env, type, setTitle}) {
@@ -29,21 +51,31 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
       setTitle(type);
     }, [history, match, env, type, setTitle]);
 
+
   return (
-    <div>
-      <div>{titleMap[type]} {usedCount} of {totalCount}</div>
-      <LinearProgress
-        color="primary"
-        value={(usedCount / totalCount) * 100}
-        variant="determinate"
-        thickness={10}
-        className={classes.progressBar}
-      />
+    <div className={classes.productionUsageWrapper}>
+      <div className={classes.productionUsageInfo}>
+        <Typography variant="h4" component="span" className={classes.featureText}>
+          {titleMap[type]}:&nbsp;
+        </Typography>
+        <Typography component="span"><span>{usedCount} </span>of <span>{totalCount}</span></Typography>
+      </div>
+      <div className={classes.productionUsageLinearProgress}>
+        <LinearProgress
+          color="primary"
+          value={(usedCount / totalCount) * 100}
+          variant="determinate"
+          thickness={10}
+          className={clsx(classes.progressBar, classes.productionProgressBar)}
+          />
+      </div>
       <Button
+        data-test="fixConnection"
+        variant="text"
+        color="primary"
         onClick={onButtonClick}
-        variant="outlined"
-        color="primary">
-        List!
+        className={classes.productionUsageListLink}>
+        List
       </Button>
     </div>);
 }

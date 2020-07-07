@@ -81,17 +81,17 @@ export default function LicenseTable() {
       },
       flows: {
         resource: licenseEntitlementUsage?.sandbox?.flowUsage?.flows,
-        totalResources: licenseActionDetails.totalNumberofSandboxFlows,
+        totalResources: licenseActionDetails?.totalNumberofSandboxFlows,
         totalUsedResources: licenseEntitlementUsage?.sandbox?.flowUsage?.numEnabled,
       },
       tradingpartners: {
         resource: licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.tradingPartners,
-        totalResources: licenseActionDetails.totalNumberofSandboxTradingPartners,
+        totalResources: licenseActionDetails?.totalNumberofSandboxTradingPartners,
         totalUsedResources: licenseEntitlementUsage?.sandbox?.tradingPartnerUsage?.numConsumed,
       },
       agents: {
         resource: licenseEntitlementUsage?.sandbox?.agentUsage?.agents,
-        totalResources: licenseActionDetails.totalNumberofSandboxAgents,
+        totalResources: licenseActionDetails?.totalNumberofSandboxAgents,
         totalUsedResources: licenseEntitlementUsage?.sandbox?.agentUsage?.numActive,
       },
     }
