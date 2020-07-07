@@ -18,10 +18,7 @@ export default function getForm(options) {
         name: 'V0_json',
         type: 'radiogroup',
         label: 'Parse strategy',
-        helpText: `Automatic parsing means the XML data is converted to JSON without any user configurations.
-        This typically generates a more complex and difficult to read JSON.
-        If you would like to have more control over what the JSON output looks like,
-        use the custom option.`,
+        helpKey: 'parser.xml.V0_json',
         defaultValue: options?.V0_json ? 'true' : 'false',
         options: [
           {
@@ -37,7 +34,7 @@ export default function getForm(options) {
         name: 'trimSpaces',
         type: 'checkbox',
         defaultValue: !!options?.trimSpaces,
-        helpText: 'If checked, values will be stripped of leading and trailing whitespace.',
+        helpKey: 'parser.xml.trimSpaces',
         label: 'Trim leading and trailing spaces',
         visibleWhen,
       },
@@ -73,7 +70,7 @@ export default function getForm(options) {
         type: 'text',
         defaultValue: options?.listNodes || '',
         multiline: true,
-        helpText: 'It is not always possible to infer which XML nodes are single values or a list. To force an XML node to be recognized as a list (Array), enter it\'s path here.',
+        helpKey: 'parser.xml.listNodes',
         label: 'List nodes',
         visibleWhen
       },
@@ -84,7 +81,7 @@ export default function getForm(options) {
         placeholder: 'all',
         defaultValue: options?.includeNodes || '',
         multiline: true,
-        helpText: 'Often XML documents are large and their full content is not needed. It is possibly to reduce the record size by specifying only the set of nodes (specified by path) that should be extracted.',
+        helpKey: 'parser.xml.includeNodes',
         label: 'Include only these nodes',
         visibleWhen
       },
@@ -95,7 +92,7 @@ export default function getForm(options) {
         placeholder: 'none',
         defaultValue: options?.excludeNodes || '',
         multiline: true,
-        helpText: 'It may be easier to specify node to exclude than which to include. If you wish to exclude certain xml nodes from the final record, specify them here using a simplified xpath.',
+        helpKey: 'parser.xml.excludeNodes',
         label: 'Exclude any of these nodes',
         visibleWhen
       },

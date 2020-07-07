@@ -1,4 +1,3 @@
-// needs work
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   settingsForm:
@@ -2155,6 +2154,13 @@ export default {
   'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
   'mapping.lookup.default': 'This holds the default value to be set for the extract field.',
   'mapping.suitescript.lookup.useNull': 'Please check this field if you want to use \'null\' as the default lookup value. This value will be used if your lookup does not find anything.',
-  'mapping.suitescript.lookup.useEmptyString': 'Please check this field if you want to use \'\' (i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything.'
-  // #region UI help text
+  'mapping.suitescript.lookup.useEmptyString': 'Please check this field if you want to use \'\' (i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything.',
+  'parser.xml.V0_json': `Automatic parsing means the XML data is converted to JSON without any user configurations.
+     This typically generates a more complex and difficult to read JSON.
+     If you would like to have more control over what the JSON output looks like,
+     use the custom option.`,
+  'parser.xml.trimSpaces': 'If checked, values will be stripped of leading and trailing whitespace.',
+  'parser.xml.listNodes': 'It is not always possible to infer which XML nodes are single values or a list. To force an XML node to be recognized as a list (Array), enter it\'s path here.',
+  'parser.xml.includeNodes': 'Often XML documents are large and their full content is not needed. It is possibly to reduce the record size by specifying only the set of nodes (specified by path) that should be extracted.',
+  'parser.xml.excludeNodes': 'It may be easier to specify node to exclude than which to include. If you wish to exclude certain xml nodes from the final record, specify them here using a simplified xpath.',
 };
