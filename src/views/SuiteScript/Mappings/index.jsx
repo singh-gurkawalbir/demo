@@ -460,10 +460,10 @@ const SuiteScriptMapping = (props) => {
 };
 
 export default function SuiteScriptMappingWrapper(props) {
-  const match = useRouteMatch();
-  const flowId = props.flowId || match.params.flowId;
   const {ssLinkedConnectionId, integrationId} = props;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const flowId = props.flowId || match.params.flowId;
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
 
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
