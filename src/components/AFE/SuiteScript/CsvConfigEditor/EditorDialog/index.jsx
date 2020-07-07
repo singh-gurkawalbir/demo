@@ -130,20 +130,12 @@ export default function EditorDialog(props) {
     [dispatch, id]
   );
 
-  const saveEditor = useCallback(() => {
+  const handleSave = useCallback(() => {
     if (onSave) {
       onSave(true, editor);
     }
     dispatch(actions.editor.saveComplete(id));
   }, [dispatch, editor, id, onSave]);
-
-
-  const handleSave = useCallback(
-    () => {
-      saveEditor();
-    },
-    [saveEditor]
-  );
 
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
