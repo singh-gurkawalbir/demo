@@ -88,7 +88,9 @@ export default {
     if (retValues['/http/response/successPath'] === '') {
       retValues['/http/response/successPath'] = undefined;
     }
-
+    if (retValues['/http/response/successValues'] === '') {
+      retValues['/http/response/successValues'] = undefined;
+    }
     if (
       retValues['/http/response/failValues'] &&
       !retValues['/http/response/failValues'].length
@@ -98,6 +100,9 @@ export default {
 
     if (retValues['/http/response/failPath'] === '') {
       retValues['/http/response/failPath'] = undefined;
+    }
+    if (retValues['/http/response/failValues'] === '') {
+      retValues['/http/response/failValues'] = undefined;
     }
 
     if (
