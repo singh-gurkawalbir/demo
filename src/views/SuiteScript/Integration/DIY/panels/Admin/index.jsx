@@ -1,19 +1,18 @@
 import { List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, {useEffect} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   NavLink,
   Redirect, Route,
   Switch,
   useRouteMatch
 } from 'react-router-dom';
-import GeneralSection from './sections/General';
-import actions from '../../../../../../actions';
+import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
+import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';
-import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 3, 3, 0),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   listItem: {
     color: theme.palette.text.primary,
@@ -50,7 +49,7 @@ const allSections = [
     path: 'general',
     label: 'General',
     Section: GeneralSection,
-    id: 'general',
+    id: 'genSettings',
   },
   {
     path: 'legacy',
@@ -60,24 +59,6 @@ const allSections = [
   },
 ];
 
-export const useLoadSuiteScriptSettings = ({
-  ssLinkedConnectionId,
-  integrationId,
-}) => {
-  const dispatch = useDispatch();
-
-  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
-    ssLinkedConnectionId,
-    integrationId,
-    resourceType: 'settings',
-  }));
-  useEffect(() => {
-    if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return {hasSettingsMetadata};
-};
 function AdminPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
   const match = useRouteMatch();
@@ -128,11 +109,13 @@ function AdminPanel({ ssLinkedConnectionId, integrationId }) {
         </div>
         <div className={classes.content}>
           <Switch>
-            {availableSections.map(({ path, Section }) => (
+            {availableSections.map(({ path, Section, id}) => (
               <Route key={path} path={`${match.url}/${path}`}>
                 <Section
                   ssLinkedConnectionId={ssLinkedConnectionId}
                   integrationId={integrationId}
+                  sectionId={path}
+                  id={id}
                 />
               </Route>
             ))}
@@ -144,21 +127,16 @@ function AdminPanel({ ssLinkedConnectionId, integrationId }) {
 }
 
 export default function AdminPanelWithLoad({ ssLinkedConnectionId, integrationId }) {
-  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
-
   return (
     <LoadSuiteScriptResources
       required
       ssLinkedConnectionId={ssLinkedConnectionId}
       integrationId={integrationId}
       resources="flows">
-      {hasSettingsMetadata &&
-
       <AdminPanel
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
-
- />}
+        /> :
     </LoadSuiteScriptResources>
   );
 }

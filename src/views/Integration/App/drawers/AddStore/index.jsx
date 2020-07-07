@@ -115,7 +115,7 @@ export default function IntegrationAppAddNewStore(props) {
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
       props.history.push(
-        `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
+        getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
       );
     }
   }, [

@@ -121,7 +121,9 @@ export default {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
-
+    if (retValues['/http/requestMediaType'] === ' ') {
+      retValues['/http/requestMediaType'] = undefined;
+    }
     delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 

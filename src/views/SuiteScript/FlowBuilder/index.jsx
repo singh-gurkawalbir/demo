@@ -108,6 +108,9 @@ const useStyles = makeStyles((theme) => ({
   editableTextInputShift: {
     width: `calc(100vw - ${theme.drawerWidth + 410}px)`,
   },
+  resultContainer: {
+    padding: theme.spacing(3, 3, 12, 3),
+  },
 }));
 const bottomDrawerMin = 41;
 
@@ -293,7 +296,7 @@ function FlowBuilder() {
           <div className={classes.canvas}>
             {/* CANVAS START */}
             {!flow.editable && (
-              <Typography>
+              <Typography className={classes.resultContainer}>
                 The ability to change settings for the data flow you have
                 selected is not currently supported. Please{' '}
                 <Link href="https://celigo.com/support" target="_blank">

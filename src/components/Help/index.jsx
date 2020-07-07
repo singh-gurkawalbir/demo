@@ -10,7 +10,7 @@ import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   helpIcon: {
-    fontSize: 18,
+    fontSize: 16,
     color: theme.palette.text.hint,
   },
 }));

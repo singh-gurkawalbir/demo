@@ -19,6 +19,7 @@ import {
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import getRoutePath from '../../utils/routePaths';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -258,7 +259,7 @@ export function* signInWithGoogle({ returnTo }) {
 
   form.id = 'signinWithGoogle';
   form.method = 'POST';
-  form.action = `/auth/google?returnTo=${returnTo || '/pg/'}`;
+  form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
 
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
@@ -287,7 +288,7 @@ export function* linkWithGoogle({ returnTo }) {
 
   form.id = 'linkWithGoogle';
   form.method = 'POST';
-  form.action = `/link/google?returnTo=${returnTo || '/pg/'}`;
+  form.action = `/link/google?returnTo=${returnTo || getRoutePath('/')}`;
 
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);

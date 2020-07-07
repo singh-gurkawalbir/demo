@@ -623,6 +623,12 @@ export default {
       root: {
         minHeight: 36,
       },
+      scrollButtonsDesktop: {
+        '& > svg': {
+          border: '1px solid',
+          borderColor: colors.celigoNeutral3,
+        }
+      }
     },
     MuiListSubheader: {
       gutters: {

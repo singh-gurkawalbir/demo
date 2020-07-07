@@ -106,9 +106,12 @@ import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
 import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
+import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 
 export default {
+  matchingcriteria: DynaMatchingCriteriaWithModal,
   suitescripttable: DyanSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,
@@ -227,4 +230,5 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
 };

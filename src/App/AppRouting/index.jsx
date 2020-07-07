@@ -87,72 +87,73 @@ export default function AppRouting() {
       <Route
         path="/pg"
         exact
-        render={({ history }) => history.replace('/pg/dashboard')}
+        render={({ history }) => history.replace(getRoutePath('/dashboard'))}
         />
       <Route
-        path="/pg/clone/:resourceType/:resourceId"
+        path={getRoutePath('/clone/:resourceType/:resourceId')}
         exact
         render={({ history, match }) => history.replace(
-          `/pg/clone/${match.params.resourceType}/${match.params.resourceId}/preview`
+          getRoutePath(`/clone/${match.params.resourceType}/${match.params.resourceId}/preview`)
         )}
         />
       <Route
-        path="/pg/clone/:resourceType/:resourceId/preview"
+        path={getRoutePath('/clone/:resourceType/:resourceId/preview')}
         component={ClonePreview}
         />
       <Route
-        path="/pg/clone/:resourceType/:resourceId/setup"
+        path={getRoutePath('/clone/:resourceType/:resourceId/setup')}
         component={CloneSetup}
         />
       <Route
-        path="/pg/templates/:templateName([\w-]{5,})/:integrationId"
+        // eslint-disable-next-line no-useless-escape
+        path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId')}
         exact
         render={({ history, match }) =>
           history.replace(
-            `/pg/templates/${match.params.templateName}/${match.params.integrationId}/flows`
+            getRoutePath(`/templates/${match.params.templateName}/${match.params.integrationId}/flows`)
           )}
         />
       <Route
-        path="/pg/integrations/:integrationId"
+        path={getRoutePath('/integrations/:integrationId')}
         exact
         render={({ history, match }) =>
           history.replace(
-            `/pg/integrations/${match.params.integrationId}/flows`
+            getRoutePath(`/integrations/${match.params.integrationId}/flows`)
           )}
         />
 
       <Route
-        path="/pg/marketplace/templates/:templateId"
+        path={getRoutePath('/marketplace/templates/:templateId')}
         exact
         render={({ history, match }) =>
           history.replace(
-            `/pg/marketplace/templates/${match.params.templateId}/preview`
+            getRoutePath(`/marketplace/templates/${match.params.templateId}/preview`)
           )}
         />
       <Route
         path={[
-          '/pg/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId',
-          '/pg/integrations/:integrationId/flowBuilder/:flowId',
-          '/pg/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId',
-          '/pg/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId',
-          '/pg/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId',
-          '/pg/integrations/:integrationId/dataLoader/:flowId',
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId'),
+          getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId'),
+          getRoutePath('/integrations/:integrationId/dataLoader/:flowId'),
         ]}>
         <FlowBuilder />
       </Route>
 
       <Route
-        path="/pg/integrationapps/:integrationAppName/:integrationId/setup"
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/setup')}
         component={IntegrationAppInstallation}
         />
       <Route
-        path="/pg/integrationapps/:integrationAppName/:integrationId/install/addNewStore"
+        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
         component={IntegrationAppAddNewStore}
         />
       <Route
         path={[
-          '/pg/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId',
-          '/pg/integrationapps/:integrationAppName/:integrationId/uninstall',
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall/:storeId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/uninstall'),
         ]}
         component={IntegrationAppUninstallation}
         />
@@ -160,50 +161,51 @@ export default function AppRouting() {
 
       <Route
         path={[
-          '/pg/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab',
-          '/pg/integrationapps/:integrationAppName/:integrationId/:tab',
-          '/pg/integrationapps/:integrationAppName/:integrationId',
-          '/pg/integrations/:integrationId/:tab'
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
+          getRoutePath('/integrations/:integrationId/:tab')
         ]}
         component={Integration}
         />
       <Route
           // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
           // templateName has structure of application2-application2 will contain atleast 5 characters
-        path="/pg/templates/:templateName([\w-]{5,})/:integrationId/:tab"
+        // eslint-disable-next-line no-useless-escape
+        path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId/:tab')}
         component={Integration}
         />
 
       <Route
-        path="/pg/connectors/:connectorId/connectorLicenses"
+        path={getRoutePath('/connectors/:connectorId/connectorLicenses')}
         component={ConnectorLicenses}
         />
       <Route
-        path="/pg/connectors/:connectorId/installBase"
+        path={getRoutePath('/connectors/:connectorId/installBase')}
         component={ConnectorInstallBase}
         />
       <Route
-        path="/pg/marketplace/:application"
+        path={getRoutePath('/marketplace/:application')}
         component={MarketplaceList}
         />
-      <Route exact path="/pg/marketplace" component={Marketplace} />
+      <Route exact path={getRoutePath('/marketplace')} component={Marketplace} />
 
-      <Route path="/pg/dashboard" component={Dashboard} />
-      <Route path="/pg/recycleBin" component={RecycleBin} />
-      <Route path="/pg/editors" component={Editors} />
-      <Route path="/pg/permissions" component={Permissions} />
+      <Route path={getRoutePath('/dashboard')} component={Dashboard} />
+      <Route path={getRoutePath('/recycleBin')} component={RecycleBin} />
+      <Route path={getRoutePath('/editors')} component={Editors} />
+      <Route path={getRoutePath('/permissions')} component={Permissions} />
       <Route
-        path="/pg/myAccount"
+        path={getRoutePath('/myAccount')}
         exact
-        render={({ history }) => history.replace('/pg/myAccount/profile')}
+        render={({ history }) => history.replace(getRoutePath('/myAccount/profile'))}
         />
-      <Route path="/pg/myAccount/:tab" component={MyAccount} />
-      <Route path="/pg/templates" component={TemplateList} />
-      <Route path="/pg/accesstokens" component={AccessTokenList} />
+      <Route path={getRoutePath('/myAccount/:tab')} component={MyAccount} />
+      <Route path={getRoutePath('/templates')} component={TemplateList} />
+      <Route path={getRoutePath('/accesstokens')} component={AccessTokenList} />
       <Route
-        path="/pg/tokens"
+        path={getRoutePath('/tokens')}
         exact
-        render={({ history }) => history.replace('/pg/accesstokens')}
+        render={({ history }) => history.replace(getRoutePath('/accesstokens'))}
         />
       <Route
         path={getRoutePath('/suitescript/integrationapps/:integrationAppName/setup')}
@@ -248,7 +250,7 @@ export default function AppRouting() {
         path={[...AMPERSAND_ROUTES]}
         component={AmpersandRoutesHandler}
       />
-      <Route path="/pg/:resourceType" component={ResourceList} />
+      <Route path={getRoutePath('/:resourceType')} component={ResourceList} />
       <Route component={NotFound} />
     </Switch>
   );

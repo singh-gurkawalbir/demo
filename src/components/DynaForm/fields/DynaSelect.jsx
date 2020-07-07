@@ -17,7 +17,16 @@ const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 48;
 const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
-const getLabel = (items, value) => items.find(item => item.value === value)?.label;
+const getLabel = (items, value) => {
+  const item = items.find(item => item.value === value);
+  if (typeof item?.label === 'string') {
+    return item.label;
+  }
+  if (item?.optionSearch) {
+    return item.optionSearch;
+  }
+  return '';
+};
 const optionSearch = (search) => ({label, optionSearch}) => search && (
   (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
  (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
@@ -77,6 +86,8 @@ const useAutoScrollOption = (items, open, listRef, value) => {
     if (scrolIndex > 0) {
       if (scrolIndex + NO_OF_OPTIONS / 2 < items.length) {
         listRef?.current?.scrollToItem(scrolIndex + (NO_OF_OPTIONS / 2));
+      } else {
+        listRef?.current?.scrollToItem(scrolIndex);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

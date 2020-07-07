@@ -49,6 +49,7 @@ function DynaSuiteScriptTable(props) {
     salesforceProductFieldOptions,
     salesforceProductField,
     ssLinkedConnectionId: connectionId,
+    disabled,
     registerField,
   } = props;
 
@@ -102,6 +103,7 @@ function DynaSuiteScriptTable(props) {
         id: 'extracts',
         label: extractFieldHeader,
         name: extractFieldHeader,
+        readOnly: disabled,
         required: true,
         type: 'autosuggest',
         options: extracts && extracts.length ? extracts : finalSelectedOptionList,
@@ -111,6 +113,7 @@ function DynaSuiteScriptTable(props) {
         id: 'generates',
         label: generateFieldHeader,
         name: generateFieldHeader,
+        readOnly: disabled,
         required: true,
         options: generates,
         type: 'autosuggest',
@@ -118,7 +121,7 @@ function DynaSuiteScriptTable(props) {
       },
     ];
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [salesforceProductOptions, allFieldsOptions, selectOption]);
+  }, [salesforceProductOptions, allFieldsOptions, selectOption, disabled]);
 
   const salesforceProductFieldChange = useCallback((id, val) => {
     setSelectOption(val);
@@ -161,6 +164,7 @@ function DynaSuiteScriptTable(props) {
         className={classes.dynaStaticMapWidgetWrapper}
         value={computedValue}
         onFieldChange={handleMapChange}
+        disableDeleteRows={disabled}
       />
     </>
   );
