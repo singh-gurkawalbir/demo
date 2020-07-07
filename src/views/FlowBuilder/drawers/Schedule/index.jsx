@@ -40,7 +40,6 @@ export default function ScheduleDrawer(props) {
   return (
     <RightDrawer
       path={[':flowId/schedule', 'schedule']}
-      width="medium"
       title="Flow schedule">
       <RoutingWrapper {...props} />
     </RightDrawer>
