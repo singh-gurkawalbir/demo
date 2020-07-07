@@ -17,14 +17,11 @@ export default {
   },
   'ftp.backupDirectoryPath': {
     type: 'text',
-    label: 'Archived directory path',
+    label: 'Move file to',
     helpKey: 'export.ftp.backupDirectoryPath',
-    visibleWhen: [
-      {
-        field: 'file.skipDelete',
-        is: [false],
-      }
-    ]
+    disabledWhen: [
+      { field: 'file.skipDelete', is: [true] },
+    ],
   },
   // #region transform
   'transform.expression.rules': {

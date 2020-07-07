@@ -38,7 +38,6 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpKey: 'hubspot.connection.http.auth.type',
       options: [
         {
@@ -89,7 +88,7 @@ export default {
         }
       ],
       defaultValue: r => {
-        const authUri = r && r.http && r.http.auth && r.http.auth.oauth && r.http.auth.oauth.authURI;
+        const authUri = r?.http?.auth?.oauth?.authURI;
 
         if (authUri && authUri.indexOf('optional_scope')) {
           const encodedScopes = authUri && authUri.split('optional_scope=')[1];
