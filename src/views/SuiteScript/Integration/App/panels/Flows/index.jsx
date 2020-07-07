@@ -12,6 +12,7 @@ import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
 import Spinner from '../../../../../../components/Spinner';
 import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
 import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
+import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,6 +63,9 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
   return (
     <>
       <ScheduleDrawer />
+      <SuiteScriptMappingDrawer
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId} />
       <PanelHeader title={`${section.title} flows`} />
       <CeligoTable
         data={flows}
@@ -129,6 +133,10 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   return (
     <div className={classes.root}>
       <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
+      {/* <SuiteScriptMappingDrawer
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId}
+        /> */}
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
       <LoadSuiteScriptResources
         required

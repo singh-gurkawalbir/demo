@@ -1,12 +1,14 @@
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../components/drawer/Right';
 import SuiteScriptMapping from '.';
 
 export default function SuiteScriptMappingDrawer(props) {
-  const {ssLinkedConnectionId, integrationId, flowId } = props;
+  const match = useRouteMatch();
+  const flowId = props.flowId || match.params.flowId;
+  const {ssLinkedConnectionId, integrationId} = props;
   const history = useHistory();
-  const handelClose = useCallback(() => {
+  const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
   return (
@@ -23,7 +25,7 @@ export default function SuiteScriptMappingDrawer(props) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         flowId={flowId}
-        onClose={handelClose} />
+        onClose={handleClose} />
     </RightDrawer>
   );
 }
