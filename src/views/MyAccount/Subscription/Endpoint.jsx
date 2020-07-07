@@ -424,11 +424,11 @@ export default function Endpoint() {
               <div className={classes.subscriptionFeaturesList} >
                 <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
                   <li className={classes.subscriptionFeatureEnabled}>
-                    {licenseActionDetails?.totalNumberofEndpoints && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    {!!(licenseActionDetails?.totalNumberofEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofEndpoints)})}> {licenseActionDetails?.totalNumberofEndpoints} Endpoint apps</Typography>
                   </li>
                   <li>
-                    {licenseActionDetails?.totalNumberofTradingPartners && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    {!!(licenseActionDetails?.totalNumberofTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofTradingPartners)})}>{licenseActionDetails?.totalNumberofTradingPartners} Trading partners</Typography>
                   </li>
                   <li>
@@ -440,11 +440,11 @@ export default function Endpoint() {
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
                   </li>
                   <li className={classes.subscriptionFeatureEnabled}>
-                    <CheckMarkIcon className={classes.enableIcon} />
+                    {!!(licenseActionDetails?.totalNumberofFlows) && <CheckMarkIcon className={classes.enableIcon} />}
                     <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofFlows)})}>{licenseActionDetails?.totalNumberofFlows} Integration flows</Typography>
                   </li>
                   <li>
-                    {licenseActionDetails?.totalNumberofAgents && (<CheckMarkIcon className={classes.enableIcon} />)}
+                    {!!(licenseActionDetails?.totalNumberofAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofAgents)})}>{licenseActionDetails?.totalNumberofAgents} On-premise agents</Typography>
                   </li>
                   <li>

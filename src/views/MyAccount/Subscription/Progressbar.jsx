@@ -70,6 +70,7 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
           />
       </div>
       <Button
+        disabled={usedCount === 0}
         data-test="fixConnection"
         variant="text"
         color="primary"
