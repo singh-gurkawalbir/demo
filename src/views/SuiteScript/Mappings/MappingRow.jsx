@@ -131,10 +131,13 @@ export default function MappingRow(props) {
   const extractFields = useMemo(() => {
     const formattedFields = [];
     if (flowSampleData) {
-      flowSampleData.forEach(extract => {
+      const _flowData = suiteScriptMappingUtil.getExtractPaths(
+        flowSampleData,
+      );
+      _flowData.forEach(extract => {
         formattedFields.push({
           id: extract.id || extract.value,
-          name: extract.name || extract.label
+          name: extract.name || extract.label || extract.id
         });
         // for netsuite
         if (extract.type === 'select') {

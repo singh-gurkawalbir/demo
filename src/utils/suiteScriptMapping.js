@@ -1,3 +1,7 @@
+import getJSONPaths, {
+  pickFirstObject,
+} from './jsonPaths';
+
 function isFileOrNetSuiteBatchExport(res) {
   if (res.netsuite && (res.netsuite.type === 'search' || (res.netsuite.restlet && res.netsuite.restlet.searchId))) {
     return true;
@@ -248,10 +252,25 @@ const getFormattedGenerateData = (importData,
   return formattedGenerateFields;
 };
 
+const getExtractPaths = (fields, jsonPath) => {
+  let extractPaths = getJSONPaths(pickFirstObject(fields));
+
+  if (jsonPath) {
+    extractPaths = extractPaths
+      .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+      .map(f => ({
+        ...f,
+        id: f.id.replace(`${jsonPath}[*].`, ''),
+      }));
+  }
+
+  return extractPaths;
+};
+
 export default {
   validateMappings,
   generateFieldAndListMappings,
   updateMappingConfigs,
   getFormattedGenerateData,
-  // getExtractPaths
+  getExtractPaths
 };

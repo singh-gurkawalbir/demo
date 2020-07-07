@@ -130,6 +130,8 @@ export default function Integration({ match }) {
         />
           {/* Add Suitescript flow related component */}
           <SuiteScriptMappingDrawer
+            ssLinkedConnectionId={ssLinkedConnectionId}
+            integrationId={integrationId}
         />
         </LoadSuiteScriptResources>
       </LoadResources>
