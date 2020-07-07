@@ -10,6 +10,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -19,6 +20,13 @@ const useStyles = makeStyles({
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
+  },
+  spinnerWrapper: {
+    display: 'flex',
+    height: '100%',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
   },
 });
 
@@ -31,7 +39,7 @@ export default function TransformEditor(props) {
     layout = 'column',
   } = props;
   const classes = useStyles();
-  const { data, result, error } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -50,6 +58,7 @@ export default function TransformEditor(props) {
         _init_data: props.data,
         _init_rule: props.rule,
         optionalSaveParams,
+        isSampleDataLoading: props.isSampleDataLoading
       })
     );
   }, [
@@ -58,6 +67,7 @@ export default function TransformEditor(props) {
     optionalSaveParams,
     props.data,
     props.rule,
+    props.isSampleDataLoading,
     resourceId,
   ]);
   const handleDataChange = useCallback(
@@ -87,14 +97,20 @@ export default function TransformEditor(props) {
 
       <PanelGridItem gridArea="data">
         <PanelTitle title="Incoming data" />
-        <CodePanel
-          name="data"
-          value={data}
-          mode="json"
-          overrides={{ showGutter: false }}
-          onChange={handleDataChange}
-          readOnly={disabled}
+        {isSampleDataLoading ? (
+          <div className={classes.spinnerWrapper}>
+            <Spinner size={48} color="primary" />
+          </div>
+        ) : (
+          <CodePanel
+            name="data"
+            value={data}
+            mode="json"
+            overrides={{ showGutter: false }}
+            onChange={handleDataChange}
+            readOnly={disabled}
         />
+        )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

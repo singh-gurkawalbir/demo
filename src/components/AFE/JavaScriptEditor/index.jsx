@@ -11,6 +11,7 @@ import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -20,6 +21,13 @@ const useStyles = makeStyles({
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
+  },
+  spinnerWrapper: {
+    display: 'flex',
+    height: '100%',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
   },
 });
 
@@ -36,7 +44,7 @@ export default function JavaScriptEditor(props) {
     resultMode = 'json',
   } = props;
   const classes = useStyles(props);
-  const { data, result, error } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -62,6 +70,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluateDelay: 500,
         _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
+        isSampleDataLoading: props.isSampleDataLoading
       })
     );
   }, [
@@ -70,6 +79,7 @@ export default function JavaScriptEditor(props) {
     scriptId,
     entryFunction,
     props.data,
+    props.isSampleDataLoading,
     context,
     optionalSaveParams,
   ]);
@@ -91,14 +101,19 @@ export default function JavaScriptEditor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
-        <CodePanel
-          id="data"
-          name="data"
-          value={data}
-          mode="json"
-          readOnly={disabled}
-          onChange={handleDataChange}
-        />
+        {isSampleDataLoading ? (
+          <div className={classes.spinnerWrapper}>
+            <Spinner size={48} color="primary" />
+          </div>
+        ) : (
+          <CodePanel
+            id="data"
+            name="data"
+            value={data}
+            mode="json"
+            readOnly={disabled}
+            onChange={handleDataChange}
+        />)}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />

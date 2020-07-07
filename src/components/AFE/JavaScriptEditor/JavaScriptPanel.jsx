@@ -39,6 +39,13 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
   },
+  spinnerWrapper: {
+    display: 'flex',
+    height: '100%',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
+  },
 }));
 const scriptFilterConfig = { type: 'scripts' };
 
@@ -180,7 +187,9 @@ export default function JavaScriptPanel(props) {
           {scriptContent === undefined && scriptId ? (
             <>
               <Typography>Retrieving your script</Typography>
-              <Spinner />
+              <div className={classes.spinnerWrapper}>
+                <Spinner size={48} color="primary" />
+              </div>
             </>
           ) : (
             <CodePanel

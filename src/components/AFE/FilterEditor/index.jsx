@@ -11,6 +11,7 @@ import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import { isJsonString } from '../../../utils/string';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -19,12 +20,19 @@ const useStyles = makeStyles({
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
   },
+  spinnerWrapper: {
+    display: 'flex',
+    height: '100%',
+    '&> div:first-child': {
+      margin: 'auto',
+    },
+  },
 });
 
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
-  const { data, lastValidData, result, error } = useSelector(state =>
+  const { data, lastValidData, result, error, isSampleDataLoading } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -38,9 +46,10 @@ export default function FilterEditor(props) {
         lastValidData: props.data,
         rule: props.rule,
         optionalSaveParams,
+        isSampleDataLoading: props.isSampleDataLoading
       })
     );
-  }, [dispatch, editorId, optionalSaveParams, props.data, props.rule]);
+  }, [dispatch, editorId, optionalSaveParams, props.data, props.rule, props.isSampleDataLoading]);
   const handleDataChange = useCallback(
     data => {
       const patchObj = { data };
@@ -83,14 +92,19 @@ export default function FilterEditor(props) {
 
       <PanelGridItem gridArea="data">
         <PanelTitle title="Input" />
-        <CodePanel
-          name="data"
-          readOnly={disabled}
-          value={data}
-          mode="json"
-          overrides={{ showGutter: false }}
-          onChange={handleDataChange}
-        />
+        {isSampleDataLoading ? (
+          <div className={classes.spinnerWrapper}>
+            <Spinner size={48} color="primary" />
+          </div>
+        ) : (
+          <CodePanel
+            name="data"
+            readOnly={disabled}
+            value={data}
+            mode="json"
+            overrides={{ showGutter: false }}
+            onChange={handleDataChange}
+        />)}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
