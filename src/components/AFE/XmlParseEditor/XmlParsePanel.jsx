@@ -38,12 +38,12 @@ export default function XmlParsePanel({ editorId, disabled }) {
     V0_json = false,
     trimSpaces = false,
     stripNewLineChars = false,
-    textNodeName,
-    attributePrefix,
-    listNodes,
-    includeNodes,
-    resourcePath,
-    excludeNodes,
+    textNodeName = '',
+    attributePrefix = '',
+    listNodes = '',
+    includeNodes = '',
+    resourcePath = '',
+    excludeNodes = '',
   } = useSelector(state => {
     const editor = selectors.editor(state, editorId);
     // console.log(editor);
@@ -63,7 +63,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
           rowsMax={4}
           disabled={disabled}
           className={classes.textField}
-          value={resourcePath || ''}
+          value={resourcePath}
           InputLabelProps={{
             shrink: true,
           }}
@@ -127,7 +127,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               placeholder="&txt"
               disabled={disabled}
               className={classes.textField}
-              value={textNodeName || ''}
+              value={textNodeName}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -139,7 +139,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               placeholder="none"
               disabled={disabled}
               className={classes.textField}
-              value={attributePrefix || ''}
+              value={attributePrefix}
               onChange={e => patchEditor('attributePrefix', e.target.value)}
               InputLabelProps={{
                 shrink: true,
@@ -153,7 +153,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              value={listNodes || ''}
+              value={listNodes}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -167,7 +167,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              value={includeNodes || ''}
+              value={includeNodes}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -181,7 +181,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              value={excludeNodes || ''}
+              value={excludeNodes}
               InputLabelProps={{
                 shrink: true,
               }}

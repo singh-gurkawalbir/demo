@@ -2,10 +2,10 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
-import XmlParseEditorDialog from '../../../AFE/XmlParseEditor/Dialog';
-import DynaForm from '../..';
-import FieldHelp from '../../FieldHelp';
+import * as selectors from '../../../../../reducers';
+import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
+import DynaForm from '../../..';
+import FieldHelp from '../../../FieldHelp';
 
 const getParserValue = ({
   resourcePath,
@@ -188,7 +188,7 @@ export default function DynaXmlParse({
     setShowEditor(!showEditor);
   }, [showEditor]);
 
-  const handleEditorSave = (shouldCommit, editorValues = {}) => {
+  const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
@@ -196,11 +196,11 @@ export default function DynaXmlParse({
       setFormKey(formKey + 1);
       onFieldChange(id, getParserValue(editorValues));
     }
-  };
+  }, [formKey, id, onFieldChange]);
 
-  const handleEditorClose = () => {
+  const handleEditorClose = useCallback(() => {
     setShowEditor(false);
-  };
+  }, []);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
