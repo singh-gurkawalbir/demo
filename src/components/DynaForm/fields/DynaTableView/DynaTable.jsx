@@ -338,8 +338,7 @@ export const DynaTable = props => {
                         value={r.value}
                         isValid={
                           !touched || !optionsMap[index].required ||
-                          (rowIndex === rowCollection.length - 1 ||
-                            (optionsMap[index].required && r.value))
+                            (optionsMap[index].required && r.value)
                         }
                         errorMessages="Please select a value"
                         options={r.options || []}
