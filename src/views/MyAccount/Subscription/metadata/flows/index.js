@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import NameCell from '../../../../../components/ResourceTable/metadata/flows/NameCell';
 
 export default {
@@ -7,9 +7,6 @@ export default {
       {
         heading: 'Flow',
         value: function Name(r) {
-          const onClick = useCallback(() => {
-            r && r.showDialog && r.showDialog(false);
-          }, [r]);
           return (
             <NameCell
               flowId={r._id}
@@ -18,8 +15,6 @@ export default {
               name={r.name}
               description={r.description}
               isFree={r.free}
-              onClick={onClick}
-              isSubscriptionPage
             />
           );
         },

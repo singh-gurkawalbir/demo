@@ -27,24 +27,7 @@ const agentsFilterConfig = {
   ignoreEnvironmentFilter: true,
 };
 const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(3, 0, 0, 2),
-    overflowX: 'auto',
-  },
-  transferButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
-  },
-  wrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    width: '100%',
-    borderRadius: theme.spacing(0.5),
-    padding: theme.spacing(2),
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
+
   progressBar: {
     height: 10,
     borderRadius: 10,
@@ -53,73 +36,6 @@ const useStyles = makeStyles(theme => ({
   },
   linearProgressWrapper: {
     marginTop: theme.spacing(1),
-  },
-  itemsList: {
-    marginTop: theme.spacing(1),
-    listStyle: 'none',
-    padding: 0,
-    display: 'flex',
-    marginBottom: 0,
-    '& li': {
-      float: 'left',
-      paddingRight: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      borderRight: `1px solid ${theme.palette.secondary.light}`,
-      fontSize: 15,
-      '&:last-child': {
-        borderRight: 'none',
-      },
-    },
-  },
-  subHeading: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  heading: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(3),
-  },
-  bold: {
-    fontWeight: 'bold',
-  },
-  normal: {
-    fontWeight: 'normal',
-  },
-  block: {
-    marginBottom: theme.spacing(3),
-  },
-  linkCompare: {
-    marginLeft: theme.spacing(2),
-  },
-  headingMaster: {
-    fontSize: theme.spacing(4),
-    fontWeight: 'bold',
-    textAlign: 'left',
-    padding: theme.spacing(2),
-  },
-  description: {
-    marginTop: theme.spacing(2),
-  },
-
-  drawerPaper: {
-    width: 600,
-    padding: theme.spacing(1),
-  },
-
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
-  link: {
-    marginTop: theme.spacing(2),
-    fontSize: theme.spacing(2),
-  },
-
-  footer: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
   },
 }));
 

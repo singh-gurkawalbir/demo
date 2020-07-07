@@ -33,7 +33,6 @@ export default function NameCell({
   flowId,
   isIntegrationApp,
   integrationId,
-  onClick,
 }) {
   const classes = useStyles();
   const isDataLoader = useSelector(state =>
@@ -62,10 +61,7 @@ export default function NameCell({
 
   return (
     <div className={classes.root}>
-      <Link
-        onClick={onClick}
-        to={flowBuilderTo}>{flowName}
-      </Link>
+      <Link to={flowBuilderTo}>{flowName}</Link>
 
       <InfoIconButton info={description} size="xs" />
 

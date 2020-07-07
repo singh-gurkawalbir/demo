@@ -153,8 +153,6 @@ export function endpointLicense(state, accountId) {
   if (!endpointLicense) {
     return null;
   }
-  endpointLicense.hasSandbox =
-  endpointLicense.sandbox || endpointLicense.numSandboxAddOnFlows > 0;
 
   endpointLicense.hasConnectorSandbox =
     account.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
@@ -189,6 +187,7 @@ export function endpointLicense(state, accountId) {
   endpointLicense.totalNumberofSandboxFlows = endpointLicense?.endpoint?.sandbox?.numFlows + endpointLicense?.endpoint?.sandbox?.numAddOnFlows;
   endpointLicense.totalNumberofSandboxTradingPartners = endpointLicense?.endpoint?.sandbox?.numTradingPartners + endpointLicense?.endpoint?.sandbox?.numAddOnTradingPartners;
   endpointLicense.totalNumberofSandboxAgents = endpointLicense?.endpoint?.sandbox?.numAgents + endpointLicense?.endpoint?.sandbox?.numAddOnAgents;
+  endpointLicense.hasSandbox = endpointLicense.sandbox || endpointLicense.totalNumberofSandboxFlows > 0;
 
   return endpointLicense;
 }

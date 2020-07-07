@@ -1107,6 +1107,14 @@ const user = {
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
       receivedLicenseEntitlementUsage: response =>
         action(actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED, { response }),
+      addLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
+      deleteLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
     },
   },
   preferences: {
