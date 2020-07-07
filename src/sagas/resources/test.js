@@ -108,6 +108,7 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
+      expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
       expect(putEffect).toEqual(
@@ -124,8 +125,6 @@ describe('commitStagedChanges saga', () => {
           )
         )
       );
-
-      expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
 
       const finalEffect = saga.next();
 
@@ -165,14 +164,14 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
-      const putEffect = saga.next(updated).value;
+      expect(saga.next(updated).value).toEqual(
+        put(actions.resource.clearStaged(tempId))
+      );
+
+      const putEffect = saga.next().value;
 
       expect(putEffect).toEqual(
         put(actions.resource.received(resourceType, updated))
-      );
-
-      expect(saga.next().value).toEqual(
-        put(actions.resource.clearStaged(tempId))
       );
 
       expect(saga.next().value).toEqual(
