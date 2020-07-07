@@ -28,14 +28,9 @@ export default {
     editorTitle: 'Build Key ends with',
   },
   's3.backupBucket': {
-    type: 'text',
+    type: 'textforsetfields',
+    setFieldIds: ['file.skipDelete'],
     label: 'Archived bucket name',
     helpKey: 'export.s3.backupBucket',
-    visibleWhen: [
-      {
-        field: 'file.skipDelete',
-        is: [false],
-      }
-    ]
   },
 };
