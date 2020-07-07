@@ -80,9 +80,9 @@ export default {
       r.file.fileDefinition._fileDefinitionId,
   },
   'file.skipDelete': {
-    type: 'checkbox',
-    label: 'Leave file on server',
-    defaultValue: r => (r && r.file && r.file.skipDelete) || false,
+    type: 'checkboxforresetfields',
+    label: 'Leave file in the current directory path',
+    fieldsToReset: [{ id: 'ftp.backupDirectoryPath', type: 'text' }],
   },
   'file.compressionFormat': {
     type: 'select',

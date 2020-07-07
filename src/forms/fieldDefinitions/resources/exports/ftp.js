@@ -16,15 +16,10 @@ export default {
     editorTitle: 'Build file name ends with',
   },
   'ftp.backupDirectoryPath': {
-    type: 'text',
-    label: 'Archived directory path',
+    type: 'textforsetfields',
+    setFieldIds: ['file.skipDelete'],
+    label: 'Move file to',
     helpKey: 'export.ftp.backupDirectoryPath',
-    visibleWhen: [
-      {
-        field: 'file.skipDelete',
-        is: [false],
-      }
-    ]
   },
   // #region transform
   'transform.expression.rules': {
