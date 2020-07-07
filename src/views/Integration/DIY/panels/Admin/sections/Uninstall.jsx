@@ -8,6 +8,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -60,11 +61,11 @@ export default function UninstallSection({ storeId, integrationId }) {
               // REVIEW: @ashu, review with Dave once
               if (index === -1) {
                 history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
                 );
               } else {
                 history.push(
-                  `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`
+                  getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${urlExtractFields[index + 1]}`)
                 );
               }
             } else if (
@@ -72,11 +73,11 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
               );
             } else {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
               );
             }
           },

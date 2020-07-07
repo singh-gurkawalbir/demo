@@ -419,7 +419,7 @@ export default function Integration(props) {
       childIntegration.mode === 'install'
     ) {
       history.push(
-        `/pg/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`
+        getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`)
       );
       dispatch(
         actions.resource.clearChildIntegration()
@@ -432,8 +432,8 @@ export default function Integration(props) {
       return (
         <Redirect
           push={false}
-          to={`/pg/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
-            'settings'}`}
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
+            'settings'}`)}
         />
       );
     }

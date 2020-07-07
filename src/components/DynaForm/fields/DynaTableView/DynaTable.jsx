@@ -142,6 +142,7 @@ export const DynaTable = props => {
     metadata = {},
     id,
     touched,
+    disableDeleteRows,
   } = props;
   const [changeIdentifier, setChangeIdentifier] = useState(0);
   const [shouldResetOptions, setShouldResetOptions] = useState(true);
@@ -405,6 +406,7 @@ export const DynaTable = props => {
                   key="delete_button"
                   className={classes.dynaTableActions}>
                   <ActionButton
+                    disabled={disableDeleteRows}
                     data-test={`deleteTableRow-${arr.row}`}
                     aria-label="delete"
                     onClick={handleRemoveRow(arr.row)}

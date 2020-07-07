@@ -52,7 +52,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     padding: '14px 24px',
-    background: theme.palette.background.paper,
   },
   closeButton: {
     position: 'absolute',

@@ -697,11 +697,11 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
-export function suiteScriptIAFormSaveProcessTerminated(
+export function suiteScriptIAFormSaving(
   state,
   { ssLinkedConnectionId, integrationId }
 ) {
-  return fromSuiteScript.suiteScriptIAFormSaveProcessTerminated(
+  return fromSuiteScript.suiteScriptIAFormSaving(
     state && state.suiteScript,
     { ssLinkedConnectionId, integrationId }
   );

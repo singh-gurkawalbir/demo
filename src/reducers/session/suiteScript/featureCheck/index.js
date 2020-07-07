@@ -25,17 +25,17 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST:
         if (!draft[key]) draft[key] = {};
         draft[key].status = 'requesting';
-        return;
+        break;
 
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.CLEAR:
         delete draft[key];
 
-        return;
+        break;
 
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.SUCCESSFUL:
         if (!draft[key])draft[key] = {};
         draft[key].status = COMM_STATES.SUCCESS;
-        return;
+        break;
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.FAILED:
         if (!draft[key])draft[key] = {};
         draft[key].status = COMM_STATES.ERROR;

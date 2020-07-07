@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
-  Route,
   useLocation,
   generatePath,
   useHistory,
@@ -18,6 +17,7 @@ import Close from '../../icons/CloseIcon';
 import Back from '../../icons/BackArrowIcon';
 import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
+import getRoutePath from '../../../utils/routePaths';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = (url) => !!matchPath(url, {
@@ -155,16 +155,18 @@ const useRedirectionToParentRoute = (resourceType, id) => {
 };
 
 export default function Panel(props) {
-  const { match, onClose, zIndex, occupyFullWidth, flowId } = props;
-  const { id, resourceType, operation } = match.params;
-  const isNew = operation === 'add';
+  const { onClose, occupyFullWidth, flowId } = props;
   const location = useLocation();
   const dispatch = useDispatch();
-
+  const history = useHistory();
+  const match = useRouteMatch();
+  const { id, resourceType, operation } = match.params;
+  const isNew = operation === 'add';
   useRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
     occupyFullWidth,
+    match,
   });
   const skipFormClose = useSelector(
     state => selectors.resourceFormState(state, resourceType, id).skipClose
@@ -241,7 +243,7 @@ export default function Panel(props) {
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
 
-  function lookupProcessorResourceType() {
+  const lookupProcessorResourceType = useCallback(() => {
     if (!stagedProcessor || !stagedProcessor.patch) {
       // TODO: we need a better pattern for logging warnings. We need a common util method
       // which logs these warning only if the build is dev... if build is prod, these
@@ -267,9 +269,9 @@ export default function Panel(props) {
     }
 
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }
+  }, [stagedProcessor]);
 
-  function getEditUrl(id) {
+  const getEditUrl = useCallback((id) => {
     // console.log(location);
     const segments = location.pathname.split('/');
     const { length } = segments;
@@ -286,7 +288,7 @@ export default function Panel(props) {
     const url = segments.join('/');
 
     return url;
-  }
+  }, [location.pathname, lookupProcessorResourceType, resourceType]);
 
   function handleSubmitComplete() {
     if (isNew) {
@@ -298,7 +300,7 @@ export default function Panel(props) {
 
       if (resourceType === 'integrations') {
         return props.history.replace(
-          `/pg/${resourceType}/${newResourceId}/flows`
+          getRoutePath(`/${resourceType}/${newResourceId}/flows`)
         );
       }
 
@@ -309,7 +311,7 @@ export default function Panel(props) {
 
       if (isMultiStepSaveResource) {
         if (!resourceId) {
-          return props.history.replace(getEditUrl(id));
+          return history.replace(getEditUrl(id));
         }
       }
       // this is NOT a case where a user selected an existing resource,
@@ -319,7 +321,7 @@ export default function Panel(props) {
       // Incase of a resource with single step save, when skipFormClose is passed
       // redirect to the updated URL with new resourceId as we do incase of edit - check else part
       if (skipFormClose && !isMultiStepSaveResource) {
-        return props.history.replace(
+        return history.replace(
           generatePath(match.path, {
             id: newResourceId || id,
             resourceType,
@@ -333,7 +335,7 @@ export default function Panel(props) {
       // Form should re render with created new Id
       // Below code just replaces url with created Id and form re initializes
       if (skipFormClose) {
-        props.history.replace(
+        history.replace(
           generatePath(match.path, {
             id: newResourceId || id,
             resourceType,
@@ -428,13 +430,6 @@ export default function Panel(props) {
           />
         </LoadResources>
       </div>
-
-      <Route
-        path={`${match.url}${DRAWER_PATH}`}
-        render={props => (
-          <Panel {...props} zIndex={zIndex + 1} onClose={onClose} />
-        )}
-      />
     </>
   );
 }

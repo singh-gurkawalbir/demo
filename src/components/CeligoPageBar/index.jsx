@@ -10,6 +10,7 @@ import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 import WelcomeBanner from './WelcomeBanner';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -60,7 +61,7 @@ export default function CeligoPageBar(props) {
   const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
-  const showBanner = location.pathname.includes('pg/dashboard') && bannerOpened;
+  const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
 
   return (
     <>

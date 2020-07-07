@@ -4,6 +4,7 @@ import React from 'react';
 import { Typography, Button } from '@material-ui/core';
 import ModalDialog from '../../components/ModalDialog';
 import reportCrash from '../../utils/crash';
+import getRoutePath from '../../utils/routePaths';
 
 export default class CrashReporter extends React.Component {
   constructor(props) {
@@ -48,7 +49,7 @@ export default class CrashReporter extends React.Component {
             color="primary"
             onClick={() => {
               this.state.crashed = false;
-              window.location.replace('/pg');
+              window.location.replace(getRoutePath(''));
             }}>
             Reload
           </Button>

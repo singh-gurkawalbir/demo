@@ -3215,6 +3215,8 @@ export function isEditorV2Supported(state, resourceId, resourceType) {
   return [
     'HTTPImport',
     'HTTPExport',
+    'RESTImport',
+    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
@@ -4563,20 +4565,28 @@ export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
   return sections.map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
   }));
 }
 
-export function suiteScriptGeneralSettings(state, id, ssLinkedConnectionId) {
-  if (!state) return null;
+export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
+  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+
   const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
-
+  let selectedGeneral = general;
   if (Array.isArray(general)) {
-    return general.find(s => s.title === 'General');
+    selectedGeneral = general.find(s => s.title === 'General');
   }
-  return general;
-}
 
+  return (selectedGeneral
+    ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
+      ...sections] : sections).map(sec => ({
+    ...sec,
+    titleId: getTitleIdFromSection(sec),
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+  }));
+}
 
 export function suiteScriptResourceStatus(
   state,
@@ -4851,11 +4861,11 @@ export function suiteScriptResourceFormSaveProcessTerminated(
   );
 }
 
-export function suiteScriptIAFormSaveProcessTerminated(
+export function suiteScriptIAFormSaving(
   state,
   { ssLinkedConnectionId, integrationId }
 ) {
-  return fromSession.suiteScriptIAFormSaveProcessTerminated(
+  return fromSession.suiteScriptIAFormSaving(
     state && state.session,
     { ssLinkedConnectionId, integrationId }
   );
@@ -5416,15 +5426,15 @@ export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType
 
 /**
  * Supported File types : csv, json, xml, xlsx
- * Note : Incase of xlsx , if uploaded returns xlsx content but if not
- * the sampledata extracted from resource would be of csv content
- * TODO @Raghu: If need arises, figure out what is needed if fileType is xlsx
+ * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
+ * Modify this if we need xlsx content any where to show
  */
 export function fileSampleData(state, { resourceId, resourceType, fileType}) {
+  const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
   const { data: rawData } = getResourceSampleDataWithStatus(
     state,
     resourceId,
-    'rawFile'
+    stage,
   );
   if (!rawData) {
     const resourceObj = resource(state, resourceType, resourceId);
