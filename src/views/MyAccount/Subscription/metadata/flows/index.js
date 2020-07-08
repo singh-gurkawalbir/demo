@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import getRoutePath from '../../../../../utils/routePaths';
 import NameCell from '../../../../../components/ResourceTable/metadata/flows/NameCell';
 
 export default {
@@ -22,7 +24,13 @@ export default {
       },
       {
         heading: 'Integration',
-        value: r => r?.integrationName,
+        value: function Name(r) {
+          return (
+            <div>
+              <Link to={getRoutePath(`/integrations/${r?.integrationId || 'none'}`)}>{r?.integrationName}</Link>
+            </div>
+          );
+        },
       }
     ];
 

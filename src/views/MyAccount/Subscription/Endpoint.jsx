@@ -14,6 +14,7 @@ import LicenceTable from './licenseTable';
 import RightDrawer from '../../../components/drawer/Right';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
+import Spinner from '../../../components/Spinner';
 
 
 const useStyles = makeStyles(theme => ({
@@ -309,7 +310,14 @@ export default function Endpoint() {
   }, [history, match?.url]);
 
   onCloseExpireMessage;
-  if (!licenseEntitlementUsage) return null;
+  if (!licenseEntitlementUsage) {
+    return (
+      <Typography>
+        Loading subscription metadata...
+        <Spinner />
+      </Typography>
+    );
+  }
 
 
   return (
@@ -381,14 +389,14 @@ export default function Endpoint() {
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
-            Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet, upgrade now
+            Oh, no! Your free trial expires in {licenseActionDetails?.expiresInDays} days! This will disable all of your flows, then you can enable one flow to keep. Or better yet,
             <Button
               data-test="upgradeSubscription"
               variant="text"
               color="primary"
               onClick={onTrialUpgradeClick}
               className={classes.subscriptionUpgradeLink}
-              > Upgrade now
+              > upgrade now
             </Button>
             and keep them all!
           </Typography>

@@ -8,7 +8,7 @@ export default {
     const columns = [
       {
         heading: 'Agent',
-        value: function ExportDrawerLink(r) {
+        value: function AgentsNameLink(r) {
           return <ResourceDrawerLink resourceType="agents" resource={r} />;
         },
         orderBy: 'name',

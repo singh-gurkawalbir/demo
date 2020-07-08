@@ -1,15 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { LinearProgress} from '@material-ui/core';
 import * as selectors from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
 import CeligoTable from '../../../components/CeligoTable';
 import agentsMetadata from './metadata/agents';
 import endpointsMetadata from './metadata/endpoints';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-
+import Progressbar from './Progressbar';
 import flowsMetadata from './metadata/flows';
 import tradingPartnersMetadata from './metadata/tradingpartners';
 import ResourceDrawer from '../../../components/drawer/Resource';
@@ -26,22 +24,13 @@ const agentsFilterConfig = {
   type: 'agents',
   ignoreEnvironmentFilter: true,
 };
-const useStyles = makeStyles(theme => ({
-
-  progressBar: {
-    height: 10,
-    borderRadius: 10,
-    maxWidth: '75%',
-    backgroundColor: theme.palette.secondary.lightest,
-  },
-  linearProgressWrapper: {
-    marginTop: theme.spacing(1),
-  },
-}));
+const integrationsFilterConfig = {
+  type: 'integrations',
+  ignoreEnvironmentFilter: true,
+};
 
 export default function LicenseTable() {
   const match = useRouteMatch();
-  const classes = useStyles();
   const {type, env} = match.params;
   const licenseActionDetails = useSelector(state =>
     selectors.endpointLicenseWithMetadata(state)
@@ -121,6 +110,10 @@ export default function LicenseTable() {
     selectors.makeResourceListSelector,
     agentsFilterConfig
   ).resources;
+  const integrations = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    integrationsFilterConfig
+  ).resources;
   const resourceList = [];
   if (type === 'endpoints') {
     resource.forEach(res => {
@@ -133,8 +126,9 @@ export default function LicenseTable() {
   } else if (type === 'flows') {
     resource.forEach(res => {
       const flow = flows.find(f => (f._id === res._id));
+      const integration = integrations.find(i => (i._id === flow?._integrationId));
 
-      flow && resourceList.push({...flow, integrationName: res?.integration?.name});
+      flow && resourceList.push({...flow, integrationName: integration?.name || 'Standalone flows', integrationId: integration?._id || 'none'});
     });
   } else if (type === 'tradingpartners') {
     resource.forEach(res => {
@@ -152,16 +146,11 @@ export default function LicenseTable() {
   return (
     <>
       <LoadResources required resources="connections,flows,integrations,agents">
-        <div className={classes.linearProgressWrapper}>
-          <div>Using {totalUsedResources} of {totalResources}</div>
-          <LinearProgress
-            color="primary"
-            value={(totalUsedResources / totalResources) * 100}
-            variant="determinate"
-            thickness={10}
-            className={classes.progressBar}
+        <Progressbar
+          usedCount={totalUsedResources}
+          totalCount={totalResources}
+          hideButton
             />
-        </div>
         <CeligoTable
           data={resourceList}
           {...metadata}

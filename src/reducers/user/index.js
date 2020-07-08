@@ -44,6 +44,12 @@ export function endpointLicense(state, accountId) {
     accountId
   );
 }
+export function currLicense(state, accountId) {
+  return fromAccounts.currLicense(
+    state && state.org && state.org.accounts,
+    accountId
+  );
+}
 
 export function diyLicense(state, accountId) {
   return fromAccounts.diyLicense(

@@ -58,7 +58,7 @@ export default (state = [], action) => {
       }
 
       const integratorLicense = ownAccount.ownerUser.licenses.find(
-        l => l.type === 'integrator'
+        l => (l.type === 'integrator' || l.type === 'endpoint')
       );
 
       if (!integratorLicense) {
@@ -67,7 +67,7 @@ export default (state = [], action) => {
 
       const { trialEndDate, tier } = action;
       const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator') {
+        if (l.type === 'integrator' || l.type === 'endpoint') {
           return { ...l, trialEndDate, tier, trialStarted: true };
         }
 
@@ -98,7 +98,7 @@ export default (state = [], action) => {
       }
 
       const integratorLicense = ownAccount.ownerUser.licenses.find(
-        l => l.type === 'integrator'
+        l => (l.type === 'integrator' || l.type === 'endpoint')
       );
 
       if (!integratorLicense) {
@@ -106,7 +106,7 @@ export default (state = [], action) => {
       }
 
       const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator') {
+        if (l.type === 'integrator' || l.type === 'endpoint') {
           return { ...l, upgradeRequested: true };
         }
 
@@ -246,6 +246,17 @@ export function integratorLicense(state, accountId) {
 
   return ioLicense;
 }
+export function currLicense(state, accountId) {
+  if (!state) {
+    return null;
+  }
+  const account = state.find(a => a._id === accountId);
+
+  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
+    return null;
+  }
+  return (account.ownerUser.licenses.find(l => l.type === 'diy') || account.ownerUser.licenses.find(l => l.type === 'integrator') || account.ownerUser.licenses.find(l => l.type === 'endpoint'));
+}
 
 export function diyLicense(state, accountId) {
   if (!state) {
@@ -355,7 +366,7 @@ export const sharedAccounts = createSelector(
     accepted.forEach(a => {
       if (!a.ownerUser || !a.ownerUser.licenses) return;
 
-      const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+      const ioLicense = a.ownerUser.licenses.find(l => (l.type === 'integrator' || l.type === 'endpoint'));
 
       shared.push({
         id: a._id,

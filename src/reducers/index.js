@@ -2280,6 +2280,11 @@ export function diyLicense(state) {
   return fromUser.diyLicense(state.user, preferences.defaultAShareId);
 }
 
+export function currLicense(state) {
+  const preferences = userPreferences(state);
+  return fromUser.currLicense(state.user, preferences.defaultAShareId);
+}
+
 export function integratorLicenseActionDetails(state) {
   let licenseActionDetails = {};
   const license = integratorLicense(state);

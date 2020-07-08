@@ -35,15 +35,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ProgressBar({ usedCount, totalCount, env, type, setTitle}) {
+export default function ProgressBar({ usedCount, totalCount, env, type, setTitle, hideButton}) {
   const match = useRouteMatch();
   const history = useHistory();
   const classes = useStyles();
   const titleMap = {
-    endpoints: 'Endpoint apps',
-    flows: 'Integration flows',
-    tradingpartners: 'Trading partners',
-    agents: 'On-premise agents',
+    endpoints: 'Endpoint apps:',
+    flows: 'Integration flows:',
+    tradingpartners: 'Trading partners:',
+    agents: 'On-premise agents:',
   };
   const onButtonClick = useCallback(
     () => {
@@ -56,7 +56,7 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
     <div className={classes.productionUsageWrapper}>
       <div className={classes.productionUsageInfo}>
         <Typography variant="h4" component="span" className={classes.featureText}>
-          {titleMap[type]}:&nbsp;
+          {titleMap[type] || 'Using '}&nbsp;
         </Typography>
         <Typography component="span"><span>{usedCount} </span>of <span>{totalCount}</span></Typography>
       </div>
@@ -69,6 +69,7 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
           className={clsx(classes.progressBar, classes.productionProgressBar)}
           />
       </div>
+      {!hideButton && (
       <Button
         disabled={usedCount === 0}
         data-test="fixConnection"
@@ -77,6 +78,6 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
         onClick={onButtonClick}
         className={classes.productionUsageListLink}>
         List
-      </Button>
+      </Button>)}
     </div>);
 }
