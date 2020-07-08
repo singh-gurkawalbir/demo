@@ -279,14 +279,62 @@ export default {
       refreshOptionsOnChangesTo: 'file.type',
       placeholder: 'Sample file (that would be parsed):',
     },
-    'file.csvHelper': { fieldId: 'file.csvHelper' },
-    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
-    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
-    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
-    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
-    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
-    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
+    'file.csvHelper': { fieldId: 'file.csvHelper',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
+    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ], },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',

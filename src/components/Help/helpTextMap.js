@@ -795,6 +795,10 @@ export default {
   'snowflake.import.rdbms.queryType': 'BULK INSERT supports binding an array of data, allowing you to insert multiple records. Binding a large array will impact performance and might be rejected if the size of data is too large to be handled by SnowFlake server. When you use BULK INSERT option, you must complete field mapping. Alternatively, you can insert records using option “Use SQL Query” by writing your own SQL statement in the Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
+  'connection.rdbms.snowflake.schema':
+    'Name of the schema that the connection will use. If the name is not provided, the connection will use the default schema defined in Snowflake for the user.',
+  'connection.rdbms.snowflake.role':
+    'Name of the Roles to use in the connection. If the user role is not provided, the connection will use the default user role defined in Snowflake for the user.',
   'snowflake.connection.rdbms.host': 'Account name of Snowflake instance.',
   'snowflake.connection.rdbms.database':
     'Snowflake database that you want to connect.',
