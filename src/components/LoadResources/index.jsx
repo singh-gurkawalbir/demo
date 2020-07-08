@@ -5,6 +5,8 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
+import SuccessIcon from '../icons/SuccessIcon';
+
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();
@@ -46,10 +48,14 @@ export default function LoadResources({ children, resources, required }) {
           {r.isLoading ?
             (
               <>
-                <Spinner size={16} />{' '} Loading {r.resourceType}
+                <Spinner size={16} /><span>{` Loading ${r.resourceType}`}</span>
               </>
             ) :
-            (` ✔ Loaded ${r.resourceType} `)}
+            (
+              <>
+                <SuccessIcon /><span>{` Loaded ${r.resourceType}`}</span>
+              </>
+            )}
         </div>)
       )}
     </Loader>);
