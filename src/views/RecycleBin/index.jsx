@@ -27,9 +27,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const LoadingMask = () => (
+export const LoadingMask = ({message}) => (
   <Loader open>
-    <Typography variant="h4">Restoring...</Typography>
+    <Typography variant="h4">{message}</Typography>
     <Spinner color="primary" />
   </Loader>
 );
@@ -78,7 +78,7 @@ export default function RecycleBin(props) {
   return (
     <>
       <CheckPermissions permission={PERMISSIONS.recyclebin.view}>
-        {status === 'requested' && <LoadingMask />}
+        {status === 'requested' && <LoadingMask message="Restoring..." />}
         <ResourceDrawer {...props} />
         <CeligoPageBar title="Recycle bin" infoText={infoText.recycleBin}>
           <div className={classes.actions}>

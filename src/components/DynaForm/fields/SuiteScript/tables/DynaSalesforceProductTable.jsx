@@ -2,12 +2,12 @@ import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../../../actions';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../reducers';
-import Spinner from '../../../Spinner';
-import DynaSelect from '../DynaSelect';
-import DynaTableView from '../DynaTableView/DynaTable';
+import actions from '../../../../../actions';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../../reducers';
+import Spinner from '../../../../Spinner';
+import DynaSelect from '../../DynaSelect';
+import DynaTableView from '../../DynaTableView/DynaTable';
 
 const useStyles = makeStyles(theme => ({
   margin: {

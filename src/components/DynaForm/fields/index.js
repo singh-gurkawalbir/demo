@@ -103,7 +103,7 @@ import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
 import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
-import DyanSuiteScriptTable from './SuiteScript/DynaSuiteScriptTable';
+import DynaSuiteScriptTable from './SuiteScript/tables';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
 import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
@@ -112,7 +112,7 @@ import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 
 export default {
   matchingcriteria: DynaMatchingCriteriaWithModal,
-  suitescripttable: DyanSuiteScriptTable,
+  suitescripttable: DynaSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,

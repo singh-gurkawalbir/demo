@@ -1,8 +1,9 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
+
 
 export default function DynaRefreshableStaticMap(props) {
   const {
@@ -74,6 +75,10 @@ export default function DynaRefreshableStaticMap(props) {
 
     return obj;
   });
+
+
+  const isLoadingMap = useMemo(() => ({[valueName]: status === 'requested'}), [status, valueName]);
+
   const onFetch = useCallback(() => {
     if (!metadata && !disableOptionsLoad) {
       dispatch(
@@ -107,10 +112,11 @@ export default function DynaRefreshableStaticMap(props) {
     );
   };
 
+
   return (
     <DynaTableView
       {...props}
-      isLoading={status === 'requested'}
+      isLoading={isLoadingMap}
       metadata={metadata}
       shouldReset={!!metadata}
       optionsMap={optionsMap}
