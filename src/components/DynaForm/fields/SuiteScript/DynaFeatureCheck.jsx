@@ -34,23 +34,26 @@ export default function DynaFeatureCheck(props) {
     if (value) {
       fieldChange(id, value);
       dispatch(actions.suiteScript.featureCheck.request(ssLinkedConnectionId, integrationId, featureName));
-    } else if (featureDisabledMessage) {
-      confirmDialog({
-        title: 'Confirm',
-        message: featureDisabledMessage,
-        buttons: [
-          {
-            label: 'No',
-            color: 'secondary',
-          },
-          {
-            label: 'Yes',
-            onClick: () => {
-              fieldChange(id, value);
+    } else {
+      if (featureDisabledMessage) {
+        return confirmDialog({
+          title: 'Confirm',
+          message: featureDisabledMessage,
+          buttons: [
+            {
+              label: 'No',
+              color: 'secondary',
             },
-          }
-        ]
-      });
+            {
+              label: 'Yes',
+              onClick: () => {
+                fieldChange(id, value);
+              },
+            }
+          ]
+        });
+      }
+      fieldChange(id, value);
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
