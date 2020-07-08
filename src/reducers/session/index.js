@@ -528,8 +528,8 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromResource.integratorLicenseActionMessage(state && state.resource);
+export function platformLicenseActionMessage(state) {
+  return fromResource.platformLicenseActionMessage(state && state.resource);
 }
 
 export function getChildIntegrationId(state, parentId) {

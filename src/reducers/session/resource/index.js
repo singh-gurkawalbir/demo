@@ -33,7 +33,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_TRIAL_ISSUED:
       newState = {
         ...state,
-        integratorLicenseActionMessage:
+        platformLicenseActionMessage:
           'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?',
       };
 
@@ -41,7 +41,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
       newState = {
         ...state,
-        integratorLicenseActionMessage:
+        platformLicenseActionMessage:
           'Your request has been received. We will contact you soon.',
       };
 
@@ -103,12 +103,12 @@ export const resourceReferences = createSelector(
   }
 );
 
-export function integratorLicenseActionMessage(state) {
+export function platformLicenseActionMessage(state) {
   if (!state) {
     return;
   }
 
-  return state.integratorLicenseActionMessage;
+  return state.platformLicenseActionMessage;
 }
 
 export function getChildIntegrationId(state, parentId) {

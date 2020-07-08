@@ -32,27 +32,8 @@ export function debugOn(state) {
 // #endregion DEBUG SELECTORS
 
 // #region LICENSE
-export function integratorLicense(state, accountId) {
-  return fromAccounts.integratorLicense(
-    state && state.org && state.org.accounts,
-    accountId
-  );
-}
-export function endpointLicense(state, accountId) {
-  return fromAccounts.endpointLicense(
-    state && state.org && state.org.accounts,
-    accountId
-  );
-}
-export function currLicense(state, accountId) {
-  return fromAccounts.currLicense(
-    state && state.org && state.org.accounts,
-    accountId
-  );
-}
-
-export function diyLicense(state, accountId) {
-  return fromAccounts.diyLicense(
+export function platformLicense(state, accountId) {
+  return fromAccounts.platformLicense(
     state && state.org && state.org.accounts,
     accountId
   );

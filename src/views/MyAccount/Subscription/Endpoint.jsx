@@ -227,7 +227,7 @@ export default function Endpoint() {
 
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const licenseActionDetails = useSelector(state =>
-    selectors.endpointLicenseWithMetadata(state)
+    selectors.platformLicenseWithMetadata(state)
   );
   const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;

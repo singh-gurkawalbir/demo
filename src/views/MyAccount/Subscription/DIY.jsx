@@ -102,7 +102,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DIY() {
   const classes = useStyles();
-  const diyLicense = useSelector(state => selectors.diyLicense(state));
+  const platformLicense = useSelector(state => selectors.platformLicense(state));
 
   // TODO: Ashok, There is  no description in the new mock please check.
   return (
@@ -114,12 +114,12 @@ export default function DIY() {
           </Typography>
           <div className={classes.wrapper}>
             <Typography variant="h3">
-              Edition: {diyLicense.usageTierName}
+              Edition: {platformLicense.usageTierName}
             </Typography>
             <ul className={classes.itemsList}>
               <li>
                 <span className={classes.bold}>Expiration date:</span>{' '}
-                {diyLicense.expirationDate}
+                {platformLicense.expirationDate}
               </li>
             </ul>
           </div>
@@ -131,7 +131,7 @@ export default function DIY() {
           <div className={classes.linearProgressWrapper}>
             <LinearProgress
               color="primary"
-              value={diyLicense.currentUsage.usagePercent}
+              value={platformLicense.currentUsage.usagePercent}
               variant="determinate"
               thickness={10}
               className={classes.progressBar}
@@ -139,8 +139,8 @@ export default function DIY() {
           </div>
           <div>
             <span className={classes.bold}>
-              {diyLicense.currentUsage.usedHours} Hour
-              {diyLicense.currentUsage.usedHours === 1 ? '' : 's'}
+              {platformLicense.currentUsage.usedHours} Hour
+              {platformLicense.currentUsage.usedHours === 1 ? '' : 's'}
             </span>
           </div>
         </div>

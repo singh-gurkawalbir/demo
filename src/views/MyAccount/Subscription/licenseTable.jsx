@@ -33,7 +33,7 @@ export default function LicenseTable() {
   const match = useRouteMatch();
   const {type, env} = match.params;
   const licenseActionDetails = useSelector(state =>
-    selectors.endpointLicenseWithMetadata(state)
+    selectors.platformLicenseWithMetadata(state)
   );
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
 

@@ -8,7 +8,7 @@ import Endpoint from './Endpoint';
 
 export default function Subscription() {
   const license = useSelector(state =>
-    selectors.currLicense(state)
+    selectors.platformLicense(state)
   );
 
   return (

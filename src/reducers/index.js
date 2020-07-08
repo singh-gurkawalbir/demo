@@ -2263,31 +2263,15 @@ export function connectionHasAs2Routing(state, id) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export function integratorLicense(state) {
+export function platformLicense(state) {
   const preferences = userPreferences(state);
 
-  return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
-}
-export function endpointLicense(state) {
-  const preferences = userPreferences(state);
-
-  return fromUser.endpointLicense(state.user, preferences.defaultAShareId);
+  return fromUser.platformLicense(state.user, preferences.defaultAShareId);
 }
 
-export function diyLicense(state) {
-  const preferences = userPreferences(state);
-
-  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
-}
-
-export function currLicense(state) {
-  const preferences = userPreferences(state);
-  return fromUser.currLicense(state.user, preferences.defaultAShareId);
-}
-
-export function integratorLicenseActionDetails(state) {
+export function platformLicenseActionDetails(state) {
   let licenseActionDetails = {};
-  const license = integratorLicense(state);
+  const license = platformLicense(state);
 
   if (!license) {
     return licenseActionDetails;
@@ -2357,7 +2341,8 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-export function licenseWithMetadata(license) {
+export function platformLicenseWithMetadata(state) {	
+  const license = platformLicense(state);
   const licenseActionDetails = { ...license };
   const nameMap = {
     none: 'None',
@@ -2548,16 +2533,9 @@ export function licenseWithMetadata(license) {
 
   return licenseActionDetails;
 }
-export function integratorLicenseWithMetadata(state) {
-  return licenseWithMetadata(integratorLicense(state));
-}
-
-export function endpointLicenseWithMetadata(state) {
-  return licenseWithMetadata(endpointLicense(state));
-}
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
-  const license = integratorLicenseWithMetadata(state);
+  const license = platformLicenseWithMetadata(state);
 
   if (!license) {
     return licenseDetails;
@@ -3606,8 +3584,8 @@ export function createdResourceId(state, tempId) {
   return fromSession.createdResourceId(state && state.session, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromSession.integratorLicenseActionMessage(state && state.session);
+export function platformLicenseActionMessage(state) {
+  return fromSession.platformLicenseActionMessage(state && state.session);
 }
 
 // #endregion Session metadata selectors

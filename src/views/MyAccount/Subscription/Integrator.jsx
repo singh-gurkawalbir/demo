@@ -126,10 +126,10 @@ export default function Subscription() {
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
-    selectors.integratorLicenseWithMetadata(state)
+    selectors.platformLicenseWithMetadata(state)
   );
-  const integratorLicense = useSelector(state =>
-    selectors.integratorLicense(state)
+  const platformLicense = useSelector(state =>
+    selectors.platformLicense(state)
   );
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const classes = useStyles();
@@ -138,10 +138,10 @@ export default function Subscription() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (integratorLicense) {
+    if (platformLicense) {
       getNumEnabledFlows();
     }
-  }, [getNumEnabledFlows, integratorLicense]);
+  }, [getNumEnabledFlows, platformLicense]);
   const { numEnabledPaidFlows, numEnabledSandboxFlows } = useSelector(
     state => selectors.getNumEnabledFlows(state),
     (left, right) =>
@@ -201,15 +201,15 @@ export default function Subscription() {
 
     return dispatch(actions.user.org.accounts.requestUpdate('reTrial'));
   }, [dispatch]);
-  const integratorLicenseActionMessage = useSelector(state =>
-    selectors.integratorLicenseActionMessage(state)
+  const platformLicenseActionMessage = useSelector(state =>
+    selectors.platformLicenseActionMessage(state)
   );
 
   useEffect(() => {
-    if (integratorLicenseActionMessage) {
-      enquesnackbar({ message: integratorLicenseActionMessage });
+    if (platformLicenseActionMessage) {
+      enquesnackbar({ message: platformLicenseActionMessage });
     }
-  }, [enquesnackbar, integratorLicenseActionMessage]);
+  }, [enquesnackbar, platformLicenseActionMessage]);
 
   const onDrawerClose = useCallback(() => {
     setShowStartFreeDialog(false);
