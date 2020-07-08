@@ -11,6 +11,7 @@ import getFormattedSampleData from '../../../utils/sampleData';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function ManageLookup(props) {
   const {
@@ -30,8 +31,10 @@ export default function ManageLookup(props) {
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  const { merged: resource = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
