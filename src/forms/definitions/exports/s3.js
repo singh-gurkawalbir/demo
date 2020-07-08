@@ -404,6 +404,7 @@ export default {
       visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
     },
     'file.skipDelete': { fieldId: 'file.skipDelete',
+      label: 'Leave file in the current bucket',
       disabledWhen: [
         { field: 's3.backupBucket', isNot: [''] },
       ], },
