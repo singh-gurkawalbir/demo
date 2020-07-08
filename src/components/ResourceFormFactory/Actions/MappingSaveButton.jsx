@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
@@ -81,12 +80,7 @@ const MappingSaveButton = props => {
       color={color}
       disabled={disabled || disableSave || !mappingsChanged}
       onClick={handleButtonClick}>
-      {disableSave ? (
-        <>
-          <Spinner size={16} />
-          Saving
-        </>
-      ) : (
+      {disableSave ? 'Saving' : (
         <>{submitButtonLabel}</>
       )}
     </Button>
