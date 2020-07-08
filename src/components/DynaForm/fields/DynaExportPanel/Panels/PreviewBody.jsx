@@ -1,18 +1,8 @@
 import React, { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Spinner from '../../../../Spinner';
+import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
 
-const useStyles = makeStyles({
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
-  },
-});
 export default function PreviewBody(props) {
   const {
     resourceSampleData,
@@ -22,7 +12,6 @@ export default function PreviewBody(props) {
     previewStageDataList,
     resource,
   } = props;
-  const classes = useStyles();
   const previewBodyTemplate = useMemo(
     () => getPreviewBodyTemplateType(resource, panelType),
     [panelType, resource]
@@ -31,9 +20,7 @@ export default function PreviewBody(props) {
   return (
     <div>
       {resourceSampleData.status === 'requested' && (
-        <div className={classes.spinnerWrapper}>
-          <Spinner size={48} color="primary" />
-        </div>
+        <PanelLoader />
       )}
       {resourceSampleData.status === 'received' && (
         <div>

@@ -11,7 +11,7 @@ import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
-import Spinner from '../../Spinner';
+import PanelLoader from '../../PanelLoader';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -21,13 +21,6 @@ const useStyles = makeStyles({
     gridTemplateColumns: '2fr 3fr 2fr',
     gridTemplateRows: '1fr 0fr',
     gridTemplateAreas: '"data rule result" "error error error"',
-  },
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
   },
 });
 
@@ -102,9 +95,7 @@ export default function JavaScriptEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
         {isSampleDataLoading ? (
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={48} color="primary" />
-          </div>
+          <PanelLoader />
         ) : (
           <CodePanel
             id="data"
