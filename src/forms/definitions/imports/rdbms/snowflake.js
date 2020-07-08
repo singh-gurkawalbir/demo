@@ -1,8 +1,6 @@
 export default {
   preSave: formValues => {
-    const newValues = {
-      ...formValues,
-    };
+    const newValues = { ...formValues };
 
     if (newValues['/rdbms/queryType'] === 'BULK INSERT') {
       newValues['/rdbms/query'] = undefined;
@@ -18,9 +16,47 @@ export default {
 
     return newValues;
   },
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'rdbms.query'
+    ) {
+      const lookupField = fields.find(
+        field => field.fieldId === 'rdbms.lookups'
+      );
+      const queryTypeField = fields.find(
+        field => field.fieldId === 'rdbms.queryType'
+      );
+      const modelMetadataField = fields.find(
+        field => field.fieldId === 'modelMetadata'
+      );
+      let queryTypeVal;
+
+      if (queryTypeField) {
+        if (fieldId === 'rdbms.query') {
+          queryTypeVal = queryTypeField && queryTypeField.value;
+        }
+      }
+
+      return {
+        queryType: queryTypeVal,
+        modelMetadataFieldId: modelMetadataField.fieldId,
+        modelMetadata: modelMetadataField && modelMetadataField.value,
+        lookups: {
+          // passing lookupId fieldId and data since we will be modifying lookups
+          //  from 'Manage lookups' option inside 'SQL Query Builder'
+          fieldId: lookupField.fieldId,
+          data: lookupField && lookupField.value,
+        },
+      };
+    }
+
+    return null;
+  },
+
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
+    'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     'rdbms.bulkInsert.batchSize': {
       id: 'rdbms.bulkInsert.batchSize',
       type: 'text',
@@ -84,6 +120,7 @@ export default {
         label: 'How would you like the records imported?',
         fields: [
           'rdbms.queryType',
+          'rdbms.lookups',
           'rdbms.bulkInsert.tableName',
           'rdbms.query',
         ],
