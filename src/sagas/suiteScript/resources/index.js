@@ -126,7 +126,7 @@ export function* requestSuiteScriptMetadata({
   const opts = {method: 'GET'};
 
   try {
-    const resource = yield call(apiCallWithRetry, {path, opts});
+    const resource = yield call(apiCallWithRetry, {path, opts, hidden: true});
     yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resource));
   } catch (error) {
     return false;
@@ -166,7 +166,14 @@ export function* resourcesReceived({ resourceType, collection = [] }) {
       /** Load V2 Salesforce - NetSuite connector settings is taking more time, so making the call in advance after loading tiles */
       const salesforceConnector = collection.find(t => t.isConnector && t.name === SUITESCRIPT_CONNECTORS.find(c => c._id === SUITESCRIPT_CONNECTOR_IDS.salesforce).ssName);
       if (salesforceConnector) {
-        yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, salesforceConnector._integrationId));
+        const settingsLoaded = yield select(selectors.hasSuiteScriptData, {
+          ssLinkedConnectionId,
+          integrationId: salesforceConnector._integrationId,
+          resourceType: 'settings',
+        });
+        if (!settingsLoaded) {
+          yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, salesforceConnector._integrationId));
+        }
       }
     }
   }

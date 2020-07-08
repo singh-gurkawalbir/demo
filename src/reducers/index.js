@@ -4587,6 +4587,21 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
   }));
 }
 
+export function hasSuiteScriptData(
+  state,
+  {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  }
+) {
+  return fromData.hasSuiteScriptData(state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
 export function suiteScriptResourceStatus(
   state,
   {
