@@ -1,5 +1,5 @@
 export default function getRoutePath(path = '') {
-  const prefix = '';
+  const prefix = '/pg';
   let pagePath = path;
 
   if (typeof pagePath !== 'string') {
