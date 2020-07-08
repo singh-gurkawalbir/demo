@@ -1,4 +1,3 @@
-import {invert} from 'lodash';
 import csvOptions from '../../../../../components/AFE/SuiteScript/CsvConfigEditor/options';
 
 export default {
@@ -6,7 +5,7 @@ export default {
     type: 'select',
     label: 'Column delimiter',
     options: [{items: csvOptions.ColumnDelimiterOptions}],
-    value: r => invert(csvOptions.ColumnDelimiterMap)[r?.import?.file?.csv?.columnDelimiter],
+    value: r => r?.import?.file?.csv?.columnDelimiter,
     required: true,
   },
   'import.file.csv.includeHeader': {

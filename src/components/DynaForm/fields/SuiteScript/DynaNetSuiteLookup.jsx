@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
+import { isArray, isObject } from 'lodash';
 import * as selectors from '../../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../../actions';
@@ -70,9 +71,11 @@ export default function DynaNetSuiteLookup(props) {
   let formattedExtractFields = [];
 
   if (flowSampleData) {
-    formattedExtractFields =
-      (flowSampleData?.map(obj => ({ name: obj.name || obj.label, id: obj.id || obj.value }))) ||
-      [];
+    if (isArray(flowSampleData)) {
+      formattedExtractFields = flowSampleData?.map(obj => ({ name: obj.name || obj.label, id: obj.id || obj.value }));
+    } else if (isObject(flowSampleData)) {
+      formattedExtractFields = Object.keys(flowSampleData).map(key => ({id: key, name: flowSampleData[key]}));
+    }
   }
 
   useEffect(() => {

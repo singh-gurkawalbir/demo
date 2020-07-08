@@ -1,26 +1,14 @@
 export default {
-  ColumnDelimiterMap: {
-    comma: ',',
-    pipe: '|',
-    semicolon: ';',
-    space: ' ',
-    tab: '\t',
-  },
   ColumnDelimiterOptions: [
-    { label: 'Comma (,)', value: 'comma' },
-    { label: 'Pipe (|)', value: 'pipe' },
-    { label: 'Semicolon (;)', value: 'semicolon' },
-    { label: 'Space', value: 'space' },
-    { label: 'Tab', value: 'tab' },
+    { label: 'Comma (,)', value: ',' },
+    { label: 'Pipe (|)', value: '|' },
+    { label: 'Semicolon (;)', value: ';' },
+    { label: 'Space', value: ' ' },
+    { label: 'Tab', value: '\t' },
   ],
-  RowDelimiterMap: {
-    lf: '\n',
-    cr: '\r',
-    crlf: '\r\n',
-  },
   RowDelimiterOptions: [
-    { label: 'LF (\\n)', value: 'lf' },
-    { label: 'CR (\\r)', value: 'cr' },
-    { label: 'CRLF (\\r\\n)', value: 'crlf' },
+    { label: 'LF (\\n)', value: '\n' },
+    { label: 'CR (\\r)', value: '\r' },
+    { label: 'CRLF (\\r\\n)', value: '\r\n' },
   ],
 };
