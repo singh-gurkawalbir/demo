@@ -497,7 +497,7 @@ describe('editor selectors', () => {
         processor: 'xmlParser',
         valid: {
           initOpts: {
-            advanced: true,
+            V0_json: false,
             trimSpaces: true,
             stripNewLineChars: true,
             attributePrefix: '@',
@@ -508,6 +508,9 @@ describe('editor selectors', () => {
           expectedRequest: {
             body: {
               data: '<doc>empty</doc>',
+              options: {
+                isSimplePath: true,
+              },
               rules: {
                 resourcePath: undefined,
                 doc: {

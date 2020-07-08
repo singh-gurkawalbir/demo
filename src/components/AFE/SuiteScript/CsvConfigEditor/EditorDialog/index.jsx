@@ -1,4 +1,4 @@
-import React, { useState, cloneElement, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, cloneElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -12,33 +12,23 @@ import {
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import actions from '../../../actions';
-import * as selectors from '../../../reducers';
-import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
-import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
-import TextToggle from '../../TextToggle';
-import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
-import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
-import useConfirmDialog from '../../ConfirmDialog';
-import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
-import Help from '../../Help';
-import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
+import * as selectors from '../../../../../reducers';
+import ViewColumnIcon from '../../../../icons/LayoutTriVerticalIcon';
+import ViewCompactIcon from '../../../../icons/LayoutLgLeftSmrightIcon';
+import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
+import FullScreenCloseIcon from '../../../../icons/FullScreenCloseIcon';
+import actions from '../../../../../actions';
+import useConfirmDialog from '../../../../ConfirmDialog';
+import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const useStyles = makeStyles(theme => ({
   dialogContent: {
     paddingBottom: 0,
   },
-  editorTitle: {
-    display: 'inline',
-    paddingRight: theme.spacing(2),
-  },
   toolbarContainer: {
     margin: theme.spacing(0, 1),
     padding: theme.spacing(2),
     display: 'flex',
-  },
-  helpTextButton: {
-    marginLeft: theme.spacing(1),
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -59,7 +49,6 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     justifyContent: 'space-between',
-    marginRight: theme.spacing(2),
     marginLeft: theme.spacing(2),
     marginTop: 0,
     marginBottom: theme.spacing(2),
@@ -71,6 +60,9 @@ const useStyles = makeStyles(theme => ({
     '& Button:last-child': {
       marginRight: '0px',
     },
+  },
+  editorToggleContainer: {
+    marginRight: theme.spacing(2),
   },
   autoPreview: {
     margin: theme.spacing(0, 1, 0, 1),
@@ -85,32 +77,32 @@ const useStyles = makeStyles(theme => ({
   },
   previewCheckbox: {
     marginLeft: 8,
-    alignSelf: 'center',
   },
   previewBtnContainer: {
     display: 'flex',
     minHeight: 29,
   }
 }));
+/**
+ * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
+ */
 
-export default function ToggleEditorDialog(props) {
+export default function EditorDialog(props) {
   const {
     children,
     id,
     open = true,
     action,
     title,
-    labels = [],
     showLayoutOptions = true,
     showFullScreen = true,
     width = '70vw',
     height = '50vh',
+    onSave,
     onClose,
     disabled,
-    helpTitle,
-    helpKey,
+    dataTest = 'editor',
     hidePreviewAction = false,
-    flowId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -118,40 +110,42 @@ export default function ToggleEditorDialog(props) {
   const [state, setState] = useState({
     layout: props.layout || 'compact',
     fullScreen: props.fullScreen || false,
-    activeEditorIndex: 0,
   });
   const { layout, fullScreen } = state;
-  const size = fullScreen ? { height } : { height, width };
-  const activeEditorId = useMemo(() => `${id}-${state.activeEditorIndex}`, [
-    id,
-    state.activeEditorIndex,
-  ]);
-  const toggleEditorOptions = useMemo(
-    () => [
-      { label: labels[0] || 'Rules', value: 'expression' },
-      { label: labels[1] || 'JavaScript', value: 'script' },
-    ],
-    [labels]
-  );
-  const editor = useSelector(state => selectors.editor(state, activeEditorId));
-  // TODO: Check for better approach
-  const [autoEvaluate, setAutoEvaluate] = useState(editor.autoEvaluate || false);
-
+  const editor = useSelector(state => selectors.editor(state, id));
   const saveInProgress = useSelector(
-    state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
-  );
-  const handleEvaluateFieldChange = useCallback(() => {
-    setAutoEvaluate(!autoEvaluate);
-  }, [autoEvaluate]);
-  const editorViolations = useSelector(state =>
-    selectors.editorViolations(state, activeEditorId)
+    state => selectors.editorPatchStatus(state, id).saveInProgress
   );
   const isEditorDirty = useSelector(state =>
-    selectors.isEditorDirty(state, activeEditorId)
+    selectors.isEditorDirty(state, id)
+  );
+  const handleAutoPreviewToggle = useCallback(() => {
+    dispatch(actions.editor.patch(id, { autoEvaluate: !editor.autoEvaluate }));
+  }, [dispatch, editor.autoEvaluate, id]);
+  const editorViolations = useSelector(state =>
+    selectors.editorViolations(state, id)
   );
   const handlePreview = useCallback(
-    () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
-    [activeEditorId, dispatch]
+    () => dispatch(actions.editor.evaluateRequest(id)),
+    [dispatch, id]
+  );
+
+  const handleSave = useCallback(() => {
+    if (onSave) {
+      onSave(true, editor);
+    }
+    dispatch(actions.editor.saveComplete(id));
+  }, [dispatch, editor, id, onSave]);
+
+  const patchEditorLayoutChange = useCallback(() => {
+    dispatch(actions.editor.changeLayout(id));
+  }, [dispatch, id]);
+  const handleLayoutChange = useCallback(
+    (event, _layout) => {
+      patchEditorLayoutChange();
+      _layout && setState({ ...state, layout: _layout });
+    },
+    [patchEditorLayoutChange, state]
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
@@ -166,42 +160,27 @@ export default function ToggleEditorDialog(props) {
           {
             label: 'No, go back',
             color: 'secondary',
-          },
+          }
         ],
       });
     } else {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-
-
-  const patchEditorLayoutChange = useCallback(() => {
-    dispatch(actions.editor.changeLayout(activeEditorId));
-  }, [activeEditorId, dispatch]);
-  const handleLayoutChange = useCallback(
-    (event, _layout) => {
-      patchEditorLayoutChange();
-      _layout && setState({ ...state, layout: _layout });
-    },
-    [patchEditorLayoutChange, state]
-  );
   const handleFullScreenClick = useCallback(() => {
     patchEditorLayoutChange();
     setState({ ...state, fullScreen: !fullScreen });
   }, [fullScreen, patchEditorLayoutChange, state]);
-  const handleEditorToggle = useCallback(
-    value =>
-      setState({ ...state, activeEditorIndex: value === 'expression' ? 0 : 1 }),
-    [state]
-  );
+  const size = useMemo(() => (fullScreen ? { height } : { height, width }), [
+    fullScreen,
+    height,
+    width,
+  ]);
   const showPreviewAction = useMemo(
     () =>
-      !hidePreviewAction && editor && !editorViolations && !autoEvaluate,
-    [editor, editorViolations, hidePreviewAction, autoEvaluate]
+      !hidePreviewAction && editor && !editorViolations && !editor.autoEvaluate,
+    [editor, editorViolations, hidePreviewAction]
   );
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
   const disableSave = useMemo(() => {
     // check for isEditorDirty !== undefined as isEditorDirty is not implemented for all editors
     const val =
@@ -213,41 +192,17 @@ export default function ToggleEditorDialog(props) {
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
 
-  useEffect(() => {
-    if (props.type) {
-      setState({
-        ...state,
-        activeEditorIndex: props.type === 'expression' ? 0 : 1,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.type]);
-
-  useEffect(() => {
-    if (editor.processor) {
-      dispatch(actions.editor.patch(activeEditorId, { autoEvaluate }));
-    }
-  }, [dispatch, activeEditorId, autoEvaluate, editor.processor]);
-
   return (
     <Dialog
       fullScreen={fullScreen}
       open={open}
       onClose={handleCancelClick}
       scroll="paper"
+      data-test={dataTest}
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
-          <Typography variant="h5" className={classes.editorTitle}>
-            {title}
-          </Typography>
-          <TextToggle
-            disabled={disabled}
-            value={state.activeEditorIndex === 0 ? 'expression' : 'script'}
-            onChange={handleEditorToggle}
-            exclusive
-            options={toggleEditorOptions}
-          />
+          <Typography variant="h5">{title}</Typography>
         </div>
         <div className={classes.actionContainer}>
           {/* it expects field to be a component to render */}
@@ -282,47 +237,22 @@ export default function ToggleEditorDialog(props) {
             </ToggleButton>
           )}
         </div>
-        {helpKey && (
-          <Help
-            title={helpTitle || title}
-            className={classes.helpTextButton}
-            helpKey={helpKey}
-            fieldId={helpKey}
-          />
-        )}
       </div>
       <DialogContent style={size} className={classes.dialogContent}>
         {// Is there a better way to do this?
-        children[state.activeEditorIndex] &&
-          cloneElement(children[state.activeEditorIndex], {
-            layout,
-            editorId: `${id}-${state.activeEditorIndex}`,
-          })
-}
+        children && cloneElement(children, { layout })
+        }
       </DialogContent>
       <DialogActions className={classes.actions}>
         <div className={classes.wrapper}>
-          <EditorSaveButton
-            key={activeEditorId}
-            id={activeEditorId}
+          <Button
             variant="outlined"
+            data-test="saveEditor"
+            disabled={disableSave}
             color="primary"
-            dataTest="saveEditor"
-            disabled={disableSave}
-            submitButtonLabel="Save"
-            flowId={flowId}
-        />
-          <EditorSaveButton
-            key={`${activeEditorId}-close`}
-            id={activeEditorId}
-            variant="outlined"
-            color="secondary"
-            dataTest="saveAndCloseEditor"
-            disabled={disableSave}
-            onClose={handleClose}
-            submitButtonLabel="Save & close"
-            flowId={flowId}
-        />
+            onClick={handleSave}>
+            Save
+          </Button>
           <Button
             variant="text"
             color="primary"
@@ -345,19 +275,18 @@ export default function ToggleEditorDialog(props) {
           </Button>
           )}
           {!hidePreviewAction && (
-          <div className={classes.previewCheckbox}>
-            <DynaCheckbox
-              disabled={disabled}
-              hideLabelSpacing
-              id="disableAutoPreview"
-              onFieldChange={handleEvaluateFieldChange}
-              label="Auto preview"
-              value={!!editor.autoEvaluate}
+            <div className={classes.previewCheckbox}>
+              <DynaCheckbox
+                disabled={disabled}
+                hideLabelSpacing
+                id="disableAutoPreview"
+                onFieldChange={handleAutoPreviewToggle}
+                label="Auto preview"
+                value={!!editor.autoEvaluate}
           />
-          </div>
+            </div>
           )}
         </div>
-
       </DialogActions>
     </Dialog>
   );

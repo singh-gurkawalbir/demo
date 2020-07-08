@@ -49,10 +49,16 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
+    background: theme.palette.background.paper,
+
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: theme.spacing(0, 0, 3, 3),
+    backgroundColor: theme.palette.background.default,
   },
   processorContainer: {
     display: 'flex',
@@ -69,22 +75,18 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     display: 'flex',
-    minHeight: 48,
+    padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
   },
-  sourceTitle: {
-    marginBottom: theme.spacing(3),
-  },
   destinationTitle: {
-    width: 320,
     marginLeft: 100,
-    marginBottom: theme.spacing(3),
+    justifyContent: 'flex-start',
   },
   generatorRoot: {
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(0, 0, 3, 3),
-    minWidth: 429,
+    backgroundColor: theme.palette.background.default,
+    minWidth: 460,
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),

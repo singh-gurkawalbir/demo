@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -19,8 +20,8 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId, disabled } = props;
-  const classes = useStyles(props);
+  const { editorId, disabled, rule } = props;
+  const classes = useStyles();
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -28,7 +29,7 @@ export default function XmlParseEditor(props) {
     selectors.editorViolations(state, editorId)
   );
   const dispatch = useDispatch();
-  const handleDataChange = () => {
+  const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
 
@@ -36,16 +37,22 @@ export default function XmlParseEditor(props) {
     dispatch(
       actions.editor.init(editorId, 'xmlParser', {
         data: props.data,
-        advanced: true,
-        trimSpaces: false,
-        rule: props.rule,
+        // since we may be sharing the same editorId, we need to force
+        // all default values.
+        V0_json: rule.V0_json === true || false,
+        resourcePath: rule.resourcePath,
+        trimSpaces: rule.trimSpaces,
+        stripNewLineChars: rule.stripNewLineChars,
+        attributePrefix: rule.attributePrefix,
+        textNodeName: rule.textNodeName,
+        listNodes: rule.listNodes,
+        includeNodes: rule.includeNodes,
+        excludeNodes: rule.excludeNodes,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props.data, rule]);
 
-  useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+  useEffect(() => handleInit(), [handleInit]);
 
   return (
     <PanelGrid key={editorId} className={classes.template}>

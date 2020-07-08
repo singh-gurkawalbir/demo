@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -12,7 +11,7 @@ import LoadResources from '../../LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
+import PanelLoader from '../../PanelLoader';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -178,10 +177,9 @@ export default function JavaScriptPanel(props) {
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            <>
-              <Typography>Retrieving your script</Typography>
-              <Spinner />
-            </>
+            // Removed retrieving message to make it consistent as we do not show specific messages
+            // pass message if need to show any
+            <PanelLoader />
           ) : (
             <CodePanel
               name="code"
