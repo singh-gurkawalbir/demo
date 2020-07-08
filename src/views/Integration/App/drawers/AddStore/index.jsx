@@ -140,7 +140,7 @@ export default function IntegrationAppAddNewStore(props) {
     return (
       <Loader open>
         <Spinner color="primary" />
-        <Typography variant="h5">Loading installation steps</Typography>
+        <Typography variant="h5">Loading</Typography>
       </Loader>
     );
   }
