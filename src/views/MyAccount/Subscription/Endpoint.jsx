@@ -15,6 +15,7 @@ import RightDrawer from '../../../components/drawer/Right';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
+import SpinnerWrapper from '../../../components/SpinnerWrapper';
 
 
 const useStyles = makeStyles(theme => ({
@@ -312,10 +313,9 @@ export default function Endpoint() {
   onCloseExpireMessage;
   if (!licenseEntitlementUsage) {
     return (
-      <Typography>
-        Loading subscription metadata...
+      <SpinnerWrapper>
         <Spinner />
-      </Typography>
+      </SpinnerWrapper>
     );
   }
 
