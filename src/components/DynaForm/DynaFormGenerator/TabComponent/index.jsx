@@ -1,5 +1,6 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import React, { useState, useCallback } from 'react';
+import clsx from 'clsx';
 import { Tabs, Tab, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
@@ -23,7 +24,9 @@ const useStyle = makeStyles(theme => ({
   tabsContainer: {
     minWidth: 150,
     background: theme.palette.background.paper,
-    marginRight: theme.spacing(2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(1),
+
   },
   MuiTabWrapper: {
     justifyContent: 'left',
@@ -37,14 +40,14 @@ const useStyle = makeStyles(theme => ({
 const TabLabel = ({layout, fieldMap, label, tabType }) => (
   <FormContext.Consumer>
     {form => (
-      tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error">{label}</Typography> : label
+      tabType !== 'tabIA' && isExpansionPanelErrored({ layout, fieldMap }, form.fields) ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography> : label
 
     )}
   </FormContext.Consumer>
 );
 
 function TabComponent(props) {
-  const { containers, fieldMap, children, type,
+  const { containers, fieldMap, children, type, className,
     ...rest } = props;
   const {
     externalTabState,
@@ -64,7 +67,7 @@ function TabComponent(props) {
       <Tabs
         value={selectedTabIndex}
         classes={{ indicator: classes.MuiTabsIndicator }}
-        className={classes.tabsContainer}
+        className={clsx(classes.tabsContainer, className)}
         variant="scrollable"
         orientation={orientation}
         indicatorColor="primary"
@@ -80,7 +83,6 @@ function TabComponent(props) {
         }}>
         {containers.map(({ label, ...layout }) => (
           <Tab
-            classes={{ wrapper: classes.MuiTabWrapper }}
             label={<TabLabel
               layout={layout}
               fieldMap={fieldMap}
