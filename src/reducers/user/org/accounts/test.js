@@ -252,14 +252,14 @@ describe('account (ashares) reducers', () => {
         expect(result).toEqual(expectedResult);
       });
     });
-    describe('integratorLicense', () => {
+    describe('platformLicense', () => {
       test('should return null when there is no integrator license', () => {
         const state = reducer(
           [],
           actions.resource.receivedCollection('shared/ashares', [])
         );
 
-        expect(selectors.integratorLicense(state, 'invalid_account')).toEqual(
+        expect(selectors.platformLicense(state, 'invalid_account')).toEqual(
           null
         );
         const state2 = reducer(
@@ -267,7 +267,7 @@ describe('account (ashares) reducers', () => {
           actions.resource.receivedCollection('shared/ashares', testAccounts)
         );
 
-        expect(selectors.integratorLicense(state2, 'invalid_account')).toEqual(
+        expect(selectors.platformLicense(state2, 'invalid_account')).toEqual(
           null
         );
       });
@@ -277,7 +277,7 @@ describe('account (ashares) reducers', () => {
           actions.resource.receivedCollection('licenses', ownLicenses)
         );
 
-        expect(selectors.integratorLicense(state, ACCOUNT_IDS.OWN)).toEqual({
+        expect(selectors.platformLicense(state, ACCOUNT_IDS.OWN)).toEqual({
           _id: 'license1',
           type: 'integrator',
           sandbox: true,
@@ -290,20 +290,20 @@ describe('account (ashares) reducers', () => {
           actions.resource.receivedCollection('shared/ashares', testAccounts)
         );
 
-        expect(selectors.integratorLicense(state2, 'abc')).toEqual({
+        expect(selectors.platformLicense(state2, 'abc')).toEqual({
           type: 'integrator',
           sandbox: false,
           hasSandbox: false,
           hasConnectorSandbox: false,
         });
 
-        expect(selectors.integratorLicense(state2, 'def')).toEqual({
+        expect(selectors.platformLicense(state2, 'def')).toEqual({
           type: 'integrator',
           sandbox: true,
           hasSandbox: true,
           hasConnectorSandbox: false,
         });
-        expect(selectors.integratorLicense(state2, 'ghi')).toEqual({
+        expect(selectors.platformLicense(state2, 'ghi')).toEqual({
           type: 'integrator',
           sandbox: false,
           numSandboxAddOnFlows: 2,
@@ -319,7 +319,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state, ACCOUNT_IDS.OWN)).toEqual({
+        expect(selectors.platformLicense(state, ACCOUNT_IDS.OWN)).toEqual({
           _id: 'license1',
           type: 'integrator',
           tier: 'none',
@@ -341,7 +341,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state2, ACCOUNT_IDS.OWN)).toEqual(
+        expect(selectors.platformLicense(state2, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -367,7 +367,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state3, ACCOUNT_IDS.OWN)).toEqual(
+        expect(selectors.platformLicense(state3, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -392,7 +392,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state4, ACCOUNT_IDS.OWN)).toEqual(
+        expect(selectors.platformLicense(state4, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -416,7 +416,7 @@ describe('account (ashares) reducers', () => {
             },
           ])
         );
-        const result = selectors.integratorLicense(state5, ACCOUNT_IDS.OWN);
+        const result = selectors.platformLicense(state5, ACCOUNT_IDS.OWN);
 
         expect(result).toEqual(
           expect.objectContaining({
@@ -448,7 +448,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state6, ACCOUNT_IDS.OWN)).toEqual(
+        expect(selectors.platformLicense(state6, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',
@@ -474,7 +474,7 @@ describe('account (ashares) reducers', () => {
           ])
         );
 
-        expect(selectors.integratorLicense(state7, ACCOUNT_IDS.OWN)).toEqual(
+        expect(selectors.platformLicense(state7, ACCOUNT_IDS.OWN)).toEqual(
           expect.objectContaining({
             _id: 'license1',
             type: 'integrator',

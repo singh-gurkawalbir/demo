@@ -250,6 +250,11 @@ export default function getRequestOptions(
         path: '/numEnabledFlows',
         opts: { method: 'GET' },
       };
+    case actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST:
+      return {
+        path: '/licenseEntitlementUsage',
+        opts: { method: 'GET' },
+      };
 
     case actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION: {
       const qs = [];
