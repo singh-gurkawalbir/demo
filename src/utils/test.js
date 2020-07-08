@@ -7,7 +7,7 @@ import getRequestOptions from './requestOptions';
 import getExistingResourcePagePath from './resource';
 import getRoutePath from './routePaths';
 
-const uiRoutePathPrefix = '';
+const uiRoutePathPrefix = '/pg';
 
 describe('Json paths util method', () => {
   test('generate all json paths for a valid JSON object', () => {

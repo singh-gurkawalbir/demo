@@ -72,7 +72,7 @@ export default function WelcomeBanner() {
         <IconTextButton
           className={clsx(classes.textColor)}
           component="a"
-          href="/classic"
+          href="/"
           variant="outlined">
           Take me back{' '}<ArrowRightIcon />
         </IconTextButton>
