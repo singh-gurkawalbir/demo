@@ -409,7 +409,7 @@ const getFieldConfig = (field = {}, resource = {}) => {
 
 function extractRules(fields, currFieldName, value) {
   return fields.map(field => {
-    const { name, hidden, required } = field;
+    const { name, hidden, required, disabled} = field;
     let rule = { ref: name };
 
     if (Object.prototype.hasOwnProperty.call(field, 'hidden') && !hidden) {
@@ -425,6 +425,14 @@ function extractRules(fields, currFieldName, value) {
         requiredRule: { field: currFieldName, is: [value] },
       };
     }
+
+    if (disabled) {
+      rule = {
+        ...rule,
+        disabledRule: { field: currFieldName, is: [value] },
+      };
+    }
+
 
     return rule;
   });
@@ -459,7 +467,7 @@ export const translateDependencyProps = fieldMap => {
         // links are similar to fields property and these are dependencies defined for link components
         const dependencyFields = dependencies[value].fields || dependencies[value].links;
 
-        if (type === 'checkbox') {
+        if (type === 'checkbox' || type === 'featurecheck') {
           rules.push(
             ...(extractRules(dependencyFields, key, value === 'enabled') || [])
           );
@@ -470,7 +478,7 @@ export const translateDependencyProps = fieldMap => {
     }
 
     rules.forEach(rule => {
-      const { ref, visibleRule, requiredRule } = rule;
+      const { ref, visibleRule, requiredRule, disabledRule } = rule;
 
       // im doing this check to prevent pushing rules to non existent refs
       // this can happen when fields are hidden and removed from the meta
@@ -487,6 +495,13 @@ export const translateDependencyProps = fieldMap => {
           fieldMapCopy[ref].requiredWhenAll = pushRuleToMeta(
             fieldMapCopy[ref].requiredWhenAll,
             requiredRule
+          );
+        }
+
+        if (disabledRule) {
+          fieldMapCopy[ref].disabledWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].disabledWhenAll,
+            disabledRule
           );
         }
       }

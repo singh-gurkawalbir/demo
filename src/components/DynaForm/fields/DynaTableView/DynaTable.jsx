@@ -311,10 +311,10 @@ export const DynaTable = props => {
             {optionsMap.map(r => (
               <div className={classes.header} key={r.id}>
                 <span className={classes.label}>{r.label || r.name}</span>
-                {r.supportsRefresh && !isLoading && (
+                {r.supportsRefresh && !isLoading?.[r.id] && (
                   <RefreshIcon onClick={onFetchResource(r.id)} />
                 )}
-                {r.supportsRefresh && isLoading === r.id && (
+                {r.supportsRefresh && isLoading?.[r.id] && (
                   <Spinner size={24} />
                 )}
               </div>

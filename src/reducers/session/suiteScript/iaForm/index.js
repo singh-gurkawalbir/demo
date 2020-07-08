@@ -71,6 +71,6 @@ export function suiteScriptIAFormSaving(
   if (!state) return false;
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
-  return !!(state?.[key]?.status === 'success');
+  return !!(state?.[key]?.status === 'saving');
 }
 // #endregion
