@@ -13,6 +13,7 @@ import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
+import { updateFlowDoc } from '../resourceForm';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -397,6 +398,12 @@ export function* updateIntegrationSettings({
         sectionId,
       })
     );
+    // if flowId is present touch the flow to show changed lastmodified date
+    // note this is somewhat a hack
+    // it is believed that in time resource level settings will render this obsolete
+    if (flowId && options.action !== 'flowEnableDisable') {
+      yield call(updateFlowDoc, { flowId, resourceType: 'integrations', resourceId: integrationId });
+    }
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
