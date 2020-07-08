@@ -4521,7 +4521,7 @@ export const getSampleDataWrapper = createSelector(
 
     if (stage === 'postAggregate') {
       return {
-        status,
+        status: 'received',
         data: {
           postAggregateData: {
             success: true,

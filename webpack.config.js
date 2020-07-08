@@ -69,7 +69,7 @@ const config = {
     })
   ],
   output: {
-    publicPath: '/',
+    publicPath: '/pg/',
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'build'),
   },
@@ -139,10 +139,10 @@ module.exports = (env, argv) => {
       contentBase: path.join(__dirname, 'build'),
       compress: true,
       port: 4000,
-      publicPath: '/',
+      publicPath: '/pg/',
       host: 'localhost.io',
       historyApiFallback: {
-        index: '/index.html',
+        index: '/pg/index.html',
       },
       proxy: {
         '/signin': proxyOpts,

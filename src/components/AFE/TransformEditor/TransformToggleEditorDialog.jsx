@@ -21,6 +21,7 @@ export default function TransformToggleEditorDialog({
   entryFunction,
   insertStubKey,
   optionalSaveParams,
+  isSampleDataLoading,
   ...rest
 }) {
   return (
@@ -36,6 +37,7 @@ export default function TransformToggleEditorDialog({
         data={data && JSON.stringify(data.record, null, 2)}
         disabled={disabled}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
       <JavaScriptEditor
         data={JSON.stringify(data, null, 2)}
@@ -44,6 +46,7 @@ export default function TransformToggleEditorDialog({
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
     </ToggleEditorDialog>
   );

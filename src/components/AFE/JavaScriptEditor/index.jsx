@@ -11,6 +11,7 @@ import ErrorGridItem from '../ErrorGridItem';
 import * as selectors from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
+import PanelLoader from '../../PanelLoader';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -36,7 +37,7 @@ export default function JavaScriptEditor(props) {
     resultMode = 'json',
   } = props;
   const classes = useStyles(props);
-  const { data, result, error } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -62,6 +63,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluateDelay: 500,
         _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
+        isSampleDataLoading: props.isSampleDataLoading
       })
     );
   }, [
@@ -70,6 +72,7 @@ export default function JavaScriptEditor(props) {
     scriptId,
     entryFunction,
     props.data,
+    props.isSampleDataLoading,
     context,
     optionalSaveParams,
   ]);
@@ -91,14 +94,17 @@ export default function JavaScriptEditor(props) {
       </PanelGridItem>
       <PanelGridItem gridArea="data">
         <PanelTitle title="Function input" />
-        <CodePanel
-          id="data"
-          name="data"
-          value={data}
-          mode="json"
-          readOnly={disabled}
-          onChange={handleDataChange}
-        />
+        {isSampleDataLoading ? (
+          <PanelLoader />
+        ) : (
+          <CodePanel
+            id="data"
+            name="data"
+            value={data}
+            mode="json"
+            readOnly={disabled}
+            onChange={handleDataChange}
+        />)}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />
