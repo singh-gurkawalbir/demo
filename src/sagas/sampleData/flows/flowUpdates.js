@@ -102,8 +102,6 @@ export function* updateFlowsDataForResource({ resourceId, resourceType, stagesTo
 
     // reset the state for that resourceId and subsequent state reset
     yield put(actions.flowData.resetStages(flowId, resourceId, stagesToReset));
-    // Fetch preview data for this resource in all used flows
-    // TODO @Raghu: fetch only for the current flow
     flowIndex += 1;
   }
 }
