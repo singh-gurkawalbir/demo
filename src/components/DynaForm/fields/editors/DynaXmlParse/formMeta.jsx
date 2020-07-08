@@ -12,6 +12,12 @@ export default function getForm(options) {
         type: 'text',
         defaultValue: options?.resourcePath || '',
         required: true,
+        validWhen: {
+          matchesRegEx: {
+            pattern: '^/',
+            message: "Resource path should start with '/'",
+          },
+        },
       },
       V0_json: {
         id: 'V0_json',

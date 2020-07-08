@@ -33,7 +33,7 @@ export default {
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
@@ -58,6 +58,7 @@ export default {
       delete newValues['/file/xlsx/keyColumns'];
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
+      newValues['/file/xml/resourcePath'] = newValues['/parsers']?.resourcePath;
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
       newValues['/file/xml'] = undefined;
@@ -71,7 +72,7 @@ export default {
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
 
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
       newValues['/file/json'] = undefined;
@@ -79,7 +80,7 @@ export default {
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/fileDefinition/resourcePath'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -97,7 +98,7 @@ export default {
       delete newValues['/file/csv/rowsPerRecord'];
       delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/json/resourcePath'];
-      delete newValues['/file/xml/resourcePath'];
+      delete newValues['/parsers'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -129,21 +130,21 @@ export default {
     const fileType = fields.find(field => field.id === 'file.type');
 
     if (fieldId === 'file.xlsx.keyColumns') {
-      const keyColoumnField = fields.find(
+      const keyColumnField = fields.find(
         field => field.id === 'file.xlsx.keyColumns'
       );
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
 
-      // resetting key coloums when hasHeaderRow changes
+      // resetting key columns when hasHeaderRow changes
       if (
-        keyColoumnField &&
-        keyColoumnField &&
-        keyColoumnField.hasHeaderRow !== hasHeaderRowField.value
+        keyColumnField &&
+        keyColumnField &&
+        keyColumnField.hasHeaderRow !== hasHeaderRowField.value
       ) {
-        keyColoumnField.value = [];
-        keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
+        keyColumnField.value = [];
+        keyColumnField.hasHeaderRow = hasHeaderRowField.value;
       }
 
       return {
@@ -299,15 +300,7 @@ export default {
       },
     },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    'file.xml.resourcePath': {
-      fieldId: 'file.xml.resourcePath',
-      validWhen: {
-        matchesRegEx: {
-          pattern: '^/',
-          message: "Resource Path should start with '/'",
-        },
-      },
-    },
+    parsers: { fieldId: 'parsers' },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
@@ -412,7 +405,6 @@ export default {
             fields: [
               'file.type',
               'uploadFile',
-              'file.xml.resourcePath',
               'file.json.resourcePath',
               'file.xlsx.hasHeaderRow',
               'file.xlsx.rowsPerRecord',
@@ -423,6 +415,7 @@ export default {
               'file.filedefinition.rules'],
             type: 'indent',
             containers: [{fields: [
+              'parsers',
               'file.csvHelper',
               'file.csv.columnDelimiter',
               'file.csv.rowDelimiter',
