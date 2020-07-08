@@ -13,28 +13,16 @@ const PARSERS = {
   xml: 'xmlParser',
 };
 
-// Any customization on file options before passing to processor is done here
-export const generateFileParserOptions = (options = {}, type) => {
-  if (type === 'csv' || type === 'xlsx') {
-    return {
-      ...options,
-      multipleRowsPerRecord: !!(
-        options.keyColumns && options.keyColumns.length
-      ),
-    };
-  }
-
-  return options;
-};
-
 /**
  * NOTE: All the fields used to extract options for a file type are based on
  * metadata field Ids for that resource
  * as we infer props on resource form while editing
  */
 export const generateFileParserOptionsFromResource = (resource = {}, type) => {
-  const { type: fileType } = resource.file || {};
-  const fields = (resource.file && resource.file[fileType]) || {};
+  const fileType = resource?.file?.type;
+  const fields = resource?.file?.[fileType] || {};
+  // console.log(fileType, resource);
+
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(type)) {
@@ -51,8 +39,24 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
       keyColumns: fields.keyColumns,
     };
   }
+
+  if (fileType === 'xml') {
+    const rules = resource?.parsers?.[0]?.rules || {};
+    const { listNodes, includeNodes, excludeNodes, ...rest} = rules;
+
+    return {
+      resourcePath: fields.resourcePath,
+      ...rest,
+      // the export.parsers schema defines the following as arrays,
+      // while the processor logic uses strings.
+      listNodes: listNodes?.join('\n'),
+      includeNodes: includeNodes?.join('\n'),
+      excludeNodes: excludeNodes?.join('\n'),
+    };
+  }
+
   // no additional props for json and xml - Add in future if updated
-  if (type === 'json' || type === 'xml') {
+  if (type === 'json') {
     return {};
   }
   // If not the above ones, it is of type file definition
@@ -65,18 +69,21 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = generateFileParserOptions(file[type], type);
+  const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],
     ...options,
   };
 
+  // console.log('parseFileData', processorData);
+
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
+    // console.log(processedData);
     return processedData;
   } catch (e) {
     // Handle errors
