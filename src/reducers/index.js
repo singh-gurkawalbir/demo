@@ -66,7 +66,6 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
-import flow from './session/suiteScript/sampleData/flow';
 
 const emptySet = [];
 const emptyObject = {};
