@@ -49,9 +49,9 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       const { sears } = exportConfig;
       method = sears.method;
     } else if (exportType === 'rakuten') {
-      // TODO confirm with Shiva on this
-      const { rakuten } = exportConfig;
-      method = rakuten.method;
+      // for rakuten, method is inside export/file
+      const { file } = exportConfig;
+      method = file.method;
     } else if (exportType === 'newegg') {
       const { newegg } = exportConfig;
       method = newegg.method;
