@@ -81,6 +81,7 @@ function OutputFilterDialog({
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
     />
   );
 }
