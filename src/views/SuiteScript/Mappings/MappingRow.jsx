@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
   },
 }));
-
+const emptySet = [];
 export default function MappingRow(props) {
   const {
     id,
@@ -109,8 +109,7 @@ export default function MappingRow(props) {
   const ref = useRef(null);
 
   const {data: importData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-  const {data: flowSampleData = []} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
-
+  const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
   const generateFields = useMemo(() => {
     const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
       importData,
@@ -127,39 +126,6 @@ export default function MappingRow(props) {
       return 0; // names must be equal
     });
   }, [importData, importType]);
-
-  const extractFields = useMemo(() => {
-    const formattedFields = [];
-    if (flowSampleData) {
-      const _flowData = suiteScriptMappingUtil.getExtractPaths(
-        flowSampleData,
-      );
-      _flowData.forEach(extract => {
-        formattedFields.push({
-          id: extract.id || extract.value,
-          name: extract.name || extract.label || extract.id
-        });
-        // for netsuite
-        if (extract.type === 'select') {
-          formattedFields.push({
-            id: `${extract.id}.internalid`,
-            name: `${extract.name} (InternalId)`
-          });
-        }
-      });
-    }
-    return formattedFields.sort((a, b) => {
-      const nameA = a.name ? a.name.toUpperCase() : '';
-      const nameB = b.name ? b.name.toUpperCase() : '';
-
-      if (nameA < nameB) return -1;
-
-      if (nameA > nameB) return 1;
-
-      return 0; // names must be equal
-    });
-  }, [flowSampleData]);
-
 
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
@@ -238,7 +204,7 @@ export default function MappingRow(props) {
             labelName="name"
             valueName="id"
             value={extract || hardCodedValueTmp}
-            options={extractFields}
+            options={extractFields || emptySet}
             disabled={disabled}
             onBlur={handleBlur('extract')}
           />

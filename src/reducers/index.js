@@ -66,6 +66,7 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import flow from './session/suiteScript/sampleData/flow';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5346,6 +5347,45 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
   }
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
+
+export const suiteScriptExtracts = createSelector(
+  [(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
+  (flowData) => {
+    if (!flowData) {
+      return emptySet;
+    }
+    const {data, status} = flowData;
+    const formattedFields = [];
+    if (status === 'received' && Array.isArray(data)) {
+      data.forEach(extract => {
+        formattedFields.push({
+          id: extract.id || extract.value,
+          name: extract.name || extract.label || extract.id
+        });
+        // for netsuite
+        if (extract.type === 'select') {
+          formattedFields.push({
+            id: `${extract.id}.internalid`,
+            name: `${extract.name} (InternalId)`
+          });
+        }
+      });
+    }
+
+    const sortedFields = formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+    return {data: sortedFields, status};
+  }
+
+);
 
 export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flow = suiteScriptFlowDetail(state, {
