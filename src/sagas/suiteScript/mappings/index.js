@@ -279,7 +279,7 @@ export function* checkForSFSublistExtractPatch({key, value}) {
   const {
     ssLinkedConnectionId, integrationId, flowId,
   } = yield select(selectors.suiteScriptMappings);
-  const {data: flowSampleData} = yield select(selectors.suiteScriptExtracts, {ssLinkedConnectionId, integrationId, flowId});
+  const {data: flowSampleData} = yield select(selectors.suiteScriptFlowSampleData, {ssLinkedConnectionId, integrationId, flowId});
 
   const childRelationshipField =
   flowSampleData && flowSampleData.find(field => field.value === value);
