@@ -6,6 +6,7 @@ import actionTypes from '../../../../actions/types';
 import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
+import suiteScriptMappingUtil from '../../../../utils/suiteScriptMapping';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -37,7 +38,10 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     const _exp = deepClone(exportConfig);
     _exp.file.type = 'csv';
     const previewData = yield call(requestFileAdaptorSampleData, {resource: _exp});
-    yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData}));
+    const extractList = suiteScriptMappingUtil.getExtractPaths(
+      previewData,
+    );
+    yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData: extractList}));
     // ftp => export.sampleData
   } else if (['rakuten', 'sears', 'newegg'].includes(exportType)) {
     let method;
