@@ -1,12 +1,6 @@
-import csvOptions from '../../../../components/AFE/SuiteScript/CsvConfigEditor/options';
-
 export default {
   preSave: formValues => {
     const newValues = formValues;
-
-    if (newValues['/import/file/csv/columnDelimiter']) {
-      newValues['/import/file/csv/columnDelimiter'] = csvOptions.ColumnDelimiterMap[newValues['/import/file/csv/columnDelimiter']];
-    }
     newValues['/import/file/method'] = newValues['/import/rakuten/method'];
 
     return newValues;

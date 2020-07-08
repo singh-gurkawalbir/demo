@@ -300,7 +300,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
         <div className={classes.innerContent}>
           { packageCommStatus === COMM_STATES.LOADING &&
           <SpinnerWrapper>
-            <Spinner />
+            <Spinner size={24} />
           </SpinnerWrapper>}
           <ConnectionDrawer
             connectorId={connectorId}

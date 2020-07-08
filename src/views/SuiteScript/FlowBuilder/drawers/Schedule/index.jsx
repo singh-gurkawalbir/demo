@@ -13,6 +13,11 @@ const useStyle = makeStyles((theme) => ({
     marginTop: -1,
     padding: theme.spacing(-1),
   },
+  suiteScriptFlowScheduleDrawer: {
+    '& > .MuiPaper-root': {
+      overflow: 'visible',
+    },
+  },
 }));
 
 function RoutingWrapper(props) {
@@ -39,11 +44,13 @@ function RoutingWrapper(props) {
 }
 
 export default function ScheduleDrawer(props) {
+  const classes = useStyle();
   return (
     <RightDrawer
       path={[':flowId/schedule', 'schedule']}
       width="medium"
       title="Flow schedule"
+      className={classes.suiteScriptFlowScheduleDrawer}
     >
       <RoutingWrapper {...props} />
     </RightDrawer>

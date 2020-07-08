@@ -649,6 +649,7 @@ export const integrationSettingsToDynaFormMetadata = (
 export const getDomain = () =>
   window.document.location.hostname.replace('www.', '');
 
+export const isEuRegion = () => ['eu.integrator.io'].includes(getDomain());
 export const isProduction = () =>
   ['integrator.io', 'eu.integrator.io'].includes(getDomain());
 export const conditionalLookupOptionsforNetsuite = [
