@@ -79,6 +79,7 @@ function PostResponseMapHookDialog({
       patchOnSave
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
     />
   );
 }

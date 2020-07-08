@@ -86,6 +86,7 @@ export default function DynaHook(props) {
     preHookData = {},
     editorResultMode,
     requestForPreHookData,
+    isSampleDataLoading,
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -209,6 +210,7 @@ export default function DynaHook(props) {
           optionalSaveParams={optionalSaveParams}
           flowId={flowId}
           patchOnSave
+          isSampleDataLoading={isSampleDataLoading}
         />
       )}
       {showCreateScriptDialog && (

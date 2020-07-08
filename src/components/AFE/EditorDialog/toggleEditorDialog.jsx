@@ -85,6 +85,7 @@ const useStyles = makeStyles(theme => ({
   },
   previewCheckbox: {
     marginLeft: 8,
+    alignSelf: 'center',
   },
   previewBtnContainer: {
     display: 'flex',

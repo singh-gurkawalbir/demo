@@ -9,9 +9,9 @@ import * as selectors from '../../../../reducers';
 /* TODO: the 'block' const in this file and <AppBlock> should eventually go in the theme.
    We use the block const across several components and thus is a maintenance issue to
    manage as we enhance the FB layout. */
-const blockHeight = 170;
-const lineHeightOffset = 63;
-const lineWidth = 130;
+const blockHeight = 200;
+const lineHeightOffset = 85;
+const lineWidth = 160;
 const useStyles = makeStyles(theme => ({
   pgContainer: {
     display: 'flex',
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
   connectingLine: {
-    marginTop: -161,
+    marginTop: -blockHeight,
     height: blockHeight + lineHeightOffset,
     borderRight: `3px dotted ${theme.palette.divider}`,
   },

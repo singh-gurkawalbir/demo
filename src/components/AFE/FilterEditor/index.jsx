@@ -11,6 +11,7 @@ import * as selectors from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import { isJsonString } from '../../../utils/string';
+import PanelLoader from '../../PanelLoader';
 
 const useStyles = makeStyles({
   ...layouts,
@@ -24,7 +25,7 @@ const useStyles = makeStyles({
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
-  const { data, lastValidData, result, error } = useSelector(state =>
+  const { data, lastValidData, result, error, isSampleDataLoading } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -38,9 +39,10 @@ export default function FilterEditor(props) {
         lastValidData: props.data,
         rule: props.rule,
         optionalSaveParams,
+        isSampleDataLoading: props.isSampleDataLoading
       })
     );
-  }, [dispatch, editorId, optionalSaveParams, props.data, props.rule]);
+  }, [dispatch, editorId, optionalSaveParams, props.data, props.rule, props.isSampleDataLoading]);
   const handleDataChange = useCallback(
     data => {
       const patchObj = { data };
@@ -83,14 +85,17 @@ export default function FilterEditor(props) {
 
       <PanelGridItem gridArea="data">
         <PanelTitle title="Input" />
-        <CodePanel
-          name="data"
-          readOnly={disabled}
-          value={data}
-          mode="json"
-          overrides={{ showGutter: false }}
-          onChange={handleDataChange}
-        />
+        {isSampleDataLoading ? (
+          <PanelLoader />
+        ) : (
+          <CodePanel
+            name="data"
+            readOnly={disabled}
+            value={data}
+            mode="json"
+            overrides={{ showGutter: false }}
+            onChange={handleDataChange}
+        />)}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

@@ -62,10 +62,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
-    textAlign: 'center',
     width: '46%',
+    display: 'flex',
+    alignItems: 'center',
     '& > div': {
       width: '100%',
+    },
+    '&:first-child': {
+      paddingLeft: 20,
     },
   },
   mappingsBody: {

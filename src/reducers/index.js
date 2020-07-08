@@ -196,6 +196,10 @@ export function getNumEnabledFlows(state) {
   return fromSession.getNumEnabledFlows(state && state.session);
 }
 
+export function getLicenseEntitlementUsage(state) {
+  return fromSession.getLicenseEntitlementUsage(state && state.session);
+}
+
 export function resourceFormSaveProcessTerminated(
   state,
   resourceType,
@@ -2259,21 +2263,15 @@ export function connectionHasAs2Routing(state, id) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export function integratorLicense(state) {
+export function platformLicense(state) {
   const preferences = userPreferences(state);
 
-  return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
+  return fromUser.platformLicense(state.user, preferences.defaultAShareId);
 }
 
-export function diyLicense(state) {
-  const preferences = userPreferences(state);
-
-  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
-}
-
-export function integratorLicenseActionDetails(state) {
+export function platformLicenseActionDetails(state) {
   let licenseActionDetails = {};
-  const license = integratorLicense(state);
+  const license = platformLicense(state);
 
   if (!license) {
     return licenseActionDetails;
@@ -2343,9 +2341,8 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-
-export function integratorLicenseWithMetadata(state) {
-  const license = integratorLicense(state);
+export function platformLicenseWithMetadata(state) {
+  const license = platformLicense(state);
   const licenseActionDetails = { ...license };
   const nameMap = {
     none: 'None',
@@ -2361,7 +2358,7 @@ export function integratorLicenseWithMetadata(state) {
   }
 
   licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
   licenseActionDetails.inTrial = false;
 
   if (licenseActionDetails.tier === 'free') {
@@ -2418,7 +2415,7 @@ export function integratorLicenseWithMetadata(state) {
   licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
 
   if (licenseActionDetails.inTrial) {
-    licenseActionDetails.subscriptionName = '30 day Free Trial';
+    licenseActionDetails.subscriptionName = 'Free trial';
   }
 
   licenseActionDetails.expirationDate = licenseActionDetails.expires;
@@ -2528,16 +2525,17 @@ export function integratorLicenseWithMetadata(state) {
     toReturn.actions = ['request-upgrade'];
   } else if (licenseActionDetails.tier !== 'enterprise') {
     toReturn.actions = ['request-upgrade'];
+  } else {
+    toReturn.actions = ['add-more-flows'];
   }
 
   licenseActionDetails.subscriptionActions = toReturn;
 
   return licenseActionDetails;
 }
-
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
-  const license = integratorLicenseWithMetadata(state);
+  const license = platformLicenseWithMetadata(state);
 
   if (!license) {
     return licenseDetails;
@@ -3586,8 +3584,8 @@ export function createdResourceId(state, tempId) {
   return fromSession.createdResourceId(state && state.session, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromSession.integratorLicenseActionMessage(state && state.session);
+export function platformLicenseActionMessage(state) {
+  return fromSession.platformLicenseActionMessage(state && state.session);
 }
 
 // #endregion Session metadata selectors
@@ -4501,7 +4499,7 @@ export const getSampleDataWrapper = createSelector(
 
     if (stage === 'postAggregate') {
       return {
-        status,
+        status: 'received',
         data: {
           postAggregateData: {
             success: true,

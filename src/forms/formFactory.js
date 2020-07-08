@@ -133,10 +133,14 @@ const applyCustomSettings = ({
       ) {
         return 'Settings must be a valid JSON';
       }
+    }
 
-      if (field.value && field.value.__invalid) {
-        return 'Some of your settings are not valid.';
-      }
+    // Note that for this use-case, its assuming that a sub-form is managing error
+    // messages per sub-form field. Thus this error message response is never made
+    // visible and we just need to pass a truthy value to prevent the parent form
+    // from submitting
+    if (field.value?.__invalid) {
+      return 'Sub-form invalid.';
     }
 
     if (validationHandler) return validationHandler(field);

@@ -68,7 +68,6 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       const previewData = yield call(apiCallWithRetry, {
         path,
         opts: { method: 'POST', body },
-        message: 'Fetching Preview',
         hidden: true,
       });
 
