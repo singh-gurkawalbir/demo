@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CsvConfigEditorDialog from '../../../../AFE/SuiteScript/CsvConfigEditor/Dialog';
-import csvOptions from '../../../../AFE/SuiteScript/CsvConfigEditor/options';
 
 export default function DynaCsvParse(props) {
   const {
@@ -54,7 +53,8 @@ export default function DynaCsvParse(props) {
 
     return { csvData: rawData && rawData.body };
   });
-  const handleClose = (shouldCommit, editorValues) => {
+
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const {
         columnDelimiter,
@@ -63,8 +63,8 @@ export default function DynaCsvParse(props) {
         keyColumns,
       } = editorValues;
       const savedVal = {
-        columnDelimiter: csvOptions.ColumnDelimiterMap[columnDelimiter],
-        rowDelimiter: csvOptions.RowDelimiterMap[rowDelimiter],
+        columnDelimiter,
+        rowDelimiter,
         hasHeaderRow,
         keyColumns,
       };
@@ -102,7 +102,8 @@ export default function DynaCsvParse(props) {
           csvEditorType="parse"
           /** rule to be passed as json */
           rule={value}
-          onClose={handleClose}
+          onClose={handleEditorClick}
+          onSave={handleSave}
           disabled={disabled}
         />
       )}

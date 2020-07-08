@@ -1,5 +1,5 @@
 import React from 'react';
-import EditorDialog from '../../EditorDialog';
+import EditorDialog from './EditorDialog';
 import CsvParseEditor from './CsvParser';
 
 export default function CsvConfigEditorDialog(props) {
