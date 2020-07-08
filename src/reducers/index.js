@@ -2341,7 +2341,7 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-export function platformLicenseWithMetadata(state) {	
+export function platformLicenseWithMetadata(state) {
   const license = platformLicense(state);
   const licenseActionDetails = { ...license };
   const nameMap = {
