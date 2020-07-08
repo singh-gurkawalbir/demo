@@ -291,43 +291,6 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'file.csvHelper') {
-      const includeHeaderField = fields.find(
-        field => field.id === 'file.csv.includeHeader'
-      );
-      const columnDelimiterField = fields.find(
-        field => field.id === 'file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'file.csv.rowDelimiter'
-      );
-      const replaceNewlineWithSpaceField = fields.find(
-        field => field.id === 'file.csv.replaceNewlineWithSpace'
-      );
-      const replaceTabWithSpaceField = fields.find(
-        field => field.id === 'file.csv.replaceTabWithSpace'
-      );
-      const truncateLastRowDelimiterField = fields.find(
-        field => field.id === 'file.csv.truncateLastRowDelimiter'
-      );
-      const wrapWithQuotesField = fields.find(
-        field => field.id === 'file.csv.wrapWithQuotes'
-      );
-
-      return {
-        fields: {
-          includeHeader: includeHeaderField && includeHeaderField.value,
-          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-          replaceNewlineWithSpace:
-            replaceNewlineWithSpaceField && replaceNewlineWithSpaceField.value,
-          replaceTabWithSpace:
-            replaceTabWithSpaceField && replaceTabWithSpaceField.value,
-          truncateLastRowDelimiter: truncateLastRowDelimiterField && truncateLastRowDelimiterField,
-          wrapWithQuotes: wrapWithQuotesField && wrapWithQuotesField.value,
-        },
-      };
-    }
     if (
       fieldId === 'http.body' ||
       fieldId === 'http.bodyCreate' ||
@@ -1387,90 +1350,8 @@ export default {
         },
       ],
     },
-    'file.csvHelper': {
-      fieldId: 'file.csvHelper',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.includeHeader': {
-      fieldId: 'file.csv.includeHeader',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.columnDelimiter': {
-      fieldId: 'file.csv.columnDelimiter',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.rowDelimiter': {
-      fieldId: 'file.csv.rowDelimiter',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.replaceNewlineWithSpace': {
-      fieldId: 'file.csv.replaceNewlineWithSpace',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.replaceTabWithSpace': {
-      fieldId: 'file.csv.replaceTabWithSpace',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.truncateLastRowDelimiter': {
-      fieldId: 'file.csv.truncateLastRowDelimiter',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.wrapWithQuotes': {
-      fieldId: 'file.csv.wrapWithQuotes',
-      visibleWhenAll: [
-        { field: 'http.requestMediaType', is: ['csv'] },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-    },
-    'file.csv.customHeaderRows': {
-      id: 'file.csv.customHeaderRows',
-      label: 'Custom header rows',
-      type: 'textarea',
+    'file.csv': {
+      fieldId: 'file.csv',
       visibleWhenAll: [
         { field: 'http.requestMediaType', is: ['csv'] },
         {
@@ -1541,15 +1422,7 @@ export default {
               {
                 fields:
                 [
-                  'file.csvHelper',
-                  'file.csv.includeHeader',
-                  'file.csv.columnDelimiter',
-                  'file.csv.rowDelimiter',
-                  'file.csv.replaceNewlineWithSpace',
-                  'file.csv.replaceTabWithSpace',
-                  'file.csv.truncateLastRowDelimiter',
-                  'file.csv.wrapWithQuotes',
-                  'file.csv.customHeaderRows'
+                  'file.csv',
                 ]
               }
             ]

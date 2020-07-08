@@ -560,17 +560,10 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'ftp.fileNameStartsWith',
     'ftp.fileNameEndsWith',
     'sampleData',
-    'file.csv.columnDelimiter',
-    'file.csv.rowDelimiter',
-    'file.csv.rowsPerRecord',
-    'file.csv.keyColumns',
-    'file.csv.hasHeaderRow',
-    'file.csv.trimSpaces',
-    'file.csv.rowsToSkip',
     'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
-    'file.csvHelper'
+    'file.csv'
   ],
   imports: [
     'lookups',
