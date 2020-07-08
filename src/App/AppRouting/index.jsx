@@ -85,7 +85,7 @@ export default function AppRouting() {
   return (
     <Switch>
       <Route
-        path="/pg"
+        path={['/pg', '']}
         exact
         render={({ history }) => history.replace(getRoutePath('/dashboard'))}
         />
@@ -105,8 +105,7 @@ export default function AppRouting() {
         component={CloneSetup}
         />
       <Route
-        // eslint-disable-next-line no-useless-escape
-        path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId')}
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId')}
         exact
         render={({ history, match }) =>
           history.replace(
@@ -169,10 +168,9 @@ export default function AppRouting() {
         component={Integration}
         />
       <Route
-          // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
-          // templateName has structure of application2-application2 will contain atleast 5 characters
-        // eslint-disable-next-line no-useless-escape
-        path={getRoutePath('/templates/:templateName([\w-]{5,})/:integrationId/:tab')}
+        // Slight hack here, Included a minimum word length of 4 for templateName to exclude add, edit to match template Name
+        // templateName has structure of application2-application2 will contain atleast 5 characters
+        path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/:tab')}
         component={Integration}
         />
 

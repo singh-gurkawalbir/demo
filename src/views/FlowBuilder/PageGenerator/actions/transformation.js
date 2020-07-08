@@ -68,6 +68,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
     />
   );
 }

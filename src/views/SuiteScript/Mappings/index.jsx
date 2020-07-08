@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouteMatch } from 'react-router-dom';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -61,10 +62,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   childHeader: {
-    textAlign: 'center',
     width: '46%',
+    display: 'flex',
+    alignItems: 'center',
     '& > div': {
       width: '100%',
+    },
+    '&:first-child': {
+      paddingLeft: 20,
     },
   },
   mappingsBody: {
@@ -458,8 +463,10 @@ const SuiteScriptMapping = (props) => {
 };
 
 export default function SuiteScriptMappingWrapper(props) {
-  const {ssLinkedConnectionId, integrationId, flowId} = props;
+  const {ssLinkedConnectionId, integrationId} = props;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const flowId = props.flowId || match.params.flowId;
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
 
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);

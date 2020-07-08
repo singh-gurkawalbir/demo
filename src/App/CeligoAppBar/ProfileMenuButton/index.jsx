@@ -12,6 +12,7 @@ import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
+import IconTextButton from '../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   popperContent: {
@@ -128,6 +129,20 @@ export default function ProfileMenuButton() {
             color="primary">
             Sign out
           </Button>
+        </div>
+        <div className={classes.actions}>
+          <IconTextButton
+            component="a"
+            href="mailto:product_feedback@celigo.com"
+            >
+            Provide UX feedback
+          </IconTextButton>
+          <IconTextButton
+            component="a"
+            href="/classic"
+            >
+            Switch to classic UI
+          </IconTextButton>
         </div>
       </ArrowPopper>
     </>

@@ -9,12 +9,18 @@ import actions from '../../../../../actions';
 import RightDrawer from '../../../../../components/drawer/Right';
 import * as selectors from '../../../../../reducers';
 
-const useStyles = makeStyles((theme) => ({
-  scheduleContainer: {
+const useStyles = makeStyles(() => ({
+  settingsContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      overflow: 'visible',
+    },
+  },
+  suiteScriptFlowSettingsDrawer: {
+    '& > .MuiPaper-root': {
+      overflow: 'visible',
+    },
   },
 }));
 
@@ -115,8 +121,8 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
     [dispatch, flow._integrationId, flowId, history, ssLinkedConnectionId]
   );
   return (
-    <RightDrawer path="settings" title="Settings" width="medium">
-      <div className={classes.scheduleContainer}>
+    <RightDrawer path="settings" title="Settings" width="medium" className={classes.suiteScriptFlowSettingsDrawer}>
+      <div className={classes.settingsContainer}>
         <DynaForm fieldMeta={fieldMeta} disabled={isViewMode || isIntegrationApp} render>
           <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
             Save
