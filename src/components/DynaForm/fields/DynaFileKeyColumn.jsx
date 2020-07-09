@@ -88,15 +88,16 @@ export default function DynaFileKeyColumn(props) {
       setEditorInit(true);
     }
   }, [editorInit, handleInit]);
-
+  const isCsvDataDifferent = csvData !== data;
   useEffect(() => {
-    if (editorInit && csvData && csvData !== data) {
+    // csvData !== data pushed outside the useeffect and used simple boolean evaluation used(isCsvDataDifferent)
+    if (editorInit && csvData && isCsvDataDifferent) {
       dispatch(actions.editor.patch(id, { data: csvData }));
 
       onFieldChange(id, []);
     }
-  }, [csvData, data, dispatch, editorInit, id, onFieldChange]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [csvData, dispatch, editorInit, id, isCsvDataDifferent]);
   useEffect(() => {
     if (editorInit) {
       dispatch(actions.editor.patch(id, { ...options }));

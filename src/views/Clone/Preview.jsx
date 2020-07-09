@@ -196,7 +196,7 @@ export default function ClonePreview(props) {
   if (!components || isEmpty(components)) {
     return (
       <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Typography variant="h4">Loading</Typography>
         <Spinner color="primary" />
       </Loader>
     );

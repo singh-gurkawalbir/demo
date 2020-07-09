@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Typography from '@material-ui/core/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
@@ -11,6 +12,8 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import WarningIcon from '../../icons/WarningIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
@@ -22,6 +25,10 @@ const useStyles = makeStyles(theme => ({
   dynaWebhookTokenbtn: {
     marginTop: 26,
     marginLeft: theme.spacing(1),
+  },
+  tokenWarning: {
+    color: theme.palette.warning.main,
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -45,6 +52,9 @@ function DynaWebhookTokenGenerator(props) {
   const finalResourceId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
   );
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const handleCopy = useCallback(() =>
+    enquesnackbar({ message: 'Your token has been copied to your clipboard' }), [enquesnackbar]);
   const handleGenerateClick = useCallback(() => {
     const tokenValue = v4().replace(/-/g, '');
 
@@ -56,7 +66,7 @@ function DynaWebhookTokenGenerator(props) {
     const formValuesCopy = deepClone(formValues);
 
     formValuesCopy[name] = tokenValue;
-    if (formValues?.['/webhook/path']) {
+    if (formValues?.['/webhook/verify'] !== 'token' || formValues?.['/webhook/path']) {
       dispatch(
         actions.resourceForm.submit(
           'exports',
@@ -113,8 +123,9 @@ function DynaWebhookTokenGenerator(props) {
           setFieldIds={setFieldIds}
         />
         <div className={classes.dynaWebhookTokenbtn}>
-          {value && value.match(/^[A-Za-z0-9]/) ? (
+          {value?.match(/^[A-Za-z0-9]/) ? (
             <CopyToClipboard
+              onCopy={handleCopy}
               text={value}>
               <Button
                 data-test="copyToClipboard"
@@ -133,6 +144,15 @@ function DynaWebhookTokenGenerator(props) {
             </Button>
           )}
         </div>
+      </div>
+      <div>
+        {value?.match(/^[A-Za-z0-9]/) &&
+          <div style={{display: 'inline-flex'}}>
+            <WarningIcon className={classes.tokenWarning} />
+            <Typography variant="body2">
+              Make sure to copy and store this token. For security, we won&apos;t show it again after you click Save or leave this page.
+            </Typography>
+          </div>}
       </div>
     </>
   );

@@ -8,6 +8,8 @@ export default {
     type: 'text',
     label: 'Username',
     required: true,
+    helpKey: 'connection.salesforce.username',
+
   },
   'salesforce.password': {
     type: 'text',
@@ -31,6 +33,8 @@ export default {
     type: 'select',
     label: 'Account type',
     required: true,
+    helpKey: 'connection.salesforce.sandbox',
+
     options: [
       {
         items: [

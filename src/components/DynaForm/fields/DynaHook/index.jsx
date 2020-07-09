@@ -117,6 +117,7 @@ export default function DynaHook(props) {
         disabled={disabled}
         preHookData={preHookData}
         requestForPreHookData={requestForPreHookData}
+        isSampleDataLoading={preHookDataStatus === 'requested'}
         {...props}
       />
     </LoadResources>

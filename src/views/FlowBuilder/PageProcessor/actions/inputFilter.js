@@ -12,6 +12,7 @@ function InputFilterDialog({
   resourceType,
   isViewMode,
   onClose,
+  isMonitorLevelAccess,
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -74,6 +75,8 @@ function InputFilterDialog({
       helpTitle="Filter Rules"
       helpKey={helpKey}
       disabled={isViewMode}
+      isMonitorLevelAccess={isMonitorLevelAccess}
+      enableFilterForIA
       id={resourceId + flowId}
       data={sampleData}
       type={type}
@@ -84,6 +87,7 @@ function InputFilterDialog({
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
     />
   );
 }

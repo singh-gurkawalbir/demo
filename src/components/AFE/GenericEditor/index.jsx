@@ -7,17 +7,10 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
-import Spinner from '../../Spinner';
+import PanelLoader from '../../PanelLoader';
 
 const useStyles = makeStyles(() => ({
   ...layouts,
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
-  },
 }));
 const Editor = props => {
   const {
@@ -66,9 +59,7 @@ const Editor = props => {
         <PanelTitle title={dataTitle} />
         {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={48} color="primary" />
-          </div>
+          <PanelLoader />
         ) : (
           <CodePanel
             name="data"

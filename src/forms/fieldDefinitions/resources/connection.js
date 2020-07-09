@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
-import { isProduction } from '../../utils';
+import { isProduction, isEuRegion } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
 
@@ -1031,6 +1031,9 @@ export default {
     defaultDisabled: true,
     defaultValue: () => {
       if (isProduction()) {
+        if (isEuRegion()) {
+          return 'https://eu.integrator.io/connection/oauth2callback';
+        }
         return 'https://integrator.io/connection/oauth2callback';
       }
 

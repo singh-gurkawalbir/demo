@@ -4,32 +4,42 @@ import SaveButton from './SaveButton';
 import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
 import SuiteScriptIASettingsSaveButton from './SuiteScriptIASettingsSaveButton';
+import SaveAndCloseButton from './SaveAndCloseButton';
+import TestSaveAndCloseButton from './TestSaveAndCloseButton';
 
 export const useLoadingSnackbarOnSave = props => {
-  const { saveTerminated, onSave } = props;
-  const [disableSave, setDisableSave] = useState(false);
-
+  const {
+    saveTerminated,
+    onSave,
+    disableSaveOnClick,
+    setDisableSaveOnClick,
+  } = props;
+  const [isSaving, setIsSaving] = useState(false);
   const handleSubmitForm = useCallback(
     values => {
       onSave(values);
-      setDisableSave(true);
+      if (setDisableSaveOnClick) setDisableSaveOnClick(true);
+      setIsSaving(true);
     },
-    [onSave]
+    [onSave, setDisableSaveOnClick]
   );
 
   useEffect(() => {
     if (saveTerminated) {
-      setDisableSave(false);
+      if (setDisableSaveOnClick) setDisableSaveOnClick(false);
+      setIsSaving(false);
     }
-  }, [saveTerminated]);
+  }, [saveTerminated, setDisableSaveOnClick]);
 
-  return { handleSubmitForm, disableSave };
+  return { handleSubmitForm, disableSave: disableSaveOnClick, isSaving };
 };
 
 export default {
   suiteScriptSave: SuiteScriptIASettingsSaveButton,
   cancel: CancelButton,
   save: SaveButton,
+  saveandclose: SaveAndCloseButton,
   testandsave: TestAndSaveButton,
+  testsaveandclose: TestSaveAndCloseButton,
   test: TestButton,
 };

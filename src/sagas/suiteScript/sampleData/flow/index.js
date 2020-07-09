@@ -1,9 +1,12 @@
 
 import { put, select, takeLatest, call } from 'redux-saga/effects';
+import { deepClone } from 'fast-json-patch/lib/core';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
+import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
+import suiteScriptMappingUtil from '../../../../utils/suiteScriptMapping';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -31,7 +34,14 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
       { refreshCache, ignoreCache: true }
     ));
-  } else if (exportType === 'fileCabinet') {
+  } else if (['fileCabinet', 'ftp'].includes(exportType)) {
+    const _exp = deepClone(exportConfig);
+    _exp.file.type = 'csv';
+    const previewData = yield call(requestFileAdaptorSampleData, {resource: _exp});
+    const extractList = suiteScriptMappingUtil.getExtractPaths(
+      previewData,
+    );
+    yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData: extractList}));
     // ftp => export.sampleData
   } else if (['rakuten', 'sears', 'newegg'].includes(exportType)) {
     let method;
@@ -39,9 +49,9 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       const { sears } = exportConfig;
       method = sears.method;
     } else if (exportType === 'rakuten') {
-      // TODO confirm with Shiva on this
-      const { rakuten } = exportConfig;
-      method = rakuten.method;
+      // for rakuten, method is inside export/file
+      const { file } = exportConfig;
+      method = file.method;
     } else if (exportType === 'newegg') {
       const { newegg } = exportConfig;
       method = newegg.method;
@@ -62,7 +72,6 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       const previewData = yield call(apiCallWithRetry, {
         path,
         opts: { method: 'POST', body },
-        message: 'Fetching Preview',
         hidden: true,
       });
 

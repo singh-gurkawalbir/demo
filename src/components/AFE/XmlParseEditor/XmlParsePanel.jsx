@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -10,7 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import helpTextMap from '../../Help/helpTextMap';
+import { getHelpTextMap } from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   helpText: {
@@ -32,18 +33,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function XmlParsePanel({ editorId, disabled }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
-    advanced = false,
+    V0_json = false,
     trimSpaces = false,
     stripNewLineChars = false,
-    textNodeName,
-    attributePrefix,
-    listNodes,
-    includeNodes,
-    resourcePath,
-    excludeNodes,
-  } = useSelector(state => selectors.editor(state, editorId));
-  const dispatch = useDispatch();
+    textNodeName = '',
+    attributePrefix = '',
+    listNodes = '',
+    includeNodes = '',
+    resourcePath = '',
+    excludeNodes = '',
+  } = useSelector(state => {
+    const editor = selectors.editor(state, editorId);
+    // console.log(editor);
+    return editor;
+  });
   const patchEditor = (option, value) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
   };
@@ -58,7 +63,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
           rowsMax={4}
           disabled={disabled}
           className={classes.textField}
-          defaultValue={resourcePath || ''}
+          value={resourcePath}
           InputLabelProps={{
             shrink: true,
           }}
@@ -67,16 +72,16 @@ export default function XmlParsePanel({ editorId, disabled }) {
         <RadioGroup
           row
           onChange={() => {
-            patchEditor('advanced', !advanced);
+            patchEditor('V0_json', !V0_json);
           }}>
-          {['Advanced', 'Simple'].map(label => (
+          {['Custom', 'Automatic'].map(label => (
             <FormControlLabel
               disabled={disabled}
               key={label}
               control={
                 <Radio
                   color="primary"
-                  checked={label === 'Advanced' ? advanced : !advanced}
+                  checked={label === 'Automatic' ? V0_json : !V0_json}
                 />
               }
               label={label}
@@ -84,12 +89,13 @@ export default function XmlParsePanel({ editorId, disabled }) {
           ))}
         </RadioGroup>
 
-        {!advanced && (
+        {V0_json && (
           <Typography variant="caption" className={classes.helpText}>
-            {helpTextMap['editor.xml.simple']}
+            {getHelpTextMap()['editor.xml.simple']}
           </Typography>
         )}
-        {advanced && (
+
+        {!V0_json && (
           <>
             <FormControlLabel
               control={
@@ -100,7 +106,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
                   color="primary"
                 />
               }
-              label="Trim Spaces"
+              label="Trim spaces"
             />
 
             <FormControlLabel
@@ -113,15 +119,15 @@ export default function XmlParsePanel({ editorId, disabled }) {
                     patchEditor('stripNewLineChars', !stripNewLineChars)}
                 />
               }
-              label="Strip Newline Chars"
+              label="Strip newline chars"
             />
 
             <TextField
-              label="Text Node Name"
+              label="Text node name"
               placeholder="&txt"
               disabled={disabled}
               className={classes.textField}
-              defaultValue={textNodeName}
+              value={textNodeName}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -129,25 +135,25 @@ export default function XmlParsePanel({ editorId, disabled }) {
             />
 
             <TextField
-              label="Attribute Prefix"
+              label="Attribute prefix"
               placeholder="none"
               disabled={disabled}
               className={classes.textField}
-              defaultValue={attributePrefix}
+              value={attributePrefix}
+              onChange={e => patchEditor('attributePrefix', e.target.value)}
               InputLabelProps={{
                 shrink: true,
               }}
-              onChange={e => patchEditor('attributePrefix', e.target.value)}
             />
 
             <TextField
-              label="List Nodes"
+              label="List nodes"
               placeholder="none"
               multiline
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              defaultValue={listNodes}
+              value={listNodes}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -155,13 +161,13 @@ export default function XmlParsePanel({ editorId, disabled }) {
             />
 
             <TextField
-              label="Nodes to Include"
+              label="Nodes to include"
               placeholder="all"
               multiline
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              defaultValue={includeNodes}
+              value={includeNodes}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -169,13 +175,13 @@ export default function XmlParsePanel({ editorId, disabled }) {
             />
 
             <TextField
-              label="Nodes to Exclude"
+              label="Nodes to exclude"
               placeholder="none"
               multiline
               rowsMax={4}
               disabled={disabled}
               className={classes.textField}
-              defaultValue={excludeNodes}
+              value={excludeNodes}
               InputLabelProps={{
                 shrink: true,
               }}

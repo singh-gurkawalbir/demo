@@ -43,6 +43,16 @@ export default {
       label: 'Warehouse name',
       required: true,
     },
+    'rdbms.snowflake.schema': {
+      id: 'rdbms.snowflake.schema',
+      type: 'text',
+      label: 'Schema',
+    },
+    'rdbms.snowflake.role': {
+      id: 'rdbms.snowflake.role',
+      type: 'text',
+      label: 'User Role',
+    },
     _borrowConcurrencyFromConnectionId: {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
@@ -69,6 +79,8 @@ export default {
           'rdbms.host',
           'rdbms.database',
           'rdbms.snowflake.warehouse',
+          'rdbms.snowflake.schema',
+          'rdbms.snowflake.role',
           'rdbms.user',
           'rdbms.password',
         ],

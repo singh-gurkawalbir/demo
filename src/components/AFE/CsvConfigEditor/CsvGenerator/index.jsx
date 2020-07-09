@@ -10,20 +10,13 @@ import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
-import Spinner from '../../../Spinner';
+import PanelLoader from '../../../PanelLoader';
 
 const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
-  },
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
   },
 });
 
@@ -87,9 +80,7 @@ export default function CsvGenerateEditor(props) {
         <PanelTitle title="Sample flow data" />
         {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={48} color="primary" />
-          </div>
+          <PanelLoader />
         ) : (
           <CodePanel
             name="data"

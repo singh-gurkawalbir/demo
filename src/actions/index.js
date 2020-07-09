@@ -1099,10 +1099,14 @@ const user = {
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
+      requestLicenseEntitlementUsage: () =>
+        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST),
       requestNumEnabledFlows: () =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+      receivedLicenseEntitlementUsage: response =>
+        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED, { response }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,

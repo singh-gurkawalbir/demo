@@ -4,7 +4,6 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
@@ -68,6 +67,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
     />
   );
 }
@@ -83,6 +83,6 @@ export default {
   name: 'exportTransformation',
   position: 'right',
   Icon,
-  helpText: helpTextMap['fb.pg.exports.transform'],
+  helpKey: 'fb.pg.exports.transform',
   Component: Transformation,
 };

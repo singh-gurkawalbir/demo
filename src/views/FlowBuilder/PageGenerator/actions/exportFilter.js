@@ -4,7 +4,6 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
 import ExportFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
@@ -68,6 +67,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       insertStubKey="filter"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      isSampleDataLoading={sampleDataStatus === 'requested'}
       flowId={flowId}
     />
   );
@@ -84,6 +84,6 @@ export default {
   name: 'exportFilter',
   position: 'right',
   Icon,
-  helpText: helpTextMap['fb.pg.exports.filter'],
+  helpKey: 'fb.pg.exports.filter',
   Component: FilterDialog,
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button, Grid } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
@@ -21,47 +21,116 @@ const useStyles = makeStyles(theme => ({
   stepNumber: step => ({
     // eslint-disable-next-line no-nested-ternary
     background: step.completed
-      ? theme.palette.primary.main
+      ? theme.palette.common.white
       : step.isCurrentStep
-        ? theme.palette.success.main
+        ? theme.palette.primary.main
         : theme.palette.secondary.lightest,
-    color:
-      step.isCurrentStep || step.completed
-        ? theme.palette.background.paper
-        : '',
-    fontSize: '22px',
+    // eslint-disable-next-line no-nested-ternary
+    color: step.completed
+      ? theme.palette.secondary.contrastText
+      : step.isCurrentStep
+        ? theme.palette.common.white
+        : theme.palette.success.main,
+    border: '1px solid',
+    // eslint-disable-next-line no-nested-ternary
+    borderColor: step.completed
+      ? theme.palette.secondary.contrastText
+      : step.isCurrentStep
+        ? theme.palette.primary.main
+        : theme.palette.secondary.contrastText,
+    fontSize: '16px',
     borderRadius: '50%',
-    width: '40px',
-    height: '40px',
-    textAlign: 'center',
-    lineHeight: '40px',
-    marginTop: '-10px',
+    width: '30px',
+    height: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   }),
   stepText: {
     display: 'inline-flex',
   },
   successText: {
-    paddingRight: '15px',
     color: theme.palette.success.main,
   },
   stepRow: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    marginTop: '10px',
-    marginBottom: '10px',
+    marginBottom: theme.spacing(0.5),
+    display: 'flex',
+    background: theme.palette.background.paper,
+    minHeight: theme.spacing(6),
   },
   imgBlock: {
     display: 'flex',
-    justifyContent: 'center',
+    borderRight: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingRight: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    maxWidth: 60,
     '& > img': {
       maxWidth: '100%',
-      maxHeight: '100%',
+      height: 'auto',
     },
+  },
+  installIntegrationStepWrapper: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    padding: theme.spacing(1),
+    justifyContent: 'space-between',
+  },
+  logoWithAction: {
+    display: 'flex',
+  },
+  installActionBtn: {
+    width: 90,
+  },
+  installInfoBtn: {
+    margin: 0,
+    '& svg': {
+      fontSize: 16,
+    },
+    '&:hover': {
+      background: 'none',
+    },
+  },
+  stepName: {
+    paddingLeft: 14,
+    display: 'flex',
+    alignItems: 'center',
+
+  },
+  stepCountWithName: {
+    display: 'flex',
+    maxWidth: '70%',
+    wordBreak: 'break-word',
+  },
+  installBtn: {
+    color: theme.palette.primary.main,
+    padding: 0,
+    minWidth: 'unset',
+    '&:hover': {
+      background: 'none',
+    },
+  },
+  completedText: {
+    color: theme.palette.secondary.contrastText,
+  },
+  succcessIcon: {
+    fontSize: 33,
+    marginLeft: -1,
+  },
+  stepTextAll: {
+    color: theme.palette.secondary.contrastText,
+    fontSize: 15,
+  },
+  stepTextInstall: {
+    fontWeight: 'bold',
+    color: theme.palette.secondary.light,
   },
 }));
 
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
   const { step, index, handleStepClick, mode = 'install', templateId } = props;
+
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
@@ -110,25 +179,32 @@ export default function InstallationStep(props) {
   };
 
   return (
-    <Grid item xs={12} className={classes.stepRow}>
-      <Grid container spacing={2}>
-        <Grid item xs={1} className={classes.step}>
-          <Typography variant="h4" className={classes.stepNumber}>
-            {index}
-          </Typography>
-        </Grid>
-        <Grid item xs={3} className={classes.step}>
-          <Typography>{step.name}</Typography>
-          <InfoIconButton info={step.description} size="xs" />
-        </Grid>
-        <Grid item xs={2} className={clsx(classes.step, classes.imgBlock)}>
-          {step.imageURL && (
+
+    <div className={classes.stepRow}>
+      <div className={classes.installIntegrationStepWrapper}>
+        <div className={classes.stepCountWithName}>
+          {step.installURL ? (
+            <SuccessIcon className={clsx(classes.successText, classes.succcessIcon)} />
+          ) :
+            <div>
+              <Typography variant="h4" className={classes.stepNumber}>
+                {index}
+              </Typography>
+            </div>}
+          <div className={classes.stepName}>
+            <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: !step.completed})}>{step.name}</Typography>
+            <InfoIconButton info={step.description} className={classes.installInfoBtn} />
+          </div>
+        </div>
+        <div className={classes.logoWithAction}>
+          <div className={classes.imgBlock}>
+            {step.imageURL && (
             <img
               alt=""
               src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
             />
-          )}
-          {step.type === INSTALL_STEP_TYPES.CONNECTION && (
+            )}
+            {step.type === INSTALL_STEP_TYPES.CONNECTION && (
             <ApplicationImg
               size="small"
               type={
@@ -137,28 +213,31 @@ export default function InstallationStep(props) {
                   : ''
               }
             />
-          )}
-        </Grid>
-        <Grid item xs={2} className={classes.step}>
-          {!step.completed && (
+            )}
+          </div>
+          <div className={classes.installActionBtn}>
+            {!step.completed && (
             <Button
               data-test={integrationAppsUtil.getStepText(step, mode)}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              variant="text">
+              variant="text"
+              color="primary"
+              className={classes.installBtn}
+              >
               {integrationAppsUtil.getStepText(step, mode)}
             </Button>
-          )}
-          {step.completed && (
+            )}
+            {step.completed && (
             <>
-              <Typography onClick={onStepClick} className={classes.successText}>
+              <Typography onClick={onStepClick} className={classes.completedText}>
                 {integrationAppsUtil.getStepText(step, mode)}
               </Typography>
-              <SuccessIcon />
             </>
-          )}
-        </Grid>
-      </Grid>
-    </Grid>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

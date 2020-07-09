@@ -88,12 +88,20 @@ export default function Panel(props) {
     occupyFullWidth,
     notificationPanelHeight,
   });
+  const skipFormClose = useSelector(
+    state => selectors.suiteScriptResourceFormState(state, {resourceType, resourceId: id, ssLinkedConnectionId, integrationId}).skipClose
+  );
+  const handleSubmitComplete = useCallback(() => {
+    if (!skipFormClose) {
+      onClose();
+    }
+  }, [onClose, skipFormClose]);
   const abortAndClose = useCallback(() => {
     dispatch(actions.suiteScript.resourceForm.submitAborted(ssLinkedConnectionId, integrationId, resourceType, id));
     onClose();
     dispatch(actions.suiteScript.resource.clearStaged(ssLinkedConnectionId, resourceType, id));
   }, [dispatch, id, integrationId, onClose, resourceType, ssLinkedConnectionId]);
-  const submitButtonLabel = 'Save';
+  const submitButtonLabel = 'Save & close';
   const requiredResources = ['tiles', 'connections', 'flows'];
   const resize = (width, height) => {
     setNotificationPanelHeight(height);
@@ -137,7 +145,8 @@ export default function Panel(props) {
               resourceId={id}
               cancelButtonLabel="Cancel"
               submitButtonLabel={submitButtonLabel}
-              // onSubmitComplete={handleSubmitComplete}
+              submitButtonColor="secondary"
+              onSubmitComplete={handleSubmitComplete}
               onCancel={abortAndClose}
               {...props}
               disabled={isViewMode}

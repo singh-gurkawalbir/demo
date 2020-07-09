@@ -14,6 +14,9 @@ export default function FilterToggleEditorDialog(props) {
     entryFunction,
     insertStubKey,
     optionalSaveParams,
+    isSampleDataLoading,
+    isMonitorLevelAccess,
+    enableFilterForIA,
     ...rest
   } = props;
   const defaults = {
@@ -30,13 +33,14 @@ export default function FilterToggleEditorDialog(props) {
       type={type}
       {...defaults}
       {...rest}
-      disabled={disabled}
+      disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
       showLayoutOptions>
       <FilterEditor
-        disabled={disabled}
+        disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
         data={data}
         rule={rule}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
       <JavaScriptEditor
         data={data}
@@ -45,6 +49,7 @@ export default function FilterToggleEditorDialog(props) {
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
     </ToggleEditorDialog>
   );

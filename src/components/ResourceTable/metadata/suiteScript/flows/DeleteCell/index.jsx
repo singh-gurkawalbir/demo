@@ -12,33 +12,39 @@ import RemoveMargin from '../RemoveMargin';
 export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderView}) {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { defaultConfirmDialog } = useConfirmDialog();
-  const handleClick = useCallback(() => {
-    defaultConfirmDialog('delete this Flow?', () => {
-      dispatch(
-        actions.suiteScript.flow.delete({
-          ssLinkedConnectionId,
-          integrationId: flow._integrationId,
-          _id: flow._id,
-        })
+  const { confirmDialog } = useConfirmDialog();
+  const deleteResource = useCallback(() => {
+    dispatch(
+      actions.suiteScript.flow.delete({
+        ssLinkedConnectionId,
+        integrationId: flow._integrationId,
+        _id: flow._id,
+      })
+    );
+    if (isFlowBuilderView) {
+      history.replace(
+        getRoutePath(
+          `/suitescript/${ssLinkedConnectionId}/integrations/${flow._integrationId}`
+        )
       );
-      if (isFlowBuilderView) {
-        history.push(
-          getRoutePath(
-            `/suitescript/${ssLinkedConnectionId}/integrations/${flow._integrationId}`
-          )
-        );
-      }
+    }
+  }, [dispatch, flow._id, flow._integrationId, history, isFlowBuilderView, ssLinkedConnectionId]);
+  const handleClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm delete',
+      message: 'Are you sure you want to delete this flow?',
+      buttons: [
+        {
+          label: 'Delete',
+          onClick: deleteResource,
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
     });
-  }, [
-    defaultConfirmDialog,
-    dispatch,
-    flow._id,
-    flow._integrationId,
-    history,
-    isFlowBuilderView,
-    ssLinkedConnectionId,
-  ]);
+  }, [confirmDialog, deleteResource]);
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId));
 
   return (
