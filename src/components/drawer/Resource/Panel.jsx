@@ -299,7 +299,7 @@ export default function Panel(props) {
       // selected.
 
       if (resourceType === 'integrations') {
-        return props.history.replace(
+        return history.replace(
           getRoutePath(`/${resourceType}/${newResourceId}/flows`)
         );
       }
