@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo, Fragment } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -9,6 +8,7 @@ import ErroredMessageComponent from './ErroredMessageComponent';
 import lookupUtil from '../../../utils/lookup';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import FieldHelp from '../FieldHelp';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   dynaHttpRequestBodyWrapper: {
@@ -69,16 +69,12 @@ const DynaHttpRequestBody = props => {
   const classes = useStyles();
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  const { adaptorType, connectionId } = useSelector(state => {
-    const { merged: resourceData = {} } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
-    const { adaptorType, _connectionId: connectionId } = resourceData;
-
-    return { adaptorType, connectionId };
-  }, shallowEqual);
+  const { merged: resourceData = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
+  const { adaptorType, _connectionId: connectionId } = resourceData;
   const formattedRule = useMemo(
     () => (Array.isArray(value) ? value[arrayIndex] : value),
     [arrayIndex, value]
