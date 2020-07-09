@@ -7,7 +7,6 @@ import BubbleSvg from '../../../FlowBuilder/BubbleSvg';
 import ResourceButton from '../ResourceButton';
 import ActionIconButton from '../../../FlowBuilder/ActionIconButton';
 import MapDataIcon from '../../../../components/icons/MapDataIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -163,7 +162,7 @@ export default function AppBlock({
         <>
           <ActionIconButton
             variant="middle"
-            helpText={helpTextMap['fb.pp.imports.importMapping']}
+            helpKey="fb.pp.imports.importMapping"
             onClick={openMapping}
             data-test="mapping">
             <MapDataIcon />
