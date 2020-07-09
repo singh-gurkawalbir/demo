@@ -245,17 +245,9 @@ function FlowBuilder() {
   );
   const handleDelete = useCallback(
     type => () => index => {
-      let resourceType;
-
-      if (type === itemTypes.PAGE_PROCESSOR) {
-        resourceType = 'page processor';
-      } else {
-        resourceType = 'page generator';
-      }
-
       confirmDialog({
         title: 'Confirm remove',
-        message: `Are you sure you want to remove this ${resourceType}?`,
+        message: 'Are you sure you want to remove this resource?',
         buttons: [
           {
             label: 'Remove',

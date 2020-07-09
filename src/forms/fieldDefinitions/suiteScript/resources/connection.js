@@ -1,5 +1,3 @@
-import helpTextMap from '../../../../components/Help/helpTextMap';
-
 export default {
   name: {
     type: 'text',
@@ -10,7 +8,7 @@ export default {
     type: 'text',
     label: 'Username',
     required: true,
-    helpText: helpTextMap['connection.salesforce.username'],
+    helpKey: 'connection.salesforce.username',
 
   },
   'salesforce.password': {
@@ -35,7 +33,7 @@ export default {
     type: 'select',
     label: 'Account type',
     required: true,
-    helpText: helpTextMap['connection.salesforce.sandbox'],
+    helpKey: 'connection.salesforce.sandbox',
 
     options: [
       {

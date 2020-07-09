@@ -206,7 +206,9 @@ export default function AppRouting() {
         render={({ history }) => history.replace(getRoutePath('/accesstokens'))}
         />
       <Route
-        path={getRoutePath('/suitescript/integrationapps/:integrationAppName/setup')}
+        path={[
+          getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/setup'),
+          getRoutePath('/suitescript/integrationapps/:integrationAppName/setup')]}
         >
         <SuiteScriptIntegrationAppInstallation />
       </Route>

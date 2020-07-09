@@ -37,8 +37,16 @@ export function parseTiles(tiles) {
     const connector = SUITESCRIPT_CONNECTORS.find(c =>
       [c.name, c.ssName].includes(displayName)
     );
+    const updatedTile = {
+      ...tile,
+      displayName,
+    };
+    if (connector) {
+      updatedTile._connectorId = connector._id;
+      updatedTile.urlName = connector.urlName;
+    }
     let status;
-    if (tile._connectorId && tile.mode !== INTEGRATION_MODES.SETTINGS) {
+    if (updatedTile._connectorId && tile.mode === INTEGRATION_MODES.INSTALL) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (tile.offlineConnections && tile.offlineConnections.length > 0) {
       status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
@@ -47,16 +55,7 @@ export function parseTiles(tiles) {
     } else {
       status = TILE_STATUS.SUCCESS;
     }
-    const updatedTile = {
-      ...tile,
-      displayName,
-      status,
-    };
-    if (connector) {
-      updatedTile._connectorId = connector._id;
-      updatedTile.urlName = connector.urlName;
-    }
-    return updatedTile;
+    return {...updatedTile, status};
   });
 }
 

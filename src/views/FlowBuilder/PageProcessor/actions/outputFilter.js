@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import OutputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
@@ -13,6 +12,7 @@ function OutputFilterDialog({
   isViewMode,
   resourceType,
   onClose,
+  isMonitorLevelAccess,
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -71,6 +71,8 @@ function OutputFilterDialog({
       helpKey="lookup.output.filter"
       helpTitle="Filter Rules"
       disabled={isViewMode}
+      isMonitorLevelAccess={isMonitorLevelAccess}
+      enableFilterForIA
       id={resourceId + flowId}
       data={sampleData}
       type={type}
@@ -97,6 +99,6 @@ export default {
   name: 'outputFilter',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.exports.filter'],
+  helpKey: 'fb.pp.exports.filter',
   Component: OutputFilter,
 };

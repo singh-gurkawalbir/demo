@@ -58,7 +58,7 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch,
     options.commMetaPath,
   ]);
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     dispatch(
       actions.metadata.refresh(
         connectionId,
@@ -70,7 +70,7 @@ export default function DynaSelectOptionsGenerator(props) {
         }
       )
     );
-  };
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, options.commMetaPath]);
 
   return (
     <>

@@ -54,9 +54,10 @@ export default function NameCell({
   });
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
   const flowBuilderTo = isIntegrationApp
     ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
-    : `${flowBuilderPathName}/${flowId}`;
+    : getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
 
   return (
     <div className={classes.root}>

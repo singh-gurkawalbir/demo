@@ -88,12 +88,6 @@ export function* submitFormValues({
   integrationId,
 }) {
   const formValues = { ...values };
-
-  // formValues = yield call(deleteUISpecificValues, {
-  //   values: formValues,
-  //   resourceId,
-  // });
-
   const { patchSet, finalValues } = yield call(createFormValuesPatchSet, {
     resourceType,
     resourceId,

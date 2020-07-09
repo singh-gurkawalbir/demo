@@ -4,7 +4,6 @@ import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
@@ -83,6 +82,6 @@ export default {
   name: 'lookupTransformation',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.exports.transform'],
+  helpKey: 'fb.pp.exports.transform',
   Component: Transformation,
 };

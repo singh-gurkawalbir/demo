@@ -59,6 +59,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const paramSSLinkedConnId = match.params.ssLinkedConnectionId;
   const suiteScriptConnectorId = match.params.integrationAppName;
   const { _id: connectorId, name, urlName, ssName } = useMemo(() => SUITESCRIPT_CONNECTORS.find(s => s._id === suiteScriptConnectorId), [suiteScriptConnectorId]);
 
@@ -251,7 +252,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     history.push(getRoutePath('/marketplace'));
   }, [history]);
 
-  const handleSubmitComplete = useCallback((connectionId) => {
+  const handleSubmitComplete = useCallback((connectionId, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -265,7 +266,9 @@ export default function SuiteScriptIntegrationAppInstallation() {
       )
     );
     verifyNSBundle(connectionId);
-    history.goBack();
+    if (!skipDrawerClose) {
+      history.goBack();
+    }
   }, [connectorId, dispatch, history, verifyNSBundle]);
 
   const onSSConnSubmitComplete = useCallback(() => {
@@ -286,6 +289,12 @@ export default function SuiteScriptIntegrationAppInstallation() {
     setSSConnection(null);
     history.goBack();
   }, [connectorId, currentStep, dispatch, history, ssLinkedConnectionId]);
+
+  useEffect(() => {
+    if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
+      handleSubmitComplete(paramSSLinkedConnId, true);
+    }
+  }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 
   if (error) {
     enqueueSnackbar({

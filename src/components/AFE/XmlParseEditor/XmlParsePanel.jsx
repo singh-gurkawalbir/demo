@@ -11,7 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import helpTextMap from '../../Help/helpTextMap';
+import { getHelpTextMap } from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   helpText: {
@@ -91,7 +91,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
 
         {V0_json && (
           <Typography variant="caption" className={classes.helpText}>
-            {helpTextMap['editor.xml.simple']}
+            {getHelpTextMap()['editor.xml.simple']}
           </Typography>
         )}
 

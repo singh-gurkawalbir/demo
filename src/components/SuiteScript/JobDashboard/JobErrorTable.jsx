@@ -183,7 +183,7 @@ function JobErrorTable({
       </ul>
       {!jobErrors ? (
         <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading errors...</span>
+          <Spinner size={20} /> <span>Loading</span>
         </div>
       ) : (
         <>

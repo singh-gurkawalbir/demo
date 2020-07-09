@@ -64,7 +64,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/uninstall`;
   } else if (tile._connectorId) {

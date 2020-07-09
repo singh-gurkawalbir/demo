@@ -528,8 +528,8 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromResource.integratorLicenseActionMessage(state && state.resource);
+export function platformLicenseActionMessage(state) {
+  return fromResource.platformLicenseActionMessage(state && state.resource);
 }
 
 export function getChildIntegrationId(state, parentId) {
@@ -542,6 +542,10 @@ export function resourceReferences(state) {
 
 export function getNumEnabledFlows(state) {
   return fromResource.getNumEnabledFlows(state && state.resource);
+}
+
+export function getLicenseEntitlementUsage(state) {
+  return fromResource.getLicenseEntitlementUsage(state && state.resource);
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
