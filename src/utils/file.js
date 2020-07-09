@@ -1,4 +1,3 @@
-import XLSX from 'xlsx';
 import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
 import { isJsonString } from './string';
@@ -83,7 +82,8 @@ export const getJSONContent = data => {
  *
  * @returns {object} CSV Data
  */
-export function getCsvFromXlsx(data) {
+export async function getCsvFromXlsx(data) {
+  const { default: XLSX } = await import(/* webpackChunkName: "XLSX" */'xlsx');
   let workBook;
   let result;
 
