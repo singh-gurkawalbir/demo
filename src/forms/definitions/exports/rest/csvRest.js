@@ -122,13 +122,28 @@ export default {
 
               return 'What would you like to export?';
             },
-            fields: [
-              'rest.blobMethod',
-              'rest.relativeURI',
-              'rest.headers',
-              'uploadFile',
-              'file.csv',
-              'rest.blobFormat',
+            containers: [
+              {
+                fields: [
+                  'rest.blobMethod',
+                  'rest.relativeURI',
+                  'rest.headers',
+                  'uploadFile',
+                ]
+              },
+              {
+                type: 'indent',
+                containers: [
+                  {fields: [
+                    'file.csv',
+                  ]}
+                ]
+              },
+              {
+                fields: [
+                  'rest.blobFormat',
+                ]
+              },
             ],
           },
           {

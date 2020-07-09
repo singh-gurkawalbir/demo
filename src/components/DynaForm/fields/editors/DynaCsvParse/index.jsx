@@ -63,12 +63,12 @@ export default function DynaCsvParse(props) {
   } = props;
   const { uploadSampleDataFieldName} = options;
   const [formKey, setFormKey] = useState(1);
-  const [currentOptions, setCurrentOptions] = useState(getParserValue({...value, resourceId, resourceType}));
+  const [currentOptions, setCurrentOptions] = useState(value);
   const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType}));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
-      setCurrentOptions({...newOptions});
+      setCurrentOptions(newOptions);
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
@@ -81,9 +81,9 @@ export default function DynaCsvParse(props) {
     },
     [id, onFieldChange]
   );
-  const handleEditorClick = () => {
+  const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
-  };
+  }, [showEditor]);
 
   const dispatch = useDispatch();
   /*

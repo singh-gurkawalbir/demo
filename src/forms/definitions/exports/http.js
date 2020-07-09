@@ -452,17 +452,32 @@ export default {
           {
             collapsed: true,
             label: 'Non-standard API response patterns',
-            fields: [
-              'http.response.resourcePath',
-              'http.response.errorPath',
-              'http.response.successPath',
-              'http.response.successValues',
-              'http.response.failPath',
-              'http.response.failValues',
-              'http.successMediaType',
-              'file.csv',
-              'http.errorMediaType',
-              'http.requestMediaType',
+            containers: [
+              {
+                fields: [
+                  'http.response.resourcePath',
+                  'http.response.errorPath',
+                  'http.response.successPath',
+                  'http.response.successValues',
+                  'http.response.failPath',
+                  'http.response.failValues',
+                  'http.successMediaType',
+                ]
+              },
+              {
+                type: 'indent',
+                containers: [
+                  {fields: [
+                    'file.csv',
+                  ]}
+                ]
+              },
+              {
+                fields: [
+                  'http.errorMediaType',
+                  'http.requestMediaType',
+                ]
+              }
             ],
           },
           {

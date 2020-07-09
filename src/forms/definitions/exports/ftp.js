@@ -230,6 +230,10 @@ export default {
           field: 'outputMode',
           is: ['records'],
         },
+        {
+          field: 'file.type',
+          is: ['csv'],
+        },
       ], },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
