@@ -98,10 +98,10 @@ export default function ConfigureSettings({ ssLinkedConnectionId, integrationId,
       section,
       integrationId,
       true,
-      {isSuiteScriptIntegrator: true},
+      {isSuiteScriptIntegrator: true, propsSpreadToFields: {sectionId: id}},
       ssLinkedConnectionId
     ),
-    [integrationId, section, ssLinkedConnectionId]
+    [id, integrationId, section, ssLinkedConnectionId]
   );
 
   const formState = useSelector(
