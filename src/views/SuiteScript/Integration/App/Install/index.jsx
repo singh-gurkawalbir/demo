@@ -252,7 +252,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     history.push(getRoutePath('/marketplace'));
   }, [history]);
 
-  const handleSubmitComplete = useCallback((connectionId, skipHistory) => {
+  const handleSubmitComplete = useCallback((connectionId, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -266,7 +266,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
       )
     );
     verifyNSBundle(connectionId);
-    if (!skipHistory) {
+    if (!skipDrawerClose) {
       history.goBack();
     }
   }, [connectorId, dispatch, history, verifyNSBundle]);

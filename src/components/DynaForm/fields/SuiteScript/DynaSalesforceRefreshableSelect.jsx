@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import * as selectors from '../../../../reducers';
@@ -32,8 +32,8 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     options = data.filter(f => f.type === 'boolean' && f.updateable);
   }
 
-  const handleRefreshResource = () =>
-    dispatch(actions.metadata.refresh(ssLinkedConnectionId, commMetaPath));
+  const handleRefreshResource = useCallback(() =>
+    dispatch(actions.metadata.refresh(ssLinkedConnectionId, commMetaPath)), [commMetaPath, dispatch, ssLinkedConnectionId]);
 
   return (
     <DynaGenericSelect

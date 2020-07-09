@@ -570,7 +570,14 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.decompressFiles',
     'file.compressionFormat',
     'file.skipDelete',
-    'file.csvHelper'
+    'file.csvHelper',
+    'test.limit',
+    'delta.dateField',
+    'delta.lagOffset',
+    'once.booleanField',
+    'restlet.delta.dateField',
+    'restlet.delta.lagOffset',
+    'restlet.once.booleanField'
   ],
   imports: [
     'lookups',

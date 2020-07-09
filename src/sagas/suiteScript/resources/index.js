@@ -5,6 +5,7 @@ import { apiCallWithRetry } from '../../index';
 import * as selectors from '../../../reducers';
 import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
 import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
+import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 export function* commitStagedChanges({
   resourceType,
@@ -125,12 +126,22 @@ export function* requestSuiteScriptMetadata({
   const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/${resourceType}`;
   const opts = {method: 'GET'};
 
+  let resp;
   try {
-    const resource = yield call(apiCallWithRetry, {path, opts, hidden: true});
-    yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resource));
+    resp = yield call(apiCallWithRetry, {path, opts});
   } catch (error) {
     return false;
   }
+
+  // for settings we receive a 200 level response
+  if (resourceType === 'settings' && resp?.success === false) {
+    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0]));
+    return false;
+  }
+
+  yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resp));
+
+
   return true;
 }
 

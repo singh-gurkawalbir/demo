@@ -32,7 +32,7 @@ export function tileDisplayName(tile) {
 }
 
 export function parseTiles(tiles) {
-  return tiles.map(tile => {
+  return tiles?.map(tile => {
     const displayName = tileDisplayName(tile);
     const connector = SUITESCRIPT_CONNECTORS.find(c =>
       [c.name, c.ssName].includes(displayName)
