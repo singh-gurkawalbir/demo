@@ -5,12 +5,16 @@ import ExportIcon from '../../../../components/icons/ExportsIcon';
 import DataLoaderIcon from '../../../../components/icons/DataLoaderIcon';
 import ListenerIcon from '../../../../components/icons/ListenerIcon';
 import ImportIcon from '../../../../components/icons/ImportsIcon';
+import TransferDownIcon from '../../../../components/icons/TransferDownIcon';
+import TransferUpIcon from '../../../../components/icons/TransferUpIcon';
 
 const blockMap = {
   export: { label: 'Export', Icon: ExportIcon },
   import: { label: 'Import', Icon: ImportIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
   dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
+  exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
+  importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,9 +39,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceButton({ onClick, variant }) {
+export default function ResourceButton({ onClick, variant = 'export', isFileTransfer }) {
   const classes = useStyles();
-  const block = blockMap[variant || 'export'];
+  const block = blockMap[isFileTransfer ? `${variant}Transfer` : variant];
 
   return (
     <Button

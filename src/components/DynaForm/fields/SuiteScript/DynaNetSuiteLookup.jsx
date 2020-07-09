@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import { isArray, isObject } from 'lodash';
 import * as selectors from '../../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../../actions';
@@ -66,17 +65,7 @@ export default function DynaNetSuiteLookup(props) {
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state =>
     selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId: resourceContext.resourceId})
   );
-
-
-  let formattedExtractFields = [];
-
-  if (flowSampleData) {
-    if (isArray(flowSampleData)) {
-      formattedExtractFields = flowSampleData?.map(obj => ({ name: obj.name || obj.label, id: obj.id || obj.value }));
-    } else if (isObject(flowSampleData)) {
-      formattedExtractFields = Object.keys(flowSampleData).map(key => ({id: key, name: flowSampleData[key]}));
-    }
-  }
+  const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId: resourceContext.resourceId})).data;
 
   useEffect(() => {
     if (
@@ -124,7 +113,7 @@ export default function DynaNetSuiteLookup(props) {
         <NetSuiteLookupFilterEditorDialog
           title="Lookup criteria"
           id={id}
-          data={formattedExtractFields}
+          data={extractFields}
           value={rule}
           onClose={handleClose}
           // disabled={disabled}
