@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { FieldWrapper } from 'react-forms-processor';
 import ArrowPopper from '../../ArrowPopper';
-import helpTextMap from '../../Help/helpTextMap';
+import { getHelpTextMap } from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   helpPopper: {
@@ -36,7 +36,7 @@ function DynaLabel(props) {
   };
 
   const showArrowPopper =
-    !disablePopover && (helpText || (helpKey && helpTextMap[helpKey]));
+    !disablePopover && (helpText || (helpKey && getHelpTextMap()[helpKey]));
 
   return (
     <>
@@ -48,7 +48,7 @@ function DynaLabel(props) {
           open={!!anchorEl}
           anchorEl={anchorEl}>
           <Typography className={classes.label}>
-            {helpText || helpTextMap[helpKey]}
+            {helpText || getHelpTextMap()[helpKey]}
           </Typography>
         </ArrowPopper>
       )}

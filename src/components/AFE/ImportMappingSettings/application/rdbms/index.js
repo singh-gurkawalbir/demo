@@ -65,7 +65,7 @@ export default {
               items: [
                 { label: 'Standard', value: 'standard' },
                 { label: 'Hard-Coded', value: 'hardCoded' },
-                // { label: 'Lookup', value: 'lookup' },
+                { label: 'Lookup', value: 'lookup' },
                 { label: 'Multi-Field', value: 'multifield' },
               ],
             },

@@ -2,11 +2,11 @@ import csvOptions from '../../../../../components/AFE/SuiteScript/CsvConfigEdito
 
 export default {
   'import.file.csv.columnDelimiter': {
-    type: 'select',
+    id: 'import.file.csv.columnDelimiter',
+    type: 'selectwithinput',
     label: 'Column delimiter',
-    options: [{items: csvOptions.ColumnDelimiterOptions}],
-    value: r => r?.import?.file?.csv?.columnDelimiter,
-    required: true,
+    options: csvOptions.ColumnDelimiterOptions,
+    defaultValue: r => r?.import?.file?.csv?.columnDelimiter || ',',
   },
   'import.file.csv.includeHeader': {
     type: 'checkbox',

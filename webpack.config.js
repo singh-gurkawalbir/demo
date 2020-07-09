@@ -75,6 +75,7 @@ const config = {
   },
   optimization: {
     splitChunks: {
+      chunks: 'all',
       automaticNameDelimiter: '_',
     },
   },

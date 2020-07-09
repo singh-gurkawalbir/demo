@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import DoneIcon from '@material-ui/icons/Done';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,17 +64,20 @@ export const PingMessage = props => {
 };
 
 const TestButton = props => {
-  const { classes, resourceId, label, ssLinkedConnectionId } = props;
+  const { classes, resourceId, ssLinkedConnectionId } = props;
+  const [isTesting, setIsTesting] = useState(false);
   const dispatch = useDispatch();
   const handleTestConnection = useCallback(
-    values =>
+    values => {
+      setIsTesting(true);
       dispatch(
         actions.suiteScript.resource.connections.test(
           resourceId,
           values,
           ssLinkedConnectionId
         )
-      ),
+      );
+    },
     [dispatch, resourceId, ssLinkedConnectionId]
   );
   const testConnectionCommState = useSelector(state =>
@@ -86,6 +89,11 @@ const TestButton = props => {
   );
 
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
+  useEffect(() => {
+    if (isTesting && !pingLoading) {
+      setIsTesting(false);
+    }
+  }, [testConnectionCommState, isTesting, pingLoading]);
 
   return (
     <>
@@ -101,7 +109,7 @@ const TestButton = props => {
         size="small"
         variant="outlined"
         color="secondary">
-        {label || 'Test connection'}
+        {isTesting ? 'Testing' : 'Test connection'}
       </DynaAction>
     </>
   );

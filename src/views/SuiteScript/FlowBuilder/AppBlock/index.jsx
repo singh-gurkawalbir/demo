@@ -7,7 +7,6 @@ import BubbleSvg from '../../../FlowBuilder/BubbleSvg';
 import ResourceButton from '../ResourceButton';
 import ActionIconButton from '../../../FlowBuilder/ActionIconButton';
 import MapDataIcon from '../../../../components/icons/MapDataIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -136,6 +135,7 @@ export default function AppBlock({
   const location = useLocation();
   const history = useHistory();
   let application;
+  let isFileTransfer = false;
   const openMapping = useCallback(() => {
     history.push(`${location.pathname}/mapping`);
   }, [history, location.pathname]);
@@ -151,10 +151,13 @@ export default function AppBlock({
     application = resource[blockType].type;
   }
 
-  if (application === 'fileCabinet') {
-    application = 'netsuite';
+  if (['ftp', 'fileCabinet', 'ACTIVITY_STREAM'].includes(application)) {
+    isFileTransfer = true;
   }
 
+  if (['fileCabinet', 'ACTIVITY_STREAM'].includes(application)) {
+    application = 'netsuite';
+  }
 
   const action = useMemo(() => {
     const {import: importRes} = resource;
@@ -163,7 +166,7 @@ export default function AppBlock({
         <>
           <ActionIconButton
             variant="middle"
-            helpText={helpTextMap['fb.pp.imports.importMapping']}
+            helpKey="fb.pp.imports.importMapping"
             onClick={openMapping}
             data-test="mapping">
             <MapDataIcon />
@@ -192,7 +195,7 @@ export default function AppBlock({
           />
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} isFileTransfer={isFileTransfer} />
           <div className={classes.middleActionContainer}>
             {action}
           </div>
