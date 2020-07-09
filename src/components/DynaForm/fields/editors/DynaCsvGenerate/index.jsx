@@ -34,21 +34,16 @@ const getParserValue = ({
   truncateLastRowDelimiter,
   wrapWithQuotes,
   customHeaderRows,
-}) => {
-  const rules = {
-    includeHeader,
-    columnDelimiter,
-    rowDelimiter,
-    replaceNewlineWithSpace,
-    replaceTabWithSpace,
-    truncateLastRowDelimiter,
-    wrapWithQuotes,
-
-  };
-  // customHeaderRows is only supported for http.
-  if (typeof customHeaderRows !== 'undefined') { rules.customHeaderRows = customHeaderRows.split('\n').filter(val => val !== ''); }
-  return rules;
-};
+}) => ({
+  includeHeader,
+  columnDelimiter,
+  rowDelimiter,
+  replaceNewlineWithSpace,
+  replaceTabWithSpace,
+  truncateLastRowDelimiter,
+  wrapWithQuotes,
+  customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
+});
 
 export default function DynaCsvGenerate(props) {
   const classes = useStyles();
@@ -81,7 +76,7 @@ export default function DynaCsvGenerate(props) {
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
-      setCurrentOptions(newOptions);
+      setCurrentOptions({...newOptions, resourceId, resourceType });
       const parsersValue = getParserValue(newOptions);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
@@ -91,7 +86,7 @@ export default function DynaCsvGenerate(props) {
         onFieldChange(id, parsersValue);
       }
     },
-    [id, onFieldChange]
+    [id, onFieldChange, resourceId, resourceType]
   );
   const handleEditorClick = () => {
     setShowEditor(!showEditor);

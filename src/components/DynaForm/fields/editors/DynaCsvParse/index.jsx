@@ -34,19 +34,14 @@ const getParserValue = ({
   keyColumns,
   rowsToSkip,
   trimSpaces
-}) => {
-  const rules = {
-    columnDelimiter,
-    rowDelimiter,
-    hasHeaderRow,
-    keyColumns,
-    trimSpaces
-  };
-  if (typeof rowsToSkip !== 'undefined') {
-    rules.rowsToSkip = Number.isInteger(rowsToSkip) ? rowsToSkip : 0;
-  }
-  return rules;
-};
+}) => ({
+  columnDelimiter,
+  rowDelimiter,
+  hasHeaderRow,
+  keyColumns,
+  trimSpaces,
+  rowsToSkip: Number.isInteger(rowsToSkip) ? rowsToSkip : 0,
+});
 
 export default function DynaCsvParse(props) {
   const classes = useStyles();
@@ -99,21 +94,18 @@ export default function DynaCsvParse(props) {
       const value = getParserValue(editorValues);
       onFieldChange(id, value);
 
-      // when keyColumn is supported
-      if (typeof editorValues.keyColumns !== 'undefined' && editorValues?.keyColumns?.length) {
-        dispatch(
-          actions.sampleData.request(
-            resourceId,
-            resourceType,
-            {
-              type: 'csv',
-              file: csvData,
-              editorValues,
-            },
-            'file'
-          )
-        );
-      }
+      dispatch(
+        actions.sampleData.request(
+          resourceId,
+          resourceType,
+          {
+            type: 'csv',
+            file: csvData,
+            editorValues,
+          },
+          'file'
+        )
+      );
     }
   }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
 

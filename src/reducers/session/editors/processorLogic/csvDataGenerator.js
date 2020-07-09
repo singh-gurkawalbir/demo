@@ -12,26 +12,22 @@ const requestBody = ({
   wrapWithQuotes,
   data,
   customHeaderRows,
-}) => {
-  const body = {
-    rules: {
-      columnDelimiter,
-      rowDelimiter,
-      hasHeaderRow,
-      trimSpaces,
-      includeHeader,
-      truncateLastRowDelimiter,
-      replaceTabWithSpace,
-      replaceNewlineWithSpace,
-      wrapWithQuotes,
+}) => ({
+  rules: {
+    columnDelimiter,
+    rowDelimiter,
+    hasHeaderRow,
+    trimSpaces,
+    includeHeader,
+    truncateLastRowDelimiter,
+    replaceTabWithSpace,
+    replaceNewlineWithSpace,
+    wrapWithQuotes,
+    customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
 
-    },
-    data: [JSON.parse(data)],
-  };
-
-  if (typeof customHeaderRows !== 'undefined') { body.rules.customHeaderRows = customHeaderRows.split('\n').filter(val => val !== ''); }
-  return body;
-};
+  },
+  data: [JSON.parse(data)],
+});
 const validate = editor => ({
   dataError: !editor.data
     ? 'Must provide some sample data.'
