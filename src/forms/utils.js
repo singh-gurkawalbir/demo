@@ -363,7 +363,12 @@ const getFieldConfig = (field = {}, resource = {}) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
-    newField.type = 'text';
+    if (!newField.type && newField?.supportsRefresh) {
+      // specific to suitescript
+      newField.type = 'refreshabletext';
+    } else {
+      newField.type = 'text';
+    }
   } else if (newField.type === 'expression') {
     newField.type = 'iaexpression';
     newField.flowId = resource._id;
@@ -464,15 +469,18 @@ export const translateDependencyProps = fieldMap => {
 
     if (dependencies) {
       Object.keys(dependencies).forEach(value => {
+        Object.keys(dependencies?.[value]).forEach(componentType => {
         // links are similar to fields property and these are dependencies defined for link components
-        const dependencyFields = dependencies[value].fields || dependencies[value].links;
-
-        if (type === 'checkbox' || type === 'featurecheck') {
-          rules.push(
-            ...(extractRules(dependencyFields, key, value === 'enabled') || [])
-          );
-        } else rules.push(...(extractRules(dependencyFields, key, value) || []));
+          const dependencyFields = dependencies[value][componentType];
+          // feature is a checkbox
+          if (type === 'checkbox' || type === 'featurecheck') {
+            rules.push(
+              ...(extractRules(dependencyFields, key, value === 'enabled') || [])
+            );
+          } else rules.push(...(extractRules(dependencyFields, key, value) || []));
+        });
       });
+
 
       delete fieldMapCopy[key].dependencies;
     }
@@ -511,7 +519,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConnectionId) =>
+const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConnectionId, propsSpreadToFields) =>
   fields
     .map(field => {
       // TODO: generate correct name path
@@ -519,6 +527,7 @@ const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConn
       // name is the unique identifier....verify with Ashok
 
       return {
+        ...(propsSpreadToFields || {}),
         ...getFieldConfig(field, resource),
         defaultValue,
         name: `/${name}`,
@@ -590,10 +599,10 @@ export const integrationSettingsToDynaFormMetadata = (
   integrationId,
   skipContainerWrap,
   options = {},
-  ssLinkedConnectionId
+  ssLinkedConnectionId,
 ) => {
   const finalData = {};
-  const { resource, isFlow = false, isSuiteScriptIntegrator} = options;
+  const { resource, isFlow = false, isSuiteScriptIntegrator, propsSpreadToFields = {}} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -603,7 +612,8 @@ export const integrationSettingsToDynaFormMetadata = (
       fields,
       integrationId,
       resource,
-      ssLinkedConnectionId
+      ssLinkedConnectionId,
+      propsSpreadToFields
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
@@ -620,7 +630,8 @@ export const integrationSettingsToDynaFormMetadata = (
         section.fields,
         integrationId,
         resource,
-        ssLinkedConnectionId
+        ssLinkedConnectionId,
+        propsSpreadToFields
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
@@ -638,7 +649,7 @@ export const integrationSettingsToDynaFormMetadata = (
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId).reduce(
+      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId, propsSpreadToFields).reduce(
         generateFieldsAndSections,
         {}
       ),
