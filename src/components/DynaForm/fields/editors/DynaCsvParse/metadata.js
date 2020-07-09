@@ -58,7 +58,7 @@ export default function getFormMetadata(options) {
         name: 'rowsPerRecord',
         label: 'Multiple rows per record',
         type: 'checkbox',
-        defaultValue: !!(options?.keyColumns && Array.isArray(options.keyColumns) && options.keyColumns.length),
+        defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
         required: true,
       },
       keyColumns: {
