@@ -185,7 +185,6 @@ export default function DynaXmlParse({
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
-  console.log('data', data);
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
