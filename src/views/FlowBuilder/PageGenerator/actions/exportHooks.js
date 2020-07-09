@@ -6,7 +6,6 @@ import Icon from '../../../../components/icons/HookIcon';
 import actions from '../../../../actions';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import Hooks from '../../../../components/Hooks';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import {
   getSelectedHooksPatchSet,
   getDefaultValuesForHooks,
@@ -81,6 +80,6 @@ export default {
   name: 'exportHooks',
   position: 'right',
   Icon,
-  helpText: helpTextMap['fb.pg.exports.hooks'],
+  helpKey: 'fb.pg.exports.hooks',
   Component: ExportHooks,
 };
