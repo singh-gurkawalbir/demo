@@ -5,16 +5,9 @@ const requestBody = editor => {
     rowDelimiter: editor.rowDelimiter,
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
+    rowsToSkip: Number.isInteger(editor.rowsToSkip) ? editor.rowsToSkip : 0,
+    keyColumns: editor.keyColumns
   };
-
-  if (Number.isInteger(editor.rowsToSkip)) {
-    rules.rowsToSkip = editor.rowsToSkip;
-  }
-
-  if (editor.multipleRowsPerRecord && editor.keyColumns) {
-    rules.keyColumns = editor.keyColumns;
-  }
-
   return {
     rules,
     data: editor.data,
