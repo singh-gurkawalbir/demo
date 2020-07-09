@@ -282,7 +282,9 @@ export default {
     if (retValues['/inputMode'] !== 'blob') {
       delete retValues['/blobKeyPath'];
     }
-
+    if (retValues['/http/requestMediaType'] === 'csv') {
+      retValues['/file/type'] = 'csv';
+    }
     retValues['/statusExport'] = undefined;
     delete retValues['/inputMode'];
 

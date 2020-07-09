@@ -3,10 +3,18 @@ import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowPopper from '../ArrowPopper';
-import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
 import HelpIcon from '../icons/HelpIcon';
 import RawHtml from '../RawHtml';
+
+let _helpTextMap = {};
+export function getHelpTextMap() {
+  return _helpTextMap;
+}
+
+import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ './helpTextMap').then(({ default: tm }) => {
+  _helpTextMap = tm || {};
+}).catch(() => {});
 
 const useStyles = makeStyles(theme => ({
   helpIcon: {
@@ -37,7 +45,8 @@ function Help(props) {
   }, []);
   const { className, helpKey, helpText, ...rest } = props;
   const open = !!anchorEl;
-  const helpTextValue = helpText || helpTextMap[helpKey];
+  const helpTextValue = helpText || getHelpTextMap()[helpKey];
+  // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);
 
   if (!helpTextValue) return null;
 

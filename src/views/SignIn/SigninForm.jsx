@@ -96,8 +96,7 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    margin: '0 auto',
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(2, 0),
     '&:before': {
       content: '""',
       width: '40%',

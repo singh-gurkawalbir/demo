@@ -16,6 +16,11 @@ export default {
     label: 'Name',
     required: true,
   },
+  description: {
+    type: 'text',
+    label: 'Description',
+    defaultValue: r => r.description || '',
+  },
   'http.status.initialWaitTime': {
     type: 'text',
     label: 'Initial wait time',
@@ -51,7 +56,7 @@ export default {
         isNot: [true],
       },
     ],
-    label: 'Submit resource path',
+    label: 'Resource path',
   },
   'http.result._exportId': {
     type: 'selectresource',
@@ -67,10 +72,17 @@ export default {
   },
   'http.submit.sameAsStatus': {
     type: 'checkbox',
-    label: 'Same as status export',
+    label: 'Same as check status',
+    defaultValue: true
   },
   'http.submit.transform': {
     type: 'transformrules',
-    label: 'Transform Rules for Submit Response',
+    label: 'Transform rules',
+    visibleWhen: [
+      {
+        field: 'http.submit.sameAsStatus',
+        isNot: [true],
+      },
+    ],
   },
 };

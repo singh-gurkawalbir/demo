@@ -1,12 +1,12 @@
-import { call, put, takeEvery, takeLatest, select } from 'redux-saga/effects';
+import { call, put, race, select, take, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import { apiCallWithRetry } from '../../index';
-import { commStatusByKey } from '../../../reducers/index';
-import getRequestOptions from '../../../utils/requestOptions';
-import commKeyGenerator from '../../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
+import { commStatusByKey } from '../../../reducers/index';
+import commKeyGenerator from '../../../utils/commKeyGenerator';
+import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
+import { apiCallWithRetry } from '../../index';
 
 export function* getNetsuiteOrSalesforceMeta({
   connectionId,
@@ -104,6 +104,24 @@ export function* getNetsuiteOrSalesforceMeta({
   }
 }
 
+
+function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
+  const {
+    connectionId,
+    commMetaPath,
+  } = params;
+  yield race({
+    getMetadata: call(getNetsuiteOrSalesforceMeta, params),
+    abortMetadata: take(
+      action =>
+        action.type === actionTypes.METADATA.REFRESH &&
+        action.connectionId === connectionId &&
+        action.commMetaPath === commMetaPath,
+    ),
+  });
+}
+
+
 export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
   const { path, opts } = getRequestOptions(
     actionTypes.METADATA.ASSISTANT_REQUEST,
@@ -142,6 +160,6 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
 
 export default [
   takeEvery(actionTypes.METADATA.REQUEST, getNetsuiteOrSalesforceMeta),
-  takeLatest(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMeta),
+  takeEvery(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMetaTakeLatestPerAction),
   takeEvery(actionTypes.METADATA.ASSISTANT_REQUEST, requestAssistantMetadata),
 ];

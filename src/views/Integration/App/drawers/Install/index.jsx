@@ -9,7 +9,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
-  Grid,
   Link,
 } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
@@ -18,6 +17,7 @@ import {
   getConnectionType,
   generateNewId,
 } from '../../../../../utils/resource';
+import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import resourceConstants from '../../../../../forms/constants/connection';
@@ -29,36 +29,40 @@ import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
-import HelpIcon from '../../../../../components/icons/HelpIcon';
+import CloseIcon from '../../../../../components/icons/CloseIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
+import HelpIcon from '../../../../../components/icons/HelpIcon';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    width: '100%',
-    padding: '10px 25px',
+  installIntegrationWrapper: {
+    padding: theme.spacing(2, 3),
+  },
+  installIntegrationWrapperContent: {
+    maxWidth: 750,
   },
   message: {
-    padding: '10px',
+    marginBottom: theme.spacing(2),
   },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: 5,
   },
-  innerContent: {
-    width: '80vw',
-  },
-  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
+  },
+  installIntegrationSteps: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  noIntegrationMsg: {
+    padding: theme.spacing(3),
   },
 }));
 
@@ -260,7 +264,7 @@ export default function ConnectorInstallation(props) {
     integrationInstallSteps]);
 
   if (!installSteps || !_connectorId) {
-    return <Typography>No Integration Found</Typography>;
+    return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
   }
 
   const handleUninstall = e => {
@@ -437,6 +441,32 @@ export default function ConnectorInstallation(props) {
 
   return (
     <LoadResources required resources="connections,integrations,published">
+      <CeligoPageBar
+        title={`Install app: ${integrationName}`}
+        // Todo: (Mounika) please add the helpText
+        infoText="we need to have the help text for the following.">
+        <div className={classes.actions}>
+          <IconTextButton
+            data-test="viewHelpGuide"
+            component={Link}
+            variant="text"
+            onClick={handleHelpUrlClick}
+            color="primary">
+            <HelpIcon />
+            View help guide
+          </IconTextButton>
+          <IconTextButton
+            data-test="uninstall"
+            component={Link}
+            variant="text"
+            onClick={handleUninstall}
+            color="primary">
+            <CloseIcon />
+            Uninstall
+          </IconTextButton>
+
+        </div>
+      </CeligoPageBar>
       {connection &&
         (connection._connectionId ? (
           <ResourceSetupDrawer
@@ -462,44 +492,15 @@ export default function ConnectorInstallation(props) {
           index={currStepIndex + 1}
         />
       )}
-      <div className={classes.root}>
-        <div className={classes.innerContent}>
-          <Grid container className={classes.formHead}>
-            <Grid item xs>
-              Install app: {integrationName}
-            </Grid>
-            {helpUrl && (
-            <Grid item>
-              <IconTextButton
-                data-test="viewHelpGuide"
-                component={Link}
-                variant="text"
-                onClick={handleHelpUrlClick}
-                color="primary">
-                <HelpIcon />
-                View installation guide
-              </IconTextButton>
-            </Grid>
-            )}
-            <Grid item xs={1}>
-              <IconTextButton
-                data-test="uninstall"
-                component={Link}
-                variant="text"
-                onClick={handleUninstall}
-                color="primary">
-                <HelpIcon />
-                Uninstall
-              </IconTextButton>
-            </Grid>
-          </Grid>
-          {helpUrl && (
+      <div className={classes.installIntegrationWrapper}>
+        <div className={classes.installIntegrationWrapperContent}>
+          {!helpUrl && (
           <RawHtml
             className={classes.message}
-            html={`Complete the below steps to install your integration app.
-              Need more help? Check out our <a href="${helpUrl}" target="_blank">help guide.</a> `} />
+            html={` Complete the below steps to install your integration app.<br /> 
+            Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           )}
-          <Grid container spacing={3} className={classes.stepTable}>
+          <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -508,7 +509,7 @@ export default function ConnectorInstallation(props) {
                 step={step}
               />
             ))}
-          </Grid>
+          </div>
         </div>
       </div>
     </LoadResources>

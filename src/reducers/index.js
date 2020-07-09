@@ -66,7 +66,6 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
-import flow from './session/suiteScript/sampleData/flow';
 
 const emptySet = [];
 const emptyObject = {};
@@ -195,6 +194,10 @@ export function resourceFormState(state, resourceType, resourceId) {
 
 export function getNumEnabledFlows(state) {
   return fromSession.getNumEnabledFlows(state && state.session);
+}
+
+export function getLicenseEntitlementUsage(state) {
+  return fromSession.getLicenseEntitlementUsage(state && state.session);
 }
 
 export function resourceFormSaveProcessTerminated(
@@ -2260,21 +2263,15 @@ export function connectionHasAs2Routing(state, id) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export function integratorLicense(state) {
+export function platformLicense(state) {
   const preferences = userPreferences(state);
 
-  return fromUser.integratorLicense(state.user, preferences.defaultAShareId);
+  return fromUser.platformLicense(state.user, preferences.defaultAShareId);
 }
 
-export function diyLicense(state) {
-  const preferences = userPreferences(state);
-
-  return fromUser.diyLicense(state.user, preferences.defaultAShareId);
-}
-
-export function integratorLicenseActionDetails(state) {
+export function platformLicenseActionDetails(state) {
   let licenseActionDetails = {};
-  const license = integratorLicense(state);
+  const license = platformLicense(state);
 
   if (!license) {
     return licenseActionDetails;
@@ -2344,9 +2341,8 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-
-export function integratorLicenseWithMetadata(state) {
-  const license = integratorLicense(state);
+export function platformLicenseWithMetadata(state) {
+  const license = platformLicense(state);
   const licenseActionDetails = { ...license };
   const nameMap = {
     none: 'None',
@@ -2362,7 +2358,7 @@ export function integratorLicenseWithMetadata(state) {
   }
 
   licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier];
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
   licenseActionDetails.inTrial = false;
 
   if (licenseActionDetails.tier === 'free') {
@@ -2419,7 +2415,7 @@ export function integratorLicenseWithMetadata(state) {
   licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
 
   if (licenseActionDetails.inTrial) {
-    licenseActionDetails.subscriptionName = '30 day Free Trial';
+    licenseActionDetails.subscriptionName = 'Free trial';
   }
 
   licenseActionDetails.expirationDate = licenseActionDetails.expires;
@@ -2529,16 +2525,17 @@ export function integratorLicenseWithMetadata(state) {
     toReturn.actions = ['request-upgrade'];
   } else if (licenseActionDetails.tier !== 'enterprise') {
     toReturn.actions = ['request-upgrade'];
+  } else {
+    toReturn.actions = ['add-more-flows'];
   }
 
   licenseActionDetails.subscriptionActions = toReturn;
 
   return licenseActionDetails;
 }
-
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
-  const license = integratorLicenseWithMetadata(state);
+  const license = platformLicenseWithMetadata(state);
 
   if (!license) {
     return licenseDetails;
@@ -3156,77 +3153,6 @@ export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
 }
 
-export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return emptyObject;
-  let type = resourceType;
-
-  if (resourceType.indexOf('/licenses') >= 0) {
-    type = 'connectorLicenses';
-  }
-
-  // For accesstokens and connections within an integration
-  if (resourceType.indexOf('integrations/') >= 0) {
-    type = resourceType.split('/').pop();
-  }
-
-  const master = resource(state, type, id);
-  const { patch, conflict } = fromSession.stagedResource(
-    state.session,
-    id,
-    scope
-  );
-
-  if (!master && !patch) return { merged: {} };
-
-  let merged;
-  let lastChange;
-
-  if (patch) {
-    // If the patch is not deep cloned, its values are also mutated and
-    // on some operations can corrupt the merged result.
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
-
-    merged = patchResult.newDocument;
-
-    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
-  }
-
-  const data = {
-    master,
-    patch,
-    lastChange,
-    merged: merged || master,
-  };
-
-  if (conflict) data.conflict = conflict;
-
-  return data;
-}
-
-export function isEditorV2Supported(state, resourceId, resourceType) {
-  const { merged: resource = {} } = resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'RESTImport',
-    'RESTExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-  ].includes(resource.adaptorType);
-}
-
 export function resourceDataModified(
   resourceIdState,
   stagedIdState,
@@ -3244,14 +3170,22 @@ export function resourceDataModified(
   let lastChange;
 
   if (patch) {
-    // If the patch is not deep cloned, its values are also mutated and
-    // on some operations can corrupt the merged result.
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
+    try {
+      // If the patch is not deep cloned, its values are also mutated and
+      // on some operations can corrupt the merged result.
+      const patchResult = jsonPatch.applyPatch(
+        master ? jsonPatch.deepClone(master) : {},
+        jsonPatch.deepClone(patch)
+      );
 
-    merged = patchResult.newDocument;
+      merged = patchResult.newDocument;
+    } catch (ex) {
+      // eslint-disable-next-line
+      console.warn('unable to apply patch to the document. PatchSet = ', patch, 'document = ', master);
+      // Incase if we are not able to apply patchSet to document,
+      // catching the excpetion and assigning master to the merged.
+      merged = master;
+    }
 
     if (patch.length) lastChange = patch[patch.length - 1].timestamp;
   }
@@ -3307,6 +3241,31 @@ export const makeResourceDataSelector = () => {
       resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
+
+// Please use makeResourceDataSelector in JSX as it is cached selector.
+// For sagas we can use resourceData which points to cached selector.
+export const resourceData = makeResourceDataSelector();
+
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'RESTImport',
+    'RESTExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(resource.adaptorType);
+}
 
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);
@@ -3587,8 +3546,8 @@ export function createdResourceId(state, tempId) {
   return fromSession.createdResourceId(state && state.session, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromSession.integratorLicenseActionMessage(state && state.session);
+export function platformLicenseActionMessage(state) {
+  return fromSession.platformLicenseActionMessage(state && state.session);
 }
 
 // #endregion Session metadata selectors
@@ -4587,6 +4546,21 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
     titleId: getTitleIdFromSection(sec),
     id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
   }));
+}
+
+export function hasSuiteScriptData(
+  state,
+  {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  }
+) {
+  return fromData.hasSuiteScriptData(state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
 }
 
 export function suiteScriptResourceStatus(

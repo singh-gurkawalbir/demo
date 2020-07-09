@@ -2,6 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton, Tooltip } from '@material-ui/core';
+import { getHelpTextMap } from '../../../components/Help';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -35,6 +36,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ActionIconButton({
+  helpKey,
   helpText,
   className,
   children,
@@ -44,7 +46,7 @@ export default function ActionIconButton({
   const classes = useStyles();
 
   return (
-    <Tooltip title={helpText}>
+    <Tooltip title={helpText || (helpKey && getHelpTextMap()[helpKey])}>
       <IconButton
         size="small"
         className={clsx(classes.button, className, classes[variant])}

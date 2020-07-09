@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
@@ -82,6 +81,6 @@ export default {
   name: 'responseTransformation',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.imports.transform'],
+  helpKey: 'fb.pp.imports.transform',
   Component: ResponseTransformation,
 };

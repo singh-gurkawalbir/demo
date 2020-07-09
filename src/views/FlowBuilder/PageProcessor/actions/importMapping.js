@@ -5,7 +5,6 @@ import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
@@ -179,6 +178,6 @@ export default {
   // name prop above. No need to add complexity to the metadata as refactoring may be
   // harder. What if we want to change the root path of all fb help text keys? We
   // will now need to modify every sibling action's metadata individually.
-  helpText: helpTextMap['fb.pp.imports.importMapping'],
+  helpKey: 'fb.pp.imports.importMapping',
   Component: ImportMapping,
 };
