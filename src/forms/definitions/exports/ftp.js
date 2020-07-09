@@ -217,7 +217,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be parsed2):',
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
@@ -243,7 +243,20 @@ export default {
       },
     },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    parsers: { fieldId: 'parsers' },
+    parsers: {
+      fieldId: 'parsers',
+      uploadSampleDataFieldName: 'uploadFile',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
+    },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
