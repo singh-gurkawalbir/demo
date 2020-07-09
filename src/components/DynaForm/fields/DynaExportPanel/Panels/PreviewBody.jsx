@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
@@ -8,6 +8,7 @@ export default function PreviewBody(props) {
     resourceSampleData,
     handlePanelViewChange,
     panelType,
+    defaultPanel,
     availablePreviewStages,
     previewStageDataList,
     resource,
@@ -16,6 +17,13 @@ export default function PreviewBody(props) {
     () => getPreviewBodyTemplateType(resource, panelType),
     [panelType, resource]
   );
+
+  // Always default to defaultPanel whenever sample data is refreshed
+  useEffect(() => {
+    if (resourceSampleData.status === 'received') {
+      handlePanelViewChange(defaultPanel);
+    }
+  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange]);
 
   return (
     <div>

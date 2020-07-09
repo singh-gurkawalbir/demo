@@ -160,6 +160,7 @@ function DynaExportPanel(props) {
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
         panelType={panelType}
+        defaultPanel={defaultPanel}
         availablePreviewStages={availablePreviewStages}
         handlePanelViewChange={handlePanelViewChange}
         resource={resource}
