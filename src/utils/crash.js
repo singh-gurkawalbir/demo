@@ -1,3 +1,5 @@
+import { getCSRFToken } from './session';
+
 const CRASH = 'crash';
 
 export default function reportCrash(error) {
@@ -17,6 +19,7 @@ export default function reportCrash(error) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-csrf-token': getCSRFToken(),
       },
       body: JSON.stringify(err),
     })
