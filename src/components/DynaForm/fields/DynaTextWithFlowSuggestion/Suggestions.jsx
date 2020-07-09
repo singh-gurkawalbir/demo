@@ -9,6 +9,7 @@ import * as selectors from '../../../../reducers';
 import lookupUtil from '../../../../utils/lookup';
 import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value, textInsertPosition) => {
@@ -139,15 +140,14 @@ export default function Suggestions(props) {
         stage: 'flowInput',
       }).data
   );
-  const adaptorType = useSelector(state => {
-    const { merged: resourceData = {} } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
+  const { merged: resourceData = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
 
-    return resourceData && resourceData.adaptorType;
-  });
+  const adaptorType = resourceData?.adaptorType;
+
   const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const extracts = useMemo(() => {
     const extractPaths = getJSONPaths(pickFirstObject(sampleData));

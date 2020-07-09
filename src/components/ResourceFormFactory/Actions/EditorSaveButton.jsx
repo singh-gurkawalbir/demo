@@ -3,7 +3,6 @@ import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
 import { useLoadingSnackbarOnSave } from '.';
 import { preSaveValidate } from '../../AFE/EditorDialog/util';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -66,12 +65,7 @@ export default function EditorSaveButton(props) {
       color={color}
       disabled={!!(disableBtn || disableSave)}
       onClick={handleButtonClick}>
-      {isSaving ? (
-        <>
-          <Spinner size={16} />
-          Saving
-        </>
-      ) : (
+      {isSaving ? 'Saving' : (
         <>{submitButtonLabel}</>
       )}
     </Button>

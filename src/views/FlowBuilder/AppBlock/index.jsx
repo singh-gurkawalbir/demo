@@ -269,6 +269,7 @@ function AppBlock({
       <Fragment key={a.name}>
         <ActionIconButton
           variant={a.position !== 'middle' ? 'contained' : undefined}
+          helpKey={a.helpKey}
           helpText={a.helpText}
           className={clsx({
             [classes.isNotOverActions]: !expanded && !a.isUsed,

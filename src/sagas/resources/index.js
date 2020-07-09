@@ -305,6 +305,8 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     }
   }
 
+  yield put(actions.resource.clearStaged(id, scope));
+
   yield put(actions.resource.received(resourceType, updated));
 
   if (!isNew) {
@@ -314,8 +316,6 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   if (options && options.action === 'flowEnableDisable') {
     yield put(actions.flow.isOnOffActionInprogress(false, id));
   }
-
-  yield put(actions.resource.clearStaged(id, scope));
 
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));

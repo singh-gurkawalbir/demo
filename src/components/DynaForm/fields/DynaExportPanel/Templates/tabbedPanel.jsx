@@ -39,13 +39,23 @@ export default function TabbedPanel(props) {
     setTabValue(newValue);
   }
 
-  const { body, header } = getBodyHeaderFieldsForPreviewData(
+  const { body, headers, other } = getBodyHeaderFieldsForPreviewData(
     previewStageDataList[panelType],
     panelType
   );
-  const tabContent = useMemo(() => (tabValue === 'body' ? body : header), [
+  const tabContent = useMemo(() => {
+    switch (tabValue) {
+      case 'body':
+        return body;
+      case 'header':
+        return headers;
+      default:
+        return other;
+    }
+  }, [
     body,
-    header,
+    headers,
+    other,
     tabValue,
   ]);
 
@@ -73,10 +83,16 @@ export default function TabbedPanel(props) {
             aria-controls="tab-body"
           />
           <Tab
-            label="Header"
+            label="Headers"
             value="header"
             id="tab-header"
             aria-controls="tab-header"
+          />
+          <Tab
+            label="Other"
+            value="other"
+            id="tab-other"
+            aria-controls="tab-other"
           />
           )
         </Tabs>
@@ -84,7 +100,7 @@ export default function TabbedPanel(props) {
           <pre>{tabContent}</pre>
         </div>
       </div>
-      <ClipBoardPanel text={tabValue === 'body' ? body : header} />
+      <ClipBoardPanel text={tabContent} />
     </div>
   );
 }

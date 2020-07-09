@@ -4,7 +4,6 @@ import { Button } from '@material-ui/core';
 import Icon from '../../../../components/icons/RoutingIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import ModalDialog from '../../../../components/ModalDialog';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
@@ -113,6 +112,6 @@ export default {
   name: 'as2Routing',
   position: 'left',
   Icon,
-  helpText: helpTextMap['fb.pg.exports.as2routing'],
+  helpKey: 'fb.pg.exports.as2routing',
   Component: As2RoutingDialog,
 };

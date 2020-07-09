@@ -2341,7 +2341,7 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-export function platformLicenseWithMetadata(state) {	
+export function platformLicenseWithMetadata(state) {
   const license = platformLicense(state);
   const licenseActionDetails = { ...license };
   const nameMap = {
@@ -3153,77 +3153,6 @@ export function getAllResourceConflicts(state) {
   return fromSession.getAllResourceConflicts(state && state.session);
 }
 
-export function resourceData(state, resourceType, id, scope) {
-  if (!state || !resourceType || !id) return emptyObject;
-  let type = resourceType;
-
-  if (resourceType.indexOf('/licenses') >= 0) {
-    type = 'connectorLicenses';
-  }
-
-  // For accesstokens and connections within an integration
-  if (resourceType.indexOf('integrations/') >= 0) {
-    type = resourceType.split('/').pop();
-  }
-
-  const master = resource(state, type, id);
-  const { patch, conflict } = fromSession.stagedResource(
-    state.session,
-    id,
-    scope
-  );
-
-  if (!master && !patch) return { merged: {} };
-
-  let merged;
-  let lastChange;
-
-  if (patch) {
-    // If the patch is not deep cloned, its values are also mutated and
-    // on some operations can corrupt the merged result.
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
-
-    merged = patchResult.newDocument;
-
-    if (patch.length) lastChange = patch[patch.length - 1].timestamp;
-  }
-
-  const data = {
-    master,
-    patch,
-    lastChange,
-    merged: merged || master,
-  };
-
-  if (conflict) data.conflict = conflict;
-
-  return data;
-}
-
-export function isEditorV2Supported(state, resourceId, resourceType) {
-  const { merged: resource = {} } = resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-
-  return [
-    'HTTPImport',
-    'HTTPExport',
-    'RESTImport',
-    'RESTExport',
-    'FTPImport',
-    'FTPExport',
-    'AS2Import',
-    'AS2Export',
-    'S3Import',
-    'S3Export',
-  ].includes(resource.adaptorType);
-}
-
 export function resourceDataModified(
   resourceIdState,
   stagedIdState,
@@ -3241,14 +3170,22 @@ export function resourceDataModified(
   let lastChange;
 
   if (patch) {
-    // If the patch is not deep cloned, its values are also mutated and
-    // on some operations can corrupt the merged result.
-    const patchResult = jsonPatch.applyPatch(
-      master ? jsonPatch.deepClone(master) : {},
-      jsonPatch.deepClone(patch)
-    );
+    try {
+      // If the patch is not deep cloned, its values are also mutated and
+      // on some operations can corrupt the merged result.
+      const patchResult = jsonPatch.applyPatch(
+        master ? jsonPatch.deepClone(master) : {},
+        jsonPatch.deepClone(patch)
+      );
 
-    merged = patchResult.newDocument;
+      merged = patchResult.newDocument;
+    } catch (ex) {
+      // eslint-disable-next-line
+      console.warn('unable to apply patch to the document. PatchSet = ', patch, 'document = ', master);
+      // Incase if we are not able to apply patchSet to document,
+      // catching the excpetion and assigning master to the merged.
+      merged = master;
+    }
 
     if (patch.length) lastChange = patch[patch.length - 1].timestamp;
   }
@@ -3304,6 +3241,31 @@ export const makeResourceDataSelector = () => {
       resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
+
+// Please use makeResourceDataSelector in JSX as it is cached selector.
+// For sagas we can use resourceData which points to cached selector.
+export const resourceData = makeResourceDataSelector();
+
+export function isEditorV2Supported(state, resourceId, resourceType) {
+  const { merged: resource = {} } = resourceData(
+    state,
+    resourceType,
+    resourceId
+  );
+
+  return [
+    'HTTPImport',
+    'HTTPExport',
+    'RESTImport',
+    'RESTExport',
+    'FTPImport',
+    'FTPExport',
+    'AS2Import',
+    'AS2Export',
+    'S3Import',
+    'S3Export',
+  ].includes(resource.adaptorType);
+}
 
 export function resourceFormField(state, resourceType, resourceId, id) {
   const data = resourceData(state, resourceType, resourceId);
@@ -4586,6 +4548,21 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
   }));
 }
 
+export function hasSuiteScriptData(
+  state,
+  {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  }
+) {
+  return fromData.hasSuiteScriptData(state.data, {
+    resourceType,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
 export function suiteScriptResourceStatus(
   state,
   {
@@ -5344,6 +5321,45 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
   }
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
+
+export const suiteScriptExtracts = createSelector(
+  [(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
+  (flowData) => {
+    if (!flowData) {
+      return emptySet;
+    }
+    const {data, status} = flowData;
+    const formattedFields = [];
+    if (status === 'received' && Array.isArray(data)) {
+      data.forEach(extract => {
+        formattedFields.push({
+          id: extract.id || extract.value,
+          name: extract.name || extract.label || extract.id
+        });
+        // for netsuite
+        if (extract.type === 'select') {
+          formattedFields.push({
+            id: `${extract.id}.internalid`,
+            name: `${extract.name} (InternalId)`
+          });
+        }
+      });
+    }
+
+    const sortedFields = formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+    return {data: sortedFields, status};
+  }
+
+);
 
 export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flow = suiteScriptFlowDetail(state, {

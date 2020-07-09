@@ -7,7 +7,7 @@ import { isPageGeneratorResource } from './flows';
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
-  asyncHelpers: 'Async helpers',
+  asyncHelpers: 'Async helper',
   connections: 'Connection',
   connectors: 'Integration app',
   exports: 'Export',
@@ -379,7 +379,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
   let toReturn = false;
   let filteredConnectors = [];
-  const supportBaseUrl = 'http://support.integrator.io/hc/en-us/categories/';
+  const supportBaseUrl = 'http://docs.celigo.com/hc/en-us/categories/';
   let connectorToCategoryMap = {};
 
   if (domain === 'localhost.io') {

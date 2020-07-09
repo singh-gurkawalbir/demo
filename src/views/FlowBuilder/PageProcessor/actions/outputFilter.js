@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import OutputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
@@ -97,6 +96,6 @@ export default {
   name: 'outputFilter',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.exports.filter'],
+  helpKey: 'fb.pp.exports.filter',
   Component: OutputFilter,
 };

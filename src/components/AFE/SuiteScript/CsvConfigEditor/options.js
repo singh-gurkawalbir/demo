@@ -5,8 +5,6 @@ export default {
     { label: 'Semicolon (;)', value: ';' },
     { label: 'Space', value: ' ' },
     { label: 'Tab', value: '\t' },
-    { label: 'Asterisk (*)', value: '*' },
-
   ],
   RowDelimiterOptions: [
     { label: 'LF (\\n)', value: '\n' },

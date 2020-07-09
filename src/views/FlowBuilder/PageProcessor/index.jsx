@@ -19,7 +19,6 @@ import postResponseMapHook from './actions/postResponseMapHook';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
-import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -234,7 +233,7 @@ const PageProcessor = ({
       {
         ...inputFilterAction,
         isUsed: usedActions[actionsMap.inputFilter],
-        helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
+        helpKey: `fb.pp.${resourceType}.inputFilter`,
       },
     ];
 
@@ -252,7 +251,7 @@ const PageProcessor = ({
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap['fb.pp.exports.hooks'],
+            helpKey: 'fb.pp.exports.hooks',
           }
         );
       } else {
@@ -276,7 +275,7 @@ const PageProcessor = ({
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap['fb.pp.imports.hooks'],
+            helpKey: 'fb.pp.imports.hooks',
           }
         );
       }
@@ -286,17 +285,17 @@ const PageProcessor = ({
           {
             ...responseMapping,
             isUsed: usedActions[actionsMap.responseMapping],
-            helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+            helpKey: `fb.pp.${resourceType}.responseMapping`,
           },
           {
             ...postResponseMapHook,
             isUsed: usedActions[actionsMap.postResponseMap],
-            helpText: helpTextMap[`fb.pp.${resourceType}.postResponseMap`],
+            helpKey: `fb.pp.${resourceType}.postResponseMap`,
           },
           {
             ...proceedOnFailureAction,
             isUsed: usedActions[actionsMap.proceedOnFailure],
-            helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
+            helpKey: `fb.pp.${resourceType}.proceedOnFailure`,
           }
         );
       }

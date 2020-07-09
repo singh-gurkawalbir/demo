@@ -168,7 +168,7 @@ export default function NetSuiteMappingAssistant({
   if (!netSuiteRecordMetadata) {
     return (
       <Typography>
-        Loading record metadata...
+        Loading
         <Spinner />
       </Typography>
     );
@@ -178,7 +178,7 @@ export default function NetSuiteMappingAssistant({
     <>
       {netSuiteFormIsLoading && (
         <Typography>
-          Loading {netSuiteRecordMetadata.label} form...
+          Loading
           {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
           <Spinner />
         </Typography>

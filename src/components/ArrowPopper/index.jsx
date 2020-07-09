@@ -141,7 +141,7 @@ export default function ArrowPopper({
       }}>
       <span className={clsx(classes.arrow, overrideClasses?.arrow)} ref={setArrowEl} />
       <ClickAwayListener onClickAway={onClose} mouseEvent="onMouseDown">
-        <Paper className={clsx(classes.paper, className)} elevation={1}>
+        <Paper className={clsx(classes.paper, overrideClasses?.paper)} elevation={1}>
           {children}
         </Paper>
       </ClickAwayListener>

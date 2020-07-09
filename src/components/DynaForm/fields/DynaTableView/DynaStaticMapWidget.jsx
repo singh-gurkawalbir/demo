@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { Divider, makeStyles } from '@material-ui/core';
 import actions from '../../../../actions';
 import RadioGroup from '../radiogroup/DynaRadioGroup';
 import DynaSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
+
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -164,12 +165,14 @@ export default function DynaStaticMapWidget(props) {
     onFieldChange(id, { map, default: val, allowFailures });
   };
 
+  const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
+
   return (
     <>
       <DynaTableView
         {...props}
         optionsMap={optionsMap}
-        isLoading={isLoading ? fieldType : false}
+        isLoading={isLoadingMap}
         hideLabel
         className={classes.dynaStaticMapWidgetWrapper}
         shouldReset={shouldReset}
