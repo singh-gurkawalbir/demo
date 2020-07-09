@@ -12,6 +12,7 @@ export default {
 
   fieldMap: {
     name: { fieldId: 'name' },
+    // description: { fieldId: 'description' },
     'http.status._exportId': { fieldId: 'http.status._exportId' },
     'http.status.initialWaitTime': { fieldId: 'http.status.initialWaitTime' },
     'http.status.pollWaitTime': { fieldId: 'http.status.pollWaitTime' },
@@ -20,21 +21,6 @@ export default {
     'http.status.doneWithoutDataValues': {
       fieldId: 'http.status.doneWithoutDataValues',
     },
-    statusExport: {
-      fieldId: 'statusExport',
-      type: 'labeltitle',
-      label: 'Status export',
-    },
-    submit: {
-      fieldId: 'submit',
-      type: 'labeltitle',
-      label: 'Submit',
-    },
-    result: {
-      fieldId: 'result',
-      type: 'labeltitle',
-      label: 'Result',
-    },
     'http.submit.resourcePath': { fieldId: 'http.submit.resourcePath' },
     'http.status.doneValues': { fieldId: 'http.status.doneValues' },
     'http.result._exportId': { fieldId: 'http.result._exportId' },
@@ -42,22 +28,36 @@ export default {
     'http.submit.transform': { fieldId: 'http.submit.transform' },
   },
   layout: {
-    fields: [
-      'name',
-      'statusExport',
-      'http.status._exportId',
-      'http.status.initialWaitTime',
-      'http.status.pollWaitTime',
-      'http.status.statusPath',
-      'http.status.inProgressValues',
-      'http.status.doneValues',
-      'http.status.doneWithoutDataValues',
-      'submit',
-      'http.submit.sameAsStatus',
-      'http.submit.resourcePath',
-      'http.submit.transform',
-      'result',
-      'http.result._exportId',
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: false,
+        label: 'General',
+        fields: ['name'],
+      },
+      {
+        collapsed: false,
+        label: 'Configure how to check status',
+        fields: ['http.status._exportId',
+          'http.status.initialWaitTime',
+          'http.status.pollWaitTime',
+          'http.status.statusPath',
+          'http.status.inProgressValues',
+          'http.status.doneValues',
+          'http.status.doneWithoutDataValues'],
+      },
+      {
+        collapsed: false,
+        label: 'Configure how to get the results',
+        fields: ['http.result._exportId'],
+      },
+      {
+        collapsed: false,
+        label: 'Configure how to process initial submission',
+        fields: ['http.submit.sameAsStatus',
+          'http.submit.resourcePath',
+          'http.submit.transform'],
+      }
     ],
   },
 };

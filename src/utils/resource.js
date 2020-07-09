@@ -7,7 +7,7 @@ import { isPageGeneratorResource } from './flows';
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
-  asyncHelpers: 'Async helpers',
+  asyncHelpers: 'Async helper',
   connections: 'Connection',
   connectors: 'Integration app',
   exports: 'Export',

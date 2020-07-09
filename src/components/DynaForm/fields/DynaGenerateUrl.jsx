@@ -9,6 +9,7 @@ import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
   field => !field.isValid || field.isDiscretelyInvalid
@@ -49,6 +50,9 @@ function GenerateUrl(props) {
   const finalResourceId =
     useSelector(state => selectors.createdResourceId(state, resourceId)) ||
     resourceId;
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const handleCopy = useCallback(() =>
+    enquesnackbar({ message: 'Your URL has been copied to your clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
     if (inValidFields(webookRequiredFields, fieldStates)) {
       webookRequiredFields.forEach(fieldId => {
@@ -91,6 +95,7 @@ function GenerateUrl(props) {
         <div className={classes.dynaGenerateTokenbtn}>
           {value && (
             <CopyToClipboard
+              onCopy={handleCopy}
               text={value}>
               <Button
                 data-test="copyToClipboard"

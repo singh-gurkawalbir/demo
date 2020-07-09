@@ -3,7 +3,7 @@
  */
 import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
-import { isJsonString } from './string';
+import { isJsonString, safeParse } from './string';
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -178,9 +178,10 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
   const { headers, ...rest } = (bodyHeaderData && bodyHeaderData[0]) || {};
-
+  const { body, ...others} = rest || {};
   return {
-    body: JSON.stringify(rest, null, 2),
-    header: JSON.stringify(headers, null, 2),
+    body: JSON.stringify(safeParse(body), null, 2),
+    headers: JSON.stringify(safeParse(headers), null, 2),
+    other: JSON.stringify(safeParse(others), null, 2)
   };
 };
