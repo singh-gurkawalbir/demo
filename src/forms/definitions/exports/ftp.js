@@ -217,7 +217,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed2):',
+      placeholder: 'Sample file (that would be parsed):',
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
