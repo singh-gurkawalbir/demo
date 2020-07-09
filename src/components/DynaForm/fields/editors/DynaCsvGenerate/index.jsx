@@ -1,6 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import * as selectors from '../../../../../reducers';
 import DynaEditorWithFlowSampleData from '../../DynaEditorWithFlowSampleData';
 import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
@@ -31,6 +33,7 @@ const getParserValue = ({
   replaceTabWithSpace,
   truncateLastRowDelimiter,
   wrapWithQuotes,
+  customHeaderRows = '',
 }) => {
   const rules = {
     includeHeader,
@@ -40,11 +43,14 @@ const getParserValue = ({
     replaceTabWithSpace,
     truncateLastRowDelimiter,
     wrapWithQuotes,
+
   };
+  // customHeaderRows is only supported for http.
+  if (typeof customHeaderRows !== 'undefined') { rules.customHeaderRows = customHeaderRows.split('\n').filter(val => val !== ''); }
   return rules;
 };
 
-export default function DynaCsvGenerata(props) {
+export default function DynaCsvGenerate(props) {
   const classes = useStyles();
   const {
     id,
@@ -58,13 +64,24 @@ export default function DynaCsvGenerata(props) {
     helpKey,
   } = props;
   const [formKey, setFormKey] = useState(1);
-  const [currentOptions, setCurrentOptions] = useState(getParserValue({...value, resourceId, resourceType}));
-  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType}));
+  const isHttpImport = useSelector(state => {
+    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+    return resource?.adaptorType === 'HTTPImport';
+  });
+  const initOptions = useMemo(() => {
+    const {customHeaderRows, ...others} = value;
+    const opts = {...others, resourceId, resourceType};
+    if (typeof customHeaderRows !== 'undefined') {
+      opts.customHeaderRows = customHeaderRows?.join('\n');
+    }
+    return opts;
+  }, [resourceId, resourceType, value]);
+  const [currentOptions, setCurrentOptions] = useState(initOptions);
+  const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
-      setCurrentOptions({...newOptions});
-      // console.log('optionsChange', newOptions);
+      setCurrentOptions(newOptions);
       const parsersValue = getParserValue(newOptions);
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
@@ -80,14 +97,13 @@ export default function DynaCsvGenerata(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleSave = (shouldCommit, editorValues = {}) => {
+  const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
-      setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
+      setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
       setFormKey(formKey + 1);
-      const value = getParserValue(editorValues);
-      onFieldChange(id, value);
+      onFieldChange(id, getParserValue(editorValues));
     }
-  };
+  }, [formKey, id, isHttpImport, onFieldChange]);
 
   return (
     <>

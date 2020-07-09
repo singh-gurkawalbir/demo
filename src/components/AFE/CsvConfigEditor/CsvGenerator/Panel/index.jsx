@@ -11,6 +11,7 @@ import * as selectors from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import options from '../../options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
+import DynaText from '../../../../DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -52,11 +53,27 @@ export default function CsvGeneratePanel(props) {
     replaceTabWithSpace = false,
     replaceNewlineWithSpace = false,
     truncateLastRowDelimiter = false,
+    customHeaderRows,
+    resourceId,
+    resourceType,
   } = useSelector(state => selectors.editor(state, editorId));
+
   const dispatch = useDispatch();
+  const customHeaderRowsSupported = useSelector(state => {
+    if (!resourceId || !resourceType) {
+      return false;
+    }
+    const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+    return resource?.adaptorType === 'HTTPImport';
+  });
   const patchEditor = (option, value) => {
     dispatch(actions.editor.patch(editorId, { [option]: value }));
   };
+
+  /** customHeaderRow is not enabled for all Apps.
+  Though BE has support for all apps but request was to only enable it for HTTP.
+  If it is to be enabled for other apps as well. The same is to be added to defaultValue of metadata declaration
+*/
 
   return (
     <div className={classes.container}>
@@ -164,6 +181,20 @@ export default function CsvGeneratePanel(props) {
           }
           label="Replace new line with space"
         />
+        {customHeaderRowsSupported && (
+          <FormControl disabled={disabled} className={classes.formControl}>
+            <DynaText
+              color="primary"
+              value={customHeaderRows}
+              label="Custom header rows"
+              data-test="customHeaderRows"
+              disabled={disabled}
+              onFieldChange={(id, value) => patchEditor('customHeaderRows', value)}
+              multiline
+              rowsMax={4}
+            />
+          </FormControl>
+        )}
       </FormGroup>
     </div>
   );
