@@ -29,7 +29,7 @@ const requestBody = ({
     data: [JSON.parse(data)],
   };
 
-  if (typeof customHeaderRows !== 'undefined') { body.rules = customHeaderRows.split('\n').filter(val => val !== ''); }
+  if (typeof customHeaderRows !== 'undefined') { body.rules.customHeaderRows = customHeaderRows.split('\n').filter(val => val !== ''); }
   return body;
 };
 const validate = editor => ({
