@@ -33,7 +33,7 @@ const getParserValue = ({
   replaceTabWithSpace,
   truncateLastRowDelimiter,
   wrapWithQuotes,
-  customHeaderRows = '',
+  customHeaderRows,
 }) => {
   const rules = {
     includeHeader,
