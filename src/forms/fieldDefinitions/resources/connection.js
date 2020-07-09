@@ -24,8 +24,15 @@ export default {
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else {
-        // Should not borrow concurrency for ['ftp', 'as2', 's3', 'netsuite']
-        expression.push({ type: ['ftp', 'as2', 's3', 'netsuite'].includes(r.type) ? '' : r.type });
+        // Should not borrow concurrency for ['ftp', 'as2', 's3']
+        expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+
+        if (r.type === 'netsuite') {
+          expression.push({
+            'netsuite.account': r?.netsuite?.account,
+            'netsuite.environment': r?.netsuite?.environment
+          });
+        }
       }
 
       return {
