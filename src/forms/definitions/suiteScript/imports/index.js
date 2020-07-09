@@ -4,6 +4,7 @@ import newegg from './newegg';
 import sears from './sears';
 import rakuten from './rakuten';
 import ftp from './ftp';
+import activityStream from './activityStream';
 
 export default {
   netsuite,
@@ -12,4 +13,5 @@ export default {
   sears,
   rakuten,
   ftp,
+  ACTIVITY_STREAM: activityStream,
 };

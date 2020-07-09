@@ -41,7 +41,6 @@ const mapStateToProps = (
     resource,
     lastPatchtimestamp,
     connection,
-    /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
   };
 };
 
@@ -76,49 +75,125 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
+/**
+ * We use primary and secondary actions to differentiate two sets of buttons we use for forms
+ * primary - save, save&close, cancel
+ * secondary - test, validate, ...other sort of actions
+ * TODO @Surya: Revisit this once form refactor is done
+ */
+const ActionButtons = ({actions, formProps, proceedOnChange}) => {
+  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
+  const primaryActions = [];
+  const secondaryActions = [];
+  if (actions.length) {
+    actions.forEach(action => {
+      const Action = consolidatedActions[action.id];
+      let actionProps = {};
+      /**
+      * Passes a global state for disable functionality for actions except 'cancel'
+      * used to manage disable states across buttons
+      * Ex: when save is clicked , save&close gets disabled
+      * In these cases, individual actions are recommended to use this disable prop to update
+      * rather than a local state
+      */
+      if (action.id !== 'cancel') {
+        actionProps = {
+          disableSaveOnClick,
+          setDisableSaveOnClick
+        };
+      }
+      // remove form disabled prop...
+      // they dont necessary apply to action button
+      const { disabled, ...rest } = formProps;
+      const actionContainer = <Action
+        key={action.id}
+        dataTest={action.id}
+        proceedOnChange={proceedOnChange}
+        {...rest}
+        {...action}
+        {...actionProps}
+      />;
+      if (action.mode === 'secondary') {
+        secondaryActions.push(actionContainer);
+      } else {
+        primaryActions.push(actionContainer);
+      }
+    });
+  } else {
+    return null;
+  }
+  return (
+    <>
+      <div> {primaryActions} </div>
+      <div> { secondaryActions }</div>
+    </>
+  );
+};
+
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType } = props;
   const { actions } = props.fieldMeta;
+  const secondaryActions = ['test', 'validate'];
+
+  const actionButtons = useMemo(() => {
+    // if props has defined actions return it
+    if (actions) return actions;
+    let actionButtons = ['save', 'saveandclose', 'cancel'];
+    // When action button metadata isn't provided we infer the action buttons.
+    if (resourceType === 'connections' && resource?.type !== 'other') {
+      actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
+    }
+    return actionButtons.map(id => ({
+      id,
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+    }));
+  }, [actions, resource?.type, resourceType, secondaryActions]);
 
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
 
-  // When action buttons is provided in the metadata then we generate the action buttons for you
-  if (actions) {
-    const ActionButtons =
-      actions.length > 0 &&
-      actions.map(action => {
-        const Action = consolidatedActions[action.id];
-
-        return <Action key={action.id} {...props} {...action} />;
-      });
-
-    return <DynaForm {...props}>{ActionButtons}</DynaForm>;
-  }
-
-  let actionButtons = ['save', 'cancel'];
-
-  if (resourceType === 'integrations') {
-    actionButtons = ['save'];
-  } else if (resourceType === 'connections') {
-    if (resource.type !== 'other') {
-      actionButtons = ['test', 'testandsave', 'cancel'];
-    }
-  }
-
   return (
-    <DynaForm {...props}>
-      {actionButtons.map(key => {
-        const Action = consolidatedActions[key];
-        // remove form disabled prop...
-        // they dont necessary apply to action button
-        const { disabled, ...rest } = props;
-
-        return <Action key={key} dataTest={key} {...rest} />;
-      })}
+    <DynaForm {...props} isResourceForm>
+      <ActionButtons actions={actionButtons} formProps={props} />
     </DynaForm>
   );
+
+  // // When action buttons is provided in the metadata then we generate the action buttons for you
+  // if (actions) {
+  //   const ActionButtons =
+  //     actions.length > 0 &&
+  //     actions.map(action => {
+  //       const Action = consolidatedActions[action.id];
+
+  //       return <Action key={action.id} {...props} {...action} />;
+  //     });
+
+  //   return <DynaForm {...props}>{ActionButtons}</DynaForm>;
+  // }
+
+  // let actionButtons = ['save', 'cancel'];
+
+  // if (resourceType === 'integrations') {
+  //   actionButtons = ['save'];
+  // } else if (resourceType === 'connections') {
+  //   if (resource.type !== 'other') {
+  //     actionButtons = ['test', 'testandsave', 'cancel'];
+  //   }
+  // }
+
+  // return (
+  //   <DynaForm {...props}>
+  //     {actionButtons.map(key => {
+  //       const Action = consolidatedActions[key];
+  //       // remove form disabled prop...
+  //       // they dont necessary apply to action button
+  //       const { disabled, ...rest } = props;
+
+  //       return <Action key={key} dataTest={key} {...rest} />;
+  //     })}
+  //   </DynaForm>
+  // );
 }
 
 export const FormStateManager = props => {
