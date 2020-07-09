@@ -53,7 +53,6 @@ export default function DynaCsvParse(props) {
     resourceId,
     resourceType,
     disabled,
-    helpKey,
     uploadSampleDataFieldName
   } = props;
   const [formKey, setFormKey] = useState(1);
@@ -158,7 +157,7 @@ export default function DynaCsvParse(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} helpKey={helpKey} />
+        <FieldHelp {...props} />
       </div>
       <DynaForm
         key={formKey}

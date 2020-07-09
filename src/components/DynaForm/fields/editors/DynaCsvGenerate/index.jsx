@@ -56,7 +56,6 @@ export default function DynaCsvGenerate(props) {
     resourceType,
     disabled,
     flowId,
-    helpKey,
   } = props;
   const [formKey, setFormKey] = useState(1);
   const isHttpImport = useSelector(state => {
@@ -66,11 +65,9 @@ export default function DynaCsvGenerate(props) {
   const initOptions = useMemo(() => {
     const {customHeaderRows, ...others} = value;
     const opts = {...others, resourceId, resourceType};
-    if (typeof customHeaderRows !== 'undefined') {
-      opts.customHeaderRows = customHeaderRows?.join('\n');
-    }
+    opts.customHeaderRows = isHttpImport && customHeaderRows?.join('\n');
     return opts;
-  }, [resourceId, resourceType, value]);
+  }, [isHttpImport, resourceId, resourceType, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
   const [showEditor, setShowEditor] = useState(false);
@@ -130,7 +127,7 @@ export default function DynaCsvGenerate(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} helpKey={helpKey} />
+        <FieldHelp {...props} />
       </div>
       <DynaForm
         key={formKey}
