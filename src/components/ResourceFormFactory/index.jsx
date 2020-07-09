@@ -46,7 +46,7 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew, flowId) => {
+  handleInitForm: (resourceType, resourceId, isNew, flowId, integrationId) => {
     const skipCommit =
       isNew &&
       [
@@ -63,7 +63,9 @@ const mapDispatchToProps = dispatch => ({
         resourceId,
         isNew,
         skipCommit,
-        flowId
+        flowId,
+        [],
+        integrationId,
       )
     );
   },
@@ -233,10 +235,11 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     flowId,
     connection,
+    integrationId,
   } = props;
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew, flowId);
+    handleInitForm(resourceType, resourceId, isNew, flowId, integrationId);
 
     return () => handleClearResourceForm(resourceType, resourceId);
   }, [
@@ -247,6 +250,7 @@ export const ResourceFormFactory = props => {
     lastPatchtimestamp,
     resourceId,
     resourceType,
+    integrationId,
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
@@ -256,8 +260,9 @@ export const ResourceFormFactory = props => {
         resource,
         isNew,
         connection,
+        integrationId,
       }),
-    [connection, isNew, resource, resourceType]
+    [connection, isNew, resource, resourceType, integrationId]
   );
   const { fieldMeta } = formState;
 
