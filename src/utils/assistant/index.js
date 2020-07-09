@@ -1167,6 +1167,9 @@ export function convertToReactFormFields({
       }
 
       if (fieldDef.type === 'textwithflowsuggestion') {
+        if (isArray(fieldDef.defaultValue)) {
+          fieldDef.defaultValue = fieldDef.defaultValue.join(',');
+        }
         fieldDef.showLookup = false;
       }
 
