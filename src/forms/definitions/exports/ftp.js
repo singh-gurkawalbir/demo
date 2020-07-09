@@ -174,11 +174,6 @@ export default {
         resourcePath: resourcePath && resourcePath.value,
       };
     }
-    if (fieldId === 'file.csv') {
-      return {
-        uploadSampleDataFieldName: 'uploadFile',
-      };
-    }
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -225,6 +220,7 @@ export default {
       placeholder: 'Sample file (that would be parsed):',
     },
     'file.csv': { fieldId: 'file.csv',
+      uploadSampleDataFieldName: 'uploadFile',
       visibleWhenAll: [
         {
           field: 'outputMode',

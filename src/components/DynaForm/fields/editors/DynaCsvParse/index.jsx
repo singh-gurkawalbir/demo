@@ -59,9 +59,8 @@ export default function DynaCsvParse(props) {
     resourceType,
     disabled,
     helpKey,
-    options = {}
+    uploadSampleDataFieldName
   } = props;
-  const { uploadSampleDataFieldName} = options;
   const [formKey, setFormKey] = useState(1);
   const [currentOptions, setCurrentOptions] = useState(value);
   const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType}));
@@ -93,7 +92,7 @@ export default function DynaCsvParse(props) {
     resourceId, resourceType, fileType: 'csv'
   }));
 
-  const handleSave = (shouldCommit, editorValues = {}) => {
+  const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
       setFormKey(formKey + 1);
@@ -116,7 +115,7 @@ export default function DynaCsvParse(props) {
         );
       }
     }
-  };
+  }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
 
   const uploadFileAction = useMemo(
     () => {
