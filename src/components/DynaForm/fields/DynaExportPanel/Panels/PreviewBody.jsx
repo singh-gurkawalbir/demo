@@ -18,6 +18,7 @@ export default function PreviewBody(props) {
     [panelType, resource]
   );
 
+  // Always default to defaultPanel whenever sample data is refreshed
   useEffect(() => {
     if (resourceSampleData.status === 'received') {
       handlePanelViewChange(defaultPanel);
