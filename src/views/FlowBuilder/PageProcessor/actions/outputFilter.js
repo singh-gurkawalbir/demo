@@ -12,6 +12,7 @@ function OutputFilterDialog({
   isViewMode,
   resourceType,
   onClose,
+  isMonitorLevelAccess,
 }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -70,6 +71,8 @@ function OutputFilterDialog({
       helpKey="lookup.output.filter"
       helpTitle="Filter Rules"
       disabled={isViewMode}
+      isMonitorLevelAccess={isMonitorLevelAccess}
+      enableFilterForIA
       id={resourceId + flowId}
       data={sampleData}
       type={type}
