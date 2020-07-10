@@ -11,7 +11,7 @@ const defaultExtracts = ['Public', 'Private', 'Subsidiary', 'Other'].map(label =
 function DynaMapSubsidaries(props) {
   const {salesforceSubsidiaryFieldOptions, generates = [], extracts = [], value, onFieldChange, id,
     extractFieldHeader, generateFieldHeader, disabled, registerField, salesforceSubsidiaryField, fields} = props;
-  const [fieldMappingType, setFieldMappingType] = useState('Always Use');
+  const [fieldMappingType, setFieldMappingType] = useState((!value || typeof value === 'string') ? 'Always Use' : 'Map');
   const [tableValue, setTableValue] = useState(typeof value !== 'string' ? value : {});
 
   const [subsidaryValue, setSubsidaryValue] = useState(typeof value === 'string' ? value : '');
