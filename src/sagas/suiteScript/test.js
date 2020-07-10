@@ -6,7 +6,7 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import { getPackageURLs, verifySSConnection, verifyConnectorBundle, checkNetSuiteDABundle, verifyPackage, isConnectionOnline } from './installer';
+import { getPackageURLs, verifySSConnection, verifyConnectorBundle, checkNetSuiteDABundle, verifyPackage, isConnectionOnline, postInstallComplete } from './installer';
 
 describe('suiteScript sagas', () => {
   describe('installer saga', () => {
@@ -274,6 +274,32 @@ describe('suiteScript sagas', () => {
             actions.suiteScript.installer.updateStep(
               connectorId,
               'completed'
+            )
+          )
+          .run();
+      });
+    });
+
+    describe('postInstallComplete generator', () => {
+      test('should dispatch failed action in case of error', () => expectSaga(postInstallComplete, { ssLinkedConnectionId, connectorId})
+        .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+        .call.fn(apiCallWithRetry)
+        .put(
+          actions.suiteScript.installer.failed(
+            connectorId,
+            error
+          )
+        )
+        .run());
+      test('should dispatch done action when response is a success', () => {
+        const expectedOut = { success: true};
+
+        return expectSaga(postInstallComplete, { ssLinkedConnectionId, connectorId })
+          .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
+          .call.fn(apiCallWithRetry)
+          .put(
+            actions.suiteScript.installer.done(
+              connectorId
             )
           )
           .run();

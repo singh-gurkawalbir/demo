@@ -55,6 +55,7 @@ export default function SearchCriteriaDialog(props) {
     onSave,
     onClose,
     disabled,
+    onRefresh,
     width = '80vw',
     height = '50vh',
     fieldOptions = {},
@@ -115,6 +116,7 @@ export default function SearchCriteriaDialog(props) {
         <SearchCriteriaEditor
           editorId={id}
           value={value}
+          onRefresh={onRefresh}
           fieldOptions={fieldOptions}
         />
       </DialogContent>

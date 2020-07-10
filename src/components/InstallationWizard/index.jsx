@@ -86,7 +86,7 @@ export default function InstallationWizard(props) {
         resourceId,
       })
     ) || {};
-  const {redirectTo, isInstallFailed} = useSelector(state =>
+  const {redirectTo, isInstallFailed, environment: destinationEnvironment } = useSelector(state =>
     selectors.redirectToOnInstallationComplete(state, {
       resourceType,
       resourceId,
@@ -118,7 +118,7 @@ export default function InstallationWizard(props) {
   useEffect(() => {
     if (redirectTo || isInstallFailed) {
       setInstallInProgress(false);
-      handleSetupComplete(redirectTo, isInstallFailed);
+      handleSetupComplete(redirectTo, isInstallFailed, destinationEnvironment);
     }
   }, [
     dispatch,
@@ -128,6 +128,7 @@ export default function InstallationWizard(props) {
     resourceType,
     templateId,
     isInstallFailed,
+    destinationEnvironment
   ]);
 
   if (!installSteps) {

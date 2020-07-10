@@ -1,26 +1,9 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
-import DynaTableView from '../../DynaTableView/DynaTable';
-import * as selectors from '../../../../../reducers';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../../actions';
-
-
-const useStyles = makeStyles(theme => ({
-  margin: {
-    marginTop: '20px',
-    marginBottom: '20px',
-  },
-  flexColumn: {
-    flexDirection: 'column',
-  },
-  dynaStaticMapWidgetWrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(2, 3),
-  },
-}));
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../../reducers';
+import { BaseTableViewComponent } from './DynaSalesforceProductTable';
 
 export default function DynaSuiteScriptTable(props) {
   const dispatch = useDispatch();
@@ -35,12 +18,7 @@ export default function DynaSuiteScriptTable(props) {
     generateFieldHeader,
     supportsExtractsRefresh,
     supportsGeneratesRefresh,
-    onFieldChange,
-    value,
-
   } = props;
-
-  const classes = useStyles();
 
   const [shouldReset, setShouldReset] = useState(false);
 
@@ -108,35 +86,13 @@ export default function DynaSuiteScriptTable(props) {
     generates, supportsGeneratesRefresh]);
 
 
-  const handleMapChange = useCallback(
-    (tableid, value = []) => {
-      const mapValue = {};
-
-      value.filter(Boolean).forEach(val => {
-        mapValue[val.extracts] = val.generates;
-      });
-      onFieldChange(id, mapValue);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-  const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
-    extracts: key,
-    generates: value[key],
-  })), [value]);
-
   return (
-
-    <DynaTableView
+    <BaseTableViewComponent
       {...props}
       optionsMap={optionsMap}
-      metadata={{optionsMap}}
       hideLabel
       isLoading={isLoading}
       shouldReset={shouldReset}
-      className={classes.dynaStaticMapWidgetWrapper}
-      value={computedValue}
-      onFieldChange={handleMapChange}
       disableDeleteRows={disabled}
       handleRefreshClickHandler={handleRefreshClick}
       />);

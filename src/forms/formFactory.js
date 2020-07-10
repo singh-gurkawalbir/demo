@@ -529,6 +529,7 @@ const flattenedFieldMap = (
     flowId,
     resObjectRefs = {},
     resFields = [],
+    integrationId,
   } = opts;
 
   fields &&
@@ -552,6 +553,7 @@ const flattenedFieldMap = (
             ignoreFunctionTransformations,
             developerMode,
             flowId,
+            integrationId,
             resObjectRefs,
           }
         );
@@ -564,6 +566,7 @@ const flattenedFieldMap = (
         resourceId: resource._id,
         resourceType,
         flowId,
+        integrationId,
         ...masterFields,
         ...f,
       };

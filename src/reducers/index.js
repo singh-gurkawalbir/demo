@@ -268,6 +268,7 @@ export function redirectToOnInstallationComplete(
   state,
   { resourceType = 'integrations', resourceId, templateId }
 ) {
+  let environment;
   let redirectTo = 'dashboard';
   let flow;
   let flowDetails;
@@ -277,7 +278,7 @@ export function redirectToOnInstallationComplete(
     templateId || `${resourceType}-${resourceId}`
   );
 
-  const {isInstallFailed} = fromSession.template(
+  const { isInstallFailed } = fromSession.template(
     state && state.session,
     templateId || `${resourceType}-${resourceId}`
   );
@@ -304,6 +305,9 @@ export function redirectToOnInstallationComplete(
         flowDetails = resource(state, 'flows', flow._id);
 
         if (flowDetails) {
+          if (!flowDetails._integrationId) {
+            environment = flowDetails.sandbox ? 'sandbox' : 'production';
+          }
           redirectTo = `integrations/${flowDetails._integrationId ||
             'none'}/flows`;
         }
@@ -318,7 +322,7 @@ export function redirectToOnInstallationComplete(
       break;
   }
 
-  return {redirectTo: getRoutePath(redirectTo)};
+  return { redirectTo: getRoutePath(redirectTo), environment };
 }
 
 export function previewTemplate(state, templateId) {

@@ -54,7 +54,7 @@ const getStatusVariantAndMessage = ({
 };
 
 export default function ConnectionStatusPanel(props) {
-  const { resourceId, resourceType } = props;
+  const { resourceId, resourceType, isFlowBuilderView } = props;
   const classes = useStyles();
   const match = useRouteMatch();
   const location = useLocation();
@@ -114,7 +114,7 @@ export default function ConnectionStatusPanel(props) {
   useEffect(() => {
     // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
     // and if it is a new connection resource you are creating then there is no point in making ping calls
-    if (connectionId && !isNewId(connectionId)) {
+    if (!isFlowBuilderView && connectionId && !isNewId(connectionId)) {
       dispatch(actions.resource.connections.pingAndUpdate(connectionId));
     }
 
@@ -123,7 +123,7 @@ export default function ConnectionStatusPanel(props) {
     return () => {
       dispatch(actions.resource.connections.testClear(connectionId));
     };
-  }, [connectionId, dispatch]);
+  }, [connectionId, dispatch, isFlowBuilderView]);
 
   if (
     (resourceType !== 'connections' && !isOffline) ||

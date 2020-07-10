@@ -1,55 +1,7 @@
 export default {
-  optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'export.file.csvHelper') {
-      const keyColumnsField = fields.find(
-        field => field.id === 'export.file.csv.keyColumns'
-      );
-      const columnDelimiterField = fields.find(
-        field => field.id === 'export.file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'export.file.csv.rowDelimiter'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'export.file.csv.hasHeaderRow'
-      );
-
-      return {
-        fields: {
-          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-          keyColumns: keyColumnsField && keyColumnsField.value,
-        },
-      };
-    }
-    if (fieldId === 'export.file.csv.keyColumns') {
-      const columnDelimiterField = fields.find(
-        field => field.id === 'export.file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'export.file.csv.rowDelimiter'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'export.file.csv.hasHeaderRow'
-      );
-      const options = {
-        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-      };
-
-      return options;
-    }
-  },
   fieldMap: {
     'export.file.method': {fieldId: 'export.file.method'},
-    'export.file.csvHelper': {fieldId: 'export.file.csvHelper'},
-    'export.file.csv.columnDelimiter': {fieldId: 'export.file.csv.columnDelimiter'},
-    'export.file.csv.rowDelimiter': {fieldId: 'export.file.csv.rowDelimiter'},
-    'export.file.csv.hasHeaderRow': {fieldId: 'export.file.csv.hasHeaderRow'},
-    'export.file.csv.rowsPerRecord': {fieldId: 'export.file.csv.rowsPerRecord'},
-    'export.file.csv.keyColumns': {fieldId: 'export.file.csv.keyColumns'},
+    'export.file.csv': {fieldId: 'export.file.csv'},
   },
   layout: {
     type: 'column',
@@ -63,12 +15,7 @@ export default {
             type: 'indent',
             containers: [{
               fields: [
-                'export.file.csvHelper',
-                'export.file.csv.columnDelimiter',
-                'export.file.csv.rowDelimiter',
-                'export.file.csv.hasHeaderRow',
-                'export.file.csv.rowsPerRecord',
-                'export.file.csv.keyColumns',
+                'export.file.csv',
               ]
             }],
           },
