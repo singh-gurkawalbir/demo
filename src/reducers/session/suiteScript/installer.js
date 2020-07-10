@@ -95,6 +95,13 @@ export default (state = {}, action) => {
           }
         }
         break;
+
+      case actionTypes.SUITESCRIPT.INSTALLER.DONE:
+        if (!draft[id]) {
+          draft[id] = {};
+        }
+        draft[id].setupDone = true;
+        break;
     }
   });
 };
