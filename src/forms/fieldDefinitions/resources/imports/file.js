@@ -1,5 +1,3 @@
-import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
-
 export default {
   // Todo why helpKey is it named csv file id like to change it to
   // something meaningful
@@ -101,109 +99,19 @@ export default {
       },
     ],
   },
-  'file.csvHelper': {
+  'file.csv': {
     type: 'csvgenerate',
-    label: 'CSV generator helper:',
+    label: 'CSV generator helper',
     helpKey: 'file.csvGenerate',
-    refreshOptionsOnChangesTo: [
-      'file.csv.includeHeader',
-      'file.csv.columnDelimiter',
-      'file.csv.rowDelimiter',
-      'file.csv.replaceNewlineWithSpace',
-      'file.csv.replaceTabWithSpace',
-      'file.csv.truncateLastRowDelimiter',
-      'file.csv.wrapWithQuotes',
-    ],
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.includeHeader': {
-    type: 'checkbox',
-    label: 'Include header',
-    defaultValue: r =>
-      (r.file && r.file.csv && r.file.csv.includeHeader) || true,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.columnDelimiter': {
-    type: 'selectwithinput',
-    label: 'Column delimiter',
-    defaultValue: r =>
-      (r && r.file && r.file.csv && r.file.csv.columnDelimiter) || ',',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-    options: csvOptions.ColumnDelimiterOptions,
-  },
-  'file.csv.rowDelimiter': {
-    type: 'select',
-    label: 'Row delimiter',
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-    options: [
-      {
-        items: csvOptions.RowDelimiterOptions,
-      },
-    ],
-    defaultValue: r =>
-      (r && r.file && r.file.csv && r.file.csv.rowDelimiter) || '\n',
-  },
-  'file.csv.replaceNewlineWithSpace': {
-    type: 'checkbox',
-    label: 'Replace new line with space',
-    defaultValue: r =>
-      (r.file && r.file.csv && r.file.csv.replaceNewlineWithSpace) || false,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.replaceTabWithSpace': {
-    type: 'checkbox',
-    label: 'Replace tab with space',
-    defaultValue: r =>
-      (r.file && r.file.csv && r.file.csv.replaceTabWithSpace) || false,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.truncateLastRowDelimiter': {
-    type: 'checkbox',
-    label: 'Truncate last row delimiter',
-    defaultValue: r =>
-      (r.file && r.file.csv && r.file.csv.truncateLastRowDelimiter) || false,
-    visibleWhenAll: [
-      {
-        field: 'file.type',
-        is: ['csv'],
-      },
-    ],
-  },
-  'file.csv.wrapWithQuotes': {
-    type: 'checkbox',
-    label: 'Wrap with quotes',
-    defaultValue: r =>
-      (r.file && r.file.csv && r.file.csv.wrapWithQuotes) || false,
+    defaultValue: r => r?.file?.csv || {
+      includeHeader: true,
+      columnDelimiter: ',',
+      rowDelimiter: '\n',
+      replaceNewlineWithSpace: false,
+      replaceTabWithSpace: false,
+      truncateLastRowDelimiter: false,
+      wrapWithQuotes: false,
+    },
     visibleWhenAll: [
       {
         field: 'file.type',

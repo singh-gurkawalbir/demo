@@ -86,6 +86,12 @@ export default function AttachFlows({ onClose, integrationId }) {
           color="primary">
           Attach
         </Button>
+        <Button
+          variant="text"
+          color="primary"
+          onClick={onClose}>
+          Cancel
+        </Button>
       </div>
     </ModalDialog>
   );

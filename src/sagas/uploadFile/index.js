@@ -116,17 +116,17 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
   let fileContent = yield call(configureFileReader, file, fileType);
 
   if (['xlsx', 'json'].includes(fileType)) {
-    const { error, data } =
-      fileType === 'xlsx'
-        ? getCsvFromXlsx(fileContent)
-        : getJSONContent(fileContent);
-
-    if (error) {
-      return yield put(actions.file.processError({ fileId, error }));
-    }
-
+    let out;
     if (fileType === 'json') {
-      fileContent = data;
+      out = getJSONContent(fileContent);
+    } else {
+      out = yield call(getCsvFromXlsx, fileContent);
+    }
+    if (out.error) {
+      return yield put(actions.file.processError({ fileId, error: out.error }));
+    }
+    if (fileType === 'json') {
+      fileContent = out.data;
     }
   }
 
