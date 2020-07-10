@@ -184,10 +184,15 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
 
     if (type === 'connection') {
-      if (step.isTriggered) {
+      if (step.isTriggered || step.verifying) {
         return false;
       }
-
+      dispatch(
+        actions.suiteScript.installer.updateStep(
+          connectorId,
+          'inProgress'
+        )
+      );
       history.push(`${match.url}/setConnection`);
     } else if (type === 'integrator-bundle') {
       verifyNSBundle();
@@ -259,7 +264,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     history.push(getRoutePath('/marketplace'));
   }, [history]);
 
-  const handleSubmitComplete = useCallback((connectionId, skipDrawerClose) => {
+  const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
     dispatch(
       actions.suiteScript.installer.updateSSLinkedConnectionId(
         connectorId,
@@ -299,7 +304,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
   useEffect(() => {
     if (installSteps && installSteps.length > 0 && !ssLinkedConnectionId && paramSSLinkedConnId) {
-      handleSubmitComplete(paramSSLinkedConnId, true);
+      handleSubmitComplete(paramSSLinkedConnId, true, true);
     }
   }, [handleSubmitComplete, installSteps, paramSSLinkedConnId, ssLinkedConnectionId]);
 
