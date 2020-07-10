@@ -33,6 +33,7 @@ const handleAddNewResource = args => {
     expConnId,
     statusExport,
     assistant,
+    integrationId,
   } = args;
 
   if (
@@ -68,6 +69,9 @@ const handleAddNewResource = args => {
 
       if (resourceType === 'asyncHelpers') {
         values = { ...values, '/http/_asyncHelperId': generateNewId() };
+      }
+      if (resourceType === 'connections' && integrationId && integrationId !== 'none') {
+        values = { ...values, '/integrationId': integrationId};
       }
 
       if (statusExport) {
@@ -164,6 +168,7 @@ function DynaSelectResource(props) {
     ignoreEnvironmentFilter,
     resourceContext,
     skipPingConnection,
+    integrationId,
   } = props;
   const classes = useStyles();
   const location = useLocation();
@@ -246,6 +251,7 @@ function DynaSelectResource(props) {
         statusExport,
         expConnId,
         assistant,
+        integrationId,
       }),
     [
       dispatch,
@@ -257,6 +263,7 @@ function DynaSelectResource(props) {
       statusExport,
       expConnId,
       assistant,
+      integrationId,
     ]
   );
   const handleEditResource = useCallback(() => {
