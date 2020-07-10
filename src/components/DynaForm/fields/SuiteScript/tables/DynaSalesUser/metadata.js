@@ -13,7 +13,7 @@ export default {
     {
       heading: 'In Salesforce',
 
-      value: r => r?.inSalesforce ? <><CheckmarkIcon />{r?.sfName} </> : <CancelIcon />,
+      value: r => r?.inSalesforce ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
       heading: 'Profile',
@@ -23,7 +23,7 @@ export default {
     {
       heading: 'In Netsuite',
 
-      value: r => r?.inNetSuite ? <><CheckmarkIcon />{r?.sfName} </> : <CancelIcon />,
+      value: r => r?.inNetSuite ? <><CheckmarkIcon color="primary" />{r?.sfName} </> : <CancelIcon color="error" />,
     },
     {
       heading: 'Sales Role',
