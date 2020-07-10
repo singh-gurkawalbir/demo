@@ -67,7 +67,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   const [ssConnection, setSSConnection] = useState(null);
   const history = useHistory();
   // using isEqual as shallowEqual doesn't do nested equality checks
-  const { steps: installSteps, ssLinkedConnectionId, error, NETSUITE_CONNECTION, SALESFORCE_CONNECTION, ssIntegrationId } = useSelector(state =>
+  const { steps: installSteps, ssLinkedConnectionId, error, NETSUITE_CONNECTION, SALESFORCE_CONNECTION, ssIntegrationId, setupDone } = useSelector(state =>
     selectors.suiteScriptIntegrationAppInstallerData(state, connectorId), isEqual
   );
   const packageCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/suitescript/connections/${ssLinkedConnectionId}/installer/getPackageURLs`, 'GET'));
@@ -87,11 +87,18 @@ export default function SuiteScriptIntegrationAppInstallation() {
   }, [connectorId, dispatch, installSteps]);
 
   useEffect(() => {
-    if (isInstallComplete) {
+    // to make final postInstall API call
+    if (isInstallComplete && !setupDone && !error) {
+      dispatch(actions.suiteScript.installer.completeSetup(connectorId, ssLinkedConnectionId));
       enqueueSnackbar({
         message: 'Please wait... configuring connector...',
         variant: 'success',
       });
+    }
+  }, [connectorId, enqueueSnackbar, dispatch, setupDone, isInstallComplete, ssLinkedConnectionId, error]);
+
+  useEffect(() => {
+    if (setupDone) {
       dispatch(actions.resource.requestCollection(`suitescript/connections/${ssLinkedConnectionId}/tiles`));
       history.replace(
         getRoutePath(`/suitescript/${ssLinkedConnectionId}/integrationapps/${urlName}/${ssIntegrationId}`)
@@ -100,7 +107,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
         connectorId,
       ));
     }
-  }, [connectorId, dispatch, enqueueSnackbar, history, isInstallComplete, ssIntegrationId, ssLinkedConnectionId, urlName]);
+  }, [connectorId, dispatch, history, setupDone, ssIntegrationId, ssLinkedConnectionId, urlName]);
 
   const verifySFBundle = useCallback((connectionId) => {
     if (!currentStep.isTriggered && !connectionId) {
@@ -301,6 +308,14 @@ export default function SuiteScriptIntegrationAppInstallation() {
       message: error,
       variant: 'error'
     });
+  }
+
+  if (isInstallComplete && !setupDone) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
   }
 
   return (

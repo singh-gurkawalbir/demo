@@ -221,10 +221,29 @@ export function* verifyPackage({ssLinkedConnectionId, connectorId, installerFunc
   );
 }
 
+export function* postInstallComplete({ssLinkedConnectionId, connectorId}) {
+  const path = `/suitescript/connections/${ssLinkedConnectionId}/connectors/postInstall`;
+  const { error, response } = yield makeRequest({ path, method: 'PUT' });
+  if (error || !response || !response.success) {
+    return yield put(
+      actions.suiteScript.installer.failed(
+        connectorId,
+        error
+      )
+    );
+  }
+  yield put(
+    actions.suiteScript.installer.done(
+      connectorId
+    )
+  );
+}
+
 export default [
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.INTEGRATOR_BUNDLE, checkNetSuiteDABundle),
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.CONNECTOR_BUNDLE, verifyConnectorBundle),
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, verifySSConnection),
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.PACKAGE, verifyPackage),
-  takeEvery(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, getPackageURLs)
+  takeEvery(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, getPackageURLs),
+  takeEvery(actionTypes.SUITESCRIPT.INSTALLER.POST_INSTALL, postInstallComplete)
 ];

@@ -514,6 +514,15 @@ export default {
       action(actionTypes.SUITESCRIPT.INSTALLER.CLEAR_STEPS, {
         id: connectorId,
       }),
+    completeSetup: (connectorId, ssLinkedConnectionId) =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.POST_INSTALL, {
+        connectorId,
+        ssLinkedConnectionId
+      }),
+    done: connectorId =>
+      action(actionTypes.SUITESCRIPT.INSTALLER.DONE, {
+        id: connectorId,
+      }),
   },
   mapping: {
     init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
