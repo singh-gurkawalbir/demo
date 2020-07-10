@@ -201,10 +201,9 @@ export default function FilterPanel({
           if (!rulesState[ruleId].data.rhs.type) {
             rulesState[ruleId].data.rhs.type = 'value';
           }
+          const rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
 
-          return `<input class="form-control" name="${name}" value="${rulesState[
-            ruleId
-          ].data.rhs.value || ''}">`;
+          return `<input class="form-control" name="${name}" value="${rhsValue}">`;
         };
 
         filter.valueGetter = rule => {
