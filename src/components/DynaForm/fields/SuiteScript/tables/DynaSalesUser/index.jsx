@@ -22,12 +22,13 @@ export default function DynaSalesUser(props) {
     })
   );
 
-  useEffect(() =>
+  useEffect(() => {
     dispatch(
       actions.metadata.request(
         ssLinkedConnectionId,
         commMetaPath,
-      )),
+      ));
+  },
   [commMetaPath, dispatch, ssLinkedConnectionId]);
 
   const profiles = data?.profiles;
