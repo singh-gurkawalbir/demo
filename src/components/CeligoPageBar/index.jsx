@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
@@ -9,8 +8,6 @@ import SlideOnScroll from '../SlideOnScroll';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import * as selectors from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
-import WelcomeBanner from './WelcomeBanner';
-import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   pageHeader: {
@@ -58,10 +55,7 @@ export default function CeligoPageBar(props) {
     className,
   } = props;
   const classes = useStyles();
-  const location = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-  const bannerOpened = useSelector(state => selectors.bannerOpened(state));
-  const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
 
   return (
     <>
@@ -70,11 +64,9 @@ export default function CeligoPageBar(props) {
           <Paper
             className={clsx(classes.pageHeader, className, {
               [classes.pageHeaderShift]: drawerOpened,
-              [classes.bannerOffset]: showBanner,
             })}
             elevation={0}
             square>
-            {showBanner && <WelcomeBanner />}
 
             <Grid item container wrap="nowrap">
               {history && (
@@ -100,9 +92,7 @@ export default function CeligoPageBar(props) {
         </ElevateOnScroll>
       </SlideOnScroll>
       <div
-        className={clsx(classes.pageBarOffset, {
-          [classes.bannerOffset]: showBanner,
-        })}
+        className={clsx(classes.pageBarOffset)}
       />
     </>
   );
