@@ -1,25 +1,31 @@
-import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
+import { useHistory, Link } from 'react-router-dom';
+import { Chip } from '@material-ui/core';
 import CalendarIcon from '../../../../../icons/CalendarIcon';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
-import { flowAllowsScheduling } from '../../../../../../utils/suiteScript';
+import { flowAllowsScheduling, flowType } from '../../../../../../utils/suiteScript';
 
 
 export default function ScheduleCell({flow}) {
   const history = useHistory();
-  const handleClick = useCallback(() => {
-    history.push(`flows/${flow._id}/schedule`);
-  }, [flow._id, history]);
   const allowSchedule = flowAllowsScheduling(flow);
 
-  if (!allowSchedule) return null;
+  if (!allowSchedule) {
+    const type = flowType(flow);
+    if (type !== 'Scheduled') {
+      return <Chip size="small" label={type} />;
+    }
+  }
 
   return (
     <RemoveMargin>
       <IconButtonWithTooltip
         tooltipProps={{title: 'Change schedule', placement: 'bottom'}}
-        onClick={handleClick}>
+        component={Link}
+        data-test={`flowSchedule-${flow.ioFlowName || flow.name || flow._id}`}
+        to={`${history.location.pathname}/${flow._id}/schedule`}
+        disabled={!allowSchedule}>
         <CalendarIcon />
       </IconButtonWithTooltip>
     </RemoveMargin>

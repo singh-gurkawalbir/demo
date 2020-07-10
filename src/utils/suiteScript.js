@@ -69,8 +69,8 @@ export const flowSupportsMapping = flow => {
 
 export const flowAllowsScheduling = flow => {
   let supportsScheduling = !!flow.editable;
-  if (supportsScheduling && flow.import) {
-    if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.import.type)) {
+  if (supportsScheduling) {
+    if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type)) {
       supportsScheduling = false;
     }
   }

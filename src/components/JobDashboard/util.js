@@ -90,6 +90,12 @@ export function getPages(job, parentJob) {
 }
 
 export function getFlowJobStatusDetails(job) {
+  if (job.uiStatus === JOB_STATUS.RETRYING) {
+    return {
+      showSpinner: true,
+      status: JOB_UI_STATUS[job.uiStatus],
+    };
+  }
   if (
     job.uiStatus !== JOB_STATUS.RUNNING ||
     !job.doneExporting ||
@@ -150,6 +156,12 @@ export function getFlowJobStatusDetails(job) {
 }
 
 export function getExportJobStatusDetails(job) {
+  if (job.uiStatus === JOB_STATUS.RETRYING) {
+    return {
+      showSpinner: true,
+      status: JOB_UI_STATUS[job.uiStatus],
+    };
+  }
   if (job.uiStatus !== JOB_STATUS.RUNNING) {
     let errorPercentage = 0;
     let resolvedPercentage = 0;
@@ -200,6 +212,12 @@ export function getExportJobStatusDetails(job) {
 }
 
 export function getImportJobStatusDetails(job) {
+  if (job.uiStatus === JOB_STATUS.RETRYING) {
+    return {
+      showSpinner: true,
+      status: JOB_UI_STATUS[job.uiStatus],
+    };
+  }
   if (job.uiStatus !== JOB_STATUS.RUNNING || !job.percentComplete) {
     let errorPercentage = 0;
     let resolvedPercentage = 0;
