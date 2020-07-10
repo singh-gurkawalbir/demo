@@ -140,7 +140,7 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2020-01',
+        '2020-07',
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
