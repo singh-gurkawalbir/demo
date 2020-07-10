@@ -13,22 +13,21 @@ import {
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   dynaAssistantbtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaAssistantFormLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  configureLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start'
+  },
+});
 const SearchParamsModal = props => {
   const {
     paramMeta,
@@ -113,10 +112,13 @@ export default function DynaAssistantSearchParams(props) {
         />
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
-        <FormLabel className={classes.dynaAssistantFormLabel}>
-          Configure search parameters:
-        </FormLabel>
-
+        <div className={classes.configureLabelWrapper}>
+          <FormLabel className={classes.dynaAssistantFormLabel}>
+            Configure search parameters
+          </FormLabel>
+          {/* {Todo (shiva): we need helpText for the component} */}
+          <FieldHelp {...props} helpText="Configure search parameters" />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -125,8 +127,6 @@ export default function DynaAssistantSearchParams(props) {
           onClick={() => setShowSearchParamsModal(true)}>
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
-        {/* {Todo (shiva): we need helpText for the component} */}
-        <FieldHelp {...props} />
       </div>
       <ErroredMessageComponent
         isValid={isValid}

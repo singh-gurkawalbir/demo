@@ -6,22 +6,21 @@ import DynaHook from '../DynaHook';
 import ModalDialog from '../../../ModalDialog';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   dynaRoutingRulesBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaRoutingRulesLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  dynaRoutingRulesLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+});
 
 export default function DynaRoutingRules(props) {
   const classes = useStyles();
@@ -58,7 +57,10 @@ export default function DynaRoutingRules(props) {
         </ModalDialog>
       )}
       <div className={classes.dynaRoutingRulesWrapper}>
-        <FormLabel className={classes.dynaRoutingRulesLabel}>{label}</FormLabel>
+        <div className={classes.dynaRoutingRulesLabelWrapper}>
+          <FormLabel className={classes.dynaRoutingRulesLabel}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -67,7 +69,6 @@ export default function DynaRoutingRules(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} />
       </div>
     </>
   );

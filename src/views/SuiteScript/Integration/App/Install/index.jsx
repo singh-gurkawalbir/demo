@@ -1,20 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual } from 'lodash';
-import {
-  Typography,
-  IconButton,
-  Grid,
-  Paper,
-  Breadcrumbs,
-} from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
-import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
 import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
 import openExternalUrl from '../../../../../utils/window';
@@ -29,13 +19,14 @@ import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import getRoutePath from '../../../../../utils/routePaths';
 import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
+import CeligoPageBar from '../../../../../components/CeligoPageBar';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: theme.spacing(2),
     flexGrow: 1,
     width: '100%',
-    padding: '10px 25px',
   },
   formHead: {
     borderBottom: 'solid 1px',
@@ -43,9 +34,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 29,
   },
   innerContent: {
-    width: '80vw',
+    width: '100%',
+    padding: theme.spacing(3),
   },
-  stepTable: { position: 'relative', marginTop: -20 },
+  stepTable: { maxWidth: 750, },
   floatRight: {
     float: 'right',
   },
@@ -170,6 +162,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
+
   const handleStepClick = useCallback((step) => {
     const {
       connectionType,
@@ -259,10 +252,10 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [NETSUITE_CONNECTION, SALESFORCE_CONNECTION, connectorId, dispatch, history, match.url, ssLinkedConnectionId, verifyNSBundle, verifySFBundle]);
 
-  const handleBackClick = useCallback(e => {
-    e.preventDefault();
-    history.push(getRoutePath('/marketplace'));
-  }, [history]);
+  // const handleBackClick = useCallback(e => {
+  //   e.preventDefault();
+  //   history.push(getRoutePath('/marketplace'));
+  // }, [history]);
 
   const handleSubmitComplete = useCallback((connectionId, isAuthorized, skipDrawerClose) => {
     dispatch(
@@ -315,16 +308,16 @@ export default function SuiteScriptIntegrationAppInstallation() {
     });
   }
 
-  if (isInstallComplete && !setupDone) {
-    return (
-      <SpinnerWrapper>
-        <Spinner />
-      </SpinnerWrapper>
-    );
-  }
 
   return (
+
     <LoadResources resources="integrations,connections">
+      <CeligoPageBar
+        title={`Install app: ${name}`}
+        // Todo: (Mounika) please add the helpText
+        infoText="we need to have the help text for the following."
+         />
+
       <div className={classes.root}>
         <div className={classes.innerContent}>
           { packageCommStatus === COMM_STATES.LOADING &&
@@ -349,29 +342,8 @@ export default function SuiteScriptIntegrationAppInstallation() {
         />
           </RightDrawer>
           )}
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton
-                data-test="back"
-                onClick={handleBackClick}
-                size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
-            <Grid item xs>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
-                  <Typography color="textPrimary">Setup</Typography>
-                  <Typography color="textPrimary">
-                    {name}
-                  </Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
-          </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
+
+          <div className={classes.stepTable}>
             {installSteps.map((step, index) => (
               <InstallationStep
                 key={step.__index}
@@ -380,7 +352,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
                 step={step}
               />
             ))}
-          </Grid>
+          </div>
         </div>
       </div>
     </LoadResources>

@@ -10,22 +10,21 @@ import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import FieldHelp from '../FieldHelp';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaHttpRequestBodyWrapper: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
+  },
+  dynaHttpRequestlabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   dynaReqBodyBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaHttpReqLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+});
 const ManageLookup = props => {
   const {
     label = 'Manage lookups',
@@ -154,9 +153,12 @@ const DynaHttpRequestBody = props => {
         />
       )}
       <div className={classes.dynaHttpRequestBodyWrapper}>
-        <FormLabel className={classes.dynaHttpReqLabel}>
-          {label ? `${label}:` : ''}
-        </FormLabel>
+        <div className={classes.dynaHttpRequestlabelWrapper}>
+          <FormLabel className={classes.dynaHttpReqLabel}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} helpText={label} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -165,7 +167,7 @@ const DynaHttpRequestBody = props => {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} />
+
       </div>
       <ErroredMessageComponent {...props} />
     </Fragment>
