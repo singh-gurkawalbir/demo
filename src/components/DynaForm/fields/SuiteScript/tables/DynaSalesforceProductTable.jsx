@@ -25,6 +25,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+export const useGetSuiteScriptBaseCommPath = ({connectionId, integrationId}) => {
+  const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
+  const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
+
+
+  return `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes`;
+};
+
 export const BaseTableViewComponent = (props) => {
   const classes = useStyles();
   const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
@@ -99,14 +107,8 @@ function DynaSuiteScriptTable(props) {
     }
   },
   [salesforceProductFieldOptions]);
-
-  const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
-  const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
-
-
-  const commMetaPath = `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes/Product2?ignoreCache=true`;
-
-
+  const baseCommPath = useGetSuiteScriptBaseCommPath({connectionId, integrationId});
+  const commMetaPath = `${baseCommPath}/Product2?ignoreCache=true`;
   const { data: allFieldsOptions} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     commMetaPath,
     'suiteScript-sObjects');
