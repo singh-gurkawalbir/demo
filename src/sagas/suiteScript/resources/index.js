@@ -135,7 +135,7 @@ export function* requestSuiteScriptMetadata({
 
   // for settings we receive a 200 level response
   if (resourceType === 'settings' && resp?.success === false) {
-    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0]));
+    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
     return false;
   }
 

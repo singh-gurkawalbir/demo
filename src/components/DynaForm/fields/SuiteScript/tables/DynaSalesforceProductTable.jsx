@@ -37,8 +37,9 @@ export const BaseTableViewComponent = (props) => {
   const classes = useStyles();
   const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
   const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
-    extracts: key,
-    generates: value[key],
+    // casting the values to strings
+    extracts: `${key}`,
+    generates: `${value[key]}`,
   })), [value]);
 
   const handleMapChange = useCallback(
