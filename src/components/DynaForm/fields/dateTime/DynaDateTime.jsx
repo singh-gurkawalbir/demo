@@ -14,7 +14,7 @@ export default function DateTimePicker(props) {
   const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
-    onFieldChange(id, moment(dateValue).format(format) || '', !componentMounted);
+    onFieldChange(id, (dateValue && moment(dateValue).format(format)) || '', !componentMounted);
     setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue]);
