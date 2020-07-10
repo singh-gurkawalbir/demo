@@ -1,12 +1,11 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
 import DynaForm from '../../..';
 import FieldHelp from '../../../FieldHelp';
-import DynaUploadFile from '../../DynaUploadFile';
 import getForm from './formMeta';
 
 const getParserValue = ({
@@ -74,7 +73,6 @@ export default function DynaXmlParse({
   resourceId,
   resourceType,
   disabled,
-  uploadSampleDataFieldName,
 }) {
   const classes = useStyles();
   const [showEditor, setShowEditor] = useState(false);
@@ -86,6 +84,7 @@ export default function DynaXmlParse({
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
+
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
@@ -119,26 +118,6 @@ export default function DynaXmlParse({
     [id, onFieldChange]
   );
 
-  const uploadFileAction = useMemo(
-    () => {
-      if (uploadSampleDataFieldName) {
-        return (
-          <DynaUploadFile
-            resourceId={resourceId}
-            resourceType={resourceType}
-            onFieldChange={onFieldChange}
-            options="xml"
-            placeholder="Sample file (that would be parsed)"
-            id={uploadSampleDataFieldName}
-            persistData
-          />
-        );
-      }
-    },
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [uploadSampleDataFieldName]
-  );
   return (
     <div className={classes.fullWidth}>
       {showEditor && (
@@ -151,7 +130,6 @@ export default function DynaXmlParse({
           onSave={handleEditorSave}
           onClose={handleEditorClose}
           disabled={disabled}
-          uploadFileAction={uploadFileAction}
         />
       )}
       <div className={classes.launchContainer}>

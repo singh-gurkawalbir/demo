@@ -1,9 +1,9 @@
 import { FormContext } from 'react-forms-processor/dist';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
-import DynaSuiteScriptUploadFile from '../DynaSuiteScriptUploadFile';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
@@ -114,7 +114,7 @@ function DynaUploadFile(props) {
   );
 
   return (
-    <DynaSuiteScriptUploadFile
+    <FileUploader
       {...props}
       label={DEFAULT_PLACEHOLDER}
       fileName={fileName}
