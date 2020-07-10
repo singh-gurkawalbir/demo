@@ -13,6 +13,7 @@ import connectionSagas from './connections';
 import { isNewId } from '../../../utils/resource';
 import { suiteScriptResourceKey } from '../../../utils/suiteScript';
 import { apiCallWithRetry } from '../..';
+import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 export const SCOPES = {
   META: 'meta',
@@ -262,7 +263,6 @@ export function* initFormValues({
   );
 }
 
-
 function* suiteScriptSubmitIA({
   ssLinkedConnectionId,
   integrationId,
@@ -277,7 +277,12 @@ function* suiteScriptSubmitIA({
   const opts = {method: 'PUT', body: {data: {[camelCasedSectionId]: payload}}};
 
   try {
-    yield call(apiCallWithRetry, {path, opts});
+    const resp = yield call(apiCallWithRetry, {path, opts});
+
+    if (!resp?.success) {
+      yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
+      return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
+    }
   } catch (error) {
     return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
   }
