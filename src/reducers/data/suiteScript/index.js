@@ -134,7 +134,7 @@ export default (
 
             if (resourceType.endsWith('/tiles')) {
               const tiles = parseTiles(collection);
-              draft[ssLinkedConnectionId].tiles = tiles.map(tile => ({
+              draft[ssLinkedConnectionId].tiles = tiles?.map(tile => ({
                 ...tile,
                 ssLinkedConnectionId,
               }));

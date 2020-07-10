@@ -160,7 +160,9 @@ function JobTable({
 
   function handleErrorDrawerClose() {
     history.goBack();
-    setShowErrorDialogFor({});
+    // only clear the current error set if the close was fired from
+    // this drawer and not the child retry drawer.
+    if (match.isExact) setShowErrorDialogFor({});
   }
 
   return (

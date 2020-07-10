@@ -109,8 +109,10 @@ import DynaRoutingRules from './editors/DynaRoutingRules';
 import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
+import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 
 export default {
+  refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,
   suitescripttable: DynaSuiteScriptTable,
   featurecheck: DynaFeatureCheck,

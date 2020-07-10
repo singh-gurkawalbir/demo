@@ -1,18 +1,32 @@
 import util from '../../../../utils/json';
 
-const requestBody = editor => ({
+const requestBody = ({
+  columnDelimiter,
+  rowDelimiter,
+  hasHeaderRow,
+  trimSpaces,
+  includeHeader,
+  truncateLastRowDelimiter,
+  replaceTabWithSpace,
+  replaceNewlineWithSpace,
+  wrapWithQuotes,
+  data,
+  customHeaderRows,
+}) => ({
   rules: {
-    columnDelimiter: editor.columnDelimiter,
-    rowDelimiter: editor.rowDelimiter,
-    hasHeaderRow: editor.hasHeaderRow,
-    trimSpaces: editor.trimSpaces,
-    includeHeader: editor.includeHeader,
-    truncateLastRowDelimiter: editor.truncateLastRowDelimiter,
-    replaceTabWithSpace: editor.replaceTabWithSpace,
-    replaceNewlineWithSpace: editor.replaceNewlineWithSpace,
-    wrapWithQuotes: editor.wrapWithQuotes,
+    columnDelimiter,
+    rowDelimiter,
+    hasHeaderRow,
+    trimSpaces,
+    includeHeader,
+    truncateLastRowDelimiter,
+    replaceTabWithSpace,
+    replaceNewlineWithSpace,
+    wrapWithQuotes,
+    customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
+
   },
-  data: [JSON.parse(editor.data)],
+  data: [JSON.parse(data)],
 });
 const validate = editor => ({
   dataError: !editor.data

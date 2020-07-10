@@ -110,7 +110,7 @@ export default function TemplatePreview() {
 
   const handleReadMeClick = () => {
     confirmDialog({
-      title: 'ReadMe',
+      title: 'Readme',
       isHtml: true,
       message: integration.doc.readme,
       buttons: [
@@ -188,7 +188,7 @@ export default function TemplatePreview() {
               color="primary"
               variant="outlined"
               onClick={handleReadMeClick}>
-              View ReadMe
+              View Readme
             </Button>
           )}
         </div>
