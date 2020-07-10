@@ -1,11 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
-import Loader from '../Loader';
-import Spinner from '../Spinner';
-import SuccessIcon from '../icons/SuccessIcon';
 
 
 export default function LoadResources({ children, resources, required }) {
@@ -41,22 +38,5 @@ export default function LoadResources({ children, resources, required }) {
     return children || null;
   }
 
-  return (
-    <Loader open >
-      {resourceStatus.map(r => (
-        <div key={r.resourceType}>
-          {r.isLoading ?
-            (
-              <>
-                <Spinner size={16} /><span>{` Loading ${r.resourceType}`}</span>
-              </>
-            ) :
-            (
-              <>
-                <SuccessIcon /><span>{` Loaded ${r.resourceType}`}</span>
-              </>
-            )}
-        </div>)
-      )}
-    </Loader>);
+  return null;
 }
