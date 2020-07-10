@@ -25,6 +25,42 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+export const BaseTableViewComponent = (props) => {
+  const classes = useStyles();
+  const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
+  const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
+    extracts: key,
+    generates: value[key],
+  })), [value]);
+
+  const handleMapChange = useCallback(
+    (tableid, value = []) => {
+      const mapValue = {};
+
+      value.filter(Boolean).forEach(val => {
+        mapValue[val.extracts] = val.generates;
+      });
+      onFieldChange(id, mapValue);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+
+  return (<DynaTableView
+    {...props}
+    optionsMap={optionsMap}
+    metadata={{optionsMap}}
+    hideLabel
+    shouldReset={shouldReset}
+    className={classes.dynaStaticMapWidgetWrapper}
+    value={computedValue}
+    onFieldChange={handleMapChange}
+    disableDeleteRows={disabled}
+      />);
+};
+
+
 const SalesforceProductOptions = ({value,
   onFieldChange,
   options}) => (
@@ -40,7 +76,6 @@ function DynaSuiteScriptTable(props) {
     _integrationId: integrationId,
     extracts = [],
     onFieldChange,
-    value = {},
     generates = [],
     extractFieldHeader,
     generateFieldHeader,
@@ -55,7 +90,7 @@ function DynaSuiteScriptTable(props) {
 
   const [shouldReset, setShouldReset] = useState(false);
   const [selectOption, setSelectOption] = useState(salesforceProductField);
-  const classes = useStyles();
+
   // The values should be saved within a value object
   const salesforceProductOptions = useMemo(() => {
     if (salesforceProductFieldOptions) {
@@ -68,10 +103,7 @@ function DynaSuiteScriptTable(props) {
   const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
   const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
 
-  const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
-    extracts: key,
-    generates: value[key],
-  })), [value]);
+
   const commMetaPath = `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes/Product2?ignoreCache=true`;
 
 
@@ -130,19 +162,6 @@ function DynaSuiteScriptTable(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleMapChange = useCallback(
-    (tableid, value = []) => {
-      const mapValue = {};
-
-      value.filter(Boolean).forEach(val => {
-        mapValue[val.extracts] = val.generates;
-      });
-      onFieldChange(id, mapValue);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
 
   if (salesforceProductFieldOptions && !allFieldsOptions) { return <Spinner />; }
 
@@ -155,15 +174,11 @@ function DynaSuiteScriptTable(props) {
         options={salesforceProductOptions}
         connectionId={connectionId}
       />}
-      <DynaTableView
+      <BaseTableViewComponent
         {...props}
         optionsMap={optionsMap}
-        metadata={{optionsMap}}
         hideLabel
         shouldReset={shouldReset}
-        className={classes.dynaStaticMapWidgetWrapper}
-        value={computedValue}
-        onFieldChange={handleMapChange}
         disableDeleteRows={disabled}
       />
     </>
