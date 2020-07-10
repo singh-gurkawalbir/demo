@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import * as selectors from '../../../reducers';
-import LoadResources from '../../../components/LoadResources';
 import CeligoTable from '../../../components/CeligoTable';
 import agentsMetadata from './metadata/agents';
 import endpointsMetadata from './metadata/endpoints';
@@ -145,18 +144,16 @@ export default function LicenseTable() {
 
   return (
     <>
-      <LoadResources required resources="connections,flows,integrations,agents">
-        <Progressbar
-          usedCount={totalUsedResources}
-          totalCount={totalResources}
-          hideButton
+      <Progressbar
+        usedCount={totalUsedResources}
+        totalCount={totalResources}
+        hideButton
             />
-        <CeligoTable
-          data={resourceList}
-          {...metadata}
+      <CeligoTable
+        data={resourceList}
+        {...metadata}
             />
-        <ResourceDrawer />
-      </LoadResources>
+      <ResourceDrawer />
     </>
   );
 }
