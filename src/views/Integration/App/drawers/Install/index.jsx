@@ -446,15 +446,17 @@ export default function ConnectorInstallation(props) {
         // Todo: (Mounika) please add the helpText
         infoText="we need to have the help text for the following.">
         <div className={classes.actions}>
-          <IconTextButton
-            data-test="viewHelpGuide"
-            component={Link}
-            variant="text"
-            onClick={handleHelpUrlClick}
-            color="primary">
-            <HelpIcon />
-            View help guide
-          </IconTextButton>
+          {helpUrl && (
+            <IconTextButton
+              data-test="viewHelpGuide"
+              component={Link}
+              variant="text"
+              onClick={handleHelpUrlClick}
+              color="primary">
+              <HelpIcon />
+              View help guide
+            </IconTextButton>
+          )}
           <IconTextButton
             data-test="uninstall"
             component={Link}
@@ -494,11 +496,13 @@ export default function ConnectorInstallation(props) {
       )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
-          {!helpUrl && (
-          <RawHtml
-            className={classes.message}
-            html={` Complete the below steps to install your integration app.<br /> 
+          {helpUrl ? (
+            <RawHtml
+              className={classes.message}
+              html={` Complete the below steps to install your integration app.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
+          ) : (
+            <Typography>Complete the below steps to install your integration app.</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (
