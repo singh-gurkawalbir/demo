@@ -164,7 +164,8 @@ export default function DynaCsvParse(props) {
             placeholder="Sample CSV file (that would be parsed)"
             id={uploadSampleDataFieldName}
             persistData
-            showFileNameWithLabel
+            hideFileName
+            variant="text"
             classProps={
               {
                 root: classes.fileUploadRoot,

@@ -142,10 +142,12 @@ export default function DynaCsvParse(props) {
             resourceType={resourceType}
             onFieldChange={onFieldChange}
             options="csv"
+            color=""
             placeholder="Sample CSV file (that would be parsed)"
             id={uploadSampleDataFieldName}
             persistData
-            showFileNameWithLabel
+            hideFileName
+            variant="text"
             classProps={
               {
                 root: classes.fileUploadRoot,

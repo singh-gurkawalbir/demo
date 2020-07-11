@@ -58,7 +58,9 @@ function FileUploader(props) {
     uploadError,
     label,
     classProps = {},
-    showFileNameWithLabel = false,
+    hideFileName = false,
+    variant = 'outlined',
+    color = 'secondary'
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -72,14 +74,13 @@ function FileUploader(props) {
         <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
           <FormLabel required={required}>
             {label}
-            {showFileNameWithLabel && (fileName ? <span className={classes.fileValue}> {fileName}</span> : <span className={classes.defaultText}>No file chosen</span>)}
           </FormLabel>
           <FieldHelp {...props} />
         </div>
         <div className={clsx(classes.uploadContainer, classProps.uploadFile)}>
           <Button
-            variant="outlined"
-            color="secondary"
+            variant={variant}
+            color={color}
             onClick={handleClick}
             name={name}
             disabled={disabled}
@@ -96,7 +97,7 @@ function FileUploader(props) {
             className={classes.fileInput}
             onChange={handleFileChosen}
         />
-          {!showFileNameWithLabel && (fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
+          {!hideFileName && (fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
 
         </div>
       </div>
