@@ -165,6 +165,7 @@ export default function DynaCsvParse(props) {
             id={uploadSampleDataFieldName}
             persistData
             hideFileName
+            color=""
             variant="text"
             classProps={
               {
