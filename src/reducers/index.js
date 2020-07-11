@@ -5229,6 +5229,25 @@ export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationI
   return flows && flows.find(flow => flow._id === flowId);
 }
 
+export function suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) {
+  if (!subRecordMappingId) return emptyObject;
+  const flow = suiteScriptFlowDetail(state, {
+    integrationId,
+    ssLinkedConnectionId,
+    flowId
+  });
+  if (flow?.import?.netsuite?.subRecordImports?.length) {
+    let subrecordObj = flow.import.netsuite.subRecordImports[0];
+    while (subrecordObj) {
+      if (subrecordObj.mappingId === subRecordMappingId) {
+        return subrecordObj;
+      }
+      subrecordObj = subrecordObj?.subRecordImports?.length && subrecordObj.subRecordImports[0];
+    }
+  }
+  return emptyObject;
+}
+
 export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
@@ -5239,18 +5258,8 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   const { import: importConfig } = flow;
   const { type: importType, _connectionId } = importConfig;
   if (importType === 'netsuite') {
-    const { recordType } = importConfig.netsuite;
-    const { subRecordType } = options;
-    let commMetaPath;
-
-    if (subRecordType) {
-      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
-       * in case of subrecord */
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
-    } else {
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    }
-
+    const recordType = options.recordType || importConfig.netsuite?.recordType;
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId: ssLinkedConnectionId,
@@ -5276,6 +5285,15 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   }
   return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
+export function suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) {
+  const options = {};
+  if (subRecordMappingId) {
+    const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+    options.recordType = recordType;
+  }
+  return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
+}
+
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {

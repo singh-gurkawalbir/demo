@@ -525,9 +525,9 @@ export default {
       }),
   },
   mapping: {
-    init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+    init: ({ ssLinkedConnectionId, integrationId, flowId, subRecordMappingId }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
-        ssLinkedConnectionId, integrationId, flowId
+        ssLinkedConnectionId, integrationId, flowId, subRecordMappingId
       }),
     initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {

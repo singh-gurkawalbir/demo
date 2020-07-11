@@ -107,8 +107,8 @@ export default function MappingRow(props) {
   } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
-
-  const {data: importData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {subRecordMappingId} = useSelector(state => selectors.suiteScriptMappings(state));
+  const {data: importData} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
   const generateFields = useMemo(() => {
     const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
