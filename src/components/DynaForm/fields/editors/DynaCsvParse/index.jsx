@@ -10,17 +10,18 @@ import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 
-const useStyles = makeStyles({
-  csvContainer: {
+const useStyles = makeStyles(theme => ({
+  container: {
     width: '100%',
+    paddingLeft: theme.spacing(1)
   },
-  csvBtn: {
+  button: {
     maxWidth: 100,
   },
-  csvLabel: {
+  label: {
     marginBottom: 6,
   },
-  csvLabelWrapper: {
+  labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
@@ -48,7 +49,7 @@ const useStyles = makeStyles({
   uploadFileErrorContainer: {
     marginBottom: 4
   }
-});
+}));
 
 const getParserValue = ({
   columnDelimiter,
@@ -163,7 +164,7 @@ export default function DynaCsvParse(props) {
   );
   return (
     <>
-      <div className={classes.csvContainer}>
+      <div className={classes.container}>
         {showEditor && (
           <CsvConfigEditorDialog
             title="CSV parser helper"
@@ -181,15 +182,15 @@ export default function DynaCsvParse(props) {
             disabled={disabled}
           />
         )}
-        <div className={classes.csvLabelWrapper}>
-          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.csvBtn}
+          className={classes.button}
           onClick={handleEditorClick}>
           Launch
         </Button>
