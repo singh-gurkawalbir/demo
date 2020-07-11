@@ -16,7 +16,7 @@ const stateTiedToAccountType = (state, selectedAccountType) => state?.find(ele =
 
 const allOptionKeys = (values, key) => values?.[key] && Object.keys(values?.[key]);
 export const DynaMatchingCriteria = (props) => {
-  const { allValues, accountTypeOptions, setAllValues, required, disabled} = props;
+  const { allValues, accountTypeOptions, setAllValues, required, disabled, id, onFieldChange} = props;
 
   const accountTypeSelectOptions = useMemo(
     () => withItemsWrapper(generateOptionsFormLabelValueAr(accountTypeOptions)), [accountTypeOptions]);
@@ -28,7 +28,11 @@ export const DynaMatchingCriteria = (props) => {
         disabled={disabled}
         value={selectedAccountType}
         options={accountTypeSelectOptions}
-        onFieldChange={(id, value) => setSelectedAccountType(value)} />
+        onFieldChange={(_, value) => {
+          // no op..trying to make the component touched when we change this select
+          onFieldChange(id, allValues);
+          setSelectedAccountType(value);
+        }} />
       {labelKeyAr.map(({label, key}) => {
         const values = stateTiedToAccountType(allValues, selectedAccountType);
         const allSelectedValues = allOptionKeys(values, key)?.filter(key1 => values?.[key]?.[key1]).map(key => key);
