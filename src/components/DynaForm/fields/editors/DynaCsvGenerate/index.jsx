@@ -62,9 +62,12 @@ export default function DynaCsvGenerate(props) {
     return resource?.adaptorType === 'HTTPImport';
   });
   const initOptions = useMemo(() => {
-    const {customHeaderRows, ...others} = value;
+    const {customHeaderRows = [], ...others} = value;
     const opts = {...others, resourceId, resourceType};
-    opts.customHeaderRows = isHttpImport && customHeaderRows?.join('\n');
+    if (isHttpImport) {
+      opts.customHeaderRows = customHeaderRows?.join('\n');
+    }
+
     return opts;
   }, [isHttpImport, resourceId, resourceType, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
