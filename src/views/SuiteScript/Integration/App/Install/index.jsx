@@ -307,6 +307,13 @@ export default function SuiteScriptIntegrationAppInstallation() {
       variant: 'error'
     });
   }
+  if (isInstallComplete && !setupDone) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
+  }
 
 
   return (

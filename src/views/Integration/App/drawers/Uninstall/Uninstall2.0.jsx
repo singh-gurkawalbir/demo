@@ -17,8 +17,8 @@ import ArrowBackIcon from '../../../../../components/icons/BackArrowIcon';
 import InstallationStep from '../../../../../components/InstallStep';
 import { UNINSTALL_STEP_TYPES } from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
-// import Spinner from '../../../../../components/Spinner';
-// import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
+import Spinner from '../../../../../components/Spinner';
+import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -135,13 +135,13 @@ export default function Uninstaller2({ integration, integrationId }) {
   if (error) {
     return <Redirect push={false} to={getRoutePath('dashboard')} />;
   }
-  // if (!uninstallSteps || uninstallSteps.length === 0) {
-  //   return (
-  //     <SpinnerWrapper>
-  //       <Spinner />
-  //     </SpinnerWrapper>
-  //   );
-  // }
+  if (!uninstallSteps || uninstallSteps.length === 0) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
+  }
 
   return (
     <div className={classes.root}>
