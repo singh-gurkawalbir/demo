@@ -13,7 +13,8 @@ import DynaSuiteScriptUploadFile from '../../../DynaSuiteScriptUploadFile';
 const useStyles = makeStyles(theme => ({
   container: {
     width: '100%',
-    paddingLeft: theme.spacing(1)
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   button: {
     maxWidth: 100,
