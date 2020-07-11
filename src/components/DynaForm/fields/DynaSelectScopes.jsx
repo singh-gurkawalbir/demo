@@ -7,19 +7,21 @@ import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
+  dynaSelectScopesContainer: {
+    width: '100%',
+  },
   dynaTextLabelWrapper: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   scopesLabel: {
-    marginBottom: 0,
-    marginRight: theme.spacing(1),
+    marginBottom: 6,
   },
   scopesBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 160,
   },
-}));
+});
 const excludeSelectedScopes = (defaultScopes, selectedScopes = []) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
 const TransferListModal = props => {
@@ -105,21 +107,22 @@ export default function DynaSelectScopesDialog(props) {
           }}
         />
       )}
-      <FormControl className={classes.dynaTextFormControl}>
+      <FormControl className={classes.dynaSelectScopesContainer}>
         <div className={classes.dynaTextLabelWrapper}>
           <FormLabel htmlFor={id} className={classes.scopesLabel}>
-            {label ? `${label}:` : ''}
-          </FormLabel>
-          <Button
-            data-test={id}
-            variant="outlined"
-            className={classes.scopesBtn}
-            color="secondary"
-            onClick={() => setShowScopesModal(true)}>
             {label}
-          </Button>
+          </FormLabel>
           <FieldHelp {...props} />
         </div>
+        <Button
+          data-test={id}
+          variant="outlined"
+          className={classes.scopesBtn}
+          color="secondary"
+          onClick={() => setShowScopesModal(true)}>
+          {label}
+        </Button>
+
 
         <ErroredMessageComponent {...props} />
       </FormControl>

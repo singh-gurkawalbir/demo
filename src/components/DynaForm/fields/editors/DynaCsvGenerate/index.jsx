@@ -8,22 +8,21 @@ import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   csvContainer: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   csvBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   csvLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  csvLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+});
 
 const getParserValue = ({
   includeHeader,
@@ -118,7 +117,10 @@ export default function DynaCsvGenerate(props) {
             fieldId="file.csv"
         />
         )}
-        <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+        <div className={classes.csvLabelWrapper}>
+          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -127,7 +129,6 @@ export default function DynaCsvGenerate(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} />
       </div>
       <DynaForm
         key={formKey}

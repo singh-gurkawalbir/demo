@@ -172,7 +172,8 @@ export default {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
+        // Todo Sravan we need to add the spinner before uninstalling or configuring or installing.
+        stepText = isUninstall ? 'Uninstalling' : 'Configuring';
       } else {
         stepText = isUninstall ? 'Uninstall' : 'Configure';
       }
@@ -181,7 +182,7 @@ export default {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
         if (step.verifying) {
-          stepText = 'Verifying...';
+          stepText = 'Verifying';
         } else {
           stepText = 'Verify now';
         }
@@ -191,7 +192,7 @@ export default {
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
-      stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
+      stepText = isUninstall ? 'Uninstalling' : 'Installing';
     } else {
       stepText = isUninstall ? 'Uninstall' : 'Install';
     }
