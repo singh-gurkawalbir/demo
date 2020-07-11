@@ -69,15 +69,14 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-export default function DynaXmlParse(props) {
-  const {
-    id,
-    value,
-    onFieldChange,
-    resourceId,
-    resourceType,
-    disabled,
-  } = props;
+export default function DynaXmlParse({
+  id,
+  value,
+  onFieldChange,
+  resourceId,
+  resourceType,
+  disabled,
+}) {
   const classes = useStyles();
   const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
