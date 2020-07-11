@@ -7,19 +7,12 @@ import { useHistory, Redirect } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography,
-  IconButton,
-  Grid,
-  Paper,
-  Breadcrumbs,
-} from '@material-ui/core';
-import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
+import { Typography } from '@material-ui/core';
+import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
-import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 import InstallationStep from '../../../../../components/InstallStep';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
@@ -27,21 +20,20 @@ import Loader from '../../../../../components/Loader';
 import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    width: '100%',
-    padding: '10px 25px',
+  installIntegrationWrapper: {
+    padding: theme.spacing(2, 3),
+  },
+  installIntegrationWrapperContent: {
+    maxWidth: 750,
+  },
+  message: {
+    marginBottom: theme.spacing(2),
   },
   formHead: {
     borderBottom: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
     marginBottom: 29,
   },
-  innerContent: {
-    width: '80vw',
-  },
-  stepTable: { position: 'relative', marginTop: -20 },
   floatRight: {
     float: 'right',
   },
@@ -49,6 +41,13 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
   },
+  installIntegrationSteps: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  noIntegrationMsg: {
+    padding: theme.spacing(3),
+  }
 }));
 
 export default function Uninstaller1({ integration, integrationId, storeId }) {
@@ -186,46 +185,33 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     }
   };
 
-  const handleBackClick = () => {
-    dispatch(actions.integrationApp.uninstaller.clearSteps(integrationId));
-    history.goBack();
-  };
 
   return (
-    <div className={classes.root}>
-      <div className={classes.innerContent}>
-        <Grid container className={classes.formHead}>
-          <Grid item xs={1}>
-            <IconButton
-              data-test="back"
-              onClick={handleBackClick}
-              size="medium">
-              <ArrowBackIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-          <Grid item>
-            <Paper elevation={0} className={classes.paper}>
-              <Breadcrumbs
-                separator={<ArrowRightIcon />}
-                aria-label="breadcrumb">
-                <Typography color="textPrimary">Setup</Typography>
-                <Typography color="textPrimary">{name}</Typography>
-                <Typography color="textPrimary">{storeName}</Typography>
-              </Breadcrumbs>
-            </Paper>
-          </Grid>
-        </Grid>
-        <Grid container spacing={3} className={classes.stepTable}>
-          {(uninstallSteps || []).map((step, index) => (
-            <InstallationStep
-              key={step.name}
-              mode="uninstall"
-              handleStepClick={handleStepClick}
-              index={index + 1}
-              step={step}
-            />
-          ))}
-        </Grid>
+    <div>
+      <CeligoPageBar
+        title={`Uninstall app: ${name}${storeName ? ` - ${storeName}` : ''}`}
+        // Todo: (Mounika) please add the helpText
+        infoText="we need to have the help text for the following." />
+      <div className={classes.installIntegrationWrapper}>
+        <div className={classes.installIntegrationWrapperContent}>
+          <Typography className={classes.message}>
+            {storeName ?
+              `Complete the below steps to uninstall your integration app child ${storeName}` :
+              'Complete the below steps to uninstall your integration app.'}
+          </Typography>
+
+          <div className={classes.installIntegrationSteps}>
+            {(uninstallSteps || []).map((step, index) => (
+              <InstallationStep
+                key={step.name}
+                mode="uninstall"
+                handleStepClick={handleStepClick}
+                index={index + 1}
+                step={step}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

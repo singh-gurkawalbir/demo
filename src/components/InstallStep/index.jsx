@@ -147,8 +147,6 @@ const useStyles = makeStyles(theme => ({
 export default function InstallationStep(props) {
   const classes = useStyles(props.step || {});
   const { step, index, handleStepClick, mode = 'install', templateId } = props;
-  // eslint-disable-next-line
-  console.log(props);
   const dispatch = useDispatch();
   const [verified, setVerified] = useState(false);
   const connection = useSelector(state => {
@@ -191,6 +189,7 @@ export default function InstallationStep(props) {
   if (!step) {
     return null;
   }
+  const { stepText, showSpinner } = integrationAppsUtil.getStepText(step, mode);
 
   const onStepClick = () => {
     handleStepClick(step, connection, index);
@@ -210,7 +209,9 @@ export default function InstallationStep(props) {
               </Typography>
             </div>}
           <div className={classes.stepName}>
-            <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>{step.name}</Typography>
+            <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>
+              {step.name}
+            </Typography>
             <InfoIconButton info={step.description} className={classes.installInfoBtn} />
           </div>
         </div>
@@ -236,20 +237,20 @@ export default function InstallationStep(props) {
           <div className={classes.installActionBtnWrapper}>
             {!step.completed && (
             <IconTextButton
-              data-test={integrationAppsUtil.getStepText(step, mode)}
+              data-test={stepText}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
               variant="text"
               color="primary"
               className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
               >
-              {integrationAppsUtil.getStepText(step, mode)}
+              {showSpinner && <Spinner color="primary" size={16} />} {stepText}
             </IconTextButton>
             )}
             {step.completed && (
             <>
               <Typography onClick={onStepClick} className={classes.completedText}>
-                {step.verifying && <Spinner color="primary" size={16} />}  {integrationAppsUtil.getStepText(step, mode)}
+                {showSpinner && <Spinner color="primary" size={16} />}  {stepText}
               </Typography>
             </>
             )}
