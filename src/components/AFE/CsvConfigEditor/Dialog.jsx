@@ -12,7 +12,7 @@ export default function CsvConfigEditorDialog(props) {
     isSampleDataLoading,
     disabled,
     csvEditorType = 'parse',
-    uploadFileAction,
+    editorDataTitle,
     ...rest
   } = props;
   const defaults = {
@@ -43,7 +43,7 @@ export default function CsvConfigEditorDialog(props) {
           editorId={id}
           rule={rule}
           data={data}
-          uploadFileAction={uploadFileAction}
+          editorDataTitle={editorDataTitle}
         />
       )}
     </AFE2EditorDialog>

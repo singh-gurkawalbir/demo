@@ -151,7 +151,7 @@ export default function DynaCsvParse(props) {
     }
   }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
 
-  const uploadFileAction = useMemo(
+  const editorDataTitle = useMemo(
     () => {
       if (uploadSampleDataFieldName) {
         return (
@@ -195,7 +195,7 @@ export default function DynaCsvParse(props) {
             // /** rule to be passed as json */
             // rule={rule}
             rule={currentOptions}
-            uploadFileAction={uploadFileAction}
+            editorDataTitle={editorDataTitle}
             onSave={handleSave}
             onClose={handleEditorClick}
             disabled={disabled}
@@ -213,7 +213,6 @@ export default function DynaCsvParse(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} />
       </div>
       <DynaForm
         key={formKey}
