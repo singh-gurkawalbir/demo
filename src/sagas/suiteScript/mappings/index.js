@@ -114,7 +114,6 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
   const {export: exportRes, import: importRes} = flow;
   const {type: importType} = importRes;
 
-  const {lookups = []} = importRes[importType];
   let exportType;
   if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
     exportType = 'netsuite';
@@ -128,18 +127,22 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
     subRecordMappingId
   };
   let mapping;
+  let lookups;
   if (importType === 'netsuite') {
     if (subRecordMappingId) {
       const netsuiteSubrecordObj = yield select(selectors.suiteScriptNetsuiteMappingSubRecord, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
       options.recordType = netsuiteSubrecordObj.recordType;
       mapping = netsuiteSubrecordObj.mapping;
+      lookups = netsuiteSubrecordObj.lookups;
     } else {
       options.recordType = importRes.netsuite.recordType;
       mapping = importRes.mapping;
+      lookups = importRes.netsuite.lookups;
     }
   } else if (importType === 'salesforce') {
     options.sObjectType = importRes.salesforce.sObjectType;
     mapping = importRes.mapping;
+    lookups = importRes[importType].lookups;
   }
 
   // const {type: importType, mapping} = importRes;
@@ -162,8 +165,11 @@ export function* saveMappings() {
     lookups,
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
+    recordType,
+    subRecordMappingId
   } = yield select(selectors.suiteScriptMappings);
+  console.log('checking if recordType is savd', recordType);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -186,22 +192,41 @@ export function* saveMappings() {
       });
     options.childRelationships = childRelationshipFields;
   } else if (importType === 'netsuite') {
-    const { recordType } = importRes.netsuite;
     options.recordType = recordType;
   }
   const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
-  patchSet.push({
-    op: importRes.mapping ? 'replace' : 'add',
-    path: '/import/mapping',
-    value: _mappings,
-  });
-  if (lookups) {
+  if (subRecordMappingId) {
+    // TO be test
+    const {subRecordImports} = importRes?.netsuite;
+    const modifiedsubRecordImports = deepClone(subRecordImports);
+    let subRecord = modifiedsubRecordImports.length && modifiedsubRecordImports[0];
+    while (subRecord) {
+      if (subRecord.mappingId === subRecordMappingId) {
+        subRecord.mapping = _mappings;
+        subRecord.lookups = lookups;
+        break;
+      }
+      subRecord = subRecord?.subRecordImports?.length && subRecord.subRecordImports[0];
+    }
     patchSet.push({
-      op: importRes[importType] && importRes[importType].lookups ? 'replace' : 'add',
-      path: `/import/${importType}/lookups`,
-      value: lookups,
+      op: 'replace',
+      path: '/import/netsuite/subRecordImports',
+      value: modifiedsubRecordImports,
     });
+  } else {
+    patchSet.push({
+      op: importRes.mapping ? 'replace' : 'add',
+      path: '/import/mapping',
+      value: _mappings,
+    });
+    if (lookups) {
+      patchSet.push({
+        op: importRes[importType] && importRes[importType].lookups ? 'replace' : 'add',
+        path: `/import/${importType}/lookups`,
+        value: lookups,
+      });
+    }
   }
 
   const resourceType = 'imports';

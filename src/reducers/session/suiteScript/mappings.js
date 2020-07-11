@@ -24,7 +24,7 @@ export default (state = {}, action) => {
          * sObjectType // in case of salesforce import
          * }
          */
-        const { generatedMappings, lookups, options = {} } = action;
+        const { generatedMappings, lookups = [], options = {} } = action;
 
         const formattedMappings = generatedMappings.map(m => ({...m,
           rowIdentifier: 0,
