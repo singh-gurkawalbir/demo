@@ -69,8 +69,8 @@ export default function CsvParseEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle>
           <div>
-            <Typography variant="body1">Sample CSV file</Typography>
-            {uploadFileAction}
+            {uploadFileAction || (<Typography variant="body1">Sample CSV file</Typography>)}
+
           </div>
         </PanelTitle>
         <CodePanel

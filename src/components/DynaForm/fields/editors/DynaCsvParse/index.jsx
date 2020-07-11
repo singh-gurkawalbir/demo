@@ -24,6 +24,30 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  fileUploadLabelWrapper: {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: 'auto'
+
+  },
+  fileUploadRoot: {
+    width: '100%',
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'row'
+
+  },
+  uploadContainer: {
+    justifyContent: 'flex-end',
+    background: 'transparent !important',
+    border: '0px !important',
+    width: 'auto !important',
+    padding: 4
+  },
+  uploadFileErrorContainer: {
+    marginBottom: 4
+  }
 });
 
 const getParserValue = ({
@@ -116,9 +140,19 @@ export default function DynaCsvParse(props) {
             resourceType={resourceType}
             onFieldChange={onFieldChange}
             options="csv"
-            placeholder="Sample file (that would be parsed)"
+            placeholder="Sample CSV file (that would be parsed)"
             id={uploadSampleDataFieldName}
             persistData
+            showFileNameWithLabel
+            classProps={
+              {
+                root: classes.fileUploadRoot,
+                labelWrapper: classes.fileUploadLabelWrapper,
+                uploadFile: classes.uploadContainer,
+                actionContainer: classes.actionContainer,
+                errorContainer: classes.uploadFileErrorContainer
+              }
+            }
           />
         );
       }
