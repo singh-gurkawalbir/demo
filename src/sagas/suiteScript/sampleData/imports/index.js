@@ -20,6 +20,7 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
     const recordType = options.recordType || netsuite?.recordType;
 
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+
     yield put(
       actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache })
     );

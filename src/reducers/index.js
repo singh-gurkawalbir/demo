@@ -66,6 +66,7 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import suiteScriptMappingUtil from '../utils/suiteScriptMapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5285,14 +5286,48 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   }
   return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
-export function suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) {
-  const options = {};
-  if (subRecordMappingId) {
-    const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
-    options.recordType = recordType;
+
+export const suiteScriptGenerates = createSelector(
+  [
+    (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
+      const options = {};
+      if (subRecordMappingId) {
+        const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+        options.recordType = recordType;
+      }
+      return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
+    },
+    (state, {ssLinkedConnectionId, integrationId, flowId}) => {
+      const flow = suiteScriptFlowDetail(state, {
+        integrationId,
+        ssLinkedConnectionId,
+        flowId
+      });
+      return flow?.import?.type;
+    }
+
+  ],
+  ({ data, status }, importType) => {
+    if (!data) {
+      return {data, status};
+    }
+    const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
+      data,
+      importType
+    );
+    const generates = formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+    return {data: generates, status};
   }
-  return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
-}
+);
 
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {

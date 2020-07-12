@@ -33,11 +33,7 @@ export function* refreshGenerates({ isInit = false }) {
   const { import: importRes } = flow;
   const {type: importType, _connectionId} = importRes;
 
-  const {data: importData} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
-  const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
-    importData,
-    importType
-  );
+  const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
     // getting all childRelationshipFields of parent sObject
@@ -277,11 +273,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
-  const {data: importData} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId });
-  const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
-    importData,
-    importType
-  );
+  const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId });
   const mappingObj = mappings.find(_mapping => _mapping.generate === value);
   // while adding new row in mapping, key is generated in MAPPING.PATCH_FIELD reducer
   const {key} = mappingObj;
@@ -335,22 +327,8 @@ export function* updateImportSampleData() {
     subRecordMappingId
   } = yield select(selectors.suiteScriptMappings);
   if (!incompleteGenerates.length) return;
-  const flow = yield select(
-    selectors.suiteScriptFlowDetail,
-    {
-      integrationId,
-      ssLinkedConnectionId,
-      flowId
-    }
-  );
-  const { import: importRes } = flow;
-  const {type: importType} = importRes;
 
-  const {data: importData} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId });
-  const generateFields = suiteScriptMappingUtil.getFormattedGenerateData(
-    importData,
-    importType
-  );
+  const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId });
   const modifiedMappings = deepClone(mappings);
   incompleteGenerates.forEach(generateObj => {
     const {

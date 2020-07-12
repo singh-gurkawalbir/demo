@@ -22,7 +22,6 @@ export default {
       generate,
       generateFields,
       ssLinkedConnectionId,
-      connectionId,
       recordType,
       isGroupedSampleData = false,
     } = params;
@@ -126,7 +125,7 @@ export default {
           defaultValue: lookup.recordType,
           type: 'refreshableselect',
           label: 'Search record type',
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -140,7 +139,7 @@ export default {
           label: 'Search Field',
           defaultValue: lookup.searchField,
           savedRecordType: lookup.recordType,
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.suitescript.netsuite.lookup.searchField',
           visibleWhenAll: [
@@ -155,7 +154,7 @@ export default {
           label: 'Value field',
           defaultValue: lookup.resultField,
           savedRecordType: lookup.recordType,
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           refreshOptionsOnChangesTo: ['lookup.recordType'],
           helpKey: 'mapping.netsuite.lookup.resultField',
           visibleWhenAll: [
@@ -177,7 +176,7 @@ export default {
               fieldId,
               recordType,
             }),
-          connectionId: fieldId && connectionId,
+          connectionId: ssLinkedConnectionId,
           label: '',
           keyOptions:
             fieldOptions && fieldOptions.length ? fieldOptions : undefined,
@@ -235,11 +234,11 @@ export default {
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
               fieldMetadata,
-              connectionId,
+              ssLinkedConnectionId,
               fieldId,
               recordType,
             }),
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           // refreshOptionsOnChangesTo: ['lookup.recordType'],
           visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
         },
