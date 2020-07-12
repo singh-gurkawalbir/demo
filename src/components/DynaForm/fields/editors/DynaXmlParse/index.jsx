@@ -96,6 +96,7 @@ export default function DynaXmlParse({
     // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
+      setCurrentOptions(editorValues);
       setForm(getForm(editorValues));
       setFormKey(formKey + 1);
       onFieldChange(id, getParserValue(editorValues));

@@ -113,10 +113,11 @@ export default function DynaCsvParse(props) {
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
+      const parsedVal = getParserValue(editorValues);
+      setCurrentOptions(parsedVal);
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
       setFormKey(formKey + 1);
-      const value = getParserValue(editorValues);
-      onFieldChange(id, value);
+      onFieldChange(id, parsedVal);
 
       dispatch(
         actions.sampleData.request(
