@@ -43,7 +43,7 @@ export function* refreshGenerates({ isInit = false }) {
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
-    let sObjectList = [];
+    let sObjectList = [sObjectType];
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
       if (id.indexOf('[*].') !== -1) {
