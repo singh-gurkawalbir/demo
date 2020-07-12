@@ -2,6 +2,7 @@ import React, { useRef, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel } from '@material-ui/core';
+import clsx from 'clsx';
 import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 
@@ -56,6 +57,10 @@ function FileUploader(props) {
     fileName,
     uploadError,
     label,
+    classProps = {},
+    hideFileName = false,
+    variant = 'outlined',
+    color = 'secondary'
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -64,38 +69,42 @@ function FileUploader(props) {
     fileInput.current.click();
   }, []);
   return (
-    <FormControl>
-      <div className={classes.fileUploadLabelWrapper}>
-        <FormLabel required={required}>
-          {label}
-        </FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <div className={classes.uploadContainer}>
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={handleClick}
-          name={name}
-          disabled={disabled}
-          required={required}
-          className={classes.uploadBtn}
-          data-test={id}>
-          Choose file
-        </Button>
-        <input
-          data-test="uploadFile"
-          id="fileUpload"
-          type="file"
-          ref={fileInput}
-          className={classes.fileInput}
-          onChange={handleFileChosen}
+    <FormControl className={classProps.root}>
+      <div className={classProps.actionContainer} >
+        <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
+          <FormLabel required={required}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        <div className={clsx(classes.uploadContainer, classProps.uploadFile)}>
+          <Button
+            variant={variant}
+            color={color}
+            onClick={handleClick}
+            name={name}
+            disabled={disabled}
+            required={required}
+            className={classes.uploadBtn}
+            data-test={id}>
+            Choose file
+          </Button>
+          <input
+            data-test="uploadFile"
+            id="fileUpload"
+            type="file"
+            ref={fileInput}
+            className={classes.fileInput}
+            onChange={handleFileChosen}
         />
-        {fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>}
+          {!hideFileName && (fileName ? <p className={classes.fileValue}> {fileName}</p> : <p className={classes.defaultText}>No file chosen</p>)}
 
+        </div>
       </div>
-      {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
-      {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}
+      <div className={classProps.errorContainer}>
+        {!isValid && <ErroredMessageComponent errorMessages={errorMessages} />}
+        {uploadError && <ErroredMessageComponent errorMessages={uploadError} />}
+      </div>
     </FormControl>
   );
 }

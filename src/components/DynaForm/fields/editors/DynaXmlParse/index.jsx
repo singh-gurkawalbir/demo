@@ -47,21 +47,24 @@ const getParserValue = ({
 };
 
 const useStyles = makeStyles(theme => ({
-  fullWidth: {
+  container: {
     width: '100%',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   launchContainer: {
     display: 'flex',
     alignItems: 'center',
   },
   button: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   label: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
+  },
+  labelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 
 }));
@@ -119,21 +122,24 @@ export default function DynaXmlParse({
   );
 
   return (
-    <div className={classes.fullWidth}>
-      {showEditor && (
-        <XmlParseEditorDialog
-          title="XML parser helper"
-          id={id + resourceId}
-          data={data}
-          resourceType={resourceType}
-          rule={currentOptions}
-          onSave={handleEditorSave}
-          onClose={handleEditorClose}
-          disabled={disabled}
+    <>
+      <div className={classes.container}>
+        {showEditor && (
+          <XmlParseEditorDialog
+            title="XML parser helper"
+            id={id + resourceId}
+            data={data}
+            resourceType={resourceType}
+            rule={currentOptions}
+            onSave={handleEditorSave}
+            onClose={handleEditorClose}
+            disabled={disabled}
         />
-      )}
-      <div className={classes.launchContainer}>
-        <FormLabel className={classes.label}>XML parser helper</FormLabel>
+        )}
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>XML parser helper</FormLabel>
+          <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
+        </div>
         <Button
           data-test={`parse-helper-${id}`}
           variant="outlined"
@@ -142,14 +148,14 @@ export default function DynaXmlParse({
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
       </div>
+
       <DynaForm
         key={formKey}
         onChange={handleFormChange}
         disabled={disabled}
         fieldMeta={form}
       />
-    </div>
+    </>
   );
 }

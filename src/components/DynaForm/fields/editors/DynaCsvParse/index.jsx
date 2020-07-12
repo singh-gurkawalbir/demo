@@ -10,21 +10,47 @@ import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 
-const useStyles = makeStyles({
-  csvContainer: {
+const useStyles = makeStyles(theme => ({
+  container: {
     width: '100%',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
-  csvBtn: {
+  button: {
     maxWidth: 100,
   },
-  csvLabel: {
+  label: {
     marginBottom: 6,
   },
-  csvLabelWrapper: {
+  labelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
   },
-});
+  fileUploadLabelWrapper: {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: 'auto'
+
+  },
+  fileUploadRoot: {
+    width: '100%',
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'row'
+
+  },
+  uploadContainer: {
+    justifyContent: 'flex-end',
+    background: 'transparent !important',
+    border: '0px !important',
+    width: 'auto !important',
+    padding: 4
+  },
+  uploadFileErrorContainer: {
+    marginBottom: 4
+  }
+}));
 
 const getParserValue = ({
   columnDelimiter,
@@ -107,7 +133,7 @@ export default function DynaCsvParse(props) {
     }
   }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
 
-  const uploadFileAction = useMemo(
+  const editorDataTitle = useMemo(
     () => {
       if (uploadSampleDataFieldName) {
         return (
@@ -116,9 +142,21 @@ export default function DynaCsvParse(props) {
             resourceType={resourceType}
             onFieldChange={onFieldChange}
             options="csv"
-            placeholder="Sample file (that would be parsed)"
+            color=""
+            placeholder="Sample CSV file (that would be parsed)"
             id={uploadSampleDataFieldName}
             persistData
+            hideFileName
+            variant="text"
+            classProps={
+              {
+                root: classes.fileUploadRoot,
+                labelWrapper: classes.fileUploadLabelWrapper,
+                uploadFile: classes.uploadContainer,
+                actionContainer: classes.actionContainer,
+                errorContainer: classes.uploadFileErrorContainer
+              }
+            }
           />
         );
       }
@@ -129,7 +167,7 @@ export default function DynaCsvParse(props) {
   );
   return (
     <>
-      <div className={classes.csvContainer}>
+      <div className={classes.container}>
         {showEditor && (
           <CsvConfigEditorDialog
             title="CSV parser helper"
@@ -141,21 +179,21 @@ export default function DynaCsvParse(props) {
             // /** rule to be passed as json */
             // rule={rule}
             rule={currentOptions}
-            uploadFileAction={uploadFileAction}
+            editorDataTitle={editorDataTitle}
             onSave={handleSave}
             onClose={handleEditorClick}
             disabled={disabled}
           />
         )}
-        <div className={classes.csvLabelWrapper}>
-          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
-          className={classes.csvBtn}
+          className={classes.button}
           onClick={handleEditorClick}>
           Launch
         </Button>

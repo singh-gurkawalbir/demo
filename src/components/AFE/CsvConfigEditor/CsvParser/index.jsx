@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function CsvParseEditor(props) {
-  const { editorId, disabled, uploadFileAction } = props;
+  const { editorId, disabled, editorDataTitle } = props;
   const classes = useStyles();
   const [editorInit, setEditorInit] = useState(false);
   const { data, result, error } = useSelector(state =>
@@ -72,8 +72,7 @@ export default function CsvParseEditor(props) {
       <PanelGridItem gridArea="data">
         <PanelTitle>
           <div>
-            <Typography variant="body1">Sample CSV file</Typography>
-            {uploadFileAction}
+            {editorDataTitle || (<Typography variant="body1">Sample CSV file</Typography>)}
           </div>
         </PanelTitle>
         <CodePanel
