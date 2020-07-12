@@ -240,14 +240,13 @@ const connectors = [
   { id: 'chargify', name: 'Chargify', type: 'rest', assistant: 'chargify' },
   // { id: 'clio', name: 'clio', type: 'http', assistant: 'clio' },
   { id: 'clover', name: 'Clover', type: 'http', assistant: 'clover' },
-  { id: 'concur', name: 'Concur', marketPlaceOnly: true },
-  // {
-  //   id: 'concurall',
-  //   name: 'Concur',
-  //   type: 'rest',
-  //   assistant: 'concurall',
-  //   icon: 'concur',
-  // },
+  {
+    id: 'concurall',
+    name: 'Concur',
+    type: 'rest',
+    assistant: 'concurall',
+    icon: 'concur',
+  },
   {
     id: 'concurv4',
     name: 'Concur v4 ',
@@ -817,8 +816,6 @@ export const groupApplications = (
           'yammer',
           'hybris',
           'etsy',
-          'concur',
-          'concurall',
           'concurv4',
           'constantcontact',
         ].includes(asst.id)
