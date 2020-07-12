@@ -1,10 +1,11 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
 import DynaForm from '../../..';
+import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
 
@@ -66,7 +67,30 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  fileUploadLabelWrapper: {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: 'auto'
 
+  },
+  fileUploadRoot: {
+    width: '100%',
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'row'
+
+  },
+  uploadContainer: {
+    justifyContent: 'flex-end',
+    background: 'transparent !important',
+    border: '0px !important',
+    width: 'auto !important',
+    padding: 4
+  },
+  uploadFileErrorContainer: {
+    marginBottom: 4
+  }
 }));
 
 export default function DynaXmlParse({
@@ -76,13 +100,18 @@ export default function DynaXmlParse({
   resourceId,
   resourceType,
   disabled,
+  uploadSampleDataFieldName
 }) {
   const classes = useStyles();
   const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
-  const options = { resourcePath, ...value?.[0]?.rules};
+  const getInitOptions = useCallback(
+    (val) => ({ resourcePath, ...val?.[0]?.rules}),
+    [resourcePath],
+  );
+  const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options));
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
@@ -96,11 +125,14 @@ export default function DynaXmlParse({
     // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
+      const parsersValue = getParserValue(editorValues);
+      setCurrentOptions(getInitOptions(parsersValue));
+
       setForm(getForm(editorValues));
       setFormKey(formKey + 1);
-      onFieldChange(id, getParserValue(editorValues));
+      onFieldChange(id, parsersValue);
     }
-  }, [formKey, id, onFieldChange]);
+  }, [formKey, getInitOptions, id, onFieldChange]);
 
   const handleEditorClose = useCallback(() => {
     setShowEditor(false);
@@ -120,7 +152,38 @@ export default function DynaXmlParse({
     },
     [id, onFieldChange]
   );
+  const editorDataTitle = useMemo(
+    () => {
+      if (uploadSampleDataFieldName) {
+        return (
+          <DynaUploadFile
+            resourceId={resourceId}
+            resourceType={resourceType}
+            onFieldChange={onFieldChange}
+            options="xml"
+            color=""
+            placeholder="Sample XML file (that would be parsed)"
+            id={uploadSampleDataFieldName}
+            persistData
+            hideFileName
+            variant="text"
+            classProps={
+              {
+                root: classes.fileUploadRoot,
+                labelWrapper: classes.fileUploadLabelWrapper,
+                uploadFile: classes.uploadContainer,
+                actionContainer: classes.actionContainer,
+                errorContainer: classes.uploadFileErrorContainer
+              }
+            }
+          />
+        );
+      }
+    },
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [uploadSampleDataFieldName]
+  );
   return (
     <>
       <div className={classes.container}>
@@ -134,6 +197,7 @@ export default function DynaXmlParse({
             onSave={handleEditorSave}
             onClose={handleEditorClose}
             disabled={disabled}
+            editorDataTitle={editorDataTitle}
         />
         )}
         <div className={classes.labelWrapper}>
