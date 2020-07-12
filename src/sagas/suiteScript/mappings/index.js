@@ -4,8 +4,8 @@ import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
 import { commitStagedChanges } from '../resources';
+import generateFieldAndListMappings, { updateMappingConfigs } from '../../../utils/suiteScript/mapping';
 
 export const SCOPES = {
   META: 'meta',
@@ -142,7 +142,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
   }
 
   // const {type: importType, mapping} = importRes;
-  const generatedMappings = suiteScriptMappingUtil.generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
+  const generatedMappings = generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
   yield put(actions.suiteScript.mapping.initComplete(
     {
       ssLinkedConnectionId,
@@ -190,7 +190,7 @@ export function* saveMappings() {
   } else if (importType === 'netsuite') {
     options.recordType = recordType;
   }
-  const _mappings = suiteScriptMappingUtil.updateMappingConfigs({importType, mappings, exportConfig, options});
+  const _mappings = updateMappingConfigs({importType, mappings, exportConfig, options});
   const patchSet = [];
   if (subRecordMappingId) {
     // TO be test

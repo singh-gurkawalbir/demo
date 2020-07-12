@@ -101,7 +101,7 @@ export default function MappingSettings(props) {
           lookup,
         });
       }
-    }, [connectionId, generate, generateFields, importType, lookup, recordType, ssLinkedConnectionId, value]
+    }, [connectionId, extractFields, generate, generateFields, importType, lookup, recordType, ssLinkedConnectionId, value]
   );
   const handleSubmit = useCallback(
     formVal => {

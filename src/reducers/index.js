@@ -66,7 +66,7 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
-import suiteScriptMappingUtil from '../utils/suiteScriptMapping';
+import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5311,7 +5311,7 @@ export const suiteScriptGenerates = createSelector(
     if (!data) {
       return {data, status};
     }
-    const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
+    const formattedFields = getFormattedGenerateData(
       data,
       importType
     );
