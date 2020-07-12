@@ -191,7 +191,8 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
       <CeligoPageBar
         title={`Uninstall app: ${name}${storeName ? ` - ${storeName}` : ''}`}
         // Todo: (Mounika) please add the helpText
-        infoText="we need to have the help text for the following." />
+        // infoText="we need to have the help text for the following."
+        />
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
