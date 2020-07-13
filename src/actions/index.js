@@ -779,7 +779,7 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    setOauthConnectionStatus: (openOauthConnection, connectionId) =>
+    setOauthConnectionMode: (openOauthConnection, connectionId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
         openOauthConnection, connectionId
       }),

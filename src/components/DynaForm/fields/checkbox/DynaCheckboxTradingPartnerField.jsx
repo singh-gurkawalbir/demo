@@ -11,6 +11,10 @@ export default function DynaCheckboxForResetFields(props) {
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const isSandbox = environment === 'sandbox';
   let enabled = false;
   if (
     [
@@ -18,7 +22,11 @@ export default function DynaCheckboxForResetFields(props) {
       USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
     ].includes(accessLevel)
   ) {
-    enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofTradingPartners > 0;
+    if (isSandbox) {
+      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofSandboxTradingPartners > 0;
+    } else {
+      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
+    }
   }
 
   return <DynaCheckbox {...props} disabled={!enabled} />;

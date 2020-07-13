@@ -140,7 +140,7 @@ export default function ConnectorInstallation(props) {
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
   if (openOauthConnection) {
-    dispatch(actions.integrationApp.installer.setOauthConnectionStatus(false, connectionId));
+    dispatch(actions.integrationApp.installer.setOauthConnectionMode(false, connectionId));
     setConnection({
       _connectionId: connectionId,
     });
