@@ -128,14 +128,14 @@ export function* requestSuiteScriptMetadata({
 
   let resp;
   try {
-    resp = yield call(apiCallWithRetry, {path, opts});
+    resp = yield call(apiCallWithRetry, {path, opts, hidden: resourceType === 'settings'});
   } catch (error) {
     return false;
   }
 
   // for settings we receive a 200 level response
   if (resourceType === 'settings' && resp?.success === false) {
-    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0]));
+    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
     return false;
   }
 

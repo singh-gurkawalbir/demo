@@ -87,8 +87,12 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/setup`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`
           )
+        );
+      } else if (tile._connectorId) {
+        history.push(
+          getRoutePath(`/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`)
         );
       } else {
         history.push(
@@ -98,14 +102,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
         );
       }
     },
-    [
-      history,
-      tile.urlName,
-      isNotYetSupported,
-      tile._integrationId,
-      tile.ssLinkedConnectionId,
-      tile.status,
-    ]
+    [isNotYetSupported, tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history]
   );
   const handleLinkClick = useCallback(
     event => {

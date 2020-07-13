@@ -71,7 +71,7 @@ function SettingsPanelComponent({
           path: s.titleId,
           label: s.title,
           Section: 'FlowsConfiguration',
-          id: s.titleId
+          id: s.id
         });
       }
       return newArray;

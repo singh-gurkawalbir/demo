@@ -51,6 +51,35 @@ export default {
       password: form['/http/auth/oauth/password'],
     }),
   },
+  concurall: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => ({
+      username: form['/http/unencrypted/username'],
+      password: form['/http/encrypted/password'],
+      clientId: form['/http/unencrypted/clientId'],
+      clientSecret: form['/http/encrypted/clientSecret'],
+      credtype: form['/http/unencrypted/credtype'],
+      subdomain: form['/http/subdomain']
+    }),
+  },
+  concur: {
+    responseParser: resp => ({
+      'http.auth.token.token': resp && resp.access_token,
+    }),
+    payloadTransformer: form => {
+      const username = form['/http/unencrypted/username'];
+      const password = form['/http/encrypted/password'];
+      const base64Crendentials = window.btoa(`${username}:${password}`);
+      const consumerKey = form['/http/unencrypted/consumerKey'];
+
+      return {
+        base64Crendentials,
+        consumerKey
+      };
+    },
+  },
   paypal: {
     responseParser: resp => ({
       'http.auth.token.token': resp && resp.access_token,

@@ -8,23 +8,21 @@ import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   csvContainer: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   csvBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   csvLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
-
+  csvLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+});
 const getParserValue = ({
   includeHeader,
   columnDelimiter,
@@ -62,12 +60,18 @@ export default function DynaCsvGenerate(props) {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
     return resource?.adaptorType === 'HTTPImport';
   });
-  const initOptions = useMemo(() => {
-    const {customHeaderRows, ...others} = value;
-    const opts = {...others, resourceId, resourceType};
-    opts.customHeaderRows = isHttpImport && customHeaderRows?.join('\n');
-    return opts;
-  }, [isHttpImport, resourceId, resourceType, value]);
+  const getInitOptions = useCallback(
+    (val) => {
+      const {customHeaderRows = [], ...others} = val;
+      const opts = {...others, resourceId, resourceType};
+      if (isHttpImport) {
+        opts.customHeaderRows = customHeaderRows?.join('\n');
+      }
+      return opts;
+    },
+    [isHttpImport, resourceId, resourceType],
+  );
+  const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
   const [showEditor, setShowEditor] = useState(false);
@@ -91,11 +95,13 @@ export default function DynaCsvGenerate(props) {
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
+      const parsedVal = getParserValue(editorValues);
+      setCurrentOptions(getInitOptions(parsedVal));
       setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
       setFormKey(formKey + 1);
-      onFieldChange(id, getParserValue(editorValues));
+      onFieldChange(id, parsedVal);
     }
-  }, [formKey, id, isHttpImport, onFieldChange]);
+  }, [formKey, getInitOptions, id, isHttpImport, onFieldChange]);
 
   return (
     <>
@@ -118,7 +124,10 @@ export default function DynaCsvGenerate(props) {
             fieldId="file.csv"
         />
         )}
-        <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+        <div className={classes.csvLabelWrapper}>
+          <FormLabel className={classes.csvLabel}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -127,7 +136,6 @@ export default function DynaCsvGenerate(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp {...props} />
       </div>
       <DynaForm
         key={formKey}

@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 29,
   },
 
-  stepTable: { position: 'relative', marginTop: -20 },
+  stepTable: { maxWidth: 750, },
   floatRight: {
     float: 'right',
   },
@@ -316,7 +316,7 @@ export default function InstallationWizard(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={3} className={classes.stepTable}>
+        <div className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep
               key={step.name}
@@ -327,7 +327,7 @@ export default function InstallationWizard(props) {
               step={step}
             />
           ))}
-        </Grid>
+        </div>
       </div>
     </LoadResources>
   );

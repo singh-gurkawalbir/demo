@@ -98,7 +98,7 @@ export default function DynaSqlQuery(props) {
       <div>{label}</div>
       <div className={classes.editorContainer}>
         <SqlQueryBuilderEditorDialog
-          title="Sql Query"
+          title="SQL Query"
           id={`${id}-inline`}
           rule={value}
           sampleData={JSON.stringify(sampleData, null, 2)}

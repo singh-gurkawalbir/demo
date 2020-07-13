@@ -8,7 +8,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
-import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import Spinner from '../../../../../../components/Spinner';
 import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
 import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
@@ -62,7 +62,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
 
   return (
     <>
-      <ScheduleDrawer />
+      <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
       <SuiteScriptMappingDrawer
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId} />

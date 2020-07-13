@@ -1,16 +1,44 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
-import {BaseTableViewComponent} from './DynaSalesforceProductTable';
+import { useDispatch } from 'react-redux';
+import {BaseTableViewComponent, useGetSuiteScriptBaseCommPath} from './DynaSalesforceProductTable';
 import DynaRadio from '../../radiogroup/DynaRadioGroup';
 import DynaSelect from '../../DynaSelect';
-
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../Spinner';
 
 const fieldMappingTypeOptions = [{items: ['Always Use', 'Map'].map(label => ({label, value: label}))}];
 
-const defaultExtracts = ['Public', 'Private', 'Subsidiary', 'Other'].map(label => ({text: label, id: label}));
+const SalesforceSubsidarySelect = ({
+  disabled,
+  salesforceSubsidiaryFieldOptions,
+  selectedOption,
+  mapSubsidiariesSalesforceSubsidiaryFieldID, onFieldChange}) => {
+  const generatedSalesforceSubsidiaryFieldOptions = useMemo(() =>
+    [{items: salesforceSubsidiaryFieldOptions.map(([value, label]) => ({label, value}))}],
+  [salesforceSubsidiaryFieldOptions]);
+
+  return (
+    <DynaSelect
+      disabled={disabled}
+      value={selectedOption}
+      label="Salesforce Subsidiary Field"
+      options={generatedSalesforceSubsidiaryFieldOptions}
+      onFieldChange={(id, value) => {
+        onFieldChange(mapSubsidiariesSalesforceSubsidiaryFieldID, value);
+      }}
+    />
+  );
+};
 function DynaMapSubsidaries(props) {
   const {salesforceSubsidiaryFieldOptions, generates = [], extracts = [], value, onFieldChange, id,
-    extractFieldHeader, generateFieldHeader, disabled, registerField, salesforceSubsidiaryField, fields} = props;
+    extractFieldHeader, generateFieldHeader, disabled, registerField,
+    salesforceSubsidiaryField, fields,
+    _integrationId: integrationId,
+    ssLinkedConnectionId: connectionId,
+  } = props;
   const [fieldMappingType, setFieldMappingType] = useState((!value || typeof value === 'string') ? 'Always Use' : 'Map');
   const [tableValue, setTableValue] = useState(typeof value !== 'string' ? value : {});
 
@@ -23,8 +51,26 @@ function DynaMapSubsidaries(props) {
   }, []);
   const generateOptions = useMemo(() => [{items: generates.map(({id, text}) => ({label: text, value: id}))}], [generates]);
 
-  const generatedSalesforceSubsidiaryFieldOptions = useMemo(() => [{items: salesforceSubsidiaryFieldOptions.map(([value, label]) => ({label, value}))}], [salesforceSubsidiaryFieldOptions]);
+
+  const basePath = useGetSuiteScriptBaseCommPath({connectionId, integrationId});
+  const dispatch = useDispatch();
+
+  const selectedOption = fields?.find(({id}) => id === mapSubsidiariesSalesforceSubsidiaryFieldID)?.value;
+  const salesforceSubsidaryMetaPath = `${basePath}/Account?ignoreCache=true`;
+  useEffect(() => {
+    dispatch(actions.metadata.request(connectionId, salesforceSubsidaryMetaPath));
+  }, [connectionId, dispatch, salesforceSubsidaryMetaPath]);
+  const { data: allFieldsOptions, status: metadataStatus} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    salesforceSubsidaryMetaPath,
+    'suiteScript-sObjects');
+
+
   const optionsMap = useMemo(() => {
+    const selectedOptionList = allFieldsOptions &&
+    // name corresponds to value of an option
+    allFieldsOptions.length && allFieldsOptions.find(opt => opt.name === selectedOption)?.options;
+    const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
+
     setShouldReset(state => !state);
     return [
       {
@@ -34,7 +80,7 @@ function DynaMapSubsidaries(props) {
         readOnly: disabled,
         required: true,
         type: 'autosuggest',
-        options: extracts && extracts.length ? extracts : defaultExtracts,
+        options: extracts && extracts.length ? extracts : finalSelectedOptionList,
       },
       {
         id: 'generates',
@@ -46,7 +92,7 @@ function DynaMapSubsidaries(props) {
         type: 'autosuggest',
       },
     ];
-  }, [extractFieldHeader, disabled, extracts, generateFieldHeader, generates]);
+  }, [allFieldsOptions, extractFieldHeader, disabled, extracts, generateFieldHeader, generates, selectedOption]);
   const [componentMounted, setComponentMounted] = useState(false);
 
   useEffect(() => {
@@ -59,7 +105,8 @@ function DynaMapSubsidaries(props) {
     setComponentMounted(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [componentMounted, fieldMappingType, id, subsidaryValue, tableValue]);
-  const selectedOption = fields?.find(({id}) => id === mapSubsidiariesSalesforceSubsidiaryFieldID)?.value;
+
+
   return (
     <>
 
@@ -77,21 +124,21 @@ function DynaMapSubsidaries(props) {
         (<DynaSelect
           label="Select Subsidiary"
           id={id}
-
+          disabled={disabled}
           onFieldChange={(id, value) => {
             setSubsidaryValue(value);
           }}
           options={generateOptions}
           value={subsidaryValue} />) : (
             <>
-              <DynaSelect
-                value={selectedOption}
-                label="Salesforce Subsidiary Field"
-                options={generatedSalesforceSubsidiaryFieldOptions}
-                onFieldChange={(id, value) => {
-                  onFieldChange(mapSubsidiariesSalesforceSubsidiaryFieldID, value);
-                }}
-              />
+              {metadataStatus === 'requested' ? <Spinner /> : (
+                <SalesforceSubsidarySelect
+                  disabled={disabled}
+                  salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
+                  selectedOption={selectedOption}
+                  mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
+                  onFieldChange={onFieldChange}
+              />)}
               <BaseTableViewComponent
                 {...props}
                 optionsMap={optionsMap}
@@ -101,7 +148,6 @@ function DynaMapSubsidaries(props) {
                 }}
                 hideLabel
                 shouldReset={shouldReset}
-
                 disableDeleteRows={disabled}
       />
             </>
