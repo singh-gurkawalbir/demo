@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import trim from '../../../utils/trim';
 
 const styles = theme => ({
@@ -28,14 +27,15 @@ const NetsuiteValidateButton = props => {
     disabled,
     onFieldChange,
   } = props;
+  const [requestedOnMount, setRequestedOnMount] = useState(false);
   const handleValidate = values => {
     dispatch(
       actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
     );
   };
 
-  const netsuiteUserRolesState = useSelector(state =>
-    selectors.netsuiteUserRoles(state, resourceId)
+  const netsuiteValidationStatus = useSelector(state =>
+    selectors.netsuiteUserRoles(state, resourceId)?.status
   );
   const isValidatingNetsuiteUserRoles = useSelector(state =>
     selectors.isValidatingNetsuiteUserRoles(state)
@@ -43,45 +43,31 @@ const NetsuiteValidateButton = props => {
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, resourceId)
   );
-  const { message, status } = netsuiteUserRolesState || {};
   const matchingActionField = fields.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
-  const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
-    if (resourceId && fieldsIsVisible && !isOffline) {
+    if (resourceId && fieldsIsVisible && !isOffline && !requestedOnMount) {
       dispatch(
         actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
       );
+      setRequestedOnMount(true);
     }
-  }, [dispatch, fieldsIsVisible, resourceId, isOffline]);
+  }, [dispatch, fieldsIsVisible, resourceId, isOffline, requestedOnMount]);
 
   useEffect(() => {
     if (fieldsIsVisible) {
-      if (status === 'success') {
+      if (netsuiteValidationStatus === 'success') {
         // enable save button
         onFieldChange(id, 'false');
-        dispatch(
-          actions.resource.connections.netsuite.clearUserRoles(resourceId)
-        );
-      } else if (status === 'failed') {
-        if (message) {
-          enquesnackbar({ message, variant: 'error' });
-          // disable save button
-          onFieldChange(id, 'true');
-          dispatch(
-            actions.resource.connections.netsuite.clearUserRoles(resourceId)
-          );
-        }
+      } else if (netsuiteValidationStatus === 'error') {
+        // disable save button
+        onFieldChange(id, 'true');
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    dispatch,
-    enquesnackbar,
-    message,
-    status,
-    resourceId,
-    onFieldChange,
+    netsuiteValidationStatus,
     id,
     fieldsIsVisible,
   ]);
@@ -102,6 +88,11 @@ const NetsuiteValidateButton = props => {
       });
     }
   }, [registerField, fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible]);
+
+  useEffect(() => () => dispatch(
+    actions.resource.connections.netsuite.clearUserRoles(resourceId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), []);
 
   if (id) {
     if (!fieldsIsVisible) return null;
