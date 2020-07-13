@@ -77,7 +77,9 @@ export default {
       arrayIndex: 0,
       label: 'Query builder',
       title: 'SQL Query Builder',
-      refreshOptionsOnChangesTo: ['rdbms.queryType', 'modelMetadata'],
+      refreshOptionsOnChangesTo: ['rdbms.lookups',
+        'rdbms.queryType',
+        'modelMetadata'],
       visibleWhen: [
         {
           field: 'rdbms.queryType',

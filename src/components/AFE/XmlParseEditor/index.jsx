@@ -2,6 +2,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CodePanel from '../GenericEditor/CodePanel';
 import XmlParsePanel from './XmlParsePanel';
 import PanelGrid from '../PanelGrid';
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId, disabled, rule } = props;
+  const { editorId, disabled, rule, editorDataTitle } = props;
   const classes = useStyles();
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -32,6 +33,14 @@ export default function XmlParseEditor(props) {
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
+  useEffect(() => {
+    // trigger data change when editor is initialized and sample data changes while uploading new file
+    if (data !== undefined && props.data !== data) {
+      handleDataChange(props.data);
+    }
+    // trigger this only when sample data changes. Dont add other dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.data]);
 
   const handleInit = useCallback(() => {
     dispatch(
@@ -61,7 +70,11 @@ export default function XmlParseEditor(props) {
         <XmlParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="XML to parse" />
+        <PanelTitle>
+          <div>
+            {editorDataTitle || (<Typography variant="body1">Sample XML file</Typography>)}
+          </div>
+        </PanelTitle>
         <CodePanel
           name="data"
           value={data}
