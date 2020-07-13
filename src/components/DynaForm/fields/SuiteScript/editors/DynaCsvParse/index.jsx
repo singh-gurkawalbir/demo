@@ -154,7 +154,8 @@ export default function DynaCsvParse(props) {
         )
       );
     }
-  }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
+    handleEditorClick();
+  }, [csvData, dispatch, formKey, handleEditorClick, id, onFieldChange, resourceId, resourceType, ssLinkedConnectionId]);
 
   const editorDataTitle = useMemo(
     () => {
