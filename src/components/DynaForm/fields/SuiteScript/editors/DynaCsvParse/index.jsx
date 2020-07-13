@@ -79,7 +79,7 @@ export default function DynaCsvParse(props) {
   } = props;
   const [formKey, setFormKey] = useState(1);
   const [currentOptions, setCurrentOptions] = useState(value);
-  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType}));
+  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId, }));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
@@ -132,7 +132,11 @@ export default function DynaCsvParse(props) {
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
-      setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
+      setForm(getFormMetadata({...editorValues,
+        resourceId,
+        resourceType,
+        ssLinkedConnectionId,
+      }));
       setFormKey(formKey + 1);
       const value = getParserValue(editorValues);
       onFieldChange(id, value);

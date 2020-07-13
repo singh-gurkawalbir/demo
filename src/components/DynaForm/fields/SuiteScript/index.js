@@ -6,6 +6,7 @@ import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaApiParameters from './DynaApiParameters';
 import DynaNetSuiteUpsertField from './DynaNetSuiteUpsertField';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
+import DynaFileKeyColumn from './DynaFileKeyColumn';
 
 export default {
   suitescriptapimethod: DynaApiMethod,
@@ -16,4 +17,5 @@ export default {
   suitescriptapiparameters: DynaApiParameters,
   suitescriptnetsuiteupsertfield: DynaNetSuiteUpsertField,
   suitescriptnetsuitelookup: DynaNetSuiteLookup,
+  suitescriptfilekeycolumn: DynaFileKeyColumn,
 };
