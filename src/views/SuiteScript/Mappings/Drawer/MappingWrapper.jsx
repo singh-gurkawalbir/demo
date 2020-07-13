@@ -13,12 +13,14 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'capitalize'
   }
 }));
+
 export default function MappingWrapper(props) {
   const classes = useStyles();
   const {ssLinkedConnectionId, integrationId, onClose} = props;
   const [selectedSubRecordMapping, setSelectedSubRecordMapping] = useState(null);
   const match = useRouteMatch();
   const flowId = props.flowId || match.params.flowId;
+
 
   const mappingList = useSelector(state => {
     const flow = selectors.suiteScriptFlowDetail(state, {
@@ -28,16 +30,21 @@ export default function MappingWrapper(props) {
     });
     if (flow?.import?.netsuite?.subRecordImports?.length) {
       // recursively fetch subrecordMapping
-      const subRecords = [];
-      let subrecord = flow.import.netsuite.subRecordImports[0];
-      while (subrecord) {
-        subRecords.push({
-          id: subrecord.mappingId,
-          name: `${subrecord.recordType} (Subrecord)`
-        });
-        subrecord = subrecord?.subRecordImports?.length && subrecord.subRecordImports[0];
-      }
-      return [{id: '__parent', name: 'Netsuite'}, ...subRecords];
+      const subRecordList = [];
+      const iterateSubRecord = (subRecords) => {
+        if (subRecords.length) {
+          subRecords.forEach(_subRecordImp => {
+            subRecordList.push({
+              id: _subRecordImp.mappingId,
+              name: `${_subRecordImp.recordType} (Subrecord)`
+            });
+            iterateSubRecord(_subRecordImp?.subRecordImports);
+          });
+        }
+      };
+      iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
+
+      return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
     }
     return [];
   });

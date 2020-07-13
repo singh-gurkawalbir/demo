@@ -529,9 +529,9 @@ export default {
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
         ssLinkedConnectionId, integrationId, flowId, subRecordMappingId
       }),
-    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
-        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options
       }),
     patchField: ({ field, key, value }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),

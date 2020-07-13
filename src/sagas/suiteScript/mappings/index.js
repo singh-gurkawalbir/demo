@@ -140,7 +140,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
     mapping = importRes.mapping;
     lookups = importRes[importType].lookups;
   }
-
+  const subRecordFields = mapping?.fields?.filter(f => f.mappingId);
   // const {type: importType, mapping} = importRes;
   const generatedMappings = generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
   yield put(actions.suiteScript.mapping.initComplete(
@@ -149,6 +149,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
       integrationId,
       flowId,
       generatedMappings,
+      subRecordFields,
       lookups,
       options,
     }));
@@ -163,9 +164,9 @@ export function* saveMappings() {
     integrationId,
     flowId,
     recordType,
+    subRecordFields,
     subRecordMappingId
   } = yield select(selectors.suiteScriptMappings);
-  console.log('checking if recordType is savd', recordType);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
@@ -191,20 +192,28 @@ export function* saveMappings() {
     options.recordType = recordType;
   }
   const _mappings = updateMappingConfigs({importType, mappings, exportConfig, options});
+  // add subrecord fields
+  if (subRecordFields?.length) {
+    _mappings.fields = [..._mappings.fields, ...subRecordFields];
+  }
   const patchSet = [];
   if (subRecordMappingId) {
-    // TO be test
     const {subRecordImports} = importRes?.netsuite;
     const modifiedsubRecordImports = deepClone(subRecordImports);
-    let subRecord = modifiedsubRecordImports.length && modifiedsubRecordImports[0];
-    while (subRecord) {
-      if (subRecord.mappingId === subRecordMappingId) {
-        subRecord.mapping = _mappings;
-        subRecord.lookups = lookups;
-        break;
+    const modifyMappingForSubRecord = (subRecords) => {
+      if (subRecords?.length) {
+        for (let i = 0; i < subRecords.length; i += 1) {
+          const subRecord = subRecords[i];
+          if (subRecord.mappingId === subRecordMappingId) {
+            subRecord.mapping = _mappings;
+            subRecord.lookups = lookups;
+            break;
+          }
+          modifyMappingForSubRecord(subRecord?.subRecordImports);
+        }
       }
-      subRecord = subRecord?.subRecordImports?.length && subRecord.subRecordImports[0];
-    }
+    };
+    modifyMappingForSubRecord(modifiedsubRecordImports);
     patchSet.push({
       op: 'replace',
       path: '/import/netsuite/subRecordImports',

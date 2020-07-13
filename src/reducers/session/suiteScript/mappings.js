@@ -24,7 +24,7 @@ export default (state = {}, action) => {
          * sObjectType // in case of salesforce import
          * }
          */
-        const { generatedMappings, lookups = [], options = {} } = action;
+        const { generatedMappings, lookups = [], subRecordFields, options = {} } = action;
 
         const formattedMappings = generatedMappings.map(m => ({...m,
           rowIdentifier: 0,
@@ -38,6 +38,7 @@ export default (state = {}, action) => {
           changeIdentifier: 0,
           ssLinkedConnectionId,
           integrationId,
+          subRecordFields,
           flowId,
           status: 'success',
           ...options
