@@ -135,7 +135,7 @@ import coupa from './coupa';
 import microsoftdynamics365 from './microsoftdynamics365';
 import microsoftbusinesscentral from './microsoftbusinesscentral';
 import quip from './quip';
-// import concur from './concur';
+import concur from './concur';
 import oandaexchangerates from './oandaexchangerates';
 import oandav20fxtrade from './oandav20fxtrade';
 import tophatter from './tophatter';
@@ -180,6 +180,8 @@ import joor from './joor';
 import sapbydesign from './sapbydesign';
 import concurinvoice from './concurinvoice';
 import concurexpense from './concurexpense';
+import concurall from './concurall';
+
 
 export default {
   concurexpense,
@@ -331,7 +333,7 @@ export default {
   microsoftdynamics365,
   microsoftbusinesscentral,
   quip,
-  // concur,
+  concur,
   oandaexchangerates,
   spreecommerce,
   sugarcrm,
@@ -363,4 +365,5 @@ export default {
   joor,
   sapbydesign,
   concurinvoice,
+  concurall,
 };

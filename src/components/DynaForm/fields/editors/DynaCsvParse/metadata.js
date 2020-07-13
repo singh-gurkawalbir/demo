@@ -70,6 +70,14 @@ export default function getFormMetadata(options) {
         helpKey: 'export.file.csv.keyColumns',
         defaultValue: options?.keyColumns || [],
         resourceType: options.resourceType,
+        refreshOptionsOnChangesTo: [
+          'columnDelimiter',
+          'rowDelimiter',
+          'trimSpaces',
+          'rowsToSkip',
+          'hasHeaderRow',
+          'rowsPerRecord',
+        ],
         visibleWhen: [
           {
             field: 'rowsPerRecord',

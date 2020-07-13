@@ -444,7 +444,8 @@ export default function ConnectorInstallation(props) {
       <CeligoPageBar
         title={`Install app: ${integrationName}`}
         // Todo: (Mounika) please add the helpText
-        infoText="we need to have the help text for the following.">
+        // infoText="we need to have the help text for the following."
+        >
         <div className={classes.actions}>
           {helpUrl && (
             <IconTextButton

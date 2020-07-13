@@ -1884,6 +1884,15 @@ export default {
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the API key can be found next to the 'Authentication' section.",
   'connection.shopify.rest.basicAuth.password':
     "Login to your Shopify store and navigate to 'Apps' section. Click on the respective private app and the password can be found next to the 'Authentication' section.",
+  'concur.connection.http.unencrypted.username': 'Please enter the Username of your Concur account.',
+  'concur.connection.http.encrypted.password': 'Please enter the Password of your Concur account.',
+  'concur.connection.http.unencrypted.consumerKey': 'Please enter the consumer Key of your Concur account.',
+  'concurall.connection.http.unencrypted.username': 'Please enter the ID value which will be available in the URL after connecting to Concur App present at the App Center.',
+  'concurall.connection.http.encrypted.password': 'Please enter the Request token value which will be available in the URL after connecting to Concur App present at the App Center.',
+  'concurall.connection.http.subdomain': 'Please enter the Password of your Concur account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passwords safe.',
+  'concurall.connection.http.unencrypted.clientId': 'Please enter Client ID of your Concur account.',
+  'concurall.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Concur Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',
   'connection.netsuite.authType':
     "Please choose ‘Basic’ to use your NetSuite email and password for this connection, or choose 'Token Based Auth' to use NetSuite's Token Based Authentication. Token Based Auth is much more secure than email and password, and your tokens will never expire untill revoked in NetSuite, and is NetSuite’s recommended way of configuring a connection. There are two ways to configure Token Based Auth: </br><b>1.Token Based Auth(Manual) : </b>A user would have to manually create the Tokens in NetSuite and enter them in IO.Please read <a href=https://celigosuccess.zendesk.com/hc/en-us/articles/115000694991-NetSuite-2018-2-two-factor-authentication-2FA-requirement>here</a> on generating tokens manually. Once you generate the tokens, please keep them secure as they can be re-used for multiple connections.</br> <b>2.Token Based Auth(Automatic) :</b> [Recommended] Integrator will generate tokens on behalf of the user. Once you select this option, IO will redirect you to NetSuite login page and you can select the role for which you need to generate the tokens. Please note that authorising a connection generates a new set of tokens in NetSuite everytime, so anytime a connection is created/edited with this option will generate a new set of tokens.",
   'connection.netsuite.linkSuiteScriptIntegrator':
