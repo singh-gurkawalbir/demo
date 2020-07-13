@@ -18,14 +18,14 @@ const PARSERS = {
  * metadata field Ids for that resource
  * as we infer props on resource form while editing
  */
-export const generateFileParserOptionsFromResource = (resource = {}, type) => {
+export const generateFileParserOptionsFromResource = (resource = {}) => {
   const fileType = resource?.file?.type;
   const fields = resource?.file?.[fileType] || {};
   // console.log(fileType, resource);
 
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
-  if (['csv', 'xlsx'].includes(type)) {
+  if (['csv', 'xlsx'].includes(fileType)) {
     return {
       rowsToSkip: fields.rowsToSkip,
       trimSpaces: fields.trimSpaces,
@@ -56,7 +56,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
   }
 
   // no additional props for json and xml - Add in future if updated
-  if (type === 'json') {
+  if (fileType === 'json') {
     return {};
   }
   // If not the above ones, it is of type file definition
@@ -69,7 +69,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = generateFileParserOptionsFromResource(resource, type);
+  const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],
