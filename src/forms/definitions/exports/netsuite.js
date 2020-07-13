@@ -41,6 +41,7 @@ export default {
       delete newValues['/netsuite/restlet/criteria'];
       newValues['/netsuite/distributed'] = undefined;
       delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/forceReload'];
       delete newValues['/netsuite/distributed/executionType'];
     }
 
