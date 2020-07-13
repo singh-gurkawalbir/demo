@@ -138,6 +138,7 @@ export default {
     },
     'file.csv': {
       fieldId: 'file.csv',
+      uploadSampleDataFieldName: 'uploadFile',
       visibleWhenAll: [
         {
           field: 'file.type',
@@ -149,7 +150,10 @@ export default {
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     // 'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
-    parsers: { fieldId: 'parsers' },
+    parsers: {
+      fieldId: 'parsers',
+      uploadSampleDataFieldName: 'uploadFile',
+    },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },

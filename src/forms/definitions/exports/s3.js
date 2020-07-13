@@ -244,7 +244,11 @@ export default {
       },
     },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
-    parsers: { fieldId: 'parsers' },
+    parsers: {
+      fieldId: 'parsers',
+      uploadSampleDataFieldName: 'uploadFile',
+
+    },
 
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',

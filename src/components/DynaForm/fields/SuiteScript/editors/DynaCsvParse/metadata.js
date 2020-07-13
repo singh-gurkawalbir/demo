@@ -47,11 +47,18 @@ export default function getFormMetadata(options) {
         id: 'keyColumns',
         name: 'keyColumns',
         label: 'Key columns',
-        type: 'filekeycolumn',
+        type: 'suitescriptfilekeycolumn',
         resourceId: options.resourceId,
         helpKey: 'export.file.csv.keyColumns',
         defaultValue: options?.keyColumns || [],
         resourceType: options.resourceType,
+        ssLinkedConnectionId: options.ssLinkedConnectionId,
+        refreshOptionsOnChangesTo: [
+          'columnDelimiter',
+          'rowDelimiter',
+          'hasHeaderRow',
+          'rowsPerRecord',
+        ],
         visibleWhen: [
           {
             field: 'rowsPerRecord',
