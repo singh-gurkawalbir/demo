@@ -92,7 +92,17 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     }
   }
 }
+
+export function* onResourceUpdate({ master, ssLinkedConnectionId, integrationId, resourceType }) {
+  if (resourceType === 'exports') {
+    const {_id: flowId} = master;
+    return yield put(
+      actions.suiteScript.sampleData.reset({ ssLinkedConnectionId, integrationId, flowId})
+    );
+  }
+}
 export const flowSampleDataSagas = [
   takeLatest(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, requestFlowSampleData),
+  takeLatest(actionTypes.SUITESCRIPT.RESOURCE.UPDATED, onResourceUpdate),
 
 ];

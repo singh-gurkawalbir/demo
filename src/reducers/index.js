@@ -5522,6 +5522,23 @@ export function fileSampleData(state, { resourceId, resourceType, fileType}) {
   }
   return rawData?.body;
 }
+export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId}) {
+  // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    'rawFile',
+  );
+  if (!rawData) {
+    const resourceObj = suiteScriptResource(state, {resourceType, id: resourceId, ssLinkedConnectionId});
+    if (
+      resourceObj?.export?.file?.csv
+    ) {
+      return resourceObj.export.sampleData;
+    }
+  }
+  return rawData?.body;
+}
 export const getMappingSubRecordList = createSelector([
   (state, {integrationId,
     ssLinkedConnectionId,

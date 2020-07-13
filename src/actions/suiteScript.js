@@ -288,10 +288,11 @@ export default {
         flowId,
         error
       }),
-    reset: (ssLinkedConnectionId, resourceId) =>
+    reset: ({ssLinkedConnectionId, integrationId, flowId}) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
         ssLinkedConnectionId,
-        resourceId,
+        integrationId,
+        flowId
       }),
   },
   job: {
