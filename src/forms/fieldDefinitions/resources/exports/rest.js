@@ -219,6 +219,12 @@ export default {
             },
           },
           {
+            field: 'rest.postBody',
+            matchesRegEx: {
+              pattern: 'lastExportDateTime',
+            },
+          },
+          {
             matchesRegEx: {
               pattern: '^(.*)lastExportDateTime',
             },
@@ -301,7 +307,6 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-
   'rest.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',
