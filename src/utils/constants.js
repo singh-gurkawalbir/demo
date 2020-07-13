@@ -602,3 +602,5 @@ export const C_LOCKED_FIELDS = Object.freeze({
   ],
 });
 export const CLONING_SUPPORTED_IAS = ['sfnsio'];
+export const ALLOWED_HTML_TAGS =
+  ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
