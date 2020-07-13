@@ -5535,7 +5535,7 @@ export const getMappingSubRecordList = createSelector([
     // recursively fetch subrecordMapping
     const subRecordList = [];
     const iterateSubRecord = (subRecords) => {
-      if (subRecords.length) {
+      if (subRecords?.length) {
         subRecords.forEach(_subRecordImp => {
           subRecordList.push({
             id: _subRecordImp.mappingId,
