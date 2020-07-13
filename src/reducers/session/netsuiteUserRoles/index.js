@@ -30,7 +30,7 @@ export default (state = {}, action) => {
       newState[connectionId] = {
         ...newState[connectionId],
         message,
-        status: 'failed',
+        status: 'error',
       };
 
       return newState;
