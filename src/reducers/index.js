@@ -5387,8 +5387,9 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
 }
 
 export const suiteScriptExtracts = createSelector(
-  [(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
-  (flowData) => {
+  [(state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
+    (state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
+  (flow, flowData) => {
     if (!flowData) {
       return emptySet;
     }
@@ -5400,8 +5401,7 @@ export const suiteScriptExtracts = createSelector(
           id: extract.id || extract.value,
           name: extract.name || extract.label || extract.id
         });
-        // for netsuite
-        if (extract.type === 'select') {
+        if (flow?.export?.netsuite?.type === 'restlet' && extract.type === 'select') {
           formattedFields.push({
             id: `${extract.id}.internalid`,
             name: `${extract.name} (InternalId)`
