@@ -5539,7 +5539,7 @@ export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, r
   }
   return rawData?.body;
 }
-export const getMappingSubRecordList = createSelector([
+export const getSuitescriptMappingSubRecordList = createSelector([
   (state, {integrationId,
     ssLinkedConnectionId,
     flowId}) => suiteScriptFlowDetail(state, {

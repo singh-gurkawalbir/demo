@@ -22,7 +22,7 @@ export default function MappingWrapper(props) {
   const flowId = props.flowId || match.params.flowId;
 
   const mappingList = useSelector(state =>
-    selectors.getMappingSubRecordList(state,
+    selectors.getSuitescriptMappingSubRecordList(state,
       {
         integrationId,
         ssLinkedConnectionId,
