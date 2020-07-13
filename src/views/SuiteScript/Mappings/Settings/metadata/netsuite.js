@@ -226,10 +226,9 @@ export default {
           label: 'Value',
           required: true,
           multiselect: generateFieldType === 'multiselect',
-          defaultValue:
-            generateFieldType === 'multiselect' && value.hardCodedValue
-              ? value.hardCodedValue.split(',')
-              : value.hardCodedValue,
+          defaultValue: `${generateFieldType === 'multiselect' && value.hardCodedValue
+            ? value.hardCodedValue.split(',')
+            : value.hardCodedValue}`,
           commMetaPath:
             fieldId &&
             getNetsuiteSelectFieldValueUrl({
