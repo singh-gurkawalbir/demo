@@ -110,6 +110,7 @@ import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
+import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
   refreshabletext: DynaRefreshableText,
@@ -205,6 +206,7 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
+  checkboxtradingpartnerfield: DynaCheckboxTradingPartnerField,
   exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
