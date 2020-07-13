@@ -1385,6 +1385,10 @@ export function checkUpgradeRequested(state, licenseId) {
 export function isOnOffInProgress(state, flowId) {
   return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
+export function canOpenOauthConnection(state) {
+  return fromSession.canOpenOauthConnection(state && state.session);
+}
+
 
 export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};

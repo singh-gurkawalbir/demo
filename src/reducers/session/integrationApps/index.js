@@ -157,3 +157,7 @@ export function isAddOnInstallInProgress(state, id) {
 export function integrationClonedDetails(state, id) {
   return fromClone.integrationClonedDetails(state && state.clone, id);
 }
+
+export function canOpenOauthConnection(state) {
+  return fromInstaller.canOpenOauthConnection(state && state.installer);
+}
