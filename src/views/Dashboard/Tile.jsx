@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles, Button } from '@material-ui/core';
+import Truncate from 'react-truncate';
+import { Typography, Tooltip, makeStyles, Button, Zoom } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import * as selectors from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
@@ -54,6 +55,7 @@ const useStyles = makeStyles(theme => ({
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isTruncated, setIsTruncated] = useState(false);
   const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
     false
   );
@@ -279,13 +281,33 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           <Content>
             <CardTitle>
               <Typography variant="h3">
-                <Link
-                  color="inherit"
-                  to={getRoutePath(urlToIntegrationSettings)}
-                  className={classes.tileName}
-                  onClick={handleLinkClick}>
-                  {tile.name}
-                </Link>
+                {isTruncated ? (
+                  <Tooltip
+                    title={<span className={classes.tooltipNameFB}> {tile.name}</span>}
+                    TransitionComponent={Zoom}
+                    placement="top"
+                    enterDelay={100}>
+                    <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+                      <Link
+                        color="inherit"
+                        to={getRoutePath(urlToIntegrationSettings)}
+                        className={classes.tileName}
+                        onClick={handleLinkClick}>
+                        {tile.name}
+                      </Link>
+                    </Truncate>
+                  </Tooltip>
+                ) : (
+                  <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
+                    <Link
+                      color="inherit"
+                      to={getRoutePath(urlToIntegrationSettings)}
+                      className={classes.tileName}
+                      onClick={handleLinkClick}>
+                      {tile.name}
+                    </Link>
+                  </Truncate>
+                )}
               </Typography>
             </CardTitle>
             {tile.connector &&
