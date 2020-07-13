@@ -30,6 +30,10 @@ export default (state = {}, action) => {
         draft[id].data = error;
         break;
       }
+      case actionTypes.SUITESCRIPT.SAMPLEDATA.RESET: {
+        delete draft[id];
+        break;
+      }
 
       default:
     }

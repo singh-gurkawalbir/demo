@@ -53,6 +53,12 @@ export default function getFormMetadata(options) {
         defaultValue: options?.keyColumns || [],
         resourceType: options.resourceType,
         ssLinkedConnectionId: options.ssLinkedConnectionId,
+        refreshOptionsOnChangesTo: [
+          'columnDelimiter',
+          'rowDelimiter',
+          'hasHeaderRow',
+          'rowsPerRecord',
+        ],
         visibleWhen: [
           {
             field: 'rowsPerRecord',

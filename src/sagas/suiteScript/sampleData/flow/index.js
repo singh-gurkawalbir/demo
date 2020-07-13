@@ -7,6 +7,7 @@ import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 import suiteScriptMappingUtil from '../../../../utils/suiteScriptMapping';
+import { resourceFormState } from '../../../../reducers/session/suiteScript';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -92,7 +93,25 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     }
   }
 }
+
+export function* onResourceUpdate({ resourceId, ssLinkedConnectionId, integrationId, resourceType }) {
+  if (resourceType === 'exports') {
+    const { flowId } = yield select(
+      resourceFormState,
+      {
+        resourceType,
+        resourceId,
+        ssLinkedConnectionId,
+        integrationId
+      }
+    );
+    return yield put(
+      actions.suiteScript.sampleData.reset({ ssLinkedConnectionId, integrationId, flowId})
+    );
+  }
+}
 export const flowSampleDataSagas = [
   takeLatest(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, requestFlowSampleData),
+  takeLatest(actionTypes.SUITESCRIPT.RESOURCE.UPDATED, onResourceUpdate),
 
 ];

@@ -69,7 +69,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, type) => {
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = generateFileParserOptionsFromResource(resource);
+  const options = generateFileParserOptionsFromResource(resource, type);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],
