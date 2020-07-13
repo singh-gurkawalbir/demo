@@ -89,6 +89,8 @@ const NetsuiteValidateButton = props => {
     }
   }, [registerField, fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible]);
 
+  // Clean up action on un mount , to clear user roles when container is closed
+  // TODO @Raghu: check ,should we clear on validate click? or on un mount?
   useEffect(() => () => dispatch(
     actions.resource.connections.netsuite.clearUserRoles(resourceId)
   // eslint-disable-next-line react-hooks/exhaustive-deps
