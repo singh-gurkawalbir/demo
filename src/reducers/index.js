@@ -5238,13 +5238,20 @@ export function suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId
     flowId
   });
   if (flow?.import?.netsuite?.subRecordImports?.length) {
-    let subrecordObj = flow.import.netsuite.subRecordImports[0];
-    while (subrecordObj) {
-      if (subrecordObj.mappingId === subRecordMappingId) {
-        return subrecordObj;
+    let selectedSubRecord = emptyObject;
+    const iterateSubRecord = (subRecords) => {
+      if (subRecords?.length) {
+        for (let i = 0; i < subRecords.length; i += 1) {
+          if (subRecords[i].mappingId === subRecordMappingId) {
+            selectedSubRecord = subRecords[i];
+            return;
+          }
+          iterateSubRecord(subRecords[i]?.subRecordImports);
+        }
       }
-      subrecordObj = subrecordObj?.subRecordImports?.length && subrecordObj.subRecordImports[0];
-    }
+    };
+    iterateSubRecord(flow.import.netsuite.subRecordImports);
+    return selectedSubRecord;
   }
   return emptyObject;
 }
@@ -5515,3 +5522,32 @@ export function fileSampleData(state, { resourceId, resourceType, fileType}) {
   }
   return rawData?.body;
 }
+export const getMappingSubRecordList = createSelector([
+  (state, {integrationId,
+    ssLinkedConnectionId,
+    flowId}) => suiteScriptFlowDetail(state, {
+    integrationId,
+    ssLinkedConnectionId,
+    flowId
+  }),
+], (flow) => {
+  if (flow?.import?.netsuite?.subRecordImports?.length) {
+    // recursively fetch subrecordMapping
+    const subRecordList = [];
+    const iterateSubRecord = (subRecords) => {
+      if (subRecords.length) {
+        subRecords.forEach(_subRecordImp => {
+          subRecordList.push({
+            id: _subRecordImp.mappingId,
+            name: `${_subRecordImp.recordType} (Subrecord)`
+          });
+          iterateSubRecord(_subRecordImp?.subRecordImports);
+        });
+      }
+    };
+    iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
+
+    return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
+  }
+  return emptySet;
+});

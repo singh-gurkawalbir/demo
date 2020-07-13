@@ -21,35 +21,13 @@ export default function MappingWrapper(props) {
   const match = useRouteMatch();
   const flowId = props.flowId || match.params.flowId;
 
-
-  const mappingList = useSelector(state => {
-    const flow = selectors.suiteScriptFlowDetail(state, {
-      integrationId,
-      ssLinkedConnectionId,
-      flowId
-    });
-    if (flow?.import?.netsuite?.subRecordImports?.length) {
-      // recursively fetch subrecordMapping
-      const subRecordList = [];
-      const iterateSubRecord = (subRecords) => {
-        if (subRecords.length) {
-          subRecords.forEach(_subRecordImp => {
-            subRecordList.push({
-              id: _subRecordImp.mappingId,
-              name: `${_subRecordImp.recordType} (Subrecord)`
-            });
-            iterateSubRecord(_subRecordImp?.subRecordImports);
-          });
-        }
-      };
-      iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
-
-      return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
-    }
-    return [];
-  });
-
-
+  const mappingList = useSelector(state =>
+    selectors.getMappingSubRecordList(state,
+      {
+        integrationId,
+        ssLinkedConnectionId,
+        flowId
+      }));
   return (
     <>
       {mappingList && mappingList.length && !selectedSubRecordMapping ?
