@@ -136,11 +136,11 @@ export default function ConnectorInstallation(props) {
     installSteps,
   ]);
   const { openOauthConnection, connectionId } = useSelector(
-    state => selectors.canOpenOauthConnection(state),
+    state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
   if (openOauthConnection) {
-    dispatch(actions.integrationApp.installer.setOauthConnectionMode(false, connectionId));
+    dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
     setConnection({
       _connectionId: connectionId,
     });

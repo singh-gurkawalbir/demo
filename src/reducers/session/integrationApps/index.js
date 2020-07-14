@@ -158,6 +158,6 @@ export function integrationClonedDetails(state, id) {
   return fromClone.integrationClonedDetails(state && state.clone, id);
 }
 
-export function canOpenOauthConnection(state) {
-  return fromInstaller.canOpenOauthConnection(state && state.installer);
+export function canOpenOauthConnection(state, integrationId) {
+  return fromInstaller.canOpenOauthConnection(state && state.installer, integrationId);
 }

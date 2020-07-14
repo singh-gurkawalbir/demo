@@ -7,7 +7,7 @@ export default (state = {}, action) => {
   const { id, type, update, formMeta, openOauthConnection, connectionId } = action;
 
   return produce(state, draft => {
-    if (!id && !connectionId) {
+    if (!id) {
       return;
     }
 
@@ -17,8 +17,10 @@ export default (state = {}, action) => {
         draft[id] = {};
         break;
       case actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS:
-        draft.openOauthConnection = openOauthConnection;
-        draft.connectionId = connectionId;
+        draft[id] = {};
+        draft[id].openOauthConnection = openOauthConnection;
+        draft[id].connectionId = connectionId;
+        console.log('In reducers', 'id', id, 'openOauthConnection', openOauthConnection, 'connectionId', connectionId);
         break;
 
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE:
@@ -53,12 +55,12 @@ export function integrationAppsInstaller(state, id) {
   return state[id];
 }
 
-export function canOpenOauthConnection(state) {
-  if (!state) {
+export function canOpenOauthConnection(state, id) {
+  if (!state || !state[id]) {
     return { openOauthConnection: false };
   }
 
-  return { openOauthConnection: state.openOauthConnection || false, connectionId: state.connectionId};
+  return { openOauthConnection: state[id].openOauthConnection || false, connectionId: state[id].connectionId};
 }
 
 // #endregion

@@ -779,9 +779,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
-    setOauthConnectionMode: (openOauthConnection, connectionId) =>
+    setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
-        openOauthConnection, connectionId
+        connectionId, openOauthConnection, id
       }),
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
