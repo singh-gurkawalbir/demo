@@ -20,7 +20,6 @@ export default (state = {}, action) => {
         draft[id] = {};
         draft[id].openOauthConnection = openOauthConnection;
         draft[id].connectionId = connectionId;
-        console.log('In reducers', 'id', id, 'openOauthConnection', openOauthConnection, 'connectionId', connectionId);
         break;
 
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE:
