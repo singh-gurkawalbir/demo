@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { Typography, makeStyles, ButtonGroup, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -102,7 +101,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 const SuiteScriptMapping = (props) => {
-  const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId } = props;
+  const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId, subRecordMappingId } = props;
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
@@ -131,12 +130,12 @@ const SuiteScriptMapping = (props) => {
     state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
   const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
-  const {status: importSampleDataStatus, } = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: importSampleDataStatus, } = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
-    dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId}));
-  }, [dispatch, flowId, integrationId, ssLinkedConnectionId]);
+    dispatch(actions.suiteScript.mapping.init({ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
+  }, [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordMappingId]);
   const handleRefreshGenerates = useCallback(
     () => {
       dispatch(
@@ -463,14 +462,14 @@ const SuiteScriptMapping = (props) => {
 };
 
 export default function SuiteScriptMappingWrapper(props) {
-  const {ssLinkedConnectionId, integrationId} = props;
+  const {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId} = props;
+  // console.log('subRecordMappingId', subRecordMappingId);
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const flowId = props.flowId || match.params.flowId;
   const [importSampleDataLoaded, setImportSampleDataLoaded] = useState(false);
 
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
-  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const subRecordType = useSelector(state => selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).recordType);
+  const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
   const requestImportSampleData = useCallback(
     () => {
@@ -480,11 +479,12 @@ export default function SuiteScriptMappingWrapper(props) {
             ssLinkedConnectionId,
             integrationId,
             flowId,
+            options: {recordType: subRecordType}
           }
         )
       );
     },
-    [dispatch, flowId, integrationId, ssLinkedConnectionId]
+    [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordType]
   );
   const requestFlowSampleData = useCallback(
     () => {
@@ -538,7 +538,7 @@ export default function SuiteScriptMappingWrapper(props) {
     );
   }
   return (
-    <SuiteScriptMapping {...props} ssLinkedConnectionId={ssLinkedConnectionId} integrationId={integrationId} flowId={flowId} />
+    <SuiteScriptMapping {...props} />
 
   );
 }
