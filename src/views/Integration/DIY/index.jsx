@@ -255,6 +255,8 @@ export default function Integration(props) {
   const cantDelete = flows.length > 0;
   const patchIntegration = useCallback(
     (path, value) => {
+      // TODO: need to revisit after IA2.0 behavior is clear.
+      // Potential change to switch to PATCH call (instead of PUT)
       const patchSet = [{ op: 'replace', path, value }];
 
       dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));

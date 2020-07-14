@@ -52,14 +52,12 @@ export default function DynaNetSuiteLookup(props) {
   };
 
   const dispatch = useDispatch();
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
-      onFieldChange(id, JSON.stringify(rule));
+      onFieldChange(id, rule.length > 0 ? JSON.stringify(rule) : '');
     }
-
-    handleEditorClick();
   };
 
   const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state =>
@@ -111,12 +109,13 @@ export default function DynaNetSuiteLookup(props) {
     <>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
-          title="Lookup criteria"
+          title="Define lookup criteria"
           id={id}
           data={extractFields}
           value={rule}
-          onClose={handleClose}
-          // disabled={disabled}
+          // onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           options={options}
           autoEvaluate={false}
         />

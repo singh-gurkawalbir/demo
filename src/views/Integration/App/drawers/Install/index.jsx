@@ -16,6 +16,7 @@ import actions from '../../../../../actions';
 import {
   getConnectionType,
   generateNewId,
+  isOauth,
 } from '../../../../../utils/resource';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
@@ -134,6 +135,16 @@ export default function ConnectorInstallation(props) {
     currentStep,
     installSteps,
   ]);
+  const { openOauthConnection, connectionId } = useSelector(
+    state => selectors.canOpenOauthConnection(state, integrationId),
+    (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
+  );
+  if (openOauthConnection) {
+    dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
+    setConnection({
+      _connectionId: connectionId,
+    });
+  }
   const selectedConnectionType = useSelector(state => {
     const selectedConnection = selectors.resource(
       state,
@@ -207,8 +218,9 @@ export default function ConnectorInstallation(props) {
           )
         );
       }
-
-      setConnection(false);
+      if (connectionDoc && !isOauth(connectionDoc)) {
+        setConnection(false);
+      }
     },
     [
       connection,

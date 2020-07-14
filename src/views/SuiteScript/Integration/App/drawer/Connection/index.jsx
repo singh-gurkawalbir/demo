@@ -17,6 +17,7 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 
 export default function ConnectionDrawer({
+  connectorId,
   handleSubmitComplete
 }) {
   const dispatch = useDispatch();
@@ -57,8 +58,24 @@ export default function ConnectionDrawer({
   const handleConnectionClose = useCallback(() => {
     setConnection(null);
     setAccount(null);
+    dispatch(
+      actions.suiteScript.installer.updateStep(
+        connectorId,
+        'reset'
+      )
+    );
     history.goBack();
-  }, [history]);
+  }, [connectorId, dispatch, history]);
+
+  const handleDrawerClose = useCallback(() => {
+    dispatch(
+      actions.suiteScript.installer.updateStep(
+        connectorId,
+        'reset'
+      )
+    );
+    history.goBack();
+  }, [connectorId, dispatch, history]);
 
   const handleConnectionSubmit = useCallback(() => {
     handleSubmitComplete(linkedConnectionId);
@@ -115,7 +132,7 @@ export default function ConnectionDrawer({
       infoText="This is used to verify if there is an existing connection already linked to NetSuite."
       height="tall"
       width="medium"
-      onClose={history.goBack}>
+      onClose={handleDrawerClose}>
       <div >
         <DynaForm
           fieldMeta={fieldMeta}
@@ -126,7 +143,7 @@ export default function ConnectionDrawer({
             variant="outlined">
             Continue
           </DynaSubmit>
-          <Button onClick={history.goBack} variant="text" color="primary">
+          <Button onClick={handleDrawerClose} variant="text" color="primary">
             Cancel
           </Button>
         </DynaForm>

@@ -69,7 +69,7 @@ export default {
           filterKey: 'salesforce-sObjects',
           commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           helpKey: 'mapping.salesforce.lookup.sObjectType',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -81,7 +81,7 @@ export default {
           name: 'whereClause',
           type: 'salesforcelookupfilters',
           label: '',
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           visibleWhenAll: [
@@ -116,7 +116,7 @@ export default {
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
-          connectionId,
+          connectionId: ssLinkedConnectionId,
           refreshOptionsOnChangesTo: ['lookup.sObjectType'],
           helpKey: 'mapping.salesforce.lookup.resultField',
           visibleWhenAll: [
@@ -411,19 +411,14 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (
-      !selectedGenerateObj ||
-      (selectedGenerateObj && selectedGenerateObj.type !== 'date' &&
-      selectedGenerateObj.type !== 'datetime')
-    ) {
+    if (!selectedGenerateObj || !['datetime', 'date'].includes(selectedGenerateObj.type)) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;
 
       fields = fields.filter(
-        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
+        el => !['extractDateFormat', 'extractDateTimezone'].includes(el)
       );
     }
-
     if (!selectedGenerateObj) {
       delete fieldMeta.fieldMap.hardcodedCheckbox;
       delete fieldMeta.fieldMap.hardcodedSFSelect;
@@ -432,12 +427,13 @@ export default {
 
       fields = fields.filter(
         el =>
-          el !== 'hardcodedCheckbox' &&
-          el !== 'hardcodedSFSelect' &&
-          el !== 'lookupSFSelect' &&
-          el !== 'defaultSFSelect'
-      );
-    } else if (selectedGenerateObj && selectedGenerateObj.type === 'boolean') {
+          ![
+            'hardcodedCheckbox',
+            'hardcodedSFSelect',
+            'lookupSFSelect',
+            'defaultSFSelect'
+          ].includes(el));
+    } else if (selectedGenerateObj.type === 'boolean') {
       delete fieldMeta.fieldMap.hardcodedDefault;
       delete fieldMeta.fieldMap.hardcodedSFSelect;
       delete fieldMeta.fieldMap.lookupSFSelect;
@@ -445,23 +441,26 @@ export default {
 
       fields = fields.filter(
         el =>
-          el !== 'hardcodedDefault' &&
-          el !== 'hardcodedSFSelect' &&
-          el !== 'lookupSFSelect' &&
-          el !== 'defaultSFSelect'
+          ![
+            'hardcodedDefault',
+            'hardcodedSFSelect',
+            'lookupSFSelect',
+            'defaultSFSelect'
+          ].includes(el)
       );
-    } else if (selectedGenerateObj && selectedGenerateObj.type !== 'picklist') {
+    } else if (selectedGenerateObj.type !== 'picklist') {
       delete fieldMeta.fieldMap.hardcodedSFSelect;
       delete fieldMeta.fieldMap.lookupSFSelect;
       delete fieldMeta.fieldMap.defaultSFSelect;
       delete fieldMeta.fieldMap.hardcodedCheckbox;
-
       fields = fields.filter(
         el =>
-          el !== 'hardcodedCheckbox' &&
-          el !== 'hardcodedSFSelect' &&
-          el !== 'lookupSFSelect' &&
-          el !== 'defaultSFSelect'
+          ![
+            'hardcodedCheckbox',
+            'hardcodedSFSelect',
+            'lookupSFSelect',
+            'defaultSFSelect'
+          ].includes(el)
       );
     } else {
       delete fieldMeta.fieldMap.hardcodedDefault;
@@ -470,9 +469,11 @@ export default {
 
       fields = fields.filter(
         el =>
-          el !== 'hardcodedCheckbox' &&
-          el !== 'hardcodedDefault' &&
-          el !== 'lookupDefault'
+          ![
+            'hardcodedCheckbox',
+            'hardcodedDefault',
+            'lookupDefault',
+          ].includes(el)
       );
     }
 

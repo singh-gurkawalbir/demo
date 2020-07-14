@@ -9,6 +9,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { isJsonString } from '../../../../../utils/string';
 import PanelHeader from '../../../../../components/PanelHeader';
 import FormBuilderButton from '../../../../../components/FormBuilderButton';
+import useSaveStatusIndicator from '../../../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 const emptyObj = {};
 
 export default function CustomSettings({ integrationId: parentIntegrationId, childId }) {
-  const integrationId = childId || parentIntegrationId;
+  const integrationId = useMemo(() => childId || parentIntegrationId, [childId, parentIntegrationId]);
   const dispatch = useDispatch();
   const classes = useStyles();
   const [formKey, setFormKey] = useState(0);
@@ -63,10 +64,10 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
   useEffect(() => {
     setFormKey(formKey => formKey + 1);
   }, [settings]);
-  const validationHandler = field => {
+  const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
-    if (field && field.id === 'settings') {
+    if (field?.id === 'settings') {
       if (
         field.value &&
         typeof field.value === 'string' &&
@@ -75,18 +76,18 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
         return 'Settings must be valid JSON';
       }
     }
-  };
+  }, []);
 
   const handleSubmit = useCallback(
     formVal => {
       // dont submit the form if there is validation error
       // REVIEW: @ashu, re-visit once Surya's form PR is merged
-      if (formVal && formVal.settings && formVal.settings.__invalid) return;
+      if (formVal?.settings?.__invalid) return;
       const patchSet = [
         {
           op: 'replace',
           path: '/settings',
-          value: formVal && formVal.settings,
+          value: formVal?.settings,
         },
       ];
 
@@ -105,6 +106,13 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
     [dispatch, integrationId]
   );
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/integrations/${integrationId}`,
+      method: 'put',
+      onSave: handleSubmit,
+    }
+  );
   return (
     <div className={classes.root}>
       <PanelHeader title="Settings" >
@@ -122,9 +130,9 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
           <DynaSubmit
             resourceType="integrations"
             resourceId={integrationId}
-            disabled={!canEditIntegration}
-            onClick={handleSubmit}>
-            Save
+            disabled={!canEditIntegration || disableSave}
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
           </DynaSubmit>
         </DynaForm>
       </div>
