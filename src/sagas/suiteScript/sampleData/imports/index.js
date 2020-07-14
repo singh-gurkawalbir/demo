@@ -17,9 +17,10 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
   const { import: importConfig} = flow;
   const {type: importType, _connectionId, netsuite, salesforce} = importConfig;
   if (importType === 'netsuite') {
-    const { recordType } = netsuite;
+    const recordType = options.recordType || netsuite?.recordType;
 
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+
     yield put(
       actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache })
     );

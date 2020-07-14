@@ -51,16 +51,19 @@ export default function MappingSettings(props) {
     integrationId,
     flowId,
   } = props;
-  const { lookups = []} = useSelector(state => selectors.suiteScriptMappings(state));
-  const {importType, connectionId, recordType} = useSelector(state => {
+  const { lookups = [], subRecordMappingId, recordType} = useSelector(state => selectors.suiteScriptMappings(state));
+  const {data: generateFields} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
+  const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
+
+  const {importType, connectionId} = useSelector(state => {
     const flows = selectors.suiteScriptResourceList(state, {
       resourceType: 'flows',
       integrationId,
       ssLinkedConnectionId,
     });
     const selectedFlow = flows && flows.find(flow => flow._id === flowId);
-    const {type, _connectionId, recordType } = (selectedFlow && selectedFlow.import) || {};
-    return {importType: type, connectionId: _connectionId, recordType};
+    const {type, _connectionId } = (selectedFlow && selectedFlow.import) || {};
+    return {importType: type, connectionId: _connectionId};
   }, shallowEqual);
 
   const [formState, setFormState] = useState({
@@ -78,9 +81,9 @@ export default function MappingSettings(props) {
       if (importType === 'netsuite') {
         return netsuiteMetadata.getMetaData({
           value,
-          extractFields: [],
+          extractFields,
           generate,
-          generateFields: [],
+          generateFields,
           ssLinkedConnectionId,
           connectionId,
           lookup,
@@ -90,15 +93,15 @@ export default function MappingSettings(props) {
       if (importType === 'salesforce') {
         return salesforceMetadata.getMetaData({
           value,
-          extractFields: [],
+          extractFields,
           generate,
-          generateFields: [],
+          generateFields,
           ssLinkedConnectionId,
           connectionId,
           lookup,
         });
       }
-    }, [connectionId, generate, importType, lookup, recordType, ssLinkedConnectionId, value]
+    }, [connectionId, extractFields, generate, generateFields, importType, lookup, recordType, ssLinkedConnectionId, value]
   );
   const handleSubmit = useCallback(
     formVal => {

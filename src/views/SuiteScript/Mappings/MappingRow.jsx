@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
@@ -9,7 +9,6 @@ import MappingConnectorIcon from '../../../components/icons/MappingConnectorIcon
 import GripperIcon from '../../../components/icons/GripperIcon';
 import Settings from './Settings/Button';
 import * as selectors from '../../../reducers';
-import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
 import DynaTypeableSelect from '../../../components/DynaForm/fields/DynaTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
@@ -96,7 +95,6 @@ export default function MappingRow(props) {
     onMove,
     onDrop,
     index,
-    importType,
     isDraggable = false,
   } = props;
   const {
@@ -107,26 +105,9 @@ export default function MappingRow(props) {
   } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
-
-  const {data: importData} = useSelector(state => selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {subRecordMappingId} = useSelector(state => selectors.suiteScriptMappings(state));
+  const {data: generateFields} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const extractFields = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId})).data;
-  const generateFields = useMemo(() => {
-    const formattedFields = suiteScriptMappingUtil.getFormattedGenerateData(
-      importData,
-      importType
-    );
-    return formattedFields.sort((a, b) => {
-      const nameA = a.name ? a.name.toUpperCase() : '';
-      const nameB = b.name ? b.name.toUpperCase() : '';
-
-      if (nameA < nameB) return -1;
-
-      if (nameA > nameB) return 1;
-
-      return 0; // names must be equal
-    });
-  }, [importData, importType]);
-
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
