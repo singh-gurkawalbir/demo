@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
@@ -8,6 +9,9 @@ import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import CodeEditor from '../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../components/RawHtml';
+import RightDrawer from '../../../../../../components/drawer/Right';
+import EditorSaveButton from '../../../../../../components/ResourceFormFactory/Actions/EditorSaveButton';
+import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -15,23 +19,43 @@ const useStyles = makeStyles(theme => ({
   },
   editorContainer: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
-    height: '25vh',
-    marginBottom: theme.spacing(3),
+    height: '40vh',
+    margin: theme.spacing(2, 0),
   },
   previewContainer: {
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderRadius: 4,
     backgroundColor: theme.palette.background.default,
-    height: '25vh',
+    height: '30vh',
     padding: theme.spacing(1),
     margin: theme.spacing(2, 0),
     overflow: 'auto',
+  },
+  button: {
+    marginRight: theme.spacing(-0.75),
+  },
+  actionContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  wrapper: {
+    '& Button': {
+      marginRight: theme.spacing(2),
+    },
+    '& Button:last-child': {
+      marginRight: 0,
+    },
   },
 }));
 
 export default function ReadmeSection({ integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const { confirmDialog } = useConfirmDialog();
+  const hideSaveAction = false;
+  const editorId = `readme-${integrationId}`;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
   );
@@ -39,53 +63,146 @@ export default function ReadmeSection({ integrationId }) {
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId).edit
   );
-  const [value, setValue] = useState(integration && integration.readme);
+  const readmeValue = integration && integration.readme;
 
-  function handleChange(value) {
-    setValue(value);
-  }
-
-  const handleSave = () => {
-    const patchSet = [
-      {
-        op: 'replace',
-        path: '/readme',
-        value,
-      },
-    ];
-
-    dispatch(actions.resource.patchStaged(integrationId, patchSet, 'value'));
+  const toggleEditMode = useCallback(() => {
+    history.push(`${match.url}/editReadme`);
     dispatch(
-      actions.resource.commitStaged('integrations', integrationId, 'value')
+      actions.editor.init(editorId, 'readme', {
+        data: readmeValue,
+        _init_data: readmeValue,
+        autoEvaluate: false,
+        autoEvaluateDelay: 200,
+        integrationId,
+      })
     );
-  };
+  }, [history, match.url, dispatch, editorId, readmeValue, integrationId]);
+  const onClose = useCallback(() => {
+    history.goBack();
+  }, [history]);
+
+  useEffect(() => {
+    dispatch(
+      actions.editor.init(editorId, 'readme', {
+        data: readmeValue,
+        _init_data: readmeValue,
+        autoEvaluate: false,
+        autoEvaluateDelay: 200,
+        integrationId,
+      })
+    );
+    // we only want to init the editor once per render (onMount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const editor = useSelector(state => selectors.editor(state, editorId));
+  const { data } = editor;
+  const handleChange = useCallback(
+    data => {
+      dispatch(actions.editor.patch(editorId, { data }));
+    },
+    [dispatch, editorId]
+  );
+  const saveInProgress = useSelector(
+    state => selectors.editorPatchStatus(state, editorId).saveInProgress
+  );
+  const isEditorDirty = useSelector(state =>
+    selectors.isEditorDirty(state, editorId)
+  );
+
+  const handleCancelClick = useCallback(() => {
+    if (!isEditorDirty) {
+      return onClose();
+    }
+
+    confirmDialog({
+      title: 'Confirm cancel',
+      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+      buttons: [
+        {
+          label: 'Yes, cancel',
+          onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
+        },
+      ]
+    });
+  }, [confirmDialog, isEditorDirty, onClose]);
+
+  const disableSave =
+    !editor ||
+    editor.error ||
+    (isEditorDirty !== undefined && !isEditorDirty);
 
   return (
-    <>
-      <PanelHeader title="Readme" />
+    <div>
+      <PanelHeader title="Readme">
+        <Button
+          className={classes.button}
+          data-test="form-editor-action"
+          variant="text"
+          onClick={toggleEditMode}>
+          Edit Readme
+        </Button>
+      </PanelHeader>
       <div className={classes.root}>
+        <RawHtml className={classes.previewContainer} html={readmeValue} />
+      </div>
+      <RightDrawer
+        path="editReadme"
+        height="tall"
+        width="xl"
+        // type="paper"
+        title="Edit Readme"
+        variant="temporary"
+        onClose={onClose}>
         <div className={classes.editorContainer}>
           <CodeEditor
             name="readme"
-            value={value}
+            value={data}
             mode="html"
             readOnly={!canEditIntegration}
             onChange={handleChange}
           />
         </div>
-
         <Typography variant="h4">Preview</Typography>
-        <RawHtml className={classes.previewContainer} html={value} />
-
-        <Button
-          data-test="saveReadme"
-          disabled={!canEditIntegration}
-          variant="contained"
-          color="primary"
-          onClick={handleSave}>
-          Save
-        </Button>
-      </div>
-    </>
+        <RawHtml className={classes.previewContainer} html={data} />
+        <div className={classes.actionContainer}>
+          <div className={classes.wrapper}>
+            {!hideSaveAction && (
+            <>
+              <EditorSaveButton
+                id={editorId}
+                variant="outlined"
+                color="primary"
+                dataTest="saveEditor"
+                disabled={disableSave}
+                submitButtonLabel="Save"
+              />
+              <EditorSaveButton
+                id={editorId}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseEditor"
+                disabled={disableSave}
+                onClose={onClose}
+                submitButtonLabel="Save & close"
+              />
+            </>
+            )}
+            <Button
+              variant="text"
+              color="primary"
+              data-test="closeEditor"
+              onClick={handleCancelClick}
+              disabled={!!saveInProgress}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </RightDrawer>
+    </div>
   );
 }
