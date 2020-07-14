@@ -2,7 +2,7 @@ import produce from 'immer';
 import {differenceWith, isEqual } from 'lodash';
 import shortid from 'shortid';
 import actionTypes from '../../../actions/types';
-import suiteScriptMappingUtil from '../../../utils/suiteScriptMapping';
+import { validateMappings } from '../../../utils/suiteScript/mapping';
 
 const { deepClone } = require('fast-json-patch');
 
@@ -24,7 +24,7 @@ export default (state = {}, action) => {
          * sObjectType // in case of salesforce import
          * }
          */
-        const { generatedMappings, lookups, options = {} } = action;
+        const { generatedMappings, lookups = [], subRecordFields, options = {} } = action;
 
         const formattedMappings = generatedMappings.map(m => ({...m,
           rowIdentifier: 0,
@@ -38,6 +38,7 @@ export default (state = {}, action) => {
           changeIdentifier: 0,
           ssLinkedConnectionId,
           integrationId,
+          subRecordFields,
           flowId,
           status: 'success',
           ...options
@@ -62,7 +63,7 @@ export default (state = {}, action) => {
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
+        } = validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
         draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
@@ -128,7 +129,7 @@ export default (state = {}, action) => {
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
+        } = validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
         draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
 
@@ -175,7 +176,7 @@ export default (state = {}, action) => {
           const {
             isSuccess,
             errMessage: validationErrMsg,
-          } = suiteScriptMappingUtil.validateMappings(
+          } = validateMappings(
             draft.mappings.mappings,
             draft.mappings.lookups
           );
@@ -192,7 +193,7 @@ export default (state = {}, action) => {
         const {
           isSuccess,
           errMessage: validationErrMsg,
-        } = suiteScriptMappingUtil.validateMappings(draft.mappings.mappings, draft.mappings.lookups);
+        } = validateMappings(draft.mappings.mappings, draft.mappings.lookups);
 
         draft.mappings.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;

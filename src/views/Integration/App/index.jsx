@@ -324,7 +324,7 @@ export default function IntegrationApp(props) {
         )}
         {supportsMultiStore && (
           <div className={classes.actions}>
-            {accessLevel === 'owner' && (
+            {(accessLevel === 'owner' || accessLevel === 'manage') && (
               <IconTextButton
                 variant="text"
                 data-test={`add${storeLabel}`}

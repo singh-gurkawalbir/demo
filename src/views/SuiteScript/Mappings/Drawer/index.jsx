@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import RightDrawer from '../../../components/drawer/Right';
-import SuiteScriptMapping from '.';
+import RightDrawer from '../../../../components/drawer/Right';
+import MappingWrapper from './MappingWrapper';
 
 export default function SuiteScriptMappingDrawer(props) {
   const {ssLinkedConnectionId, integrationId} = props;
@@ -21,7 +21,7 @@ export default function SuiteScriptMappingDrawer(props) {
       // helpKey={}
       // helpTitle={}
       >
-      <SuiteScriptMapping
+      <MappingWrapper
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         flowId={flowId}
