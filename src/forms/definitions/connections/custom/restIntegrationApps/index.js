@@ -1,4 +1,3 @@
-import shopify from './shopify';
 import zendesk from './zendesk';
 import jet from './jet';
 import jira from './jira';
@@ -7,7 +6,6 @@ import ebay from './ebay';
 import bigcommerce from './bigcommerce';
 
 export default {
-  shopify,
   zendesk,
   jet,
   jira,
