@@ -13,15 +13,15 @@ import { convertUtcToTimezone } from '../../../../utils/date';
 
 export default function DatePicker(props) {
   const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
-  const resourceType = resourceContext && resourceContext.resourceType;
-  const resourceId = resourceContext && resourceContext.resourceId;
+  const resourceType = resourceContext?.resourceType;
+  const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
   const [componentMounted, setComponentMounted] = useState(false);
   const isIAResource = useSelector(state => {
     const resource =
       selectors.resource(state, resourceType, resourceId) || {};
 
-    return !!(resource && resource._connectorId);
+    return !!(resource?._connectorId);
   });
   const { dateFormat, timezone } = useSelector(state => {
     const { dateFormat, timezone } = selectors.userProfilePreferencesProps(state);

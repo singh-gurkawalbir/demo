@@ -67,7 +67,7 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
   const validationHandler = useCallback(field => {
     // Incase of invalid json throws error to be shown on the field
 
-    if (field && field.id === 'settings') {
+    if (field?.id === 'settings') {
       if (
         field.value &&
         typeof field.value === 'string' &&
@@ -82,12 +82,12 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
     formVal => {
       // dont submit the form if there is validation error
       // REVIEW: @ashu, re-visit once Surya's form PR is merged
-      if (formVal && formVal.settings && formVal.settings.__invalid) return;
+      if (formVal?.settings?.__invalid) return;
       const patchSet = [
         {
           op: 'replace',
           path: '/settings',
-          value: formVal && formVal.settings,
+          value: formVal?.settings,
         },
       ];
 
