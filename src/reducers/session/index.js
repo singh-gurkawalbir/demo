@@ -406,6 +406,9 @@ export function checkUpgradeRequested(state, licenseId) {
 export function isOnOffInProgress(state, flowId) {
   return fromFlows.isOnOffInProgress(state && state.flows, flowId);
 }
+export function canOpenOauthConnection(state, integrationId) {
+  return fromIntegrationApps.canOpenOauthConnection(state && state.integrationApps, integrationId);
+}
 
 export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
