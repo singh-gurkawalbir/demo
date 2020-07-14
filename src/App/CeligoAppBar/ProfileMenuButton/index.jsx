@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: theme.spacing(1),
+    height: 30,
   },
   profileArea: {
     display: 'flex',
@@ -76,6 +77,7 @@ const useStyles = makeStyles(theme => ({
   bottomActionsBtn: {
     fontFamily: 'source sans pro',
     padding: 0,
+    paddingTop: 2,
   }
 }));
 
