@@ -165,7 +165,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   // parse the resourceBody and construct props to process file content
   if (!values.editorValues) {
     // eslint-disable-next-line no-param-reassign
-    values.editorValues = generateFileParserOptionsFromResource(body, type);
+    values.editorValues = generateFileParserOptionsFromResource(body);
   }
   const dataForEachStageMap = {
     rawFile: { data: [{ body: file, type }] },

@@ -288,10 +288,11 @@ export default {
         flowId,
         error
       }),
-    reset: (ssLinkedConnectionId, resourceId) =>
+    reset: ({ssLinkedConnectionId, integrationId, flowId}) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
         ssLinkedConnectionId,
-        resourceId,
+        integrationId,
+        flowId
       }),
   },
   job: {
@@ -525,13 +526,13 @@ export default {
       }),
   },
   mapping: {
-    init: ({ ssLinkedConnectionId, integrationId, flowId }) =>
+    init: ({ ssLinkedConnectionId, integrationId, flowId, subRecordMappingId }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
-        ssLinkedConnectionId, integrationId, flowId
+        ssLinkedConnectionId, integrationId, flowId, subRecordMappingId
       }),
-    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options }) =>
+    initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
-        ssLinkedConnectionId, integrationId, flowId, generatedMappings, lookups, options
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options
       }),
     patchField: ({ field, key, value }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),

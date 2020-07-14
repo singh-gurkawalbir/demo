@@ -1,7 +1,7 @@
 export default {
   'http.method': {
     type: 'select',
-    label: 'Method',
+    label: 'HTTP method',
     required: true,
     visibleWhen: [
       {

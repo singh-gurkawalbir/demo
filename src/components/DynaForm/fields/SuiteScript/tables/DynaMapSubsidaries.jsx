@@ -12,6 +12,7 @@ import Spinner from '../../../../Spinner';
 const fieldMappingTypeOptions = [{items: ['Always Use', 'Map'].map(label => ({label, value: label}))}];
 
 const SalesforceSubsidarySelect = ({
+  disabled,
   salesforceSubsidiaryFieldOptions,
   selectedOption,
   mapSubsidiariesSalesforceSubsidiaryFieldID, onFieldChange}) => {
@@ -21,6 +22,7 @@ const SalesforceSubsidarySelect = ({
 
   return (
     <DynaSelect
+      disabled={disabled}
       value={selectedOption}
       label="Salesforce Subsidiary Field"
       options={generatedSalesforceSubsidiaryFieldOptions}
@@ -65,7 +67,8 @@ function DynaMapSubsidaries(props) {
 
   const optionsMap = useMemo(() => {
     const selectedOptionList = allFieldsOptions &&
-    allFieldsOptions.length && allFieldsOptions.find(opt => opt.label === selectedOption)?.options;
+    // name corresponds to value of an option
+    allFieldsOptions.length && allFieldsOptions.find(opt => opt.name === selectedOption)?.options;
     const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
 
     setShouldReset(state => !state);
@@ -121,7 +124,7 @@ function DynaMapSubsidaries(props) {
         (<DynaSelect
           label="Select Subsidiary"
           id={id}
-
+          disabled={disabled}
           onFieldChange={(id, value) => {
             setSubsidaryValue(value);
           }}
@@ -130,6 +133,7 @@ function DynaMapSubsidaries(props) {
             <>
               {metadataStatus === 'requested' ? <Spinner /> : (
                 <SalesforceSubsidarySelect
+                  disabled={disabled}
                   salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
                   selectedOption={selectedOption}
                   mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
@@ -144,7 +148,6 @@ function DynaMapSubsidaries(props) {
                 }}
                 hideLabel
                 shouldReset={shouldReset}
-
                 disableDeleteRows={disabled}
       />
             </>

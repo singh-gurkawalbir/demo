@@ -57,6 +57,15 @@ export function* createComponents({ resourceType, resourceId }) {
     });
   } catch (error) {
     yield put(actions.template.failedInstall(`${resourceType}-${resourceId}`));
+    if (data.newTemplateInstaller) {
+      yield put(
+        actions.integrationApp.clone.receivedIntegrationClonedStatus(
+          resourceId,
+          '',
+          error
+        )
+      );
+    }
 
     return undefined;
   }
