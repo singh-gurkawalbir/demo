@@ -1405,12 +1405,19 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
     if (!childId) {
       childIntegrations.forEach(intId => {
         const integration = resource(state, 'integrations', intId);
-        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
+        if (integration) {
+          registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
+        }
       });
     } else {
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
-      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections);
+      if (parentIntegration) {
+        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections);
+      }
+      if (childIntegration) {
+        registeredConnections = registeredConnections.concat(childIntegration._registeredConnections);
+      }
     }
 
     if (registeredConnections) {
