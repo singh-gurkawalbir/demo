@@ -67,12 +67,11 @@ export default function ReadmeSection({ integrationId }) {
 
   const toggleEditMode = useCallback(() => {
     history.push(`${match.url}/editReadme`);
+    // initializing editor again to clearout previous uncommitted changes
     dispatch(
       actions.editor.init(editorId, 'readme', {
         data: readmeValue,
         _init_data: readmeValue,
-        autoEvaluate: false,
-        autoEvaluateDelay: 200,
         integrationId,
       })
     );
@@ -86,8 +85,6 @@ export default function ReadmeSection({ integrationId }) {
       actions.editor.init(editorId, 'readme', {
         data: readmeValue,
         _init_data: readmeValue,
-        autoEvaluate: false,
-        autoEvaluateDelay: 200,
         integrationId,
       })
     );
