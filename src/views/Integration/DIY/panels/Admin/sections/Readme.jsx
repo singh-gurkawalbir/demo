@@ -137,7 +137,7 @@ export default function ReadmeSection({ integrationId }) {
     (isEditorDirty !== undefined && !isEditorDirty);
 
   return (
-    <div>
+    <>
       <PanelHeader title="Readme">
         <Button
           className={classes.button}
@@ -203,6 +203,6 @@ export default function ReadmeSection({ integrationId }) {
           </div>
         </div>
       </RightDrawer>
-    </div>
+    </>
   );
 }
