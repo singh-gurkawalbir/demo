@@ -251,7 +251,7 @@ export default function UserDetail(props) {
                   />
 
             </TableCell>
-            {integrationId && user._id !== ACCOUNT_IDS.OWN && (
+            {integrationId && user._id !== ACCOUNT_IDS.OWN ? (
               <TableCell>
                 <Menu
                   anchorEl={anchorEl}
@@ -269,7 +269,8 @@ export default function UserDetail(props) {
                   <MoreHorizIcon />
                 </IconButton>
               </TableCell>
-            )}
+            ) : (
+              <TableCell />)}
 
             {!integrationId && (
             <>
