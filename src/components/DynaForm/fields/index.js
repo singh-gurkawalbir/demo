@@ -33,6 +33,7 @@ import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthCo
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaNetSuiteDefaultValue from './DynaNetSuiteDefaultValue';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
@@ -219,6 +220,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,
