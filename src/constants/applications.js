@@ -816,6 +816,8 @@ export const groupApplications = (
           'yammer',
           'hybris',
           'etsy',
+          'concur',
+          'concurall',
           'concurv4',
           'constantcontact',
         ].includes(asst.id)
