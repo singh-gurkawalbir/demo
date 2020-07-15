@@ -5083,7 +5083,7 @@ export function httpAssistantSupportsMappingPreview(state, importId) {
 
   if (_integrationId && http) {
     const connection = resource(state, 'connections', _connectionId);
-    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
+    return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
   }
 
   return false;
