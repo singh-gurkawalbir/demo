@@ -6,6 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
 import * as selectors from '../../reducers';
+import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 
 export function* installStep({ id, installerFunction, storeId, addOnId }) {
@@ -208,6 +209,7 @@ export function* installStoreStep({ id, installerFunction }) {
   }
 
   if (stepCompleteResponse && stepCompleteResponse.success) {
+    yield call(getResource, { resourceType: 'integrations', id });
     yield put(
       actions.integrationApp.store.completedStepInstall(
         id,

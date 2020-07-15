@@ -87,6 +87,7 @@ export default function DynaTypeableSelect(props) {
     TextComponent,
     // triggered when field is touched.
     triggerBlurOnTouch = false,
+    hideDropdownOnChange = false,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -132,6 +133,7 @@ export default function DynaTypeableSelect(props) {
     setInputState({ ...inputState, inputValue: newVal });
 
     if (onBlur) onBlur(id, newVal);
+    if (hideDropdownOnChange) { setShowDropdown(false); }
   };
 
   const handleBlur = () => {
