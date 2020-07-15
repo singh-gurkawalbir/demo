@@ -473,11 +473,13 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   let addIndexPP = flowDoc?.pageProcessors?.length || 0;
   let addIndexPG = flowDoc?.pageGenerators?.length || 0;
 
-  // if user clicked on pending config bubble, replace it with newly created resource
-  // IO-15882
+  // Incoming resourceIds that model new PP or PGs (are prefixed with 'new-')  may contain a suffix
+  // identifying if the resource should replace an existing pending resource, or if absent, add a new
+  // resource. If this index suffix exists, we replace the pending PP/PG at that location, otherwise we
+  // add a new one.
   const [, pendingIndex] = tempResourceId?.split('.');
   let pending = false;
-  if (pendingIndex ?? false) {
+  if (pendingIndex) {
     pending = true;
     addIndexPP = pendingIndex;
     addIndexPG = pendingIndex;

@@ -200,7 +200,7 @@ const PageProcessor = ({
         },
       ];
 
-      // IO-15882, for pending resource, passing the PP index in newId
+      // for pending resource, passing the PP index in newId
       // which will be used in saga to add or replace the pending resource
       newId = `${newId}.${index}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
