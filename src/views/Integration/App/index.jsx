@@ -9,7 +9,6 @@ import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
-import AdminIcon from '../../../components/icons/InviteUsersIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
@@ -19,7 +18,6 @@ import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
-import CustomSettingsIcon from '../../../components/icons/CustomSettingsIcon';
 import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
@@ -34,9 +32,11 @@ import getRoutePath from '../../../utils/routePaths';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import integrationAppUtil, { getAdminLevelTabs, getIntegrationAppUrlName } from '../../../utils/integrationApps';
 import SettingsIcon from '../../../components/icons/SettingsIcon';
+import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
+import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 
 const allTabs = [
-  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: SettingsPanel},
+  { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
@@ -53,7 +53,7 @@ const allTabs = [
   {
     path: 'users',
     label: 'Users',
-    Icon: AdminIcon,
+    Icon: GroupOfUsersIcon,
     Panel: UsersPanel,
   },
   {
@@ -71,7 +71,7 @@ const allTabs = [
   {
     path: 'admin',
     label: 'Admin',
-    Icon: SettingsIcon,
+    Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
