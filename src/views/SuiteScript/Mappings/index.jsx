@@ -80,6 +80,7 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+    cursor: 'pointer'
   },
   spinner: {
     marginLeft: 5,
@@ -106,8 +107,8 @@ const SuiteScriptMapping = (props) => {
     localMappings: [],
     localChangeIdentifier: -1,
   });
+  const [salesforceLayoutId, setSalesforceLayoutId] = useState('');
   const { localMappings, localChangeIdentifier } = state;
-
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -123,13 +124,16 @@ const SuiteScriptMapping = (props) => {
     lastModifiedRowKey = '',
     sfSubListExtractFieldName,
   } = useSelector(state => selectors.suiteScriptMappings(state));
-  const salesforceMasterRecordTypeInfo = useSelector(state => selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
-    ssLinkedConnectionId,
-    flowId}));
+  const sfLayoutId = useSelector(state => {
+    const salesforceMasterRecordTypeInfo = selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
+      ssLinkedConnectionId,
+      flowId
+    });
+    return salesforceMasterRecordTypeInfo?.data?.recordTypeId;
+  });
   const saveInProgress = useSelector(
     state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
-  const { recordTypeId: salesforceMasterRecordTypeId } = (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) || {};
   const {status: importSampleDataStatus, } = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
@@ -306,6 +310,13 @@ const SuiteScriptMapping = (props) => {
       });
     }
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
+
+  useEffect(() => {
+    if (sfLayoutId && salesforceLayoutId !== sfLayoutId) {
+      setSalesforceLayoutId(sfLayoutId);
+    }
+  }, [sfLayoutId, salesforceLayoutId]);
+
   const showPreviewPane = ['netsuite', 'salesforce'].includes(importType);
   return (
     <div className={classes.root}>
@@ -446,7 +457,7 @@ const SuiteScriptMapping = (props) => {
             connectionId={connectionId}
             sObjectType={sObjectType}
             sObjectLabel={sObjectType}
-            layoutId={salesforceMasterRecordTypeId}
+            layoutId={salesforceLayoutId}
             onFieldClick={handleSFNSAssistantFieldClick}
             data={{}}
      />
