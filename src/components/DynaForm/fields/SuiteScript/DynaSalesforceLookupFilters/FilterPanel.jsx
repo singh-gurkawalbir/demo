@@ -46,7 +46,6 @@ export default function FilterPanel({
   data = defaultData,
   readOnly,
 }) {
-  console.log('props', props);
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
