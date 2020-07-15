@@ -6,7 +6,7 @@ import actionTypes from '../../../../actions/types';
 import * as selectors from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
-import suiteScriptMappingUtil from '../../../../utils/suiteScriptMapping';
+import { getExtractPaths } from '../../../../utils/suiteScript/mapping';
 
 export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const {refreshCache } = options;
@@ -38,7 +38,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     const _exp = deepClone(exportConfig);
     _exp.file.type = 'csv';
     const previewData = yield call(requestFileAdaptorSampleData, {resource: _exp});
-    const extractList = suiteScriptMappingUtil.getExtractPaths(
+    const extractList = getExtractPaths(
       previewData,
     );
     yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData: extractList}));
@@ -92,7 +92,17 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     }
   }
 }
+
+export function* onResourceUpdate({ master, ssLinkedConnectionId, integrationId, resourceType }) {
+  if (resourceType === 'exports') {
+    const {_id: flowId} = master;
+    return yield put(
+      actions.suiteScript.sampleData.reset({ ssLinkedConnectionId, integrationId, flowId})
+    );
+  }
+}
 export const flowSampleDataSagas = [
   takeLatest(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, requestFlowSampleData),
+  takeLatest(actionTypes.SUITESCRIPT.RESOURCE.UPDATED, onResourceUpdate),
 
 ];

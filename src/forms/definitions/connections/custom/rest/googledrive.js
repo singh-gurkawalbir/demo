@@ -27,6 +27,9 @@ export default {
         'https://www.googleapis.com/auth/drive.scripts',
       ],
     },
+    application: {
+      fieldId: 'application',
+    },
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {

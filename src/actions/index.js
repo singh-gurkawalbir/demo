@@ -779,6 +779,10 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        connectionId, openOauthConnection, id
+      }),
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
     }),
@@ -932,10 +936,10 @@ const integrationApp = {
       }),
   },
   clone: {
-    receivedIntegrationClonedStatus: (id, integrationId) =>
+    receivedIntegrationClonedStatus: (id, integrationId, error) =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
         id,
-        isCloned: true,
+        isCloned: !error,
         integrationId,
       }),
     clearIntegrationClonedStatus: id =>

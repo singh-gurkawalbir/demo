@@ -43,7 +43,7 @@ describe('netsuiteUser roles reducer ', () => {
       [connectionId]: { userRoles: { something: {} }, status: 'success' },
     });
   });
-  test('should update the status to failed when the request for netsuiteUserRoles has failed', () => {
+  test('should update the status to error when the request for netsuiteUserRoles has failed', () => {
     let state = reducer(
       undefined,
       actions.resource.connections.netsuite.requestUserRoles(connectionId)
@@ -58,7 +58,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: { status: 'failed', message: 'Failed to retrieve' },
+      [connectionId]: { status: 'error', message: 'Failed to retrieve' },
     });
   });
   test('should clear the the message and the status on a failed request for netsuiteUserRoles', () => {
@@ -76,7 +76,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: { status: 'failed', message: 'Failed to retrieve' },
+      [connectionId]: { status: 'error', message: 'Failed to retrieve' },
     });
 
     state = reducer(
@@ -107,7 +107,7 @@ describe('netsuiteUser roles reducer ', () => {
 
     expect(state[connectionId]).toEqual({
       message: 'Failed to retrieve',
-      status: 'failed',
+      status: 'error',
       userRoles: { something: {} },
     });
   });

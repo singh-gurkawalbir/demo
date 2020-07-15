@@ -33,6 +33,7 @@ import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthCo
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaNetSuiteDefaultValue from './DynaNetSuiteDefaultValue';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
@@ -111,6 +112,7 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
   refreshabletext: DynaRefreshableText,
@@ -206,6 +208,7 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
+  checkboxtradingpartnerfield: DynaCheckboxTradingPartnerField,
   exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
@@ -220,6 +223,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,

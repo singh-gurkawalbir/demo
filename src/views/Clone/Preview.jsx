@@ -78,6 +78,7 @@ export default function ClonePreview(props) {
   Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`;
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
+  const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
@@ -138,12 +139,16 @@ export default function ClonePreview(props) {
   ];
 
   useEffect(() => {
-    if (isCloned && isIAIntegration) {
-      props.history.push(
-        getRoutePath(
-          `/integrationapps/${integrationAppName}/${integrationId}/setup`
-        )
-      );
+    if (isIAIntegration) {
+      if (isCloned) {
+        props.history.push(
+          getRoutePath(
+            `/integrationapps/${integrationAppName}/${integrationId}/setup`
+          )
+        );
+      } else {
+        setCloneRequested(false);
+      }
       dispatch(
         actions.integrationApp.clone.clearIntegrationClonedStatus(resource._id)
       );
@@ -341,6 +346,7 @@ export default function ClonePreview(props) {
           }
         )
       );
+      setCloneRequested(true);
       dispatch(actions.clone.createComponents(resourceType, resourceId));
 
       return;
@@ -394,6 +400,7 @@ export default function ClonePreview(props) {
               optionsHandler={fieldMeta.optionsHandler}>
               <DynaSubmit
                 skipDisableButtonForFormTouched
+                disabled={cloneRequested}
                 data-test="clone"
                 onClick={clone}>
                 {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}

@@ -782,6 +782,31 @@ export default {
       },
     ],
   },
+  'http.successMediaType': {
+    type: 'select',
+    label: 'Success media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+        ],
+      },
+    ],
+  },
+  'http.errorMediaType': {
+    type: 'select',
+    label: 'Error media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+        ],
+      },
+    ],
+  },
   configureApiRateLimits: {
     label: 'Configure api rate limits',
     type: 'checkbox',
@@ -1397,7 +1422,7 @@ export default {
     label: 'User directory is root',
   },
   'ftp.tradingPartner': {
-    type: 'checkbox',
+    type: 'checkboxtradingpartnerfield',
     label: 'External trading partner?',
   },
   'ftp.useImplicitFtps': {
