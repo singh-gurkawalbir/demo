@@ -18,6 +18,10 @@ export default {
       newValues['/export/salesforce/errorMessageField/id'] = undefined;
     }
 
+    if (newValues['/export/salesforce/exportType'] === 'once') {
+      newValues['/export/salesforce/exportType'] = 'exportTypeOnce';
+    }
+
     return newValues;
   },
   fieldMap: {
