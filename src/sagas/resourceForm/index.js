@@ -470,17 +470,26 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     createdId
   );
 
-  const addIndexPP =
-    (flowDoc && flowDoc.pageProcessors && flowDoc.pageProcessors.length) || 0;
-  const addIndexPG =
-    (flowDoc && flowDoc.pageGenerators && flowDoc.pageGenerators.length) || 0;
+  let addIndexPP = flowDoc?.pageProcessors?.length || 0;
+  let addIndexPG = flowDoc?.pageGenerators?.length || 0;
+
+  // if user clicked on pending config bubble, replace it with newly created resource
+  // IO-15882
+  const [, pendingIndex] = tempResourceId?.split('.');
+  let pending = false;
+  if (pendingIndex ?? false) {
+    pending = true;
+    addIndexPP = pendingIndex;
+    addIndexPG = pendingIndex;
+  }
+
   let flowPatches = [];
 
   if (resourceType === 'exports') {
     if (createdResource?.isLookup) {
       flowPatches = [
         {
-          op: 'add',
+          op: pending ? 'replace' : 'add',
           path: `/pageProcessors/${addIndexPP}`,
           value: { type: 'export', _exportId: createdId },
         },
@@ -491,11 +500,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       // perform replace in that case
       // eslint-disable-next-line no-lonely-if
       if (
-        flowDoc &&
-        flowDoc.pageGenerators &&
-        flowDoc.pageGenerators[0] &&
-        flowDoc.pageGenerators[0].application &&
-        flowDoc.pageGenerators[0].application === 'dataLoader'
+        flowDoc?.pageGenerators?.[0]?.application === 'dataLoader'
       ) {
         flowPatches = [
           {
@@ -507,7 +512,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
       } else {
         flowPatches = [
           {
-            op: 'add',
+            op: pending ? 'replace' : 'add',
             path: `/pageGenerators/${addIndexPG}`,
             value: { _exportId: createdId },
           },
@@ -519,7 +524,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
 
     flowPatches = [
       {
-        op: 'add',
+        op: pending ? 'replace' : 'add',
         path: `/pageProcessors/${addIndexPP}`,
         value: { type: 'import', _importId: createdId },
       },

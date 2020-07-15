@@ -168,7 +168,7 @@ const PageProcessor = ({
   // #endregion
 
   const handleBlockClick = useCallback(() => {
-    const newId = generateNewId();
+    let newId = generateNewId();
 
     if (pending) {
       // generate newId
@@ -200,8 +200,9 @@ const PageProcessor = ({
         },
       ];
 
-      // console.log('patchSet: ', patchSet);
-
+      // IO-15882, for pending resource, passing the PP index in newId
+      // which will be used in saga to add or replace the pending resource
+      newId = `${newId}.${index}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
@@ -225,6 +226,7 @@ const PageProcessor = ({
     resource,
     resourceId,
     resourceType,
+    index
   ]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
