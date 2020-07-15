@@ -302,7 +302,7 @@ export function* fetchUIVersion() {
   let resp;
   try {
     resp = yield call(apiCallWithRetry, {
-      path: '/ui/version',
+      path: '/ui/version?app=react',
     });
   // eslint-disable-next-line no-empty
   } catch (e) {
