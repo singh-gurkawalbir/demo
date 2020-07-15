@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Link } from '@material-ui/core';
+import differenceBy from 'lodash/differenceBy';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -77,11 +78,13 @@ export default function IntegrationAppAddNewStore(props) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
+  const [initialStores] = useState(integration.stores);
   const showUninstall = !!(
     integration &&
     integration.settings &&
     integration.settings.defaultSectionId
   );
+  const integrationStores = integration?.stores;
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
@@ -112,23 +115,34 @@ export default function IntegrationAppAddNewStore(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      let childId;
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      props.history.push(
-        getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
-      );
+      if (integrationStores.length > initialStores.length) {
+        const newStore = differenceBy(integrationStores, initialStores, 'value');
+        childId = newStore?.length && newStore[0].value;
+      }
+      if (childId) {
+        props.history.push(
+          getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows`)
+        );
+      } else {
+        props.history.push(
+          getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
+        );
+      }
     }
-  }, [
-    dispatch,
+  }, [dispatch,
+    initialStores,
+    integrationStores,
     integrationAppName,
     integrationId,
     isSetupComplete,
-    props.history,
-  ]);
+    props.history]);
 
   if (error) {
     history.push(
