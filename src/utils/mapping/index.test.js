@@ -6,7 +6,7 @@ describe('isEqual', () => {
   const testCases = [
     [true, {}, {}],
     [false, {}, null],
-    [false, { a: 'b', c: 'd', e: 'f' }, { a: 'b', c: 'd' }],
+    [false, { a: 'b', c: 'd', e: 'f' }, { a: 'b', c: ' d' }],
     [false, { a: 'x', c: 'd', e: 'f' }, { a: 'b', c: 'd' }],
     [false, { arr: [1, 2, 3, 4] }, { arr: [2, 3, 4, 1] }],
     [true, { arr: [1, 2, 3, 4] }, { arr: [1, 2, 3, 4] }],

@@ -269,7 +269,15 @@ function* suiteScriptSubmitIA({
   sectionId,
   values
 }) {
-  const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings`;
+  // get IntegrationAppName
+  const integration = yield select(selectors.suiteScriptResource, {
+    resourceType: 'integrations',
+    id: integrationId,
+    ssLinkedConnectionId,
+  });
+
+  const queryParam = integration?.urlName === 'svbns' && `?isSVBConnector=${integration?.urlName === 'svbns'}`;
+  const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings${queryParam}`;
   // bring sectionId
 
   const payload = jsonPatch.applyPatch({}, defaultPatchSetConverter(values)).newDocument;
