@@ -167,25 +167,23 @@ export default function ReadmeSection({ integrationId }) {
         <RawHtml className={classes.previewContainer} html={data} />
         <div className={classes.actionContainer}>
           <div className={classes.wrapper}>
-            <>
-              <EditorSaveButton
-                id={editorId}
-                variant="outlined"
-                color="primary"
-                dataTest="saveEditor"
-                disabled={disableSave}
-                submitButtonLabel="Save"
-              />
-              <EditorSaveButton
-                id={editorId}
-                variant="outlined"
-                color="secondary"
-                dataTest="saveAndCloseEditor"
-                disabled={disableSave}
-                onClose={onClose}
-                submitButtonLabel="Save & close"
-              />
-            </>
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="primary"
+              dataTest="saveEditor"
+              disabled={disableSave}
+              submitButtonLabel="Save"
+            />
+            <EditorSaveButton
+              id={editorId}
+              variant="outlined"
+              color="secondary"
+              dataTest="saveAndCloseEditor"
+              disabled={disableSave}
+              onClose={onClose}
+              submitButtonLabel="Save & close"
+            />
             <Button
               variant="text"
               color="primary"
