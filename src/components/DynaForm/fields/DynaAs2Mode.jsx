@@ -13,15 +13,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 export default function AS2url() {
-  const [fieldMappingType, setFieldMappingType] = useState('https');
+  const [as2Url, setas2Url] = useState('https');
   const classes = useStyles();
   return (
     <>
       <DynaRadio
         isValid
-        value={fieldMappingType}
+        value={as2Url}
         onFieldChange={(id, value) => {
-          setFieldMappingType(value);
+          setas2Url(value);
         }}
         label="AS2 mode"
         helpText="Choose AS2 via HTTP or HTTPS for this connection."
@@ -35,7 +35,7 @@ export default function AS2url() {
       <div className={classes.inlineElements}>
         <DynaLabelValueElement
           label="AS2 URL"
-          value={fieldMappingType === 'http' ? ((isProduction() && 'http://api.integrator.io/v1/as2') || ('http://api.staging.integrator.io/v1/as2')) : ((isProduction() && 'https://api.integrator.io/v1/as2') || ('https://api.staging.integrator.io/v1/as2'))}
+          value={as2Url === 'http' ? ((isProduction() && 'http://api.integrator.io/v1/as2') || ('http://api.staging.integrator.io/v1/as2')) : ((isProduction() && 'https://api.integrator.io/v1/as2') || ('https://api.staging.integrator.io/v1/as2'))}
 />
         <FieldHelp helpText="This is the URL to which your trading partners will send AS2 documents. This URL is driven by your choice of AS2 mode above and can’t be edited." />
       </div>
