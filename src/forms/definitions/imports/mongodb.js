@@ -71,20 +71,6 @@ export default {
     'mongodb.upsert': {
       fieldId: 'mongodb.upsert',
     },
-    ignoreMissing: {
-      fieldId: 'ignoreMissing',
-      type: 'checkboxforresetfields',
-      fieldsToReset: [{ id: 'mongodb.upsert', type: 'checkbox' }],
-      visibleWhen: [
-        {
-          field: 'mongodb.method',
-          is: ['updateOne'],
-        },
-      ],
-    },
-    'mongodb.ignoreExtract': {
-      fieldId: 'mongodb.ignoreExtract',
-    },
     dataMappings: {
       formId: 'dataMappings',
     },
@@ -103,15 +89,13 @@ export default {
         fields: [
           'mongodb.method',
           'mongodb.collection',
+          'mongodb.filter',
+          'mongodb.document',
           'ignoreExisting',
           'mongodb.lookupType',
           'mongodb.ignoreLookupFilter',
-          'mongodb.filter',
-          'mongodb.upsert',
-          'ignoreMissing',
-          'mongodb.ignoreExtract',
-          'mongodb.document',
           'mongodb.update',
+          'mongodb.upsert',
         ],
       },
       {
