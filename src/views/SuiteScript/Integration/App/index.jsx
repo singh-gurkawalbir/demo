@@ -5,7 +5,7 @@ import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
 import EditableText from '../../../../components/EditableText';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
-import CustomSettingsIcon from '../../../../components/icons/CustomSettingsIcon';
+import SettingsIcon from '../../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const tabs = [
-  { path: 'settings', label: 'Settings', Icon: CustomSettingsIcon, Panel: SettingsPanel},
+  { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
 
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {

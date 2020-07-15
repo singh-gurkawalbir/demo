@@ -114,18 +114,11 @@ const determineRequiredResources = type => {
   return resourceType;
 };
 
-const getTitle = ({ resourceType, queryParamStr, resourceLabel, opTitle }) => {
+const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'pageGenerator') {
     return 'Create source';
   }
 
-  const queryParams = new URLSearchParams(queryParamStr);
-  const isConnectionFixFromImpExp =
-    queryParams.get('fixConnnection') === 'true';
-
-  if (isConnectionFixFromImpExp && resourceType === 'connections') {
-    return 'Fix offline connection';
-  }
   if (['accesstokens', 'apis'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }

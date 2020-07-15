@@ -47,6 +47,9 @@ export default {
         'https://www.googleapis.com/auth/youtubepartner-channel-audit',
       ],
     },
+    application: {
+      fieldId: 'application',
+    },
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {

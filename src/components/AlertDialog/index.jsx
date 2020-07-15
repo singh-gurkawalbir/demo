@@ -7,6 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import ModalDialog from '../ModalDialog';
 
 const contentWrapper = {
   minWidth: 432,
@@ -14,17 +15,20 @@ const contentWrapper = {
   paddingTop: 24,
 
 };
-const ExpiredSessionContent = () => (
-  <>
-    <DialogTitle>
-      <Typography>Your Session has Expired</Typography>
-      <br />
-      <Typography>Please login again</Typography>
-    </DialogTitle>
-    <DialogContent style={contentWrapper}>
-      <SignInForm dialogOpen />
-    </DialogContent>
-  </>
+const StaleUIVersion = () => (
+  <ModalDialog show>
+    <Typography>Please Reload Page</Typography>
+    <Typography>It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
+    <Button
+      data-test="ok"
+      onClick={() => {
+        window.location.reload();
+      }}
+      variant="contained"
+      color="primary">
+      ok
+    </Button>
+  </ModalDialog>
 );
 const WarningSessionContent = () => {
   const dispatch = useDispatch();
@@ -53,6 +57,19 @@ const WarningSessionContent = () => {
   );
 };
 
+const ExpiredSessionContent = () => (
+  <>
+    <DialogTitle>
+      <Typography>Your Session has Expired</Typography>
+      <br />
+      <Typography>Please login again</Typography>
+    </DialogTitle>
+    <DialogContent style={contentWrapper}>
+      <SignInForm dialogOpen />
+    </DialogContent>
+  </>
+);
+
 export default function AlertDialog() {
   const sessionValidTimestamp = useSelector(state =>
     selectors.sessionValidTimestamp(state)
@@ -61,6 +78,27 @@ export default function AlertDialog() {
   const showSessionStatus = useSelector(state =>
     selectors.showSessionStatus(state)
   );
+
+  const isAuthenticated = useSelector(state =>
+    selectors.isAuthenticated(state)
+  );
+
+  const isUiVersionDifferent = useSelector(state =>
+    selectors.isUiVersionDifferent(state)
+  );
+
+  useEffect(() => {
+    let versionPollingTimer;
+    // stop polling when version is different
+    if (isAuthenticated && !isUiVersionDifferent) {
+      versionPollingTimer = setTimeout(() => {
+        dispatch(actions.app.fetchUiVersion());
+      }, Number(process.env.UI_VERSION_PING));
+    }
+    return () => {
+      clearTimeout(versionPollingTimer);
+    };
+  }, [dispatch, isAuthenticated, isUiVersionDifferent]);
 
   useEffect(() => {
     let warningSessionTimer;
@@ -84,15 +122,18 @@ export default function AlertDialog() {
     };
   }, [dispatch, sessionValidTimestamp]);
 
+
   return (
     <div>
-      <Dialog open={!!showSessionStatus}>
-        {showSessionStatus === 'warning' ? (
-          <WarningSessionContent />
-        ) : (
-          showSessionStatus === 'expired' && <ExpiredSessionContent />
-        )}
-      </Dialog>
+      {showSessionStatus ?
+        <Dialog disableEnforceFocus open style={contentWrapper}>
+          {showSessionStatus === 'warning' ? (
+            <WarningSessionContent />
+          ) : (
+            showSessionStatus === 'expired' && <ExpiredSessionContent />
+          )}
+        </Dialog>
+        : isUiVersionDifferent && <StaleUIVersion />}
     </div>
   );
 }

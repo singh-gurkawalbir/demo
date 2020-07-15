@@ -69,11 +69,10 @@ const useStyles = makeStyles(theme => ({
   },
   imgBlock: {
     display: 'flex',
-    maxWidth: 72,
-    maxHeight: 36,
+    maxWidth: 136,
     '& > img': {
       maxWidth: '100%',
-      height: 'auto',
+      maxHeight: '100%',
     },
   },
   installIntegrationStepWrapper: {
@@ -122,7 +121,7 @@ const useStyles = makeStyles(theme => ({
   },
   stepCountWithName: {
     display: 'flex',
-    maxWidth: '70%',
+    maxWidth: '60%',
     wordBreak: 'break-word',
   },
   completedText: {
