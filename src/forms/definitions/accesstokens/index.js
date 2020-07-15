@@ -31,10 +31,8 @@ export default {
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
 
-    if (accessTokenData['/autoPurgeAt'] === 'none') {
-      delete accessTokenData['/autoPurgeAt'];
-    } else if (accessTokenData['/autoPurgeAt'] === 'never') {
-      accessTokenData['/autoPurgeAt'] = '';
+    if (!accessTokenData['/autoPurgeAt'] || accessTokenData['/autoPurgeAt'] === 'never') {
+      accessTokenData['/autoPurgeAt'] = undefined;
     } else {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();

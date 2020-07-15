@@ -1,4 +1,3 @@
-import { isNewId } from '../../../utils/resource';
 
 export default {
   name: {
@@ -15,15 +14,15 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto purge token',
-    required: r => isNewId(r && r._id),
-    defaultValue: 'none',
+    required: true,
+    defaultValue: '',
     skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
       const items = [
         {
           label: 'Never',
-          value: 'never',
+          value: 'never'
         },
         {
           label: '1 Hour',
