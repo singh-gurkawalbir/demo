@@ -161,6 +161,7 @@ export function* installScriptStep({
 
   const currentConnectionStep =
     stepCompleteResponse &&
+    Array.isArray(stepCompleteResponse) &&
     stepCompleteResponse.find(
       temp =>
         temp.completed === false &&
