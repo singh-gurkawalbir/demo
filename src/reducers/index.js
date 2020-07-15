@@ -1413,10 +1413,10 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
       if (parentIntegration) {
-        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections);
+        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnectionIds);
       }
       if (childIntegration) {
-        registeredConnections = registeredConnections.concat(childIntegration._registeredConnections);
+        registeredConnections = registeredConnections.concat(childIntegration._registeredConnectionIds);
       }
     }
 
