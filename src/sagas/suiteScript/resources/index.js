@@ -5,7 +5,6 @@ import { apiCallWithRetry } from '../../index';
 import * as selectors from '../../../reducers';
 import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
 import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 export function* commitStagedChanges({
   resourceType,
@@ -130,12 +129,6 @@ export function* requestSuiteScriptMetadata({
   try {
     resp = yield call(apiCallWithRetry, {path, opts});
   } catch (error) {
-    return false;
-  }
-
-  // for settings we receive a 200 level response
-  if (resourceType === 'settings' && resp?.success === false) {
-    yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
     return false;
   }
 
