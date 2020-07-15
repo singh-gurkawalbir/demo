@@ -57,12 +57,11 @@ export default function (state = defaultState, action) {
         delete draft.warning;
         break;
 
-      case actionTypes.AUTH_WARNING: {
-        return {
-          ...state,
-          warning: true,
-        };
-      }
+      case actionTypes.AUTH_WARNING:
+        draft.warning = true;
+
+
+        break;
 
       default:
     }

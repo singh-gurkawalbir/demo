@@ -132,6 +132,9 @@ export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
 
+export function isUiVersionDifferent(state) {
+  return fromApp.isUiVersionDifferent(state?.app);
+}
 export function appErrored(state) {
   return fromApp.appErrored(state && state.app);
 }

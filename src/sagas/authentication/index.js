@@ -138,6 +138,8 @@ export function* retrieveAppInitializationResources() {
     call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
+
+  yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -296,10 +298,24 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
+export function* fetchUIVersion() {
+  let resp;
+  try {
+    resp = yield call(apiCallWithRetry, {
+      path: '/ui/version',
+    });
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+  }
+  if (resp?.version) {
+    yield put(actions.app.updateUIVersion(resp.version));
+  }
+}
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
+  takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),

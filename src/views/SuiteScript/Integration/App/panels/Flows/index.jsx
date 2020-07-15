@@ -8,11 +8,9 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
-import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
-import Spinner from '../../../../../../components/Spinner';
-import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
-import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
+import ScheduleDrawer from '../../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
+import { LoadSettingsMetadata } from '../Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -129,7 +127,6 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
-  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
   return (
     <div className={classes.root}>
       <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
@@ -139,13 +136,15 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         resources="flows">
-        {hasSettingsMetadata ?
+        <LoadSettingsMetadata
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId} >
           <FlowPanel
             ssLinkedConnectionId={ssLinkedConnectionId}
             integrationId={integrationId}
 
-        /> : <><SpinnerWrapper><Spinner /></SpinnerWrapper></>}
-
+        />
+        </LoadSettingsMetadata>
       </LoadSuiteScriptResources>
     </div>
   );
