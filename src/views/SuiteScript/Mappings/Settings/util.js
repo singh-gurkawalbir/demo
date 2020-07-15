@@ -30,7 +30,9 @@ const getFormattedLookup = (lookup, formVal) => {
       lookupTmp.default = null;
     } else if ('lookupuseEmptyString' in formVal && formVal.lookupUseEmptyString === true) {
       lookupTmp.default = '';
-    } else if ('lookupDefault' in formVal && formVal.lookupDefault) {
+    } else if ('lookupDefault' in formVal && formVal.lookupDefault !== undefined) {
+      // TODO (Aditya) : Check if same fix is applicable in IA mapping
+      // lookupDefault could be '' empty string. In this case, it is expected
       lookupTmp.default = formVal.lookupDefault;
     }
   }
