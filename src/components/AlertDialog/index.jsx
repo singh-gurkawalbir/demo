@@ -16,7 +16,7 @@ const contentWrapper = {
 
 };
 const StaleUIVersion = () => (
-  <ModalDialog disableEnforceFocus show>
+  <ModalDialog show>
     <Typography>Please Reload Page</Typography>
     <Typography>It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
     <Button
@@ -93,7 +93,7 @@ export default function AlertDialog() {
     if (isAuthenticated && !isUiVersionDifferent) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
-      }, 30000);
+      }, Number(process.env.UI_VERSION_PING));
     }
     return () => {
       clearTimeout(versionPollingTimer);

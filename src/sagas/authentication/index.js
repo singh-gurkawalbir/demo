@@ -298,7 +298,7 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
-export function* updateUIVersion() {
+export function* fetchUIVersion() {
   let resp;
   try {
     resp = yield call(apiCallWithRetry, {
@@ -308,14 +308,14 @@ export function* updateUIVersion() {
   } catch (e) {
   }
   if (resp?.version) {
-    yield put(actions.app.uiVersionUpdate(resp.version));
+    yield put(actions.app.updateUIVersion(resp.version));
   }
 }
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
-  takeEvery(actionTypes.UI_VERSION_FETCH, updateUIVersion),
+  takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),

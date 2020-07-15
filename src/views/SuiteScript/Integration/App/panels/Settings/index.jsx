@@ -23,24 +23,24 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   integrationId, children }) => {
   const dispatch = useDispatch();
 
-  const {hasData: hasSettingsMetadata, isLoading} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
+  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
     ssLinkedConnectionId,
     integrationId,
     resourceType: 'settings',
   }));
-
 
   const resource = useSelector(state => selectors.suiteScriptResource(state, {
     ssLinkedConnectionId,
     id: integrationId,
     resourceType: 'settings',
   }));
+
   useEffect(() => {
     if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (isLoading) { return <Spinner />; }
+  if (!hasSettingsMetadata) { return <Spinner />; }
 
   if (resource?.errors) {
     return <Typography>{inferErrorMessage(resource)[0]}</Typography>;
