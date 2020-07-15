@@ -515,7 +515,7 @@ export default function ConnectorInstallation(props) {
               html={` Complete the below steps to install your integration app.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
           ) : (
-            <Typography>Complete the below steps to install your integration app.</Typography>
+            <Typography className={classes.message}>Complete the below steps to install your integration app.</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (

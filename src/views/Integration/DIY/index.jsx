@@ -9,8 +9,7 @@ import TrashIcon from '../../../components/icons/TrashIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import FlowsIcon from '../../../components/icons/FlowsIcon';
-import CustomSettingsIcon from '../../../components/icons/CustomSettingsIcon';
-import UsersIcon from '../../../components/icons/InviteUsersIcon';
+import SettingsIcon from '../../../components/icons/SettingsIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import IconTextButton from '../../../components/IconTextButton';
@@ -31,13 +30,14 @@ import { INTEGRATION_DELETE_VALIDATE } from '../../../utils/messageStore';
 import { STANDALONE_INTEGRATION } from '../../../utils/constants';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import SettingsIcon from '../../../components/icons/SettingsIcon';
+import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import { getTemplateUrlName } from '../../../utils/template';
 import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integrationApps';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
+import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -59,7 +59,7 @@ const tabs = [
   {
     path: 'settings',
     label: 'Settings',
-    Icon: CustomSettingsIcon,
+    Icon: SettingsIcon,
     Panel: SettingsPanel,
   },
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
@@ -90,13 +90,13 @@ const tabs = [
   {
     path: 'users',
     label: 'Users',
-    Icon: UsersIcon,
+    Icon: GroupOfUsersIcon,
     Panel: UsersPanel,
   },
   {
     path: 'admin',
     label: 'Admin',
-    Icon: SettingsIcon,
+    Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
 ];
