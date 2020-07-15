@@ -111,6 +111,7 @@ import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
+import DynaAs2Mode from './DynaAs2Mode';
 import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
@@ -236,5 +237,6 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
-  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
+  as2Mode: DynaAs2Mode,
 };
