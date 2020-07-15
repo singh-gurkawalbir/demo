@@ -3,11 +3,9 @@ export default {
     type: 'radiogroupforresetfields',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
-      { id: 'ignoreMissing', type: 'checkbox' },
       { id: 'mongodb.update', type: 'sqlquerybuilder' },
       { id: 'mongodb.document', type: 'sqlquerybuilder' },
       { id: 'mongodb.lookupType', type: 'select' },
-      { id: 'mongodb.ignoreExtract', type: 'text' },
     ],
     label: 'Method',
     options: [
@@ -71,9 +69,9 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Query builder',
+    label: 'Document builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB query builder',
+    title: 'MongoDB document builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -87,9 +85,9 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Query builder',
+    label: 'Document builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB query builder',
+    title: 'MongoDB document builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -127,28 +125,12 @@ export default {
     ],
   },
   'mongodb.upsert': {
-    type: 'checkboxforresetfields',
+    type: 'checkbox',
     label: 'Upsert',
-    fieldsToReset: [{ id: 'ignoreMissing', type: 'checkbox' }],
     visibleWhen: [
       {
         field: 'mongodb.method',
         is: ['updateOne'],
-      },
-    ],
-  },
-  'mongodb.ignoreExtract': {
-    type: 'text',
-    label: 'Which field?',
-    required: true,
-    visibleWhen: [
-      {
-        field: 'ignoreMissing',
-        is: [true],
-      },
-      {
-        field: 'mongodb.lookupType',
-        is: ['source'],
       },
     ],
   },

@@ -33,6 +33,7 @@ import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthCo
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaNetSuiteDefaultValue from './DynaNetSuiteDefaultValue';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
@@ -110,6 +111,7 @@ import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
 import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
+import DynaAs2Mode from './DynaAs2Mode';
 import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
@@ -221,6 +223,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,
@@ -234,5 +237,6 @@ export default {
   linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
   routingrules: DynaRoutingRules,
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
-  ftpfilenamewitheditor: DynaFTPFileNameWithEditor
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
+  as2Mode: DynaAs2Mode,
 };

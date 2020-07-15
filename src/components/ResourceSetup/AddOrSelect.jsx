@@ -24,7 +24,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// TODO Sravan - Cancel button doesnt work.
 export default function AddOrSelect(props) {
   const {
     resourceId,
@@ -33,7 +32,8 @@ export default function AddOrSelect(props) {
     resource,
     environment,
     resourceType = 'connections',
-    manageOnly = false
+    manageOnly = false,
+    onClose
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);
@@ -133,6 +133,7 @@ export default function AddOrSelect(props) {
               cancelButtonLabel="Cancel"
               onSubmitComplete={handleSubmitComplete}
               connectionType={connectionType}
+              onCancel={onClose}
             />
           ) : (
             <DynaForm

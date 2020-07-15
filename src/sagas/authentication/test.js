@@ -110,6 +110,8 @@ describe('initialize all app relevant resources sagas', () => {
       ])
     );
 
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
@@ -140,6 +142,7 @@ describe('initialize all app relevant resources sagas', () => {
       ])
     );
 
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
@@ -178,6 +181,8 @@ describe('initialize all app relevant resources sagas', () => {
         retrievingAssistantDetailsEffect,
       ])
     );
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);

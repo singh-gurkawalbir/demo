@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
 import { isProduction, isEuRegion } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
@@ -778,6 +778,31 @@ export default {
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
           { label: 'URL Encoded', value: 'urlencoded' },
+        ],
+      },
+    ],
+  },
+  'http.successMediaType': {
+    type: 'select',
+    label: 'Success media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
+          { label: 'CSV', value: 'csv' },
+        ],
+      },
+    ],
+  },
+  'http.errorMediaType': {
+    type: 'select',
+    label: 'Error media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'JSON', value: 'json' },
         ],
       },
     ],
@@ -1888,15 +1913,6 @@ export default {
         ],
       },
     ],
-  },
-  as2url: {
-    type: 'select',
-    label: 'AS2 url',
-    options: [{
-      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
-    }
-    ],
-    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',

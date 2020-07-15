@@ -1889,7 +1889,7 @@ export default {
   'concur.connection.http.unencrypted.consumerKey': 'Please enter the consumer Key of your Concur account.',
   'concurall.connection.http.unencrypted.username': 'Please enter the ID value which will be available in the URL after connecting to Concur App present at the App Center.',
   'concurall.connection.http.encrypted.password': 'Please enter the Request token value which will be available in the URL after connecting to Concur App present at the App Center.',
-  'concurall.connection.http.subdomain': 'Please enter the Password of your Concur account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your passwords safe.',
+  'concurall.connection.http.subdomain': 'Please enter the subdomain of your Concur account.',
   'concurall.connection.http.unencrypted.clientId': 'Please enter Client ID of your Concur account.',
   'concurall.connection.http.encrypted.clientSecret': 'Please enter Client Secret of your Concur Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
   'concurall.connection.http.unencrypted.credtype': 'For connections from the App Center, use authtoken. if omitted, oauth2 will assume the type is password.',

@@ -419,7 +419,7 @@ export default {
         hardcodedSelect: {
           id: 'hardcodedSelect',
           name: 'hardcodedSelect',
-          type: 'refreshableselect',
+          type: 'netsuitedefaultvalue',
           label: 'Value',
           required: true,
           multiselect: generateFieldType === 'multiselect',
@@ -442,7 +442,7 @@ export default {
         lookupSelect: {
           id: 'lookupSelect',
           name: 'lookupSelect',
-          type: 'refreshableselect',
+          type: 'netsuitedefaultvalue',
           label: 'Value',
           required: true,
           multiselect: generateFieldType === 'multiselect',
