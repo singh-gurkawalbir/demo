@@ -54,7 +54,6 @@ export default function ReadmeSection({ integrationId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
-  const hideSaveAction = false;
   const editorId = `readme-${integrationId}`;
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)
@@ -141,7 +140,7 @@ export default function ReadmeSection({ integrationId }) {
           data-test="form-editor-action"
           variant="text"
           onClick={toggleEditMode}>
-          Edit Readme
+          Edit readme
         </Button>
       </PanelHeader>
       <div className={classes.root}>
@@ -152,7 +151,7 @@ export default function ReadmeSection({ integrationId }) {
         height="tall"
         width="xl"
         // type="paper"
-        title="Edit Readme"
+        title="Edit readme"
         variant="temporary"
         onClose={onClose}>
         <div className={classes.editorContainer}>
@@ -168,7 +167,6 @@ export default function ReadmeSection({ integrationId }) {
         <RawHtml className={classes.previewContainer} html={data} />
         <div className={classes.actionContainer}>
           <div className={classes.wrapper}>
-            {!hideSaveAction && (
             <>
               <EditorSaveButton
                 id={editorId}
@@ -188,7 +186,6 @@ export default function ReadmeSection({ integrationId }) {
                 submitButtonLabel="Save & close"
               />
             </>
-            )}
             <Button
               variant="text"
               color="primary"
