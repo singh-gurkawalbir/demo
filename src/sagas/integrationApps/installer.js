@@ -167,6 +167,7 @@ export function* installScriptStep({
     );
 
   if (currentConnectionStep && isOauth(connectionDoc)) {
+    yield put(actions.integrationApp.installer.setOauthConnectionMode(currentConnectionStep._connectionId, true, id));
     try {
       yield call(
         openOAuthWindowForConnection,

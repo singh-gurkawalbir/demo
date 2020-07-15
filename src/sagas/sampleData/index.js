@@ -165,7 +165,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   // parse the resourceBody and construct props to process file content
   if (!values.editorValues) {
     // eslint-disable-next-line no-param-reassign
-    values.editorValues = generateFileParserOptionsFromResource(body, type);
+    values.editorValues = generateFileParserOptionsFromResource(body);
   }
   const dataForEachStageMap = {
     rawFile: { data: [{ body: file, type }] },
@@ -182,7 +182,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   }
   // For all other file types processor call gives us the JSON format based on the options user configured
   if (type === 'xlsx') {
-    const { result } = getCsvFromXlsx(file);
+    const { result } = yield call(getCsvFromXlsx, file);
     dataForEachStageMap.csv = { data: [{ body: result }] };
     // save csv content of xlsx file uploaded to be 'data' for the processor call
     processorData.data = result;

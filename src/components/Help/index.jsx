@@ -65,7 +65,7 @@ function Help(props) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} />
+            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'b', 'i', 'br']}} />
           ) : (
             helpTextValue
           )}

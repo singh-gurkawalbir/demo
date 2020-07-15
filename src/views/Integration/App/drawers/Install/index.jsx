@@ -16,6 +16,7 @@ import actions from '../../../../../actions';
 import {
   getConnectionType,
   generateNewId,
+  isOauth,
 } from '../../../../../utils/resource';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
@@ -122,7 +123,7 @@ export default function ConnectorInstallation(props) {
   }, shallowEqual);
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
-    return integrationApp && integrationApp.helpUrl;
+    return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
     selectors.integrationInstallSteps(state, integrationId)
@@ -134,6 +135,16 @@ export default function ConnectorInstallation(props) {
     currentStep,
     installSteps,
   ]);
+  const { openOauthConnection, connectionId } = useSelector(
+    state => selectors.canOpenOauthConnection(state, integrationId),
+    (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
+  );
+  if (openOauthConnection) {
+    dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
+    setConnection({
+      _connectionId: connectionId,
+    });
+  }
   const selectedConnectionType = useSelector(state => {
     const selectedConnection = selectors.resource(
       state,
@@ -207,8 +218,9 @@ export default function ConnectorInstallation(props) {
           )
         );
       }
-
-      setConnection(false);
+      if (connectionDoc && !isOauth(connectionDoc)) {
+        setConnection(false);
+      }
     },
     [
       connection,
@@ -444,17 +456,20 @@ export default function ConnectorInstallation(props) {
       <CeligoPageBar
         title={`Install app: ${integrationName}`}
         // Todo: (Mounika) please add the helpText
-        infoText="we need to have the help text for the following.">
+        // infoText="we need to have the help text for the following."
+        >
         <div className={classes.actions}>
-          <IconTextButton
-            data-test="viewHelpGuide"
-            component={Link}
-            variant="text"
-            onClick={handleHelpUrlClick}
-            color="primary">
-            <HelpIcon />
-            View help guide
-          </IconTextButton>
+          {helpUrl && (
+            <IconTextButton
+              data-test="viewHelpGuide"
+              component={Link}
+              variant="text"
+              onClick={handleHelpUrlClick}
+              color="primary">
+              <HelpIcon />
+              View help guide
+            </IconTextButton>
+          )}
           <IconTextButton
             data-test="uninstall"
             component={Link}
@@ -494,11 +509,13 @@ export default function ConnectorInstallation(props) {
       )}
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
-          {!helpUrl && (
-          <RawHtml
-            className={classes.message}
-            html={` Complete the below steps to install your integration app.<br /> 
+          {helpUrl ? (
+            <RawHtml
+              className={classes.message}
+              html={` Complete the below steps to install your integration app.<br /> 
             Need more help? <a href="${helpUrl}" target="_blank">Check out our help guide</a>`} />
+          ) : (
+            <Typography>Complete the below steps to install your integration app.</Typography>
           )}
           <div className={classes.installIntegrationSteps}>
             {installSteps.map((step, index) => (

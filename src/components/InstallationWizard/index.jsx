@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 29,
   },
 
-  stepTable: { position: 'relative', marginTop: -20 },
+  stepTable: { maxWidth: 750, },
   floatRight: {
     float: 'right',
   },
@@ -86,7 +86,7 @@ export default function InstallationWizard(props) {
         resourceId,
       })
     ) || {};
-  const {redirectTo, isInstallFailed} = useSelector(state =>
+  const {redirectTo, isInstallFailed, environment: destinationEnvironment } = useSelector(state =>
     selectors.redirectToOnInstallationComplete(state, {
       resourceType,
       resourceId,
@@ -118,7 +118,7 @@ export default function InstallationWizard(props) {
   useEffect(() => {
     if (redirectTo || isInstallFailed) {
       setInstallInProgress(false);
-      handleSetupComplete(redirectTo, isInstallFailed);
+      handleSetupComplete(redirectTo, isInstallFailed, destinationEnvironment);
     }
   }, [
     dispatch,
@@ -128,6 +128,7 @@ export default function InstallationWizard(props) {
     resourceType,
     templateId,
     isInstallFailed,
+    destinationEnvironment
   ]);
 
   if (!installSteps) {
@@ -315,7 +316,7 @@ export default function InstallationWizard(props) {
             </Grid>
           </Grid>
         )}
-        <Grid container spacing={3} className={classes.stepTable}>
+        <div className={classes.stepTable}>
           {installSteps.map((step, index) => (
             <InstallationStep
               key={step.name}
@@ -326,7 +327,7 @@ export default function InstallationWizard(props) {
               step={step}
             />
           ))}
-        </Grid>
+        </div>
       </div>
     </LoadResources>
   );

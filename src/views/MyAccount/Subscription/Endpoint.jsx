@@ -16,6 +16,7 @@ import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
+import LoadResources from '../../../components/LoadResources';
 
 
 const useStyles = makeStyles(theme => ({
@@ -583,6 +584,7 @@ export default function Endpoint() {
           </div>
         </div>
       </div>)}
+      <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );
 }

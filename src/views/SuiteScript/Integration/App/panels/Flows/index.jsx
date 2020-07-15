@@ -60,7 +60,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
 
   return (
     <>
-      <ScheduleDrawer />
+      <ScheduleDrawer ssLinkedConnectionId={ssLinkedConnectionId} />
       <SuiteScriptMappingDrawer
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId} />

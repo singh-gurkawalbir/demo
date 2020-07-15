@@ -164,7 +164,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   }
   // #endregion
 
-  const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
+  let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
   if (!isNew) {
@@ -204,6 +204,12 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
+  // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
+  // and connection will be auto registered to the integration.
+  // This is required for tile level monitor access users
+  if (resourceType === 'connections' && merged.integrationId && isNew) {
+    path = `/integrations/${merged.integrationId}/connections`;
+  }
 
   try {
     updated = yield call(apiCallWithRetry, {
@@ -235,7 +241,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
      calling ping after connection save sets the offline flag appropriately in the backend.
      UI shouldnt set offline flag. It should read status from db.
   */
-  if (resourceType === 'connections' && updated._id && isNew) {
+  if (resourceType === 'connections' && updated?._id && isNew) {
     try {
       yield call(apiCallWithRetry, {
         path: `/connections/${updated._id}/ping`,

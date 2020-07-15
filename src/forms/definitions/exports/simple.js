@@ -4,7 +4,6 @@ export default {
   preSave: formValues => {
     // console.log(formValues);
     const newValues = { ...formValues };
-    delete newValues['/file/csvHelper'];
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
@@ -102,62 +101,6 @@ export default {
     if (fieldId === 'uploadFile') {
       return fileType.value;
     }
-    if (fieldId === 'file.csvHelper') {
-      const keyColumnsField = fields.find(
-        field => field.id === 'file.csv.keyColumns'
-      );
-      const columnDelimiterField = fields.find(
-        field => field.id === 'file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'file.csv.rowDelimiter'
-      );
-      const trimSpacesField = fields.find(
-        field => field.id === 'file.csv.trimSpaces'
-      );
-      const rowsToSkipField = fields.find(
-        field => field.id === 'file.csv.rowsToSkip'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.csv.hasHeaderRow'
-      );
-      return {
-        fields: {
-          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-          trimSpaces: trimSpacesField && trimSpacesField.value,
-          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
-          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-          keyColumns: keyColumnsField && keyColumnsField.value,
-        },
-      };
-    }
-    if (fieldId === 'file.csv.keyColumns') {
-      const columnDelimiterField = fields.find(
-        field => field.id === 'file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'file.csv.rowDelimiter'
-      );
-      const trimSpacesField = fields.find(
-        field => field.id === 'file.csv.trimSpaces'
-      );
-      const rowsToSkipField = fields.find(
-        field => field.id === 'file.csv.rowsToSkip'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.csv.hasHeaderRow'
-      );
-      const options = {
-        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-        trimSpaces: trimSpacesField && trimSpacesField.value,
-        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
-        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-        fileType: fileType.value
-      };
-      return options;
-    }
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -193,8 +136,9 @@ export default {
         isNot: [''],
       }],
     },
-    'file.csvHelper': {
-      fieldId: 'file.csvHelper',
+    'file.csv': {
+      fieldId: 'file.csv',
+      uploadSampleDataFieldName: 'uploadFile',
       visibleWhenAll: [
         {
           field: 'file.type',
@@ -202,18 +146,14 @@ export default {
         },
       ],
     },
-    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
-    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
-    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
-    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
-    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
-    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     // 'file.xml.resourcePath': { fieldId: 'file.xml.resourcePath' },
-    parsers: { fieldId: 'parsers' },
+    parsers: {
+      fieldId: 'parsers',
+      uploadSampleDataFieldName: 'uploadFile',
+    },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
@@ -250,14 +190,7 @@ export default {
               {fields: [
                 // 'file.xml.resourcePath', // moved into 'parsers' input
                 'parsers',
-                'file.csvHelper',
-                'file.csv.columnDelimiter',
-                'file.csv.rowDelimiter',
-                'file.csv.trimSpaces',
-                'file.csv.rowsToSkip',
-                'file.csv.hasHeaderRow',
-                'file.csv.rowsPerRecord',
-                'file.csv.keyColumns',
+                'file.csv',
                 'file.json.resourcePath',
                 'file.xlsx.hasHeaderRow',
                 'file.xlsx.rowsPerRecord',

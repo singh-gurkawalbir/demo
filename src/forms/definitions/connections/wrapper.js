@@ -7,7 +7,7 @@ export default {
   init: (fieldMeta, resource = {}) => {
     const newfieldMeta = deepClone(fieldMeta);
 
-    const unEncryptedText = resource.wrapper && resource.wrapper.unencrypted && Object.prototype.toString.apply(resource.wrapper.unencrypted) === '[object Object]' ? JSON.stringify(resource.wrapper.unencrypted) : resource.wrapper.unencrypted;
+    const unEncryptedText = resource?.wrapper?.unencrypted && Object.prototype.toString.apply(resource.wrapper.unencrypted) === '[object Object]' ? JSON.stringify(resource.wrapper.unencrypted) : resource?.wrapper?.unencrypted;
     let unEncryptedFields = [];
     if (resource && resource.wrapper && resource.wrapper.unencryptedFields && resource.wrapper.unencryptedFields.length > 0) {
       resource.wrapper.unencryptedFields.forEach(fld => {

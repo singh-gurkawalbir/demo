@@ -66,6 +66,7 @@ import mappingUtil from '../utils/mapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
+import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 
 const emptySet = [];
 const emptyObject = {};
@@ -271,6 +272,7 @@ export function redirectToOnInstallationComplete(
   state,
   { resourceType = 'integrations', resourceId, templateId }
 ) {
+  let environment;
   let redirectTo = 'dashboard';
   let flow;
   let flowDetails;
@@ -280,7 +282,7 @@ export function redirectToOnInstallationComplete(
     templateId || `${resourceType}-${resourceId}`
   );
 
-  const {isInstallFailed} = fromSession.template(
+  const { isInstallFailed } = fromSession.template(
     state && state.session,
     templateId || `${resourceType}-${resourceId}`
   );
@@ -307,6 +309,9 @@ export function redirectToOnInstallationComplete(
         flowDetails = resource(state, 'flows', flow._id);
 
         if (flowDetails) {
+          if (!flowDetails._integrationId) {
+            environment = flowDetails.sandbox ? 'sandbox' : 'production';
+          }
           redirectTo = `integrations/${flowDetails._integrationId ||
             'none'}/flows`;
         }
@@ -321,7 +326,7 @@ export function redirectToOnInstallationComplete(
       break;
   }
 
-  return {redirectTo: getRoutePath(redirectTo)};
+  return { redirectTo: getRoutePath(redirectTo), environment };
 }
 
 export function previewTemplate(state, templateId) {
@@ -1384,6 +1389,10 @@ export function checkUpgradeRequested(state, licenseId) {
 export function isOnOffInProgress(state, flowId) {
   return fromSession.isOnOffInProgress(state && state.session, flowId);
 }
+export function canOpenOauthConnection(state, integrationId) {
+  return fromSession.canOpenOauthConnection(state && state.session, integrationId);
+}
+
 
 export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
@@ -1399,12 +1408,19 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
     if (!childId) {
       childIntegrations.forEach(intId => {
         const integration = resource(state, 'integrations', intId);
-        registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
+        if (integration) {
+          registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
+        }
       });
     } else {
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
-      registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections).concat(childIntegration._registeredConnections);
+      if (parentIntegration) {
+        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections);
+      }
+      if (childIntegration) {
+        registeredConnections = registeredConnections.concat(childIntegration._registeredConnections);
+      }
     }
 
     if (registeredConnections) {
@@ -5228,6 +5244,32 @@ export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationI
   return flows && flows.find(flow => flow._id === flowId);
 }
 
+export function suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) {
+  if (!subRecordMappingId) return emptyObject;
+  const flow = suiteScriptFlowDetail(state, {
+    integrationId,
+    ssLinkedConnectionId,
+    flowId
+  });
+  if (flow?.import?.netsuite?.subRecordImports?.length) {
+    let selectedSubRecord = emptyObject;
+    const iterateSubRecord = (subRecords) => {
+      if (subRecords?.length) {
+        for (let i = 0; i < subRecords.length; i += 1) {
+          if (subRecords[i].mappingId === subRecordMappingId) {
+            selectedSubRecord = subRecords[i];
+            return;
+          }
+          iterateSubRecord(subRecords[i]?.subRecordImports);
+        }
+      }
+    };
+    iterateSubRecord(flow.import.netsuite.subRecordImports);
+    return selectedSubRecord;
+  }
+  return emptyObject;
+}
+
 export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
@@ -5238,18 +5280,8 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   const { import: importConfig } = flow;
   const { type: importType, _connectionId } = importConfig;
   if (importType === 'netsuite') {
-    const { recordType } = importConfig.netsuite;
-    const { subRecordType } = options;
-    let commMetaPath;
-
-    if (subRecordType) {
-      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
-       * in case of subrecord */
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
-    } else {
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    }
-
+    const recordType = options.recordType || importConfig.netsuite?.recordType;
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId: ssLinkedConnectionId,
@@ -5275,6 +5307,49 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   }
   return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
+
+export const suiteScriptGenerates = createSelector(
+  [
+    (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
+      const options = {};
+      if (subRecordMappingId) {
+        const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+        options.recordType = recordType;
+      }
+      return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
+    },
+    (state, {ssLinkedConnectionId, integrationId, flowId}) => {
+      const flow = suiteScriptFlowDetail(state, {
+        integrationId,
+        ssLinkedConnectionId,
+        flowId
+      });
+      return flow?.import?.type;
+    }
+
+  ],
+  ({ data, status }, importType) => {
+    if (!data) {
+      return {data, status};
+    }
+    const formattedFields = getFormattedGenerateData(
+      data,
+      importType
+    );
+    const generates = formattedFields.sort((a, b) => {
+      const nameA = a.name ? a.name.toUpperCase() : '';
+      const nameB = b.name ? b.name.toUpperCase() : '';
+
+      if (nameA < nameB) return -1;
+
+      if (nameA > nameB) return 1;
+
+      return 0; // names must be equal
+    });
+    return {data: generates, status};
+  }
+);
+
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
   const flow = suiteScriptFlowDetail(state, {
@@ -5326,8 +5401,9 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
 }
 
 export const suiteScriptExtracts = createSelector(
-  [(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
-  (flowData) => {
+  [(state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
+    (state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
+  (flow, flowData) => {
     if (!flowData) {
       return emptySet;
     }
@@ -5339,8 +5415,7 @@ export const suiteScriptExtracts = createSelector(
           id: extract.id || extract.value,
           name: extract.name || extract.label || extract.id
         });
-        // for netsuite
-        if (extract.type === 'select') {
+        if (flow?.export?.netsuite?.type === 'restlet' && extract.type === 'select') {
           formattedFields.push({
             id: `${extract.id}.internalid`,
             name: `${extract.name} (InternalId)`
@@ -5461,3 +5536,49 @@ export function fileSampleData(state, { resourceId, resourceType, fileType}) {
   }
   return rawData?.body;
 }
+export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId}) {
+  // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
+  const { data: rawData } = getResourceSampleDataWithStatus(
+    state,
+    resourceId,
+    'rawFile',
+  );
+  if (!rawData) {
+    const resourceObj = suiteScriptResource(state, {resourceType, id: resourceId, ssLinkedConnectionId});
+    if (
+      resourceObj?.export?.file?.csv
+    ) {
+      return resourceObj.export.sampleData;
+    }
+  }
+  return rawData?.body;
+}
+export const getSuitescriptMappingSubRecordList = createSelector([
+  (state, {integrationId,
+    ssLinkedConnectionId,
+    flowId}) => suiteScriptFlowDetail(state, {
+    integrationId,
+    ssLinkedConnectionId,
+    flowId
+  }),
+], (flow) => {
+  if (flow?.import?.netsuite?.subRecordImports?.length) {
+    // recursively fetch subrecordMapping
+    const subRecordList = [];
+    const iterateSubRecord = (subRecords) => {
+      if (subRecords?.length) {
+        subRecords.forEach(_subRecordImp => {
+          subRecordList.push({
+            id: _subRecordImp.mappingId,
+            name: `${_subRecordImp.recordType} (Subrecord)`
+          });
+          iterateSubRecord(_subRecordImp?.subRecordImports);
+        });
+      }
+    };
+    iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
+
+    return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
+  }
+  return emptySet;
+});

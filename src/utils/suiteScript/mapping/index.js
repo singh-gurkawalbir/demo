@@ -1,6 +1,4 @@
-import getJSONPaths, {
-  pickFirstObject,
-} from './jsonPaths';
+import getJSONPaths, { pickFirstObject } from '../../jsonPaths';
 
 function isFileOrNetSuiteBatchExport(res) {
   if (res.netsuite && (res.netsuite.type === 'search' || (res.netsuite.restlet && res.netsuite.restlet.searchId))) {
@@ -13,7 +11,7 @@ function isFileOrNetSuiteBatchExport(res) {
 }
 
 
-const generateFieldAndListMappings = ({importType, mapping, exportRes, isGroupedSampleData}) => {
+export default function generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData}) {
   const isNetsuiteImport = importType === 'netsuite';
   const {fields = [], lists = []} = mapping || {};
   const toReturn = [];
@@ -73,9 +71,9 @@ const generateFieldAndListMappings = ({importType, mapping, exportRes, isGrouped
     });
   });
   return toReturn;
-};
+}
 
-const validateMappings = (mappings, lookups) => {
+export const validateMappings = (mappings, lookups) => {
   const duplicateMappings = mappings
     .filter(e => !!e.generate)
     .map(e => e.generate)
@@ -139,7 +137,7 @@ const validateMappings = (mappings, lookups) => {
   return { isSuccess: true };
 };
 
-const updateMappingConfigs = ({importType, mappings = [], exportConfig, options}) => {
+export const updateMappingConfigs = ({importType, mappings = [], exportConfig, options}) => {
   const isNetsuiteImport = importType === 'netsuite';
   const { childRelationships = [], recordType} = options;
   let generateParts;
@@ -189,7 +187,7 @@ const updateMappingConfigs = ({importType, mappings = [], exportConfig, options}
 
       if (
         generateParts.length > 1 &&
-        !(isItemSubtypeRecord && generateParts[0] === 'subtype')
+          !(isItemSubtypeRecord && generateParts[0] === 'subtype')
       ) {
         if (generateParts[1] === 'internalid') {
           mapping.internalId = true;
@@ -223,7 +221,7 @@ const updateMappingConfigs = ({importType, mappings = [], exportConfig, options}
   };
 };
 
-const getFormattedGenerateData = (importData,
+export const getFormattedGenerateData = (importData,
   importType) => {
   let formattedGenerateFields = [];
 
@@ -252,7 +250,7 @@ const getFormattedGenerateData = (importData,
   return formattedGenerateFields;
 };
 
-const getExtractPaths = (fields, jsonPath) => {
+export const getExtractPaths = (fields, jsonPath) => {
   let extractPaths = getJSONPaths(pickFirstObject(fields));
 
   if (jsonPath) {
@@ -265,12 +263,4 @@ const getExtractPaths = (fields, jsonPath) => {
   }
 
   return extractPaths;
-};
-
-export default {
-  validateMappings,
-  generateFieldAndListMappings,
-  updateMappingConfigs,
-  getFormattedGenerateData,
-  getExtractPaths
 };

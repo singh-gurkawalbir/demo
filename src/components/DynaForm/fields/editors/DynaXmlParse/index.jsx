@@ -1,11 +1,13 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
 import DynaForm from '../../..';
+import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
+import getForm from './formMeta';
 
 const getParserValue = ({
   resourcePath,
@@ -45,124 +47,50 @@ const getParserValue = ({
   return value;
 };
 
-const visibleWhen = [{ field: 'V0_json', is: ['false'] }];
-const getForm = options => ({
-  fieldMap: {
-    resourcePath: {
-      id: 'resourcePath',
-      name: 'resourcePath',
-      label: 'Resource path',
-      type: 'text',
-      defaultValue: options?.resourcePath || '',
-      required: true,
-    },
-    V0_json: {
-      id: 'V0_json',
-      name: 'V0_json',
-      type: 'radiogroup',
-      label: 'Parse strategy',
-      helpText: `Automatic parsing means the XML data is converted to JSON without any user configurations.
-        This typically generates a more complex and difficult to read JSON.
-        If you would like to have more control over what the JSON output looks like,
-        use the custom option.`,
-      defaultValue: options?.V0_json ? 'true' : 'false',
-      options: [
-        {
-          items: [
-            { value: 'false', label: 'Custom' },
-            { value: 'true', label: 'Automatic' },
-          ]
-        }
-      ]
-    },
-    trimSpaces: {
-      id: 'trimSpaces',
-      name: 'trimSpaces',
-      type: 'checkbox',
-      defaultValue: !!options?.trimSpaces,
-      helpText: 'If checked, values will be stripped of leading and trailing whitespace.',
-      label: 'Trim leading and trailing spaces',
-      visibleWhen,
-    },
-    stripNewLineChars: {
-      id: 'stripNewLineChars',
-      name: 'stripNewLineChars',
-      type: 'checkbox',
-      defaultValue: !!options?.stripNewLineChars,
-      label: 'Strip new line characters',
-      visibleWhen,
-    },
-    attributePrefix: {
-      id: 'attributePrefix',
-      name: 'attributePrefix',
-      type: 'text',
-      placeholder: 'none',
-      defaultValue: options?.attributePrefix || '',
-      label: 'Character to prepend on attribute names',
-      visibleWhen,
-    },
-    textNodeName: {
-      id: 'textNodeName',
-      name: 'textNodeName',
-      type: 'text',
-      placeholder: '&txt',
-      defaultValue: options?.textNodeName || '',
-      label: 'Text node name',
-      visibleWhen,
-    },
-    listNodes: {
-      id: 'listNodes',
-      name: 'listNodes',
-      type: 'text',
-      defaultValue: options?.listNodes || '',
-      multiline: true,
-      helpText: 'It is not always possible to infer which XML nodes are single values or a list. To force an XML node to be recognized as a list (Array), enter it\'s path here.',
-      label: 'List nodes',
-      visibleWhen
-    },
-    includeNodes: {
-      id: 'includeNodes',
-      name: 'includeNodes',
-      type: 'text',
-      placeholder: 'all',
-      defaultValue: options?.includeNodes || '',
-      multiline: true,
-      helpText: 'Often XML documents are large and their full content is not needed. It is possibly to reduce the record size by specifying only the set of nodes (specified by path) that should be extracted.',
-      label: 'Include only these nodes',
-      visibleWhen
-    },
-    excludeNodes: {
-      id: 'excludeNodes',
-      name: 'excludeNodes',
-      type: 'text',
-      placeholder: 'none',
-      defaultValue: options?.excludeNodes || '',
-      multiline: true,
-      helpText: 'It may be easier to specify node to exclude than which to include. If you wish to exclude certain xml nodes from the final record, specify them here using a simplified xpath.',
-      label: 'Exclude any of these nodes',
-      visibleWhen
-    },
-  }
-});
-
 const useStyles = makeStyles(theme => ({
-  fullWidth: {
+  container: {
     width: '100%',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
   },
   launchContainer: {
     display: 'flex',
     alignItems: 'center',
   },
   button: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   label: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
+  labelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  fileUploadLabelWrapper: {
+    width: '100%',
+    marginTop: 'auto',
+    marginBottom: 'auto'
 
+  },
+  fileUploadRoot: {
+    width: '100%',
+  },
+  actionContainer: {
+    display: 'flex',
+    flexDirection: 'row'
+
+  },
+  uploadContainer: {
+    justifyContent: 'flex-end',
+    background: 'transparent !important',
+    border: '0px !important',
+    width: 'auto !important',
+    padding: 4
+  },
+  uploadFileErrorContainer: {
+    marginBottom: 4
+  }
 }));
 
 export default function DynaXmlParse({
@@ -172,13 +100,18 @@ export default function DynaXmlParse({
   resourceId,
   resourceType,
   disabled,
+  uploadSampleDataFieldName
 }) {
   const classes = useStyles();
   const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
-  const options = { resourcePath, ...value?.[0]?.rules};
+  const getInitOptions = useCallback(
+    (val) => ({ resourcePath, ...val?.[0]?.rules}),
+    [resourcePath],
+  );
+  const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [form, setForm] = useState(getForm(options));
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
@@ -192,11 +125,14 @@ export default function DynaXmlParse({
     // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
+      const parsersValue = getParserValue(editorValues);
+      setCurrentOptions(getInitOptions(parsersValue));
+
       setForm(getForm(editorValues));
       setFormKey(formKey + 1);
-      onFieldChange(id, getParserValue(editorValues));
+      onFieldChange(id, parsersValue);
     }
-  }, [formKey, id, onFieldChange]);
+  }, [formKey, getInitOptions, id, onFieldChange]);
 
   const handleEditorClose = useCallback(() => {
     setShowEditor(false);
@@ -216,23 +152,58 @@ export default function DynaXmlParse({
     },
     [id, onFieldChange]
   );
+  const editorDataTitle = useMemo(
+    () => {
+      if (uploadSampleDataFieldName) {
+        return (
+          <DynaUploadFile
+            resourceId={resourceId}
+            resourceType={resourceType}
+            onFieldChange={onFieldChange}
+            options="xml"
+            color=""
+            placeholder="Sample XML file (that would be parsed)"
+            id={uploadSampleDataFieldName}
+            persistData
+            hideFileName
+            variant="text"
+            classProps={
+              {
+                root: classes.fileUploadRoot,
+                labelWrapper: classes.fileUploadLabelWrapper,
+                uploadFile: classes.uploadContainer,
+                actionContainer: classes.actionContainer,
+                errorContainer: classes.uploadFileErrorContainer
+              }
+            }
+          />
+        );
+      }
+    },
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [uploadSampleDataFieldName]
+  );
   return (
-    <div className={classes.fullWidth}>
-      {showEditor && (
-        <XmlParseEditorDialog
-          title="XML parser helper"
-          id={id + resourceId}
-          data={data}
-          resourceType={resourceType}
-          rule={currentOptions}
-          onSave={handleEditorSave}
-          onClose={handleEditorClose}
-          disabled={disabled}
+    <>
+      <div className={classes.container}>
+        {showEditor && (
+          <XmlParseEditorDialog
+            title="XML parser helper"
+            id={id + resourceId}
+            data={data}
+            resourceType={resourceType}
+            rule={currentOptions}
+            onSave={handleEditorSave}
+            onClose={handleEditorClose}
+            disabled={disabled}
+            editorDataTitle={editorDataTitle}
         />
-      )}
-      <div className={classes.launchContainer}>
-        <FormLabel className={classes.label}>XML parser helper</FormLabel>
+        )}
+        <div className={classes.labelWrapper}>
+          <FormLabel className={classes.label}>XML parser helper</FormLabel>
+          <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
+        </div>
         <Button
           data-test={`parse-helper-${id}`}
           variant="outlined"
@@ -241,14 +212,14 @@ export default function DynaXmlParse({
           onClick={handleEditorClick}>
           Launch
         </Button>
-        <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
       </div>
+
       <DynaForm
         key={formKey}
         onChange={handleFormChange}
         disabled={disabled}
         fieldMeta={form}
       />
-    </div>
+    </>
   );
 }

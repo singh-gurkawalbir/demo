@@ -16,7 +16,7 @@ const contentWrapper = {
 
 };
 const StaleUIVersion = () => (
-  <ModalDialog show>
+  <ModalDialog disableEnforceFocus show>
     <Typography>Please Reload Page</Typography>
     <Typography>It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
     <Button
@@ -126,7 +126,7 @@ export default function AlertDialog() {
   return (
     <div>
       {showSessionStatus ?
-        <Dialog open style={contentWrapper}>
+        <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
             <WarningSessionContent />
           ) : (

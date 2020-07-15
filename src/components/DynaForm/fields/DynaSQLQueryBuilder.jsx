@@ -12,23 +12,23 @@ import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import FieldHelp from '../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
+
+const useStyles = makeStyles({
   sqlContainer: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   sqlBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   sqlLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  sqlLabelWrapper: {
+    display: 'flex',
+  }
+});
 
 export default function DynaSQLQueryBuilder(props) {
   const classes = useStyles();
@@ -260,11 +260,15 @@ export default function DynaSQLQueryBuilder(props) {
             ruleTitle={ruleTitle}
           />
         )}
-        <FormLabel className={classes.sqlLabel}>{label}:</FormLabel>
+        <div className={classes.sqlLabelWrapper}>
+          <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           className={classes.sqlBtn}
           data-test={id}
           variant="outlined"
+          color="secondary"
           onClick={handleEditorClick}>
           Launch
         </Button>

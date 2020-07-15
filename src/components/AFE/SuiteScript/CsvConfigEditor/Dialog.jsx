@@ -4,7 +4,7 @@ import CsvParseEditor from './CsvParser';
 
 export default function CsvConfigEditorDialog(props) {
   // csvEditorType: ['parse', 'generate']
-  const { id, rule, data, disabled, ...rest } = props;
+  const { id, rule, data, disabled, editorDataTitle, ...rest } = props;
   const defaults = {
     width: '80vw',
     height: '70vh',
@@ -24,6 +24,8 @@ export default function CsvConfigEditorDialog(props) {
         editorId={id}
         rule={rule}
         data={data}
+        editorDataTitle={editorDataTitle}
+
       />
     </EditorDialog>
   );

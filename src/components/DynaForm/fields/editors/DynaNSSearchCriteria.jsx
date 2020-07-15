@@ -45,7 +45,7 @@ export default function DynaNSSearchCriteria(props) {
     setShowEditor(!showEditor);
   };
 
-  const { data: savedSearches } = useSelector(state =>
+  const { data: savedSearches, status } = useSelector(state =>
     selectors.metadataOptionsAndResources({
       state,
       connectionId,
@@ -53,8 +53,8 @@ export default function DynaNSSearchCriteria(props) {
       filterKey,
     })
   );
-  const onFetch = useCallback(() => {
-    dispatch(actions.metadata.request(connectionId, commMetaPath));
+  const onFetch = useCallback((shouldRefreshCache) => {
+    dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
   }, [commMetaPath, connectionId, dispatch]);
 
   useEffect(() => {
@@ -76,10 +76,12 @@ export default function DynaNSSearchCriteria(props) {
           value={value}
           fieldOptions={{
             fields: savedSearches,
+            status,
             valueName: 'value',
             labelName: 'label',
           }}
           onSave={handleSave}
+          onRefresh={onFetch}
           onClose={handleEditorClick}
           disabled={disabled}
         />

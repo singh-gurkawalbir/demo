@@ -1,4 +1,21 @@
+import { isJsonString } from '../../../../utils/string';
+
 export default {
+  preSave: formValues => {
+    const newValues = { ...formValues };
+    if (isJsonString(newValues['/import/netsuite/internalIdLookup/expression'])) {
+      newValues['/import/netsuite/internalIdLookup/expression'] = JSON.parse(newValues['/import/netsuite/internalIdLookup/expression']);
+    }
+
+    if (newValues['/import/netsuite/operation'] === 'add' && !newValues['/import/netsuite/ignoreExisting']) {
+      newValues['/import/netsuite/internalIdLookup/expression'] = undefined;
+    }
+    if (!newValues['/import/netsuite/internalIdLookup/expression'] || newValues['/import/netsuite/internalIdLookup/expression'].length === 0) {
+      newValues['/import/netsuite/internalIdLookup'] = {};
+      delete newValues['/import/netsuite/internalIdLookup/expression'];
+    }
+    return { ...newValues };
+  },
   optionsHandler: (fieldId, fields) => {
     if (fieldId === 'import.netsuite.internalIdLookup.expression') {
       const recordTypeField = fields.find(

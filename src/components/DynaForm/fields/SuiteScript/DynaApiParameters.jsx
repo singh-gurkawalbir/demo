@@ -14,22 +14,21 @@ import FieldHelp from '../../FieldHelp';
 import * as selectors from '../../../../reducers';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   dynaAssistantbtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaAssistantFormLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  dynaAssistantFormLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  }
+});
 const ApiParametersModal = props => {
   const {
     apiMethodMetadata,
@@ -99,10 +98,12 @@ export default function DynaApiParameters(props) {
         />
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
-        <FormLabel className={classes.dynaAssistantFormLabel}>
-          Define API parameters
-        </FormLabel>
-
+        <div className={classes.dynaAssistantFormLabelWrapper}>
+          <FormLabel className={classes.dynaAssistantFormLabel}>
+            Define API parameters
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -111,7 +112,6 @@ export default function DynaApiParameters(props) {
           onClick={() => setShowApiParametersModal(true)}>
           {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
-        <FieldHelp {...props} />
       </div>
       <ErroredMessageComponent
         isValid={isValid}

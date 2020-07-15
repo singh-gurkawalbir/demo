@@ -4,7 +4,6 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    delete newValues['/file/csvHelper'];
     newValues['/type'] = 'webhook';
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
@@ -116,63 +115,6 @@ export default {
         resourcePath: resourcePath && resourcePath.value,
       };
     }
-    if (fieldId === 'file.csvHelper') {
-      const keyColumnsField = fields.find(
-        field => field.id === 'file.csv.keyColumns'
-      );
-      const columnDelimiterField = fields.find(
-        field => field.id === 'file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'file.csv.rowDelimiter'
-      );
-      const trimSpacesField = fields.find(
-        field => field.id === 'file.csv.trimSpaces'
-      );
-      const rowsToSkipField = fields.find(
-        field => field.id === 'file.csv.rowsToSkip'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.csv.hasHeaderRow'
-      );
-
-      return {
-        fields: {
-          columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-          rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-          trimSpaces: trimSpacesField && trimSpacesField.value,
-          rowsToSkip: rowsToSkipField && rowsToSkipField.value,
-          hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-          keyColumns: keyColumnsField && keyColumnsField.value,
-        },
-      };
-    }
-    if (fieldId === 'file.csv.keyColumns') {
-      const columnDelimiterField = fields.find(
-        field => field.id === 'file.csv.columnDelimiter'
-      );
-      const rowDelimiterField = fields.find(
-        field => field.id === 'file.csv.rowDelimiter'
-      );
-      const trimSpacesField = fields.find(
-        field => field.id === 'file.csv.trimSpaces'
-      );
-      const rowsToSkipField = fields.find(
-        field => field.id === 'file.csv.rowsToSkip'
-      );
-      const hasHeaderRowField = fields.find(
-        field => field.id === 'file.csv.hasHeaderRow'
-      );
-      const options = {
-        columnDelimiter: columnDelimiterField && columnDelimiterField.value,
-        rowDelimiter: rowDelimiterField && rowDelimiterField.value,
-        trimSpaces: trimSpacesField && trimSpacesField.value,
-        rowsToSkip: rowsToSkipField && rowsToSkipField.value,
-        hasHeaderRow: hasHeaderRowField && hasHeaderRowField.value,
-      };
-
-      return options;
-    }
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -180,14 +122,7 @@ export default {
       fieldId: 'edix12.format',
     },
     'file.type': { fieldId: 'file.type' },
-    'file.csvHelper': { fieldId: 'file.csvHelper' },
-    'file.csv.columnDelimiter': { fieldId: 'file.csv.columnDelimiter' },
-    'file.csv.rowDelimiter': { fieldId: 'file.csv.rowDelimiter' },
-    'file.csv.trimSpaces': { fieldId: 'file.csv.trimSpaces' },
-    'file.csv.rowsToSkip': { fieldId: 'file.csv.rowsToSkip' },
-    'file.csv.hasHeaderRow': { fieldId: 'file.csv.hasHeaderRow' },
-    'file.csv.rowsPerRecord': { fieldId: 'file.csv.rowsPerRecord' },
-    'file.csv.keyColumns': { fieldId: 'file.csv.keyColumns' },
+    'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': { fieldId: 'file.xlsx.rowsPerRecord' },
     'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
@@ -238,14 +173,8 @@ export default {
               'file.filedefinition.rules',
             ],
             containers: [{fields: [
-              'file.csvHelper',
-              'file.csv.columnDelimiter',
-              'file.csv.rowDelimiter',
-              'file.csv.trimSpaces',
-              'file.csv.rowsToSkip',
-              'file.csv.hasHeaderRow',
-              'file.csv.rowsPerRecord',
-              'file.csv.keyColumns']}]
+              'file.csv',
+            ]}]
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],

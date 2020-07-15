@@ -349,10 +349,9 @@ export default function FilterPanel({
               updateUIForRHSRule({ rule, name });
             });
           }
+          const rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
 
-          return `<input class="form-control" name="${name}" value="${rulesState[
-            ruleId
-          ].data.rhs.value || ''}">${
+          return `<input class="form-control" name="${name}" value="${rhsValue}">${
             readOnly
               ? ''
               : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'

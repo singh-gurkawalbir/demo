@@ -159,6 +159,7 @@ const getIntegrationApp = ({ _connectorId, name }) => {
 export default {
   getStepText: (step = {}, mode) => {
     let stepText = '';
+    let showSpinner = false;
     const isUninstall = mode === 'uninstall';
 
     if (
@@ -172,7 +173,8 @@ export default {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = isUninstall ? 'Uninstalling...' : 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling' : 'Configuring';
+        showSpinner = true;
       } else {
         stepText = isUninstall ? 'Uninstall' : 'Configure';
       }
@@ -181,7 +183,8 @@ export default {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
         if (step.verifying) {
-          stepText = 'Verifying...';
+          showSpinner = true;
+          stepText = 'Verifying';
         } else {
           stepText = 'Verify now';
         }
@@ -191,12 +194,13 @@ export default {
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
-      stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
+      showSpinner = true;
+      stepText = isUninstall ? 'Uninstalling' : 'Installing';
     } else {
       stepText = isUninstall ? 'Uninstall' : 'Install';
     }
 
-    return stepText;
+    return { stepText, showSpinner };
   },
   getHighestEditionForIntegrationApp: (integration = {}) => {
     const { _connectorId, name } = integration;

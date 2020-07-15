@@ -127,7 +127,7 @@ export function* requestSuiteScriptMetadata({
 
   let resp;
   try {
-    resp = yield call(apiCallWithRetry, {path, opts});
+    resp = yield call(apiCallWithRetry, {path, opts, hidden: resourceType === 'settings'});
   } catch (error) {
     return false;
   }
