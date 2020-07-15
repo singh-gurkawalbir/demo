@@ -738,7 +738,7 @@ export function* requestDebugLogs({ connectionId }) {
 }
 
 export function* receivedResource({ resourceType, resource }) {
-  if (resourceType === 'connections' && !resource.offline) {
+  if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
   }
 }
