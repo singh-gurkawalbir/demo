@@ -6,7 +6,6 @@ import Input from '@material-ui/core/Input';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import { FixedSizeList } from 'react-window';
-import useTraceUpdate from 'use-trace-update';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 import CeligoSelect from '../../CeligoSelect';
@@ -130,7 +129,6 @@ export default function DynaSelect(props) {
   } = props;
 
   const listRef = React.createRef();
-  useTraceUpdate(props);
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const isSubHeader =
