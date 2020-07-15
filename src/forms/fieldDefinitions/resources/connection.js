@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AS2_URLS_STAGING, AS2_URLS_PRODUCTION} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
 import { isProduction, isEuRegion } from '../../utils';
 import { isNewId } from '../../../utils/resource';
 import { applicationsList } from '../../../constants/applications';
@@ -1888,15 +1888,6 @@ export default {
         ],
       },
     ],
-  },
-  as2url: {
-    type: 'select',
-    label: 'AS2 url',
-    options: [{
-      items: isProduction() ? AS2_URLS_PRODUCTION : AS2_URLS_STAGING,
-    }
-    ],
-    value: isProduction() ? 'https://api.integrator.io/v1/as2' : 'https://api.staging.integrator.io/v1/as2'
   },
   requiremdnspartners: {
     type: 'labelvalue',
