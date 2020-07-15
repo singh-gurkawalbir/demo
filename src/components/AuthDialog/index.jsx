@@ -85,14 +85,12 @@ export default function AlertDialog() {
   }, [dispatch, sessionValidTimestamp]);
 
   return (
-    <div>
-      <Dialog open={!!showSessionStatus}>
-        {showSessionStatus === 'warning' ? (
-          <WarningSessionContent />
-        ) : (
-          showSessionStatus === 'expired' && <ExpiredSessionContent />
-        )}
-      </Dialog>
-    </div>
+    <Dialog disableEnforceFocus open={!!showSessionStatus}>
+      {showSessionStatus === 'warning' ? (
+        <WarningSessionContent />
+      ) : (
+        showSessionStatus === 'expired' && <ExpiredSessionContent />
+      )}
+    </Dialog>
   );
 }
