@@ -38,9 +38,6 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  arrowIcon: {
-    marginTop: 2,
-  },
   accountListPopper: {
     maxWidth: 250,
     left: '124px !important',
@@ -195,7 +192,7 @@ export default function AccountList() {
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
         {selectedAccount && selectedAccount.company}
-        <ArrowDownIcon className={classes.arrowIcon} />
+        <ArrowDownIcon />
       </IconTextButton>
 
       <ArrowPopper
