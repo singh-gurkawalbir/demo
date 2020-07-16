@@ -63,7 +63,7 @@ const DynaForm = props => {
     const firstInput = formRef.current?.querySelector?.('input');
 
     if (firstInput?.focus) {
-      setTimeout(() => firstInput?.focus?.(), 100);
+      setTimeout(() => firstInput.focus(), 100);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formRef.current]);
@@ -83,16 +83,15 @@ const DynaForm = props => {
     // return null;
   }
   return (
-    <div ref={formRef} >
-      <Form
-        {...rest}
-        showValidationBeforeTouched={showValidationBeforeTouched}
-        renderer={renderer}>
-        <div className={clsx(classes.fieldContainer, className)}>
-          <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
-        </div>
-        {/* The children are action buttons for the form */}
-        {children && (
+    <Form
+      {...rest}
+      showValidationBeforeTouched={showValidationBeforeTouched}
+      renderer={renderer}>
+      <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
+        <DynaFormGenerator {...rest} layout={layout} fieldMap={fieldMap} />
+      </div>
+      {/* The children are action buttons for the form */}
+      {children && (
         <div className={classes.actions}>
           {/* Incase of a resource form,  isResourceForm property allows the button group container to be split left and right
             * based on primary and secondary action buttons
@@ -103,9 +102,8 @@ const DynaForm = props => {
             })}>{children}
           </ButtonGroup>
         </div>
-        )}
-      </Form>
-    </div>
+      )}
+    </Form>
   );
 };
 
