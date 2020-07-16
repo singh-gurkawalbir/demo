@@ -30,10 +30,10 @@ export default {
   },
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
-
-    if (!accessTokenData['/autoPurgeAt'] || accessTokenData['/autoPurgeAt'] === 'never') {
+    if (accessTokenData['/autoPurgeAt'] === 'never') {
       accessTokenData['/autoPurgeAt'] = undefined;
-    } else {
+    // eslint-disable-next-line no-restricted-globals
+    } else if (accessTokenData['/autoPurgeAt'] && !isNaN(accessTokenData['/autoPurgeAt'])) {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();
 

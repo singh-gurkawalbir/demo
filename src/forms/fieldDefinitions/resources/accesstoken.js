@@ -1,3 +1,17 @@
+// import moment from 'moment';
+import { isNewId } from '../../../utils/resource';
+
+// const getAutoPurgeDescription = (id, autoPurgeAt) => {
+//   if (isNewId(id)) {
+//     return '';
+//   }
+//   if (moment(autoPurgeAt, moment.ISO_8601).isValid()) {
+//     const x = moment(autoPurgeAt);
+//     const y = moment();
+//     return `Auto purges in ${moment.duration(x.diff(y)).humanize()}`;
+//   }
+//   return undefined;
+// };
 
 export default {
   name: {
@@ -14,15 +28,16 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto purge token',
-    required: true,
-    defaultValue: '',
+    required: r => isNewId(r?._id),
+    // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),
+    defaultValue: r => (!isNewId(r?._id) && !r?.autoPurgeAt) ? 'never' : r?.autoPurgeAt,
     skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
       const items = [
         {
           label: 'Never',
-          value: 'never'
+          value: 'never',
         },
         {
           label: '1 Hour',
