@@ -5,6 +5,7 @@ import { makeStyles, TableCell } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   link: {
     cursor: 'pointer',
+    fontWeight: 'bold',
   },
   resolved: {
     color: theme.palette.primary.main,

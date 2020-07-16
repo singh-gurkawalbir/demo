@@ -17,7 +17,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
   },
-
+  expPanelTitle: {
+    color: theme.palette.secondary.main,
+  },
 }));
 
 export default function CollapsedComponents(props) {
@@ -102,7 +104,7 @@ const ExpansionPannelExpandOnInValidState = props => {
           data-test={header}
           onClick={() => setShouldExpand(expand => !expand)}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography>{header}</Typography>
+          <Typography className={classes.expPanelTitle}>{header}</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails >
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />

@@ -55,7 +55,9 @@ const useStyles = makeStyles(theme => ({
 const other = {
   celigoWhite: colors.celigoWhite,
   celigoError: colors.celigoError,
+  celigoErrorDark: colors.celigoErrorDark,
   celigoSuccess: colors.celigoSuccess,
+  celigoSuccessDark: colors.celigoSuccessDark,
   celigoWarning: colors.celigoWarning,
 };
 const sandbox = {
@@ -70,6 +72,7 @@ const accent = {
   celigoAccent2: colors.celigoAccent2,
   celigoAccent3: colors.celigoAccent3,
   celigoAccent4: colors.celigoAccent4,
+  celigoAccent5: colors.celigoAccent5,
 };
 const neutral = {
   celigoNeutral1: colors.celigoNeutral1,

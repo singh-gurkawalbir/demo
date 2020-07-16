@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     borderLeft: `5px solid ${theme.palette.primary.main}`,
   },
   errorCount: {
-    color: theme.palette.error.main,
+    color: theme.palette.error.dark,
   },
 }));
 

@@ -113,6 +113,9 @@ const useStyles = makeStyles((theme) => ({
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
   },
+  sourceTitle: {
+    marginLeft: -100,
+  },
 }));
 const bottomDrawerMin = 41;
 

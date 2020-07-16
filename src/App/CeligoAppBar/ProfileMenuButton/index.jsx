@@ -65,10 +65,15 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 13,
     padding: 0,
   },
+  // TODO (Azhar): we have to make a variant for this btn
   myAccBtn: {
     borderColor: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
     fontFamily: 'Roboto400',
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    }
   },
   signOutBtn: {
     fontFamily: 'Roboto400',

@@ -39,6 +39,15 @@ export default {
       hint: colors.celigoNeutral5,
       secondary: colors.celigoNeutral7,
     },
+    error: {
+      main: colors.celigoError,
+      dark: colors.celigoErrorDark,
+    },
+    // Todo (Azhar): Success light and dark not taking the colors in the theme
+    success: {
+      main: colors.celigoSuccess,
+      dark: colors.celigoSuccessDark,
+    },
   },
   breakpoints: {
     keys: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
@@ -385,7 +394,7 @@ export default {
         fontFamily: 'source sans pro',
         fontSize: 14,
         lineHeight: '24px',
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         '&.Mui-required': {
           fontWeight: 'bold',
         },
@@ -650,6 +659,8 @@ export default {
         minHeight: 'unset',
       },
       wrapper: {
+        color: colors.celigoNeutral8,
+        fontSize: 14,
         '& > svg': {
           fontSize: '1.1rem',
         },

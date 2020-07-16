@@ -93,12 +93,12 @@ const useStyles = makeStyles(theme => ({
   message: {
     display: 'flex',
     alignItems: 'center',
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.main,
   },
   actionButton: {
     padding: 0,
     '& svg': {
-      color: theme.palette.text.primary,
+      color: theme.palette.secondary.main,
     },
   },
 }));
