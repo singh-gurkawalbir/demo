@@ -176,7 +176,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     return <DynaForm {...props} />;
   }
   return (
-    <DynaForm proceedOnChange={proceedOnChange} {...props} isResourceForm>
+    <DynaForm proceedOnChange={proceedOnChange} {...props} autoFocus isResourceForm>
       {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}
     </DynaForm>
   );

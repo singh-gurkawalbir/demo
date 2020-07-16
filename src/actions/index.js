@@ -1241,6 +1241,8 @@ const flowData = {
     }),
 };
 const app = {
+  fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
+  updateUIVersion: (version) => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),

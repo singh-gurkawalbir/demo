@@ -129,7 +129,6 @@ export default function DynaSelect(props) {
   } = props;
 
   const listRef = React.createRef();
-
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const isSubHeader =
@@ -224,6 +223,7 @@ export default function DynaSelect(props) {
       </MenuItem>
     );
   };
+
 
   return (
     <div className={classes.dynaSelectWrapper}>
