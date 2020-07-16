@@ -1,6 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
@@ -8,7 +7,6 @@ import * as selectors from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import CodeEditor from '../../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../../components/RawHtml';
-import RightDrawer from '../../../../../../../components/drawer/Right';
 import EditorSaveButton from '../../../../../../../components/ResourceFormFactory/Actions/EditorSaveButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 
@@ -41,16 +39,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ReadmeEditor({ editorId }) {
+export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const history = useHistory();
+  const editorId = `readme-${integrationId}`;
   const { confirmDialog } = useConfirmDialog();
-
-  const onClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
-
   const data = useSelector(state => selectors.editor(state, editorId).data);
   const handleChange = useCallback(
     data => {
@@ -86,16 +79,20 @@ export default function ReadmeEditor({ editorId }) {
     });
   }, [confirmDialog, isEditorDirty, onClose]);
 
+  useEffect(() => {
+    dispatch(
+      actions.editor.init(editorId, 'readme', {
+        data: readmeValue,
+        _init_data: readmeValue,
+        integrationId,
+      })
+    );
+    // we only want to init the editor once per render (onMount)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <RightDrawer
-      path="editReadme"
-      height="tall"
-      width="xl"
-      // type="paper"
-      title="Edit readme"
-      variant="temporary"
-      onClose={onClose}>
+    <>
       <div className={classes.editorContainer}>
         <CodeEditor
           name="readme"
@@ -135,6 +132,6 @@ export default function ReadmeEditor({ editorId }) {
           </Button>
         </div>
       </div>
-    </RightDrawer>
+    </>
   );
 }
