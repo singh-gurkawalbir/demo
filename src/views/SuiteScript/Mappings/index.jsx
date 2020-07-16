@@ -102,7 +102,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 const SuiteScriptMapping = (props) => {
-  const {disabled, onClose, ssLinkedConnectionId, integrationId, flowId, subRecordMappingId } = props;
+  const {onClose, ssLinkedConnectionId, integrationId, flowId, subRecordMappingId } = props;
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
@@ -112,6 +112,9 @@ const SuiteScriptMapping = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  const isManageLevelUser = useSelector(
+    state => selectors.userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId)
+  );
   const {
     mappings,
     lookups,
@@ -213,7 +216,7 @@ const SuiteScriptMapping = (props) => {
   );
   const handleSFNSAssistantFieldClick = useCallback(
     meta => {
-      if (disabled) {
+      if (!isManageLevelUser) {
         return;
       }
       let value;
@@ -231,7 +234,7 @@ const SuiteScriptMapping = (props) => {
           })
         );
       }
-    }, [disabled, dispatch, lastModifiedRowKey, recordType, sObjectType]);
+    }, [dispatch, isManageLevelUser, lastModifiedRowKey, recordType, sObjectType]);
   const patchSettings = useCallback(
     (key, settings) => {
       dispatch(actions.suiteScript.mapping.patchSettings(key, settings));
@@ -334,7 +337,7 @@ const SuiteScriptMapping = (props) => {
             {extractLabel}
             { flowSampleDataStatus !== 'requested' && (
               <RefreshIcon
-                disabled={disabled}
+                disabled={!isManageLevelUser}
                 onClick={handleRefreshExtracts}
                 className={classes.refreshButton}
                 data-test="refreshExtracts"
@@ -353,7 +356,7 @@ const SuiteScriptMapping = (props) => {
             {generateLabel}
             { importSampleDataStatus !== 'requested' && (
               <RefreshIcon
-                disabled={disabled}
+                disabled={!isManageLevelUser}
                 onClick={handleRefreshGenerates}
                 className={classes.refreshButton}
                 data-test="refreshGenerates"
@@ -376,7 +379,7 @@ const SuiteScriptMapping = (props) => {
               key={`${mapping.key}-${mapping.rowIdentifier}`}
               mapping={mapping}
               onFieldUpdate={handleFieldUpdate}
-              disabled={disabled}
+              disabled={!isManageLevelUser}
               ssLinkedConnectionId={ssLinkedConnectionId}
               integrationId={integrationId}
               flowId={flowId}
@@ -385,7 +388,7 @@ const SuiteScriptMapping = (props) => {
               onDelete={handleDelete}
               onMove={handleMove}
               onDrop={handleDrop}
-              isDraggable={!disabled}
+              isDraggable={isManageLevelUser}
               importType={importType}
               />
           ))}
@@ -394,7 +397,7 @@ const SuiteScriptMapping = (props) => {
             index={emptyRowIndex}
             mapping={emptyObj}
             onFieldUpdate={handleFieldUpdate}
-            disabled={disabled}
+            disabled={!isManageLevelUser}
             ssLinkedConnectionId={ssLinkedConnectionId}
             integrationId={integrationId}
             flowId={flowId}
@@ -409,7 +412,7 @@ const SuiteScriptMapping = (props) => {
           className={classes.importMappingButtonGroup}>
 
           <SaveButton
-            disabled={!!(disabled || saveInProgress)}
+            disabled={!isManageLevelUser || saveInProgress}
             color="primary"
             dataTest="saveImportMapping"
             submitButtonLabel="Save"
@@ -420,14 +423,14 @@ const SuiteScriptMapping = (props) => {
             color="secondary"
             dataTest="saveAndCloseImportMapping"
             onClose={handleClose}
-            disabled={!!(disabled || saveInProgress)}
+            disabled={!isManageLevelUser || saveInProgress}
             showOnlyOnChanges
             submitButtonLabel="Save & close"
           />
           <Button
             variant="text"
             data-test="saveImportMapping"
-            disabled={!!saveInProgress}
+            disabled={saveInProgress}
             onClick={handleClose}>
             Cancel
           </Button>
