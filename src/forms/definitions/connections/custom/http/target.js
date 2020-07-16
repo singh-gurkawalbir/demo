@@ -65,6 +65,9 @@ export default {
       helpKey: 'target.connection.http.unencrypted.x-seller-id',
       required: true,
     },
+    application: {
+      fieldId: 'application'
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {

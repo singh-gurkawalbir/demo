@@ -570,7 +570,8 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'once.booleanField',
     'restlet.delta.dateField',
     'restlet.delta.lagOffset',
-    'restlet.once.booleanField'
+    'restlet.once.booleanField',
+    'restlet.type'
   ],
   imports: [
     'lookups',

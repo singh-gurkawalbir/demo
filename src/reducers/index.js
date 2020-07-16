@@ -132,6 +132,9 @@ export function reloadCount(state) {
   return fromApp.reloadCount((state && state.app) || null);
 }
 
+export function isUiVersionDifferent(state) {
+  return fromApp.isUiVersionDifferent(state?.app);
+}
 export function appErrored(state) {
   return fromApp.appErrored(state && state.app);
 }
@@ -1063,16 +1066,28 @@ export function isIAConnectionSetupPending(state, connectionId) {
   const { _integrationId } = connection;
   const integration = resource(state, 'integrations', _integrationId);
 
-  if (integration && integration.mode === 'settings') {
+  const addNewStoreSteps = fromSession.addNewStoreSteps(
+    state?.session,
+    _integrationId
+  );
+  const { steps } = addNewStoreSteps;
+  if (steps && Array.isArray(steps)) {
+    const installStep = steps.find(s => s._connectionId === connectionId);
+    if (!installStep?.completed) {
+      return true;
+    }
+  }
+
+  if (integration?.mode === 'settings') {
     return false;
   }
 
-  if (integration && integration.install) {
+  if (integration?.install) {
     const installStep = integration.install.find(
       step => step._connectionId === connectionId
     );
 
-    if (installStep && !installStep.completed) {
+    if (!installStep?.completed) {
       return true;
     }
   }

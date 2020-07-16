@@ -4,20 +4,20 @@ export default {
     '/type': 'http',
     '/assistant': 'solidcommerce',
     '/http/auth/type': 'custom',
-    '/http/mediaType': 'xml',
-    '/http/ping/relativeURI': `/GetAllCompanyLists?appKey=${
-      formValues['/http/encrypted/appKey']
-    }&xslUri=&securityKey=${encodeURIComponent(
-      formValues['/http/encrypted/securityKey']
-    )}&includeWarehouses=True`,
-    '/http/ping/method': 'GET',
+    '/http/mediaType': 'urlencoded',
+    '/http/successMediaType': 'xml',
+    '/http/ping/relativeURI': '/GetAllCompanyLists',
+    '/http/ping/method': 'POST',
     '/http/baseURI': 'https://upsprodwebservices.upsefulfillment.com/ws.asmx',
-    '/http/encrypted/securityKey': encodeURIComponent(
-      formValues['/http/encrypted/securityKey']
-    ),
     '/http/ping/successPath': '/LiquidateDirect/GetAllCompanyLists/DateTime',
     '/http/ping/errorPath': '/LiquidateDirect/Error/ErrorText',
+    '/http/ping/body': '{"xslUri":"","appKey":"{{{connection.http.encrypted.appKey}}}","securityKey":"{{{connection.http.encrypted.securityKey}}}","includeWarehouses":"True"}',
     '/http/headers': [
+      { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
+    ],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/token/refreshHeaders': [
       { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
     ],
   }),

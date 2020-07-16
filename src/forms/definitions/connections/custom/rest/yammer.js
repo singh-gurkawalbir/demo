@@ -15,6 +15,9 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     restAdvanced: { formId: 'restAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
     type: 'collapse',
