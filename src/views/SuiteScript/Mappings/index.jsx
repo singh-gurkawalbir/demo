@@ -82,6 +82,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: 0,
     cursor: 'pointer'
   },
+  disableRefresh: {
+    pointerEvents: 'none',
+    cursor: 'not-allowed',
+  },
   spinner: {
     marginLeft: 5,
     width: 50,
@@ -320,7 +324,7 @@ const SuiteScriptMapping = (props) => {
     }
   }, [sfLayoutId, salesforceLayoutId]);
 
-  const showPreviewPane = ['netsuite', 'salesforce'].includes(importType);
+  const showPreviewPane = ['netsuite', 'salesforce'].includes(importType) && isManageLevelUser;
   return (
     <div className={classes.root}>
       <div
@@ -339,7 +343,13 @@ const SuiteScriptMapping = (props) => {
               <RefreshIcon
                 disabled={!isManageLevelUser}
                 onClick={handleRefreshExtracts}
-                className={classes.refreshButton}
+                className={
+                  clsx(classes.refreshButton,
+                    {
+                      [classes.disableRefresh]: !isManageLevelUser
+                    }
+                  )
+                }
                 data-test="refreshExtracts"
               />
             )}
@@ -358,7 +368,13 @@ const SuiteScriptMapping = (props) => {
               <RefreshIcon
                 disabled={!isManageLevelUser}
                 onClick={handleRefreshGenerates}
-                className={classes.refreshButton}
+                className={
+                  clsx(classes.refreshButton,
+                    {
+                      [classes.disableRefresh]: !isManageLevelUser
+                    }
+                  )
+                }
                 data-test="refreshGenerates"
               />
             )}
