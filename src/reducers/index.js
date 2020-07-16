@@ -1120,7 +1120,7 @@ export function userAccessLevelOnConnection(state, connectionId) {
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
       i =>
-        i._registeredConnectionIds &&
+        i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
 
@@ -2703,7 +2703,7 @@ export function userPermissionsOnConnection(state, connectionId) {
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
       i =>
-        i._registeredConnectionIds &&
+        i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
