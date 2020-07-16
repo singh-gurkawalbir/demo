@@ -189,12 +189,8 @@ export default {
         is: ['blob'],
       },
     ],
-    defaultValue: r => {
-      if (r.http.relativeURI[0] === null) {
-        return '';
-      }
-      return r && r.http && r.http.relativeURI && r.http.relativeURI[0];
-    }
+    defaultValue: r =>
+      r && r.http && r.http.relativeURI && r.http.relativeURI[0],
   },
   'http.body': {
     type: 'httprequestbody',
