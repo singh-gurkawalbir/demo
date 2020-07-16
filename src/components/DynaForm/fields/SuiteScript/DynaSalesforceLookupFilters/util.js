@@ -60,34 +60,11 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
       rules: [],
     };
   }
-  let updatedExpression = '';
-  function formattedExpression(exp) {
-    updatedExpression += '(';
-    if (Array.isArray(exp[0])) {
-      formattedExpression(exp[0]);
-    } else {
-      updatedExpression += `${exp[0]}`;
-    }
-
-    updatedExpression += ` ${exp[1].toUpperCase()} `;
-
-    if (Array.isArray(exp[2])) {
-      formattedExpression(exp[2]);
-    } else {
-      updatedExpression += `{{{${exp[2]}}}}`;
-    }
-    updatedExpression += ')';
-  }
-  try {
-    formattedExpression(JSON.parse(expression));
-  } catch (ex) {
-    return {
-      condition: 'AND',
-      rules: [],
-    };
-  }
-
-  updatedExpression = updatedExpression
+  const updatedExpression = expression.replace(/"and"/g, '"AND"').replace(/"or"/g, '"OR"').replace(/\[/g, '(').replace(/\]/g, ')')
+    .replace(/"/g, '')
+    .replace(/,/g, ' ')
+    .replace(/[a-zA-Z.]+\)/g, '{{{$&}}}')
+    .replace(/\)}}}/g, '}}})')
     .replace(/{{{/g, "'{{{")
     .replace(/}}}\)/g, "}}}')");
   let whereClause;
