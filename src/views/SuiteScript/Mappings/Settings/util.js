@@ -30,7 +30,8 @@ const getFormattedLookup = (lookup, formVal) => {
       lookupTmp.default = null;
     } else if ('lookupuseEmptyString' in formVal && formVal.lookupUseEmptyString === true) {
       lookupTmp.default = '';
-    } else if ('lookupDefault' in formVal && formVal.lookupDefault) {
+    } else if ('lookupDefault' in formVal) {
+      // lookupDefault could be '' (empty string) and value saved will be lookup.default = ''
       lookupTmp.default = formVal.lookupDefault;
     }
   }
