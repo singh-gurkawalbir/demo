@@ -58,7 +58,7 @@ export default function FilterPanel({
       if (editorId) {
         dispatch(actions.editor.patch(editorId, { rule: value || [] }));
       } else if (onFieldChange) {
-        //convert value to suiteScript supported format
+        // convert value to suiteScript supported format
         const formattedVal = convertValueToSuiteScriptSupportedExpression(value);
         onFieldChange(id, formattedVal);
       }

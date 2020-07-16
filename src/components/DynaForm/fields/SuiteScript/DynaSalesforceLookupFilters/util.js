@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isArray, filter, invert } from 'lodash';
 import parser from 'js-sql-parser';
-import { compose } from 'redux';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -62,34 +61,32 @@ export function convertSalesforceLookupFilterExpression(expression, data = []) {
     };
   }
   let updatedExpression = '';
-  function formattedExpression(exp){
+  function formattedExpression(exp) {
     updatedExpression += '(';
-    if(Array.isArray(exp[0])){
+    if (Array.isArray(exp[0])) {
       formattedExpression(exp[0]);
-    }
-    else {
+    } else {
       updatedExpression += `${exp[0]}`;
     }
-    
-    updatedExpression += ` ${exp[1].toUpperCase()} `
 
-    if(Array.isArray(exp[2])){
+    updatedExpression += ` ${exp[1].toUpperCase()} `;
+
+    if (Array.isArray(exp[2])) {
       formattedExpression(exp[2]);
-    }
-    else {
+    } else {
       updatedExpression += `{{{${exp[2]}}}}`;
     }
-    updatedExpression += `)`;
+    updatedExpression += ')';
   }
-  try{
-    formattedExpression(JSON.parse(expression))
+  try {
+    formattedExpression(JSON.parse(expression));
   } catch (ex) {
     return {
       condition: 'AND',
       rules: [],
     };
   }
-  
+
   updatedExpression = updatedExpression
     .replace(/{{{/g, "'{{{")
     .replace(/}}}\)/g, "}}}')");
@@ -244,6 +241,11 @@ export function generateSalesforceLookupFilterExpression(
 }
 
 export function convertValueToSuiteScriptSupportedExpression(expression) {
-  return expression.replace(/{{{[a-zA-Z]*\s/g, "")
-  .replace(/}}}/g, "").replace(/\(/g, '[').replace(/\)/g, ']').replace(/OR/g,',or,').replace(/AND/g,',and,').replace(/[a-zA-Z_.]+/g, `"$&"`).replace(/[=!<>]+/g, `,"$&",`).replace(/\s/g, '');
+  return expression.replace(/{{{[a-zA-Z]*\s/g, '')
+    .replace(/}}}/g, '').replace(/\(/g, '[').replace(/\)/g, ']')
+    .replace(/OR/g, ',or,')
+    .replace(/AND/g, ',and,')
+    .replace(/[a-zA-Z_.]+/g, '"$&"')
+    .replace(/[=!<>]+/g, ',"$&",')
+    .replace(/\s/g, '');
 }
