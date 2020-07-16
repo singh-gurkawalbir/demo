@@ -2,7 +2,6 @@ export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
-    retValues['/http/ping/relativeURI'] = '/orders.json';
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
@@ -21,6 +20,67 @@ export default {
 
       retValues['/http/auth/basic'] = undefined;
 
+
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
+    } else {
+      retValues['/http/auth/basic/username'] = `${
+        formValues['/http/auth/basic/username']
+      }`;
+      retValues['/http/auth/basic/password'] = `${
+        formValues['/http/auth/basic/password']
+      }`;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/auth/token'] = undefined;
+      retValues['/http/_iClientId'] = undefined;
+    }
+    if (
+      resource &&
+      resource._connectorId) {
+      retValues['/http/baseURI'] = `https://${
+        formValues['/http/storeURL']
+      }.myshopify.com`;
+      retValues['/http/ping/relativeURI'] = '/admin/orders.json';
+
+      if (
+        retValues['/http/auth/oauth/scope'] &&
+        !!retValues['/http/auth/oauth/scope'].length
+      ) {
+        const scope = retValues['/http/auth/oauth/scope'].find(
+          str => str !== 'read_analytics'
+        );
+
+        if (scope) {
+          const scopeId = /^(read_|write_)(\w*)/.test(scope)
+            ? /^(read_|write_)(\w*)/.exec(scope)[2]
+            : '';
+          const pingURIs = {
+            content: '/admin/articles/authors.json',
+            themes: '/admin/themes.json',
+            products: '/admin/products/count.json',
+            customers: '/admin/customers/count.json',
+            orders: '/admin/orders/count.json',
+            script_tags: '/admin/script_tags/count.json',
+            fulfillments: '/admin/fulfillment_services.json?scope=all',
+            shipping: '/admin/carrier_services.json',
+            users: '/admin/users.json',
+          };
+
+          retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
+        }
+      }
+    } else {
+      retValues['/http/ping/relativeURI'] = '/orders.json';
+      retValues['/http/baseURI'] = `https://${
+        formValues['/http/storeURL']
+      }.myshopify.com/admin/api/${formValues['/http/unencrypted/version']}`;
       if (
         retValues['/http/auth/oauth/scope'] &&
         !!retValues['/http/auth/oauth/scope'].length
@@ -48,26 +108,6 @@ export default {
           retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
         }
       }
-
-      if (
-        resource &&
-        !resource._connectorId &&
-        resource.http &&
-        resource.http._iClientId
-      ) {
-        retValues['/http/_iClientId'] = undefined;
-      }
-    } else {
-      retValues['/http/auth/basic/username'] = `${
-        formValues['/http/auth/basic/username']
-      }`;
-      retValues['/http/auth/basic/password'] = `${
-        formValues['/http/auth/basic/password']
-      }`;
-      retValues['/http/auth/oauth/authURI'] = undefined;
-      retValues['/http/auth/oauth/tokenURI'] = undefined;
-      retValues['/http/auth/token'] = undefined;
-      retValues['/http/_iClientId'] = undefined;
     }
 
     return {
@@ -75,9 +115,6 @@ export default {
       '/type': 'http',
       '/assistant': 'shopify',
       '/http/mediaType': 'json',
-      '/http/baseURI': `https://${
-        formValues['/http/storeURL']
-      }.myshopify.com/admin/api/${formValues['/http/unencrypted/version']}`,
       '/http/ping/method': 'GET',
     };
   },
@@ -141,6 +178,7 @@ export default {
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
         '2020-07',
+      visible: r => !(r?._connectorId),
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',

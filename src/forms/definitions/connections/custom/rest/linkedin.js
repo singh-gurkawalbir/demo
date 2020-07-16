@@ -22,6 +22,9 @@ export default {
         'w_share',
       ],
     },
+    application: {
+      fieldId: 'application',
+    },
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {

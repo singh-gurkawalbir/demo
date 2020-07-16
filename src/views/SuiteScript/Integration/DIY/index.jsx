@@ -15,7 +15,7 @@ import FlowsPanel from './panels/Flows';
 import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 // import IntegrationTabs from '../common/Tabs';
-import SettingsIcon from '../../../../components/icons/SettingsIcon';
+import SettingsIcon from '../../../../components/icons/SingleUserIcon';
 import IntegrationTabs from '../common/Tabs';
 import actions from '../../../../actions';
 

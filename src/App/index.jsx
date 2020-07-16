@@ -12,7 +12,7 @@ import themeProvider from '../theme/themeProvider';
 import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
-import AuthDialog from '../components/AuthDialog';
+import AlertDialog from '../components/AlertDialog';
 import AppErroredModal from './AppErroredModal';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
@@ -42,7 +42,7 @@ function NonSigninHeaderComponents(props) {
     <>
       <CeligoAppBar {...props} />
       <AppErroredModal {...props} />
-      <AuthDialog {...props} />
+      <AlertDialog {...props} />
       <CeligoDrawer {...props} />
     </>
   );

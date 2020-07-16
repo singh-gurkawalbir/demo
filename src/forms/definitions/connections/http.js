@@ -187,6 +187,12 @@ export default {
     'http.mediaType': {
       fieldId: 'http.mediaType',
     },
+    'http.successMediaType': {
+      fieldId: 'http.successMediaType',
+    },
+    'http.errorMediaType': {
+      fieldId: 'http.errorMediaType',
+    },
     'http.encrypted': {
       fieldId: 'http.encrypted',
       visibleWhen: [{ field: 'http.auth.type', isNot: ['custom'] }],
@@ -538,6 +544,8 @@ export default {
           'http.headers',
           'http.baseURI',
           'http.mediaType',
+          'http.successMediaType',
+          'http.errorMediaType',
           'http.auth.failStatusCode',
           'http.auth.failPath',
           'http.auth.failValues',

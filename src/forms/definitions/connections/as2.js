@@ -32,7 +32,7 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    as2url: { fieldId: 'as2url' },
+    as2Mode: { id: 'as2Mode', type: 'as2Mode', label: 'AS2 mode' },
     'as2.as2Id': {
       fieldId: 'as2.as2Id',
       defaultDisabled: r => {
@@ -260,7 +260,7 @@ export default {
         collapsed: true,
         label: 'Configure my AS2 station',
         fields: [
-          'as2url',
+          'as2Mode',
           'as2.as2Id',
           'requiremdnspartners',
           'requireasynchronousmdns',

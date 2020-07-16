@@ -2,8 +2,8 @@ import { Divider, List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { isEqual } from 'lodash';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   NavLink,
 
@@ -12,11 +12,42 @@ import {
 
   useRouteMatch
 } from 'react-router-dom';
+import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import Spinner from '../../../../../../components/Spinner';
 import * as selectors from '../../../../../../reducers';
+import inferErrorMessage from '../../../../../../utils/inferErrorMessage';
 import ConfigureSettings from './sections/ConfigureSettings';
-import useLoadSuiteScriptSettings from '../../../../../../hooks/suiteScript/useLoadSuiteScriptSettings';
+
+export const LoadSettingsMetadata = ({ssLinkedConnectionId,
+  integrationId, children }) => {
+  const dispatch = useDispatch();
+
+  const {hasData: hasSettingsMetadata} = useSelector(state => selectors.suiteScriptResourceStatus(state, {
+    ssLinkedConnectionId,
+    integrationId,
+    resourceType: 'settings',
+  }));
+
+  const resource = useSelector(state => selectors.suiteScriptResource(state, {
+    ssLinkedConnectionId,
+    id: integrationId,
+    resourceType: 'settings',
+  }));
+
+  useEffect(() => {
+    if (!hasSettingsMetadata) { dispatch(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, integrationId)); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (!hasSettingsMetadata) { return <Spinner />; }
+
+  if (resource?.errors) {
+    return <Typography>{inferErrorMessage(resource)[0]}</Typography>;
+  }
+
+  return children;
+};
 
 
 const useStyles = makeStyles(theme => ({
@@ -161,17 +192,18 @@ export default function SettingsPanel({ ssLinkedConnectionId, integrationId }) {
   const infoTextFlow =
       'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
-  const {hasSettingsMetadata} = useLoadSuiteScriptSettings({ssLinkedConnectionId, integrationId});
   return (
     <div className={classes.root}>
       <PanelHeader title="Integration flows" infoText={infoTextFlow} />
-
-      {hasSettingsMetadata ?
+      <LoadSettingsMetadata
+        ssLinkedConnectionId={ssLinkedConnectionId}
+        integrationId={integrationId} >
         <SettingsPanelComponent
           ssLinkedConnectionId={ssLinkedConnectionId}
           integrationId={integrationId}
 
-          /> : <Spinner />}
+          />
+      </LoadSettingsMetadata>
 
     </div>
   );

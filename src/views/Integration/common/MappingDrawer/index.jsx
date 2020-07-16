@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function MappingDrawer() {
+function MappingDrawer({integrationId}) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -43,6 +43,8 @@ function MappingDrawer() {
     const mappingPreviewType = selectors.mappingPreviewType(state, importId);
     return !!mappingPreviewType;
   });
+
+  const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
@@ -75,6 +77,7 @@ function MappingDrawer() {
                 // am importId, this prop should be called as such.
                 resourceId={importId}
                 flowId={flowId}
+                disabled={isMonitorLevelUser}
                 subRecordMappingId={subRecordMappingId}
               />
             </>
