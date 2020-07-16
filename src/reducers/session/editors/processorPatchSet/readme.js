@@ -2,7 +2,6 @@ export default {
   patchSet: editor => {
     const patches = {
       foregroundPatches: [],
-      backgroundPatches: [],
     };
     const {
       integrationId,
