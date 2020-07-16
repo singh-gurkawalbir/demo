@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles,
   Button,
-  Checkbox,
-  FormControlLabel,
 } from '@material-ui/core';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -14,6 +12,7 @@ import RightDrawer from '../../drawer/Right';
 import TextToggle from '../../TextToggle';
 import SettingsFormEditor from '.';
 import { isJsonString } from '../../../utils/string';
+import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 
 const emptyObj = {};
 
@@ -202,16 +201,6 @@ export default function EditorDrawer({
         options={toggleOptions}
       />
       <div className={classes.actionSpacer} />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={autoEvaluate}
-            onChange={handlePreviewChange}
-            name="autoEvaluate"
-          />
-        }
-        label="Auto preview"
-      />
     </>
   );
 
@@ -263,7 +252,8 @@ export default function EditorDrawer({
             Cancel
           </Button>
         </div>
-        {!editor.autoEvaluate && (
+        <div className={classes.wrapper}>
+          {!editor.autoEvaluate && (
           <Button
             data-test="previewEditorResult"
             variant="outlined"
@@ -271,7 +261,15 @@ export default function EditorDrawer({
             disabled={!!editorViolations}>
             Preview
           </Button>
-        )}
+          )}
+          <DynaCheckbox
+            hideLabelSpacing
+            id="autoEvaluateSettings"
+            onFieldChange={handlePreviewChange}
+            label="Auto preview"
+            value={autoEvaluate}
+          />
+        </div>
       </div>
     </RightDrawer>
   );
