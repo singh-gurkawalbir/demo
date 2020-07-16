@@ -296,10 +296,8 @@ export default function Endpoint() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!licenseEntitlementUsage) {
-      requestLicenseEntitlementUsage();
-    }
-  }, [requestLicenseEntitlementUsage, licenseEntitlementUsage]);
+    requestLicenseEntitlementUsage();
+  }, [requestLicenseEntitlementUsage]);
 
   const onDrawerClose = useCallback(() => {
     setShowStartFreeDialog(false);

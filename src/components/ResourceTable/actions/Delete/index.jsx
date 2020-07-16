@@ -12,6 +12,9 @@ export default {
     if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
       return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
+    if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
+      return 'Delete license';
+    }
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,

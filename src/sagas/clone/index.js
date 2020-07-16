@@ -76,7 +76,9 @@ export function* createComponents({ resourceType, resourceId }) {
     yield put(
       actions.integrationApp.clone.receivedIntegrationClonedStatus(
         resourceId,
-        components._integrationId
+        components._integrationId,
+        '',
+        data.sandbox,
       )
     );
 

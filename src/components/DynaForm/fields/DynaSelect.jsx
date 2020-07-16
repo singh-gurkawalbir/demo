@@ -1,15 +1,14 @@
-import React, { useMemo, useState, useCallback, useEffect} from 'react';
-import { ListSubheader, FormLabel } from '@material-ui/core';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
+import { FormLabel, Input, ListSubheader } from '@material-ui/core';
 import FormControl from '@material-ui/core/FormControl';
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FixedSizeList } from 'react-window';
-import ErroredMessageComponent from './ErroredMessageComponent';
-import FieldHelp from '../FieldHelp';
-import CeligoSelect from '../../CeligoSelect';
 import { stringCompare } from '../../../utils/sort';
+import CeligoSelect from '../../CeligoSelect';
+import FieldHelp from '../FieldHelp';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const AUTO_CLEAR_SEARCH = 500;
 
@@ -110,6 +109,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+const Row = ({ index, style, data }) => {
+  const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id} = data;
+  const { label, value, subHeader, disabled = false } = items[index];
+  if (subHeader) {
+    return (
+      <ListSubheader disableSticky key={subHeader} style={style}>
+        {subHeader}
+      </ListSubheader>
+    );
+  }
+
+  return (
+    <MenuItem
+      key={value}
+      value={value}
+      data-value={value}
+      disabled={disabled}
+      className={clsx({
+        [classes.focusVisibleMenuItem]: matchMenuIndex === index,
+      })}
+      style={style}
+      selected={value === finalTextValue}
+      onClick={() => {
+        if (value !== undefined) {
+          onFieldChange(id, value);
+        }
+
+        setOpen(false);
+      }}>
+      {label}
+    </MenuItem>
+  );
+};
+
+
 export default function DynaSelect(props) {
   const {
     disabled,
@@ -190,40 +224,20 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const Row = ({ index, style }) => {
-    const { label, value, subHeader, disabled = false } = items[index];
-    const classes = useStyles();
-    if (subHeader) {
-      return (
-        <ListSubheader disableSticky key={subHeader} style={style}>
-          {subHeader}
-        </ListSubheader>
-      );
-    }
 
-    return (
-      <MenuItem
-        key={value}
-        value={value}
-        data-value={value}
-        disabled={disabled}
-        className={clsx({
-          [classes.focusVisibleMenuItem]: matchMenuIndex === index,
-        })}
-        style={style}
-        selected={value === finalTextValue}
-        onClick={() => {
-          if (value !== undefined) {
-            onFieldChange(id, value);
-          }
+  const renderValue = useCallback(selected => getLabel(items, selected), [items]);
 
-          setOpen(false);
-        }}>
-        {label}
-      </MenuItem>
-    );
-  };
-
+  const openSelect = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const closeSelect = useCallback(
+    () => {
+      setOpen(false);
+    }, []
+  );
+  const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [classes, finalTextValue, id, items, matchMenuIndex]);
 
   return (
     <div className={classes.dynaSelectWrapper}>
@@ -243,15 +257,12 @@ export default function DynaSelect(props) {
           value={finalTextValue}
           disableUnderline
           displayEmpty
-          renderValue={selected => getLabel(items, selected)}
+          renderValue={renderValue}
           open={open}
-          onOpen={() => {
-            setOpen(true);
-          }}
-          onClose={() => {
-            setOpen(false);
-          }}
+          onOpen={openSelect}
+          onClose={closeSelect}
           disabled={disabled}
+          // TODO: memoize this
           input={<Input name={name} id={id} />}>
           <FixedSizeList
             className={className}
@@ -263,7 +274,9 @@ export default function DynaSelect(props) {
                 ? OPTIONS_VIEW_PORT_HEIGHT
                 : ITEM_SIZE * items.length
             }
-            itemCount={items.length}>
+            itemCount={items.length}
+            itemData={rowProps}
+            >
             {Row}
           </FixedSizeList>
         </CeligoSelect>

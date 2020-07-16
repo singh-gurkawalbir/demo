@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
+import TextField from '@material-ui/core/TextField';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 
 const useStyles = makeStyles({
   dynaFieldWrapper: {
@@ -35,14 +36,8 @@ export default function DynaSoqlQuery(props) {
   const [sObject, setsObject] = useState(true);
   const [queryChanged, setQueryChanged] = useState(true);
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/soql/query/metadata`;
-  const { data = {} } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId: ssLinkedConnectionId,
-      commMetaPath,
-      filterKey,
-    })
-  );
+
+  const { data = {} } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId, commMetaPath, filterKey);
 
   const handleFieldOnBlur = () => {
     setsObject(true);
