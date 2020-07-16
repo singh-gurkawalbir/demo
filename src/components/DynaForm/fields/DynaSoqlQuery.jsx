@@ -42,7 +42,7 @@ export default function DynaSoqlQuery(props) {
   const [queryChanged, setQueryChanged] = useState(true);
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/query/columns`;
 
-  const data = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey)?.data;
+  const { data = {} } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
   const handleFieldOnBlur = () => {
     setsObject(true);
