@@ -35,7 +35,7 @@ export default function ReadmeSection({ integrationId }) {
   const match = useRouteMatch();
   const editorId = `readme-${integrationId}`;
   const readmeValue = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId).readme || ''
+    selectors.resource(state, 'integrations', integrationId)?.readme || ''
   );
 
   const canEditIntegration = useSelector(
