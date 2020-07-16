@@ -39,14 +39,24 @@ export default {
       hint: colors.celigoNeutral5,
       secondary: colors.celigoNeutral7,
     },
+    info: {
+      main: colors.celigoAccent2,
+      contrastText: colors.celigoWhite,
+    },
     error: {
       main: colors.celigoError,
       dark: colors.celigoErrorDark,
+      contrastText: colors.celigoWhite,
+    },
+    warning: {
+      backgroundColor: colors.celigoWarning,
+      contrastText: colors.celigoWhite,
     },
     // Todo (Azhar): Success light and dark not taking the colors in the theme
     success: {
       main: colors.celigoSuccess,
       dark: colors.celigoSuccessDark,
+      contrastText: colors.celigoWhite,
     },
   },
   breakpoints: {

@@ -7,6 +7,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 5,
     minHeight: 55,
     color: theme.palette.secondary.main,
+    cursor: 'pointer',
   },
 }));
 

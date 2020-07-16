@@ -23,9 +23,8 @@ const useStyles = makeStyles(theme => ({
   realtime: {
     backgroundColor: theme.palette.secondary.light,
   },
-  // TODO (Azhar): check why success variant is not working
   success: {
-    backgroundColor: '#5CB85C',
+    backgroundColor: theme.palette.success.dark,
   },
   error: {
     backgroundColor: theme.palette.error.dark,
