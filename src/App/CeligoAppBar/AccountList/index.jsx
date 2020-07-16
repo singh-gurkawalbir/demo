@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   currentContainer: {
     fontSize: 13,
-    color: theme.palette.text.hint,
+    color: theme.palette.secondary.light,
     fontFamily: 'source sans pro',
     padding: 0,
     '& svg': {
