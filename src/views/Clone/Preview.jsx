@@ -18,6 +18,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import InfoIconButton from '../../components/InfoIconButton';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -80,6 +81,7 @@ export default function ClonePreview(props) {
   const [requested, setRequested] = useState(false);
   const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const showIntegrationField = resourceType === 'flows';
@@ -92,13 +94,14 @@ export default function ClonePreview(props) {
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
-  const { isCloned, integrationId } = useSelector(
+  const { isCloned, integrationId, sandbox } = useSelector(
     state => selectors.integrationAppClonedDetails(state, resource._id),
     (left, right) =>
       left &&
       right &&
       left.isCloned === right.isCloned &&
-      left.integrationId === right.integrationId
+      left.integrationId === right.integrationId &&
+      left.sandbox === right.sandbox
   );
   const integrationAppName =
     isIAIntegration && getIntegrationAppUrlName(resource && resource.name);
@@ -141,11 +144,38 @@ export default function ClonePreview(props) {
   useEffect(() => {
     if (isIAIntegration) {
       if (isCloned) {
-        props.history.push(
-          getRoutePath(
-            `/integrationapps/${integrationAppName}/${integrationId}/setup`
-          )
-        );
+        if (!sandbox === (preferences.environment === 'sandbox')) {
+          confirmDialog({
+            title: 'Confirm switch',
+            message: `Your integration app has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            buttons: [
+              {
+                label: 'Yes, switch',
+                onClick: () => {
+                  props.history.push(getRoutePath('/'));
+                },
+              },
+              {
+                label: 'No, go back',
+                color: 'secondary',
+                onClick: () => {
+                  dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
+                  props.history.push(
+                    getRoutePath(
+                      `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+                    )
+                  );
+                },
+              },
+            ],
+          });
+        } else {
+          props.history.push(
+            getRoutePath(
+              `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+            )
+          );
+        }
       } else {
         setCloneRequested(false);
       }
@@ -161,6 +191,9 @@ export default function ClonePreview(props) {
     props.history,
     integrationId,
     resource._id,
+    confirmDialog,
+    sandbox,
+    preferences.environment,
   ]);
 
   useEffect(() => {

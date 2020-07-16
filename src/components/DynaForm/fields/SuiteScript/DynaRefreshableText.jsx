@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import RefreshGenericResource from '../DynaRefreshableSelect/RefreshGenericResource';
 import DynaText from '../DynaText';
@@ -10,14 +11,9 @@ export default function DynaRefreshableText(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, onFieldChange, sectionId} = props;
   const dispatch = useDispatch();
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/refreshMetadata?field=${sectionId}.${id}&type=${fieldId}`;
-  const { data, status, errorMessage } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId: ssLinkedConnectionId,
-      commMetaPath,
-      filterKey: 'raw'
-    })
-  );
+
+  const { data, status, errorMessage } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId, commMetaPath, 'raw');
+
 
   useEffect(() => {
     if (status === 'received') {

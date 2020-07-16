@@ -23,12 +23,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
   },
   currentContainer: {
-    marginBottom: 5,
-    fontSize: 15,
-    color: theme.palette.text.hint,
-    fontFamily: 'Roboto400',
+    fontSize: 13,
+    color: theme.palette.secondary.light,
+    fontFamily: 'source sans pro',
     padding: 0,
-    marginTop: 5,
     '& svg': {
       color: theme.palette.secondary.light,
     },

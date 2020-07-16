@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
 import { FormLabel } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
@@ -45,14 +46,8 @@ export default function DynaNSSearchCriteria(props) {
     setShowEditor(!showEditor);
   };
 
-  const { data: savedSearches, status } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    })
-  );
+  const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
+
   const onFetch = useCallback((shouldRefreshCache) => {
     dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
   }, [commMetaPath, connectionId, dispatch]);

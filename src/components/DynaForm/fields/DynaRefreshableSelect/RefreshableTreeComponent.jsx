@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -9,6 +9,7 @@ import ArrowDownIcon from '../../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../icons/ArrowUpIcon';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 import Spinner from '../../../Spinner';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 // TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
 // refreshCache=true should be appended with api call when refresh button clicked.
 const fieldToOption = field => ({
@@ -58,14 +59,8 @@ const RefreshTreeElement = props => {
     level,
   } = props;
   const nodeId = `${selectedRelationshipName}${level},${selectedReferenceTo}`;
-  const { status } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    })
-  );
+
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
 
   return (
     <TreeItem
@@ -95,33 +90,13 @@ function TreeViewComponent(props) {
     level,
   } = props;
   const metaBasePath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/`;
-  const { referenceFields, nonReferenceFields, status } = useSelector(state => {
-    const {
-      data: referenceFields,
-      ...rest
-    } = selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    });
-    const { data: nonReferenceFields } = selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-nonReferenceFields',
-    });
+  const {data: dataRef, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
+  const {data: dataNonRef } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-nonReferenceFields');
 
-    return {
-      ...rest,
-      nonReferenceFields:
-        (nonReferenceFields && nonReferenceFields.map(fieldToOption)) || null,
-      referenceFields:
-        (referenceFields &&
-          referenceFields.map(fieldToOptionReferencedFields)) ||
-        null,
-    };
-  });
+  const referenceFields = useMemo(() => (dataRef && dataRef.map(fieldToOptionReferencedFields)) || null, [dataRef]);
+
+  const nonReferenceFields = useMemo(() => (dataNonRef && dataNonRef.map(fieldToOption)) || null, [dataNonRef]);
+
   const skipNonReferencedFields = skipFirstLevelFields && level === 1;
 
   return (
