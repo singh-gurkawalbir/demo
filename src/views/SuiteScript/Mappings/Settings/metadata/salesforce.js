@@ -255,7 +255,6 @@ export default {
           name: 'lookupDefault',
           type: 'text',
           label: 'Default lookup value',
-          required: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.failIfMatchNotFound', is: [false] },
@@ -263,7 +262,7 @@ export default {
             { field: 'lookup.useEmptyString', is: [false] },
           ],
           helpKey: 'mapping.lookupDefault',
-          defaultValue: lookup.default,
+          defaultValue: lookup.default || '',
         },
         lookupSFSelect: {
           id: 'lookupSFSelect',

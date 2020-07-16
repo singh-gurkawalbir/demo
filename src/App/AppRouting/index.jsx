@@ -146,6 +146,10 @@ export default function AppRouting() {
         component={IntegrationAppInstallation}
         />
       <Route
+        path={getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId/setup')}
+        component={IntegrationAppInstallation}
+        />
+      <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
         component={IntegrationAppAddNewStore}
         />

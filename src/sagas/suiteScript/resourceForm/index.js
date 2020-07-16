@@ -276,7 +276,7 @@ function* suiteScriptSubmitIA({
     ssLinkedConnectionId,
   });
 
-  const queryParam = integration?.urlName === 'svbns' && `?isSVBConnector=${integration?.urlName === 'svbns'}`;
+  const queryParam = integration?.urlName === 'svbns' ? `?isSVBConnector=${integration?.urlName === 'svbns'}` : '';
   const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings${queryParam}`;
   // bring sectionId
 

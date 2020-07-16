@@ -63,6 +63,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const integration = useSelector(state =>
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
+  const isCloned = integration?.install?.find(step => step?.isClone);
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -91,7 +92,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
@@ -178,7 +179,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
+            `${isCloned ? '/clone' : ''}?/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
           )
         );
       } else {
@@ -211,6 +212,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       tile._integrationId,
       tile.offlineConnections,
       tile.status,
+      isCloned,
     ]
   );
   const handleLinkClick = useCallback(
