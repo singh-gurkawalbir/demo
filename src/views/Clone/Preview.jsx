@@ -169,6 +169,12 @@ export default function ClonePreview(props) {
               },
             ],
           });
+        } else {
+          props.history.push(
+            getRoutePath(
+              `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+            )
+          );
         }
       } else {
         setCloneRequested(false);
