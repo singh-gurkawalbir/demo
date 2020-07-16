@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Menu from '@material-ui/core/Menu';
+import {makeStyles} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
@@ -19,8 +20,14 @@ import CommStatus from '../CommStatus';
 import MoreHorizIcon from '../icons/EllipsisHorizontalIcon';
 import CeligoSwitch from '../CeligoSwitch';
 
+const useStyles = makeStyles({
+  moreIcon: {
+    padding: 0,
+  },
+});
 // TODO: Refactor this component
 export default function UserDetail(props) {
+  const classes = useStyles();
   const { confirmDialog } = useConfirmDialog();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClick = useCallback(event => {
@@ -265,7 +272,7 @@ export default function UserDetail(props) {
                     Change permissions
                   </MenuItem>
                 </Menu>
-                <IconButton onClick={handleClick}>
+                <IconButton onClick={handleClick} className={classes.moreIcon}>
                   <MoreHorizIcon />
                 </IconButton>
               </TableCell>

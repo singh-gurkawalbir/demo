@@ -43,6 +43,11 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(2),
     },
   },
+  btnErrorTable: {
+    borderColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.light,
+    fontFamily: 'Roboto400',
+  },
   statusWrapper: {
     display: 'flex',
     marginRight: theme.spacing(1),
@@ -175,7 +180,7 @@ function JobErrorTable({
           Duration: <span className={classes.darkGray}>{job.duration}</span>
         </li>
         <li>
-          Completed:{' '}
+          Completed:
           <span className={classes.darkGray}>
             <DateTimeDisplay dateTime={job.endedAt} />
           </span>
@@ -192,6 +197,7 @@ function JobErrorTable({
               data-test="markResolvedJobs"
               variant="outlined"
               color="secondary"
+              className={classes.btnErrorTable}
               onClick={handleResolveClick}
               disabled={!hasUnresolvedErrors}>
               {numSelectedResolvableErrors > 0

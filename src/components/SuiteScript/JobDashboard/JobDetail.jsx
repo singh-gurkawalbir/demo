@@ -192,7 +192,7 @@ export default function JobDetail({
               onClick={() => {
                 handleViewErrorsClick(false);
               }}>
-              {job.numError} View
+              View
             </Button>
           ) : (
             job.numError

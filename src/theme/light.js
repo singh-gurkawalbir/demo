@@ -656,7 +656,7 @@ export default {
         flexDirection: 'row',
         '& > *:first-child': {
           marginBottom: '0 !important',
-          marginRight: 8,
+          marginRight: 4,
         },
       },
     },

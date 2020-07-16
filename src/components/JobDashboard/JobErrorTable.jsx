@@ -71,6 +71,11 @@ const useStyles = makeStyles(theme => ({
   downloadOnlyDivider: {
     margin: theme.spacing(2),
   },
+  btnErrorTable: {
+    borderColor: theme.palette.secondary.lightest,
+    color: theme.palette.secondary.light,
+    fontFamily: 'Roboto400',
+  },
 }));
 
 function JobErrorTable({
@@ -449,6 +454,7 @@ function JobErrorTable({
               data-test="retryErroredJobs"
               variant="outlined"
               color="secondary"
+              className={classes.btnErrorTable}
               onClick={handleRetryClick}
               disabled={isJobInProgress || !hasRetriableErrors}>
               {numSelectedRetriableErrors > 0
