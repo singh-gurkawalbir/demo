@@ -13,6 +13,7 @@ import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import FieldHelp from '../FieldHelp';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   nsSavedSearch: {
@@ -82,9 +83,8 @@ export default function DynaNSSavedSearch(props) {
     setSearchType(evt.target.value);
   };
 
-  const { data } = useSelector(state =>
-    selectors.metadataOptionsAndResources({ state, connectionId, commMetaPath })
-  );
+  const { data } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath);
+
   const netSuiteSystemDomain = useSelector(state => {
     const connection = selectors.resource(state, 'connections', connectionId);
 

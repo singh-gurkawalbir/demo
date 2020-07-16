@@ -1,4 +1,4 @@
-import React, { useEffect, useState, cloneElement, useCallback } from 'react';
+import React, { useEffect, useState, cloneElement, useCallback, useMemo } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -104,7 +104,9 @@ export default function RefreshGenericResource(props) {
     openExternalUrl({ url: urlToOpen });
   }, [urlToOpen]);
 
+  const options = useMemo(() => [{ items: fieldData || [] }], [fieldData]);
   if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
+
 
   return (
     <div>
@@ -116,7 +118,7 @@ export default function RefreshGenericResource(props) {
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
-            options: [{ items: fieldData || [] }],
+            options,
           })}
         </div>
         {!isLoading && !removeRefresh && (
