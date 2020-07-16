@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
@@ -7,6 +7,7 @@ import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 
 /**
@@ -66,16 +67,8 @@ export default function DynaNetSuiteQualificationCriteria(props) {
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const filters = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-        filterKey: 'suitescript-bodyField',
-      }).data,
-    (left, right) => left.length === right.length
-  );
+
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'suitescript-bodyField')?.data;
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {

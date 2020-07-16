@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles({
   formField: {
@@ -40,14 +41,9 @@ export default function DynaSoqlQuery(props) {
   const [sObject, setsObject] = useState(true);
   const [queryChanged, setQueryChanged] = useState(true);
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/query/columns`;
-  const { data = {} } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    })
-  );
+
+  const data = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey)?.data;
+
   const handleFieldOnBlur = () => {
     setsObject(true);
   };

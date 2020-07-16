@@ -1,5 +1,5 @@
 import Iframe from 'react-iframe';
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,8 @@ import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -33,18 +35,15 @@ export default function NetSuiteMappingAssistant({
 
     return !!isNSAssistantFormLoaded;
   });
-  const netSuiteRecordMetadata = useSelector(state => {
-    const recordTypes = selectors.metadataOptionsAndResources({
-      state,
-      connectionId: netSuiteConnectionId,
-      commMetaPath: `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`,
-      filterKey: 'suitescript-recordTypes',
-    }).data;
 
+  const recordTypes = useSelectorMemo(selectors.makeOptionsFromMetadata, netSuiteConnectionId, `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`, 'suitescript-recordTypes')?.data;
+
+  const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
-  });
+  }, [netSuiteRecordType, recordTypes]);
+
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {

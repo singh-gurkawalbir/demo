@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
@@ -10,6 +10,7 @@ import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 import RefreshIcon from '../../../icons/RefreshIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -85,15 +86,8 @@ export default function DynaNetSuiteLookupFilters(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filters = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-      }).data,
-    (left, right) => left.length === right.length
-  );
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
+
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
