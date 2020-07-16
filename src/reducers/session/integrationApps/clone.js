@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 const defaultObject = { isCloned: false, integrationId: undefined };
 
 export default (state = {}, action) => {
-  const { id, isCloned, type, integrationId } = action;
+  const { id, isCloned, type, integrationId, sandbox } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -14,7 +14,7 @@ export default (state = {}, action) => {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.CLONE.STATUS:
-        draft[id] = { isCloned, integrationId };
+        draft[id] = { isCloned, integrationId, sandbox };
         break;
     }
   });

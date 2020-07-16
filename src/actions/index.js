@@ -936,11 +936,12 @@ const integrationApp = {
       }),
   },
   clone: {
-    receivedIntegrationClonedStatus: (id, integrationId, error) =>
+    receivedIntegrationClonedStatus: (id, integrationId, error, sandbox) =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
         id,
         isCloned: !error,
         integrationId,
+        sandbox
       }),
     clearIntegrationClonedStatus: id =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {

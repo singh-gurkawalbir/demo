@@ -147,6 +147,17 @@ const routes = [
     ],
   },
   {
+    path: getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId'),
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      {
+        path: '/setup',
+        breadcrumb: () => 'Clone-configure and install',
+        childRoutes: integrationAppRoutes,
+      },
+    ],
+  },
+  {
     path: getRoutePath('/templates/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
   },
@@ -206,7 +217,7 @@ const routes = [
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
         childRoutes: [
-          { path: '/preview', breadcrumb: () => 'Preview' },
+          { path: '/preview', breadcrumb: () => 'Clone-detail' },
           { path: '/setup', breadcrumb: () => 'Install' },
         ],
       },
