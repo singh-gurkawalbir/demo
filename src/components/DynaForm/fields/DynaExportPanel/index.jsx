@@ -20,8 +20,12 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   container: {
-    paddingLeft: theme.spacing(3),
-    width: 600,
+    background: theme.palette.common.white,
+    padding: theme.spacing(2),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    marginLeft: theme.spacing(3),
+    width: 654,
     float: 'left',
     marginRight: theme.spacing(2),
     [theme.breakpoints.up('xl')]: {
@@ -33,6 +37,9 @@ const useStyles = makeStyles(theme => ({
   },
   previewDataHeading: {
     fontSize: 18,
+    margin: theme.spacing(-0.5, -2, 2, -2),
+    padding: theme.spacing(0, 2, 1, 2),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   drawerShift: {
     transition: theme.transitions.create(['width', 'margin'], {

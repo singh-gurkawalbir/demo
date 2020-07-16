@@ -12,8 +12,9 @@ const useStyles = makeStyles({
     width: '100%',
     overflowX: 'auto',
   },
-
-  tablePaginationRoot: { float: 'right' },
+  tablePaginationRoot: {
+    float: 'right'
+  },
 });
 
 export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {

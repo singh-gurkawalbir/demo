@@ -23,12 +23,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
   },
   currentContainer: {
-    marginBottom: 5,
-    fontSize: 15,
+    fontSize: 13,
     color: theme.palette.text.hint,
-    fontFamily: 'Roboto400',
+    fontFamily: 'source sans pro',
     padding: 0,
-    marginTop: 5,
     '& svg': {
       color: theme.palette.secondary.light,
     },
@@ -39,6 +37,9 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.text.secondary,
       },
     },
+  },
+  arrowIcon: {
+    marginTop: 2,
   },
   accountListPopper: {
     maxWidth: 250,
@@ -194,7 +195,7 @@ export default function AccountList() {
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
         {selectedAccount && selectedAccount.company}
-        <ArrowDownIcon />
+        <ArrowDownIcon className={classes.arrowIcon} />
       </IconTextButton>
 
       <ArrowPopper
