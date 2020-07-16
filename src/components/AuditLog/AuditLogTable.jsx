@@ -7,14 +7,15 @@ import metadata from './metadata';
 import ShowMoreDrawer from '../drawer/ShowMore';
 
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     width: '100%',
-    marginLeft: theme.spacing(1),
+    overflowX: 'auto',
   },
-
-  tablePaginationRoot: { float: 'right' },
-}));
+  tablePaginationRoot: {
+    float: 'right'
+  },
+});
 
 export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {
   const classes = useStyles();
