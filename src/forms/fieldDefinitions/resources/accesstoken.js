@@ -28,9 +28,9 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto purge token',
-    required: r => isNewId(r?._id),
+    required: r => isNewId(r?._id) || !!r?._connectorId,
     // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),
-    defaultValue: r => (!isNewId(r?._id) && !r?.autoPurgeAt) ? 'never' : r?.autoPurgeAt,
+    defaultValue: r => (!isNewId(r?._id) && !r?.autoPurgeAt && !r._connectorId) ? 'never' : r?.autoPurgeAt,
     skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
@@ -79,9 +79,9 @@ export default {
       r.fullAccess ||
       (r._connectorId &&
         r.autoPurgeAt &&
-        !r._connectionIds.length &&
-        !r._exportIds.length &&
-        !r._importIds.length)
+        !r?._connectionIds?.length &&
+        !r?._exportIds?.length &&
+        !r?._importId?.length)
         ? 'true'
         : 'false',
     options: [
