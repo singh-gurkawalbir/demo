@@ -9,7 +9,6 @@ import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-
 const useStyles = makeStyles(() => ({
   spinner: {
     left: 0,
