@@ -132,7 +132,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'hidden',
   },
   itemText: {
-    fontSize: 13,
+    fontSize: 14,
     fontFamily: 'unset',
     color: 'inherit',
   },

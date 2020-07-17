@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     paddingTop: 84,
     width: '100%',
+    color: theme.palette.secondary.main,
   },
   buttonContainer: {
     display: 'flex',

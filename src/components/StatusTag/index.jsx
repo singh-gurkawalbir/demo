@@ -6,11 +6,15 @@ import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(0.5, 1),
     fontSize: 12,
-    borderRadius: 4,
-    display: 'inline-block',
+    borderRadius: 2,
+    display: 'flex',
+    fontFamily: 'source sans pro',
     color: theme.palette.background.paper,
+    JustifyContent: 'center',
+    width: '80px !important',
+    height: '20px !important',
+    alignItems: 'center',
   },
   default: {
     background: theme.palette.secondary.lightest,
@@ -20,10 +24,10 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.light,
   },
   success: {
-    backgroundColor: theme.palette.success.main,
+    backgroundColor: theme.palette.success.dark,
   },
   error: {
-    backgroundColor: theme.palette.error.main,
+    backgroundColor: theme.palette.error.dark,
   },
   info: {
     backgroundColor: theme.palette.info.main,
@@ -50,7 +54,7 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       position: 'absolute',
       zIndex: 2,
-      background: theme.palette.error.main,
+      background: theme.palette.error.dark,
       bottom: 0,
       top: 0,
     },

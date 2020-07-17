@@ -80,8 +80,14 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
   },
   errorCount: {
-    color: theme.palette.error.main,
+    color: theme.palette.error.dark,
   },
+  // statusBtn: {
+  //   color: theme.palette.error.dark,
+  //   float: 'right',
+  //   padding: 0,
+  //   minWidth: 'unset',
+  // },
   resolved: {
     width: '9%',
     textAlign: 'right',

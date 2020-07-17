@@ -96,6 +96,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
+    color: theme.palette.secondary.main,
 
   },
   destinationTitle: {
@@ -150,6 +151,9 @@ const useStyles = makeStyles(theme => ({
     height: 18,
     marginLeft: theme.spacing(2),
   },
+  sourceTitle: {
+    marginLeft: -100,
+  }
 }));
 
 function FlowBuilder() {
