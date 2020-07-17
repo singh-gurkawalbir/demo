@@ -111,7 +111,7 @@ export default {
         },
         _default: {
           id: '_default',
-          name: 'default',
+          name: '_default',
           type: 'text',
           label: 'Enter default value',
           defaultValue: lookup.default,
