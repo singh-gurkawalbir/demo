@@ -61,7 +61,7 @@ export const flowSupportsMapping = flow => {
       supportsMapping = false;
     }
   }
-  if (supportsMapping && flow.export.type === 'MY_COMPUTER') {
+  if (supportsMapping && flow.export?.type === 'MY_COMPUTER') {
     supportsMapping = false;
   }
   return supportsMapping;
@@ -74,7 +74,7 @@ export const flowAllowsScheduling = flow => {
       supportsScheduling = false;
     }
   }
-  if (supportsScheduling && flow.export.type === 'MY_COMPUTER') {
+  if (supportsScheduling && flow.export?.type === 'MY_COMPUTER') {
     supportsScheduling = false;
   }
   return supportsScheduling;
