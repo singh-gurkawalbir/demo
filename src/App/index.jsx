@@ -6,26 +6,26 @@ import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
+import themeProvider from '../theme/themeProvider';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
-import themeProvider from '../theme/themeProvider';
-import CeligoAppBar from './CeligoAppBar';
-import CeligoDrawer from './CeligoDrawer';
-import PageContent from './PageContent';
 import AlertDialog from '../components/AlertDialog';
-import AppErroredModal from './AppErroredModal';
+import { ConfirmDialogProvider } from '../components/ConfirmDialog';
+import ConflictAlertDialog from '../components/ConflictAlertDialog';
 import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import actions from '../actions';
-import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
-import { ConfirmDialogProvider } from '../components/ConfirmDialog';
-import ConflictAlertDialog from '../components/ConflictAlertDialog';
-import CrashReporter from './CrashReporter';
 import getRoutePath from '../utils/routePaths';
-
+import AppErroredModal from './AppErroredModal';
+import WithAuth from './AppRoutingWithAuth';
+import CrashReporter from './CrashReporter';
+import LoadingNotification from './LoadingNotification';
+import CeligoAppBar from './CeligoAppBar';
+import CeligoDrawer from './CeligoDrawer';
+import PageContent from './PageContent';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -99,6 +99,7 @@ export default function App() {
                 <CssBaseline />
                 <BrowserRouter>
                   <div className={classes.root}>
+                    <LoadingNotification />
                     <NetworkSnackbar />
                     {/* Headers */}
                     <Switch>

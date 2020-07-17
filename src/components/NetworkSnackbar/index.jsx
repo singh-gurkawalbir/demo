@@ -34,30 +34,18 @@ const Notifications = ({ allLoadingOrErrored }) => {
     return null;
   }
 
-  const loadingMessage = allLoadingOrErrored.some(
-    r => r.status === COMM_STATES.LOADING && !r.retryCount
-  ) && ({name: 'loading', message: 'Loading'});
-
-  const retryMessage = allLoadingOrErrored.some(
-    r => r.status === COMM_STATES.LOADING && r.retryCount
-  ) && ({name: 'retry', message: 'Retrying… Hold your breath…'});
-
-  const errored = allLoadingOrErrored
+  const errorNotifications = allLoadingOrErrored
     .filter(r => r.status === COMM_STATES.ERROR);
 
-  const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r);
+  if (errorNotifications?.length === 0) return null;
 
-  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR
-    ? (<ErroredMessageList messages={message} />)
-    : <Typography>{message}</Typography>;
-
-  if (consolidatedNotificationMsgs.length === 1) {
-    return <NotificationMsg {...consolidatedNotificationMsgs[0]} />;
+  if (errorNotifications.length === 1) {
+    return <ErroredMessageList messages={errorNotifications[0]} />;
   }
 
-  const notificationMsgs = consolidatedNotificationMsgs.map(({name, status, message}) => (
+  const notificationMsgs = errorNotifications.map(({name, status, message}) => (
     <li key={name}>
-      <NotificationMsg status={status} message={message} />
+      <ErroredMessageList status={status} message={message} />
     </li>));
 
   return <ul>{notificationMsgs}</ul>;
@@ -66,20 +54,14 @@ const Notifications = ({ allLoadingOrErrored }) => {
 export default function NetworkSnackbar() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isAllLoadingCommsAboveThreshold = useSelector(state =>
-    selectors.isAllLoadingCommsAboveThreshold(state)
-  );
   const loadingAndErroredMessages = useSelector(state =>
     selectors.allLoadingOrErroredWithCorrectlyInferredErroredMessage(state)
-  );
-  const isLoadingAnyResource = useSelector(state =>
-    selectors.isLoadingAnyResource(state)
   );
   const handleClearComms = useCallback(() => {
     dispatch(actions.clearComms());
   }, [dispatch]);
 
-  if (!isAllLoadingCommsAboveThreshold || !loadingAndErroredMessages) {
+  if (!loadingAndErroredMessages) {
     return null;
   }
 
@@ -91,9 +73,8 @@ export default function NetworkSnackbar() {
       }}
       open
       className={classes.snackbarWrapper}>
-      <SystemStatus isLoading={isLoadingAnyResource}>
+      <SystemStatus>
         <Notifications allLoadingOrErrored={loadingAndErroredMessages} />
-        {!isLoadingAnyResource && (
         <Button
           data-test="dismissNetworkSnackbar"
           variant="contained"
@@ -101,7 +82,6 @@ export default function NetworkSnackbar() {
           onClick={handleClearComms}>
           Dismiss
         </Button>
-        )}
       </SystemStatus>
     </Snackbar>
   );

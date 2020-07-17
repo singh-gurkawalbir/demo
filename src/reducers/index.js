@@ -166,18 +166,28 @@ export function isLoadingAnyResource(state) {
   return fromComms.isLoadingAnyResource(state.comms);
 }
 
-export function isAllLoadingCommsAboveThreshold(state) {
-  const loadingOrErrored = allLoadingOrErrored(state);
+export function commsSummary(state) {
+  let isLoading = false;
+  let isRetrying = false;
+  let hasError = false;
+  const commsState = state.comms.networkComms;
 
-  if (loadingOrErrored === null) return;
+  // console.log(commsState);
 
-  return (
-    loadingOrErrored.filter(
-      resource =>
-        resource.status === fromNetworkComms.COMM_STATES.LOADING &&
-        Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
-    ).length === 0
-  );
+  Object.keys(commsState).forEach(key => {
+    const c = commsState[key];
+    if (!c.isHidden) {
+      if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
+        hasError = true;
+      } else if (c.retryCount > 0) {
+        isRetrying = true;
+      } else if (c.status === fromNetworkComms.COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
+        isLoading = true;
+      }
+    }
+  });
+
+  return { isLoading, isRetrying, hasError };
 }
 
 export function commStatusPerPath(state, path, method) {
