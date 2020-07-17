@@ -81,7 +81,7 @@ export default {
         r.autoPurgeAt &&
         !r?._connectionIds?.length &&
         !r?._exportIds?.length &&
-        !r?._importId?.length)
+        !r?._importIds?.length)
         ? 'true'
         : 'false',
     options: [
