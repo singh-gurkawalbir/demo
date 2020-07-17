@@ -877,7 +877,7 @@ export const setValues = (data, schedule, scheduleStartMinute, flow, index, reso
   return resource;
 };
 
-export const getScheduleStartMinute = (resource, preferences) => {
+export const getScheduleStartMinute = (resource = {}, preferences) => {
   let scheduleStartMinute = 0;
 
   if (preferences && preferences.scheduleShiftForFlowsCreatedAfter) {
