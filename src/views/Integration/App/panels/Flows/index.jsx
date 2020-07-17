@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'auto',
   },
   listItem: {
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.main,
   },
   activeListItem: {
     color: theme.palette.primary.main,
