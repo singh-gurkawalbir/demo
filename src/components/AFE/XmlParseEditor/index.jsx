@@ -21,7 +21,7 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId, disabled, rule, editorDataTitle } = props;
+  const { editorId, disabled, rule = {}, editorDataTitle } = props;
   const classes = useStyles();
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
@@ -48,7 +48,7 @@ export default function XmlParseEditor(props) {
         data: props.data,
         // since we may be sharing the same editorId, we need to force
         // all default values.
-        V0_json: rule.V0_json === true || false,
+        V0_json: rule?.V0_json === true || false,
         resourcePath: rule.resourcePath,
         trimSpaces: rule.trimSpaces,
         stripNewLineChars: rule.stripNewLineChars,

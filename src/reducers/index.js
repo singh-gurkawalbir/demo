@@ -1132,7 +1132,7 @@ export function userAccessLevelOnConnection(state, connectionId) {
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
       i =>
-        i._registeredConnectionIds &&
+        i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
 
@@ -1428,10 +1428,10 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
       if (parentIntegration) {
-        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnections);
+        registeredConnections = registeredConnections.concat(parentIntegration._registeredConnectionIds);
       }
       if (childIntegration) {
-        registeredConnections = registeredConnections.concat(childIntegration._registeredConnections);
+        registeredConnections = registeredConnections.concat(childIntegration._registeredConnectionIds);
       }
     }
 
@@ -2715,7 +2715,7 @@ export function userPermissionsOnConnection(state, connectionId) {
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
       i =>
-        i._registeredConnectionIds &&
+        i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
     );
     let highestPermissionIntegration = {};
@@ -5095,7 +5095,7 @@ export function httpAssistantSupportsMappingPreview(state, importId) {
 
   if (_integrationId && http) {
     const connection = resource(state, 'connections', _connectionId);
-    return (http.requestMediaType === 'xml' || connection.http.mediaType === 'xml');
+    return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
   }
 
   return false;

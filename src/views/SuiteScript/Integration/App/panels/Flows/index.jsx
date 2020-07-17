@@ -64,7 +64,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
       <SuiteScriptMappingDrawer
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId} />
-      <PanelHeader title={`${section.title} flows`} />
+      <PanelHeader title={`${section?.title} flows`} />
       <CeligoTable
         data={flows}
         filterKey={filterKey}
