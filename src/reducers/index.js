@@ -552,9 +552,11 @@ export function isUserInErrMgtTwoDotZero(state) {
   return fromUser.isUserInErrMgtTwoDotZero(state && state.user);
 }
 
-export function userProfile(state) {
-  return state && state.user && state.user.profile;
-}
+export const userProfile = createSelector(
+  state => state?.user?.profile,
+  profile => profile
+);
+
 
 export function developerMode(state) {
   return (
@@ -584,40 +586,42 @@ export const userOwnPreferences = createSelector(
 // }
 
 // TODO: make this selector a lot more granular...its dependency is user
-export function userProfilePreferencesProps(state) {
-  const profile = userProfile(state);
-  const preferences = userPreferences(state);
-  const {
-    _id,
-    name,
-    email,
-    company,
-    role,
-    developer,
-    phone,
-    dateFormat,
-    timezone,
-    timeFormat,
-    scheduleShiftForFlowsCreatedAfter,
-    // eslint-disable-next-line camelcase
-    auth_type_google,
-  } = { ...profile, ...preferences };
+export const userProfilePreferencesProps = createSelector(
+  userProfile,
+  userPreferences,
+  (profile, preferences) => {
+    const {
+      _id,
+      name,
+      email,
+      company,
+      role,
+      developer,
+      phone,
+      dateFormat,
+      timezone,
+      timeFormat,
+      scheduleShiftForFlowsCreatedAfter,
+      // eslint-disable-next-line camelcase
+      auth_type_google,
+    } = { ...profile, ...preferences };
 
-  return {
-    _id,
-    name,
-    email,
-    company,
-    role,
-    developer,
-    phone,
-    dateFormat,
-    timezone,
-    timeFormat,
-    scheduleShiftForFlowsCreatedAfter,
-    auth_type_google,
-  };
-}
+    return {
+      _id,
+      name,
+      email,
+      company,
+      role,
+      developer,
+      phone,
+      dateFormat,
+      timezone,
+      timeFormat,
+      scheduleShiftForFlowsCreatedAfter,
+      auth_type_google,
+    };
+  }
+);
 
 export function userProfileEmail(state) {
   return state && state.user && state.user.profile && state.user.profile.email;
