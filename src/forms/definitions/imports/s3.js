@@ -173,6 +173,9 @@ export default {
     's3.fileKey': {
       fieldId: 's3.fileKey',
     },
+    's3.backupBucket': {
+      fieldId: 's3.backupBucket',
+    },
     blobKeyPath: {
       fieldId: 'blobKeyPath',
     },
@@ -270,6 +273,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
+          's3.backupBucket',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',
