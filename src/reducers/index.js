@@ -67,6 +67,7 @@ import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
+import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5363,7 +5364,7 @@ export const suiteScriptGenerates = createSelector(
 );
 
 
-export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
+export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
@@ -5375,25 +5376,17 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
     const {recordType} = exportConfig.netsuite.realtime;
 
-    const { subRecordType } = options;
-    let commMetaPath;
-
-    if (subRecordType) {
-      /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
-       * in case of subrecord */
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${subRecordType}?parentRecordType=${recordType}`;
-    } else {
-      commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    }
+    const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
 
     const { data, status } = metadataOptionsAndResources({
       state,
       connectionId: ssLinkedConnectionId,
       commMetaPath,
-      filterKey: 'suitescript-recordTypeDetail',
+      filterKey: 'raw',
     });
+    const formattedData = status === 'received' ? getSuiteScriptNetsuiteRealTimeSampleData(data, recordType) : data;
 
-    return { data, status };
+    return { data: formattedData, status };
   }
   if (exportType === 'salesforce') {
     const { sObjectType } = exportConfig.salesforce;
@@ -5406,7 +5399,6 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectMetadata',
     });
-
     return { data, status };
   }
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
@@ -5414,15 +5406,16 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
 
 export const suiteScriptExtracts = createSelector(
   [(state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
-    (state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options})],
+    (state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
   (flow, flowData) => {
     if (!flowData) {
       return emptySet;
     }
     const {data, status} = flowData;
-    const formattedFields = [];
-    if (status === 'received' && Array.isArray(data)) {
-      data.forEach(extract => {
+    let formattedFields;
+    if (status === 'received') {
+      formattedFields = [];
+      data?.forEach(extract => {
         formattedFields.push({
           id: extract.id || extract.value,
           name: extract.name || extract.label || extract.id
@@ -5435,8 +5428,7 @@ export const suiteScriptExtracts = createSelector(
         }
       });
     }
-
-    const sortedFields = formattedFields.sort((a, b) => {
+    const sortedFields = formattedFields?.sort((a, b) => {
       const nameA = a.name ? a.name.toUpperCase() : '';
       const nameB = b.name ? b.name.toUpperCase() : '';
 

@@ -500,7 +500,7 @@ export default function SuiteScriptMappingWrapper(props) {
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const subRecordType = useSelector(state => selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}).recordType);
   const {status: importSampleDataStatus, data: importSampleData} = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
-  const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
+  const {status: flowSampleDataStatus, data: flowSampleData} = useSelector(state => selectors.suiteScriptExtracts(state, {ssLinkedConnectionId, integrationId, flowId}));
   const requestImportSampleData = useCallback(
     () => {
       dispatch(
