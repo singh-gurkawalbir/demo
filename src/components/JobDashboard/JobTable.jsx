@@ -160,7 +160,9 @@ function JobTable({
     // ViewErrors drawer will work when user selectes a job error or from the error notification mail
     // For reload case as there is no track of jobID, redirecting to the job table dashbaord
     if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
-      const strippedRoute = history.location.pathname.split('/').slice(0, -1).join('/');
+      const urlExtractFields = history.location.pathname.split('/');
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
+      const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
       history.replace(strippedRoute);
     }
   }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors, history, showErrorDialogFor]);
