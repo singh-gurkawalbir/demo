@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
-  systemStatusWrapper: {
+  root: {
     display: 'flex',
     justifyContent: 'center',
     margin: theme.spacing(1),
@@ -33,7 +33,7 @@ function SystemStatus({ children, isLoading }) {
   const classes = useStyles();
 
   return (
-    <div className={classes.systemStatusWrapper}>
+    <div className={classes.root}>
       <Paper className={classes.wrapper}>
         {children}
         {isLoading && (
