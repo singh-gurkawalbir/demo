@@ -10,7 +10,7 @@ import ButtonsGroup from '../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   message: {
-    marginBottom: theme.spacing(4),
+    marginBottom: theme.spacing(3),
     fontSize: 15,
     lineHeight: '19px',
   },
