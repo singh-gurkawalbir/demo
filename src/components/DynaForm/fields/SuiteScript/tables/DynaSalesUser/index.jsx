@@ -1,11 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Spinner from '../../../../../Spinner';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from './metadata';
 import DynaSelect from '../../../DynaSelect';
 import * as selectors from '../../../../../../reducers';
 import actions from '../../../../../../actions';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 // view only component
 const camelCase = (str) => str.charAt(0).toLowerCase() + str.slice(1);
@@ -13,14 +14,8 @@ export default function DynaSalesUser(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId} = props;
   const dispatch = useDispatch();
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/refreshMetadata?field=${sectionId}.${camelCase(id)}&type=${fieldId}`;
-  const { data, status } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId: ssLinkedConnectionId,
-      commMetaPath,
-      filterKey: 'raw'
-    })
-  );
+
+  const { data, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId, commMetaPath, 'raw');
 
   useEffect(() => {
     dispatch(

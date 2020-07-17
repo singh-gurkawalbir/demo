@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
+import moment from 'moment';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 
 export default {
@@ -22,10 +23,8 @@ export default {
     {
       heading: 'Expires on',
       value(r) {
-        return (
-          <Typography color="error">
-            {formatLastModified(r.license && r.license.expires)}
-          </Typography>
+        return (r.expires ? (
+          <Typography color="error"> {moment(r.expires).format('MMM D, YYYY')} ({formatLastModified(r.expires)})</Typography>) : ''
         );
       },
       orderBy: 'license.expires',

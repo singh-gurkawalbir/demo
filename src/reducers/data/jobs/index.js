@@ -99,7 +99,7 @@ export default (state = DEFAULT_STATE, action) => {
     };
   }
   if (type === actionTypes.JOB.RECEIVED_FAMILY) {
-    if (job.type === JOB_TYPES.FLOW) {
+    if (job?.type === JOB_TYPES.FLOW) {
       const jobWithDefaultProps = parseJobFamily(job);
       const index = getParentJobIndex(state.flowJobs, job._id);
 

@@ -125,7 +125,7 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section.title} flows`} />
+      <PanelHeader title={`${section?.title} flows`} />
       <CeligoTable
         data={flows}
         filterKey={filterKey}

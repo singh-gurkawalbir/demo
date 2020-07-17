@@ -13,6 +13,7 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import RefreshIcon from '../icons/RefreshIcon';
+import RunFlowButton from '../RunFlowButton';
 import CeligoSelect from '../CeligoSelect';
 import IconTextButton from '../IconTextButton';
 import FlowSelector from './FlowSelector';
@@ -239,6 +240,7 @@ function Filters({
             </IconButton>
           </>
         )}
+        {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
       </div>
     </div>
   );

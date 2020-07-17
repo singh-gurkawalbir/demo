@@ -1,4 +1,17 @@
+// import moment from 'moment';
 import { isNewId } from '../../../utils/resource';
+
+// const getAutoPurgeDescription = (id, autoPurgeAt) => {
+//   if (isNewId(id)) {
+//     return '';
+//   }
+//   if (moment(autoPurgeAt, moment.ISO_8601).isValid()) {
+//     const x = moment(autoPurgeAt);
+//     const y = moment();
+//     return `Auto purges in ${moment.duration(x.diff(y)).humanize()}`;
+//   }
+//   return undefined;
+// };
 
 export default {
   name: {
@@ -15,8 +28,9 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto purge token',
-    required: r => isNewId(r && r._id),
-    defaultValue: 'none',
+    required: r => isNewId(r?._id) || !!r?._connectorId,
+    // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),
+    defaultValue: r => (!isNewId(r?._id) && !r?.autoPurgeAt && !r._connectorId) ? 'never' : r?.autoPurgeAt,
     skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
@@ -65,9 +79,9 @@ export default {
       r.fullAccess ||
       (r._connectorId &&
         r.autoPurgeAt &&
-        !r._connectionIds.length &&
-        !r._exportIds.length &&
-        !r._importIds.length)
+        !r?._connectionIds?.length &&
+        !r?._exportIds?.length &&
+        !r?._importId?.length)
         ? 'true'
         : 'false',
     options: [

@@ -1,43 +1,36 @@
 import React, { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { isString } from 'lodash';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import FormLabel from '@material-ui/core/FormLabel';
-import * as selectors from '../../../../reducers';
-import actions from '../../../../actions';
+import * as selectors from '../../../../../reducers';
+import actions from '../../../../../actions';
 import FilterPanel from './FilterPanel';
-import Spinner from '../../../Spinner';
-import { wrapSpecialChars } from '../../../../utils/jsonPaths';
-import RefreshIcon from '../../../icons/RefreshIcon';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import Spinner from '../../../../Spinner';
+import { wrapSpecialChars } from '../../../../../utils/jsonPaths';
+import RefreshIcon from '../../../../icons/RefreshIcon';
 
-/**
- * TODO: Azhar to check and update the button styles
- */
 const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    flexDirection: 'row !important',
+    display: 'inline-block !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
-    marginLeft: theme.spacing(1),
   },
-  loading: {
-    display: 'flex',
+  loaderSObject: {
     flexDirection: 'row !important',
-    alignItems: 'center',
-    padding: theme.spacing(1, 0),
   },
-  heading: {
-    paddingRight: theme.spacing(1),
+  loaderSObjectText: {
+    marginRight: theme.spacing(2),
+  },
+  salesForceLookupFilterIcon: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
-export default function DynaNetSuiteLookupFilters(props) {
+export default function DynaSalesforceLookupFilters(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const {
@@ -46,34 +39,28 @@ export default function DynaNetSuiteLookupFilters(props) {
     connectionId,
     data,
     options = {},
+    opts = {},
     onFieldChange,
     editorId,
-    required,
-    disabled,
   } = props;
-  const { disableFetch, commMetaPath } = options;
-  let rule = [];
+  let modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
 
-  if (isString(value)) {
-    try {
-      rule = JSON.parse(value);
-    } catch (ex) {
-      // nothing
-    }
-  } else {
-    rule = value;
+  if (opts.isGroupedSampleData && Array.isArray(data)) {
+    modifiedData = modifiedData.concat(
+      modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
+    );
   }
 
-  const modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
+  const { disableFetch, commMetaPath } = options;
   const handleEditorInit = useCallback(() => {
     dispatch(
-      actions.editor.init(editorId, 'netsuiteLookupFilter', {
+      actions.editor.init(editorId, 'salesforceLookupFilter', {
         modifiedData,
-        _init_rule: rule,
-        rule,
+        rule: value,
+        _init_rule: value,
       })
     );
-  }, [dispatch, editorId, modifiedData, rule]);
+  }, [dispatch, editorId, modifiedData, value]);
 
   useEffect(() => {
     if (editorId) {
@@ -85,9 +72,16 @@ export default function DynaNetSuiteLookupFilters(props) {
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
-
+  const filters = useSelector(
+    state =>
+      selectors.metadataOptionsAndResources({
+        state,
+        connectionId,
+        commMetaPath,
+        filterKey: 'salesforce-recordType',
+      }).data,
+    (left, right) => left.length === right.length
+  );
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
@@ -107,34 +101,34 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   if (!filters) {
     return (
-      <div className={classes.loading}>
-        <Typography className={classes.heading}>
+      <div className={classes.loaderSObject}>
+        <Typography className={classes.loaderSObjectText}>
           Loading
         </Typography>
         <Spinner size={24} />
       </div>
+
     );
   }
 
   return (
     <>
       <div className={classes.refreshFilters}>
-        <FormLabel disabled={disabled} required={required} >
-          Refresh  search filters
-        </FormLabel>
+        Refresh search filters
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          <RefreshIcon />
+          <RefreshIcon className={classes.salesForceLookupFilterIcon} />
         </Button>
+
       </div>
       <FilterPanel
         id={id}
         editorId={editorId}
-        rule={rule}
+        rule={value}
         data={modifiedData}
         filters={filters}
         onFieldChange={onFieldChange}

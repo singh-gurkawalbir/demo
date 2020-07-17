@@ -147,6 +147,9 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_UPDATE:
         if (response) {
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
           draft[integrationId].mappingMetadata = response;
           draft[integrationId].status = 'received';
         }
@@ -154,6 +157,9 @@ export default (state = {}, action) => {
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_ERROR:
         if (error) {
+          if (!draft[integrationId]) {
+            draft[integrationId] = {};
+          }
           draft[integrationId].status = 'error';
           draft[integrationId].error = error;
         }
