@@ -193,7 +193,6 @@ export default function UserDetail(props) {
   ) {
     userAccessLevel = USER_ACCESS_LEVELS.TILE;
   }
-  console.log('asdasdsad', (!user.accepted || (integrationId && (user._id === ACCOUNT_IDS.OWN))));
 
   return (
     <>
