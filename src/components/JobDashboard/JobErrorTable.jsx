@@ -71,10 +71,15 @@ const useStyles = makeStyles(theme => ({
   downloadOnlyDivider: {
     margin: theme.spacing(2),
   },
+  // TODO (Azhar):  we need to keep a varaint for this button
   btnErrorTable: {
     borderColor: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
     fontFamily: 'Roboto400',
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    }
   },
 }));
 
@@ -465,6 +470,7 @@ function JobErrorTable({
               data-test="markResolvedJobs"
               variant="outlined"
               color="secondary"
+              className={classes.btnErrorTable}
               onClick={handleResolveClick}
               disabled={isJobInProgress || !hasUnresolvedErrors}>
               {numSelectedResolvableErrors > 1
@@ -479,6 +485,7 @@ function JobErrorTable({
               data-test="downloadAllErrors"
               variant="outlined"
               color="secondary"
+              className={classes.btnErrorTable}
               onClick={handleDownloadAllErrorsClick}
               disabled={isJobInProgress}>
               Download all errors
@@ -487,6 +494,7 @@ function JobErrorTable({
               data-test="uploadProcessedErrors"
               variant="outlined"
               color="secondary"
+              className={classes.btnErrorTable}
               disabled={isJobInProgress}
               onClick={handleUploadProcessedErrors}>
               Upload processed errors

@@ -32,7 +32,7 @@ import { getTemplateUrlName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
     '&:hover': {
       color: theme.palette.primary.main,
     },
@@ -282,7 +282,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           </Header>
           <Content>
             <CardTitle>
-              <Typography variant="h3">
+              <Typography variant="h3" className={classes.tileName}>
                 {isTruncated ? (
                   <Tooltip
                     title={<span className={classes.tooltipNameFB}> {tile.name}</span>}

@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '17px',
     padding: 6,
   },
+  titleStatusPanel: {
+    color: theme.palette.secondary.main,
+  },
 }));
 const getStatusVariantAndMessage = ({
   resourceType,
@@ -141,9 +144,9 @@ export default function ConnectionStatusPanel(props) {
     <div className={classes.root}>
       <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
-          <Typography variant="h6">{message}</Typography>
+          <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>
         ) : (
-          <Typography component="div" variant="h6">
+          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
             The connection associated with this resource is currently offline
             and configuration is limited.
             <Button
