@@ -9,13 +9,20 @@ export default {
     if (['accesstokens', 'apis'].includes(actionProps.resourceType)) {
       return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]}`;
     }
+    if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
+      return 'Edit license';
+    }
     return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: EditIcon,
   component: function Edit(props) {
-    const { resourceType, rowData = {} } = props;
+    const { rowData = {} } = props;
+    let {resourceType} = props;
     const history = useHistory();
     const match = useRouteMatch();
+    if (resourceType?.indexOf('/licenses') >= 0) {
+      resourceType = 'connectorLicenses';
+    }
 
     const handleClick = useCallback(() => {
       history.push(`${match.url}/edit/${resourceType}/${rowData._id}`);

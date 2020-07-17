@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import { DynaGenericSelect } from './RefreshGenericResource';
+import * as selectors from '../../../../reducers';
 import RawHtml from '../../../RawHtml';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { DynaGenericSelect } from './RefreshGenericResource';
 
 const useStyles = makeStyles(() => ({
   validationError: {
@@ -30,14 +31,13 @@ export default function DynaSelectOptionsGenerator(props) {
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { status, data, errorMessage, validationError } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: options.commMetaPath || commMetaPath,
-      filterKey: options.filterKey || filterKey,
-    })
-  );
+
+
+  const { status, data, errorMessage, validationError } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    options.commMetaPath || commMetaPath,
+    options.filterKey || filterKey);
+
+
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
       dispatch(

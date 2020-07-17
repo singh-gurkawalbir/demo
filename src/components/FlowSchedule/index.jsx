@@ -36,7 +36,7 @@ export default function FlowSchedule({
     selectors.resource(state, 'exports', pg && pg._exportId)
   );
   let resource = pg || flow;
-  const schedule = (pg && pg.schedule) || flow.schedule;
+  const schedule = pg?.schedule || flow?.schedule;
   const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
 
   const onSave = useCallback((formVal) => {
