@@ -17,8 +17,8 @@ const contentWrapper = {
 };
 const StaleUIVersion = () => (
   <ModalDialog show>
-    <Typography variant="h3">Please reload page</Typography>
-    <Typography >It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
+    <Typography variant="h3">Reload page</Typography>
+    <Typography >It looks like your browser has cached an older version of our app.Click &apos;Reload&apos; to refresh the page.</Typography>
     <Button
       data-test="ok"
       onClick={() => {
@@ -26,7 +26,7 @@ const StaleUIVersion = () => (
       }}
       variant="outlined"
       color="primary">
-      ok
+      Reload
     </Button>
   </ModalDialog>
 );
