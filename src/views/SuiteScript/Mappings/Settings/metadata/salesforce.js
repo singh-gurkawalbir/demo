@@ -79,7 +79,7 @@ export default {
         'lookup.whereClause': {
           id: 'lookup.whereClause',
           name: 'whereClause',
-          type: 'salesforcelookupfilters',
+          type: 'suitescriptsalesforcelookupfilters',
           label: '',
           connectionId: ssLinkedConnectionId,
           filterKey: 'salesforce-recordType',

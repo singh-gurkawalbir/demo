@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
+import IconTextButton from '../IconTextButton';
 import {
   EMPTY_RAW_DATA,
   MAX_DATA_LOADER_FILE_SIZE,
@@ -58,6 +59,16 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
         onClick={onRunClick}>
         <RunIcon />
       </IconButtonWithTooltip>
+    );
+  }
+
+  if (variant === 'iconText') {
+    return (
+      <IconTextButton
+        data-test="runFlow"
+        onClick={onRunClick}>
+        <RunIcon /> Run now
+      </IconTextButton>
     );
   }
 

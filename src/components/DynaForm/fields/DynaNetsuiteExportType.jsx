@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaSelect from './DynaSelect';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const isOnceNotSupported = (recordTypes, recordTypeVal) => {
   if (!recordTypes) {
@@ -28,15 +28,11 @@ export default function DynaNetsuiteExportType(props) {
     selectOptions,
   } = props;
   const { recordType: selectedRecordType, commMetaPath } = options;
-  const recordTypes = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-        filterKey,
-      }).data
-  );
+
+  const recordTypes = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    commMetaPath,
+    filterKey)?.data;
+
   const optionsSupported = useMemo(() => {
     if (isOnceNotSupported(recordTypes, selectedRecordType)) {
       return selectOptions.filter(item => item.value !== 'once');

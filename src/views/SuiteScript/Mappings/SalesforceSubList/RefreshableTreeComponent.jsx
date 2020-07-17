@@ -9,6 +9,7 @@ import Spinner from '../../../../components/Spinner';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 // TODO (Surya): This component doesnt support adding additional action button for refresh with each Node.
 // refreshCache=true should be appended with api call when refresh button clicked.
 const fieldToOption = field => ({
@@ -58,14 +59,10 @@ const RefreshTreeElement = props => {
     level,
   } = props;
   const nodeId = `${selectedRelationshipName}${level},${selectedReferenceTo}`;
-  const { status } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId: ssLinkedConnectionId,
-      commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
-      filterKey: 'salesforce-sObjects-referenceFields',
-    })
-  );
+
+  const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId,
+    `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
+
 
   return (
     <TreeItem

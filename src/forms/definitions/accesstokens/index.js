@@ -30,12 +30,10 @@ export default {
   },
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
-
-    if (accessTokenData['/autoPurgeAt'] === 'none') {
-      delete accessTokenData['/autoPurgeAt'];
-    } else if (accessTokenData['/autoPurgeAt'] === 'never') {
-      accessTokenData['/autoPurgeAt'] = '';
-    } else {
+    if (accessTokenData['/autoPurgeAt'] === 'never') {
+      accessTokenData['/autoPurgeAt'] = undefined;
+    // eslint-disable-next-line no-restricted-globals
+    } else if (accessTokenData['/autoPurgeAt'] && !isNaN(accessTokenData['/autoPurgeAt'])) {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();
 

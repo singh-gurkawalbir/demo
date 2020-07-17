@@ -1,17 +1,17 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
-import React, { useState, useCallback } from 'react';
-import clsx from 'clsx';
-import { Tabs, Tab, Typography } from '@material-ui/core';
+import { Tab, Tabs, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
-import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
-
+import clsx from 'clsx';
+import React, { useCallback, useEffect, useState } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
 import FormGenerator from '..';
 import {
   getAllFormValuesAssociatedToMeta,
-  isExpansionPanelErrored,
-  isAnyFieldTouchedForMeta,
+
+  isAnyFieldTouchedForMeta, isExpansionPanelErrored
 } from '../../../../forms/utils';
+import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
+import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
+
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -138,20 +138,6 @@ function FormWithSave(props) {
   );
 }
 
-export function SuiteScriptTabIAComponent(props) {
-  return (
-    <TabComponent
-      {...props}
-      orientation="horizontal"
-    >
-      <FormWithSave >
-
-        <SuiteScriptSaveButton />
-      </FormWithSave>
-    </TabComponent>
-  );
-}
-
 export function TabIAComponent(props) {
   return (
     <TabComponent {...props}>
@@ -162,6 +148,54 @@ export function TabIAComponent(props) {
   );
 }
 
+
+const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
+  useEffect(() => {
+    Object.values(fieldMap).forEach((field) => {
+      registerField(field);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  return null;
+};
+
+function InitializeAllFieldState({children, fieldMap}) {
+  return (
+    <FormContext.Consumer>
+      {form => (
+        <>
+          <InitializeFieldStateHook registerField={form.registerField} fieldMap={fieldMap} />
+          {children}
+        </>
+      )}
+    </FormContext.Consumer>);
+}
+// this is necessary when we clone props we want all of its children to receive them
+function SuiteScriptWithCompleteSave(props) {
+  return (
+    <>
+      <FormGenerator {...props} />
+      <SuiteScriptSaveButton {...props} />
+    </>
+  );
+}
+
+export function SuiteScriptTabIACompleteSave(props) {
+  return (
+    <InitializeAllFieldState fieldMap={props.fieldMap}>
+
+      <TabComponent
+        {...props}
+        orientation="horizontal"
+    >
+        <SuiteScriptWithCompleteSave />
+      </TabComponent>
+    </InitializeAllFieldState>
+  );
+}
+// this is necessary when we clone props we want all of its children to receive them
 function TabWithCompleteSave(props) {
   return (
     <>
@@ -173,11 +207,15 @@ function TabWithCompleteSave(props) {
 
 export function TabComponentSimple(props) {
   return (
-    <TabComponent {...props}>
-      <TabWithCompleteSave />
-    </TabComponent>
+    <InitializeAllFieldState fieldMap={props.fieldMap}>
+      <TabComponent {...props}>
+        <TabWithCompleteSave />
+      </TabComponent>
+    </InitializeAllFieldState>
+
   );
 }
+
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (
