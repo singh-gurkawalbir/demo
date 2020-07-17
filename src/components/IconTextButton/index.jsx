@@ -4,14 +4,16 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   left: { marginRight: 8, marginLeft: -8 },
   right: { marginLeft: 8, marginRight: -8 },
   root: {
     padding: '2px 20px',
     whiteSpace: 'nowrap',
+    color: theme.palette.secondary.main,
+    fontSize: 14,
   },
-});
+}));
 const styledChildren = (children, classes) => {
   let position = 'left';
 

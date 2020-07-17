@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     width: 48,
     height: 48,
   },
+  resourceBtnName: {
+    color: theme.palette.secondary.main,
+  }
 }));
 
 export default function ResourceButton({ onClick, variant }) {
@@ -56,7 +59,7 @@ export default function ResourceButton({ onClick, variant }) {
       onClick={onClick}>
       <div>
         <block.Icon className={classes.blockIcon} />
-        <Typography variant="body2">{block.label}</Typography>
+        <Typography variant="body2" className={classes.resourceBtnName}>{block.label}</Typography>
       </div>
     </Button>
   );

@@ -43,10 +43,15 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(2),
     },
   },
+  // TODO (Azhar):  we need to keep a varaint for this button
   btnErrorTable: {
     borderColor: theme.palette.secondary.lightest,
     color: theme.palette.secondary.light,
     fontFamily: 'Roboto400',
+    '&:hover': {
+      borderColor: theme.palette.secondary.lightest,
+      color: theme.palette.secondary.light,
+    }
   },
   statusWrapper: {
     display: 'flex',

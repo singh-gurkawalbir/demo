@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
   titleText: {
     wordBreak: 'break-word',
     paddingRight: theme.spacing(2),
+    color: theme.palette.secondary.main,
   },
 
   closeButton: {

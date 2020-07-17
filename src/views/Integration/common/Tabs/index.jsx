@@ -16,6 +16,8 @@ const useStyles = makeStyles(theme => ({
   },
   tab: {
     minWidth: theme.spacing(13.75),
+    color: theme.palette.secondary.main,
+    fontSize: 14,
   },
 }));
 

@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     '& svg': {
       color: theme.palette.secondary.light,
+      marginLeft: theme.spacing(0.5),
     },
     '&:hover': {
       background: 'none',

@@ -2,13 +2,16 @@ export default {
   celigoWhite: '#FFFFFF',
 
   celigoError: '#FF3C3C',
+  celigoErrorDark: '#D9534F',
   celigoSuccess: '#4CBB02',
+  celigoSuccessDark: '#5CB85C',
   celigoWarning: '#FFB30C',
 
   celigoAccent1: '#0E7DC1',
-  celigoAccent2: '#00A1E1',
-  celigoAccent3: '#37B5ED',
-  celigoAccent4: '#12C7FF',
+  celigoAccent2: '#1D76C7',
+  celigoAccent3: '#00A1E1',
+  celigoAccent4: '#37B5ED',
+  celigoAccent5: '#12C7FF',
 
   celigoNeutral1: '#F8FAFF',
   celigoNeutral2: '#F0F5F9',

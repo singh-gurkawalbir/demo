@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    color: theme.palette.secondary.main,
   },
   bannerOffset: {
     height: theme.pageBarHeight + 58,
