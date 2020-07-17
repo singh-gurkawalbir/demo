@@ -38,14 +38,12 @@ export default function JobStatus({ job }) {
 
   if (jobStatusDetails.showSpinner) {
     return (
-      <>
-        <div className={classes.state}>
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={24} color="primary" />
-          </div>
-          {jobStatusDetails.status}
+      <div className={classes.state}>
+        <div className={classes.spinnerWrapper}>
+          <Spinner size={24} color="primary" />
         </div>
-      </>
+        {jobStatusDetails.status}
+      </div>
     );
   }
 
