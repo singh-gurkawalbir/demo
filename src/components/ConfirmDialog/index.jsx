@@ -8,9 +8,11 @@ import Prompt from '../Prompt';
 import ButtonsGroup from '../ButtonGroup';
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   message: {
-    marginBottom: 10,
+    marginBottom: theme.spacing(4),
+    fontSize: 15,
+    lineHeight: '19px',
   },
   containerButtons: {
     position: 'relative',
@@ -21,7 +23,7 @@ const useStyles = makeStyles({
     right: 0,
     top: 0,
   },
-});
+}));
 
 export const ConfirmDialog = props => {
   const {
@@ -68,22 +70,20 @@ export const ConfirmDialog = props => {
       ) : (
         <div className={classes.message}>{message}</div>
       )}
-      <div className={classes.containerButtons} >
-        {buttons.map(button => (
-          <>
-            <ButtonsGroup>
-              <Button
-                variant={button.color === 'secondary' ? 'text' : 'outlined'}
-                data-test={button.label}
-                key={button.label}
-                className={clsx({[classes.btnRight]: button.label && buttons.length > 2 === 'Cancel'})}
-                color={button.color === 'secondary' ? '' : 'primary'}
-                onClick={handleButtonClick(button)}>
-                {button.label}
-              </Button>
-            </ButtonsGroup>
-          </>
-        ))}
+      <div className={classes.containerButtons}>
+        <ButtonsGroup>
+          {buttons.map(button => (
+            <Button
+              variant={button.color === 'secondary' ? 'text' : 'outlined'}
+              data-test={button.label}
+              key={button.label}
+              className={clsx({[classes.btnRight]: button.label && buttons.length > 2 === 'Cancel'})}
+              color={button.color === 'secondary' ? '' : 'primary'}
+              onClick={handleButtonClick(button)}>
+              {button.label}
+            </Button>
+          ))}
+        </ButtonsGroup>
       </div>
 
     </ModalDialog>
