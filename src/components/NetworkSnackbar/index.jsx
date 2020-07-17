@@ -6,31 +6,19 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import RawHtml from '../RawHtml';
-import SystemStatus from '../SystemStatus';
+import SystemStatus from './SystemStatus';
 
 const useStyles = makeStyles({
   snackbarWrapper: {
     background: 'transparent',
   },
 });
-const Dismiss = props =>
-  props.show && (
-    <Button
-      data-test="dismissNetworkSnackbar"
-      variant="contained"
-      color="primary"
-      onClick={props.onClick}>
-      Dismiss
-    </Button>
-  );
 
 export const ErroredMessageList = ({ messages }) =>
   messages?.length
     ? messages.filter(msg => !!msg).map((msg, index) => (
       <Fragment key={msg}>
-        {
-            // Check if the message contains html elements, render it as html
-          }
+        { /* If the message contains html elements, render it as html */ }
         {/<\/?[a-z][\s\S]*>/i.test(msg) ? (
           <RawHtml html={msg} />
         ) : (
@@ -40,33 +28,38 @@ export const ErroredMessageList = ({ messages }) =>
       </Fragment>
     ))
     : null;
-const LOADING_MSG = 'Loading';
-const RETRY_MSG = 'Retrying… Hold your breath….';
+
 const Notifications = ({ allLoadingOrErrored }) => {
-  if (!allLoadingOrErrored || !allLoadingOrErrored.length) return null;
+  if (!allLoadingOrErrored || !allLoadingOrErrored.length) {
+    return null;
+  }
+
   const loadingMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && !r.retryCount
-  ) && ({name: LOADING_MSG, message: LOADING_MSG});
+  ) && ({name: 'loading', message: 'Loading'});
 
   const retryMessage = allLoadingOrErrored.some(
     r => r.status === COMM_STATES.LOADING && r.retryCount
-  ) && ({name: RETRY_MSG, message: RETRY_MSG});
+  ) && ({name: 'retry', message: 'Retrying… Hold your breath…'});
 
   const errored = allLoadingOrErrored
-    .filter(r => r.status === COMM_STATES.ERROR)
-    .map(({name, status, message }) => ({name, message, status }
-    ));
+    .filter(r => r.status === COMM_STATES.ERROR);
 
   const consolidatedNotificationMsgs = [loadingMessage, retryMessage, ...errored].filter(r => r);
 
+  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR
+    ? (<ErroredMessageList messages={message} />)
+    : <Typography>{message}</Typography>;
 
-  const NotificationMsg = ({status, message}) => status === COMM_STATES.ERROR ? (<ErroredMessageList messages={message} />) : <Typography>{message}</Typography>;
+  if (consolidatedNotificationMsgs.length === 1) {
+    return <NotificationMsg {...consolidatedNotificationMsgs[0]} />;
+  }
 
-  if (consolidatedNotificationMsgs.length === 1) { return <NotificationMsg {...consolidatedNotificationMsgs[0]} />; }
   const notificationMsgs = consolidatedNotificationMsgs.map(({name, status, message}) => (
     <li key={name}>
       <NotificationMsg status={status} message={message} />
     </li>));
+
   return <ul>{notificationMsgs}</ul>;
 };
 
@@ -76,7 +69,7 @@ export default function NetworkSnackbar() {
   const isAllLoadingCommsAboveThreshold = useSelector(state =>
     selectors.isAllLoadingCommsAboveThreshold(state)
   );
-  const allLoadingOrErrored = useSelector(state =>
+  const loadingAndErroredMessages = useSelector(state =>
     selectors.allLoadingOrErroredWithCorrectlyInferredErroredMessage(state)
   );
   const isLoadingAnyResource = useSelector(state =>
@@ -86,16 +79,10 @@ export default function NetworkSnackbar() {
     dispatch(actions.clearComms());
   }, [dispatch]);
 
-  if (!isAllLoadingCommsAboveThreshold || !allLoadingOrErrored) {
+  if (!isAllLoadingCommsAboveThreshold || !loadingAndErroredMessages) {
     return null;
   }
 
-  // const msg = (
-  //   <SystemStatus isLoading={isLoadingAnyResource}>
-  //     <ul>{allLoadingOrErrored.map(r => notification(r))}</ul>
-  //     <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
-  //   </SystemStatus>
-  // );
   return (
     <Snackbar
       anchorOrigin={{
@@ -103,14 +90,18 @@ export default function NetworkSnackbar() {
         horizontal: 'center',
       }}
       open
-      // autoHideDuration={6000}
-      // onClose={this.handleClose}
-      // message={msg}
       className={classes.snackbarWrapper}>
       <SystemStatus isLoading={isLoadingAnyResource}>
-        <Notifications allLoadingOrErrored={allLoadingOrErrored} />
-
-        <Dismiss show={!isLoadingAnyResource} onClick={handleClearComms} />
+        <Notifications allLoadingOrErrored={loadingAndErroredMessages} />
+        {!isLoadingAnyResource && (
+        <Button
+          data-test="dismissNetworkSnackbar"
+          variant="contained"
+          color="primary"
+          onClick={handleClearComms}>
+          Dismiss
+        </Button>
+        )}
       </SystemStatus>
     </Snackbar>
   );
