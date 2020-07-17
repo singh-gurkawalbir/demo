@@ -1,5 +1,4 @@
 import produce from 'immer';
-import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
@@ -115,55 +114,4 @@ export function timestampComms(state, resourceName) {
 export function retryCount(state, resourceName) {
   return (state && state[resourceName] && state[resourceName].retry) || 0;
 }
-
-function isHidden(state, resourceName) {
-  return !!(state && state[resourceName] && state[resourceName].hidden);
-}
-
-export const allLoadingOrErrored = createSelector(
-  state => state,
-  state => {
-    if (!state || typeof state !== 'object') {
-      return null;
-    }
-
-    const resources = [];
-
-    Object.keys(state).forEach(key => {
-      const comm = {
-        name: key,
-        status: commStatus(state, key),
-        retryCount: retryCount(state, key),
-        timestamp: timestampComms(state, key),
-        message: requestMessage(state, key),
-        isHidden: isHidden(state, key),
-      };
-
-      if (
-        (comm.status === COMM_STATES.LOADING ||
-          comm.status === COMM_STATES.ERROR) &&
-        !comm.isHidden
-      ) {
-        resources.push(comm);
-      }
-    });
-
-    return resources.length ? resources : null;
-  }
-);
-
-export const isLoadingAnyResource = createSelector(
-  state => state,
-  state => {
-    if (!state || typeof state !== 'object') {
-      return null;
-    }
-
-    return (
-      Object.keys(state).filter(
-        resource => isLoading(state, resource) && !isHidden(state, resource)
-      ).length !== 0
-    );
-  }
-);
 // #endregion

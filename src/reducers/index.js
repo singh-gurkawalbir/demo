@@ -142,28 +142,23 @@ export function appErrored(state) {
 // #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
-export function allLoadingOrErrored(state) {
-  return fromComms.allLoadingOrErrored(state.comms);
-}
+// Use shallowEquality operator to prevent re-renders.
+// or convert this to re-select since it has no args, it s perfect
+// case for re-select.
+export function commsErrors(state) {
+  const commsState = state.comms.networkComms;
+  // console.log(commsState);
+  let errors;
 
-// TODO: Santosh, here is another case where we are returning a new object
-// in order to "infer" the error message from the state. we cold use re-select, or
-// simply refactor the single place this is used to call the existing util method,
-// "inferErrorMessage", from the component itself.
-export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
-  const resourceStatuses = allLoadingOrErrored(state);
-
-  if (!resourceStatuses) return null;
-
-  return resourceStatuses.map(comm => {
-    const { message, ...rest } = comm;
-
-    return { ...rest, message: inferErrorMessage(message) };
+  Object.keys(commsState).forEach(key => {
+    const c = commsState[key];
+    if (!c.isHidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
+      if (!errors) errors = {};
+      errors[key] = inferErrorMessage(c.message);
+    }
   });
-}
 
-export function isLoadingAnyResource(state) {
-  return fromComms.isLoadingAnyResource(state.comms);
+  return errors;
 }
 
 export function commsSummary(state) {
@@ -171,8 +166,6 @@ export function commsSummary(state) {
   let isRetrying = false;
   let hasError = false;
   const commsState = state.comms.networkComms;
-
-  // console.log(commsState);
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
@@ -195,7 +188,6 @@ export function commStatusPerPath(state, path, method) {
 
   return fromComms.commStatus(state && state.comms, key);
 }
-
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
