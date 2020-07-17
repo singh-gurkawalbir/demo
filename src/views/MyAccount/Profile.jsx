@@ -51,7 +51,6 @@ export default function ProfileComponent() {
   const classes = useStyles();
 
   const [formState, setFormState] = useState({
-    initComplete: true,
     showFormValidationsBeforeTouch: false,
   });
   const showCustomFormValidations = useCallback(() => {
