@@ -20,12 +20,12 @@ import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 0, 2, 2),
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
 
-    '& > *': {
+    '& > *:not(:last-child)': {
       marginRight: 10,
       '&:first-child': {
         marginLeft: 10,
@@ -59,9 +59,6 @@ const useStyles = makeStyles(theme => ({
   },
   pagingText: {
     alignSelf: 'center',
-  },
-  refreshButton: {
-    marginRight: theme.spacing(1),
   },
   hideLabel: {
     marginLeft: '10px',
@@ -209,9 +206,7 @@ function Filters({
       </div>
 
       <div className={classes.rightActionContainer}>
-        <IconTextButton
-          className={classes.refreshButton}
-          onClick={handleRefreshClick}>
+        <IconTextButton onClick={handleRefreshClick}>
           <RefreshIcon /> Refresh
         </IconTextButton>
         {maxPage > 0 && (
