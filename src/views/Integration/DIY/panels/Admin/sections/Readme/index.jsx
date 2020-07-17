@@ -41,7 +41,7 @@ export default function ReadmeSection({ integrationId }) {
   );
 
   const toggleEditMode = useCallback(() => {
-    history.push(`${match.url}/editReadme`);
+    history.push(`${match.url}/edit/readme`);
   }, [history, match.url]);
 
   const onClose = useCallback(() => {
@@ -64,7 +64,7 @@ export default function ReadmeSection({ integrationId }) {
         <RawHtml className={classes.previewContainer} html={readmeValue} />
       </div>
       <RightDrawer
-        path="editReadme"
+        path="edit/readme"
         height="tall"
         width="xl"
         // type="paper"
