@@ -17,14 +17,14 @@ const contentWrapper = {
 };
 const StaleUIVersion = () => (
   <ModalDialog show>
-    <Typography>Please Reload Page</Typography>
-    <Typography>It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
+    <Typography variant="h3">Please reload page</Typography>
+    <Typography >It looks like your browser has cached an older version of our app, and we need to reload the page. Please click &apos;OK&apos; to proceed.</Typography>
     <Button
       data-test="ok"
       onClick={() => {
         window.location.reload();
       }}
-      variant="contained"
+      variant="outlined"
       color="primary">
       ok
     </Button>

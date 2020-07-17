@@ -1,13 +1,25 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
+import ButtonsGroup from '../ButtonGroup';
+
 
 const useStyles = makeStyles({
   message: {
     marginBottom: 10,
+  },
+  containerButtons: {
+    position: 'relative',
+    width: '100%',
+  },
+  btnRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
   },
 });
 
@@ -56,17 +68,24 @@ export const ConfirmDialog = props => {
       ) : (
         <div className={classes.message}>{message}</div>
       )}
+      <div className={classes.containerButtons} >
+        {buttons.map(button => (
+          <>
+            <ButtonsGroup>
+              <Button
+                variant={button.color === 'secondary' ? 'text' : 'outlined'}
+                data-test={button.label}
+                key={button.label}
+                className={clsx({[classes.btnRight]: button.label && buttons.length > 2 === 'Cancel'})}
+                color={button.color === 'secondary' ? '' : 'primary'}
+                onClick={handleButtonClick(button)}>
+                {button.label}
+              </Button>
+            </ButtonsGroup>
+          </>
+        ))}
+      </div>
 
-      {buttons.map(button => (
-        <Button
-          variant={button.variant || 'outlined'}
-          data-test={button.label}
-          key={button.label}
-          color={button.color || 'primary'}
-          onClick={handleButtonClick(button)}>
-          {button.label}
-        </Button>
-      ))}
     </ModalDialog>
   );
 };
@@ -104,7 +123,7 @@ export default function useConfirmDialog() {
         message: `Are you sure you want to ${message}`,
         buttons: [
           { label: 'Yes', color: 'primary', onClick: callback },
-          { label: 'Cancel', variant: 'text' },
+          { label: 'Cancel', variant: 'text', color: 'secondary' },
         ],
       });
     },
