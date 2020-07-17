@@ -169,7 +169,7 @@ export default function DynaHook(props) {
       const { function: func, _scriptId, _stackId } = value;
       const isEmptyHook = !func && !(_scriptId || _stackId);
 
-      // If all fields are empty , then it is valid as we accept empty hook
+      // If all fields are empty , then it is valid as we accept empty hook(except resource type apis)
       if (isEmptyHook) return resourceType !== 'apis';
 
       // If hook is not empty, then valid if those respective fields are not empty
