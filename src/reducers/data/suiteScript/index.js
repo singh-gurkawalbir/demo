@@ -73,7 +73,7 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RECEIVED:
         {
           const { job } = action;
-          const jobIndex = state.jobs.findIndex(
+          const jobIndex = state.jobs?.findIndex(
             j => j._id === job._id && j.type === job.type
           );
 
@@ -322,7 +322,7 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RESOLVE_INIT:
         {
           const { jobId, jobType } = action;
-          const jobIndex = state.jobs.findIndex(
+          const jobIndex = state.jobs?.findIndex(
             j => j._id === jobId && j.type === jobType
           );
 
@@ -344,7 +344,7 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RESOLVE_UNDO:
         {
           const { jobId, jobType } = action;
-          const jobIndex = state.jobs.findIndex(
+          const jobIndex = state.jobs?.findIndex(
             j => j._id === jobId && j.type === jobType
           );
 
