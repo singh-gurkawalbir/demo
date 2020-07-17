@@ -47,12 +47,12 @@ export default function CodeEditor({
 
   useEffect(() => {
     if (!skipDelay) {
-      // update the state value, only when user is not typing and new value is available from the selector.
-      if (inputVal !== value && !typingTimeout) {
+      // update the state value, only when the new value is available from the props.
+      if (inputVal !== value) {
         setState({ ...state, inputVal: value, editorVal: value });
       }
     }
-  }, [inputVal, skipDelay, state, typingTimeout, value]);
+  }, [inputVal, skipDelay, state, value]);
 
   const handleLoad = useCallback((
     editor => {
