@@ -179,7 +179,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
-            `${isCloned ? '/clone' : ''}?/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
+            `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
           )
         );
       } else {
