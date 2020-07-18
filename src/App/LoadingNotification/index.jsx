@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NetworkSnackbar() {
+export default function LoadingNotification() {
   const classes = useStyles();
   const {isLoading, isRetrying} = useSelector(
     state => selectors.commsSummary(state),
