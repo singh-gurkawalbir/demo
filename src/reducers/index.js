@@ -142,42 +142,45 @@ export function appErrored(state) {
 // #endregion app selectors
 
 // #region PUBLIC COMMS SELECTORS
-export function allLoadingOrErrored(state) {
-  return fromComms.allLoadingOrErrored(state.comms);
-}
+// Use shallowEquality operator to prevent re-renders.
+// or convert this to re-select since it has no args, it s perfect
+// case for re-select.
+export function commsErrors(state) {
+  const commsState = state.comms.networkComms;
+  // console.log(commsState);
+  let errors;
 
-// TODO: Santosh, here is another case where we are returning a new object
-// in order to "infer" the error message from the state. we cold use re-select, or
-// simply refactor the single place this is used to call the existing util method,
-// "inferErrorMessage", from the component itself.
-export function allLoadingOrErroredWithCorrectlyInferredErroredMessage(state) {
-  const resourceStatuses = allLoadingOrErrored(state);
-
-  if (!resourceStatuses) return null;
-
-  return resourceStatuses.map(comm => {
-    const { message, ...rest } = comm;
-
-    return { ...rest, message: inferErrorMessage(message) };
+  Object.keys(commsState).forEach(key => {
+    const c = commsState[key];
+    if (!c.isHidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
+      if (!errors) errors = {};
+      errors[key] = inferErrorMessage(c.message);
+    }
   });
+
+  return errors;
 }
 
-export function isLoadingAnyResource(state) {
-  return fromComms.isLoadingAnyResource(state.comms);
-}
+export function commsSummary(state) {
+  let isLoading = false;
+  let isRetrying = false;
+  let hasError = false;
+  const commsState = state.comms.networkComms;
 
-export function isAllLoadingCommsAboveThreshold(state) {
-  const loadingOrErrored = allLoadingOrErrored(state);
+  Object.keys(commsState).forEach(key => {
+    const c = commsState[key];
+    if (!c.isHidden) {
+      if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
+        hasError = true;
+      } else if (c.retryCount > 0) {
+        isRetrying = true;
+      } else if (c.status === fromNetworkComms.COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
+        isLoading = true;
+      }
+    }
+  });
 
-  if (loadingOrErrored === null) return;
-
-  return (
-    loadingOrErrored.filter(
-      resource =>
-        resource.status === fromNetworkComms.COMM_STATES.LOADING &&
-        Date.now() - resource.timestamp < Number(process.env.NETWORK_THRESHOLD)
-    ).length === 0
-  );
+  return { isLoading, isRetrying, hasError };
 }
 
 export function commStatusPerPath(state, path, method) {
@@ -185,7 +188,6 @@ export function commStatusPerPath(state, path, method) {
 
   return fromComms.commStatus(state && state.comms, key);
 }
-
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS

@@ -202,7 +202,6 @@ export default {
         marginBottom: 8,
       },
     },
-
     MuiMenu: {
       list: {
         maxHeight: 300,
@@ -349,7 +348,6 @@ export default {
         },
       },
     },
-
     MuiTableCell: {
       root: {
         position: 'relative',
@@ -515,7 +513,6 @@ export default {
         },
       },
     },
-
     MuiInputBase: {
       root: {
         fontFamily: 'source sans pro',
@@ -636,7 +633,6 @@ export default {
         },
       },
     },
-
     MuiTabs: {
       root: {
         minHeight: 36,
@@ -693,6 +689,76 @@ export default {
       label: {
         fontSize: 14,
         lineHeight: '18px',
+      },
+    },
+    MuiSnackbar: {
+      root: {
+        maxWidth: 700,
+      },
+    },
+    MuiSnackbarContent: {
+      action: {
+        color: colors.celigoNeutral6,
+      },
+      message: {
+        color: colors.celigoNeutral6,
+        '& svg': {
+          fontSize: '32px !important',
+        },
+      },
+      root: {
+        borderRadius: 6,
+        flexWrap: 'nowrap',
+        flexGrow: '1 !important',
+        backgroundColor: colors.celigoWhite,
+        '&:before': {
+          borderTopLeftRadius: 6,
+          borderBottomLeftRadius: 6,
+          content: '""',
+          width: 5,
+          height: '100%',
+          position: 'absolute',
+          background: colors.celigoNeutral3,
+          left: 0,
+          top: 0,
+        },
+        '&[class*="variantInfo"]': {
+          backgroundColor: colors.celigoWhite,
+          '&:before': {
+            background: colors.celigoAccent2,
+          },
+          '& div > span > svg': {
+            color: colors.celigoAccent2,
+          },
+        },
+        '&[class*="variantSuccess"]': {
+          backgroundColor: colors.celigoWhite,
+          '&:before': {
+            background: colors.celigoSuccess,
+          },
+          '& div > span > svg': {
+            color: colors.celigoSuccess,
+          },
+        },
+        '&[class*="variantWarning"]': {
+          backgroundColor: colors.celigoWhite,
+          '&:before': {
+            background: colors.celigoWarning,
+          },
+          '& div > span > svg': {
+            color: colors.celigoWarning,
+          },
+        },
+        '&[class*="variantError"]': {
+          backgroundColor: colors.celigoWhite,
+          '&:before': {
+            background: colors.celigoError,
+          },
+          '& div > span > svg': {
+            color: colors.celigoError,
+          },
+        },
+
       },
     },
   },

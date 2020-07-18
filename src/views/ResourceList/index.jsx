@@ -65,12 +65,12 @@ export default function ResourceList(props) {
     filterConfig
   );
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
-  let addResourceLabel = '';
+  let createResourceLabel = '';
   if (resourceType) {
-    if (['accesstokens', 'apis'].indexOf(resourceType)) {
-      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType];
+    if (['accesstokens', 'apis'].includes(resourceType)) {
+      createResourceLabel = resourceName;
     } else {
-      addResourceLabel = MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase();
+      createResourceLabel = resourceName.toLowerCase();
     }
   }
 
@@ -124,7 +124,7 @@ export default function ResourceList(props) {
             to={`${location.pathname}/add/${resourceType}/${generateNewId()}`}
             variant="text"
             color="primary">
-            <AddIcon /> Create {addResourceLabel}
+            <AddIcon /> Create {createResourceLabel}
           </IconTextButton>
         </div>
       </CeligoPageBar>
@@ -133,7 +133,7 @@ export default function ResourceList(props) {
           {list.count === 0 ? (
             <Typography>
               {list.total === 0
-                ? `You don't have any ${addResourceLabel}s.`
+                ? `You don't have any ${createResourceLabel}s.`
                 : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
             </Typography>
           ) : (

@@ -40,7 +40,6 @@ export default function IconTextButton(props) {
 
   return (
     <Button
-      data-test="iconButton"
       {...rest}
       className={clsx(classes.root, className)}>
       {styledChildren(props.children, classes)}
