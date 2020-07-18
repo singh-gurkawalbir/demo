@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -38,21 +39,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
+  { value: 'DD/MM/YYYY', label: '31/12/1900' },
+  { value: 'DD-MMM-YYYY', label: '31-Dec-1900' },
+  { value: 'DD.MM.YYYY', label: '31.12.1900' },
+  { value: 'DD-MMMM-YYYY', label: '31-December-1900' },
+  { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
+  { value: 'YYYY/MM/DD', label: '1900/12/31' },
+  { value: 'YYYY-MM-DD', label: '1900-12-31' }];
 export default function ProfileComponent() {
   const classes = useStyles();
-  const dateFormats = useMemo(
-    () => [
-      { value: 'MM/DD/YYYY', label: '12/31/1900' },
-      { value: 'DD/MM/YYYY', label: '31/12/1900' },
-      { value: 'DD-MMM-YYYY', label: '31-Dec-1900' },
-      { value: 'DD.MM.YYYY', label: '31.12.1900' },
-      { value: 'DD-MMMM-YYYY', label: '31-December-1900' },
-      { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
-      { value: 'YYYY/MM/DD', label: '1900/12/31' },
-      { value: 'YYYY-MM-DD', label: '1900-12-31' },
-    ],
-    []
-  );
+
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
@@ -90,7 +87,7 @@ export default function ProfileComponent() {
           [],
       },
     ],
-    [dateFormats]
+    []
   );
   const timeFormatList = useMemo(
     () => [
@@ -109,8 +106,9 @@ export default function ProfileComponent() {
     ],
     []
   );
+
   const dispatch = useDispatch();
-  const handleSubmit = formVal => {
+  const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
     const { timeFormat, dateFormat } = completePayloadCopy;
     const preferencesPayload = { timeFormat, dateFormat };
@@ -120,15 +118,15 @@ export default function ProfileComponent() {
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
     dispatch(actions.user.profile.update(completePayloadCopy));
-  };
+  }, [dispatch]);
 
-  const handleLinkWithGoogle = () => {
+  const handleLinkWithGoogle = useCallback(() => {
     dispatch(actions.auth.linkWithGoogle(getRoutePath('/myAccount/profile')));
-  };
+  }, [dispatch]);
 
-  const handleUnLinkWithGoogle = () => {
+  const handleUnLinkWithGoogle = useCallback(() => {
     dispatch(actions.user.profile.unlinkWithGoogle());
-  };
+  }, [dispatch]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
@@ -138,7 +136,7 @@ export default function ProfileComponent() {
     }
   );
 
-  const fieldMeta = {
+  const fieldMeta = useMemo(() => ({
     fieldMap: {
       name: {
         id: 'name',
@@ -241,12 +239,15 @@ export default function ProfileComponent() {
         'developer',
       ],
     },
-  };
-
+  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    setCount(count => count + 1);
+  }, [fieldMeta]);
   return (
     <>
       <PanelHeader title="Profile" />
-      <DynaForm formState={formState} fieldMeta={fieldMeta}>
+      <DynaForm key={count} formState={formState} fieldMeta={fieldMeta}>
         <DynaSubmit
           showCustomFormValidations={showCustomFormValidations}
           onClick={submitHandler()}

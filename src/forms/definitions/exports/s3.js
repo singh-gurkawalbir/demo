@@ -302,11 +302,7 @@ export default {
       fieldId: 'file.compressionFormat',
       visibleWhen: [{ field: 'file.decompressFiles', is: [true] }],
     },
-    'file.skipDelete': { fieldId: 'file.skipDelete',
-      label: 'Leave file in the current bucket',
-      disabledWhen: [
-        { field: 's3.backupBucket', isNot: [''] },
-      ], },
+    'file.skipDelete': { fieldId: 'file.skipDelete' },
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: {
       fieldId: 'pageSize',

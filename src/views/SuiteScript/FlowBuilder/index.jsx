@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     display: 'flex',
+    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),
@@ -112,6 +113,9 @@ const useStyles = makeStyles((theme) => ({
   },
   resultContainer: {
     padding: theme.spacing(3, 3, 12, 3),
+  },
+  sourceTitle: {
+    marginLeft: -100,
   },
 }));
 const bottomDrawerMin = 41;

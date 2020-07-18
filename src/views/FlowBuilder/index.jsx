@@ -92,10 +92,12 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
+    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
+    color: theme.palette.secondary.main,
 
   },
   destinationTitle: {
@@ -150,6 +152,9 @@ const useStyles = makeStyles(theme => ({
     height: 18,
     marginLeft: theme.spacing(2),
   },
+  sourceTitle: {
+    marginLeft: -100,
+  }
 }));
 
 function FlowBuilder() {

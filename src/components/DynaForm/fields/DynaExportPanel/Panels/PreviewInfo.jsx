@@ -19,12 +19,11 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: 5,
       height: '100%',
-      backgroundColor: theme.palette.success.main,
+      backgroundColor: props => props.resourceSampleData.status === 'error' ? theme.palette.error.main : theme.palette.success.main,
       position: 'absolute',
       left: 0,
       top: 0,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.contrastText,
+      borderRadius: theme.spacing(0.5, 0, 0, 0.5),
     },
   },
   previewData: {
@@ -69,7 +68,7 @@ export default function PreviewInfo(props) {
     panelType,
     disabled,
   } = props;
-  const classes = useStyles();
+  const classes = useStyles(props);
   // ShowSampleDataStatus Fn shows Preview Status
   const sampleDataStatus = useMemo(() => {
     if (resourceSampleData.status === 'requested') return <Typography variant="body2"> Testing </Typography>;

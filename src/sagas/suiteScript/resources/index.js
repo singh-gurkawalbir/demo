@@ -129,6 +129,8 @@ export function* requestSuiteScriptMetadata({
   try {
     resp = yield call(apiCallWithRetry, {path, opts, hidden: resourceType === 'settings'});
   } catch (error) {
+    yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, JSON.parse(error.message)));
+
     return false;
   }
 

@@ -12,6 +12,9 @@ import CloseIcon from '../icons/CloseIcon';
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
+    margin: theme.spacing(0, 2),
+    padding: theme.spacing(2, 0, 1, 0),
+
   },
   actionButton: {
     float: 'right',
@@ -21,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '95%',
     flex: 1,
     wordBreak: 'break-word',
+    '& > .MuiTypography-root': {
+      color: theme.palette.secondary.main,
+    }
   },
   closeButton: {
     position: 'absolute',
@@ -30,8 +36,9 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     justifyContent: 'flex-start',
-    padding: theme.spacing(1, 3),
+    padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest} `,
+    margin: theme.spacing(0, 2),
   },
   paper: {
     minWidth: '450px',
@@ -41,6 +48,10 @@ const useStyles = makeStyles(theme => ({
   },
   md: {
     minWidth: theme.breakpoints.values.md,
+  },
+  dialogContent: {
+    background: theme.palette.common.white,
+    padding: theme.spacing(2),
   },
 }));
 
@@ -66,7 +77,7 @@ export default function ModalDialog({
         <DialogTitle
           className={clsx(classes.dialogTitle, classes[minWidth])}
           disableTypography>
-          <Typography variant="h3" className={classes.titleText}>
+          <Typography variant="h3" component="div" className={classes.titleText}>
             {children[0]}
           </Typography>
           {onClose && (
@@ -89,7 +100,7 @@ export default function ModalDialog({
           )}
         </DialogTitle>
       )}
-      {children[1] && <DialogContent>{children[1]}</DialogContent>}
+      {children[1] && <DialogContent className={classes.dialogContent}>{children[1]}</DialogContent>}
       {children[2] && (
         <DialogActions className={classes.actions}>{children[2]}</DialogActions>
       )}

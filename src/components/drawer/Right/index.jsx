@@ -40,6 +40,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    color: theme.palette.secondary.main,
   },
   contentContainer: {
     margin: theme.spacing(1, 2),

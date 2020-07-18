@@ -43,7 +43,7 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   if (!hasSettingsMetadata) { return <Spinner />; }
 
   if (resource?.errors) {
-    return <Typography>{inferErrorMessage(resource)[0]}</Typography>;
+    return <Typography color="error">{inferErrorMessage(resource)[0]}</Typography>;
   }
 
   return children;
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     overflowX: 'scroll',
   },
   listItem: {
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.main,
   },
   activeListItem: {
     color: theme.palette.primary.main,

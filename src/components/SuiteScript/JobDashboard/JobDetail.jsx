@@ -89,13 +89,10 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   stateBtn: {
-    color: theme.palette.error.main,
+    color: theme.palette.error.dark,
     float: 'right',
     padding: 0,
     minWidth: 'unset',
-    '&:hover': {
-      color: `${theme.palette.error.dark} !important`,
-    },
   },
   checkActionBorder: {
     paddingLeft: '13px',

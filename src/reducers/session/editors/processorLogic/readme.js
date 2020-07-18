@@ -1,7 +1,7 @@
 export default {
+  // These two functions are mandatory for processorLogic
   requestBody: () => ({}),
   validate: () => ({
     dataError: '',
   }),
-  dirty: editor => editor.data !== editor._init_data
 };

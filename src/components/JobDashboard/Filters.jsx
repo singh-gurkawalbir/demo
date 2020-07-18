@@ -60,9 +60,6 @@ const useStyles = makeStyles(theme => ({
   pagingText: {
     alignSelf: 'center',
   },
-  refreshButton: {
-    marginRight: theme.spacing(1),
-  },
   hideLabel: {
     marginLeft: '10px',
   },
@@ -209,9 +206,7 @@ function Filters({
       </div>
 
       <div className={classes.rightActionContainer}>
-        <IconTextButton
-          className={classes.refreshButton}
-          onClick={handleRefreshClick}>
+        <IconTextButton onClick={handleRefreshClick}>
           <RefreshIcon /> Refresh
         </IconTextButton>
         {maxPage > 0 && (

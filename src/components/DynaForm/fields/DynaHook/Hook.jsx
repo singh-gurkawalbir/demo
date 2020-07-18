@@ -87,6 +87,7 @@ export default function DynaHook(props) {
     editorResultMode,
     requestForPreHookData,
     isSampleDataLoading,
+    resourceType
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -168,8 +169,8 @@ export default function DynaHook(props) {
       const { function: func, _scriptId, _stackId } = value;
       const isEmptyHook = !func && !(_scriptId || _stackId);
 
-      // If all fields are empty , then it is valid as we accept empty hook
-      if (isEmptyHook) return true;
+      // If all fields are empty , then it is valid as we accept empty hook(except resource type apis)
+      if (isEmptyHook) return resourceType !== 'apis';
 
       // If hook is not empty, then valid if those respective fields are not empty
       switch (field) {
@@ -182,7 +183,7 @@ export default function DynaHook(props) {
         default:
       }
     },
-    [value]
+    [value, resourceType]
   );
   const optionalSaveParams = useMemo(
     () => ({
