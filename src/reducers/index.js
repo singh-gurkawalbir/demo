@@ -146,7 +146,9 @@ export function appErrored(state) {
 // or convert this to re-select since it has no args, it s perfect
 // case for re-select.
 export function commsErrors(state) {
-  const commsState = state.comms.networkComms;
+  const commsState = state?.comms?.networkComms;
+
+  if (!commsState) return;
   // console.log(commsState);
   let errors;
 
@@ -165,20 +167,22 @@ export function commsSummary(state) {
   let isLoading = false;
   let isRetrying = false;
   let hasError = false;
-  const commsState = state.comms.networkComms;
+  const commsState = state?.comms?.networkComms;
 
-  Object.keys(commsState).forEach(key => {
-    const c = commsState[key];
-    if (!c.isHidden) {
-      if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
-        hasError = true;
-      } else if (c.retryCount > 0) {
-        isRetrying = true;
-      } else if (c.status === fromNetworkComms.COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
-        isLoading = true;
+  if (commsState) {
+    Object.keys(commsState).forEach(key => {
+      const c = commsState[key];
+      if (!c.isHidden) {
+        if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
+          hasError = true;
+        } else if (c.retryCount > 0) {
+          isRetrying = true;
+        } else if (c.status === fromNetworkComms.COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
+          isLoading = true;
+        }
       }
-    }
-  });
+    });
+  }
 
   return { isLoading, isRetrying, hasError };
 }

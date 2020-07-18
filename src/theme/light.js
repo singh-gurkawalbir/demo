@@ -693,6 +693,8 @@ export default {
         maxWidth: 700,
       },
     },
+    // Please note that the info|error|success|warn variant styles are configured in the <SnackbarProvider>
+    // component used in the application's root component.
     MuiSnackbarContent: {
       action: {
         color: colors.celigoNeutral6,
@@ -719,43 +721,6 @@ export default {
           left: 0,
           top: 0,
         },
-        '&[class*="variantInfo"]': {
-          backgroundColor: colors.celigoWhite,
-          '&:before': {
-            background: colors.celigoAccent2,
-          },
-          '& div > span > svg': {
-            color: colors.celigoAccent2,
-          },
-        },
-        '&[class*="variantSuccess"]': {
-          backgroundColor: colors.celigoWhite,
-          '&:before': {
-            background: colors.celigoSuccess,
-          },
-          '& div > span > svg': {
-            color: colors.celigoSuccess,
-          },
-        },
-        '&[class*="variantWarning"]': {
-          backgroundColor: colors.celigoWhite,
-          '&:before': {
-            background: colors.celigoWarning,
-          },
-          '& div > span > svg': {
-            color: colors.celigoWarning,
-          },
-        },
-        '&[class*="variantError"]': {
-          backgroundColor: colors.celigoWhite,
-          '&:before': {
-            background: colors.celigoError,
-          },
-          '& div > span > svg': {
-            color: colors.celigoError,
-          },
-        },
-
       },
     },
   },
