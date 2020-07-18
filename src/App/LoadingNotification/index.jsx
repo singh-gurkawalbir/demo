@@ -4,6 +4,9 @@ import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
+  snackbar: {
+    zIndex: 1401,
+  },
   paper: {
     width: 150,
     padding: theme.spacing(1.5),
@@ -27,7 +30,7 @@ export default function NetworkSnackbar() {
   }
 
   return (
-    <Snackbar open anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+    <Snackbar open classes={{root: classes.snackbar}} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
       <Paper elevation={2} className={classes.paper}>
         <Typography variant="body2">
           {isRetrying ? 'Retrying' : 'Loading'}...

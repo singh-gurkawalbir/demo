@@ -12,7 +12,6 @@ import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
-import NetworkSnackbar from '../components/NetworkSnackbar';
 import * as selectors from '../reducers';
 import actions from '../actions';
 import Signin from '../views/SignIn';
@@ -23,6 +22,7 @@ import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
 import LoadingNotification from './LoadingNotification';
+import ErrorNotifications from './ErrorNotifications';
 import CeligoAppBar from './CeligoAppBar';
 import CeligoDrawer from './CeligoDrawer';
 import PageContent from './PageContent';
@@ -100,7 +100,7 @@ export default function App() {
                 <BrowserRouter>
                   <div className={classes.root}>
                     <LoadingNotification />
-                    <NetworkSnackbar />
+                    <ErrorNotifications />
                     {/* Headers */}
                     <Switch>
                       <Route path={getRoutePath('/signin')} component={null} />
