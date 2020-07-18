@@ -6,6 +6,7 @@ export default {
       { id: 'mongodb.update', type: 'sqlquerybuilder' },
       { id: 'mongodb.document', type: 'sqlquerybuilder' },
       { id: 'mongodb.lookupType', type: 'select' },
+      { id: 'mongodb.ignoreExtract', type: 'text' },
     ],
     label: 'Method',
     options: [
@@ -121,6 +122,17 @@ export default {
       {
         field: 'mongodb.method',
         is: ['updateOne'],
+      },
+    ],
+  },
+  'mongodb.ignoreExtract': {
+    type: 'text',
+    label: 'Which field?',
+    required: true,
+    visibleWhen: [
+      {
+        field: 'mongodb.lookupType',
+        is: ['source'],
       },
     ],
   },

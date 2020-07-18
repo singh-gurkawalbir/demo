@@ -71,6 +71,9 @@ export default {
     'mongodb.upsert': {
       fieldId: 'mongodb.upsert',
     },
+    'mongodb.ignoreExtract': {
+      fieldId: 'mongodb.ignoreExtract',
+    },
     dataMappings: {
       formId: 'dataMappings',
     },
@@ -93,6 +96,7 @@ export default {
           'mongodb.document',
           'ignoreExisting',
           'mongodb.lookupType',
+          'mongodb.ignoreExtract',
           'mongodb.ignoreLookupFilter',
           'mongodb.update',
           'mongodb.upsert',
