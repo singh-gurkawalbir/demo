@@ -8,10 +8,11 @@ const useStyles = makeStyles(theme => ({
   root: {
     fontSize: 12,
     borderRadius: 2,
+    paddingTop: 2,
     display: 'flex',
     fontFamily: 'source sans pro',
     color: theme.palette.background.paper,
-    JustifyContent: 'center',
+    justifyContent: 'center',
     width: '80px !important',
     height: '20px !important',
     alignItems: 'center',
@@ -89,11 +90,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     left: 0,
-    top: 0,
   },
 }));
 
-function StatusTag(props) {
+export default function StatusTag(props) {
   const {
     variant = 'default',
     errorValue,
@@ -140,5 +140,3 @@ StatusTag.propTypes = {
 StatusTag.defaultProps = {
   variant: 'default',
 };
-
-export default StatusTag;

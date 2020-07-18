@@ -156,7 +156,16 @@ function JobTable({
       handleViewErrorsClick({jobId: _JobId, parentJobId: flowJobId, includeAll: true});
       setOpenedJobErrors(true);
     }
-  }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors]);
+    // This logic is to handle the case when user tries to reload the page with viewErrors link
+    // ViewErrors drawer will work when user selectes a job error or from the error notification mail
+    // For reload case as there is no track of jobID, redirecting to the job table dashbaord
+    if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
+      const urlExtractFields = history.location.pathname.split('/');
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
+      const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
+      history.replace(strippedRoute);
+    }
+  }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors, history, showErrorDialogFor]);
 
   function handleErrorDrawerClose() {
     history.goBack();
@@ -206,7 +215,7 @@ function JobTable({
           ))}
         </TableBody>
       </Table>
-
+      {(showErrorDialogFor?.jobId || _JobId) &&
       <ErrorDrawer
         // for now, force tall (default)
         // height={isFlowBuilderView ? 'short' : 'tall'}
@@ -218,7 +227,7 @@ function JobTable({
         numError={showErrorDialogFor.numError}
         numResolved={showErrorDialogFor.numResolved}
         onClose={handleErrorDrawerClose}
-        />
+        />}
     </>
   );
 }
