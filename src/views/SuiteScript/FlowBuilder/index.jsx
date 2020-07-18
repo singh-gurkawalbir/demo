@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     display: 'flex',
+    fontSize: 14,
     padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
     marginBottom: theme.spacing(0.5),

@@ -52,7 +52,6 @@ export default {
       backgroundColor: colors.celigoWarning,
       contrastText: colors.celigoWhite,
     },
-    // Todo (Azhar): Success light and dark not taking the colors in the theme
     success: {
       main: colors.celigoSuccess,
       dark: colors.celigoSuccessDark,
@@ -665,11 +664,15 @@ export default {
         minWidth: 140,
         textTransform: 'none',
       },
+      textColorPrimary: {
+        '&.Mui-selected': {
+          fontWeight: 'bold',
+        },
+      },
       labelIcon: {
         minHeight: 'unset',
       },
       wrapper: {
-        color: colors.celigoNeutral8,
         fontSize: 14,
         '& > svg': {
           fontSize: '1.1rem',
