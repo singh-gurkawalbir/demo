@@ -29,10 +29,7 @@ export default {
   },
   's3.backupBucket': {
     type: 'text',
-    label: 'Move file to',
+    label: 'Backup bucket name',
     helpKey: 'export.s3.backupBucket',
-    disabledWhen: [
-      { field: 'file.skipDelete', is: [true] },
-    ],
-  },
+  }
 };

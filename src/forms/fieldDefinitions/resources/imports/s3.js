@@ -26,4 +26,9 @@ export default {
     defaultValue: r => r && r.s3 && r.s3.fileKey,
     refreshOptionsOnChangesTo: ['file.type'],
   },
+  's3.backupBucket': {
+    type: 'text',
+    label: 'Backup bucket name',
+    helpKey: 'import.s3.backupBucket',
+  },
 };
