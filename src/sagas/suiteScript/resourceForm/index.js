@@ -299,7 +299,10 @@ function* suiteScriptSubmitIA({
   const isSuccessful = yield call(requestSuiteScriptMetadata, {resourceType: 'settings', ssLinkedConnectionId, integrationId});
   if (!isSuccessful) { return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId)); }
 
-  return yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
+  yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
+  // refresh flows after saving Suitescript IA settings
+  const flowpath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows`;
+  yield put(actions.resource.requestCollection(flowpath));
 }
 
 export const resourceFormSagas = [
