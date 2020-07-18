@@ -18,6 +18,7 @@ import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
+import colors from '../theme/colors';
 import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
@@ -34,6 +35,45 @@ import PageContent from './PageContent';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+  },
+});
+
+const useSnackbarStyles = makeStyles({
+  variantInfo: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoAccent2,
+    },
+    '& div > span > svg': {
+      color: colors.celigoAccent2,
+    },
+  },
+  variantSuccess: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoSuccess,
+    },
+    '& div > span > svg': {
+      color: colors.celigoSuccess,
+    },
+  },
+  variantWarning: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoWarning,
+    },
+    '& div > span > svg': {
+      color: colors.celigoWarning,
+    },
+  },
+  variantError: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoError,
+    },
+    '& div > span > svg': {
+      color: colors.celigoError,
+    },
   },
 });
 
@@ -57,6 +97,7 @@ export const PageContentComponents = () => (
 
 export default function App() {
   const classes = useStyles();
+  const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state =>
@@ -94,7 +135,7 @@ export default function App() {
         <DndProvider backend={HTML5Backend}>
           <Fragment key={reloadCount}>
             <ConfirmDialogProvider>
-              <SnackbarProvider maxSnack={3}>
+              <SnackbarProvider classes={snackbarClasses} maxSnack={3}>
                 <FontStager />
                 <CssBaseline />
                 <BrowserRouter>
