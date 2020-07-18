@@ -5,7 +5,7 @@ import actions from '../../actions';
 import * as selectors from '../../reducers';
 
 // NOTE: This could/should? be converted to a hook since it doesn't render anything...
-// its just a useEffect hook. (useGenericErrorHandler?)
+// its just a useEffect hook. (could call it: useGenericErrorHandler?)
 export default function ErrorNotifications() {
   const dispatch = useDispatch();
   const errors = useSelector(state => selectors.commsErrors(state), shallowEqual);
