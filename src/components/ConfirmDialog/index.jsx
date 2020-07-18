@@ -77,7 +77,7 @@ export const ConfirmDialog = props => {
               variant={button.color === 'secondary' ? 'text' : 'outlined'}
               data-test={button.label}
               key={button.label}
-              className={clsx({[classes.btnRight]: button.label && buttons.length > 2 === 'Cancel'})}
+              className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
               color={button.color === 'secondary' ? '' : 'primary'}
               onClick={handleButtonClick(button)}>
               {button.label}
