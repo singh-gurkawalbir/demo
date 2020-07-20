@@ -16,6 +16,7 @@ import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
+import ConnectorCrumb from './crumbs/Connector';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -124,14 +125,6 @@ const routes = [
       },
       ...flowBuilderRoutes,
     ],
-  },
-  {
-    path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
-    breadcrumb: () => 'Licenses',
-  },
-  {
-    path: getRoutePath('/connectors/:connectorId/installBase'),
-    breadcrumb: () => 'Install base',
   },
   { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
@@ -260,6 +253,13 @@ const commonChildRoutes = [
   {
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
+  },
+  {
+    path: '/:connectorId',
+    breadcrumb: ConnectorCrumb,
+    childRoutes: [
+      { path: '/connectorLicenses', breadcrumb: () => 'Licenses' },
+      { path: '/installBase', breadcrumb: () => 'Install base' }]
   },
 ];
 
