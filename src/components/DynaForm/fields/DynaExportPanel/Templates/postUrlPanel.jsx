@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.5),
     padding: theme.spacing(2),
     textAlign: 'left',
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
 }));
 
