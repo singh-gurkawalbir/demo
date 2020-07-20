@@ -123,7 +123,7 @@ export default {
           filterKey: 'suitescript-recordTypes',
           commMetaPath: `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes`,
           defaultValue: lookup.recordType,
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
           label: 'Search record type',
           connectionId: ssLinkedConnectionId,
           helpKey: 'mapping.netsuite.lookup.recordType',
@@ -135,7 +135,7 @@ export default {
         'lookup.searchField': {
           id: 'lookup.searchField',
           name: 'searchField',
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
           label: 'Search Field',
           defaultValue: lookup.searchField,
           savedRecordType: lookup.recordType,
@@ -150,7 +150,7 @@ export default {
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
           label: 'Value field',
           defaultValue: lookup.resultField,
           savedRecordType: lookup.recordType,
@@ -222,7 +222,7 @@ export default {
         hardcodedSelect: {
           id: 'hardcodedSelect',
           name: 'hardcodedSelect',
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
           label: 'Value',
           required: true,
           multiselect: generateFieldType === 'multiselect',
