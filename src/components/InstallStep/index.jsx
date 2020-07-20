@@ -222,14 +222,13 @@ export default function InstallationStep(props) {
               src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
             />
             )}
-            {step.type === INSTALL_STEP_TYPES.CONNECTION && (
+            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (
             <ApplicationImg
               size="small"
               type={
-                step.options.connectionType
-                  ? step.options.connectionType.toLowerCase()
-                  : ''
+                step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.type || ''
               }
+              assistant={step?.sourceConnection?.assistant}
             />
             )}
           </div>
