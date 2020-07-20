@@ -140,16 +140,11 @@ export default function UserDetail(props) {
           commStatus.message
         }"`;
       }
-    } else if (action === 'delete') {
-      if (commStatus.status === COMM_STATES.SUCCESS) {
-        message = `User ${user.sharedWithUser.name ||
-          user.sharedWithUser.email} deleted successfully`;
-      } else if (commStatus.status === COMM_STATES.ERROR) {
-        message = `Deleting user ${user.sharedWithUser.name ||
+    } else if (action === 'delete' && commStatus.status === COMM_STATES.ERROR) {
+      message = `Deleting user ${user.sharedWithUser.name ||
           user.sharedWithUser.email} is failed due to the error "${
-          commStatus.message
-        }"`;
-      }
+        commStatus.message
+      }"`;
     } else if (action === 'makeOwner') {
       if (commStatus.status === COMM_STATES.SUCCESS) {
         message = `An Account Ownership invitation has been sent to 
