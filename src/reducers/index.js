@@ -172,7 +172,7 @@ export function commsSummary(state) {
   if (commsState) {
     Object.keys(commsState).forEach(key => {
       const c = commsState[key];
-      if (!c.isHidden) {
+      if (!c.hidden) {
         if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
           hasError = true;
         } else if (c.retryCount > 0) {
