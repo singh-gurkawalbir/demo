@@ -1,7 +1,9 @@
 import React, { useMemo, useEffect } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
+import { resourceData } from '../../../../../reducers';
 
 export default function PreviewBody(props) {
   const {
@@ -11,8 +13,12 @@ export default function PreviewBody(props) {
     defaultPanel,
     availablePreviewStages,
     previewStageDataList,
-    resource,
+    resourceId,
+    resourceType
   } = props;
+  const resource = useSelector(state =>
+    resourceData(state, resourceType, resourceId).merged, shallowEqual
+  );
   const previewBodyTemplate = useMemo(
     () => getPreviewBodyTemplateType(resource, panelType),
     [panelType, resource]
@@ -31,7 +37,12 @@ export default function PreviewBody(props) {
         <PanelLoader />
       )}
       {resourceSampleData.status === 'received' && (
-        <div>
+        <>
+          <Templates.PostUrlPanel
+            previewStageDataList={previewStageDataList}
+            resourceId={resourceId}
+            resourceType={resourceType}
+          />
           <Templates.HeaderPanel
             handlePanelViewChange={handlePanelViewChange}
             availablePreviewStages={availablePreviewStages}
@@ -50,7 +61,7 @@ export default function PreviewBody(props) {
               key={panelType}
             />
           )}
-        </div>
+        </>
       )}
       {resourceSampleData.status === 'error' && (
         <Templates.ErrorPanel resourceSampleData={resourceSampleData} />

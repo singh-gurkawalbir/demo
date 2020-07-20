@@ -53,6 +53,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isAS2Resource,
+  adaptorTypeMap
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -4186,6 +4187,18 @@ export function getAvailableResourcePreviewStages(
   const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
 
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
+}
+
+export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
+  const resourceObj = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  ).merged;
+  // for rest and http
+  const appType = adaptorTypeMap[resourceObj?.adaptorType];
+  return ['http', 'rest'].includes(appType);
 }
 
 /*
