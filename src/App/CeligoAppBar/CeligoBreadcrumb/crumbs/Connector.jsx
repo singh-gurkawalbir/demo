@@ -10,7 +10,7 @@ export default function ConnectorCrumb({ connectorId }) {
 
   return (
     <LoadResources resources="connectors">
-      {connector ? connector.name : 'Integration'}
+      {connector?.name || 'Integration app'}
     </LoadResources>
   );
 }

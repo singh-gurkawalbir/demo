@@ -189,6 +189,19 @@ const routes = [
     ],
   },
   {
+    path: getRoutePath('/connectors'),
+    breadcrumb: 'Integration apps',
+    childRoutes: [
+      { path: '/edit/:resourceType/:resourceId', breadcrumb: EditResourceTypeCrumb },
+      { path: '/add/:resourceType/:resourceId', breadcrumb: AddResourceTypeCrumb },
+      { path: '/:connectorId',
+        breadcrumb: ConnectorCrumb,
+        childRoutes: [
+          { path: '/connectorLicenses', breadcrumb: 'Licenses' },
+          { path: '/installBase', breadcrumb: 'Install base' }]}
+    ]
+  },
+  {
     path: getRoutePath('/marketplace'),
     breadcrumb: () => 'Marketplace',
     childRoutes: [
@@ -254,13 +267,6 @@ const commonChildRoutes = [
     path: '/edit/:resourceType/:id',
     breadcrumb: EditResourceTypeCrumb,
   },
-  {
-    path: '/:connectorId',
-    breadcrumb: ConnectorCrumb,
-    childRoutes: [
-      { path: '/connectorLicenses', breadcrumb: () => 'Licenses' },
-      { path: '/installBase', breadcrumb: () => 'Install base' }]
-  },
 ];
 
 function parseUrl(pathname, routes, url = '', params = {}) {
@@ -296,7 +302,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
         const childPath = pathname.replace(match.url, '');
         let childCrumbs;
 
-        // possibly child routes? time to recuse.
+        // possibly child routes? time to recurse.
         if (r.childRoutes) {
           childCrumbs = parseUrl(childPath, r.childRoutes, newUrl, newParams);
 
@@ -349,12 +355,12 @@ export default function CeligoBreadcrumb({ location }) {
             key={url}
             variant="body2"
             className={clsx(classes.activeCrumb, classes.crumb)}>
-            <Crumb {...params} />
+            {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
             <div className={classes.crumb}>
-              <Crumb {...params} />
+              {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
             </div>
           </Link>
         )
