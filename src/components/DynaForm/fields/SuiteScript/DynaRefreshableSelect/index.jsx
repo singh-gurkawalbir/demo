@@ -51,16 +51,25 @@ export default function DynaSelectOptionsGenerator(props) {
     }
   }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, data, disableOptionsLoad, dispatch, ignoreCache, options.commMetaPath]);
   const onRefresh = useCallback(() => {
+    if (disableOptionsLoad) {
+      return;
+    }
+    const opts = {
+      bundleUrlHelp,
+      bundlePath,
+
+    };
+    if (ignoreCache) {
+      opts.ignoreCache = true;
+    } else {
+      opts.refreshCache = true;
+    }
+
     dispatch(
       actions.metadata.refresh(
         connectionId,
         options.commMetaPath || commMetaPath,
-        {
-          refreshCache: true,
-          bundleUrlHelp,
-          bundlePath,
-          ignoreCache,
-        }
+        opts
       )
     );
   }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, ignoreCache, options.commMetaPath]);
