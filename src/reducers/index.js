@@ -154,7 +154,7 @@ export function commsErrors(state) {
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
-    if (!c.isHidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
+    if (!c.hidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
       if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
     }
