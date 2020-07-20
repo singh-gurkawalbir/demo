@@ -236,7 +236,7 @@ export default {
     label: 'Key columns',
     hasHeaderRow: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
-    refreshOptionsOnChangesTo: ['file.xlsx.hasHeaderRow'],
+    refreshOptionsOnChangesTo: ['file.xlsx.hasHeaderRow', 'file.type'],
     sampleData: r => r && r.sampleData,
     visibleWhenAll: [
       {
