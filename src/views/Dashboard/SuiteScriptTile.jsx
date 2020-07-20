@@ -32,7 +32,7 @@ import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
     '&:hover': {
       color: theme.palette.primary.main,
     },

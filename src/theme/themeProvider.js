@@ -24,7 +24,7 @@ export default (name = DEFAULT_THEME) => {
   });
   const muiTheme = createMuiTheme(theme);
   // eslint-disable-next-line
-  console.log('*** THEME ***', theme);
+  // console.log('*** THEME ***', theme);
 
   return {
     ...muiTheme,

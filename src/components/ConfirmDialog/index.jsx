@@ -1,15 +1,29 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import Button from '@material-ui/core/Button';
 import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
+import ButtonsGroup from '../ButtonGroup';
 
-const useStyles = makeStyles({
+
+const useStyles = makeStyles(theme => ({
   message: {
-    marginBottom: 10,
+    marginBottom: theme.spacing(3),
+    fontSize: 15,
+    lineHeight: '19px',
   },
-});
+  containerButtons: {
+    position: 'relative',
+    width: '100%',
+  },
+  btnRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+}));
 
 export const ConfirmDialog = props => {
   const {
@@ -56,17 +70,22 @@ export const ConfirmDialog = props => {
       ) : (
         <div className={classes.message}>{message}</div>
       )}
+      <div className={classes.containerButtons}>
+        <ButtonsGroup>
+          {buttons.map(button => (
+            <Button
+              variant={button.color === 'secondary' ? 'text' : 'outlined'}
+              data-test={button.label}
+              key={button.label}
+              className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
+              color={button.color === 'secondary' ? '' : 'primary'}
+              onClick={handleButtonClick(button)}>
+              {button.label}
+            </Button>
+          ))}
+        </ButtonsGroup>
+      </div>
 
-      {buttons.map(button => (
-        <Button
-          variant={button.variant || 'outlined'}
-          data-test={button.label}
-          key={button.label}
-          color={button.color || 'primary'}
-          onClick={handleButtonClick(button)}>
-          {button.label}
-        </Button>
-      ))}
     </ModalDialog>
   );
 };
@@ -104,7 +123,7 @@ export default function useConfirmDialog() {
         message: `Are you sure you want to ${message}`,
         buttons: [
           { label: 'Yes', color: 'primary', onClick: callback },
-          { label: 'Cancel', variant: 'text' },
+          { label: 'Cancel', variant: 'text', color: 'secondary' },
         ],
       });
     },

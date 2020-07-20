@@ -196,6 +196,9 @@ export default {
     blobKeyPath: {
       fieldId: 'blobKeyPath',
     },
+    'ftp.backupDirectoryPath': {
+      fieldId: 'ftp.backupDirectoryPath',
+    },
     'ftp.fileName': {
       fieldId: 'ftp.fileName',
     },
@@ -335,6 +338,7 @@ export default {
           'ftp.inProgressFileName',
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
+          'ftp.backupDirectoryPath',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

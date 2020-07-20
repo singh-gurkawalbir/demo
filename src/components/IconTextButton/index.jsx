@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
     color: theme.palette.secondary.main,
     fontSize: 14,
+    fontFamily: 'Roboto400',
   },
 }));
 const styledChildren = (children, classes) => {
@@ -39,7 +40,6 @@ export default function IconTextButton(props) {
 
   return (
     <Button
-      data-test="iconButton"
       {...rest}
       className={clsx(classes.root, className)}>
       {styledChildren(props.children, classes)}

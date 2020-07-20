@@ -52,7 +52,6 @@ export default {
       backgroundColor: colors.celigoWarning,
       contrastText: colors.celigoWhite,
     },
-    // Todo (Azhar): Success light and dark not taking the colors in the theme
     success: {
       main: colors.celigoSuccess,
       dark: colors.celigoSuccessDark,
@@ -203,7 +202,6 @@ export default {
         marginBottom: 8,
       },
     },
-
     MuiMenu: {
       list: {
         maxHeight: 300,
@@ -350,7 +348,6 @@ export default {
         },
       },
     },
-
     MuiTableCell: {
       root: {
         position: 'relative',
@@ -516,7 +513,6 @@ export default {
         },
       },
     },
-
     MuiInputBase: {
       root: {
         fontFamily: 'source sans pro',
@@ -637,7 +633,6 @@ export default {
         },
       },
     },
-
     MuiTabs: {
       root: {
         minHeight: 36,
@@ -665,11 +660,15 @@ export default {
         minWidth: 140,
         textTransform: 'none',
       },
+      textColorPrimary: {
+        '&.Mui-selected': {
+          fontWeight: 'bold',
+        },
+      },
       labelIcon: {
         minHeight: 'unset',
       },
       wrapper: {
-        color: colors.celigoNeutral8,
         fontSize: 14,
         '& > svg': {
           fontSize: '1.1rem',
@@ -690,6 +689,41 @@ export default {
       label: {
         fontSize: 14,
         lineHeight: '18px',
+      },
+    },
+    MuiSnackbar: {
+      root: {
+        maxWidth: 700,
+      },
+    },
+    // Please note that the info|error|success|warn variant styles are configured in the <SnackbarProvider>
+    // component used in the application's root component.
+    MuiSnackbarContent: {
+      action: {
+        color: colors.celigoNeutral6,
+      },
+      message: {
+        color: colors.celigoNeutral6,
+        '& svg': {
+          fontSize: '32px !important',
+        },
+      },
+      root: {
+        borderRadius: 6,
+        flexWrap: 'nowrap',
+        flexGrow: '1 !important',
+        backgroundColor: colors.celigoWhite,
+        '&:before': {
+          borderTopLeftRadius: 6,
+          borderBottomLeftRadius: 6,
+          content: '""',
+          width: 5,
+          height: '100%',
+          position: 'absolute',
+          background: colors.celigoNeutral3,
+          left: 0,
+          top: 0,
+        },
       },
     },
   },

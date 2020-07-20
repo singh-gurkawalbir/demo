@@ -17,11 +17,8 @@ export default {
   },
   'ftp.backupDirectoryPath': {
     type: 'text',
-    label: 'Move file to',
+    label: 'Backup files path',
     helpKey: 'export.ftp.backupDirectoryPath',
-    disabledWhen: [
-      { field: 'file.skipDelete', is: [true] },
-    ],
   },
   // #region transform
   'transform.expression.rules': {

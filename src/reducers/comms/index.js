@@ -54,14 +54,6 @@ export function retryCount(state, resourceName) {
   return fromNetworkComms.retryCount(state && state.networkComms, resourceName);
 }
 
-export function allLoadingOrErrored(state) {
-  return fromNetworkComms.allLoadingOrErrored(state && state.networkComms);
-}
-
-export function isLoadingAnyResource(state) {
-  return fromNetworkComms.isLoadingAnyResource(state && state.networkComms);
-}
-
 export function suiteScriptTestConnectionStatus(
   state,
   resourceId,
