@@ -58,7 +58,10 @@ export function getUnionObject(arr) {
       ]
     */
 export default function getJSONPaths(dataIn, prefix, options = {}) {
-  if (!dataIn) return emptySet;
+  // in some scenarios export data will be of type string, so adding extra check
+  // for eg,fetch all blocked phone numbers(assistant: message media) operation
+  // returns just array of phone numbers
+  if (!dataIn || typeof dataIn !== 'object') return emptySet;
 
   let paths = [];
   let type;
