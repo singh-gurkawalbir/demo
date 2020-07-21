@@ -5600,16 +5600,11 @@ export function tradingPartnerConnections(
   state,
   connectionId,
 ) {
-  let connections = resourceList(state, { type: 'connections' }).resources;
+  const connections = resourceList(state, { type: 'connections' }).resources;
   const currConnection = resource(state, 'connections', connectionId);
-  connections = connections?.filter(c => (c.type === 'ftp' &&
+  return connections?.filter(c => (c.type === 'ftp' &&
       c.ftp.hostURI === currConnection.ftp.hostURI &&
       c.ftp.port === currConnection.ftp.port &&
       c.sandbox === currConnection.sandbox
   ));
-  let connectionsList = '';
-  connections.forEach(c => {
-    connectionsList += `<p> ${c.name} </p>`;
-  });
-  return connectionsList;
 }

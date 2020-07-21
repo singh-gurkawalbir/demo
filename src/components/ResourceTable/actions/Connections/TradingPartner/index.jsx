@@ -14,9 +14,13 @@ export default {
     const dispatch = useDispatch();
     const [openDialog, setOpenDialog] = useState(false);
     const { confirmDialog } = useConfirmDialog();
-    const connectionsList = useSelector(state =>
+    const connections = useSelector(state =>
       selectors.tradingPartnerConnections(state, connectionId)
     );
+    let connectionsList = '';
+    connections.forEach(c => {
+      connectionsList += `<p> ${c.name} </p>`;
+    });
 
     const updateTradingPartner = useCallback(() => {
       dispatch(
