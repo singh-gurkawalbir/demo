@@ -199,10 +199,7 @@ export default function Suggestions(props) {
       if (showSuggestionsWithoutHandlebar) {
         onValueUpdate(lookup.name);
       } else {
-        const valueToInsert =
-          adaptorType === 'HTTPImport'
-            ? `lookup "${lookup.name}" this`
-            : lookup.name;
+        const valueToInsert = `lookup.${lookup.name}`;
         // update text field with selected lookup
         const newValue = getValueAfterInsert(
           value,
@@ -213,13 +210,7 @@ export default function Suggestions(props) {
         onValueUpdate(newValue);
       }
     },
-    [
-      adaptorType,
-      textInsertPosition,
-      onValueUpdate,
-      showSuggestionsWithoutHandlebar,
-      value,
-    ]
+    [textInsertPosition, onValueUpdate, showSuggestionsWithoutHandlebar, value]
   );
   const handleLookupAdd = useCallback(
     lookup => {
