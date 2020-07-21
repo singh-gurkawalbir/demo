@@ -126,7 +126,7 @@ export default function AddOnsPanel({ integrationId }) {
                   onClick={() => handleContactSales(data.name)}
                   variant="outlined"
                   color="primary">
-                  Contact Sales
+                  Contact sales
                 </Button>
               </CardActions>
             </Card>
