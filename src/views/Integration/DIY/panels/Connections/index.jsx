@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
 import { generateNewId,
-  isTradingParnerSupported,
+  isTradingPartnerSupported,
 } from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
@@ -60,7 +60,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const showTradingPartner = isTradingParnerSupported({licenseActionDetails, accessLevel, environment});
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
 
   useEffect(() => {

@@ -745,7 +745,7 @@ export function getConnectionType(resource) {
 
   return type;
 }
-export function isTradingParnerSupported({environment, licenseActionDetails, accessLevel}) {
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
   if (

@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
-  isTradingParnerSupported,
+  isTradingPartnerSupported,
 } from '../../utils/resource';
 import infoText from './infoText';
 import IconTextButton from '../../components/IconTextButton';
@@ -75,7 +75,7 @@ export default function ResourceList(props) {
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const showTradingPartner = isTradingParnerSupported({licenseActionDetails, accessLevel, environment});
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
   let createResourceLabel = '';
   if (resourceType) {

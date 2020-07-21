@@ -93,7 +93,7 @@ const connection = {
       integrationId,
     }),
   completeTradingPartner: (connectionIds) =>
-    action(actionTypes.CONNECTION.TRADING_PARTNER_COMPLETE, {
+    action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE, {
       connectionIds,
     }),
   updateIClients: (iClients, connectionId) =>

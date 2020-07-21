@@ -645,7 +645,7 @@ export function* updateNotifications({ notifications }) {
         body: notifications,
         method: 'PUT',
       },
-      message: 'Updating notifications.',
+      message: 'Updating notifications',
     });
   } catch (e) {
     return undefined;

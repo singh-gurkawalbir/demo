@@ -8,7 +8,7 @@ import metadata from '../../../../../components/ResourceTable/metadata/connectio
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
-  isTradingParnerSupported,
+  isTradingPartnerSupported,
 } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -33,7 +33,7 @@ export default function ConnectionPanel({ flow }) {
   const environment = useSelector(
     state => selectors.userPreferences(state).environment
   );
-  const showTradingPartner = isTradingParnerSupported({licenseActionDetails, accessLevel, environment});
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));

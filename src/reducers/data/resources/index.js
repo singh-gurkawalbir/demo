@@ -235,8 +235,9 @@ export default (state = {}, action) => {
 
       return state;
 
-    case actionTypes.CONNECTION.TRADING_PARTNER_COMPLETE: {
-      if (connectionIds && connectionIds.length) {
+    case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
+      // cant implement immer here with current implementation. Need to revisit again.
+      if (connectionIds?.length) {
         connectionIds.forEach(({ _id: cId}) => {
           resourceIndex = newState.connections.findIndex(r => r._id === cId);
           if (resourceIndex !== -1) {
