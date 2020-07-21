@@ -33,7 +33,7 @@ export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask 
     return null;
   }
 
-  const msg = 'Test message that is not too long'; // message[0];
+  const msg = message[0];
   return (
     <Snackbar
       open
