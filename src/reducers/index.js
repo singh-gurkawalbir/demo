@@ -948,7 +948,7 @@ export function flowType(state, flowId) {
   if (!exports) return '';
 
   if (isSimpleImportFlow(flow, exports)) {
-    return 'Data loader';
+    return 'Data Loader';
   }
 
   if (isRealtimeFlow(flow, exports)) {

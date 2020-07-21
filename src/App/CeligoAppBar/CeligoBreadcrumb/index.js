@@ -57,16 +57,16 @@ const useStyles = makeStyles(theme => ({
 const flowBuilderRoutes = [
   {
     path: '/flowBuilder/:flowId',
-    breadcrumb: () => 'Flow builder',
+    breadcrumb: 'Flow Builder',
     childRoutes: [
-      { path: '/schedule', breadcrumb: () => 'Schedule' },
-      { path: '/settings', breadcrumb: () => 'Settings' },
+      { path: '/schedule', breadcrumb: 'Schedule' },
+      { path: '/settings', breadcrumb: 'Settings' },
     ],
   },
   {
     path: '/dataLoader/:flowId',
-    breadcrumb: () => 'Data loader',
-    childRoutes: [{ path: '/settings', breadcrumb: () => 'Settings' }],
+    breadcrumb: 'Data Loader',
+    childRoutes: [{ path: '/settings', breadcrumb: 'Settings' }],
   },
 ];
 // These routes are shared for IAs with and without /child/ url segment.
@@ -75,22 +75,22 @@ const integrationAppRoutes = [
   ...flowBuilderRoutes,
   {
     path: '/admin',
-    breadcrumb: () => 'Admin',
+    breadcrumb: 'Admin',
     childRoutes: [
-      { path: '/general', breadcrumb: () => 'General' },
-      { path: '/addons', breadcrumb: () => 'Add-ons' },
-      { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
-      { path: '/apitokens', breadcrumb: () => 'Api tokens' },
-      { path: '/users', breadcrumb: () => 'Users' },
-      { path: '/audit', breadcrumb: () => 'Audit log' },
-      { path: '/subscription', breadcrumb: () => 'Subscription' },
-      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
-      { path: '/notifications', breadcrumb: () => 'Notifications' },
-      { path: '/apitoken', breadcrumb: () => 'API tokens' },
+      { path: '/general', breadcrumb: 'General' },
+      { path: '/addons', breadcrumb: 'Add-ons' },
+      { path: '/dashboard', breadcrumb: 'Dashboard' },
+      { path: '/connections', breadcrumb: 'Connections' },
+      { path: '/apitokens', breadcrumb: 'Api tokens' },
+      { path: '/users', breadcrumb: 'Users' },
+      { path: '/audit', breadcrumb: 'Audit log' },
+      { path: '/subscription', breadcrumb: 'Subscription' },
+      { path: '/uninstall', breadcrumb: 'Uninstall' },
+      { path: '/notifications', breadcrumb: 'Notifications' },
+      { path: '/apitoken', breadcrumb: 'API tokens' },
       {
         path: '/flows',
-        breadcrumb: () => 'Flows',
+        breadcrumb: 'Flows',
         childRoutes: [
           {
             path: '/:section',
@@ -111,15 +111,15 @@ const routes = [
     childRoutes: [
       {
         path: '/admin',
-        breadcrumb: () => 'Admin',
+        breadcrumb: 'Admin',
         childRoutes: [
-          { path: '/flows', breadcrumb: () => 'Flows' },
-          { path: '/dashboard', breadcrumb: () => 'Dashboard' },
-          { path: '/connections', breadcrumb: () => 'Connections' },
-          { path: '/readme', breadcrumb: () => 'Readme' },
-          { path: '/users', breadcrumb: () => 'Users' },
-          { path: '/audit', breadcrumb: () => 'Audit log' },
-          { path: '/notifications', breadcrumb: () => 'Notifications' },
+          { path: '/flows', breadcrumb: 'Flows' },
+          { path: '/dashboard', breadcrumb: 'Dashboard' },
+          { path: '/connections', breadcrumb: 'Connections' },
+          { path: '/readme', breadcrumb: 'Readme' },
+          { path: '/users', breadcrumb: 'Users' },
+          { path: '/audit', breadcrumb: 'Audit log' },
+          { path: '/notifications', breadcrumb: 'Notifications' },
         ],
       },
       ...flowBuilderRoutes,
@@ -127,11 +127,11 @@ const routes = [
   },
   {
     path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
-    breadcrumb: () => 'Licenses',
+    breadcrumb: 'Licenses',
   },
   {
     path: getRoutePath('/connectors/:connectorId/installBase'),
-    breadcrumb: () => 'Install base',
+    breadcrumb: 'Install base',
   },
   { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
@@ -152,7 +152,7 @@ const routes = [
     childRoutes: [
       {
         path: '/setup',
-        breadcrumb: () => 'Clone-configure and install',
+        breadcrumb: 'Clone-configure and install',
         childRoutes: integrationAppRoutes,
       },
     ],
@@ -161,34 +161,34 @@ const routes = [
     path: getRoutePath('/templates/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
   },
-  { path: getRoutePath('/templates'), breadcrumb: () => 'Templates' },
+  { path: getRoutePath('/templates'), breadcrumb: 'Templates' },
 
   {
     path: getRoutePath('/connectors/:integrationId/settings'),
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
-      { path: '/users', breadcrumb: () => 'Users' },
-      { path: '/uninstall', breadcrumb: () => 'Uninstall' },
-      { path: '/connections', breadcrumb: () => 'Connections' },
-      { path: '/tokens', breadcrumb: () => 'API tokens' },
-      { path: '/general', breadcrumb: () => 'General' },
-      { path: '/audit', breadcrumb: () => 'Audit log' },
-      { path: '/subscription', breadcrumb: () => 'Subscription' },
-      { path: '/notifications', breadcrumb: () => 'Notifications' },
-      { path: '/addons', breadcrumb: () => 'Add-ons' },
+      { path: '/users', breadcrumb: 'Users' },
+      { path: '/uninstall', breadcrumb: 'Uninstall' },
+      { path: '/connections', breadcrumb: 'Connections' },
+      { path: '/tokens', breadcrumb: 'API tokens' },
+      { path: '/general', breadcrumb: 'General' },
+      { path: '/audit', breadcrumb: 'Audit log' },
+      { path: '/subscription', breadcrumb: 'Subscription' },
+      { path: '/notifications', breadcrumb: 'Notifications' },
+      { path: '/addons', breadcrumb: 'Add-ons' },
       {
         path: '/:storeId',
         breadcrumb: StoreCrumb,
         childRoutes: [
-          { path: '/users', breadcrumb: () => 'Users' },
-          { path: '/uninstall', breadcrumb: () => 'Uninstall' },
-          { path: '/connections', breadcrumb: () => 'Connections' },
-          { path: '/tokens', breadcrumb: () => 'API tokens' },
-          { path: '/general', breadcrumb: () => 'General' },
-          { path: '/audit', breadcrumb: () => 'Audit log' },
-          { path: '/subscription', breadcrumb: () => 'Subscription' },
-          { path: '/addons', breadcrumb: () => 'Add-ons' },
-          { path: '/notifications', breadcrumb: () => 'Notifications' },
+          { path: '/users', breadcrumb: 'Users' },
+          { path: '/uninstall', breadcrumb: 'Uninstall' },
+          { path: '/connections', breadcrumb: 'Connections' },
+          { path: '/tokens', breadcrumb: 'API tokens' },
+          { path: '/general', breadcrumb: 'General' },
+          { path: '/audit', breadcrumb: 'Audit log' },
+          { path: '/subscription', breadcrumb: 'Subscription' },
+          { path: '/addons', breadcrumb: 'Add-ons' },
+          { path: '/notifications', breadcrumb: 'Notifications' },
           { path: '/:section', breadcrumb: a => a.section },
         ],
       },
@@ -197,15 +197,15 @@ const routes = [
   },
   {
     path: getRoutePath('/marketplace'),
-    breadcrumb: () => 'Marketplace',
+    breadcrumb: 'Marketplace',
     childRoutes: [
       { path: '/:app', breadcrumb: MarketplaceCrumb },
       {
         path: '/templates/:templateId',
         breadcrumb: TemplateCrumb,
         childRoutes: [
-          { path: 'preview', breadcrumb: () => 'Preview' },
-          { path: 'install', breadcrumb: () => 'Install' },
+          { path: 'preview', breadcrumb: 'Preview' },
+          { path: 'install', breadcrumb: 'Install' },
         ],
       },
     ],
@@ -217,31 +217,31 @@ const routes = [
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
         childRoutes: [
-          { path: '/preview', breadcrumb: () => 'Clone-detail' },
-          { path: '/setup', breadcrumb: () => 'Install' },
+          { path: '/preview', breadcrumb: 'Clone-detail' },
+          { path: '/setup', breadcrumb: 'Install' },
         ],
       },
     ],
   },
-  { path: getRoutePath('/recycleBin'), breadcrumb: () => 'Recycle-bin' },
-  { path: getRoutePath('/apis'), breadcrumb: () => 'My APIs' },
+  { path: getRoutePath('/recycleBin'), breadcrumb: 'Recycle-bin' },
+  { path: getRoutePath('/apis'), breadcrumb: 'My APIs' },
   {
     path: getRoutePath('/myAccount'),
-    breadcrumb: () => 'My account',
+    breadcrumb: 'My account',
     childRoutes: [
-      { path: '/users', breadcrumb: () => 'Users' },
-      { path: '/profile', breadcrumb: () => 'Profile' },
-      { path: '/subscription', breadcrumb: () => 'Subscription' },
-      { path: '/audit', breadcrumb: () => 'Audit log' },
-      { path: '/transfers', breadcrumb: () => 'Transfers' },
+      { path: '/users', breadcrumb: 'Users' },
+      { path: '/profile', breadcrumb: 'Profile' },
+      { path: '/subscription', breadcrumb: 'Subscription' },
+      { path: '/audit', breadcrumb: 'Audit log' },
+      { path: '/transfers', breadcrumb: 'Transfers' },
     ],
   },
 
-  { path: getRoutePath('/accesstokens'), breadcrumb: () => 'API tokens' },
+  { path: getRoutePath('/accesstokens'), breadcrumb: 'API tokens' },
   // Dev tools
-  { path: getRoutePath('/resources'), breadcrumb: () => 'Resources' },
-  { path: getRoutePath('/editors'), breadcrumb: () => 'Dev playground' },
-  { path: getRoutePath('/permissions'), breadcrumb: () => 'Permission explorer' },
+  { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
+  { path: getRoutePath('/editors'), breadcrumb: 'Dev playground' },
+  { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
   {
     path: getRoutePath('/:resourceType'),
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
@@ -252,7 +252,7 @@ const commonChildRoutes = [
   // acts like the resource drawer. They share the property of preserving the url and
   // append a /clone route to the end of an existing route url. Possibly more
   // metadata needs to be carried in the url.. keeping it simple for now.
-  { path: '/clone', breadcrumb: () => 'Clone' },
+  { path: '/clone', breadcrumb: 'Clone' },
   {
     path: '/add/:resourceType/:id',
     breadcrumb: AddResourceTypeCrumb,
@@ -333,7 +333,7 @@ export default function CeligoBreadcrumb({ location }) {
     selectors.shouldShowAppRouting(state)
   );
   const breadcrumbs = [
-    { url: getRoutePath(''), breadcrumb: () => 'Home' },
+    { url: getRoutePath(''), breadcrumb: 'Home' },
     ...parseUrl(location, shouldShowAppRouting ? routes : []),
   ];
 

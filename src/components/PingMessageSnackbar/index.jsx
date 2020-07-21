@@ -29,7 +29,7 @@ export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask 
     return <TestConnectionSnackbar onCancel={onCancelTask} />;
   }
 
-  if (commState !== PING_STATES.ERROR || !message || !message.length) {
+  if (commState !== PING_STATES.ERROR || !message?.[0]) {
     return null;
   }
 
