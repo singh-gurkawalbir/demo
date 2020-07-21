@@ -148,7 +148,7 @@ export default function IntegrationApp(props) {
     integrationAppUtil.isCloningSupported(
       integration._connectorId,
       integration.name
-    );
+    ) && accessLevel !== 'monitor';
 
   useEffect(() => {
     if (!addOnState || !addOnState.status) {

@@ -235,6 +235,20 @@ export default (state = {}, action) => {
 
       return state;
 
+    case actionTypes.CONNECTION.TRADING_PARTNER_COMPLETE: {
+      if (connectionIds && connectionIds.length) {
+        connectionIds.forEach(({ _id: cId}) => {
+          resourceIndex = newState.connections.findIndex(r => r._id === cId);
+          if (resourceIndex !== -1) {
+            newState.connections[resourceIndex].ftp.tradingPartner = !(state.connections[resourceIndex].ftp.tradingPartner);
+          }
+        });
+
+        return newState;
+      }
+
+      return state;
+    }
     case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
       resourceIndex = state.integrations.findIndex(
         r => r._id === integrationId

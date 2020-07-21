@@ -14,6 +14,7 @@ import Revoke from '../../actions/Connections/Revoke';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import Edit from '../../actions/Edit';
+import TradingPartner from '../../actions/Connections/TradingPartner';
 
 export default {
   columns: (r, actionProps) => {
@@ -92,6 +93,9 @@ export default {
       actionsToReturn = [...actionsToReturn, Revoke];
     }
     actionsToReturn = [Edit, ...actionsToReturn];
+    if (r.type === 'ftp' && actionProps?.showTradingPartner) {
+      actionsToReturn = [...actionsToReturn, TradingPartner];
+    }
     if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
       actionsToReturn = [...actionsToReturn, Delete];
     }

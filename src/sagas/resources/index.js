@@ -645,7 +645,7 @@ export function* updateNotifications({ notifications }) {
         body: notifications,
         method: 'PUT',
       },
-      message: 'Updating Notifications.',
+      message: 'Updating notifications.',
     });
   } catch (e) {
     return undefined;
@@ -666,7 +666,7 @@ export function* requestRegister({ connectionIds, integrationId }) {
         method: 'PUT',
         body: connectionIds,
       },
-      message: 'Registering Connections',
+      message: 'Registering connections',
     });
 
     yield put(
@@ -686,11 +686,30 @@ export function* requestDeregister({ connectionId, integrationId }) {
       opts: {
         method: 'DELETE',
       },
-      message: 'Deregistering Connection',
+      message: 'Deregistering connection',
     });
 
     yield put(
       actions.connection.completeDeregister(connectionId, integrationId)
+    );
+  } catch (error) {
+    return undefined;
+  }
+}
+
+export function* updateTradingPartner({ connectionId }) {
+  const path = `/connections/${connectionId}/tradingPartner`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        method: 'PUT',
+      },
+      message: 'Updating trading partner',
+    });
+    yield put(
+      actions.connection.completeTradingPartner(response?._connectionIds || [])
     );
   } catch (error) {
     return undefined;
@@ -824,6 +843,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
   takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
+  takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
