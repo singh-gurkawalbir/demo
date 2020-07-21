@@ -60,9 +60,9 @@ const WarningSessionContent = () => {
 const ExpiredSessionContent = () => (
   <>
     <DialogTitle>
-      <Typography>Your Session has Expired</Typography>
+      <Typography>Your session has expired</Typography>
       <br />
-      <Typography>Please login again</Typography>
+      <Typography>Please sign in again</Typography>
     </DialogTitle>
     <DialogContent style={contentWrapper}>
       <SignInForm dialogOpen />
