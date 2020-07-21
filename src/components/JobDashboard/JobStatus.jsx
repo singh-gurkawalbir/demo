@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
   },
   spinnerWrapper: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(2),
   },
   link: {
     fontFamily: 'Roboto400',
