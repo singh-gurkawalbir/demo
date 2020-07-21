@@ -373,6 +373,11 @@ const connectors = {
       fieldName,
       _integrationId,
     }),
+  clearStatus: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.STATUS_CLEAR, {
+      fieldName,
+      _integrationId
+    }),
   receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
       metadata,

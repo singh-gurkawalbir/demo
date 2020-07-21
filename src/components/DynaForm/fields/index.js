@@ -62,6 +62,7 @@ import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTree
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaIAExpression from './DynaIAExpression';
+import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
@@ -120,6 +121,7 @@ export default {
   suitescripttable: DynaSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,
+  iaselect: DynaIASelect,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
