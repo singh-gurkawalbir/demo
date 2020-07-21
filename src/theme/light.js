@@ -49,7 +49,7 @@ export default {
       contrastText: colors.celigoWhite,
     },
     warning: {
-      backgroundColor: colors.celigoWarning,
+      main: colors.celigoWarning,
       contrastText: colors.celigoWhite,
     },
     success: {
