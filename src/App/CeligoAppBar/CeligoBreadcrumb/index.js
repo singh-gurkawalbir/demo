@@ -349,12 +349,12 @@ export default function CeligoBreadcrumb({ location }) {
             key={url}
             variant="body2"
             className={clsx(classes.activeCrumb, classes.crumb)}>
-            <Crumb {...params} />
+            {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
             <div className={classes.crumb}>
-              <Crumb {...params} />
+              {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
             </div>
           </Link>
         )
