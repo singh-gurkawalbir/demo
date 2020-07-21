@@ -30,5 +30,6 @@ export default {
   validate: editor => ({
     dataError:
       typeof editor.data !== 'object' && util.validateJsonString(editor.data),
+    ruleError: editor.isInvalid ? 'Invalid Rule' : undefined
   }),
 };
