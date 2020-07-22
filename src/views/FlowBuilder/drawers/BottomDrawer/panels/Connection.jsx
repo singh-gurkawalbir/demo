@@ -7,6 +7,9 @@ import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/metadata/connections';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
+import {
+  isTradingPartnerSupported,
+} from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,6 +24,16 @@ export default function ConnectionPanel({ flow }) {
   const flowConnections = useSelector(state =>
     selectors.flowConnectionList(state, flow)
   );
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
@@ -45,6 +58,7 @@ export default function ConnectionPanel({ flow }) {
             type: 'flowBuilder',
             resourceType: 'connections',
             integrationId,
+            showTradingPartner,
           }}
         />
       </LoadResources>

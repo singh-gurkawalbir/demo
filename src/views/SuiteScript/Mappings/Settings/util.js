@@ -33,6 +33,8 @@ const getFormattedLookup = (lookup, formVal) => {
     } else if ('lookupDefault' in formVal) {
       // lookupDefault could be '' (empty string) and value saved will be lookup.default = ''
       lookupTmp.default = formVal.lookupDefault;
+    } else if ('lookupSFSelect' in formVal) {
+      lookupTmp.default = formVal.lookupSFSelect || null;
     }
   }
   return lookupTmp;
@@ -41,8 +43,6 @@ const getFormattedLookup = (lookup, formVal) => {
 export default {
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
-    let errorStatus = false;
-    let errorMessage = '';
     const settings = {};
 
     settings.generate = generate;
@@ -91,15 +91,16 @@ export default {
       if (formVal._mode === 'static') {
         let atleastOneValMapped = false;
 
-        formVal._mapList.forEach(obj => {
+        formVal._mapList?.forEach(obj => {
           if (obj.export && obj.import) {
             atleastOneValMapped = true;
           }
         });
 
         if (!atleastOneValMapped) {
-          errorStatus = true;
-          errorMessage = 'You need to map at least one value.';
+          return {
+            errorMessage: 'You need to map at least one value.',
+          };
         }
       }
 
@@ -111,8 +112,6 @@ export default {
     return {
       settings,
       lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
     };
   }
 };

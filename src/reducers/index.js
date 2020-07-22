@@ -948,7 +948,7 @@ export function flowType(state, flowId) {
   if (!exports) return '';
 
   if (isSimpleImportFlow(flow, exports)) {
-    return 'Data loader';
+    return 'Data Loader';
   }
 
   if (isRealtimeFlow(flow, exports)) {
@@ -5596,3 +5596,15 @@ export const getSuitescriptMappingSubRecordList = createSelector([
   }
   return emptySet;
 });
+export function tradingPartnerConnections(
+  state,
+  connectionId,
+) {
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const currConnection = resource(state, 'connections', connectionId);
+  return connections?.filter(c => (c.type === 'ftp' &&
+      c.ftp.hostURI === currConnection.ftp.hostURI &&
+      c.ftp.port === currConnection.ftp.port &&
+      c.sandbox === currConnection.sandbox
+  ));
+}
