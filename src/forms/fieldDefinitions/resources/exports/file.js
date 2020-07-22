@@ -43,7 +43,7 @@ export default {
         items: [
           { label: 'UTF-8', value: 'utf8' },
           { label: 'Windows-1252', value: 'win1252' },
-          { label: 'UTF-16LE', value: 'utf-16le' },
+          { label: 'UTF16-LE', value: 'utf16-le' },
         ],
       },
     ],

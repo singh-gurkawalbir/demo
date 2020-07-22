@@ -346,7 +346,7 @@ export default {
           { label: 'Base64', value: 'base64' },
           { label: 'Binary', value: 'binary' },
           { label: 'Hex', value: 'hex' },
-          { label: 'UCS-2/UTF-16', value: 'ucs2/utf16-le' },
+          { label: 'UTF16-LE', value: 'utf16-le' },
           { label: 'UTF-8', value: 'utf8' },
         ],
       },
