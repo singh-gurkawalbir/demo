@@ -12,7 +12,7 @@ const blockMap = {
   export: { label: 'Export', Icon: ExportIcon },
   import: { label: 'Import', Icon: ImportIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
-  dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
+  dataLoader: { label: 'Data Loader', Icon: DataLoaderIcon },
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };
