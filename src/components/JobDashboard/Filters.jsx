@@ -7,6 +7,7 @@ import {
   Checkbox,
   FormControlLabel,
   IconButton,
+  Typography,
 } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
@@ -20,7 +21,14 @@ import FlowSelector from './FlowSelector';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    marginTop: -1,
+    padding: theme.spacing(0, 2, 1.5, 2),
+    backgroundColor: theme.palette.common.white,
+  },
+  filterContainer: {
+    padding: theme.spacing(2, 0),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    borderWidth: [[1, 0]],
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
@@ -62,6 +70,12 @@ const useStyles = makeStyles(theme => ({
   },
   hideLabel: {
     marginLeft: '10px',
+  },
+  divider: {
+    width: 1,
+    height: 20,
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+    margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
 
@@ -125,39 +139,43 @@ function Filters({
 
   return (
     <div className={classes.root}>
-      <CeligoSelect
-        className={clsx(classes.filterButton, classes.retry)}
-        data-test="retryJobs"
-        onChange={e => onActionClick(e.target.value)}
-        displayEmpty
-        disabled={disableActions}
-        value="">
-        <MenuItem value="" disabled>
-          Retry
-        </MenuItem>
-        <MenuItem value="retryAll">All jobs</MenuItem>
-        <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
-          {numJobsSelected} selected jobs
-        </MenuItem>
-      </CeligoSelect>
+      <div className={classes.filterContainer}>
+        <CeligoSelect
+          className={clsx(classes.filterButton, classes.retry)}
+          data-test="retryJobs"
+          onChange={e => onActionClick(e.target.value)}
+          displayEmpty
+          disabled={disableActions}
+          value="">
+          <MenuItem value="" disabled>
+            Retry
+          </MenuItem>
+          <MenuItem value="retryAll">All jobs</MenuItem>
+          <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
+            {numJobsSelected} selected jobs
+          </MenuItem>
+        </CeligoSelect>
 
-      <CeligoSelect
-        disabled={disableActions}
-        data-test="resolveJobs"
-        className={clsx(classes.filterButton, classes.resolve)}
-        onChange={e => onActionClick(e.target.value)}
-        displayEmpty
-        value="">
-        <MenuItem value="" disabled>
-          Resolve
-        </MenuItem>
-        <MenuItem value="resolveAll">All jobs</MenuItem>
-        <MenuItem value="resolveSelected" disabled={numJobsSelected === 0}>
-          {numJobsSelected} selected jobs
-        </MenuItem>
-      </CeligoSelect>
+        <CeligoSelect
+          disabled={disableActions}
+          data-test="resolveJobs"
+          className={clsx(classes.filterButton, classes.resolve)}
+          onChange={e => onActionClick(e.target.value)}
+          displayEmpty
+          value="">
+          <MenuItem value="" disabled>
+            Resolve
+          </MenuItem>
+          <MenuItem value="resolveAll">All jobs</MenuItem>
+          <MenuItem value="resolveSelected" disabled={numJobsSelected === 0}>
+            {numJobsSelected} selected jobs
+          </MenuItem>
+        </CeligoSelect>
 
-      {!flowId && (
+        <div className={classes.divider} />
+        <Typography>Filter by: </Typography>
+
+        {!flowId && (
         <FlowSelector
           integrationId={integrationId}
           data-test="selectAFlow"
@@ -165,51 +183,52 @@ function Filters({
           value={filterFlowId}
           onChange={flowId => patchFilter('flowId', flowId)}
         />
-      )}
+        )}
 
-      <CeligoSelect
-        data-test="flowStatusFilter"
-        className={clsx(classes.filterButton, classes.status)}
-        onChange={e => patchFilter('status', e.target.value)}
-        value={status}>
-        {[
-          ['all', 'Select status'],
-          ['error', 'Contains error'],
-          ['resolved', 'Contains resolved'],
-          ['running', 'In progress'],
-          ['retrying', 'Retrying'],
-          ['queued', 'Queued'],
-          ['canceled', 'Canceled'],
-          ['completed', 'Completed'],
-          ['failed', 'Failed'],
-        ].map(opt => (
-          <MenuItem key={opt[0]} value={opt[0]}>
-            {opt[1]}
-          </MenuItem>
-        ))}
-      </CeligoSelect>
-      <div className={classes.hideLabel}>
-        <FormControlLabel
-          data-test="hideEmptyJobsFilter"
-          label="Hide empty jobs"
-          classes={{ label: classes.hideEmptyLabel }}
-          control={
-            <Checkbox
+        <CeligoSelect
+          data-test="flowStatusFilter"
+          className={clsx(classes.filterButton, classes.status)}
+          onChange={e => patchFilter('status', e.target.value)}
+          value={status}>
+          {[
+            ['all', 'Select status'],
+            ['error', 'Contains error'],
+            ['resolved', 'Contains resolved'],
+            ['running', 'In progress'],
+            ['retrying', 'Retrying'],
+            ['queued', 'Queued'],
+            ['canceled', 'Canceled'],
+            ['completed', 'Completed'],
+            ['failed', 'Failed'],
+          ].map(opt => (
+            <MenuItem key={opt[0]} value={opt[0]}>
+              {opt[1]}
+            </MenuItem>
+          ))}
+        </CeligoSelect>
+        <div className={classes.hideLabel}>
+          <FormControlLabel
+            data-test="hideEmptyJobsFilter"
+            label="Hide empty jobs"
+            classes={{ label: classes.hideEmptyLabel }}
+            control={
+              <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={hideEmpty}
-              data-test="hideEmptyJobs"
-              color="primary"
-              onChange={e => patchFilter('hideEmpty', e.target.checked)}
+                checked={hideEmpty}
+                data-test="hideEmptyJobs"
+                color="primary"
+                onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
           }
         />
-      </div>
+        </div>
 
-      <div className={classes.rightActionContainer}>
-        <IconTextButton onClick={handleRefreshClick}>
-          <RefreshIcon /> Refresh
-        </IconTextButton>
-        {maxPage > 0 && (
+        <div className={classes.rightActionContainer}>
+
+          <IconTextButton onClick={handleRefreshClick}>
+            <RefreshIcon /> Refresh
+          </IconTextButton>
+          {maxPage > 0 && (
           <>
             <IconButton
               disabled={currentPage === 0}
@@ -234,8 +253,9 @@ function Filters({
               <ArrowRightIcon />
             </IconButton>
           </>
-        )}
-        {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
+          )}
+          {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
+        </div>
       </div>
     </div>
   );
