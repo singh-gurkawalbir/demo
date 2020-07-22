@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
@@ -6,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.paper2,
     // color: theme.palette.text.main,
-    borderBottom: `solid 1px rgb(0,0,0,0.3)`,
+    borderBottom: 'solid 1px rgb(0,0,0,0.3)',
   },
 }));
 

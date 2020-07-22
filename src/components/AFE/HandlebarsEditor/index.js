@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -64,7 +64,7 @@ export default function HandlebarsEditor(props) {
         strict: props.strict,
         autoEvaluateDelay: 500,
         template: props.rule,
-        initTemplate: props.rule,
+        _init_template: props.rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
       })

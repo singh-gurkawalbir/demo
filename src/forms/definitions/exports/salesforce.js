@@ -24,7 +24,8 @@ export default {
       );
 
       return value;
-    } else if (fieldId === 'salesforce.distributed.qualifier') {
+    }
+    if (fieldId === 'salesforce.distributed.qualifier') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
       );
@@ -37,7 +38,8 @@ export default {
           sObjectTypeField &&
           sObjectTypeField.value !== sObjectTypeField.defaultValue,
       };
-    } else if (fieldId === 'salesforce.distributed.skipExportFieldId') {
+    }
+    if (fieldId === 'salesforce.distributed.skipExportFieldId') {
       const sObjectTypeField = fields.find(
         field => field.fieldId === 'salesforce.sObjectType'
       );
@@ -142,8 +144,7 @@ export default {
       ],
       visible: false,
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -156,6 +157,7 @@ export default {
       filterKey: 'salesforce-soqlQuery',
       required: true,
       multiline: true,
+      helpKey: 'export.salesforce.soql.query',
       connectionId: r => r && r._connectionId,
       defaultValue: r => r && r.salesforce && r.salesforce.soql,
       refreshOptionsOnChangesTo: ['delta.dateField', 'once.booleanField'],
@@ -223,6 +225,7 @@ export default {
       connectionId: r => r._connectionId,
       fieldId: 'salesforce.sObjectType',
       type: 'refreshableselect',
+      filterKey: 'salesforce-sObjects-triggerable',
       bundlePath: r => r && `connections/${r._connectionId}/distributed`,
       bundleUrlHelp:
         'Please install our <a target="_blank" href="BUNDLE_URL">integrator distributed adapter package</a> in your Salesforce account to create realtime exports.',
@@ -281,6 +284,8 @@ export default {
       fieldId: 'salesforce.objectType',
     },
     pageSize: { fieldId: 'pageSize' },
+    skipRetries: { fieldId: 'skipRetries' },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
     'salesforce.distributed.qualifier': {
       fieldId: 'salesforce.distributed.qualifier',
@@ -298,27 +303,32 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode', 'salesforce.executionType'],
         type: 'collapse',
         containers: [
           {
             collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
+            label: 'General',
+            fields: [
+              'common',
+              'outputMode',
+              'exportOneToMany',
+              'salesforce.executionType',
+            ],
           },
           {
             collapsed: true,
             label: r => {
               if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-                return 'What would you like to transfer from Salesforce?';
-              } else if (
+                return 'What would you like to transfer?';
+              }
+              if (
                 r.resourceType === 'realtime' ||
                 r.type === 'distributed'
               ) {
-                return 'What would you like to listen from Salesforce?';
+                return 'Configure real-time export in source application';
               }
 
-              return 'What would you like to export from Salesforce?';
+              return 'What would you like to export?';
             },
             fields: [
               'salesforce.sObjectType',
@@ -328,11 +338,17 @@ export default {
               'salesforce.distributed.relatedLists',
               'salesforce.distributed.qualifier',
               'salesforce.soql',
+              'salesforce.id',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: [
               'type',
               'delta.dateField',
               'delta.lagOffset',
               'once.booleanField',
-              'salesforce.id',
             ],
           },
           {
@@ -343,6 +359,8 @@ export default {
               'salesforce.distributed.batchSize',
               'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
+              'skipRetries',
+              'apiIdentifier'
             ],
           },
         ],

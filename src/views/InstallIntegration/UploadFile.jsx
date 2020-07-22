@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -50,7 +50,7 @@ export default function UploadFile(props) {
   }
 
   return (
-    <Fragment>
+    <>
       <label htmlFor="fileUpload">
         <Button
           data-test="selectFile"
@@ -69,6 +69,6 @@ export default function UploadFile(props) {
           onChange={handleUploadFileChange}
         />
       </label>
-    </Fragment>
+    </>
   );
 }

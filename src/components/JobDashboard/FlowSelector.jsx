@@ -1,10 +1,11 @@
 import { makeStyles, MenuItem } from '@material-ui/core';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../utils/constants';
 import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { stringCompare } from '../../utils/sort';
 
 const useStyles = makeStyles(theme => ({
   flow: {
@@ -38,13 +39,16 @@ export default function FlowSelector({
       filter: {
         $where() {
           if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+            // eslint-disable-next-line react/no-this-in-sfc
             return !this._integrationId; // standalone integration flows
           }
 
           if (storeId) {
+            // eslint-disable-next-line react/no-this-in-sfc
             return storeFlows.includes(this._id);
           }
 
+          // eslint-disable-next-line react/no-this-in-sfc
           return this._integrationId === integrationId;
         },
       },
@@ -64,7 +68,7 @@ export default function FlowSelector({
       displayEmpty
       value={value || ''}>
       <MenuItem value="">Select flow</MenuItem>
-      {filteredFlows.map(opt => (
+      {filteredFlows.sort(stringCompare('name')).map(opt => (
         <MenuItem key={opt._id} value={opt._id}>
           {opt.name || opt._id}
         </MenuItem>

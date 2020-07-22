@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import ApplicationsList from './ApplicationsList';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -10,11 +10,11 @@ export default function Marketplace() {
   const filter = useSelector(state => selectors.filter(state, 'marketplace'));
 
   return (
-    <Fragment>
+    <>
       <CeligoPageBar title="Marketplace" infoText={MARKETPLACE_HELPINFO}>
         <KeywordSearch filterKey="marketplace" />
       </CeligoPageBar>
       <ApplicationsList filter={filter} />
-    </Fragment>
+    </>
   );
 }

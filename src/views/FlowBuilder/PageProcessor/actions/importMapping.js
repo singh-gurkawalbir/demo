@@ -1,11 +1,10 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
@@ -17,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     width: 824,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   content: {
@@ -26,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 3, 6, 3),
     marginBottom: theme.spacing(1),
     '& > div:first-child': {
-      height: `calc(100vh - 180px)`,
+      height: 'calc(100vh - 180px)',
     },
   },
   // TODO:check for better way to handle width when drawer open and closes
@@ -53,12 +52,11 @@ function ImportMapping({
   const classes = useStyles();
   const resourceId = resource._id;
   const mappingEditorId = `${resourceId}-${flowId}`;
-  const { showSalesforceNetsuiteAssistant, httpAssistantPreview } = useSelector(
-    state => selectors.mapping(state, mappingEditorId)
-  );
-  const showPreview = !!(
-    showSalesforceNetsuiteAssistant || httpAssistantPreview
-  );
+  const hasPreviewPanel = useSelector(state => {
+    const mappingPreviewType = selectors.mappingPreviewType(state, resourceId);
+
+    return !!mappingPreviewType;
+  });
   const handleClose = (...args) => {
     setSelectedMapping(null);
     onClose(...args);
@@ -108,11 +106,11 @@ function ImportMapping({
         paper: clsx(classes.drawerPaper, {
           [classes.fullWidthDrawerClose]:
             !drawerOpened &&
-            showPreview &&
+            hasPreviewPanel &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
           [classes.fullWidthDrawerOpen]:
             drawerOpened &&
-            showPreview &&
+            hasPreviewPanel &&
             (!subrecords || subrecords.length === 0 || selectedMapping),
         }),
       }}>
@@ -128,7 +126,7 @@ function ImportMapping({
         <LoadResources
           required="true"
           resources="imports, exports, connections">
-          <Fragment>
+          <>
             {subrecords && subrecords.length > 0 && !selectedMapping ? (
               <div>
                 <Typography className={classes.text} variant="h5">
@@ -164,7 +162,7 @@ function ImportMapping({
                 }
               />
             )}
-          </Fragment>
+          </>
         </LoadResources>
       </div>
     </Drawer>
@@ -180,6 +178,6 @@ export default {
   // name prop above. No need to add complexity to the metadata as refactoring may be
   // harder. What if we want to change the root path of all fb help text keys? We
   // will now need to modify every sibling action's metadata individually.
-  helpText: helpTextMap['fb.pp.imports.importMapping'],
+  helpKey: 'fb.pp.imports.importMapping',
   Component: ImportMapping,
 };

@@ -16,6 +16,7 @@ import {
   IMPORT_RESPONSE_MAPPING_EXTRACTS,
 } from './responseMapping';
 import arrayUtils from './array';
+import jsonUtils from './json';
 import { isIntegrationApp } from './flows';
 import { isJsonString } from './string';
 
@@ -30,6 +31,11 @@ const sampleDataStage = {
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
   },
+  /**
+   * flowInput, InputFilter
+   * raw, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
+   * raw, transform, outputFilter
+   */
   imports: {
     inputFilter: 'flowInput',
     preMap: 'flowInput',
@@ -43,6 +49,10 @@ const sampleDataStage = {
     postSubmit: 'responseTransform',
     responseTransform: 'sampleResponse',
   },
+  /**
+   * flowInput, inputFilter
+   * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   */
 };
 
 /*
@@ -173,6 +183,21 @@ export const reset = (flow, index, isPageGenerator) => {
   }
 };
 
+export const resetStagesForFlowResource = (flow, index, stages = [], isPageGenerator) => {
+  const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
+  const resourceId = resource._exportId || resource._importId;
+  const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
+  const resourceIds = keys(flow[resourceMap]);
+  if (resourceIds.includes(resourceId)) {
+    stages.forEach(stage => {
+      if (flow[resourceMap][resourceId][stage]) {
+        // eslint-disable-next-line no-param-reassign
+        flow[resourceMap][resourceId][stage] = {};
+      }
+    });
+  }
+};
+
 export const compare = (currentList = [], updatedList = []) => {
   const changedIndex = updatedList.findIndex((item, index) => {
     const currentItem = currentList[index] || {};
@@ -209,6 +234,10 @@ export const getAddedLookupInFlow = (oldFlow = {}, patchSet = []) => {
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
   if (!patchSet.length) return {};
+  // There is a case when we update flow just to update lastModified property
+  // In that case, no need of any update for flowData
+  if (patchSet.find(patch => patch.path === '/lastModified')) return {};
+  // Analyse patches and update stages updated
   const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
   const updates = {
     sequence: false,
@@ -216,8 +245,7 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   };
 
   updatedPathsFromPatchSet.forEach(path => {
-    if (pathRegex.sequence.test(path) && !updates.sequence)
-      updates.sequence = true;
+    if (pathRegex.sequence.test(path) && !updates.sequence) updates.sequence = true;
 
     if (pathRegex.responseMapping.test(path) && !updates.responseMapping) {
       // Extract resourceIndex from the path
@@ -349,3 +377,60 @@ export const getFormattedResourceForPreview = (
 
   return resource;
 };
+
+/**
+ * @input patchSet
+ * @input resourceType
+ * @outPut stage /  undefined
+ * The stage returned is used to determine what parts of resource's stages need to be updated
+ * If none of the below paths are matched, returns undefined which implies reset the entire resource's state
+ */
+export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
+  const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
+  if (patchSetPath === '/transform') return 'transform';
+  if (patchSetPath === '/filter') return 'outputFilter';
+  if (patchSetPath === '/inputFilter') return 'inputFilter';
+  if (patchSetPath === '/hooks') {
+    if (patchSetValue.preSavePage) return 'preSavePage';
+    if (patchSetValue.preMap) return 'preMap';
+    if (patchSetValue.postMap) return 'postMap';
+  }
+  if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
+  if (patchSetPath === '/mapping') return 'importMapping';
+};
+
+/**
+ * @input stage
+ * @input resourceType : supports imports, exports
+ * @outPut listOfStages []
+ */
+export const getSubsequentStages = (stage, resourceType) => {
+  if (!['exports', 'imports'].includes(resourceType)) {
+    return [];
+  }
+  const stageMap = sampleDataStage[resourceType];
+  const nextStages = [];
+  const keys = jsonUtils.getObjectKeysFromValue(stageMap, stage);
+  if (!keys.length) {
+    return [];
+  }
+  nextStages.push(...keys);
+  for (let i = 0; i < keys.length; i += 1) {
+    const currStage = keys[i];
+    nextStages.push(...(getSubsequentStages(currStage, resourceType)));
+  }
+  return nextStages;
+};
+
+/**
+ * @param {array} patch - patch set for the resource updated
+ * returns Bool whether to update sample data or not
+ * If the patch is of rawData / any specific stage which implies change happened outside resourceForm
+ * No need of sample data update
+ * TODO @Raghu: Add intelligence to analyse patchSet and update only if specific fields in resourceForm gets updated
+ * As of now any field change in the resourceForm triggers sample data update
+ */
+export const shouldUpdateResourceSampleData = (patch = []) =>
+  patch.length &&
+  !isRawDataPatchSet(patch) &&
+  !getResourceStageUpdatedFromPatch(patch);

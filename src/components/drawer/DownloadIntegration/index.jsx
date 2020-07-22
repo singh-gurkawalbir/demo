@@ -1,3 +1,4 @@
+import React from 'react';
 import GenerateZip from '../../GenerateZip';
 import RightDrawer from '../Right';
 
@@ -6,7 +7,7 @@ export default function DownloadIntegrationDrawer() {
     <RightDrawer
       path="downloadIntegration"
       title="Download integration"
-      // variant="temporary"
+      height="tall"
     >
       <GenerateZip />
     </RightDrawer>

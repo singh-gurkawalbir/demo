@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback, Fragment, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
@@ -50,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderTop: 0,
     display: 'flex',
-    justifyContent: `space-between`,
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },
@@ -129,7 +130,7 @@ export default function BottomDrawer({
   const connectionIdNameMap = useMemo(() => {
     const resourceIdNameMap = {};
 
-    connections.forEach(r => (resourceIdNameMap[r._id] = r.name || r._id));
+    connections.forEach(r => { resourceIdNameMap[r._id] = r.name || r._id; });
 
     return resourceIdNameMap;
   }, [connections]);
@@ -279,7 +280,7 @@ export default function BottomDrawer({
           <RunDashboardPanel flow={flow} />
         </TabPanel>
       ) : (
-        <Fragment>
+        <>
           <TabPanel value={tabValue} index={0} classes={classes}>
             <ConnectionPanel flow={flow} />
           </TabPanel>
@@ -298,7 +299,7 @@ export default function BottomDrawer({
                     key={connectionId}
                     index={cIndex + 3}
                     classes={classes}>
-                    <Fragment>
+                    <>
                       <div className={classes.rightActionContainer}>
                         <IconTextButton
                           className={classes.refreshButton}
@@ -313,11 +314,11 @@ export default function BottomDrawer({
                         mode="javascript"
                         overrides={{ useWorker: false }}
                       />
-                    </Fragment>
+                    </>
                   </TabPanel>
                 )
             )}
-        </Fragment>
+        </>
       )}
     </Drawer>
   );

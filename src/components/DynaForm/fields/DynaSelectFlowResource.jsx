@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import DynaSelectResource from './DynaSelectResource';
 import * as selectors from '../../../reducers';

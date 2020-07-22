@@ -36,7 +36,7 @@ describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
   });
   test('insert value after "{{Test}}{{xxx", without post "}}" or "{{"', () => {
     const value = '{{Hello}}{{John';
-    const insertPosition = `14`;
+    const insertPosition = '14';
     const insertedVal = 'Johnson';
     const expectedResult = '{{Hello}}{{Johnson}}';
 
@@ -46,7 +46,7 @@ describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
   });
   test('insert value after "{{Test}}{{xxx", with  "xxx}}" following it', () => {
     const value = '{{Hello}}{{John}}';
-    const insertPosition = `14`;
+    const insertPosition = '14';
     const insertedVal = 'Johnson';
     const expectedResult = '{{Hello}}{{Johnson}}';
 
@@ -57,7 +57,7 @@ describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
 
   test('insert value after "{{Test}}{{xxx", with  "{{" following it', () => {
     const value = '{{Hello}}{{John{{abcd}}';
-    const insertPosition = `14`;
+    const insertPosition = '14';
     const insertedVal = 'Johnson';
     const expectedResult = '{{Hello}}{{Johnson}}{{abcd}}';
 
@@ -67,7 +67,7 @@ describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
   });
   test('insert value after "{{Test}}{{xxx", with  "{" following it', () => {
     const value = '{{Hello}}{{John{';
-    const insertPosition = `14`;
+    const insertPosition = '14';
     const insertedVal = 'Johnson';
     const expectedResult = '{{Hello}}{{Johnson}}';
 

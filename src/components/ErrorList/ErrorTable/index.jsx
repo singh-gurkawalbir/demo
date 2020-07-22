@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, Fragment, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
@@ -47,9 +47,9 @@ export default function ErrorTable(props) {
   }, [dataFilter, rowsPerPage]);
 
   return (
-    <Fragment>
+    <>
       {data.length ? (
-        <Fragment>
+        <>
           <CeligPagination
             {...paginationOptions}
             rowsPerPageOptions={rowsPerPageOptions}
@@ -66,10 +66,10 @@ export default function ErrorTable(props) {
             {...metadata}
             actionProps={actionProps}
           />
-        </Fragment>
+        </>
       ) : (
         <div className={classes.emptyRow}>{emptyRowsLabel || 'No Rows'} </div>
       )}
-    </Fragment>
+    </>
   );
 }

@@ -15,7 +15,7 @@ export default {
       '/assistant': 'merchantesolutions',
       '/http/auth/type': 'custom',
       '/http/mediaType': 'urlencoded',
-      '/http/baseURI': `https://cert.merchante-solutions.com`,
+      '/http/baseURI': 'https://cert.merchante-solutions.com',
       '/http/ping/relativeURI': '/mes-api/tridentApi',
       '/http/ping/method': 'POST',
       '/http/ping/successValues': ['000'],
@@ -54,18 +54,21 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.profileId',
-      'http.encrypted.profileKey',
-      'http.encrypted.cardNumber',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.profileId',
+          'http.encrypted.profileKey',
+          'http.encrypted.cardNumber'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

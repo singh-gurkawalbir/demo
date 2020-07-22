@@ -1,7 +1,7 @@
 export default {
   'http.successMediaType': {
     type: 'select',
-    label: 'Success media type',
+    label: 'Override success media type',
     options: [
       {
         items: [
@@ -18,9 +18,29 @@ export default {
       },
     ],
   },
+  'http.requestMediaType': {
+    type: 'select',
+    label: 'Request media type',
+    options: [
+      {
+        items: [
+          { label: 'XML', value: 'xml' },
+          { label: 'URL ENCODED', value: 'urlencoded' },
+          { label: 'JSON', value: 'json' },
+          { label: 'FORM DATA', value: 'form-data' },
+        ],
+      },
+    ],
+    visibleWhen: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+  },
   'http.errorMediaType': {
     type: 'select',
-    label: 'Error media type',
+    label: 'Override error media type',
     options: [
       {
         items: [
@@ -52,8 +72,14 @@ export default {
             },
           },
           {
+            field: 'http.body',
             matchesRegEx: {
-              pattern: '^(.*)lastExportDateTime',
+              pattern: 'lastExportDateTime',
+            },
+          },
+          {
+            matchesRegEx: {
+              pattern: 'lastExportDateTime',
             },
           },
         ],
@@ -174,6 +200,7 @@ export default {
   },
   'http.paging.body': {
     type: 'httprequestbody',
+    title: 'Build paging post body',
     label: 'Build paging post body',
     required: true,
     visibleWhenAll: [

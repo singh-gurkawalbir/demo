@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CeligoTable from '../../../../components/CeligoTable';
 import * as selectors from '../../../../reducers';
@@ -91,7 +91,7 @@ export default function Invite(props) {
   const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
 
   return (
-    <Fragment>
+    <>
       <IconTextButton
         onClick={backToTransferClick}
         variant="outlined"
@@ -111,20 +111,18 @@ export default function Invite(props) {
         initiate the transfer process again.
       </div>
       <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-      <DynaSubmit formKey={formKey} onClick={handleSubmit}>
-        Next
-      </DynaSubmit>
+      <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>
 
-      {!!error && <Fragment> {error} </Fragment>}
+      {!!error && <> {error} </>}
       {response && response.length && (
-        <Fragment>
-          <Fragment>
+        <>
+          <>
             <CeligoTable
               resourceType="transfers"
               data={response}
               {...metadata}
             />
-          </Fragment>
+          </>
           <Button
             data-test="invite"
             variant="outlined"
@@ -132,8 +130,8 @@ export default function Invite(props) {
             onClick={initiateTransferClick}>
             Initiate Transfer
           </Button>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

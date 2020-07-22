@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import each from 'jest-each';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../utils/constants';
 import {

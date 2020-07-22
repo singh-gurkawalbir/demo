@@ -77,24 +77,22 @@ export default {
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
-    fields: ['common'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
+        label: 'General',
+        fields: ['common', 'exportOneToMany'],
       },
       {
         collapsed: true,
         label: 'What would you like to export?',
-        fields: [
-          'wrapper.function',
-          'wrapper.configuration',
-          'type',
-          'delta.dateField',
-          'once.booleanField',
-        ],
+        fields: ['wrapper.function', 'wrapper.configuration'],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: ['type', 'delta.dateField', 'once.booleanField'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

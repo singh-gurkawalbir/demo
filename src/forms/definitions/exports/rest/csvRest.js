@@ -1,7 +1,6 @@
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
-
     retValues['/file/type'] = 'csv';
     retValues['/rest/method'] = 'GET';
 
@@ -42,8 +41,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -65,8 +63,8 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      label: 'Sample file (that would be exported)',
-      mode: r => r && r.file && r.file.type,
+      placeholder: 'Sample file (that would be parsed):',
+      options: 'csv',
       visibleWhen: [
         {
           field: 'outputMode',
@@ -77,16 +75,16 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'CSV parser helper:',
+      label: 'CSV parser helper',
       helpKey: 'file.csvParse',
-      defaultValue: r =>
-        (r.file && r.file.csv) || {
-          rowsToSkip: 0,
-          trimSpaces: true,
-          columnDelimiter: ',',
-          hasHeaderRow: false,
-          rowDelimiter: '\n',
-        },
+      defaultValue: r => r?.file?.csv || {
+        columnDelimiter: ',',
+        rowDelimiter: '\n',
+        hasHeaderRow: false,
+        keyColumns: [],
+        rowsToSkip: 0,
+        trimSpaces: false
+      },
       visibleWhen: [
         {
           field: 'outputMode',
@@ -105,35 +103,60 @@ export default {
         },
       ],
     },
+    formView: { fieldId: 'formView' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common', 'outputMode'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
-      },
-      {
-        collapsed: true,
-        label: r => {
-          if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-            return 'What would you like to transfer?';
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
+          {
+            collapsed: true,
+            label: r => {
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
-          return 'What would you like to export?';
-        },
-        fields: [
-          'rest.blobMethod',
-          'rest.relativeURI',
-          'rest.headers',
-          'uploadFile',
-          'file.csv',
-          'rest.resourcePath',
-          'rest.blobFormat',
+              return 'What would you like to export?';
+            },
+            containers: [
+              {
+                fields: [
+                  'rest.blobMethod',
+                  'rest.relativeURI',
+                  'rest.headers',
+                  'uploadFile',
+                ]
+              },
+              {
+                type: 'indent',
+                containers: [
+                  {fields: [
+                    'file.csv',
+                  ]}
+                ]
+              },
+              {
+                fields: [
+                  'rest.blobFormat',
+                ]
+              },
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Non-standard API response patterns',
+            fields: ['rest.resourcePath'],
+          },
+          { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },
-      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
-    ],
+      {
+        fields: ['exportPanel'],
+      }
+    ]
   },
 };

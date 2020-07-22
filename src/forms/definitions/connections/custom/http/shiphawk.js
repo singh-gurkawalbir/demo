@@ -5,7 +5,7 @@ export default {
     '/assistant': 'shiphawk',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://shiphawk.com/api`,
+    '/http/baseURI': 'https://shiphawk.com/api',
     '/http/ping/relativeURI': '/v4/orders/',
     '/http/ping/method': 'GET',
     '/http/headers': [
@@ -29,13 +29,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.encrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

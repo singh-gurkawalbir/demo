@@ -32,7 +32,8 @@ export default (state = [], action) => {
         const sharedAccounts = state.filter(a => a._id !== ACCOUNT_IDS.OWN);
 
         return [ownAccount, ...sharedAccounts];
-      } else if (resourceType === 'shared/ashares') {
+      }
+      if (resourceType === 'shared/ashares') {
         const ownAccounts = state.filter(a => a._id === ACCOUNT_IDS.OWN);
 
         if (!ownAccounts.length) {
@@ -56,17 +57,17 @@ export default (state = [], action) => {
         return state;
       }
 
-      const integratorLicense = ownAccount.ownerUser.licenses.find(
-        l => l.type === 'integrator'
+      const platformLicense = ownAccount.ownerUser.licenses.find(
+        l => (l.type === 'integrator' || l.type === 'endpoint')
       );
 
-      if (!integratorLicense) {
+      if (!platformLicense) {
         return state;
       }
 
       const { trialEndDate, tier } = action;
       const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator') {
+        if (l.type === 'integrator' || l.type === 'endpoint') {
           return { ...l, trialEndDate, tier, trialStarted: true };
         }
 
@@ -96,16 +97,16 @@ export default (state = [], action) => {
         return state;
       }
 
-      const integratorLicense = ownAccount.ownerUser.licenses.find(
-        l => l.type === 'integrator'
+      const platformLicense = ownAccount.ownerUser.licenses.find(
+        l => (l.type === 'integrator' || l.type === 'endpoint')
       );
 
-      if (!integratorLicense) {
+      if (!platformLicense) {
         return state;
       }
 
       const updatedLicenses = ownAccount.ownerUser.licenses.map(l => {
-        if (l.type === 'integrator') {
+        if (l.type === 'integrator' || l.type === 'endpoint') {
           return { ...l, upgradeRequested: true };
         }
 
@@ -133,9 +134,7 @@ const remainingDays = date =>
   Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
 
 // #region PUBLIC SELECTORS
-
-// #region INTEGRATOR LICENSE
-export function integratorLicense(state, accountId) {
+export function platformLicense(state, accountId) {
   if (!state) {
     return null;
   }
@@ -147,123 +146,121 @@ export function integratorLicense(state, accountId) {
   }
 
   const ioLicense = account.ownerUser.licenses.find(
-    l => l.type === 'integrator'
+    l => (['integrator', 'endpoint', 'diy'].includes(l.type))
   );
 
   if (!ioLicense) {
     return null;
   }
+  if (ioLicense.type === 'diy') {
+    ioLicense.usageTierName = USAGE_TIER_NAMES[ioLicense.usageTier || 'free'];
 
-  ioLicense.hasSandbox =
+    ioLicense.inTrial = false;
+
+    if (ioLicense.tier === 'free') {
+      if (ioLicense.trialEndDate) {
+        ioLicense.inTrial = moment(ioLicense.trialEndDate) - moment() >= 0;
+      }
+    }
+
+    ioLicense.hasSubscription = false;
+
+    if (['none', 'free'].indexOf(ioLicense.tier) === -1) {
+      ioLicense.hasSubscription = true;
+    } else if (ioLicense.tier === 'free' && !ioLicense.inTrial) {
+      if (
+        ioLicense.numAddOnFlows > 0 ||
+      ioLicense.sandbox ||
+      ioLicense.numSandboxAddOnFlows > 0
+      ) {
+        ioLicense.hasSubscription = true;
+      }
+    }
+
+    ioLicense.isFreemium =
+  ioLicense.tier === 'free' &&
+    !ioLicense.hasSubscription &&
+    !ioLicense.inTrial;
+    ioLicense.expirationDate = ioLicense.expires;
+
+    if (ioLicense.inTrial) {
+      ioLicense.expirationDate = ioLicense.trialEndDate;
+    } else if (ioLicense.isFreemium) {
+      ioLicense.expirationDate = '';
+    }
+
+    if (ioLicense.expirationDate) {
+      ioLicense.expirationDate = moment(ioLicense.expirationDate).format(
+        'MMM Do, YYYY'
+      );
+    }
+
+    if (!ioLicense.currentUsage) {
+      ioLicense.currentUsage = {};
+    }
+
+    ioLicense.usageTierHours = USAGE_TIER_HOURS[ioLicense.usageTier || 'free'];
+
+    if (!ioLicense.currentUsage.milliseconds) {
+      ioLicense.currentUsage.milliseconds = 0;
+    }
+
+    ioLicense.currentUsage.usagePercent = Math.round(
+      (ioLicense.currentUsage.milliseconds /
+      (ioLicense.usageTierHours * 60 * 60 * 1000)) *
+      100
+    );
+    ioLicense.currentUsage.usedHours = Math.round(
+      ioLicense.currentUsage.milliseconds / 1000 / 60 / 60
+    );
+  } else {
+    ioLicense.hasSandbox =
     ioLicense.sandbox || ioLicense.numSandboxAddOnFlows > 0;
 
-  ioLicense.hasConnectorSandbox =
+    ioLicense.hasConnectorSandbox =
     account.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
       .length > 0;
 
-  if (ioLicense.expires) {
-    ioLicense.status =
+    if (ioLicense.expires) {
+      ioLicense.status =
       moment(ioLicense.expires) > moment() ? 'ACTIVE' : 'EXPIRED';
 
-    if (ioLicense.status === 'ACTIVE') {
-      ioLicense.expiresInDays = remainingDays(ioLicense.expires);
+      if (ioLicense.status === 'ACTIVE') {
+        ioLicense.expiresInDays = remainingDays(ioLicense.expires);
+      }
     }
-  }
 
-  if (
-    ioLicense.trialEndDate &&
+    if (
+      ioLicense.trialEndDate &&
     (!ioLicense.expires || moment(ioLicense.trialEndDate) > moment())
-  ) {
-    ioLicense.status =
+    ) {
+      ioLicense.status =
       moment(ioLicense.trialEndDate) > moment() ? 'IN_TRIAL' : 'TRIAL_EXPIRED';
 
-    if (ioLicense.status === 'IN_TRIAL') {
-      ioLicense.expiresInDays = remainingDays(ioLicense.trialEndDate);
+      if (ioLicense.status === 'IN_TRIAL') {
+        ioLicense.expiresInDays = remainingDays(ioLicense.trialEndDate);
+      }
+    }
+    if (ioLicense.type === 'endpoint') {
+      ioLicense.totalNumberofProductionEndpoints = ioLicense?.endpoint?.production?.numEndpoints + ioLicense?.endpoint?.production?.numAddOnEndpoints;
+      ioLicense.totalNumberofProductionFlows = ioLicense?.endpoint?.production?.numFlows + ioLicense?.endpoint?.production?.numAddOnFlows;
+      ioLicense.totalNumberofProductionTradingPartners = ioLicense?.endpoint?.production?.numTradingPartners + ioLicense?.endpoint?.production?.numAddOnTradingPartners;
+      ioLicense.totalNumberofProductionAgents = ioLicense?.endpoint?.production?.numAgents + ioLicense?.endpoint?.production?.numAddOnAgents;
+
+      ioLicense.totalNumberofSandboxEndpoints = ioLicense?.endpoint?.sandbox?.numEndpoints + ioLicense?.endpoint?.sandbox?.numAddOnEndpoints;
+      ioLicense.totalNumberofSandboxFlows = ioLicense?.endpoint?.sandbox?.numFlows + ioLicense?.endpoint?.sandbox?.numAddOnFlows;
+      ioLicense.totalNumberofSandboxTradingPartners = ioLicense?.endpoint?.sandbox?.numTradingPartners + ioLicense?.endpoint?.sandbox?.numAddOnTradingPartners;
+      ioLicense.totalNumberofSandboxAgents = ioLicense?.endpoint?.sandbox?.numAgents + ioLicense?.endpoint?.sandbox?.numAddOnAgents;
+      ioLicense.hasSandbox = ioLicense.sandbox || ioLicense.totalNumberofSandboxFlows > 0;
+
+      ioLicense.totalNumberofEndpoints = ioLicense.totalNumberofProductionEndpoints + ioLicense.totalNumberofSandboxEndpoints;
+      ioLicense.totalNumberofFlows = ioLicense.totalNumberofProductionFlows + ioLicense.totalNumberofSandboxFlows;
+      ioLicense.totalNumberofTradingPartners = ioLicense.totalNumberofProductionTradingPartners + ioLicense.totalNumberofSandboxTradingPartners;
+      ioLicense.totalNumberofAgents = ioLicense.totalNumberofProductionAgents + ioLicense.totalNumberofSandboxAgents;
     }
   }
 
   return ioLicense;
-}
-
-export function diyLicense(state, accountId) {
-  if (!state) {
-    return null;
-  }
-
-  const account = state.find(a => a._id === accountId);
-
-  if (!account || !account.ownerUser || !account.ownerUser.licenses) {
-    return null;
-  }
-
-  const diyLicense = account.ownerUser.licenses.find(l => l.type === 'diy');
-
-  if (!diyLicense) {
-    return null;
-  }
-
-  diyLicense.usageTierName = USAGE_TIER_NAMES[diyLicense.usageTier || 'free'];
-
-  diyLicense.inTrial = false;
-
-  if (diyLicense.tier === 'free') {
-    if (diyLicense.trialEndDate) {
-      diyLicense.inTrial = moment(diyLicense.trialEndDate) - moment() >= 0;
-    }
-  }
-
-  diyLicense.hasSubscription = false;
-
-  if (['none', 'free'].indexOf(diyLicense.tier) === -1) {
-    diyLicense.hasSubscription = true;
-  } else if (diyLicense.tier === 'free' && !diyLicense.inTrial) {
-    if (
-      diyLicense.numAddOnFlows > 0 ||
-      diyLicense.sandbox ||
-      diyLicense.numSandboxAddOnFlows > 0
-    ) {
-      diyLicense.hasSubscription = true;
-    }
-  }
-
-  diyLicense.isFreemium =
-    diyLicense.tier === 'free' &&
-    !diyLicense.hasSubscription &&
-    !diyLicense.inTrial;
-  diyLicense.expirationDate = diyLicense.expires;
-
-  if (diyLicense.inTrial) {
-    diyLicense.expirationDate = diyLicense.trialEndDate;
-  } else if (diyLicense.isFreemium) {
-    diyLicense.expirationDate = '';
-  }
-
-  if (diyLicense.expirationDate) {
-    diyLicense.expirationDate = moment(diyLicense.expirationDate).format(
-      'MMM Do, YYYY'
-    );
-  }
-
-  if (!diyLicense.currentUsage) {
-    diyLicense.currentUsage = {};
-  }
-
-  diyLicense.usageTierHours = USAGE_TIER_HOURS[diyLicense.usageTier || 'free'];
-
-  if (!diyLicense.currentUsage.milliseconds) {
-    diyLicense.currentUsage.milliseconds = 0;
-  }
-
-  diyLicense.currentUsage.usagePercent = Math.round(
-    (diyLicense.currentUsage.milliseconds /
-      (diyLicense.usageTierHours * 60 * 60 * 1000)) *
-      100
-  );
-  diyLicense.currentUsage.usedHours = Math.round(
-    diyLicense.currentUsage.milliseconds / 1000 / 60 / 60
-  );
-
-  return diyLicense;
 }
 // #endregion INTEGRATOR LICENSE
 
@@ -293,7 +290,7 @@ export const sharedAccounts = createSelector(
     accepted.forEach(a => {
       if (!a.ownerUser || !a.ownerUser.licenses) return;
 
-      const ioLicense = a.ownerUser.licenses.find(l => l.type === 'integrator');
+      const ioLicense = a.ownerUser.licenses.find(l => (l.type === 'integrator' || l.type === 'endpoint'));
 
       shared.push({
         id: a._id,
@@ -311,11 +308,11 @@ export const sharedAccounts = createSelector(
     return shared;
   }
 );
-// TODO: Santosh integratorLicense selector implementation should be lazily created
+// TODO: Santosh platformLicense selector implementation should be lazily created
 // can remove this selector after implementation
 const ownLicense = createSelector(
   state => state,
-  state => integratorLicense(state, ACCOUNT_IDS.OWN)
+  state => platformLicense(state, ACCOUNT_IDS.OWN)
 );
 
 export const accountSummary = createSelector(
@@ -397,6 +394,14 @@ export function accessLevel(state, accountId) {
     return undefined;
   }
 
+  if (
+    account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
+    account.integrationAccessLevel &&
+    account.integrationAccessLevel.length > 0
+  ) {
+    return USER_ACCESS_LEVELS.TILE;
+  }
+
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
 }
 
@@ -435,6 +440,7 @@ export function permissions(
     'users',
     'exports',
     'imports',
+    'apis',
   ];
   const permissions = {};
 
@@ -579,6 +585,18 @@ export function permissions(
   } else if (userAccessLevel === USER_ACCESS_LEVELS.TILE) {
     const account = state.find(a => a._id === accountId);
     let integration;
+
+    if (account && account.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+      permissions.integrations.none = {
+        accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR,
+        flows: {},
+        connections: {},
+      };
+      permissions.integrations.all = { ...permissions.integrations.none };
+      permissions.integrations.connectors = {
+        ...permissions.integrations.none,
+      };
+    }
 
     if (
       account &&

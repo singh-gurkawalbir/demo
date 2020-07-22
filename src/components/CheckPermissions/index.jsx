@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -17,8 +18,8 @@ export default function CheckPermissions(props) {
 
     return permission
       ? !!permission
-          .split('.')
-          .reduce((prev, curr) => (prev ? prev[curr] : null), permissions)
+        .split('.')
+        .reduce((prev, curr) => (prev ? prev[curr] : null), permissions)
       : false;
   });
 

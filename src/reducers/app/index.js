@@ -3,15 +3,15 @@ import actionTypes from '../../actions/types';
 
 const defaultState = {
   appErrored: false,
-  drawerOpened: true,
   bannerOpened: true,
   count: 1,
 };
 
 // #region Reducers
-export default function(state = defaultState, action) {
+export default function (state = defaultState, action) {
+  const {version, type } = action;
   return produce(state, draft => {
-    switch (action.type) {
+    switch (type) {
       case actionTypes.APP_RELOAD:
         draft.count += 1;
         delete draft.bannerOpened;
@@ -21,10 +21,6 @@ export default function(state = defaultState, action) {
         draft.bannerOpened = !draft.bannerOpened;
         break;
 
-      case actionTypes.APP_TOGGLE_DRAWER:
-        draft.drawerOpened = !draft.drawerOpened;
-        break;
-
       case actionTypes.APP_ERRORED:
         draft.appErrored = true;
         break;
@@ -32,8 +28,15 @@ export default function(state = defaultState, action) {
       case actionTypes.APP_CLEAR_ERROR:
         delete draft.appErrored;
         break;
+      case actionTypes.UI_VERSION_UPDATE:
+        if (!draft.initVersion) {
+          draft.initVersion = version;
+        }
+        draft.version = version;
+        break;
 
       default:
+        break;
     }
   });
 }
@@ -46,12 +49,6 @@ export function bannerOpened(state) {
   return !!state.bannerOpened;
 }
 
-export function drawerOpened(state) {
-  if (!state) return true;
-
-  return !!state.drawerOpened;
-}
-
 export function reloadCount(state) {
   if (!state) return 0;
 
@@ -62,5 +59,9 @@ export function appErrored(state) {
   if (!state) return null;
 
   return state.appErrored;
+}
+
+export function isUiVersionDifferent(state) {
+  return state?.initVersion !== state?.version;
 }
 // #endregion

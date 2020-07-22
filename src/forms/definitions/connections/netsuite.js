@@ -46,8 +46,7 @@ export default {
       return { env };
     }
 
-    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '')
-      return { env, acc };
+    if (fieldId === 'netsuite.roleId' && env !== '' && acc !== '') return { env, acc };
   },
   fieldMap: {
     name: { fieldId: 'name' },
@@ -90,11 +89,15 @@ export default {
 
         return isRequired
           ? [
-              {
-                field: 'netsuite.authType',
-                is: ['token-auto'],
-              },
-            ]
+            {
+              field: 'netsuite.authType',
+              is: ['token-auto'],
+            },
+            {
+              field: 'netsuite.authType',
+              is: ['token'],
+            },
+          ]
           : [];
       },
     },
@@ -172,31 +175,45 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'netsuite.concurrencyLevel': { fieldId: 'netsuite.concurrencyLevel' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'netsuite.authType',
-      'netsuite.email',
-      'netsuite.password',
-      'netsuite.environment',
-      'netsuite.tokenEnvironment',
-      'netsuite.account',
-      'netsuite.tokenAccount',
-      'netsuite.token.auto.account',
-      'netsuite.token.auto.roleId',
-      'netsuite.roleId',
-      'netsuite.tokenId',
-      'netsuite.tokenSecret',
-      'netsuite._iClientId',
-      'netsuite.linkSuiteScriptIntegrator',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
         fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'netsuite.authType',
+          'netsuite.email',
+          'netsuite.password',
+          'netsuite.environment',
+          'netsuite.tokenEnvironment',
+          'netsuite.account',
+          'netsuite.tokenAccount',
+          'netsuite.token.auto.account',
+          'netsuite.token.auto.roleId',
+          'netsuite.roleId',
+          'netsuite.tokenId',
+          'netsuite.tokenSecret',
+          'netsuite._iClientId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
         ],
@@ -205,19 +222,6 @@ export default {
   },
   actions: [
     {
-      id: 'cancel',
-    },
-    {
-      id: 'validate',
-      label: 'Validate',
-      visibleWhen: [
-        {
-          field: 'netsuite.authType',
-          is: ['basic'],
-        },
-      ],
-    },
-    {
       id: 'save',
       label: 'Save',
       visibleWhen: [
@@ -225,14 +229,22 @@ export default {
           field: 'netsuite.authType',
           is: ['basic'],
         },
+        {
+          field: 'netsuite.authType',
+          is: [''],
+        },
       ],
     },
     {
-      id: 'test',
+      id: 'saveandclose',
       visibleWhen: [
         {
           field: 'netsuite.authType',
-          is: ['token'],
+          is: ['basic'],
+        },
+        {
+          field: 'netsuite.authType',
+          is: [''],
         },
       ],
     },
@@ -248,6 +260,39 @@ export default {
     },
     {
       id: 'testandsave',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'testsaveandclose',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'validate',
+      label: 'Validate',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['basic'],
+        },
+      ],
+    },
+    {
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'netsuite.authType',

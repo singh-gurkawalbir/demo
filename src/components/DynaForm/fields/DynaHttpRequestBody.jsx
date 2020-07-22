@@ -1,8 +1,8 @@
 import { FormLabel } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useCallback, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../reducers';
 import lookupUtil from '../../../utils/lookup';
 import useFormContext from '../../Form/FormContext';
@@ -11,22 +11,21 @@ import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import DynaLookupEditor from './DynaLookupEditor';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaHttpRequestBodyWrapper: {
-    flexDirection: `row !important`,
     width: '100%',
-    alignItems: 'center',
+  },
+  dynaHttpRequestlabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   dynaReqBodyBtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaHttpReqLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+});
 const ManageLookup = props => {
   const {
     label = 'Manage lookups',
@@ -71,25 +70,22 @@ const DynaHttpRequestBody = props => {
   const formContext = useFormContext(formKey);
   const contentType = options.contentType || props.contentType;
   const [showEditor, setShowEditor] = useState(false);
-  const { adaptorType, connectionId } = useSelector(state => {
-    const { merged: resourceData = {} } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
-    const { adaptorType, _connectionId: connectionId } = resourceData;
-
-    return { adaptorType, connectionId };
-  }, shallowEqual);
+  const { merged: resourceData = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
+  const { adaptorType, _connectionId: connectionId } = resourceData;
   const formattedRule = useMemo(
     () => (Array.isArray(value) ? value[arrayIndex] : value),
     [arrayIndex, value]
   );
   const lookups =
     supportLookup &&
+    resourceType === 'imports' &&
     lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const action = useMemo(() => {
-    if (!supportLookup) {
+    if (!supportLookup || resourceType !== 'imports') {
       return;
     }
 
@@ -120,7 +116,7 @@ const DynaHttpRequestBody = props => {
     setShowEditor(!showEditor);
   }, [showEditor]);
   // TODO: break into different function. To be done across all editors
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
@@ -136,8 +132,6 @@ const DynaHttpRequestBody = props => {
         onFieldChange(id, template);
       }
     }
-
-    handleEditorClick();
   };
 
   return (
@@ -149,7 +143,8 @@ const DynaHttpRequestBody = props => {
           fieldId={id}
           onFieldChange={onFieldChange}
           lookups={lookups}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           action={action}
           editorType="httpRequestBody"
           flowId={flowId}
@@ -160,18 +155,21 @@ const DynaHttpRequestBody = props => {
         />
       )}
       <div className={classes.dynaHttpRequestBodyWrapper}>
-        <FormLabel className={classes.dynaHttpReqLabel}>
-          {label ? `${label}:` : ''}
-        </FormLabel>
+        <div className={classes.dynaHttpRequestlabelWrapper}>
+          <FormLabel className={classes.dynaHttpReqLabel}>
+            {label}
+          </FormLabel>
+          <FieldHelp {...props} helpText={label} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaReqBodyBtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
-        <FieldHelp {...props} />
+
       </div>
       <ErroredMessageComponent {...props} />
     </Fragment>

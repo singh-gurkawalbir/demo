@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import * as selectors from '../../../reducers';
@@ -39,10 +39,10 @@ export default function Transfers() {
   };
 
   return (
-    <Fragment>
+    <>
       <LoadResources required resources="transfers,integrations">
         {!showInviteView && (
-          <Fragment>
+          <>
             <div className={classes.root}>
               <div className={classes.topHeading}>
                 <PanelHeader title="Transfers" />
@@ -76,10 +76,10 @@ export default function Transfers() {
               data={transfers}
               {...metadata}
             />
-          </Fragment>
+          </>
         )}
         {showInviteView && <Invite setShowInviteView={setShowInviteView} />}
       </LoadResources>
-    </Fragment>
+    </>
   );
 }

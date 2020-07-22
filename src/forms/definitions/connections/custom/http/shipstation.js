@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': 'carriers',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://ssapi.shipstation.com`,
+    '/http/baseURI': 'https://ssapi.shipstation.com',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -21,13 +21,19 @@ export default {
       label: 'API secret',
       helpKey: 'shipstation.connection.http.auth.basic.password',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.basic.username', 'http.auth.basic.password'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.basic.username', 'http.auth.basic.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

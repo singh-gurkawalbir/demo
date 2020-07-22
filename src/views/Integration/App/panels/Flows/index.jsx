@@ -1,26 +1,23 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect, Fragment, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Route,
-  Link,
   NavLink,
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles } from '@material-ui/styles';
-import { Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import * as selectors from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
-import IconTextButton from '../../../../../components/IconTextButton';
-import SettingsIcon from '../../../../../components/icons/SettingsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import FlowCard from '../../../common/FlowCard';
-import ConfigureDrawer from './ConfigureDrawer';
+import CeligoTable from '../../../../../components/CeligoTable';
+import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
-import MappingDrawer from '../../../common/FlowCard/MappingDrawer';
+import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
+import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 import { generateNewId } from '../../../../../utils/resource';
@@ -41,10 +38,10 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 0, 3, 0),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   listItem: {
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.main,
   },
   activeListItem: {
     color: theme.palette.primary.main,
@@ -81,21 +78,20 @@ export const IAFormStateManager = props => {
   }, [dispatch, flowId, integrationId, sectionId]);
 
   return (
-    <Fragment>
+    <>
       <FormStateManager {...allProps} formKey={formKey} />
       <GenerateActions
         actions={fieldMeta.actions}
         actionProps={{ ...allProps, isIAForm: true, formKey }}
       />
-    </Fragment>
+    </>
   );
 };
 
 function FlowList({ integrationId, storeId }) {
-  const classes = useStyles();
   const match = useRouteMatch();
   const { sectionId } = match.params;
-  const { flows, fields, sections } = useSelector(state =>
+  const { flows } = useSelector(state =>
     selectors.integrationAppFlowSettings(
       state,
       integrationId,
@@ -103,21 +99,15 @@ function FlowList({ integrationId, storeId }) {
       storeId
     )
   );
-  const hasAdvancedSettings = !!fields || !!sections;
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
   const section = flowSections.find(s => s.titleId === sectionId);
-
-  // console.log('render: <Flow Settings>');
+  const filterKey = `${integrationId}-flows`;
 
   return (
     <LoadResources required resources="flows,exports">
-      <ConfigureDrawer
-        integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
-      />
+      <ScheduleDrawer />
       <SettingsDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -146,34 +136,13 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-
-      <PanelHeader title={`${section.title} flows`}>
-        {hasAdvancedSettings && (
-          <IconTextButton
-            variant="text"
-            color="primary"
-            data-test={`configure${section.title}`}
-            component={Link}
-            className={classes.configureSectionBtn}
-            to={`${sectionId}/configure`}>
-            <SettingsIcon /> Configure {section.title}
-          </IconTextButton>
-        )}
-      </PanelHeader>
-      {flows.map(f => (
-        <FlowCard
-          key={f._id}
-          storeId={storeId}
-          flowId={f._id}
-          excludeActions={[
-            'detach',
-            'clone',
-            'delete',
-            'references',
-            'download',
-          ]}
+      <PanelHeader title={`${section?.title} flows`} />
+      <CeligoTable
+        data={flows}
+        filterKey={filterKey}
+        {...flowTableMeta}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
         />
-      ))}
     </LoadResources>
   );
 }

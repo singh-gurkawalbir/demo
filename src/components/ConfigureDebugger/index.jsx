@@ -1,42 +1,76 @@
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Radio from '@material-ui/core/Radio';
-import Button from '@material-ui/core/Button';
-import { Typography } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import { useState } from 'react';
-import moment from 'moment';
+import React, { useState, useCallback, useMemo } from 'react';
+import {
+  FormLabel,
+  FormControl,
+  Typography,
+  Drawer,
+  Button,
+} from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment';
 import actions from '../../actions';
-import ModalDialog from '../ModalDialog';
+import DrawerTitleBar from '../drawer/TitleBar';
+import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
+import useConfirmDialog from '../ConfirmDialog';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    margin: theme.spacing(2, 0),
-  },
   submit: {
-    marginTop: theme.spacing(3),
+    margin: theme.spacing(3, 1, 0, 0)
   },
-  radioLabel: {
-    marginLeft: 0,
-    marginTop: theme.spacing(0.5),
+  cancel: {
+    marginTop: theme.spacing(3),
   },
   label: {
     marginBottom: theme.spacing(1),
   },
+  drawerPaper: {
+    width: 600,
+    padding: theme.spacing(1),
+  },
+  content: {
+    flexGrow: 1,
+    // backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+  },
+  footer: {
+    marginTop: theme.spacing(3),
+    display: 'flex',
+    flexDirection: 'column',
+  },
 }));
+const debugDurationOptions = [
+  {
+    label: 'Off',
+    value: '0',
+  },
+  {
+    label: 'Next 15 mins',
+    value: '15',
+  },
+  {
+    label: 'Next 30 mins',
+    value: '30',
+  },
+  {
+    label: 'Next 45 mins',
+    value: '45',
+  },
+  {
+    label: 'Next 60 mins',
+    value: '60',
+  },
+];
 
 export default function ConfigureDebugger(props) {
   const classes = useStyles();
-  const { id, name, debugDate, onClose } = props;
+  const { id, debugDate, onClose } = props;
+  const { confirmDialog } = useConfirmDialog();
   const [debugValue, setDebugValue] = useState(0);
-  const [saveLabel, setSaveLabel] = useState('Save');
   const dispatch = useDispatch();
-  const handleOnSubmit = () => {
-    setSaveLabel('Saving');
-
+  const handleSaveClick = useCallback(() => {
     const debugTime = moment()
       .add(debugValue, 'm')
       .toISOString();
@@ -49,66 +83,112 @@ export default function ConfigureDebugger(props) {
     ];
 
     dispatch(actions.resource.patch('connections', id, patchSet));
-    onClose();
-  };
+  }, [debugValue, dispatch, id]);
+  const handleValueChange = useCallback((_id, val) => {
+    setDebugValue(val);
+  }, []);
+  const defaultVal = useMemo(() => {
+    if (!(debugDate && moment().isBefore(moment(debugDate)))) {
+      return '0';
+    }
+  }, [debugDate]);
+  const minutes = useMemo(() => {
+    if (debugDate) {
+      return moment(debugDate).diff(moment(), 'minutes');
+    }
+  }, [debugDate]);
+  const handleCancelClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm cancel',
+      message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+      buttons: [
+        {
+          label: 'Yes, cancel',
+          onClick: onClose,
+        },
+        {
+          label: 'No, go back',
+          color: 'secondary',
+        },
+      ]
+    });
+  }, [onClose, confirmDialog]);
 
-  let minutes;
-  let defaultVal;
-
-  if (debugDate) {
-    minutes = moment(debugDate).diff(moment(), 'minutes');
-  }
-
-  if (!(debugDate && moment().isBefore(moment(debugDate)))) {
-    defaultVal = '0';
-  }
-
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/connections/${id}`,
+      method: 'PATCH',
+      onSave: handleSaveClick,
+      onClose,
+    }
+  );
+  // TODO @Raghu: Convert this into a Right Drawer
   return (
-    <ModalDialog show onClose={onClose}>
-      <div>Configure Debugger: {name}</div>
-      <div className={classes.container}>
-        <form onSubmit={handleOnSubmit}>
-          <FormControl component="fieldset">
-            <FormLabel className={classes.label} component="legend">
-              Debug Duration:
-            </FormLabel>
-            <RadioGroup
-              name="debugDuration"
-              defaultValue={defaultVal}
-              // value={searchType}
-              onChange={evt => setDebugValue(evt.target.value)}>
-              <FormControlLabel
-                value="0"
-                control={<Radio color="primary" />}
-                label="Off"
-                className={classes.radioLabel}
-              />
-              {['15', '30', '45', '60'].map(duration => (
-                <FormControlLabel
-                  key={duration}
-                  value={duration}
-                  control={<Radio color="primary" />}
-                  label={`Next ${duration} mins`}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-          {minutes > 1 && (
-            <Typography variant="body2" className={classes.submit}>
-              Debug mode is enabled for next {minutes} minutes.
-            </Typography>
-          )}
+    <Drawer
+      anchor="right"
+      open
+      classes={{
+        paper: classes.drawerPaper,
+      }}>
+      <DrawerTitleBar
+        onClose={onClose}
+        title="Debug connection"
+        helpKey="connection.debug"
+      />
+      <div className={classes.content}>
+        <FormControl component="fieldset">
+          <FormLabel className={classes.label} component="legend">
+            Debug duration:
+          </FormLabel>
+          <RadioGroup
+            id="debugDuration"
+            name="debugDuration"
+            defaultValue={defaultVal}
+            showOptionsVertically
+            onFieldChange={handleValueChange}
+            options={[
+              {
+                items: debugDurationOptions,
+              },
+            ]}
+          />
+        </FormControl>
+        {minutes > 1 && (
+          <Typography variant="body2" className={classes.submit}>
+            Debug mode is enabled for next {minutes} minutes.
+          </Typography>
+        )}
+      </div>
+      <div className={classes.footer}>
+        <div>
           <Button
             data-test="saveDebuggerConfiguration"
             variant="outlined"
             color="primary"
-            type="submit"
+            onClick={submitHandler()}
             className={classes.submit}
-            value="Save">
-            {saveLabel}
+            disabled={disableSave} >
+            {defaultLabels.saveLabel}
           </Button>
-        </form>
+          <Button
+            data-test="saveAndCloseDebuggerConfiguration"
+            variant="outlined"
+            color="secondary"
+            onClick={submitHandler(true)}
+            className={classes.submit}
+            disabled={disableSave} >
+            {defaultLabels.saveAndCloseLabel}
+          </Button>
+          <Button
+            variant="text"
+            className={classes.cancel}
+            color="primary"
+            data-test="closeEditor"
+            onClick={handleCancelClick}>
+            Cancel
+          </Button>
+        </div>
       </div>
-    </ModalDialog>
+    </Drawer>
   );
 }

@@ -1,9 +1,17 @@
-import { useCallback, Fragment, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import { DynaGenericSelect } from './RefreshGenericResource';
+import * as selectors from '../../../../reducers';
 import RawHtml from '../../../RawHtml';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { DynaGenericSelect } from './RefreshGenericResource';
+
+const useStyles = makeStyles(() => ({
+  validationError: {
+    display: 'inline-block !important',
+  },
+}));
 
 /**
  *
@@ -13,6 +21,7 @@ export default function DynaSelectOptionsGenerator(props) {
   const {
     connectionId,
     bundlePath,
+    ignoreValidation,
     bundleUrlHelp,
     options = {},
     filterKey,
@@ -20,27 +29,15 @@ export default function DynaSelectOptionsGenerator(props) {
     disableFetch,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
+  const classes = useStyles();
   const dispatch = useDispatch();
-  const { status, data, errorMessage, validationError } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: options.commMetaPath || commMetaPath,
-      filterKey: options.filterKey || filterKey,
-    })
-  );
 
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.metadata.clearValidations(
-          connectionId,
-          options.commMetaPath || commMetaPath
-        )
-      );
-    },
-    [commMetaPath, connectionId, dispatch, options.commMetaPath]
-  );
+
+  const { status, data, errorMessage, validationError } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    options.commMetaPath || commMetaPath,
+    options.filterKey || filterKey);
+
+
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
       dispatch(
@@ -61,7 +58,7 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch,
     options.commMetaPath,
   ]);
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     dispatch(
       actions.metadata.refresh(
         connectionId,
@@ -73,10 +70,10 @@ export default function DynaSelectOptionsGenerator(props) {
         }
       )
     );
-  };
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, options.commMetaPath]);
 
   return (
-    <Fragment>
+    <>
       <DynaGenericSelect
         resourceToFetch={options.commMetaPath || commMetaPath}
         resetValue={options.resetValue}
@@ -88,7 +85,9 @@ export default function DynaSelectOptionsGenerator(props) {
         disableOptionsLoad={disableOptionsLoad}
         {...props}
       />
-      <RawHtml html={validationError} />
-    </Fragment>
+      {!ignoreValidation && (
+        <RawHtml className={classes.validationError} html={validationError} />
+      )}
+    </>
   );
 }

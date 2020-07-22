@@ -1,4 +1,4 @@
-import { useCallback, Fragment } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {
@@ -13,6 +13,7 @@ import actions from '../../actions';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../icons/ArrowRightIcon';
 import RefreshIcon from '../icons/RefreshIcon';
+import RunFlowButton from '../RunFlowButton';
 import CeligoSelect from '../CeligoSelect';
 import IconTextButton from '../IconTextButton';
 import FlowSelector from './FlowSelector';
@@ -58,9 +59,6 @@ const useStyles = makeStyles(theme => ({
   },
   pagingText: {
     alignSelf: 'center',
-  },
-  refreshButton: {
-    marginRight: theme.spacing(1),
   },
   hideLabel: {
     marginLeft: '10px',
@@ -208,13 +206,11 @@ function Filters({
       </div>
 
       <div className={classes.rightActionContainer}>
-        <IconTextButton
-          className={classes.refreshButton}
-          onClick={handleRefreshClick}>
+        <IconTextButton onClick={handleRefreshClick}>
           <RefreshIcon /> Refresh
         </IconTextButton>
         {maxPage > 0 && (
-          <Fragment>
+          <>
             <IconButton
               disabled={currentPage === 0}
               size="small"
@@ -237,8 +233,9 @@ function Filters({
               onClick={handlePageChange(1)}>
               <ArrowRightIcon />
             </IconButton>
-          </Fragment>
+          </>
         )}
+        {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
       </div>
     </div>
   );

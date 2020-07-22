@@ -1,7 +1,6 @@
-import { hot } from 'react-hot-loader';
-import { Component, Fragment } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/';
+import { useSelector } from 'react-redux';
 import loadable from '../../utils/loadable';
 import * as selectors from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
@@ -14,14 +13,6 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
 import Tabs from '../Integration/common/Tabs';
-
-const mapStateToProps = state => {
-  const permissions = selectors.userPermissions(state);
-
-  return {
-    permissions,
-  };
-};
 
 const Profile = loadable(() =>
   import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
@@ -63,44 +54,7 @@ const tabs = [
   },
 ];
 
-// TODO: Ashok if these CSS are not being used then we can remove it.
-@hot(module)
-@withStyles(theme => ({
-  link: {
-    color: theme.palette.text.secondary,
-    // color: theme.palette.action.active,
-  },
-  appFrame: {
-    padding: theme.spacing(1),
-  },
-  about: {
-    padding: theme.spacing(1),
-  },
-  root: {
-    display: 'flex',
-    padding: theme.spacing(1),
-    alignItems: 'flex-start',
-  },
-  leftElement: {
-    position: 'relative',
-    textAlign: 'center',
-    padding: theme.spacing(1),
-    minHeight: 500,
-    zIndex: 0,
-  },
-  rightElement: {
-    background: theme.palette.background.paper,
-    flex: 4,
-    textAlign: 'center',
-    padding: theme.spacing(3),
-  },
-  activeLink: {
-    fontWeight: 'bold',
-  },
-  flex: {
-    flex: 1,
-    zIndex: 1,
-  },
+const useStyles = makeStyles(theme => ({
   wrapperProfile: {
     padding: theme.spacing(3),
     background: theme.palette.background.paper,
@@ -111,33 +65,31 @@ const tabs = [
   tabsAccount: {
     padding: theme.spacing(3),
   },
-}))
-class MyAccount extends Component {
-  render() {
-    const { match, permissions, classes } = this.props;
+}));
 
-    return (
-      <Fragment>
-        <CeligoPageBar
-          title={
+export default function MyAccount({ match }) {
+  const classes = useStyles();
+  const permissions = useSelector(state => selectors.userPermissions(state));
+
+  return (
+    <>
+      <CeligoPageBar
+        title={
             permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
               ? 'My account'
               : 'My profile'
           }
         />
-        {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
-          <div className={classes.wrapperProfile}>
-            <Profile />
-          </div>
-        ) : (
-          <Fragment>
-            <ResourceDrawer match={match} />
-            <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
-          </Fragment>
-        )}
-      </Fragment>
-    );
-  }
+      {permissions.accessLevel !== USER_ACCESS_LEVELS.ACCOUNT_OWNER ? (
+        <div className={classes.wrapperProfile}>
+          <Profile />
+        </div>
+      ) : (
+        <>
+          <ResourceDrawer match={match} />
+          <Tabs tabs={tabs} match={match} className={classes.tabsAccount} />
+        </>
+      )}
+    </>
+  );
 }
-
-export default connect(mapStateToProps)(MyAccount);

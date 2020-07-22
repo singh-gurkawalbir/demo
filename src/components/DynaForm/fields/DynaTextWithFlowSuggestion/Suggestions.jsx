@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch/lib/core';
-import { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -9,6 +9,7 @@ import * as selectors from '../../../../reducers';
 import lookupUtil from '../../../../utils/lookup';
 import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value, textInsertPosition) => {
@@ -79,8 +80,8 @@ const useStyles = makeStyles(theme => ({
   },
   suggestionsItemBtn: {
     marginLeft: -15,
-    width: `calc(100% + 30px)`,
-    height: `calc(100% + 20px)`,
+    width: 'calc(100% + 30px)',
+    height: 'calc(100% + 20px)',
     marginTop: -10,
     borderRadius: 0,
     padding: '0px 15px',
@@ -127,6 +128,7 @@ export default function Suggestions(props) {
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
     options,
+    showLookupModal,
   } = props;
   const classes = useStyles();
   const sampleData = useSelector(
@@ -138,15 +140,14 @@ export default function Suggestions(props) {
         stage: 'flowInput',
       }).data
   );
-  const adaptorType = useSelector(state => {
-    const { merged: resourceData = {} } = selectors.resourceData(
-      state,
-      resourceType,
-      resourceId
-    );
+  const { merged: resourceData = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  );
 
-    return resourceData && resourceData.adaptorType;
-  });
+  const adaptorType = resourceData?.adaptorType;
+
   const lookups = lookupUtil.getLookupFromFormContext(formContext, adaptorType);
   const extracts = useMemo(() => {
     const extractPaths = getJSONPaths(pickFirstObject(sampleData));
@@ -234,22 +235,28 @@ export default function Suggestions(props) {
     [adaptorType, handleLookupSelect, lookups, onFieldChange]
   );
   const handleLookupEdit = useCallback(
-    (lookup = {}) => {
-      const lookupIndex = lookups.findIndex(item => item.name === lookup.name);
+    (newLookup = {}, oldLookup = {}) => {
+      const lookupIndex = lookups.findIndex(item => item.name === oldLookup.name);
 
-      if (lookupIndex !== -1) {
+      if (lookupIndex === -1) {
         return;
       }
 
       const modifiedLookups = [...lookups];
 
       modifiedLookups.splice(lookupIndex, 1);
-      modifiedLookups.splice(lookupIndex, 0, lookup);
+      modifiedLookups.splice(lookupIndex, 0, newLookup);
       const lookupFieldId = lookupUtil.getLookupFieldId(adaptorType);
 
       onFieldChange(lookupFieldId, modifiedLookups);
     },
     [adaptorType, lookups, onFieldChange]
+  );
+  const handleLookupEditorShown = useCallback(
+    (val) => {
+      showLookupModal(val);
+    },
+    [showLookupModal],
   );
   const showSuggestion =
     !hide &&
@@ -273,8 +280,8 @@ export default function Suggestions(props) {
             fieldId={id}
             showDynamicLookupOnly
             onSave={handleLookupAdd}
-            onSavelabel="Add new lookup"
             options={options}
+            showLookupDialog={handleLookupEditorShown}
           />
         </li>
       )}
@@ -294,6 +301,7 @@ export default function Suggestions(props) {
               showDynamicLookupOnly
               value={lookup}
               options={options}
+              showLookupDialog={handleLookupEditorShown}
             />
           </li>
         ))}

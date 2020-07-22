@@ -1,18 +1,18 @@
-import { useCallback, Fragment } from 'react';
-import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { Button, Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, Button } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
-import DrawerTitleBar from '../../../../drawer/TitleBar';
-import DynaForm from '../../../../DynaForm';
-import DynaSubmit from '../../../../DynaForm/DynaSubmit';
+import clsx from 'clsx';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import DynaForm from '../../..';
 import actions from '../../../../../actions';
-import getFormFieldMetadata from './util';
-import { SCOPES } from '../../../../../sagas/resourceForm';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import * as selectors from '../../../../../reducers';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import DrawerTitleBar from '../../../../drawer/TitleBar';
+import DynaSubmit from '../../../DynaSubmit';
+import getFormFieldMetadata from './util';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.appBarHeight,
     paddingBottom: theme.appBarHeight,
     border: 'solid 1px',
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   root: {
@@ -36,11 +36,12 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 3),
+    padding: theme.spacing(3, 3, 1, 3),
     overflowX: 'scroll',
   },
   subRecordDynaForm: {
-    minHeight: `calc(100% - 56px)`,
+    minHeight: 'calc(100% - 56px)',
+    padding: '0px !important',
   },
 }));
 
@@ -124,7 +125,7 @@ function SubRecordDrawer(props) {
           [
             {
               op: 'replace',
-              path: `/netsuite_da/subrecords`,
+              path: '/netsuite_da/subrecords',
               value: updatedSubrecords,
             },
           ],
@@ -158,12 +159,13 @@ function SubRecordDrawer(props) {
       onClose={handleClose}>
       <DrawerTitleBar
         title={fieldId ? 'Edit subrecord import' : 'Add subrecord import'}
+        backToParent
       />
 
       <div className={classes.container}>
         <div className={classes.content}>
           {fieldMeta && (
-            <Fragment>
+            <>
               <DynaForm
                 formKey={formKey}
                 fieldMeta={fieldMeta}
@@ -182,7 +184,7 @@ function SubRecordDrawer(props) {
                 onClick={handleClose}>
                 Cancel
               </Button>
-            </Fragment>
+            </>
           )}
         </div>
       </div>

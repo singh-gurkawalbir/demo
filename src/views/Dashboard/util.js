@@ -37,6 +37,10 @@ export function tileStatus(tile) {
       label = 'Continue setup';
       variant = 'warning';
       break;
+    case TILE_STATUS.UNINSTALL:
+      label = 'Continue uninstall';
+      variant = 'warning';
+      break;
     case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
       label = 'Connection down';
       variant = 'error';
@@ -51,36 +55,6 @@ export function tileStatus(tile) {
   }
 
   return { label, variant };
-}
-
-export function suiteScriptTileName(tile) {
-  let name;
-
-  if (tile.name && tile.name.indexOf('Amazon') === 0) {
-    name = `${tile.name} - NetSuite Connector`;
-  } else {
-    switch (tile.name) {
-      case 'Salesforce Connector':
-        name = 'Salesforce - NetSuite Connector';
-        break;
-      case 'SVB Connector':
-        name = 'SVB - NetSuite Connector';
-        break;
-      case 'eBay':
-      case 'Google Shopping':
-      case 'Magento':
-      case 'Newegg':
-      case 'Nextag':
-      case 'Rakuten':
-      case 'Sears':
-        name = `${tile.name} - NetSuite Connector`;
-        break;
-      default:
-        ({ name } = tile);
-    }
-  }
-
-  return name;
 }
 
 /*
@@ -127,4 +101,6 @@ export const dropTileConfig = (ref, index, onMove) => ({
 });
 
 export const getTileId = tile =>
-  tile._ioConnectionId ? tile._id : tile._integrationId;
+  tile.ssLinkedConnectionId
+    ? `${tile.ssLinkedConnectionId}_${tile._integrationId}`
+    : tile._integrationId;

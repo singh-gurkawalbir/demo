@@ -5,7 +5,7 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [
@@ -63,7 +63,8 @@ export default {
   },
   'file.filedefinition.rules': {
     type: 'filedefinitioneditor',
-    label: 'File definition rules ',
+    label: 'File generator helper',
+    helpkey: 'import.file.filedefinition.rules',
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -100,17 +101,17 @@ export default {
   },
   'file.csv': {
     type: 'csvgenerate',
-    label: 'CSV generator helper:',
+    label: 'CSV generator helper',
     helpKey: 'file.csvGenerate',
-    defaultValue: r =>
-      (r.file && r.file.csv) || {
-        includeHeader: true,
-        rowDelimiter: '\n',
-        columnDelimiter: ',',
-        replaceNewlineWithSpace: false,
-        replaceTabWithSpace: false,
-        wrapWithQuotes: false,
-      },
+    defaultValue: r => r?.file?.csv || {
+      includeHeader: true,
+      columnDelimiter: ',',
+      rowDelimiter: '\n',
+      replaceNewlineWithSpace: false,
+      replaceTabWithSpace: false,
+      truncateLastRowDelimiter: false,
+      wrapWithQuotes: false,
+    },
     visibleWhenAll: [
       {
         field: 'file.type',

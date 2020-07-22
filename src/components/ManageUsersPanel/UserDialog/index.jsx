@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import {
@@ -6,18 +6,18 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import actions from '../../../actions';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import CommStatus from '../../CommStatus';
 import ModalDialog from '../../ModalDialog';
 import UserForm from './UserForm';
+import inferErrorMessage from '../../../utils/inferErrorMessage';
 
 export default function UserDialog({ open, userId, onClose, onSuccess }) {
   const [errorMessage, setErrorMessage] = useState();
+  const [disableSave, setDisableSave] = useState(false);
   const [actionsToClear, setActionsToClear] = useState();
   const dispatch = useDispatch();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleClose = useCallback(() => {
     setErrorMessage();
 
@@ -32,7 +32,16 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         integrationAccessLevel: [],
       };
 
-      if (accessLevel === USER_ACCESS_LEVELS.TILE) {
+      setDisableSave(true);
+
+      if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
+        integrationsToManage.forEach((_integrationId) =>
+          aShareData.integrationAccessLevel.push({
+            _integrationId,
+            accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE,
+          })
+        );
+      } else if (accessLevel === USER_ACCESS_LEVELS.TILE) {
         aShareData.accessLevel = undefined;
         integrationsToManage.forEach(_integrationId =>
           aShareData.integrationAccessLevel.push({
@@ -68,27 +77,24 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         )
       ) {
         if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
-          enqueueSnackbar({
-            message: userId
-              ? 'User updated successfully'
-              : 'User invited successfully',
-          });
-
           if (onSuccess) onSuccess();
 
           setErrorMessage();
         } else if (objStatus.createOrUpdate.status === COMM_STATES.ERROR) {
-          setErrorMessage(objStatus.createOrUpdate.message);
+          setErrorMessage(
+            inferErrorMessage(objStatus.createOrUpdate.message)[0]
+          );
         }
 
         setActionsToClear(['createOrUpdate']);
+        setDisableSave(false);
       }
     },
-    [enqueueSnackbar, onSuccess, userId]
+    [onSuccess]
   );
 
   return (
-    <Fragment>
+    <>
       <CommStatus
         actionsToMonitor={{
           createOrUpdate: {
@@ -110,11 +116,12 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
           )}
           <UserForm
             id={userId}
+            disableSave={disableSave}
             onSaveClick={handleSaveClick}
             onCancelClick={handleClose}
           />
         </div>
       </ModalDialog>
-    </Fragment>
+    </>
   );
 }

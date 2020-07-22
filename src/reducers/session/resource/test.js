@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 
 describe('session.resource reducers', () => {
@@ -11,7 +11,7 @@ describe('session.resource reducers', () => {
     expect(newState).toEqual(oldState);
   });
 
-  describe(`RESOURCE.CREATED action`, () => {
+  describe('RESOURCE.CREATED action', () => {
     test('should store the created resource ID mapped to tempId', () => {
       const tempId = 'new-123';
       const dbId = 'abc123';
@@ -21,7 +21,7 @@ describe('session.resource reducers', () => {
     });
   });
   describe('RESOURCE.REFERENCES_RECEIVED action', () => {
-    test(`should store the references in the state`, () => {
+    test('should store the references in the state', () => {
       const testReferences = {
         imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
         exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
@@ -35,7 +35,7 @@ describe('session.resource reducers', () => {
     });
   });
   describe('RESOURCE.REFERENCES_CLEAR action', () => {
-    test(`should delete the references from the state`, () => {
+    test('should delete the references from the state', () => {
       const testReferences = {
         imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
         exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
@@ -48,7 +48,7 @@ describe('session.resource reducers', () => {
 
       expect(newState).toEqual({});
     });
-    test(`should not delete new id from other parts of the store`, () => {
+    test('should not delete new id from other parts of the store', () => {
       const testReferences = {
         imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
         exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],
@@ -70,7 +70,7 @@ describe('session.resource reducers', () => {
   });
 
   describe('session.resource selectors', () => {
-    describe(`createdResourceId`, () => {
+    describe('createdResourceId', () => {
       test('should return undefined when no match found.', () => {
         expect(selectors.createdResourceId(undefined, 'tempId')).toEqual(
           undefined
@@ -93,7 +93,7 @@ describe('session.resource reducers', () => {
       test('should return empty object when state is undefined', () => {
         expect(selectors.resourceReferences(undefined)).toEqual(null);
       });
-      test(`should return references for valid state`, () => {
+      test('should return references for valid state', () => {
         const testReferences = {
           imports: [{ id: 'id1', name: 'imp1' }, { id: 'id2', name: 'imp2' }],
           exports: [{ id: 'id1', name: 'exp1' }, { id: 'id2', name: 'exp2' }],

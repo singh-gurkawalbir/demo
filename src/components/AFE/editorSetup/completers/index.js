@@ -121,6 +121,7 @@ export const loadJsonHints = value => {
   try {
     return jsonComputePaths(JSON.parse(value), null, {
       wrapSpecialChars: true,
+      excludeArrayIndices: true,
     });
   } catch (e) {
     return [];

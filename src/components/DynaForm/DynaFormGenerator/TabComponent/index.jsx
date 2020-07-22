@@ -1,11 +1,15 @@
-import { Tab, Tabs } from '@material-ui/core';
+import { Tab, Tabs, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { Fragment, useCallback, useState } from 'react';
+import clsx from 'clsx';
+import React, { useCallback, useEffect, useState } from 'react';
+import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useSelector } from 'react-redux';
 import FormGenerator from '..';
-import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
 import * as selectors from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
+import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
+import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
+
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -17,8 +21,10 @@ const useStyle = makeStyles(theme => ({
   },
   tabsContainer: {
     minWidth: 150,
-    background: theme.palette.background.default,
-    marginRight: theme.spacing(2),
+    background: theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    marginBottom: theme.spacing(1),
+
   },
   MuiTabWrapper: {
     justifyContent: 'left',
@@ -28,8 +34,21 @@ const useStyle = makeStyles(theme => ({
   },
 }));
 
+
+const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
+  const isExpansionPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+
+  return (tabType !== 'tabIA' && isExpansionPanelErrored ? <Typography color="error" style={{fontSize: 15, lineHeight: '19px' }}>{label}</Typography> : label);
+};
+
 function TabComponent(props) {
-  const { containers, fieldMap, children, ...rest } = props;
+  const { containers, fieldMap, children, type, className,
+    ...rest } = props;
   const {
     externalTabState,
     setExternalTabState,
@@ -48,7 +67,7 @@ function TabComponent(props) {
       <Tabs
         value={selectedTabIndex}
         classes={{ indicator: classes.MuiTabsIndicator }}
-        className={classes.tabsContainer}
+        className={clsx(classes.tabsContainer, className)}
         variant="scrollable"
         orientation={orientation}
         indicatorColor="primary"
@@ -62,10 +81,15 @@ function TabComponent(props) {
 
           setSelectedTab(value);
         }}>
-        {containers.map(({ label }) => (
+        {containers.map(({ label, ...layout }) => (
           <Tab
-            classes={{ wrapper: classes.MuiTabWrapper }}
-            label={label}
+            label={<TabLabel
+              layout={layout}
+              fieldMap={fieldMap}
+              label={label}
+              tabType={type}
+
+              />}
             key={label}
             data-test={label}
           />
@@ -84,7 +108,7 @@ function TabComponent(props) {
 }
 
 function FormWithSave(props) {
-  const { layout, fieldMap, ...rest } = props;
+  const { layout, fieldMap, children, classes, ...rest } = props;
   const postProcessValuesFn = useCallback(
     values => getAllFormValuesAssociatedToMeta(values, { layout, fieldMap }),
     [fieldMap, layout]
@@ -104,48 +128,115 @@ function FormWithSave(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <FormGenerator {...props} />
-      <IntegrationSettingsSaveButton
-        {...rest}
-        isValid={!isExpansionPanelErrored}
-        isFormTouchedForMeta={isAnyFieldTouchedForMeta}
-        postProcessValuesFn={postProcessValuesFn}
-      />
-    </Fragment>
+      {React.cloneElement(children, {
+        ...rest,
+        isValid: !isExpansionPanelErrored,
+        isFormTouchedForMeta: isAnyFieldTouchedForMeta,
+        postProcessValuesFn
+
+      })}
+
+    </>
   );
 }
 
 export function TabIAComponent(props) {
   return (
     <TabComponent {...props}>
-      <FormWithSave />
+      <FormWithSave >
+        <IntegrationSettingsSaveButton />
+      </FormWithSave>
     </TabComponent>
   );
 }
 
+
+const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
+  useEffect(() => {
+    Object.values(fieldMap).forEach((field) => {
+      registerField(field);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  return null;
+};
+
+function InitializeAllFieldState({children, fieldMap}) {
+  return (
+    <FormContext.Consumer>
+      {form => (
+        <>
+          <InitializeFieldStateHook registerField={form.registerField} fieldMap={fieldMap} />
+          {children}
+        </>
+      )}
+    </FormContext.Consumer>);
+}
+// this is necessary when we clone props we want all of its children to receive them
+function SuiteScriptWithCompleteSave(props) {
+  return (
+    <>
+      <FormGenerator {...props} />
+      <SuiteScriptSaveButton {...props} />
+    </>
+  );
+}
+
+export function SuiteScriptTabIACompleteSave(props) {
+  return (
+    <InitializeAllFieldState fieldMap={props.fieldMap}>
+
+      <TabComponent
+        {...props}
+        orientation="horizontal"
+    >
+        <SuiteScriptWithCompleteSave />
+      </TabComponent>
+    </InitializeAllFieldState>
+  );
+}
+// this is necessary when we clone props we want all of its children to receive them
 function TabWithCompleteSave(props) {
   return (
-    <Fragment>
+    <>
       <FormGenerator {...props} />
       <IntegrationSettingsSaveButton {...props} />
-    </Fragment>
+    </>
   );
 }
 
 export function TabComponentSimple(props) {
   return (
-    <TabComponent {...props}>
-      <TabWithCompleteSave />
-    </TabComponent>
+    <InitializeAllFieldState fieldMap={props.fieldMap}>
+      <TabComponent {...props}>
+        <TabWithCompleteSave />
+      </TabComponent>
+    </InitializeAllFieldState>
+
   );
 }
+
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (
     <TabComponent
       {...rest}
       orientation="horizontal"
+      index={index === undefined ? 0 : index + 1}>
+      <FormGenerator />
+    </TabComponent>
+  );
+}
+
+export function TabComponentWithoutSaveVertical({ index, ...rest }) {
+  return (
+    <TabComponent
+      {...rest}
+      orientation="vertical"
       index={index === undefined ? 0 : index + 1}>
       <FormGenerator />
     </TabComponent>

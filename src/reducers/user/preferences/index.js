@@ -1,3 +1,4 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import {
   ACCOUNT_IDS,
@@ -18,45 +19,52 @@ export const GLOBAL_PREFERENCES = [
 
 export default (state = { environment: 'production' }, action) => {
   const { type, resourceType, resource, preferences } = action;
-  let newState = { ...state };
 
-  switch (type) {
-    case actionTypes.RESOURCE.RECEIVED:
-      if (resourceType === 'preferences')
-        return {
-          dateFormat: 'MM/DD/YYYY',
-          timeFormat: 'h:mm:ss a',
-          ...resource,
-        };
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.RECEIVED:
+        if (resourceType === 'preferences') {
+          draft.dateFormat = 'MM/DD/YYYY';
+          draft.timeFormat = 'h:mm:ss a';
+          Object.keys(resource).forEach(key => {
+            draft[key] = resource[key];
+          });
+        }
 
-      return newState;
-    case actionTypes.UPDATE_PREFERENCES: {
-      const { defaultAShareId, accounts } = newState;
+        break;
+      case actionTypes.UPDATE_PREFERENCES:
+        {
+          const { defaultAShareId } = draft;
 
-      if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
-        newState = { ...newState, ...preferences };
-      } else {
-        Object.keys(preferences).forEach(key => {
-          const preference = preferences[key];
-
-          if (GLOBAL_PREFERENCES.includes(key)) {
-            newState[key] = preference;
+          if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+            Object.keys(preferences).forEach(key => {
+              draft[key] = preferences[key];
+            });
           } else {
-            if (!accounts[defaultAShareId]) {
-              accounts[defaultAShareId] = {};
-            }
+            Object.keys(preferences).forEach(key => {
+              const preference = preferences[key];
 
-            accounts[defaultAShareId][key] = preference;
+              if (GLOBAL_PREFERENCES.includes(key)) {
+                draft[key] = preference;
+              } else {
+                if (!draft.accounts) {
+                  draft.accounts = {};
+                }
+
+                if (!draft.accounts[defaultAShareId]) {
+                  draft.accounts[defaultAShareId] = {};
+                }
+
+                draft.accounts[defaultAShareId][key] = preference;
+              }
+            });
           }
-        });
-      }
+        }
 
-      return newState;
+        break;
+      default:
     }
-
-    default:
-      return state;
-  }
+  });
 };
 
 // #region PUBLIC SELECTORS
@@ -67,7 +75,7 @@ export function userPreferences(state) {
 }
 
 export function accountShareHeader(preferences, path) {
-  const headers = emptyObj;
+  const headers = {};
 
   if (
     !preferences ||

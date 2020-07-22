@@ -9,10 +9,17 @@ import CodePanel from '../GenericEditor/CodePanel';
 const styles = {
   content: {
     display: 'inline',
+    width: '100%',
+    height: '100%'
   },
   tabPanel: {
     height: '100%',
   },
+  dataWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  }
 };
 const SqlDataTabPanel = props => {
   const {
@@ -31,7 +38,7 @@ const SqlDataTabPanel = props => {
   }
 
   return (
-    <React.Fragment>
+    <div className={classes.dataWrapper}>
       <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab
           label="Sample Data"
@@ -86,7 +93,7 @@ const SqlDataTabPanel = props => {
           </Typography>
         )}
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

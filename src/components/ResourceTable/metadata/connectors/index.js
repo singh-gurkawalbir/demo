@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from '@material-ui/core/Link';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Delete from '../../actions/Delete';
@@ -6,6 +7,7 @@ import InstallBase from '../../actions/Connectors/InstallBase';
 import Licenses from '../../actions/Connectors/Licenses';
 import { formatLastModified } from '../../../CeligoTable/util';
 import getImageUrl from '../../../../utils/image';
+import Edit from '../../actions/Edit';
 
 export default {
   columns: [
@@ -15,10 +17,6 @@ export default {
         return <ResourceDrawerLink resourceType="connectors" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
     },
     {
       heading: 'Last updated',
@@ -48,5 +46,5 @@ export default {
       value: r => (r.published ? 'Yes' : 'No'),
     },
   ],
-  rowActions: [InstallBase, Licenses, TogglePublish, Delete],
+  rowActions: [Edit, InstallBase, Licenses, TogglePublish, Delete],
 };

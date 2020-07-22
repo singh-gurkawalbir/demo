@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { makeStyles } from '@material-ui/core/styles';
 import SearchIcon from '../icons/SearchIcon';
@@ -54,7 +54,7 @@ export default function SearchInput({ ...rest }) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <div className={classes.search}>
         <div className={classes.searchIcon}>
           <SearchIcon />
@@ -69,6 +69,6 @@ export default function SearchInput({ ...rest }) {
           inputProps={{ 'aria-label': 'search' }}
         />
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -20,10 +20,11 @@ export default {
         }
       });
 
-      if (missingFields.length)
+      if (missingFields.length) {
         errors.push(
           `${missingFields.join(',')} field missing at position ${index}`
         );
+      }
     });
 
     return errors.length ? errors.join('\n') : null;
@@ -87,4 +88,15 @@ export default {
     ),
   getObjectKeyFromValue: (obj = {}, value) =>
     Object.keys(obj)[Object.values(obj).indexOf(value)],
+
+  // returns an array of keys matched with the given value for obj[key]
+  getObjectKeysFromValue: (obj = {}, value) => {
+    const keysList = [];
+    Object.keys(obj).forEach(key => {
+      if (obj[key] === value) {
+        keysList.push(key);
+      }
+    });
+    return keysList;
+  }
 };

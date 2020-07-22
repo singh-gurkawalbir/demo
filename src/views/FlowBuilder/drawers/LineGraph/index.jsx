@@ -1,6 +1,6 @@
 import { Drawer, makeStyles } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory, Route } from 'react-router-dom';
 import FlowCharts from './FlowCharts';
@@ -13,11 +13,11 @@ const useStyles = makeStyles(theme => ({
     // marginTop: theme.appBarHeight + theme.pageBarHeight,
     border: 'solid 1px',
     borderColor: theme.palette.secondary.lightest,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
   form: {
-    maxHeight: `calc(100vh - 180px)`,
+    maxHeight: 'calc(100vh - 180px)',
     padding: theme.spacing(2, 3),
   },
   scheduleContainer: {

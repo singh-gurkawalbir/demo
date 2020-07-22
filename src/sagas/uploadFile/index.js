@@ -14,6 +14,7 @@ export function* uploadFile({
   resourceId,
   fileType,
   file,
+  fileName,
   uploadPath,
 }) {
   const path =
@@ -25,13 +26,18 @@ export function* uploadFile({
       path,
       message: 'Getting signed URL for file upload',
     });
+    const headers = {
+      'Content-Type': fileType,
+      'x-amz-server-side-encryption': 'AES256',
+    };
+
+    if (fileName) {
+      headers['Content-Disposition'] = `attachment;filename=${fileName}`;
+    }
 
     yield fetch(response.signedURL, {
       method: 'PUT',
-      headers: {
-        'Content-Type': fileType,
-        'x-amz-server-side-encryption': 'AES256',
-      },
+      headers,
       body: file,
     });
 
@@ -46,10 +52,10 @@ export function* uploadRawData({
   fileName = 'file.txt',
   fileType = 'application/text',
 }) {
-  const uploadPath = `/s3SignedURL?file_name=${fileName}&file_type=${fileType}`;
+  const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(fileName)}&file_type=${fileType}`;
 
   try {
-    const runKey = yield call(uploadFile, { file, fileType, uploadPath });
+    const runKey = yield call(uploadFile, { file, fileType, fileName, uploadPath });
 
     return runKey;
   } catch (e) {
@@ -58,14 +64,14 @@ export function* uploadRawData({
 }
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
-  const uploadPath = `/s3SignedURL?file_name=${file.name}&file_type=${fileType}`;
+  const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(file.name)}&file_type=${fileType}`;
 
   try {
     const runKey = yield call(uploadFile, { file, fileType, uploadPath });
     const previewPath = `/integrations/template/preview?runKey=${runKey}`;
     const components = yield call(apiCallWithRetry, {
       path: previewPath,
-      message: 'Loading Components from zip file',
+      message: 'Loading',
     });
 
     yield put(actions.template.receivedPreview(components, runKey, true));
@@ -97,9 +103,10 @@ function configureFileReader(file, fileType) {
  * Reads and processes the uploaded file based on file type and saves fileContent/error on state
  * For xlsx file , content gets converted to 'csv' before parsing to verify valid xlsx file
  * For JSON file, content should be parsed from String to JSON
+ * @param fileProps contains any additional properties needed to be passed related to the uploaded file
  */
-function* processFile({ fileId, file, fileType }) {
-  const { error } = getUploadedFileStatus(file, fileType);
+function* processFile({ fileId, file, fileType, fileProps = {} }) {
+  const { error } = getUploadedFileStatus(file, fileType, fileProps);
   const { name, size } = file;
 
   if (error) {
@@ -109,17 +116,17 @@ function* processFile({ fileId, file, fileType }) {
   let fileContent = yield call(configureFileReader, file, fileType);
 
   if (['xlsx', 'json'].includes(fileType)) {
-    const { error, data } =
-      fileType === 'xlsx'
-        ? getCsvFromXlsx(fileContent)
-        : getJSONContent(fileContent);
-
-    if (error) {
-      return yield put(actions.file.processError({ fileId, error }));
-    }
-
+    let out;
     if (fileType === 'json') {
-      fileContent = data;
+      out = getJSONContent(fileContent);
+    } else {
+      out = yield call(getCsvFromXlsx, fileContent);
+    }
+    if (out.error) {
+      return yield put(actions.file.processError({ fileId, error: out.error }));
+    }
+    if (fileType === 'json') {
+      fileContent = out.data;
     }
   }
 
@@ -127,7 +134,7 @@ function* processFile({ fileId, file, fileType }) {
     actions.file.processedFile({
       fileId,
       file: fileContent,
-      fileProps: { name, size, fileType },
+      fileProps: { name, size, fileType, rawFile: file },
     })
   );
 }

@@ -20,7 +20,7 @@ export function* cancel({ id }) {
 }
 
 export function* create({ data }) {
-  const path = `/transfers/invite`;
+  const path = '/transfers/invite';
   let response;
   const opts = {
     method: 'POST',
@@ -40,7 +40,7 @@ export function* create({ data }) {
 }
 
 export function* preview({ data }) {
-  let path = `/transfers/preview`;
+  let path = '/transfers/preview';
   const opts = { method: 'GET' };
 
   if (data) {

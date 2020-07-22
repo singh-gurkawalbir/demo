@@ -163,7 +163,8 @@ export const getFormattedNSSalesOrderMetadataData = metadata => {
       billAddressFields.push(field);
 
       return true;
-    } else if (field.id.indexOf('shipcustrecord') === 0) {
+    }
+    if (field.id.indexOf('shipcustrecord') === 0) {
       // eslint-disable-next-line no-param-reassign
       field.id = field.id.replace('ship', 'shippingaddress.');
       shipAddressFields.push(field);
@@ -350,8 +351,8 @@ export const getFormattedSalesForceMetadata = metadata => {
       "test1",
       "test2"
     ],
-    @output: { 
-      CreatedBy: { Username: CreatedBy.Username, CompanyName: CreatedBy.CompanyName }, 
+    @output: {
+      CreatedBy: { Username: CreatedBy.Username, CompanyName: CreatedBy.CompanyName },
       test1: test1,
       test2: test2
     }

@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.postmarkapp.com/`,
+    '/http/baseURI': 'https://api.postmarkapp.com/',
     '/http/ping/relativeURI': '/servers?count=1&offset=0',
     '/http/headers': [
       { name: 'Content-Type', value: 'application/json' },
@@ -38,17 +38,20 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.encrypted.serverToken',
-      'http.encrypted.accountToken',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.encrypted.serverToken',
+          'http.encrypted.accountToken'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -3,20 +3,21 @@ export default {
     type: 'radiogroupforresetfields',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
-      { id: 'ignoreMissing', type: 'checkbox' },
       { id: 'mongodb.update', type: 'sqlquerybuilder' },
       { id: 'mongodb.document', type: 'sqlquerybuilder' },
+      { id: 'mongodb.lookupType', type: 'select' },
+      { id: 'mongodb.ignoreExtract', type: 'text' },
     ],
     label: 'Method',
     options: [
       {
         items: [
           {
-            label: 'InsertMany',
+            label: 'Insert many',
             value: 'insertMany',
           },
           {
-            label: 'UpdateOne',
+            label: 'Update one',
             value: 'updateOne',
           },
         ],
@@ -48,7 +49,7 @@ export default {
             value: 'source',
           },
           {
-            label: 'Run a dynamic search against Mongodb',
+            label: 'Run a dynamic search against MongoDB',
             value: 'lookup',
           },
         ],
@@ -69,9 +70,9 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch query builder',
+    label: 'Document builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB Data Builder',
+    title: 'MongoDB document builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -85,9 +86,9 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Launch query builder',
+    label: 'Document builder',
     refreshOptionsOnChangesTo: ['mongodb.method'],
-    title: 'MongoDB Data Builder',
+    title: 'MongoDB document builder',
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
@@ -98,7 +99,8 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'textarea',
+    type: 'editor',
+    mode: 'json',
     label: 'Ignore lookup filter',
     visibleWhenAll: [
       {
@@ -123,29 +125,24 @@ export default {
       },
     ],
   },
-  'mongodb.upsert': {
-    type: 'checkboxforresetfields',
-    label: 'Upsert',
-    fieldsToReset: [{ id: 'ignoreMissing', type: 'checkbox' }],
-    visibleWhen: [
-      {
-        field: 'mongodb.method',
-        is: ['updateOne'],
-      },
-    ],
-  },
   'mongodb.ignoreExtract': {
     type: 'text',
     label: 'Which field?',
     required: true,
     visibleWhen: [
       {
-        field: 'ignoreMissing',
-        is: [true],
-      },
-      {
         field: 'mongodb.lookupType',
         is: ['source'],
+      },
+    ],
+  },
+  'mongodb.upsert': {
+    type: 'checkbox',
+    label: 'Upsert',
+    visibleWhen: [
+      {
+        field: 'mongodb.method',
+        is: ['updateOne'],
       },
     ],
   },

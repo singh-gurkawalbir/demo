@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TransformEditorDialog from '../../../AFE/TransformEditor/TransformToggleEditorDialog';
@@ -62,7 +62,7 @@ export default function DynaTransformEditor(props) {
   // cause react to shake the component tree to perform a rerender and the
   // rule elements key would use just the row index.
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <TransformEditorDialog
           title="Transform Mapping"
@@ -80,6 +80,6 @@ export default function DynaTransformEditor(props) {
         data-test={id}>
         {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

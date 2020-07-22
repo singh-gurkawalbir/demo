@@ -2,7 +2,6 @@ export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
-    retValues['/http/ping/relativeURI'] = '/admin/orders.json';
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
@@ -20,6 +19,35 @@ export default {
       delete retValues['/http/auth/basic/password'];
 
       retValues['/http/auth/basic'] = undefined;
+
+
+      if (
+        resource &&
+        !resource._connectorId &&
+        resource.http &&
+        resource.http._iClientId
+      ) {
+        retValues['/http/_iClientId'] = undefined;
+      }
+    } else {
+      retValues['/http/auth/basic/username'] = `${
+        formValues['/http/auth/basic/username']
+      }`;
+      retValues['/http/auth/basic/password'] = `${
+        formValues['/http/auth/basic/password']
+      }`;
+      retValues['/http/auth/oauth/authURI'] = undefined;
+      retValues['/http/auth/oauth/tokenURI'] = undefined;
+      retValues['/http/auth/token'] = undefined;
+      retValues['/http/_iClientId'] = undefined;
+    }
+    if (
+      resource &&
+      resource._connectorId) {
+      retValues['/http/baseURI'] = `https://${
+        formValues['/http/storeURL']
+      }.myshopify.com`;
+      retValues['/http/ping/relativeURI'] = '/admin/orders.json';
 
       if (
         retValues['/http/auth/oauth/scope'] &&
@@ -48,26 +76,38 @@ export default {
           retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
         }
       }
-
-      if (
-        resource &&
-        !resource._connectorId &&
-        resource.http &&
-        resource.http._iClientId
-      ) {
-        retValues['/http/_iClientId'] = undefined;
-      }
     } else {
-      retValues['/http/auth/basic/username'] = `${
-        formValues['/http/auth/basic/username']
-      }`;
-      retValues['/http/auth/basic/password'] = `${
-        formValues['/http/auth/basic/password']
-      }`;
-      retValues['/http/auth/oauth/authURI'] = undefined;
-      retValues['/http/auth/oauth/tokenURI'] = undefined;
-      retValues['/http/auth/token'] = undefined;
-      retValues['/http/_iClientId'] = undefined;
+      retValues['/http/ping/relativeURI'] = '/orders.json';
+      retValues['/http/baseURI'] = `https://${
+        formValues['/http/storeURL']
+      }.myshopify.com/admin/api/${formValues['/http/unencrypted/version']}`;
+      if (
+        retValues['/http/auth/oauth/scope'] &&
+        !!retValues['/http/auth/oauth/scope'].length
+      ) {
+        const scope = retValues['/http/auth/oauth/scope'].find(
+          str => str !== 'read_analytics'
+        );
+
+        if (scope) {
+          const scopeId = /^(read_|write_)(\w*)/.test(scope)
+            ? /^(read_|write_)(\w*)/.exec(scope)[2]
+            : '';
+          const pingURIs = {
+            content: '/articles/authors.json',
+            themes: '/themes.json',
+            products: '/products/count.json',
+            customers: '/customers/count.json',
+            orders: '/orders/count.json',
+            script_tags: '/script_tags/count.json',
+            fulfillments: '/fulfillment_services.json?scope=all',
+            shipping: '/carrier_services.json',
+            users: '/users.json',
+          };
+
+          retValues['/http/ping/relativeURI'] = pingURIs[scopeId];
+        }
+      }
     }
 
     return {
@@ -75,7 +115,6 @@ export default {
       '/type': 'http',
       '/assistant': 'shopify',
       '/http/mediaType': 'json',
-      '/http/baseURI': `https://${formValues['/http/storeURL']}.myshopify.com`,
       '/http/ping/method': 'GET',
     };
   },
@@ -130,6 +169,17 @@ export default {
         return subdomain;
       },
     },
+    'http.unencrypted.version': {
+      fieldId: 'http.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      helpKey: 'shopify.connection.http.unencrypted.version',
+      required: true,
+      defaultValue: r =>
+        (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
+        '2020-07',
+      visible: r => !(r?._connectorId),
+    },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
       label: 'API key',
@@ -144,70 +194,81 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
-        'read_content',
-        'write_content',
-        'read_themes',
-        'write_themes',
-        'read_products',
-        'write_products',
-        'read_product_listings',
-        'read_customers',
-        'write_customers',
-        'read_orders',
-        'write_orders',
-        'read_all_orders',
-        'read_draft_orders',
-        'write_draft_orders',
-        'read_inventory',
-        'write_inventory',
-        'read_locations',
-        'read_script_tags',
-        'write_script_tags',
-        'read_fulfillments',
-        'write_fulfillments',
-        'read_shipping',
-        'write_shipping',
-        'read_analytics',
-        'read_users',
-        'write_users',
-        'read_checkouts',
-        'write_checkouts',
-        'read_reports',
-        'write_reports',
-        'read_price_rules',
-        'write_price_rules',
-        'read_marketing_events',
-        'write_marketing_events',
-        'read_resource_feedbacks',
-        'write_resource_feedbacks',
-        'read_shopify_payments_payouts',
-        'unauthenticated_read_product_listings',
-        'unauthenticated_write_checkouts',
-        'unauthenticated_write_customers',
-        'unauthenticated_read_content',
+        {subHeader: 'Shopify scopes',
+          scopes: [
+            'read_content',
+            'write_content',
+            'read_themes',
+            'write_themes',
+            'read_products',
+            'write_products',
+            'read_product_listings',
+            'read_customers',
+            'write_customers',
+            'read_orders',
+            'write_orders',
+            'read_all_orders',
+            'read_draft_orders',
+            'write_draft_orders',
+            'read_inventory',
+            'write_inventory',
+            'read_locations',
+            'read_script_tags',
+            'write_script_tags',
+            'read_fulfillments',
+            'write_fulfillments',
+            'read_shipping',
+            'write_shipping',
+            'read_analytics',
+            'read_checkouts',
+            'write_checkouts',
+            'read_reports',
+            'write_reports',
+            'read_price_rules',
+            'write_price_rules',
+            'read_marketing_events',
+            'write_marketing_events',
+            'read_resource_feedbacks',
+            'write_resource_feedbacks',
+            'read_shopify_payments_payouts',
+            'unauthenticated_read_product_listings',
+            'unauthenticated_write_checkouts',
+            'unauthenticated_write_customers',
+            'unauthenticated_read_content',
+            'read_assigned_fulfillment_orders',
+            'write_assigned_fulfillment_orders',
+          ]
+        },
+        {
+          subHeader: 'Shopify Plus scopes',
+          scopes: [
+            'read_users',
+            'write_users'
+          ]}
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    application: {
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.storeURL',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-      'http.auth.oauth.scope',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.storeURL',
+          'http.unencrypted.version',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.auth.oauth.scope'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
-    {
-      id: 'cancel',
-    },
     {
       id: 'oauth',
       label: 'Save & authorize',
@@ -219,18 +280,38 @@ export default {
       ],
     },
     {
-      id: 'test',
-      label: 'Test',
+      id: 'save',
       visibleWhen: [
         {
           field: 'http.auth.type',
           is: ['basic'],
         },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
       ],
     },
     {
-      id: 'save',
-      label: 'Test and save',
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['basic'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'test',
+      mode: 'secondary',
+      label: 'Test',
       visibleWhen: [
         {
           field: 'http.auth.type',

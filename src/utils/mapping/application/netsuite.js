@@ -1,5 +1,5 @@
 import { uniqBy } from 'lodash';
-import mappingUtil from '../';
+import mappingUtil from '..';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
 const wrapTextForSpecialCharsNetsuite = extract => {

@@ -1,55 +1,50 @@
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../../../actions';
-import Icon from '../../../../icons/CloseIcon';
+import DetachIcon from '../../../../icons/unLinkedIcon';
+
 import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Detach Flow',
-  component: function DetachFlow({ resource }) {
+  label: 'Detach flow',
+  icon: DetachIcon,
+  component: function DetachFlow({ rowData = {} }) {
+    const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const handleDetachFlow = () => {
-      const message = `Are you sure you want to detach 
-      ${resource.name || resource._id} flow from this integration?`;
+    const detachFlow = useCallback(() => {
+      const patchSet = [
+        {
+          op: 'replace',
+          path: '/_integrationId',
+          value: undefined,
+        },
+      ];
 
+      dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', resourceId, 'value'));
+    }, [dispatch, resourceId]);
+    const confirmDetachFlow = useCallback(() => {
       confirmDialog({
-        title: 'Confirm',
-        message,
+        title: 'Confirm detach',
+        message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
         buttons: [
           {
-            label: 'Cancel',
+            label: 'Detach',
+            onClick: detachFlow,
           },
           {
-            label: 'Yes',
-            onClick: () => {
-              const patchSet = [
-                {
-                  op: 'replace',
-                  path: '/_integrationId',
-                  value: undefined,
-                },
-              ];
-
-              dispatch(
-                actions.resource.patchStaged(resource._id, patchSet, 'value')
-              );
-              dispatch(
-                actions.resource.commitStaged('flows', resource._id, 'value')
-              );
-            },
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
-    };
+    }, [confirmDialog, detachFlow]);
 
-    return (
-      <IconButton
-        data-test="detachFlow"
-        size="small"
-        onClick={handleDetachFlow}>
-        <Icon />
-      </IconButton>
-    );
+    useEffect(() => {
+      confirmDetachFlow();
+    }, [confirmDetachFlow]);
+
+    return null;
   },
 };

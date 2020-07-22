@@ -15,6 +15,11 @@ export default {
     label: 'File name ends with',
     editorTitle: 'Build file name ends with',
   },
+  'ftp.backupDirectoryPath': {
+    type: 'text',
+    label: 'Backup files path',
+    helpKey: 'export.ftp.backupDirectoryPath',
+  },
   // #region transform
   'transform.expression.rules': {
     type: 'transformeditor',

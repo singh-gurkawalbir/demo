@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Route, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     backgroundColor: theme.palette.background.default,
     zIndex: theme.zIndex.drawer + 1,
-    boxShadow: `-4px 4px 8px rgba(0,0,0,0.15)`,
+    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     overflowX: 'hidden',
   },
   fullWidthDrawerClose: {
@@ -109,8 +109,10 @@ function QueuedJobs({ parentUrl }) {
     selectors.queuedJobs(state, connectionId)
   );
   const queueSize = useSelector(
-    state =>
-      selectors.resource(state, 'connections', connectionId).queueSize || 0
+    state => {
+      const connection = selectors.resource(state, 'connections', connectionId);
+      return connection ? connection.queueSize : 0;
+    }
   );
 
   useEffect(() => {
@@ -145,7 +147,7 @@ function QueuedJobs({ parentUrl }) {
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
-    <Fragment>
+    <>
       <Drawer
         anchor="right"
         open={!!match}
@@ -187,7 +189,7 @@ function QueuedJobs({ parentUrl }) {
           </div>
         </div>
       </Drawer>
-    </Fragment>
+    </>
   );
 }
 

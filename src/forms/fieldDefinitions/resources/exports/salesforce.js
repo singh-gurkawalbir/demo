@@ -69,8 +69,7 @@ export default {
     required: true,
     label: 'Execution type',
     defaultValue: r => {
-      if (r.resourceType === 'realtime' || r.type === 'distributed')
-        return 'realtime';
+      if (r.resourceType === 'realtime' || r.type === 'distributed') return 'realtime';
 
       return 'scheduled';
     },
@@ -129,6 +128,7 @@ export default {
     label: 'Required trigger',
     multiline: true,
     omitWhenHidden: true,
+    copyToClipboard: true,
     visibleWhenAll: [
       {
         field: 'salesforce.executionType',
@@ -155,13 +155,13 @@ export default {
     ],
     type: 'salesforcequalifier',
     placeholder: 'Define Qualification Criteria',
-    helpKey: 'export.salesforce.qualifier',
     connectionId: r => r && r._connectionId,
   },
   'salesforce.distributed.relatedLists': {
     type: 'text',
     delimiter: ',',
     label: 'Related lists',
+    helpKey: 'export.salesforce.distributed.relatedLists',
     multiline: true,
     visibleWhenAll: [
       {

@@ -1,5 +1,6 @@
-import Button from '@material-ui/core/Button';
+import React, { useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
@@ -16,6 +17,7 @@ const styles = theme => ({
 });
 const NetsuiteValidateButton = props => {
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const {
     resourceId,
     classes,
@@ -41,24 +43,25 @@ const NetsuiteValidateButton = props => {
     );
   };
 
-  const netsuiteUserRolesState = useSelector(state =>
-    selectors.netsuiteUserRoles(state, resourceId)
+  const { status, message } = useSelector(state =>
+    selectors.netsuiteUserRoles(state, resourceId) || {}
   );
   const isValidatingNetsuiteUserRoles = useSelector(state =>
     selectors.isValidatingNetsuiteUserRoles(state)
   );
-  const { message, status } = netsuiteUserRolesState || {};
-  const matchingActionField =
-    fields && Object.values(fields).find(field => field.id === id);
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, resourceId)
+  );
+  const matchingActionField = Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
-  const [enquesnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
-    if (resourceId && fieldsIsVisible) {
+    if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
         actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
       );
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, fieldsIsVisible, resourceId]);
 
   useEffect(() => {
@@ -66,29 +69,21 @@ const NetsuiteValidateButton = props => {
       if (status === 'success') {
         // enable save button
         onFieldChange(id, 'false');
-        dispatch(
-          actions.resource.connections.netsuite.clearUserRoles(resourceId)
-        );
-      } else if (status === 'failed') {
+      } else if (status === 'error') {
         if (message) {
           enquesnackbar({ message, variant: 'error' });
           // disable save button
           onFieldChange(id, 'true');
-          dispatch(
-            actions.resource.connections.netsuite.clearUserRoles(resourceId)
-          );
         }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    dispatch,
-    enquesnackbar,
-    message,
     status,
-    resourceId,
     id,
     fieldsIsVisible,
-    onFieldChange,
+    enquesnackbar,
+    message,
   ]);
 
   useEffect(() => {
@@ -110,6 +105,13 @@ const NetsuiteValidateButton = props => {
 
   if (!fields) return null;
 
+  // Clean up action on un mount , to clear user roles when container is closed
+  // TODO @Raghu: check ,should we clear on validate click? or on un mount?
+  useEffect(() => () => dispatch(
+    actions.resource.connections.netsuite.clearUserRoles(resourceId)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), []);
+
   if (id) {
     if (!fieldsIsVisible) return null;
   }
@@ -124,7 +126,7 @@ const NetsuiteValidateButton = props => {
       onClick={() => {
         handleValidate(trim(value));
       }}>
-      {isValidatingNetsuiteUserRoles ? 'Validating' : 'Validate'}
+      {isValidatingNetsuiteUserRoles ? 'Testing' : 'Test Connection'}
     </Button>
   );
 };

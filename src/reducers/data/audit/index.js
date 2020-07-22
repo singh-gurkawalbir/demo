@@ -17,7 +17,8 @@ export default (state = defaultState, action) => {
   if (type === actionTypes.RESOURCE.RECEIVED_COLLECTION) {
     if (resourceType === 'audit') {
       return { all: collection || emptySet };
-    } else if (resourceType.endsWith('/audit')) {
+    }
+    if (resourceType.endsWith('/audit')) {
       const resourceTypeParts = resourceType.split('/');
 
       return {

@@ -65,7 +65,7 @@ export default {
               items: [
                 { label: 'Standard', value: 'standard' },
                 { label: 'Hard-Coded', value: 'hardCoded' },
-                // { label: 'Lookup', value: 'lookup' },
+                { label: 'Lookup', value: 'lookup' },
                 { label: 'Multi-Field', value: 'multifield' },
               ],
             },
@@ -103,6 +103,7 @@ export default {
           name: 'expression',
           refreshOptionsOnChangesTo: ['functions', 'extract'],
           type: 'text',
+          multiline: true,
           label: 'Expression',
           defaultValue: mappingUtil.getDefaultExpression(value),
           helpKey: 'mapping.expression',
@@ -143,7 +144,7 @@ export default {
             {
               items: [
                 {
-                  label: `Use empty string as hardcoded Value`,
+                  label: 'Use empty string as hardcoded Value',
                   value: 'useEmptyString',
                 },
                 {

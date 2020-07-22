@@ -219,24 +219,18 @@ export default {
     },
   },
   layout: {
-    fields: ['common', 'inputMode'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: r => {
-          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
-            return 'Where would you like to transfer the files?';
-          }
-
-          return 'Where would you like to import the records?';
-        },
-        fields: ['salesforce.api'],
+        label: 'General',
+        fields: ['common', 'inputMode', 'dataMappings'],
       },
       {
         collapsed: true,
-        label: 'How would you like the data imported?',
+        label: 'How would you like the records imported?',
         fields: [
+          'salesforce.api',
           'salesforce.lookups',
           'salesforce.sObjectType',
           'salesforce.operation',
@@ -266,14 +260,13 @@ export default {
           'salesforce.idLookup.whereClause',
           'salesforce.upsert.externalIdField',
           'salesforce.idLookup.extract',
-          'dataMappings',
-          'blobKeyPath',
         ],
       },
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['advancedSettings', 'deleteAfterImport'],
+        fields: [
+          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },

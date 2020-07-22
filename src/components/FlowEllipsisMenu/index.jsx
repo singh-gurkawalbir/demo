@@ -1,4 +1,4 @@
-import { useCallback, useState, Fragment } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
@@ -19,6 +19,7 @@ import DetachIcon from '../icons/unLinkedIcon';
 import CalendarIcon from '../icons/CalendarIcon';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -29,13 +30,13 @@ const useStyles = makeStyles(theme => ({
 }));
 const allActions = {
   detach: { action: 'detach', label: 'Detach flow', Icon: DetachIcon },
-  clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
   schedule: { action: 'schedule', label: 'Schedule', Icon: CalendarIcon },
   mapping: { action: 'mapping', label: 'Edit mapping', Icon: MappingIcon },
   audit: { action: 'audit', label: 'View audit log', Icon: AuditIcon },
-  references: { action: 'references', label: 'View references', Icon: RefIcon },
+  references: { action: 'references', label: 'Used by', Icon: RefIcon },
   download: { action: 'download', label: 'Download flow', Icon: DownloadIcon },
-  delete: { action: 'delete', label: 'Delete', Icon: TrashIcon },
+  clone: { action: 'clone', label: 'Clone flow', Icon: CloneIcon },
+  delete: { action: 'delete', label: 'Delete flow', Icon: TrashIcon },
 };
 
 export default function FlowEllipsisMenu({ flowId, exclude }) {
@@ -53,7 +54,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     },
     [dispatch, flowId]
   );
-  const { defaultConfirmDialog } = useConfirmDialog();
+  const { confirmDialog } = useConfirmDialog();
+
   const integrationId = flowDetails._integrationId;
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
@@ -97,58 +99,84 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
     setAnchorEl(event.currentTarget);
   }, []);
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const flowName = flowDetails.name || flowDetails._id;
+
+  const deleteFlow = useCallback(() => {
+    dispatch(actions.resource.delete('flows', flowId));
+    // TODO: If this is re-used for IA flows, this route
+    // would not be the same if flow._connectorId had a value.
+    // Also note we want to replace vs push because a user may be
+    // sitting on a page with the deleted flowId in the url.
+    // we do not want a browser history to contain the deleted flow id.
+    history.replace(getRoutePath(`/integrations/${integrationId || 'none'}`));
+  }, [dispatch, history, integrationId, flowId]);
+
+  const detachFlow = useCallback(() => {
+    patchFlow('/_integrationId', undefined);
+  }, [patchFlow]);
   const handleActionClick = useCallback(
     action => () => {
       switch (action) {
         case 'detach':
-          defaultConfirmDialog(
-            `detach ${flowName} from this integration?`,
-            () => {
-              patchFlow('/_integrationId', undefined);
-            }
-          );
+          confirmDialog({
+            title: 'Confirm detach',
+            message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
+            buttons: [
+              {
+                label: 'Detach',
+                onClick: detachFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
+              },
+            ],
+          });
           break;
 
         case 'schedule':
           if (flowDetails._connectorId) {
             history.push(
-              `/pg/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           } else if (templateName) {
             history.push(
-              `/pg/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/templates/${templateName}/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           } else {
             history.push(
-              `/pg/integrations/${integrationId}/flowBuilder/${flowId}/schedule`
+              getRoutePath(`/integrations/${integrationId}/flowBuilder/${flowId}/schedule`)
             );
           }
 
           break;
 
         case 'clone':
-          history.push(`/pg/clone/flows/${flowId}/preview`);
+          history.push(getRoutePath(`/clone/flows/${flowId}/preview`));
           break;
 
         case 'delete':
-          defaultConfirmDialog('delete this flow?', () => {
-            dispatch(actions.resource.delete('flows', flowId));
-            // TODO: If this is re-used for IA flows, this route
-            // would not be the same if flow._connectorId had a value.
-            // Also note we want to replace vs push because a user may be
-            // sitting on a page with the deleted flowId in the url.
-            // we do not want a browser history to contain the deleted flow id.
-            history.replace(`/pg/integrations/${integrationId || 'none'}`);
+          confirmDialog({
+            title: 'Confirm delete',
+            message: 'Are you sure you want to delete this flow?',
+            buttons: [
+              {
+                label: 'Delete',
+                onClick: deleteFlow,
+              },
+              {
+                label: 'Cancel',
+                color: 'secondary',
+              },
+            ],
           });
           break;
 
         case 'mapping':
-          if (flowDetails.showUtilityMapping)
+          if (flowDetails.showUtilityMapping) {
             history.push(
               `${history.location.pathname}/${flowId}/utilitymapping/commonAttributes`
             );
-          else history.push(`${history.location.pathname}/${flowId}/mapping`);
+          } else history.push(`${history.location.pathname}/${flowId}/mapping`);
 
           break;
 
@@ -175,8 +203,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       setAnchorEl(null);
     },
     [
-      defaultConfirmDialog,
-      flowName,
+      confirmDialog,
       flowDetails._connectorId,
       flowDetails.showUtilityMapping,
       history,
@@ -185,28 +212,28 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
       flowId,
       templateName,
       dispatch,
-      patchFlow,
+      deleteFlow,
+      detachFlow,
     ]
   );
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
   let availableActions = [];
 
-  if (integrationId && permission.detach)
-    availableActions.push(allActions.detach);
-
-  if (!flowDetails._connectorId || flowDetails.showMapping)
+  if (!flowDetails._connectorId || flowDetails.showMapping) {
     availableActions.push(allActions.mapping);
+  }
 
   if (flowDetails.showSchedule) availableActions.push(allActions.schedule);
 
   availableActions.push(allActions.audit);
   availableActions.push(allActions.references);
 
-  if (permission.clone) availableActions.push(allActions.clone);
-
   availableActions.push(allActions.download);
-
+  if (permission.clone) availableActions.push(allActions.clone);
+  if (integrationId && permission.detach) {
+    availableActions.push(allActions.detach);
+  }
   if (permission.delete) availableActions.push(allActions.delete);
 
   // remove any actions that have explicitly been excluded.
@@ -217,7 +244,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
   }
 
   return (
-    <Fragment>
+    <>
       <IconButton
         data-test="openActionsMenu"
         aria-label="more"
@@ -260,6 +287,6 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
           onClose={() => setShowReferences(false)}
         />
       )}
-    </Fragment>
+    </>
   );
 }

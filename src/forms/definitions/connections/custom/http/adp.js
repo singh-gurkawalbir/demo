@@ -83,6 +83,9 @@ export default {
       inputType: 'password',
       helpKey: 'adp.connection.http.encrypted.clientSecret',
     },
+    application: {
+      fieldId: 'application',
+    },
     'http.clientCertificates.cert': {
       fieldId: 'http.clientCertificates.cert',
       label: 'SSL certificate',
@@ -104,18 +107,18 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'accType',
-      'http.unencrypted.clientId',
-      'http.encrypted.clientSecret',
-      'http.clientCertificates.cert',
-      'http.clientCertificates.key',
-      'http.clientCertificates.passphrase',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['accType',
+          'http.unencrypted.clientId',
+          'http.encrypted.clientSecret',
+          'http.clientCertificates.cert',
+          'http.clientCertificates.key',
+          'http.clientCertificates.passphrase'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -1,4 +1,4 @@
-import { Fragment, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -23,14 +23,13 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
   },
   currentContainer: {
-    marginBottom: 5,
-    fontSize: 15,
-    color: theme.palette.text.hint,
-    fontFamily: 'Roboto400',
+    fontSize: 13,
+    color: theme.palette.secondary.light,
+    fontFamily: 'source sans pro',
     padding: 0,
-    marginTop: 5,
     '& svg': {
       color: theme.palette.secondary.light,
+      marginLeft: theme.spacing(0.5),
     },
     '&:hover': {
       background: 'none',
@@ -40,11 +39,17 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-  popper: {
-    maxWidth: '250px',
+  accountListPopper: {
+    maxWidth: 250,
+    left: '124px !important',
+    top: '5px !important',
+  },
+  accountListPopperArrow: {
+    left: '110px !important',
   },
   itemContainer: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    maxWidth: 248,
     '& button': {
       minWidth: 0,
       display: 'none',
@@ -55,6 +60,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&:hover': {
       background: theme.palette.background.paper2,
+      '&:first-child': {
+        borderRadius: [0, 4, 4, 0],
+      },
+      '&:last-child': {
+        borderRadius: [0, 4, 4, 0],
+      },
     },
     '&:last-child': {
       border: 'none',
@@ -96,6 +107,11 @@ const useStyles = makeStyles(theme => ({
   listWrapper: {
     minWidth: 250,
   },
+  itemRootName: {
+    margin: 0,
+    fontSize: 15,
+    lineHeight: '18px',
+  },
 }));
 
 export default function AccountList() {
@@ -131,16 +147,11 @@ export default function AccountList() {
     account => {
       handleClose();
       confirmDialog({
-        title: 'Leave Account',
-        // eslint-disable-next-line prettier/prettier
-      message: `By leaving the account "${account.company}", 
-        you will no longer have access to the account or any of the integrations within the account.`,
+        title: 'Confirm leave',
+        message: 'Are you sure you want to leave this account? You will no longer have access to the account after you leave.',
         buttons: [
           {
-            label: 'Cancel',
-          },
-          {
-            label: 'Yes',
+            label: 'Leave',
             onClick: () => {
               if (userPreferences.defaultAShareId === account.id) {
                 history.push(getRoutePath('/'));
@@ -148,6 +159,10 @@ export default function AccountList() {
 
               dispatch(actions.user.org.accounts.leave(account.id));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });
@@ -169,7 +184,7 @@ export default function AccountList() {
   const selectedAccount = accounts.find(a => a.selected);
 
   return (
-    <Fragment>
+    <>
       <IconTextButton
         onClick={handleMenu}
         variant="text"
@@ -183,9 +198,12 @@ export default function AccountList() {
 
       <ArrowPopper
         id="accountList"
-        className={classes.popper}
         open={open}
         anchorEl={anchorEl}
+        classes={{
+          popper: classes.accountListPopper,
+          arrow: classes.accountListPopperArrow
+        }}
         placement="bottom-end"
         onClose={handleClose}>
         <List dense className={classes.listWrapper}>
@@ -203,7 +221,7 @@ export default function AccountList() {
                 container: classes.itemContainer,
               }}
               key={a.id}>
-              <ListItemText>{a.company}</ListItemText>
+              <ListItemText className={classes.itemRootName}>{a.company}</ListItemText>
               {a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
                   <Button
@@ -222,6 +240,6 @@ export default function AccountList() {
           ))}
         </List>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

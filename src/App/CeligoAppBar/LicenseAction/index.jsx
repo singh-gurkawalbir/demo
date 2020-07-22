@@ -21,21 +21,21 @@ export default function LicenseAction() {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(
-    state => selectors.integratorLicenseActionDetails(state),
+    state => selectors.platformLicenseActionDetails(state),
     (left, right) =>
       left.action === right.action &&
       left.label === right.label &&
       left.upgradeRequested === right.upgradeRequested
   );
-  const integratorLicenseActionMessage = useSelector(state =>
-    selectors.integratorLicenseActionMessage(state)
+  const platformLicenseActionMessage = useSelector(state =>
+    selectors.platformLicenseActionMessage(state)
   );
 
   useEffect(() => {
-    if (integratorLicenseActionMessage) {
-      enquesnackbar({ message: integratorLicenseActionMessage });
+    if (platformLicenseActionMessage) {
+      enquesnackbar({ message: platformLicenseActionMessage });
     }
-  }, [enquesnackbar, integratorLicenseActionMessage]);
+  }, [enquesnackbar, platformLicenseActionMessage]);
   const canRequestUpgrade = useSelector(
     state =>
       selectors.resourcePermissions(state, 'subscriptions').requestUpgrade

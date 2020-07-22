@@ -7,7 +7,7 @@ import { isPageGeneratorResource } from './flows';
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
-  asyncHelpers: 'Async helpers',
+  asyncHelpers: 'Async helper',
   connections: 'Connection',
   connectors: 'Integration app',
   exports: 'Export',
@@ -24,6 +24,7 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   connectorLicenses: 'License',
   pageGenerator: 'Source',
   pageProcessor: 'Destination / lookup',
+  apis: 'My API',
 });
 
 /**
@@ -121,6 +122,14 @@ export const adaptorTypeMap = {
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
 };
+
+export const multiStepSaveResourceTypes = [
+  'imports',
+  'exports',
+  'connections',
+  'pageGenerator',
+  'pageProcessor',
+];
 
 const inferResourceType = adaptorType => {
   if (!adaptorType) return 'connections';
@@ -370,7 +379,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
   let toReturn = false;
   let filteredConnectors = [];
-  const supportBaseUrl = 'http://support.integrator.io/hc/en-us/categories/';
+  const supportBaseUrl = 'https://celigosuccess.zendesk.com/hc/en-us/categories/';
   let connectorToCategoryMap = {};
 
   if (domain === 'localhost.io') {
@@ -490,11 +499,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   return helpUrl;
 };
 
-export const getUniversityUrl = () => {
-  const domainUrl = getDomainUrl();
-
-  return `${domainUrl}/litmos/sso`;
-};
+export const getUniversityUrl = '/litmos/sso';
 
 export const getNetSuiteSubrecordLabel = (fieldId, subrecordType) => {
   const subrecordLabelMap = {
@@ -713,3 +718,29 @@ export const isOauth = connectionDoc =>
     (connectionDoc.salesforce && connectionDoc.salesforce.oauth2FlowType) ||
     (connectionDoc.netsuite &&
       connectionDoc.netsuite.authType === 'token-auto'));
+
+export function getConnectionType(resource) {
+  const { assistant, type } = getResourceSubType(resource);
+
+  if (['acumatica', 'shopify'].includes(assistant)) {
+    if (
+      resource.http &&
+      resource.http.auth &&
+      resource.http.auth.type === 'oauth'
+    ) {
+      return `${assistant}-oauth`;
+    }
+
+    return '';
+  }
+
+  if (assistant) return assistant;
+
+  if (resource?.type === 'netsuite') {
+    if (resource?.netsuite?.authType === 'token-auto') {
+      return 'netsuite-oauth';
+    }
+  }
+
+  return type;
+}

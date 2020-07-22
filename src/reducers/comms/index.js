@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux';
 import networkComms, * as fromNetworkComms from './networkComms';
 import ping, * as fromPing from './ping';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 
 export default combineReducers({
   networkComms,
   ping,
+  suiteScript,
 });
 
 export function testConnectionStatus(state, resourceId) {
@@ -52,10 +54,26 @@ export function retryCount(state, resourceName) {
   return fromNetworkComms.retryCount(state && state.networkComms, resourceName);
 }
 
-export function allLoadingOrErrored(state) {
-  return fromNetworkComms.allLoadingOrErrored(state && state.networkComms);
+export function suiteScriptTestConnectionStatus(
+  state,
+  resourceId,
+  ssLinkedConnectionId
+) {
+  return fromSuiteScript.testConnectionStatus(
+    state && state.suiteScript,
+    resourceId,
+    ssLinkedConnectionId
+  );
 }
 
-export function isLoadingAnyResource(state) {
-  return fromNetworkComms.isLoadingAnyResource(state && state.networkComms);
+export function suiteScriptTestConnectionMessage(
+  state,
+  resourceId,
+  ssLinkedConnectionId
+) {
+  return fromSuiteScript.testConnectionMessage(
+    state && state.suiteScript,
+    resourceId,
+    ssLinkedConnectionId
+  );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -14,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditLogSection({ integrationId }) {
+export default function AuditLogSection({ integrationId, childId }) {
   const infoTextAuditLog =
     'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
   const classes = useStyles();
@@ -23,7 +24,7 @@ export default function AuditLogSection({ integrationId }) {
     <div className={classes.root}>
       <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
       <div className={classes.AuditLogWrapper}>
-        <AuditLog resourceType="integrations" resourceId={integrationId} />
+        <AuditLog resourceType="integrations" resourceId={childId || integrationId} />
       </div>
     </div>
   );

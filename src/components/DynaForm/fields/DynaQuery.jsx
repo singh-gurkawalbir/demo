@@ -1,6 +1,6 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 import DynaText from './DynaText';
 
 /**
@@ -17,19 +17,17 @@ export default function DynaQuery(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
   };
 
   return (
-    <Fragment>
-      <DynaText label={label} value={value} disabled multiline />
+    <>
+      <DynaText {...props} disabled multiline />
       {showEditor && (
         <SqlQueryBuilderEditorDialog
           title="Lookups"
@@ -37,7 +35,8 @@ export default function DynaQuery(props) {
           id={`lookupQueryBuilder-${id}`}
           rule={value || defaultQueryValue}
           sampleData={sampleData}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           disabled={disabled}
           showDefaultData={false}
         />
@@ -49,6 +48,6 @@ export default function DynaQuery(props) {
         onClick={handleEditorClick}>
         Define {label}
       </Button>
-    </Fragment>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import fields from './fields';
 
 const wrapper = {
@@ -11,7 +12,7 @@ const fieldStyle = {
   width: '100%',
 };
 
-function getRenderer(formKey, resourceId, resourceType) {
+function getRenderer(formKey, resourceId, resourceType, proceedOnChange) {
   return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
     const { fieldState: field, ...rest } = props;
@@ -25,13 +26,13 @@ function getRenderer(formKey, resourceId, resourceType) {
     }
 
     return (
-      /* TODO: Dave. refactor to allow useClasses...
-         Unable to add class in the makestyle because it is throwing and error that this 
+    /* TODO: Dave. refactor to allow useClasses...
+         Unable to add class in the makestyle because it is throwing and error that this
          function is not a react function neither hook so added inline. */
 
       <div key={fid} style={wrapper}>
         <div style={fieldStyle}>
-          <DynaField {...rest} {...field} resourceContext={context} />
+          <DynaField {...rest} {...field} resourceContext={context} proceedOnChange={proceedOnChange} />
         </div>
       </div>
     );

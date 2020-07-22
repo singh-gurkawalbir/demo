@@ -1,7 +1,7 @@
 import { select, call } from 'redux-saga/effects';
 import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
 import { saveSampleDataOnResource } from './utils';
-import { isJsonString } from '../../../utils/string';
+import { safeParse } from '../../../utils/string';
 
 function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   // Incase of FTP, raw data to be saved in the data in Raw Stage ( file content )
@@ -12,7 +12,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
-  // For file types csv, xml -  file content is fetched from raw stage
+  // For file types csv, xml, json -  file content is fetched from raw stage
   let stage = 'raw';
 
   /*
@@ -25,9 +25,9 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     // For xlsx file type csv content is stored in 'csv' stage of sample data
     stage = 'csv';
   }
-
-  if (resourceObj.file.type === 'json') {
-    // For JSON file type parsed json content in stored in 'parse' stage of sample data
+  if (resourceObj.file.type === 'json' && type === 'imports') {
+    // For json file, in imports we expect data to be parsed before saving - as in Ampersand
+    // TODO @Raghu: Revisit this after release, as ampersand app is going to be deprecated
     stage = 'parse';
   }
 
@@ -42,11 +42,11 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
     const fileDefinitionData = rawData && rawData.body;
 
     return type === 'imports'
-      ? isJsonString(fileDefinitionData) && JSON.parse(fileDefinitionData)
+      ? safeParse(fileDefinitionData)
       : fileDefinitionData;
   }
 
-  return rawData && rawData.body;
+  return stage === 'parse' ? rawData : rawData?.body;
 }
 
 export default function* saveRawDataForFileAdaptors({
@@ -59,8 +59,9 @@ export default function* saveRawDataForFileAdaptors({
     tempResourceId,
     type,
   });
-
-  if (rawData) {
+  // Updated this to check for undefined... as there is a case where user can upload empty file
+  // In which case , we get rawData as '' which is falsy too
+  if (rawData !== undefined) {
     // Raw data is saved as 'sampleData' field in resourceDoc for imports and exports
     return yield call(saveSampleDataOnResource, {
       resourceId,

@@ -1,22 +1,14 @@
 /*
- TODO: 
+ TODO:
  This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
  As of now this is not a drawer, but a standalone page.
 */
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Typography,
-  IconButton,
-  Grid,
-  Paper,
-  Breadcrumbs,
-  Button,
-} from '@material-ui/core';
-import ArrowBackIcon from '../../../../../components/icons/ArrowLeftIcon';
-import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
+import { Typography, Link } from '@material-ui/core';
+import differenceBy from 'lodash/differenceBy';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import LoadResources from '../../../../../components/LoadResources';
@@ -29,13 +21,19 @@ import Spinner from '../../../../../components/Spinner';
 import Loader from '../../../../../components/Loader';
 import getRoutePath from '../../../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import IconTextButton from '../../../../../components/IconTextButton';
+import CloseIcon from '../../../../../components/icons/CloseIcon';
+import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(2),
-    flexGrow: 1,
-    width: '100%',
-    padding: '10px 25px',
+  installIntegrationWrapper: {
+    padding: theme.spacing(2, 3),
+  },
+  installIntegrationWrapperContent: {
+    maxWidth: 750,
+  },
+  message: {
+    marginBottom: theme.spacing(2),
   },
   formHead: {
     borderBottom: `solid 1px ${theme.palette.secondary.lightest}`,
@@ -51,6 +49,13 @@ const useStyles = makeStyles(theme => ({
   paper: {
     padding: theme.spacing(1, 2),
     background: theme.palette.background.default,
+  },
+  installIntegrationSteps: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  noIntegrationMsg: {
+    padding: theme.spacing(3),
   },
 }));
 const getConnectionType = resource => {
@@ -73,11 +78,13 @@ export default function IntegrationAppAddNewStore(props) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
+  const [initialStores] = useState(integration.stores);
   const showUninstall = !!(
     integration &&
     integration.settings &&
     integration.settings.defaultSectionId
   );
+  const integrationStores = integration?.stores;
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const { steps: addNewStoreSteps, error } = useSelector(state =>
     selectors.addNewStoreSteps(state, integrationId)
@@ -108,23 +115,34 @@ export default function IntegrationAppAddNewStore(props) {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      let childId;
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('imports'));
       dispatch(actions.resource.requestCollection('connections'));
-      props.history.push(
-        `/pg/integrationapps/${integrationAppName}/${integrationId}/flows`
-      );
+      if (integrationStores.length > initialStores.length) {
+        const newStore = differenceBy(integrationStores, initialStores, 'value');
+        childId = newStore?.length && newStore[0].value;
+      }
+      if (childId) {
+        props.history.push(
+          getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows`)
+        );
+      } else {
+        props.history.push(
+          getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
+        );
+      }
     }
-  }, [
-    dispatch,
+  }, [dispatch,
+    initialStores,
+    integrationStores,
     integrationAppName,
     integrationId,
     isSetupComplete,
-    props.history,
-  ]);
+    props.history]);
 
   if (error) {
     history.push(
@@ -140,7 +158,7 @@ export default function IntegrationAppAddNewStore(props) {
     return (
       <Loader open>
         <Spinner color="primary" />
-        <Typography variant="h5">Loading installation steps</Typography>
+        <Typography variant="h5">Loading</Typography>
       </Loader>
     );
   }
@@ -203,10 +221,6 @@ export default function IntegrationAppAddNewStore(props) {
     }
   };
 
-  const handleBackClick = () => {
-    props.history.goBack();
-  };
-
   const handleSubmitComplete = (connId, isAuthorized) => {
     const step = addNewStoreSteps.find(s => s.isCurrentStep);
 
@@ -249,6 +263,25 @@ export default function IntegrationAppAddNewStore(props) {
 
   return (
     <LoadResources required resources={['integrations', 'connections']}>
+      <CeligoPageBar
+        title={`Add new ${integration?.settings?.storeLabel || 'child'}`}
+        // Todo: (Mounika) please add the helpText
+        // infoText="we need to have the help text for the following."
+        >
+        <div className={classes.actions}>
+          {showUninstall && (
+            <IconTextButton
+              data-test="uninstall"
+              component={Link}
+              variant="text"
+              onClick={handleUninstall}
+              color="primary">
+              <CloseIcon />
+              Uninstall
+            </IconTextButton>
+          )}
+        </div>
+      </CeligoPageBar>
       {selectedConnectionId && (
         <ResourceSetupDrawer
           resourceId={selectedConnectionId}
@@ -257,42 +290,14 @@ export default function IntegrationAppAddNewStore(props) {
           onSubmitComplete={handleSubmitComplete}
         />
       )}
-      <div className={classes.root}>
-        <div className={classes.innerContent}>
-          <Grid container className={classes.formHead}>
-            <Grid item xs={1}>
-              <IconButton
-                data-test="back"
-                onClick={handleBackClick}
-                size="medium">
-                <ArrowBackIcon fontSize="inherit" />
-              </IconButton>
-            </Grid>
+      <div className={classes.installIntegrationWrapper}>
+        <div className={classes.installIntegrationWrapperContent}>
 
-            <Grid item xs>
-              <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs
-                  separator={<ArrowRightIcon />}
-                  aria-label="breadcrumb">
-                  <Typography color="textPrimary">Add new store</Typography>
-                  <Typography color="textPrimary">
-                    {integration.name}
-                  </Typography>
-                </Breadcrumbs>
-              </Paper>
-            </Grid>
-            {showUninstall && (
-              <Grid item xs={1} className={classes.floatRight}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleUninstall}>
-                  Uninstall
-                </Button>
-              </Grid>
-            )}
-          </Grid>
-          <Grid container spacing={3} className={classes.stepTable}>
+          <Typography>
+            {`Complete the below steps to add new ${integration?.settings?.storeLabel || 'child'}.`}
+          </Typography>
+
+          <div className={classes.installIntegrationSteps}>
             {addNewStoreSteps.map((step, index) => (
               <InstallationStep
                 key={step.name}
@@ -301,7 +306,7 @@ export default function IntegrationAppAddNewStore(props) {
                 step={step}
               />
             ))}
-          </Grid>
+          </div>
         </div>
       </div>
     </LoadResources>

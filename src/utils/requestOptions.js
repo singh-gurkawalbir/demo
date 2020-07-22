@@ -155,7 +155,7 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RESOLVE_COMMIT:
       return {
-        path: resourceId ? `/jobs/${resourceId}/resolve` : `/jobs/resolve`,
+        path: resourceId ? `/jobs/${resourceId}/resolve` : '/jobs/resolve',
         opts: { method: 'PUT' },
       };
     case actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT:
@@ -170,7 +170,7 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RETRY_COMMIT:
       return {
-        path: resourceId ? `/jobs/${resourceId}/retry` : `/jobs/retry`,
+        path: resourceId ? `/jobs/${resourceId}/retry` : '/jobs/retry',
         opts: { method: resourceId ? 'POST' : 'PUT' },
       };
     case actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT:
@@ -247,9 +247,36 @@ export default function getRequestOptions(
       };
     case actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST:
       return {
-        path: `/numEnabledFlows`,
+        path: '/numEnabledFlows',
         opts: { method: 'GET' },
       };
+    case actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST:
+      return {
+        path: '/licenseEntitlementUsage',
+        opts: { method: 'GET' },
+      };
+
+    case actionTypes.SUITESCRIPT.JOB.REQUEST_COLLECTION: {
+      const qs = [];
+      const {
+        ssLinkedConnectionId,
+        integrationId,
+        ...restOfTheFilters
+      } = filters;
+
+      Object.keys(restOfTheFilters).forEach(k => {
+        if (filters[k]) {
+          qs.push(`${k}=${encodeURIComponent(filters[k])}`);
+        }
+      });
+
+      return {
+        path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs?${qs.join(
+          '&'
+        )}`,
+        opts: { method: 'GET' },
+      };
+    }
 
     default:
       return {};

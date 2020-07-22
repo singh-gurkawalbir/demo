@@ -37,6 +37,7 @@ export default {
     common: {
       formId: 'common',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
     'mongodb.document': {
       fieldId: 'mongodb.document',
     },
@@ -70,17 +71,6 @@ export default {
     'mongodb.upsert': {
       fieldId: 'mongodb.upsert',
     },
-    ignoreMissing: {
-      fieldId: 'ignoreMissing',
-      type: 'checkboxforresetfields',
-      fieldsToReset: [{ id: 'mongodb.upsert', type: 'checkbox' }],
-      visibleWhen: [
-        {
-          field: 'mongodb.method',
-          is: ['updateOne'],
-        },
-      ],
-    },
     'mongodb.ignoreExtract': {
       fieldId: 'mongodb.ignoreExtract',
     },
@@ -89,26 +79,33 @@ export default {
     },
   },
   layout: {
-    fields: ['common'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'How would you like the data imported?',
+        label: 'General',
+        fields: ['common', 'dataMappings'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like the records imported?',
         fields: [
           'mongodb.method',
           'mongodb.collection',
+          'mongodb.filter',
+          'mongodb.document',
           'ignoreExisting',
           'mongodb.lookupType',
-          'mongodb.ignoreLookupFilter',
-          'mongodb.filter',
-          'mongodb.upsert',
-          'ignoreMissing',
           'mongodb.ignoreExtract',
-          'mongodb.document',
+          'mongodb.ignoreLookupFilter',
           'mongodb.update',
-          'dataMappings',
+          'mongodb.upsert',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['apiIdentifier'],
       },
     ],
   },

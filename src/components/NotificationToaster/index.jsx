@@ -93,12 +93,12 @@ const useStyles = makeStyles(theme => ({
   message: {
     display: 'flex',
     alignItems: 'center',
-    color: theme.palette.text.primary,
+    color: theme.palette.secondary.main,
   },
   actionButton: {
     padding: 0,
     '& svg': {
-      color: theme.palette.text.primary,
+      color: theme.palette.secondary.main,
     },
   },
 }));
@@ -112,7 +112,7 @@ const variantIcon = {
 /**
  * props.fullWidth : set to true for full width notification.
  */
-function NotificationToaster(props) {
+export default function NotificationToaster(props) {
   const classes = useStyles(props);
   const {
     className,
@@ -161,5 +161,3 @@ function NotificationToaster(props) {
     </div>
   );
 }
-
-export default NotificationToaster;

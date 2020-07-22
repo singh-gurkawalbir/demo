@@ -1,13 +1,13 @@
-import { Fragment, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import CronBuilder from '../../CronBuilder';
 import DynaText from './DynaText';
-import CancelIcon from '../../icons/CancelIcon';
-import ActionButton from '../../ActionButton';
+
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   field: {
     width: '100%',
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   resetBtn: {
     marginLeft: theme.spacing(1),
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(4),
+    marginTop: 28,
   },
 }));
 
@@ -30,10 +30,10 @@ export default function DynaCronGenerator(props) {
   );
 
   return (
-    <Fragment>
+    <>
       <div className={classes.wrapper}>
         <DynaText className={classes.field} {...props} disabled />
-        <ActionButton
+        <Button
           variant="outlined"
           color="secondary"
           className={classes.resetBtn}
@@ -41,8 +41,8 @@ export default function DynaCronGenerator(props) {
             setReset(true);
             onChange('');
           }}>
-          <CancelIcon />
-        </ActionButton>
+          Reset
+        </Button>
       </div>
       <CronBuilder
         reset={reset}
@@ -50,6 +50,6 @@ export default function DynaCronGenerator(props) {
         value={value}
         onChange={onChange}
       />
-    </Fragment>
+    </>
   );
 }

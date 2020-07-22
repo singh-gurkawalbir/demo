@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from './DynaSelect';
 import * as selectors from '../../../reducers/index';
@@ -31,9 +31,8 @@ export default function DynaNetsuiteUserRolesOptions(props) {
       acc
     )
   );
-  const { optionsArr } = netSuiteUserRoles;
-  const matchingOption =
-    optionsArr && optionsArr.find(ele => ele.value === value);
+  const { optionsArr, userRoles } = netSuiteUserRoles;
+  const matchingOption = optionsArr?.find(ele => ele.value === value);
   const [autofill, setAutofill] = useState(false);
 
   useEffect(() => {
@@ -81,6 +80,11 @@ export default function DynaNetsuiteUserRolesOptions(props) {
       );
     }
   };
+
+  // we dont want to show the fields unless the connection is validated
+  if (!userRoles) {
+    return null;
+  }
 
   return (
     <MaterialUiSelect

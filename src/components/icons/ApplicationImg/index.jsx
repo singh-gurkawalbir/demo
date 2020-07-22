@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { map } from 'lodash';
 import clsx from 'clsx';
@@ -44,8 +45,8 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';
 
-  // remove all whitespaces
-  return type.replace(/\s/g, '');
+  // remove all whitespaces and dots
+  return type.replace(/\.|\s/g, '');
 }
 
 export default function ApplicationImg({

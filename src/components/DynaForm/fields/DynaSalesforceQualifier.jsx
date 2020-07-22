@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
   },
   dynaSalesforceQualifierWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   textField: {
     width: '100%',
@@ -51,26 +51,25 @@ export default function DynaSalesforceQualifier(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, rule);
     }
-
-    handleEditorClick();
   };
 
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
       {showEditor && (
         <SalesforceEditorDialog
-          title="Qualification Criteria"
+          title="Field specific qualification criteria"
           id={id}
           value={value}
           resourceId={resourceId}
           flowId={flowId}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />

@@ -1,9 +1,8 @@
-import { Fragment, useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
@@ -12,15 +11,15 @@ function ResponseTransformationDialog(props) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { responseTransform } = resource;
-  const { status, data: sampleResponseData } = useSelector(state =>
-    selectors.getSampleDataWrapper(state, {
-      flowId,
-      resourceId,
-      resourceType: 'imports',
-      stage: 'sampleResponse',
-    })
-  );
-  const { type, rule, scriptId, entryFunction } = useMemo(() => {
+  const { status, data: sampleResponseData } = useSelector((state) => selectors.getSampleDataWrapper(state, {
+    flowId,
+    resourceId,
+    resourceType: 'imports',
+    stage: 'sampleResponse',
+  }));
+  const {
+    type, rule, scriptId, entryFunction,
+  } = useMemo(() => {
     const { type, script = {}, expression = {} } = responseTransform || {};
 
     return {
@@ -36,7 +35,7 @@ function ResponseTransformationDialog(props) {
       resourceId,
       resourceType: 'imports',
     }),
-    [resourceId]
+    [resourceId],
   );
 
   useEffect(() => {
@@ -46,8 +45,8 @@ function ResponseTransformationDialog(props) {
           flowId,
           resourceId,
           'imports',
-          'sampleResponse'
-        )
+          'sampleResponse',
+        ),
       );
     }
   }, [dispatch, flowId, resourceId, status]);
@@ -73,7 +72,7 @@ function ResponseTransformation(props) {
   const { open } = props;
 
   return (
-    <Fragment>{open && <ResponseTransformationDialog {...props} />}</Fragment>
+    <>{open && <ResponseTransformationDialog {...props} />}</>
   );
 }
 
@@ -82,6 +81,6 @@ export default {
   name: 'responseTransformation',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.imports.transform'],
+  helpKey: 'fb.pp.imports.transform',
   Component: ResponseTransformation,
 };

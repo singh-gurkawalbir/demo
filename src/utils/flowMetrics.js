@@ -19,9 +19,11 @@ export const getDurationLabel = (ranges = []) => {
     case '1 day':
       if (startDate.toISOString() === startOfToday.toISOString()) {
         return 'Today';
-      } else if (startDate.toISOString() === startOfYesterday.toISOString()) {
+      }
+      if (startDate.toISOString() === startOfYesterday.toISOString()) {
         return 'Yesterday';
-      } else if (
+      }
+      if (
         distanceInHours === '24 hours' &&
         isSameDay(addDays(new Date(), -1), startDate) &&
         isSameDay(new Date(), endDate)

@@ -18,7 +18,7 @@ export default {
         {
           items: [
             { label: 'Cloud', value: 'cloud' },
-            { label: 'On-Premise', value: 'onpremise' },
+            { label: 'On-premise', value: 'onpremise' },
           ],
         },
       ],
@@ -30,27 +30,40 @@ export default {
     'mongodb.host': { fieldId: 'mongodb.host' },
     'mongodb.database': { fieldId: 'mongodb.database' },
     'mongodb.username': { fieldId: 'mongodb.username' },
-
     'mongodb.password': { fieldId: 'mongodb.password' },
     'mongodb.replicaSet': { fieldId: 'mongodb.replicaSet' },
     'mongodb.ssl': { fieldId: 'mongodb.ssl' },
     'mongodb.authSource': { fieldId: 'mongodb.authSource' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'mode',
-      '_agentId',
-      'mongodb.host',
-      'mongodb.database',
-      'mongodb.username',
-      'mongodb.password',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+          'mode',
+          '_agentId',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'mongodb.host',
+          'mongodb.database',
+          'mongodb.username',
+          'mongodb.password',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: ['mongodb.replicaSet', 'mongodb.ssl', 'mongodb.authSource'],
       },
     ],

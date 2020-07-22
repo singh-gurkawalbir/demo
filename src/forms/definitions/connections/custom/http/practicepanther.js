@@ -5,7 +5,7 @@ export default {
     '/assistant': 'practicepanther',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://app.practicepanther.com/`,
+    '/http/baseURI': 'https://app.practicepanther.com/',
     '/http/auth/oauth/authURI':
       'https://app.practicepanther.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://app.practicepanther.com/oauth/token',
@@ -15,13 +15,16 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

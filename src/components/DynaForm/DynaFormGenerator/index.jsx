@@ -1,5 +1,5 @@
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useMemo } from 'react';
 import FormFragment from '../../Form/FormFragment';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
@@ -7,7 +7,11 @@ import {
   TabComponentSimple,
   TabComponentWithoutSave,
   TabIAComponent,
+  TabComponentWithoutSaveVertical,
+  SuiteScriptTabIACompleteSave
 } from './TabComponent';
+import IndentedComponents from './IndentedComponents';
+import BoxComponents from './BoxComponents';
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -62,9 +66,10 @@ const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap }) => {
 
 export default function FormGenerator(props) {
   const classes = useStyles();
+  const {layout, fieldMap, formKey} = props || {};
 
-  if (!props || !props.layout || !props.fieldMap) return null;
-  const { fieldMap, layout, formKey } = props;
+  if (!layout || !fieldMap) return null;
+
   const { fields, containers, type } = layout;
   const fieldsComponent = fields && (
     <FormFragmentWithDefaultFields
@@ -77,15 +82,24 @@ export default function FormGenerator(props) {
 
   if (type === 'collapse') {
     ConvertedContainer = CollapsedComponents;
+  } else if (type === 'box') {
+    ConvertedContainer = BoxComponents;
+  } else if (type === 'indent') {
+    ConvertedContainer = IndentedComponents;
   } else if (type === 'column') {
     ConvertedContainer = ColumnComponents;
   } else if (type === 'tabIA') {
     // Tab refers to IA settings tab...and each tab would have a save button that would only save that tabs values to IA
     ConvertedContainer = TabIAComponent;
+  } else if (type === 'suitScriptTabIA') {
+    // similar to tabIa behavior except used in suitescript
+    ConvertedContainer = SuiteScriptTabIACompleteSave;
   } else if (type === 'tab') {
     ConvertedContainer = TabComponentSimple;
   } else if (type === 'tabWithoutSave') {
     ConvertedContainer = TabComponentWithoutSave;
+  } else if (type === 'verticalTabWithoutSave') {
+    ConvertedContainer = TabComponentWithoutSaveVertical;
   } else {
     return (
       <div className={classes.fieldsContainer}>

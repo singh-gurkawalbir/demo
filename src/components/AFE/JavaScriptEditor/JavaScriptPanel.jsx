@@ -1,6 +1,5 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -8,11 +7,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
-import Spinner from '../../Spinner';
+import PanelLoader from '../../PanelLoader';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -104,16 +103,15 @@ export default function JavaScriptPanel(props) {
         fetchScriptContent: false,
       };
 
-      // check if initCode property existings in editor. If no, save a copy of copy as initCode for dirty checking
-      if (!('initCode' in editor)) patchObj.initCode = scriptContent;
+      // check if initCode property existings in editor. If no, save a copy of copy as _init_code for dirty checking
+      if (!('_init_code' in editor)) patchObj._init_code = scriptContent;
 
       patchEditor(patchObj);
     } else if (scriptContent === undefined && scriptId) {
       requestScript();
-    }
-    // case of scriptId selected as none
-    else if (scriptId === undefined && !('initCode' in editor)) {
-      patchEditor({ initCode: undefined });
+    } else if (scriptId === undefined && !('_init_code' in editor)) {
+      // case of scriptId selected as none
+      patchEditor({ _init_code: undefined });
     }
   }, [
     code,
@@ -161,8 +159,7 @@ export default function JavaScriptPanel(props) {
             className={classes.textField}
             value={entryFunction}
             onChange={event =>
-              patchEditor({ entryFunction: event.target.value })
-            }
+              patchEditor({ entryFunction: event.target.value })}
             label="Function"
             margin="dense"
           />
@@ -180,10 +177,9 @@ export default function JavaScriptPanel(props) {
         </div>
         <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
-            <Fragment>
-              <Typography>Retrieving your script</Typography>
-              <Spinner />
-            </Fragment>
+            // Removed retrieving message to make it consistent as we do not show specific messages
+            // pass message if need to show any
+            <PanelLoader />
           ) : (
             <CodePanel
               name="code"

@@ -22,6 +22,18 @@ export default {
     },
   },
   layout: {
-    fields: ['name', 'description', 'insertFunction', 'content'],
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: false,
+        label: 'General',
+        fields: ['name', 'description'],
+      },
+      {
+        collapsed: false,
+        label: 'Script content',
+        fields: ['insertFunction', 'content'],
+      }
+    ],
   },
 };

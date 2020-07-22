@@ -1,3 +1,4 @@
+import React from 'react';
 import produce from 'immer';
 import { makeStyles } from '@material-ui/core/styles';
 import DynaTableView from './DynaTable';
@@ -20,14 +21,14 @@ const optionsMap = [
   {
     id: 'startPosition',
     label: 'Start',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
   {
     id: 'endPosition',
     label: 'End',
-    required: true,
+    required: false,
     type: 'number',
     space: 1,
   },
@@ -40,7 +41,7 @@ const optionsMap = [
     space: 1,
   },
   {
-    id: 'regex',
+    id: 'regexExpression',
     label: 'Regex',
     required: false,
     type: 'input',
@@ -73,11 +74,10 @@ export default function DynaTrueFixedWidthColmnMapper({
   const onRowChange = (state, field, newValue) =>
     produce(state, draft => {
       if (
-        optionsMap.find(f => f.id === field && f.type === 'number') &&
-        // eslint-disable-next-line no-restricted-globals
-        !isNaN(newValue)
+        optionsMap.find(f => f.id === field && f.type === 'number')
       ) {
-        draft[field] = parseInt(newValue, 10);
+        // eslint-disable-next-line no-restricted-globals
+        draft[field] = isNaN(newValue) ? null : parseInt(newValue, 10);
       } else draft[field] = newValue;
 
       if (['startPosition', 'endPosition'].includes(field)) {
@@ -88,12 +88,14 @@ export default function DynaTrueFixedWidthColmnMapper({
     if (val && Array.isArray(val)) {
       onFieldChange(
         id,
-        val.map(({ fieldName, startPosition, endPosition, regex }) => ({
-          fieldName,
-          startPosition,
-          endPosition,
-          regex,
-        }))
+        val.map(
+          ({ fieldName, startPosition, endPosition, regexExpression }) => ({
+            fieldName,
+            startPosition: parseInt(startPosition, 10) === 'NaN' ? null : parseInt(startPosition, 10),
+            endPosition: parseInt(endPosition, 10) === 'NaN' ? null : parseInt(endPosition, 10),
+            regexExpression,
+          })
+        )
       );
     }
   };

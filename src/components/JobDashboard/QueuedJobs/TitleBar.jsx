@@ -1,11 +1,11 @@
 import { Divider, IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import BackArrowIcon from '../../../components/icons/BackArrowIcon';
-import CloseIcon from '../../../components/icons/CloseIcon';
-import LoadResources from '../../../components/LoadResources';
+import BackArrowIcon from '../../icons/BackArrowIcon';
+import CloseIcon from '../../icons/CloseIcon';
+import LoadResources from '../../LoadResources';
 import * as selectors from '../../../reducers';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';

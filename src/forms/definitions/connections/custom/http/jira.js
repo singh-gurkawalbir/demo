@@ -43,18 +43,21 @@ export default {
       label: 'API token',
       helpKey: 'jira.connection.http.auth.basic.password',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.baseURI',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.baseURI',
+          'http.auth.basic.username',
+          'http.auth.basic.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -50,6 +50,7 @@ import analyticsSagas from './analytics';
 import * as selectors from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { transferSagas } from './transfer';
+import { suiteScriptSagas } from './suiteScript';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
@@ -96,8 +97,6 @@ export function* apiCallWithRetry(args) {
     const { data } = apiResp.response;
 
     return data;
-  } catch (error) {
-    throw error;
   } finally {
     if (yield cancelled()) {
       // yield cancelled is true when the saga gets cancelled
@@ -107,8 +106,7 @@ export function* apiCallWithRetry(args) {
       const status = yield select(selectors.commStatusPerPath, path, method);
 
       // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS)
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
+      if (status !== COMM_STATES.SUCCESS) yield put(actions.api.complete(path, method, 'Request Aborted'));
     }
   }
 }
@@ -154,6 +152,7 @@ export default function* rootSaga() {
     ...transferSagas,
     ...mappingSagas,
     ...responseMappingSagas,
+    ...suiteScriptSagas,
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,

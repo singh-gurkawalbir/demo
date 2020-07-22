@@ -6,17 +6,19 @@ export default function* fetchMetadata({
   connectionId,
   commMetaPath,
   filterKey = 'raw',
+  refresh = false,
 }) {
   let metadata = yield select(getMetadataOptions, {
     connectionId,
     commMetaPath,
     filterKey,
   });
-
-  if (!metadata || !metadata.data) {
+  // Incase of refreshMode, fetch NS/SF metadata each time requested
+  if (refresh || !metadata || !metadata.data) {
     yield call(getNetsuiteOrSalesforceMeta, {
       connectionId,
       commMetaPath,
+      addInfo: { refreshCache: refresh}
     });
     metadata = yield select(getMetadataOptions, {
       connectionId,

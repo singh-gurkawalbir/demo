@@ -1,18 +1,37 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
-import Button from '@material-ui/core/Button';
+import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import SqlQueryBuilderEditorDialog from '../../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import FieldHelp from '../FieldHelp';
+
+
+const useStyles = makeStyles({
+  sqlContainer: {
+    width: '100%',
+  },
+  sqlBtn: {
+    maxWidth: 100,
+  },
+  sqlLabel: {
+    marginBottom: 6,
+  },
+  sqlLabelWrapper: {
+    display: 'flex',
+  }
+});
 
 export default function DynaSQLQueryBuilder(props) {
+  const classes = useStyles();
   const {
     id,
     onFieldChange,
@@ -173,7 +192,7 @@ export default function DynaSQLQueryBuilder(props) {
     setShowEditor(!showEditor);
   };
 
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template, defaultData } = editorValues;
 
@@ -202,8 +221,6 @@ export default function DynaSQLQueryBuilder(props) {
         }
       }
     }
-
-    handleEditorClick();
   };
 
   let lookupField;
@@ -223,31 +240,39 @@ export default function DynaSQLQueryBuilder(props) {
   }
 
   return (
-    <Fragment>
-      {showEditor && (
-        <SqlQueryBuilderEditorDialog
-          key={changeIdentifier}
-          title={title}
-          id={`${resourceId}-${id}`}
-          rule={parsedRule}
-          lookups={lookups}
-          sampleData={formattedSampleData}
-          defaultData={formattedDefaultData}
-          onFieldChange={onFieldChange}
-          onClose={handleClose}
-          action={lookupField}
-          disabled={disabled}
-          showDefaultData={!hideDefaultData}
-          ruleTitle={ruleTitle}
-        />
-      )}
-      <Button
-        data-test={id}
-        variant="outlined"
-        color="secondary"
-        onClick={handleEditorClick}>
-        {label}
-      </Button>
-    </Fragment>
+    <>
+      <div className={classes.sqlContainer}>
+        {showEditor && (
+          <SqlQueryBuilderEditorDialog
+            key={changeIdentifier}
+            title={title}
+            id={`${resourceId}-${id}`}
+            rule={parsedRule}
+            lookups={lookups}
+            sampleData={formattedSampleData}
+            defaultData={formattedDefaultData}
+            onFieldChange={onFieldChange}
+            onSave={handleSave}
+            onClose={handleEditorClick}
+            action={lookupField}
+            disabled={disabled}
+            showDefaultData={!hideDefaultData}
+            ruleTitle={ruleTitle}
+          />
+        )}
+        <div className={classes.sqlLabelWrapper}>
+          <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
+        <Button
+          className={classes.sqlBtn}
+          data-test={id}
+          variant="outlined"
+          color="secondary"
+          onClick={handleEditorClick}>
+          Launch
+        </Button>
+      </div>
+    </>
   );
 }

@@ -7,27 +7,33 @@ export default {
     _connectionIds: { fieldId: '_connectionIds' },
     _exportIds: { fieldId: '_exportIds' },
     _importIds: { fieldId: '_importIds' },
+    _apiIds: { fieldId: '_apiIds' },
   },
   layout: {
-    fields: [
-      'name',
-      'description',
-      'autoPurgeAt',
-      'fullAccess',
-      '_connectionIds',
-      '_exportIds',
-      '_importIds',
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: ['name', 'description', 'autoPurgeAt'],
+      },
+      {
+        collapsed: true,
+        label: 'Token permissions',
+        fields: ['fullAccess',
+          '_connectionIds',
+          '_exportIds',
+          '_importIds',
+          '_apiIds'],
+      }
     ],
   },
-
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
-
-    if (accessTokenData['/autoPurgeAt'] === 'none') {
-      delete accessTokenData['/autoPurgeAt'];
-    } else if (accessTokenData['/autoPurgeAt'] === 'never') {
-      accessTokenData['/autoPurgeAt'] = '';
-    } else {
+    if (accessTokenData['/autoPurgeAt'] === 'never') {
+      accessTokenData['/autoPurgeAt'] = undefined;
+    // eslint-disable-next-line no-restricted-globals
+    } else if (accessTokenData['/autoPurgeAt'] && !isNaN(accessTokenData['/autoPurgeAt'])) {
       const currDate = new Date();
       const timeInMilliSeconds = currDate.getTime();
 
@@ -40,6 +46,7 @@ export default {
       accessTokenData['/_connectionIds'] = [];
       accessTokenData['/_exportIds'] = [];
       accessTokenData['/_importIds'] = [];
+      accessTokenData['/_apiIds'] = [];
 
       if (!resource._integrationId) {
         accessTokenData['/fullAccess'] = true;

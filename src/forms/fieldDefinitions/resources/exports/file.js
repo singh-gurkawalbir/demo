@@ -19,6 +19,16 @@ export default {
       },
     ],
   },
+  'file.batchSize': {
+    type: 'text',
+    label: 'Batch size',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^[\\d]+$',
+        message: 'Only numbers allowed',
+      },
+    },
+  },
   'file.encoding': {
     type: 'select',
     label: 'File encoding',
@@ -42,7 +52,7 @@ export default {
     type: 'filetypeselect',
     label: 'File type',
     required: true,
-    defaultValue: r => (r && r.file && r.file.type) || 'csv',
+    defaultValue: r => r && r.file && r.file.type,
     options: [
       {
         items: [
@@ -68,27 +78,10 @@ export default {
       r.file.fileDefinition &&
       r.file.fileDefinition._fileDefinitionId,
   },
-
   'file.skipDelete': {
     type: 'checkbox',
     label: 'Leave file on server',
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['records'],
-      },
-    ],
-  },
-  'ftp.leaveFile': {
-    type: 'checkbox',
-    label: 'Leave file on server',
-    defaultValue: r => r && r.file && r.file.skipDelete,
-    visibleWhen: [
-      {
-        field: 'outputMode',
-        is: ['blob'],
-      },
-    ],
+    defaultValue: r => (r && r.file && r.file.skipDelete) || false,
   },
   'file.compressionFormat': {
     type: 'select',
@@ -107,7 +100,7 @@ export default {
   },
   'file.json.resourcePath': {
     label: 'Resource path',
-    type: 'text',
+    type: 'jsonresourcepath',
     visibleWhen: [
       {
         field: 'file.type',
@@ -188,6 +181,7 @@ export default {
       'edifact.format',
       'file.fileDefinition.resourcePath',
     ],
+    fileDefinitionResourcePath: r => r?.file?.fileDefinition?.resourcePath,
     userDefinitionId: r =>
       r &&
       r.file &&
@@ -197,16 +191,16 @@ export default {
   },
   'file.csv': {
     type: 'csvparse',
-    label: 'CSV parser helper:',
+    label: 'CSV parser helper',
     helpKey: 'file.csvParse',
-    defaultValue: r =>
-      (r.file && r.file.csv) || {
-        rowsToSkip: 0,
-        trimSpaces: true,
-        columnDelimiter: ',',
-        hasHeaderRow: false,
-        rowDelimiter: '\n',
-      },
+    defaultValue: r => r?.file?.csv || {
+      columnDelimiter: ',',
+      rowDelimiter: '\n',
+      hasHeaderRow: false,
+      keyColumns: [],
+      rowsToSkip: 0,
+      trimSpaces: false
+    },
     visibleWhenAll: [
       {
         field: 'file.type',
@@ -217,6 +211,8 @@ export default {
   'file.xlsx.hasHeaderRow': {
     type: 'checkbox',
     label: 'File has header',
+    defaultValue: r =>
+      !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
     visibleWhen: [
       {
         field: 'file.type',

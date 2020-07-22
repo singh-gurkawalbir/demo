@@ -1,83 +1,54 @@
 import util from '../../../../utils/json';
-import csvOptions from '../../../../components/AFE/CsvConfigEditor/options';
 
-const requestBody = editor => ({
+const requestBody = ({
+  columnDelimiter,
+  rowDelimiter,
+  hasHeaderRow,
+  trimSpaces,
+  includeHeader,
+  truncateLastRowDelimiter,
+  replaceTabWithSpace,
+  replaceNewlineWithSpace,
+  wrapWithQuotes,
+  data,
+  customHeaderRows,
+}) => ({
   rules: {
-    columnDelimiter: csvOptions.ColumnDelimiterMap[editor.columnDelimiter],
-    rowDelimiter: csvOptions.RowDelimiterMap[editor.rowDelimiter],
-    hasHeaderRow: editor.hasHeaderRow,
-    trimSpaces: editor.trimSpaces,
-    includeHeader: editor.includeHeader,
-    truncateLastRowDelimiter: editor.truncateLastRowDelimiter,
-    replaceTabWithSpace: editor.replaceTabWithSpace,
-    replaceNewlineWithSpace: editor.replaceNewlineWithSpace,
-    wrapWithQuotes: editor.wrapWithQuotes,
+    columnDelimiter,
+    rowDelimiter,
+    hasHeaderRow,
+    trimSpaces,
+    includeHeader,
+    truncateLastRowDelimiter,
+    replaceTabWithSpace,
+    replaceNewlineWithSpace,
+    wrapWithQuotes,
+    customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
+
   },
-  data: [JSON.parse(editor.data)],
+  data: [JSON.parse(data)],
 });
 const validate = editor => ({
-  dataError: util.validateJsonString(editor.data),
+  dataError: !editor.data
+    ? 'Must provide some sample data.'
+    : util.validateJsonString(editor.data),
 });
-const dirty = editor => {
-  const { initRule } = editor || {};
-  const keysToMatch = [
-    'rowDelimiter',
-    'columnDelimiter',
-    'includeHeader',
-    'truncateLastRowDelimiter',
-    'replaceTabWithSpace',
-    'replaceNewlineWithSpace',
-    'wrapWithQuotes',
-  ];
-
-  for (let i = 0; i < keysToMatch.length; i += 1) {
-    const key = keysToMatch[i];
-
-    if (typeof editor[key] === 'boolean' && !!initRule[key] !== !!editor[key]) {
-      return true;
-    } else if (
-      ['string', 'number'].includes(typeof editor[key]) &&
-      initRule[key] !== editor[key]
-    )
-      return true;
-  }
-
-  return false;
-};
 
 const init = editor => {
   const { rule = {}, ...others } = editor;
-
-  // replacing column Delimiter with column delimiter map key. Ex: ',' replaced with 'comma'
-  if (rule.columnDelimiter) {
-    const columnDelimiter = util.getObjectKeyFromValue(
-      csvOptions.ColumnDelimiterMap,
-      rule.columnDelimiter
-    );
-
-    rule.columnDelimiter = columnDelimiter;
-  }
-
-  // replacing row Delimiter with row delimiter map key. Ex: '\n' replaced with 'lf'
-  if (rule.rowDelimiter) {
-    const rowDelimiter = util.getObjectKeyFromValue(
-      csvOptions.RowDelimiterMap,
-      rule.rowDelimiter
-    );
-
-    rule.rowDelimiter = rowDelimiter;
-  }
-
+  const initRules = {};
+  Object.keys(rule).forEach(key => {
+    initRules[`_init_${key}`] = rule[key];
+  });
   return {
     ...others,
     ...rule,
-    initRule: rule,
+    ...initRules
   };
 };
 
 export default {
   validate,
   requestBody,
-  dirty,
   init,
 };

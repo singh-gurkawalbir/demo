@@ -18,22 +18,23 @@ import {
 } from '../../utils/session';
 import * as selectors from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import getRoutePath from '../../utils/routePaths';
 
 export function* retrievingOrgDetails() {
   yield all([
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestLicenses(`Retrieving licenses`)
+      actions.user.org.accounts.requestLicenses('Retrieving licenses')
     ),
     call(
       getResourceCollection,
-      actions.user.org.users.requestCollection(`Retrieving org users`)
+      actions.user.org.users.requestCollection('Retrieving org users')
     ),
     call(
       getResourceCollection,
-      actions.user.org.accounts.requestCollection(`Retrieving user's accounts`)
-    ),
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+    )
   ]);
 }
 
@@ -73,6 +74,7 @@ export function* retrievingAssistantDetails() {
     'slack',
     'stripe',
     'travis',
+    'surveymonkey'
   ];
 
   if (
@@ -104,7 +106,7 @@ export function* retrievingAssistantDetails() {
     });
     assistantConnectors.push({
       id: 'financialforce',
-      name: 'Financial Force',
+      name: 'FinancialForce',
       type: 'salesforce',
       assistant: 'financialforce',
       export: true,
@@ -136,6 +138,8 @@ export function* retrieveAppInitializationResources() {
     call(retrievingUserDetails),
     call(retrievingAssistantDetails),
   ]);
+
+  yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -192,6 +196,10 @@ export function* auth({ email, password }) {
     if (isExpired) {
       // remount the component
       yield put(actions.app.reload());
+    }
+    const {accessLevel} = yield select(selectors.resourcePermissions);
+    if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+      yield put(actions.resource.requestCollection('transfers'));
     }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
@@ -253,7 +261,7 @@ export function* signInWithGoogle({ returnTo }) {
 
   form.id = 'signinWithGoogle';
   form.method = 'POST';
-  form.action = `/auth/google?returnTo=${returnTo || '/pg/'}`;
+  form.action = `/auth/google?returnTo=${returnTo || getRoutePath('/')}`;
 
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
@@ -282,7 +290,7 @@ export function* linkWithGoogle({ returnTo }) {
 
   form.id = 'linkWithGoogle';
   form.method = 'POST';
-  form.action = `/link/google?returnTo=${returnTo || '/pg/'}`;
+  form.action = `/link/google?returnTo=${returnTo || getRoutePath('/')}`;
 
   form.innerHTML = `<input name="_csrf" value="${_csrf}">`;
   document.body.appendChild(form);
@@ -290,10 +298,24 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
+export function* fetchUIVersion() {
+  let resp;
+  try {
+    resp = yield call(apiCallWithRetry, {
+      path: '/ui/version?app=react',
+    });
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+  }
+  if (resp?.version) {
+    yield put(actions.app.updateUIVersion(resp.version));
+  }
+}
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
+  takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH_RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH_LINK_WITH_GOOGLE, linkWithGoogle),

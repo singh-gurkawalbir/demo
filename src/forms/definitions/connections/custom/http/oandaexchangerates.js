@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v2/currencies.json',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://web-services.oanda.com/rates/api`,
+    '/http/baseURI': 'https://web-services.oanda.com/rates/api',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
@@ -17,13 +17,19 @@ export default {
       label: 'API key',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

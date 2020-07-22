@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Drawer, List } from '@material-ui/core';
 import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
@@ -10,11 +10,10 @@ import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
 import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
 import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
 import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
-import JsonEditorDialog from '../../components/JsonEditorDialog';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
 import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
-import { safeParse, hashCode } from '../../utils/string';
+import { safeParse } from '../../utils/string';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
 
@@ -27,7 +26,7 @@ const editors = [
   },
   {
     name: 'HttpRequestBodyEditor',
-    label: 'Http request body',
+    label: 'Build HTTP request body',
     description:
       'This editor lets you create and test json or xml templates against your raw data.',
   },
@@ -126,9 +125,11 @@ export default function Editors() {
   const [editorName, setEditorName] = useState();
   const [rawData, setRawData] = useState();
   const [rawDataKey, setRawDataKey] = useState(1);
+  const [drawerKey, setDrawerKey] = useState(0);
   const handleEditorChange = useCallback(
     editorName => {
       if (editorName === 'SettingsFormEditor') {
+        setDrawerKey(drawerKey => drawerKey + 1);
         history.push('editors/editSettings');
       }
 
@@ -136,14 +137,12 @@ export default function Editors() {
     },
     [history]
   );
-  const handleClose = useCallback(
+  const handleSave = useCallback(
     (shouldCommit, editorValues) => {
       if (shouldCommit) {
         setRawData(editorValues.data);
         setRawDataKey(rawDataKey + 1);
       }
-
-      setEditorName();
     },
     [rawDataKey]
   );
@@ -155,7 +154,8 @@ export default function Editors() {
             title="Create URL template"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'HttpRequestBodyEditor':
@@ -164,7 +164,8 @@ export default function Editors() {
             title="Create HTTP request body"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'MergeEditor':
@@ -173,7 +174,8 @@ export default function Editors() {
             title="Apply default values"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -184,7 +186,8 @@ export default function Editors() {
             csvEditorType="parse"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -194,7 +197,8 @@ export default function Editors() {
             title="XML parser"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
 
@@ -204,7 +208,8 @@ export default function Editors() {
             title="Transform editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'JavaScriptEditor':
@@ -213,7 +218,8 @@ export default function Editors() {
             title="Javascript editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'FileDefinitionEditor':
@@ -222,7 +228,8 @@ export default function Editors() {
             title="File definition rules"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'SQLQueryBuilderEditor':
@@ -234,22 +241,8 @@ export default function Editors() {
             rule="Select * from {{orderId}}"
             data={rawData}
             defaultData={JSON.stringify({}, null, 2)}
-            onClose={handleClose}
-          />
-        );
-      case 'JSONEditor':
-        return (
-          <JsonEditorDialog
-            value={rawData}
-            title="JSON editor"
-            id={editorName}
-            onClose={() => {
-              this.handleEditorChange(null);
-            }}
-            onChange={value => {
-              // eslint-disable-next-line
-              console.log(value);
-            }}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       case 'FilterEditor':
@@ -258,17 +251,17 @@ export default function Editors() {
             title="Filter editor"
             id={editorName}
             data={rawData}
-            onClose={handleClose}
+            onSave={handleSave}
+            onClose={setEditorName}
           />
         );
       default:
         return null;
     }
-  }, [editorName, handleClose, rawData]);
-  const drawerKey = hashCode(rawData);
+  }, [editorName, handleSave, rawData]);
 
   return (
-    <Fragment>
+    <>
       <CeligoPageBar title="Dev playground" />
 
       <div className={classes.appFrame}>
@@ -298,12 +291,13 @@ export default function Editors() {
       <SettingsFormEditorDrawer
         key={drawerKey}
         editorId="settingsForm"
+        hideSaveAction="true"
         // resourceId={resourceId}
         // resourceType={resourceType}
         settingsForm={{ form: safeParse(rawData) }}
         // eslint-disable-next-line react/jsx-handler-names
         onClose={history.goBack}
       />
-    </Fragment>
+    </>
   );
 }

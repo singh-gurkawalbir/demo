@@ -1,8 +1,9 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import useFormContext from '../../Form/FormContext';
 
 const useStyle = makeStyles({
   dynaTextFtpFiedWrapper: {
@@ -17,6 +18,7 @@ const useStyle = makeStyles({
 
 export default function DynaTextFtpPort(props) {
   const {
+    formKey,
     description,
     errorMessages,
     id,
@@ -30,12 +32,17 @@ export default function DynaTextFtpPort(props) {
     valueType,
     disabled,
   } = props;
+  const {fields} = useFormContext(formKey);
   const classes = useStyle();
+  const ftptype = Object.values(fields)?.find(obj => obj.key === 'ftp.type').value;
 
   useEffect(() => {
-    if ((!value || [21, 22, 990].includes(value)) && options)
+    if ((!value || [21, 22, 990].includes(value)) && options) {
       onFieldChange(id, options, true);
-  }, [id, onFieldChange, options, value]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ftptype]);
+
 
   const handleFieldChange = useCallback(
     event => {

@@ -1,10 +1,11 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
-import MergeEditor from './';
+import MergeEditor from '.';
 
 export default function MergeEditorDialog(props) {
   const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '80vw',
     height: '50vh',
     open: true,

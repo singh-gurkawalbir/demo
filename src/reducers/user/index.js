@@ -36,15 +36,8 @@ export function debugOn(state) {
 // #endregion DEBUG SELECTORS
 
 // #region LICENSE
-export function integratorLicense(state, accountId) {
-  return fromAccounts.integratorLicense(
-    state && state.org && state.org.accounts,
-    accountId
-  );
-}
-
-export function diyLicense(state, accountId) {
-  return fromAccounts.diyLicense(
+export function platformLicense(state, accountId) {
+  return fromAccounts.platformLicense(
     state && state.org && state.org.accounts,
     accountId
   );
@@ -151,6 +144,18 @@ export const appTheme = createSelector(
     return preferences.themeName;
   }
 );
+
+export function drawerOpened(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && !!preferences.drawerOpened;
+}
+
+export function expandSelected(state) {
+  const preferences = userPreferences(state);
+
+  return preferences && preferences.expand;
+}
 
 export const editorTheme = createSelector(
   state => state,
@@ -259,7 +264,7 @@ export const accountOwner = createSelector(
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
     if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
-      const { name, email } = profile;
+      const { name, email } = profile || {};
 
       return { name, email };
     }

@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import each from 'jest-each';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 import {
   ACCOUNT_IDS,
@@ -62,6 +62,7 @@ describe('user reducers', () => {
           const patchedState = reducer(state, updatePreferencePatch);
 
           expect(patchedState).toEqual({
+            environment: 'production',
             themeName: 'blue',
             defaultAShareId: ACCOUNT_IDS.OWN,
             timeFormat: 'something else',
@@ -74,10 +75,10 @@ describe('user reducers', () => {
             defaultAShareId: '123',
             timeFormat: 'something',
             accounts: {
-              '123': {
+              123: {
                 themeName: 'fancy',
               },
-              '345': {
+              345: {
                 themeName: 'white',
               },
             },
@@ -96,12 +97,13 @@ describe('user reducers', () => {
           const patchedState = reducer(state, updatePreferencePatch);
 
           expect(patchedState).toEqual({
+            environment: 'production',
             defaultAShareId: '123',
             timeFormat: 'something else',
             dateFormat: 'test',
             accounts: {
-              '123': { themeName: 'blue' },
-              '345': { themeName: 'white' },
+              123: { themeName: 'blue' },
+              345: { themeName: 'white' },
             },
           });
         });
@@ -118,6 +120,7 @@ describe('user reducers', () => {
         const state = reducer(undefined, receivedPreferences);
 
         expect(state).toEqual({
+          environment: 'production',
           themeName: 'fancy',
           dateFormat: defaultDateFormat,
           timeFormat: defaultTimeFormat,
@@ -138,7 +141,7 @@ describe('user reducers', () => {
       });
     });
   });
-  describe(`user preferences selectors`, () => {
+  describe('user preferences selectors', () => {
     test('should generate nothing for payload in the preference update action', () => {
       const regularUserAccountPreferences = {};
       const receivedPreferencesAction = actions.resource.receivedCollection(
@@ -164,6 +167,7 @@ describe('user reducers', () => {
       const state = reducer(undefined, receivedPreferencesAction);
 
       expect(selectors.userPreferences(state)).toEqual({
+        environment: 'production',
         themeName: 'fancy',
         timeFormat: 'something',
         dateFormat: defaultDateFormat,
@@ -183,6 +187,7 @@ describe('user reducers', () => {
       const state = reducer(undefined, receivedPreferences);
 
       expect(selectors.userPreferences(state)).toEqual({
+        environment: 'production',
         themeName: 'fancy',
         defaultAShareId: ACCOUNT_IDS.OWN,
         timeFormat: 'something',
@@ -195,7 +200,7 @@ describe('user reducers', () => {
         defaultAShareId: '123',
         timeFormat: 'something',
         accounts: {
-          '123': {
+          123: {
             themeName: 'fancy',
           },
         },
@@ -209,6 +214,7 @@ describe('user reducers', () => {
       expect(selectors.userPreferences(state)).toEqual({
         ...invitedUserAccountPreferences,
         dateFormat: defaultDateFormat,
+        environment: 'production',
       });
     });
   });

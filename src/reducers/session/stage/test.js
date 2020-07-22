@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 
 describe('stage reducers', () => {
@@ -11,7 +11,7 @@ describe('stage reducers', () => {
     expect(newState).toEqual(oldState);
   });
 
-  describe(`STAGE_CLEAR action`, () => {
+  describe('STAGE_CLEAR action', () => {
     test('should do nothing if there is nothing staged', () => {
       const id = 123;
       const state = reducer(undefined, actions.resource.clearStaged(id));
@@ -36,7 +36,7 @@ describe('stage reducers', () => {
     });
   });
 
-  describe(`STAGE_UNDO action`, () => {
+  describe('STAGE_UNDO action', () => {
     test('should do nothing if there is nothing staged.', () => {
       const id = 123;
       const state = reducer(undefined, actions.resource.undoStaged(id));
@@ -63,7 +63,7 @@ describe('stage reducers', () => {
     });
   });
 
-  describe(`STAGE_PATCH action`, () => {
+  describe('STAGE_PATCH action', () => {
     test('should add patch if none yet exist.', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
@@ -113,7 +113,7 @@ describe('stage reducers', () => {
     });
   });
 
-  describe(`STAGE_CONFLICT action`, () => {
+  describe('STAGE_CONFLICT action', () => {
     test('should add conflict to stage if none yet exist.', () => {
       const id = 123;
       const conflict = [{ op: 'replace', path: '/name', value: 'ABC' }];
@@ -141,7 +141,7 @@ describe('stage reducers', () => {
     });
   });
 
-  describe(`CLEAR_CONFLICT action`, () => {
+  describe('CLEAR_CONFLICT action', () => {
     test('should do nothing if no conflict yet exists.', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];
@@ -173,7 +173,7 @@ describe('stage reducers', () => {
 });
 
 describe('stage selectors', () => {
-  describe(`stagedResource`, () => {
+  describe('stagedResource', () => {
     test('should return empty object when no match found.', () => {
       expect(selectors.stagedResource(undefined, 'key')).toEqual({});
       expect(selectors.stagedResource({}, 'key')).toEqual({});
@@ -196,7 +196,7 @@ describe('stage selectors', () => {
     });
   });
 
-  describe(`getAllResourceConflicts`, () => {
+  describe('getAllResourceConflicts', () => {
     const id = '123';
     const conflictResId = '124';
     const patch = [{ op: 'replace', path: '/name', value: 'ABC' }];

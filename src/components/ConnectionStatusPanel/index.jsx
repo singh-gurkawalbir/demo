@@ -1,4 +1,5 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
@@ -21,10 +22,12 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '17px',
     padding: 6,
   },
+  titleStatusPanel: {
+    color: theme.palette.secondary.main,
+  },
 }));
 const getStatusVariantAndMessage = ({
   resourceType,
-  isConnectionFix,
   showOfflineMsg,
   testStatus,
 }) => {
@@ -38,17 +41,15 @@ const getStatusVariantAndMessage = ({
       message:
         'Your test was not successful. Check your information and try again',
     };
-  } else if (testStatus === PING_STATES.SUCCESS) {
+  } if (testStatus === PING_STATES.SUCCESS) {
     return {
       variant: 'success',
       message: 'Your connection is working great! Nice Job!',
     };
-  } else if (!testStatus && showOfflineMsg) {
+  } if (!testStatus && showOfflineMsg) {
     return {
       variant: 'error',
-      message: isConnectionFix
-        ? ' Review and test this form to bring your connections back online.'
-        : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+      message: 'This connection is currently offline. Re-enter your credentials to bring it back online.',
     };
   }
 
@@ -56,7 +57,7 @@ const getStatusVariantAndMessage = ({
 };
 
 export default function ConnectionStatusPanel(props) {
-  const { resourceId, resourceType } = props;
+  const { resourceId, resourceType, isFlowBuilderView } = props;
   const classes = useStyles();
   const match = useRouteMatch();
   const location = useLocation();
@@ -70,10 +71,16 @@ export default function ConnectionStatusPanel(props) {
   const connectionId =
     resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
-    state => selectors.testConnectionCommState(state, connectionId).commState
+    state => {
+      if (resource.type === 'netsuite') {
+        return selectors.netsuiteUserRoles(state, connectionId)?.status;
+      }
+      return selectors.testConnectionCommState(state, connectionId).commState;
+    }
   );
   const isIAIntegration = useSelector(state => {
-    const connection = selectors.resource(state, 'connections', connectionId);
+    const connection =
+      selectors.resource(state, 'connections', connectionId) || {};
 
     return !!(connection && connection._connectorId);
   });
@@ -115,7 +122,7 @@ export default function ConnectionStatusPanel(props) {
   useEffect(() => {
     // if i can't find a connection Id it could be a new resource without any connection Id assigned to it
     // and if it is a new connection resource you are creating then there is no point in making ping calls
-    if (connectionId && !isNewId(connectionId)) {
+    if (!isFlowBuilderView && connectionId && !isNewId(connectionId)) {
       dispatch(actions.resource.connections.pingAndUpdate(connectionId));
     }
 
@@ -124,7 +131,7 @@ export default function ConnectionStatusPanel(props) {
     return () => {
       dispatch(actions.resource.connections.testClear(connectionId));
     };
-  }, [connectionId, dispatch]);
+  }, [connectionId, dispatch, isFlowBuilderView]);
 
   if (
     (resourceType !== 'connections' && !isOffline) ||
@@ -137,11 +144,11 @@ export default function ConnectionStatusPanel(props) {
     <div className={classes.root}>
       <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
-          <Typography variant="h6">{message}</Typography>
+          <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>
         ) : (
-          <Typography component="div" variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited.
+          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
+            The connection associated with this resource is currently offline
+            and configuration is limited.
             <Button
               data-test="fixConnection"
               className={classes.fixConnectionBtn}

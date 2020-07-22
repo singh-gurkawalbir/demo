@@ -1,4 +1,5 @@
 import { Button } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import {
   addDays,
@@ -13,7 +14,7 @@ import {
   startOfWeek,
   addYears,
 } from 'date-fns';
-import { Fragment, useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -176,7 +177,7 @@ export default function DateRangeSelector({ value, onSave }) {
   );
 
   return (
-    <Fragment>
+    <>
       <Button
         onClick={toggleClick}
         variant="outlined"
@@ -216,6 +217,6 @@ export default function DateRangeSelector({ value, onSave }) {
           </div>
         )}
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

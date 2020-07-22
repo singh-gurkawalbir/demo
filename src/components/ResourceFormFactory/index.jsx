@@ -1,13 +1,15 @@
-import { makeStyles } from '@material-ui/core';
+import React from '@material-ui/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import formFactory from '../../forms/formFactory';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import * as selectors from '../../reducers';
 import DynaForm from '../DynaForm';
-import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import Spinner from '../Spinner';
+import SpinnerWrapper from '../SpinnerWrapper';
+
 
 const Form = props => {
   const { fieldMeta } = props;
@@ -19,23 +21,8 @@ const Form = props => {
   return <DynaForm {...props} formKey={formKey} />;
 };
 
-const useStyles = makeStyles({
-  spinnerWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    margin: 'auto',
-  },
-});
-
 export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
   const { fieldMeta } = props;
-  const classes = useStyles();
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
 
@@ -52,17 +39,16 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
       onSubmitComplete('', false, formState.formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState.submitComplete /* , onSubmitComplete */]);
-
+  }, [formState.submitComplete]);
   useEffect(() => {
     remountForm();
   }, [fieldMeta, remountForm]);
 
   if (!formState.initComplete) {
     return (
-      <div className={classes.spinnerWrapper}>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
     );
   }
 
@@ -70,7 +56,7 @@ export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
 };
 
 export const ResourceFormFactory = props => {
-  const { resourceType, resourceId, isNew, flowId } = props;
+  const { resourceType, resourceId, isNew, flowId, integrationId } = props;
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
   );
@@ -115,7 +101,7 @@ export const ResourceFormFactory = props => {
   );
 
   useEffect(() => {
-    handleInitForm(resourceType, resourceId, isNew, flowId);
+    handleInitForm(resourceType, resourceId, isNew, flowId, integrationId);
 
     return () => handleClearResourceForm(resourceType, resourceId);
   }, [
@@ -125,6 +111,7 @@ export const ResourceFormFactory = props => {
     isNew,
     resourceId,
     resourceType,
+    integrationId,
   ]);
 
   const { optionsHandler, validationHandler } = useMemo(
@@ -134,8 +121,9 @@ export const ResourceFormFactory = props => {
         resource,
         isNew,
         connection,
+        integrationId,
       }),
-    [connection, isNew, resource, resourceType]
+    [connection, isNew, resource, resourceType, integrationId]
   );
   const { fieldMeta } = formState;
 

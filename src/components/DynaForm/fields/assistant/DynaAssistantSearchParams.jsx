@@ -1,10 +1,10 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEmpty } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DynaForm from '../..';
+import DynaSubmit from '../../DynaSubmit';
 import {
   convertToReactFormFields,
   updateFormValues,
@@ -14,22 +14,21 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
-    flexDirection: `row !important`,
     width: '100%',
-    alignItems: 'center',
   },
   dynaAssistantbtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaAssistantFormLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
+    marginBottom: 6,
   },
-}));
+  configureLabelWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start'
+  },
+});
 const SearchParamsModal = props => {
   const {
     paramMeta,
@@ -67,21 +66,18 @@ const SearchParamsModal = props => {
 
   return (
     <ModalDialog show onClose={onClose}>
-      <Fragment>
+      <>
         <span>Search parameters</span>
-      </Fragment>
-      <Fragment>
+      </>
+      <>
         <DynaForm
           formKey={formKey}
           fieldMeta={{
             fieldMap,
             layout,
-          }}
-        />
+          }} />
         <div>
-          <DynaSubmit formKey={formKey} onClick={onSaveClick}>
-            Save
-          </DynaSubmit>
+          <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
           <Button
             data-test="cancelSearchParams"
             onClick={onClose}
@@ -90,7 +86,7 @@ const SearchParamsModal = props => {
             Cancel
           </Button>
         </div>
-      </Fragment>
+      </>
     </ModalDialog>
   );
 };
@@ -110,7 +106,7 @@ export default function DynaAssistantSearchParams(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {showSearchParamsModal && (
         <SearchParamsModal
           {...props}
@@ -124,26 +120,27 @@ export default function DynaAssistantSearchParams(props) {
         />
       )}
       <div className={classes.dynaAssSearchParamsWrapper}>
-        <FormLabel className={classes.dynaAssistantFormLabel}>
-          Search parameters:
-        </FormLabel>
-
+        <div className={classes.configureLabelWrapper}>
+          <FormLabel className={classes.dynaAssistantFormLabel}>
+            Configure search parameters
+          </FormLabel>
+          {/* {Todo (shiva): we need helpText for the component} */}
+          <FieldHelp {...props} helpText="Configure search parameters" />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaAssistantbtn}
           onClick={() => setShowSearchParamsModal(true)}>
-          {label} {required && !isValid ? '*' : ''}
+          {'Launch'} {required && !isValid ? '*' : ''}
         </Button>
-        {/* {Todo (shiva): we need helpText for the component} */}
-        <FieldHelp {...props} helpText={label} />
       </div>
       <ErroredMessageComponent
         isValid={isValid}
         description=""
         errorMessages="Please enter required parameters"
       />
-    </Fragment>
+    </>
   );
 }

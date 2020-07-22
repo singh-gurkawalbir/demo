@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Card, CardActions, Typography } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
@@ -19,17 +20,17 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
     '& > div': {
       maxWidth: '100%',
       minWidth: '100%',
     },
     [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
     },
     [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
   card: {

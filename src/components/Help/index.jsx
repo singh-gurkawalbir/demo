@@ -1,24 +1,35 @@
-import { useState, Fragment, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowPopper from '../ArrowPopper';
-import helpTextMap from './helpTextMap';
 import HelpContent from '../HelpContent';
-import HelpIcon from '../../components/icons/HelpIcon';
+import HelpIcon from '../icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
-const useStyles = makeStyles({
+let _helpTextMap = {};
+export function getHelpTextMap() {
+  return _helpTextMap;
+}
+
+import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ './helpTextMap').then(({ default: tm }) => {
+  _helpTextMap = tm || {};
+}).catch(() => {});
+
+const useStyles = makeStyles(theme => ({
   helpIcon: {
-    fontSize: 18,
+    fontSize: 16,
+    color: theme.palette.text.hint,
   },
-});
+}));
 
 function Help(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const handleMenu = useCallback(
     event => {
+      event.stopPropagation();
+
       if (anchorEl) {
         setAnchorEl(null);
       } else {
@@ -34,12 +45,13 @@ function Help(props) {
   }, []);
   const { className, helpKey, helpText, ...rest } = props;
   const open = !!anchorEl;
-  const helpTextValue = helpText || helpTextMap[helpKey];
+  const helpTextValue = helpText || getHelpTextMap()[helpKey];
+  // console.log('what help', helpText, helpKey, getHelpTextMap()[helpKey]);
 
   if (!helpTextValue) return null;
 
   return (
-    <Fragment>
+    <>
       <ClickAwayListener onClickAway={handleClose}>
         <IconButton className={className} onClick={handleMenu}>
           <HelpIcon className={classes.helpIcon} />
@@ -53,13 +65,13 @@ function Help(props) {
         anchorEl={anchorEl}>
         <HelpContent {...rest}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
-            <RawHtml html={helpTextValue} />
+            <RawHtml html={helpTextValue} options={{allowedTags: ['a', 'b', 'i', 'br']}} />
           ) : (
             helpTextValue
           )}
         </HelpContent>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }
 

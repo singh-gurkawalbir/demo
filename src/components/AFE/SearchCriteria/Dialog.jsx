@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Button,
   Dialog,
@@ -10,7 +10,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../reducers';
-import SearchCriteriaEditor from './';
+import SearchCriteriaEditor from '.';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 
@@ -19,9 +19,9 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 0,
   },
   toolbarContainer: {
-    margin: theme.spacing(0, 1),
-    padding: theme.spacing(2),
     display: 'flex',
+    padding: theme.spacing(1, 2),
+    alignItems: 'center',
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -39,11 +39,11 @@ const useStyles = makeStyles(theme => ({
   },
   fullScreen: {
     marginLeft: theme.spacing(2),
+    border: 'none',
   },
   actions: {
-    marginRight: theme.spacing(3) - 2,
-    marginTop: 0,
-    marginBottom: theme.spacing(2),
+    justifyContent: 'flex-start',
+    padding: theme.spacing(2),
   },
 }));
 
@@ -52,8 +52,10 @@ export default function SearchCriteriaDialog(props) {
     id,
     title = 'Search Criteria',
     value = [],
+    onSave,
     onClose,
     disabled,
+    onRefresh,
     width = '80vw',
     height = '50vh',
     fieldOptions = {},
@@ -63,8 +65,8 @@ export default function SearchCriteriaDialog(props) {
   const { searchCriteria } = useSelector(state =>
     selectors.searchCriteria(state, id)
   );
-  const handleClose = shouldCommit => {
-    if (onClose) {
+  const handleSave = useCallback(() => {
+    if (onSave) {
       if (searchCriteria && searchCriteria.length) {
         const _criteria = searchCriteria.map(s => {
           const { searchValue2Enabled, rowIdentifier, ...sc } = s;
@@ -72,10 +74,15 @@ export default function SearchCriteriaDialog(props) {
           return sc;
         });
 
-        onClose(shouldCommit, _criteria);
-      } else onClose(shouldCommit, []);
+        onSave(true, _criteria);
+      } else onSave(true, []);
     }
-  };
+  }, [onSave, searchCriteria]);
+
+  const handleSaveAndClose = useCallback(() => {
+    handleSave();
+    onClose();
+  }, [handleSave, onClose]);
 
   const size = fullScreen ? { height } : { height, width };
   const handleFullScreenClick = () => setFullScreeen(!fullScreen);
@@ -84,12 +91,12 @@ export default function SearchCriteriaDialog(props) {
     <Dialog
       fullScreen={fullScreen}
       open
-      onClose={() => handleClose()}
+      onClose={onClose}
       scroll="paper"
       maxWidth={false}>
       <div className={classes.toolbarContainer}>
         <div className={classes.toolbarItem}>
-          <Typography variant="h5">{title}</Typography>
+          <Typography variant="h3">{title}</Typography>
         </div>
         <div className={classes.toggleContainer}>
           <ToggleButton
@@ -109,24 +116,33 @@ export default function SearchCriteriaDialog(props) {
         <SearchCriteriaEditor
           editorId={id}
           value={value}
+          onRefresh={onRefresh}
           fieldOptions={fieldOptions}
         />
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button
-          variant="text"
+          variant="outlined"
+          data-test="saveEditor"
+          disabled={disabled}
           color="primary"
-          data-test="closeEditor"
-          onClick={() => handleClose()}>
-          Cancel
+          onClick={handleSave}>
+          Save
         </Button>
         <Button
           variant="outlined"
           data-test="saveEditor"
           disabled={disabled}
+          color="secondary"
+          onClick={handleSaveAndClose}>
+          Save & close
+        </Button>
+        <Button
+          variant="text"
           color="primary"
-          onClick={() => handleClose(true)}>
-          Save
+          data-test="closeEditor"
+          onClick={onClose}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

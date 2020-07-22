@@ -5,12 +5,29 @@ export default {
     'dynamodb.aws.secretAccessKey': {
       fieldId: 'dynamodb.aws.secretAccessKey',
     },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'dynamodb.aws.accessKeyId',
-      'dynamodb.aws.secretAccessKey',
+    type: 'collapse',
+    containers: [
+      {
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'dynamodb.aws.accessKeyId',
+          'dynamodb.aws.secretAccessKey',
+        ],
+      },
     ],
   },
 };

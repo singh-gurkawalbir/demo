@@ -17,6 +17,9 @@ export default function AddResourceTypeCrumb({
       flowId,
     })
   );
+  if (resourceType === 'accesstokens') {
+    return `Create ${resourceLabel}`;
+  }
 
-  return `Add ${resourceLabel}`;
+  return `Create ${resourceLabel.toLowerCase()}`;
 }

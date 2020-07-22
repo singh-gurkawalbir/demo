@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { Button } from '@material-ui/core';
 import ModalDialog from '../../ModalDialog';
 import DynaForm from '../../DynaForm';
@@ -133,18 +133,25 @@ export default function OperandSettingsDialog({
   return (
     <ModalDialog show>
       <span>Operand Settings</span>
-      <Fragment>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <>
+        <DynaForm
+          formKey={formKey}
+          disabled={disabled}
+          fieldMeta={fieldMeta}
+          optionsHandler={optionsHandler} />
         <DynaSubmit
           formKey={formKey}
           data-test="saveOperandSettings"
           onClick={handleSubmit}>
           Save
         </DynaSubmit>
-        <Button data-test="cancelOperandSettings" onClick={onClose}>
+        <Button
+          formKey={formKey}
+          data-test="cancelOperandSettings"
+          onClick={onClose}>
           Cancel
         </Button>
-      </Fragment>
+      </>
     </ModalDialog>
   );
 }

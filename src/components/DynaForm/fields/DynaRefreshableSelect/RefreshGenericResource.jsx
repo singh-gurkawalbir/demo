@@ -1,4 +1,4 @@
-import { useEffect, useState, cloneElement, useCallback } from 'react';
+import React, { useEffect, useState, cloneElement, useCallback, useMemo } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,7 +14,7 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
     display: 'flex',
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
   },
   refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
@@ -104,7 +104,9 @@ export default function RefreshGenericResource(props) {
     openExternalUrl({ url: urlToOpen });
   }, [urlToOpen]);
 
-  if (!fieldData && !disableOptionsLoad) return <Spinner />;
+  const options = useMemo(() => [{ items: fieldData || [] }], [fieldData]);
+  if (!fieldData && !disableOptionsLoad) return <Spinner size={24} />;
+
 
   return (
     <div>
@@ -112,10 +114,11 @@ export default function RefreshGenericResource(props) {
         key={id}
         disabled={disabled}
         className={classes.refreshGenericResourceWrapper}>
+
         <div className={classes.refreshRoot}>
           {cloneElement(children, {
             ...props,
-            options: [{ items: fieldData || [] }],
+            options,
           })}
         </div>
         {!isLoading && !removeRefresh && (
@@ -132,7 +135,7 @@ export default function RefreshGenericResource(props) {
               classes.refreshGenericResourceActionBtn,
               classes.refreshLoader
             )}>
-            <Spinner size={24} color="primary" />
+            <Spinner size={24} />
           </span>
         )}
         {urlToOpen && (

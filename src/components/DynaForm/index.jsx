@@ -1,11 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { Fragment } from 'react';
+import React, { useEffect, useRef } from 'react';
 import DynaFormGenerator from './DynaFormGenerator';
+
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
-    maxHeight: `100%`,
+    maxHeight: '100%',
     overflowY: 'auto',
     padding: theme.spacing(1),
     border: 'none',
@@ -22,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
+  resourceFormButtons: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  }
 }));
 const DynaForm = props => {
   const {
@@ -31,6 +36,7 @@ const DynaForm = props => {
     fieldMeta,
     full,
     formKey,
+    autoFocus,
     ...rest
   } = props;
   const classes = useStyles();
@@ -42,6 +48,17 @@ const DynaForm = props => {
   // to identify the source.
   // console.log('RENDER: DynaForm', layout);
   // useTraceUpdate(props);
+  const formRef = useRef();
+  useEffect(() => {
+    if (!autoFocus) return;
+
+    const firstInput = formRef.current?.querySelector?.('input');
+
+    if (firstInput?.focus) {
+      setTimeout(() => firstInput.focus(), 100);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formRef.current]);
 
   if (!formKey) return null;
 
@@ -57,10 +74,9 @@ const DynaForm = props => {
       layout.fields.push(fieldId);
     });
   }
-
   return (
-    <Fragment>
-      <div className={clsx(classes.fieldContainer, className)}>
+    <>
+      <div ref={formRef} className={clsx(classes.fieldContainer, className)}>
         <DynaFormGenerator
           {...rest}
           layout={layout}
@@ -68,7 +84,7 @@ const DynaForm = props => {
           formKey={formKey}
         />
       </div>
-    </Fragment>
+    </>
   );
 };
 

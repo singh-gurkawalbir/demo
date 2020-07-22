@@ -7,7 +7,7 @@ import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
 import * as selectors from '../../reducers/index';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
-import { run } from './';
+import { run } from '.';
 
 describe('run saga', () => {
   const flowId = 'f1';

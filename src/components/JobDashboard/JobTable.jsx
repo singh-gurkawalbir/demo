@@ -1,15 +1,12 @@
-import { useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
+import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
-import JobDetail from './JobDetail';
 import { JOB_STATUS } from '../../utils/constants';
-import JobErrorDialog from './JobErrorDialog';
+import JobDetail from './JobDetail';
+import ErrorDrawer from './ErrorDrawer';
+import actions from '../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +26,6 @@ const useStyles = makeStyles(theme => ({
   checkFlow: {
     paddingLeft: 40,
   },
-  tablePaginationRoot: { float: 'right' },
   name: {
     width: '18.15%',
     wordBreak: 'break-word',
@@ -83,6 +79,9 @@ function JobTable({
   isFlowBuilderView,
 }) {
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const [openedJobErrors, setOpenedJobErrors] = useState(false);
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
@@ -94,6 +93,11 @@ function JobTable({
   const selectableJobIdsInCurrentPage = selectableJobsInCurrentPage.map(
     j => j._id
   );
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const _JobId = queryParams.get('_jobId');
+  const flowJobId = queryParams.get('_flowJobId');
   const selectedJobIds = Object.keys(selectedJobs).filter(
     jobId => selectedJobs[jobId] && selectedJobs[jobId].selected
   );
@@ -125,28 +129,53 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-  function handleViewErrorsClick({
+
+  const handleViewErrorsClick = useCallback(({
     jobId,
     parentJobId,
     showResolved = false,
     numError,
+    includeAll,
     numResolved,
-  }) {
+  }) => {
     setShowErrorDialogFor({
       jobId,
       parentJobId,
       showResolved,
       numError,
+      includeAll,
       numResolved,
     });
-  }
 
-  function handleJobErrorDialogCloseClick() {
-    setShowErrorDialogFor({});
+    history.push(`${match.url}/viewErrors`);
+  }, [history, match.url]);
+
+  useEffect(() => {
+    if (!openedJobErrors && flowJobId) {
+      dispatch(actions.job.requestFamily({ jobId: flowJobId }));
+      handleViewErrorsClick({jobId: _JobId, parentJobId: flowJobId, includeAll: true});
+      setOpenedJobErrors(true);
+    }
+    // This logic is to handle the case when user tries to reload the page with viewErrors link
+    // ViewErrors drawer will work when user selectes a job error or from the error notification mail
+    // For reload case as there is no track of jobID, redirecting to the job table dashbaord
+    if (history.location.pathname.includes('/viewErrors') && !(_JobId || showErrorDialogFor?.jobId)) {
+      const urlExtractFields = history.location.pathname.split('/');
+      const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
+      const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
+      history.replace(strippedRoute);
+    }
+  }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors, history, showErrorDialogFor]);
+
+  function handleErrorDrawerClose() {
+    history.goBack();
+    // only clear the current error set if the close was fired from
+    // this drawer and not the child retry drawer.
+    if (match.isExact) setShowErrorDialogFor({});
   }
 
   return (
-    <Fragment>
+    <>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -186,17 +215,20 @@ function JobTable({
           ))}
         </TableBody>
       </Table>
-      {showErrorDialogFor.jobId && (
-        <JobErrorDialog
-          jobId={showErrorDialogFor.jobId}
-          parentJobId={showErrorDialogFor.parentJobId}
-          showResolved={showErrorDialogFor.showResolved}
-          numError={showErrorDialogFor.numError}
-          numResolved={showErrorDialogFor.numResolved}
-          onCloseClick={handleJobErrorDialogCloseClick}
-        />
-      )}
-    </Fragment>
+      {(showErrorDialogFor?.jobId || _JobId) &&
+      <ErrorDrawer
+        // for now, force tall (default)
+        // height={isFlowBuilderView ? 'short' : 'tall'}
+        integrationName={integrationName}
+        jobId={showErrorDialogFor.jobId}
+        includeAll={showErrorDialogFor.includeAll}
+        parentJobId={showErrorDialogFor.parentJobId}
+        showResolved={showErrorDialogFor.showResolved}
+        numError={showErrorDialogFor.numError}
+        numResolved={showErrorDialogFor.numResolved}
+        onClose={handleErrorDrawerClose}
+        />}
+    </>
   );
 }
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import Retry from '../actions/Retry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';

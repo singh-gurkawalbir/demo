@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { Typography, makeStyles } from '@material-ui/core';
 import InfoIconButton from '../InfoIconButton';

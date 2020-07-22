@@ -1,6 +1,7 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-param-reassign */
 import { filter, isEmpty, uniqBy } from 'lodash';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
 
 export function getFilterRuleId(rule) {

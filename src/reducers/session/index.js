@@ -7,32 +7,35 @@ import connectors, * as fromConnectors from './connectors';
 import customSettings, * as fromCustomSettings from './customSettings';
 import editors, * as fromEditors from './editors';
 import editorSampleData, * as fromEditorSampleData from './editorSampleData';
+import errorManagement, * as fromErrorManagement from './errorManagement';
 import exportDataReducer, * as fromExportData from './exportData';
 import fileUpload, * as fromFileUpload from './fileUpload';
 import filters, * as fromFilters from './filters';
+import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import flows, * as fromFlows from './flows';
-import formReducer, * as fromForm from './form';
+import * as fromForm from './form';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import mappings, * as fromMappings from './mappings';
 import metadata, * as fromMetadata from './metadata';
 import netsuiteUserRole, * as fromNetsuiteUserRoles from './netsuiteUserRoles';
 import oAuthAuthorize, * as fromOAuthAuthorize from './oAuthAuthorize';
+import recycleBin, * as fromRecycleBin from './recycleBin';
 import resource, * as fromResource from './resource';
 import resourceForm, * as fromResourceForm from './resourceForm';
 import responseMapping, * as fromResponseMapping from './responseMapping';
 import sampleData, * as fromSampleData from './sampleData';
 import flowData, * as fromFlowData from './sampleData/flows';
-import flowMetrics, * as fromFlowMetrics from './flowMetrics';
+import importSampleData, * as fromImportSampleData from './sampleData/imports';
 import searchCriteria, * as fromSearchCriteria from './searchCriteria';
 import stackSystemTokens, * as fromStackSystemTokens from './stackSystemTokens';
 import stage, * as fromStage from './stage';
+import suiteScript, * as fromSuiteScript from './suiteScript';
 import templates, * as fromTemplates from './templates';
 import transfers, * as fromTransfers from './transfers';
-import errorManagement, * as fromErrorManagement from './errorManagement';
 
 export default combineReducers({
-  form: formReducer,
+  recycleBin,
   stage,
   filters,
   editors,
@@ -47,6 +50,7 @@ export default combineReducers({
   resource,
   netsuiteUserRole,
   sampleData,
+  importSampleData,
   flowData,
   flowMetrics,
   integrationApps,
@@ -58,6 +62,7 @@ export default combineReducers({
   transfers,
   responseMapping,
   fileUpload,
+  suiteScript,
   jobErrorsPreview,
   errorManagement,
   customSettings,
@@ -84,6 +89,12 @@ export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
     fieldVisibleRules
   );
 
+export function suiteScriptIAFeatureCheckState(
+  state,
+  { ssLinkedConnectionId, integrationId, featureName}
+) {
+  return fromSuiteScript.suiteScriptIAFeatureCheckState(state && state.suiteScript, { ssLinkedConnectionId, integrationId, featureName});
+}
 export function netsuiteUserRoles(
   state,
   connectionId,
@@ -112,6 +123,10 @@ export function tokenRequestLoading(state, resourceId) {
     state && state.connectionToken,
     resourceId
   );
+}
+
+export function recycleBinState(state) {
+  return fromRecycleBin.recycleBinState(state && state.recycleBin);
 }
 
 export function filter(state, name) {
@@ -219,7 +234,6 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
-
 export function optionsMapFromMetadata(
   state,
   connectionId,
@@ -410,6 +424,9 @@ export function checkUpgradeRequested(state, licenseId) {
 export function isOnOffInProgress(state, flowId) {
   return fromFlows.isOnOffInProgress(state && state.flows, flowId);
 }
+export function canOpenOauthConnection(state, integrationId) {
+  return fromIntegrationApps.canOpenOauthConnection(state && state.integrationApps, integrationId);
+}
 
 export function integrationAppsInstaller(state, id) {
   return fromIntegrationApps.integrationAppsInstaller(
@@ -507,6 +524,13 @@ export function uninstallData(state, id, storeId) {
   );
 }
 
+export function uninstall2Data(state, id) {
+  return fromIntegrationApps.uninstall2Data(
+    state && state.integrationApps,
+    id,
+  );
+}
+
 export function addNewStoreSteps(state, id) {
   return fromIntegrationApps.addNewStoreSteps(
     state && state.integrationApps,
@@ -525,8 +549,12 @@ export function createdResourceId(state, tempId) {
   return fromResource.createdResourceId(state && state.resource, tempId);
 }
 
-export function integratorLicenseActionMessage(state) {
-  return fromResource.integratorLicenseActionMessage(state && state.resource);
+export function platformLicenseActionMessage(state) {
+  return fromResource.platformLicenseActionMessage(state && state.resource);
+}
+
+export function getChildIntegrationId(state, parentId) {
+  return fromResource.getChildIntegrationId(state && state.resource, parentId);
 }
 
 export function resourceReferences(state) {
@@ -535,6 +563,10 @@ export function resourceReferences(state) {
 
 export function getNumEnabledFlows(state) {
   return fromResource.getNumEnabledFlows(state && state.resource);
+}
+
+export function getLicenseEntitlementUsage(state) {
+  return fromResource.getLicenseEntitlementUsage(state && state.resource);
 }
 
 export function assistantData(state, { adaptorType, assistant }) {
@@ -654,4 +686,110 @@ export function flowMetricsData(state, flowId, measurement) {
   );
 }
 
+export function integrationAppImportMetadata(state, importId) {
+  return fromImportSampleData.integrationAppImportMetadata(
+    state && state.importSampleData,
+    importId
+  );
+}
+
 // #endregion
+
+export function suiteScriptResourceFormState(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormState(state && state.suiteScript, {
+    resourceType,
+    resourceId,
+    ssLinkedConnectionId,
+    integrationId,
+  });
+}
+
+export function suiteScriptResourceFormSaveProcessTerminated(
+  state,
+  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.resourceFormSaveProcessTerminated(
+    state && state.suiteScript,
+    {
+      resourceType,
+      resourceId,
+      ssLinkedConnectionId,
+      integrationId,
+    }
+  );
+}
+
+export function suiteScriptIAFormSaving(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormSaving(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+export function suiteScriptIAFormState(
+  state,
+  { ssLinkedConnectionId, integrationId }
+) {
+  return fromSuiteScript.suiteScriptIAFormState(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, integrationId }
+  );
+}
+
+
+export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+  return fromSuiteScript.isFlowOnOffInProgress(
+    state && state.suiteScript,
+    { ssLinkedConnectionId, _id }
+  );
+}
+
+export function netsuiteAccountHasSuiteScriptIntegrations(state, account) {
+  return fromSuiteScript.netsuiteAccountHasSuiteScriptIntegrations(
+    state && state.suiteScript,
+    account
+  );
+}
+
+export function suiteScriptIntegrationAppInstallerData(state, id) {
+  return fromSuiteScript.installerData(
+    state && state.suiteScript,
+    id
+  );
+}
+export function suiteScriptMappings(state) {
+  return fromSuiteScript.mappingState(
+    state && state.suiteScript
+  );
+}
+
+export function suitesciptMappingsChanged(state) {
+  return fromSuiteScript.mappingsChanged(
+    state && state.suiteScript
+  );
+}
+
+export function suiteScriptMappingsSaveStatus(state) {
+  return fromSuiteScript.mappingsSaveStatus(
+    state && state.suiteScript
+  );
+}
+
+export function suiteScriptImportSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.importSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
+  );
+}
+export function suiteScriptFlowSampleDataContext(state, {ssLinkedConnectionId, integrationId, flowId}) {
+  return fromSuiteScript.flowSampleDataContext(
+    state && state.suiteScript,
+    {ssLinkedConnectionId, integrationId, flowId}
+  );
+}

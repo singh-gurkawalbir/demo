@@ -1,8 +1,10 @@
-import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
+
 
 export default function DynaRefreshableStaticMap(props) {
   const {
@@ -49,31 +51,29 @@ export default function DynaRefreshableStaticMap(props) {
 
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const dispatch = useDispatch();
-  const { status, metadata } = useSelector(state => {
-    const {
-      status,
-      data,
-      changeIdentifier,
-    } = selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath: options.commMetaPath || commMetaPath,
-      filterKey: options.filterKey || filterKey,
-    });
+
+  const { status: refreshStatus, data: refreshMetadata, changeIdentifier } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
+    options.commMetaPath || commMetaPath,
+    options.filterKey || filterKey);
+
+  const { status, metadata } = useMemo(() => {
     const obj = {
-      status,
+      status: refreshStatus,
     };
 
-    if (data) {
+    if (refreshMetadata) {
       const optionsMapCopy = [...optionsMap];
 
-      optionsMapCopy[1].options = data;
+      optionsMapCopy[1].options = refreshMetadata;
       optionsMapCopy[1].optionsChangeIdentifer = changeIdentifier;
       obj.metadata = { optionsMap: optionsMapCopy };
     }
 
     return obj;
-  });
+  }, [changeIdentifier, optionsMap, refreshMetadata, refreshStatus]);
+
+  const isLoadingMap = useMemo(() => ({[valueName]: status === 'requested'}), [status, valueName]);
+
   const onFetch = useCallback(() => {
     if (!metadata && !disableOptionsLoad) {
       dispatch(
@@ -107,10 +107,11 @@ export default function DynaRefreshableStaticMap(props) {
     );
   };
 
+
   return (
     <DynaTableView
       {...props}
-      isLoading={status === 'requested'}
+      isLoading={isLoadingMap}
       metadata={metadata}
       shouldReset={!!metadata}
       optionsMap={optionsMap}

@@ -1,6 +1,6 @@
 /* global describe, test, expect, fail */
 import deepFreeze from 'deep-freeze';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 
 describe('editor reducers', () => {
@@ -186,14 +186,14 @@ describe('editor reducers', () => {
 });
 
 describe('editor selectors', () => {
-  describe(`editor`, () => {
+  describe('editor', () => {
     test('should return empty object when no match found.', () => {
       expect(selectors.editor(undefined, 'key')).toEqual({});
       expect(selectors.editor({}, 'key')).toEqual({});
     });
   });
 
-  describe(`processorRequestOptions`, () => {
+  describe('processorRequestOptions', () => {
     test('should return empty object when no match found.', () => {
       expect(selectors.processorRequestOptions(undefined, 'missingId')).toEqual(
         {}
@@ -206,7 +206,7 @@ describe('editor selectors', () => {
         processor: 'csvParser',
         valid: {
           initOpts: {
-            columnDelimiter: 'tab',
+            columnDelimiter: '\t',
             hasHeaderRow: true,
             trimSpaces: true,
             data: 'a,b,c',
@@ -236,8 +236,8 @@ describe('editor selectors', () => {
         processor: 'csvDataGenerator',
         valid: {
           initOpts: {
-            columnDelimiter: 'tab',
-            rowDelimiter: 'crlf',
+            columnDelimiter: '\t',
+            rowDelimiter: '\r\n',
             hasHeaderRow: true,
             trimSpaces: true,
             includeHeader: false,
@@ -264,7 +264,7 @@ describe('editor selectors', () => {
         },
         invalid: {
           initOpts: { data: '' },
-          violations: { dataError: 'Unexpected end of JSON input' },
+          violations: { dataError: 'Must provide some sample data.' },
         },
       },
       {
@@ -497,7 +497,7 @@ describe('editor selectors', () => {
         processor: 'xmlParser',
         valid: {
           initOpts: {
-            advanced: true,
+            V0_json: false,
             trimSpaces: true,
             stripNewLineChars: true,
             attributePrefix: '@',
@@ -508,6 +508,9 @@ describe('editor selectors', () => {
           expectedRequest: {
             body: {
               data: '<doc>empty</doc>',
+              options: {
+                isSimplePath: true,
+              },
               rules: {
                 resourcePath: undefined,
                 doc: {
@@ -545,7 +548,7 @@ describe('editor selectors', () => {
 
     processorTestData.forEach(testData => {
       describe(`${testData.processor}`, () => {
-        test(`should return correct opts for valid editor.`, () => {
+        test('should return correct opts for valid editor.', () => {
           const id = 1;
           let validCases;
 
@@ -563,7 +566,7 @@ describe('editor selectors', () => {
           });
         });
 
-        test(`should return errors for invalid editor.`, () => {
+        test('should return errors for invalid editor.', () => {
           const id = 1;
           let invalidCases;
 

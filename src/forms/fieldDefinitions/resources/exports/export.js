@@ -37,14 +37,7 @@ export default {
     label: 'Name',
     required: true,
   },
-  // adaptor type has export appended to it
-  // strip it off and lowercase the connection type
-  // _connectionId: {
-  //   type: 'text',
-  //   label: 'Connection',
-  //   resourceType: 'connections',
-  //   resourceProp: 'type',
-  // },
+
   description: {
     type: 'text',
     label: 'Description',
@@ -55,6 +48,7 @@ export default {
     id: 'formView',
     type: 'formview',
     label: 'Form view',
+    visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   asynchronous: {
@@ -62,7 +56,8 @@ export default {
     label: 'Asynchronous',
   },
   apiIdentifier: {
-    label: 'Invoke this export [post]',
+    label: 'Invoke',
+    helpKey: 'apiIdentifier',
     type: 'apiidentifier',
     visible: r => r && !isNewId(r._id),
   },
@@ -102,21 +97,16 @@ export default {
     label: 'Data URI template',
     editorTitle: 'Build data URI template',
   },
-  exportOneToMany: {
-    label: 'How should this export be parameterized?',
-    type: 'labeltitle',
-    visible: r => !!(r && r.isLookup),
-  },
   oneToMany: {
     type: 'radiogroup',
-    label:
-      'Does each individual record being processed need to execute multiple different exports?',
-    defaultValue: r => (r && r.oneToMany ? 'true' : 'false'),
+    label: 'One to many',
+    helpKey: 'oneToMany',
+    defaultValue: r => ((r?.oneToMany && r?.oneToMany !== 'false') ? 'true' : 'false'),
     visible: r => !!(r && r.isLookup),
     options: [
       {
         items: [
-          { label: 'Yes(Advanced)', value: 'true' },
+          { label: 'Yes (advanced)', value: 'true' },
           { label: 'No', value: 'false' },
         ],
       },
@@ -124,18 +114,19 @@ export default {
   },
   pathToMany: {
     type: 'text',
-    label:
-      'If records being processed are represented by Objects then please specify the JSON path to the child objects that should be used to parameterize each export',
-    placeholder: 'Optional. Not needed for row/array formats.',
+    label: 'Path to many',
+    helpKey: 'pathToMany',
+    placeholder: 'Not needed for array/row based data.',
     visible: r => !!(r && r.isLookup),
     visibleWhenAll: r => {
-      if (r && r.isLookup)
+      if (r && r.isLookup) {
         return [
           {
             field: 'oneToMany',
             is: ['true'],
           },
         ];
+      }
 
       return [];
     },
@@ -377,6 +368,17 @@ export default {
     type: 'text',
     label: 'Adaptor type',
   },
+  parsers: {
+    label: 'XML parser helper',
+    type: 'xmlparse',
+    visibleWhen: [
+      {
+        field: 'file.type',
+        is: ['xml'],
+      },
+    ],
+    required: true,
+  },
   // #endregion common
   // #region inputFilter
   'inputFilter.expression.version': {
@@ -426,8 +428,7 @@ export default {
       },
     ],
     isTextComponent: r => {
-      if ((r && r.delta === undefined) || r.delta.dateFormat === undefined)
-        return false;
+      if ((r && r.delta === undefined) || r.delta.dateFormat === undefined) return false;
 
       return !(
         r &&
@@ -546,17 +547,7 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-  // #region parsers
-  // parsers check
-  'parsers.version': {
-    type: 'text',
-    label: 'Parsers version',
-  },
-  'parsers.rules': {
-    type: 'text',
-    label: 'Parsers rules',
-  },
-  // #endregion parsers
+
   // #region filter
   'filter.expression.version': {
     type: 'radiogroup',

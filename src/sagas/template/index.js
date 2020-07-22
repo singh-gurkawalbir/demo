@@ -29,7 +29,7 @@ export function* requestPreview({ templateId }) {
   try {
     components = yield call(apiCallWithRetry, {
       path,
-      message: `Fetching Preview`,
+      message: 'Loading',
     });
   } catch (error) {
     yield put(actions.template.failedPreview(templateId));
@@ -64,7 +64,7 @@ export function* createComponents({ templateId, runKey }) {
           name: `Copy ${(template || {}).name}`,
         },
       },
-      message: `Installing Template...`,
+      message: 'Installing Template...',
     });
   } catch (error) {
     yield put(actions.template.failedInstall(templateId));
@@ -94,7 +94,7 @@ export function* verifyBundleOrPackageInstall({
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: `Verifying Bundle/Package Installation...`,
+      message: 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(

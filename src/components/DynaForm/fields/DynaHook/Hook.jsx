@@ -1,5 +1,6 @@
-import { useMemo, useState, Fragment, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -9,7 +10,7 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
@@ -20,7 +21,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
-    alignItems: 'flex-start',
   },
   label: {
     minWidth: 100,
@@ -30,9 +30,21 @@ const useStyles = makeStyles(theme => ({
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
+    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
+    '&:last-child': {
+      paddingRight: 0,
+    },
+  },
+  hookActionBtnAdd: {
+    marginLeft: 0,
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+  },
+  hookActionBtnEdit: {
+    marginLeft: theme.spacing(1),
   },
 }));
 /*
@@ -74,6 +86,8 @@ export default function DynaHook(props) {
     preHookData = {},
     editorResultMode,
     requestForPreHookData,
+    isSampleDataLoading,
+    resourceType
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -88,7 +102,7 @@ export default function DynaHook(props) {
 
     setShowEditor(!showEditor);
   }, [requestForPreHookData, showEditor]);
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
 
@@ -98,8 +112,6 @@ export default function DynaHook(props) {
         function: entryFunction,
       });
     }
-
-    handleEditorClick();
   };
 
   const handleFieldChange = field => (event, fieldValue) => {
@@ -121,15 +133,14 @@ export default function DynaHook(props) {
     setShowCreateScriptDialog(true);
   };
 
-  const handleCreateScriptDialogClose = (shouldCommit, values) => {
-    if (shouldCommit === true) {
-      const options = { dispatch, isNew: true };
+  const handleCreateScriptSave = useCallback(values => {
+    const options = { dispatch, isNew: true };
+    saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
+  }, [dispatch, flowId, tempScriptId]);
 
-      saveScript({ ...values, scriptId: tempScriptId }, options);
-    }
-
+  const handleCreateScriptDialogClose = useCallback(() => {
     setShowCreateScriptDialog(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (createdScriptId && !isNewScriptIdAssigned) {
@@ -158,8 +169,8 @@ export default function DynaHook(props) {
       const { function: func, _scriptId, _stackId } = value;
       const isEmptyHook = !func && !(_scriptId || _stackId);
 
-      // If all fields are empty , then it is valid as we accept empty hook
-      if (isEmptyHook) return true;
+      // If all fields are empty , then it is valid as we accept empty hook(except resource type apis)
+      if (isEmptyHook) return resourceType !== 'apis';
 
       // If hook is not empty, then valid if those respective fields are not empty
       switch (field) {
@@ -172,7 +183,7 @@ export default function DynaHook(props) {
         default:
       }
     },
-    [value]
+    [value, resourceType]
   );
   const optionalSaveParams = useMemo(
     () => ({
@@ -182,7 +193,7 @@ export default function DynaHook(props) {
   );
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <JavaScriptEditorDialog
           title="Script editor"
@@ -194,16 +205,21 @@ export default function DynaHook(props) {
           insertStubKey={hookStage}
           entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
           context={scriptContext}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           resultMode={editorResultMode}
           optionalSaveParams={optionalSaveParams}
+          flowId={flowId}
           patchOnSave
+          isSampleDataLoading={isSampleDataLoading}
         />
       )}
       {showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
+          onSave={handleCreateScriptSave}
           scriptId={tempScriptId}
+          flowId={flowId}
         />
       )}
 
@@ -245,7 +261,7 @@ export default function DynaHook(props) {
             </div>
           )}
           {hookType === 'script' && (
-            <Fragment>
+            <>
               <div className={classes.field}>
                 <FormControl className={classes.select}>
                   <InputLabel htmlFor="scriptId">Script</InputLabel>
@@ -265,21 +281,26 @@ export default function DynaHook(props) {
               <ActionButton
                 onClick={handleCreateScriptClick}
                 disabled={disabled}
+                className={classes.hookActionBtnAdd}
                 data-test={id}>
                 <AddIcon />
               </ActionButton>
-            </Fragment>
+            </>
           )}
           {hookType === 'script' && (
             <ActionButton
               onClick={handleEditorClick}
               disabled={disabled || !value._scriptId}
+              className={clsx(
+                classes.hookActionBtnAdd,
+                classes.hookActionBtnEdit
+              )}
               data-test={id}>
               <EditIcon />
             </ActionButton>
           )}
         </div>
       </div>
-    </Fragment>
+    </>
   );
 }

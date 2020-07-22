@@ -9,7 +9,7 @@ const reset = (draft, id) => {
   delete draft[id].error;
 };
 
-export default function(state = {}, action) {
+export default function (state = {}, action) {
   const { type, kind, identifier, data, error } = action;
   const id = typeof identifier !== 'string' ? String(identifier) : identifier;
 

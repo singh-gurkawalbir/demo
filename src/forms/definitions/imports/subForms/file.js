@@ -35,6 +35,10 @@ export default {
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
   },
   layout: {
-    fields: ['uploadFile', 'file.csv', 'file.xlsx.includeHeader'],
+    fields: [
+      'uploadFile',
+      'file.csv',
+      'file.xlsx.includeHeader',
+    ],
   },
 };

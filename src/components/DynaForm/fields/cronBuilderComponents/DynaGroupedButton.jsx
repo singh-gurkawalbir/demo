@@ -1,5 +1,5 @@
 import { ButtonGroup, Button, makeStyles } from '@material-ui/core';
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles({
@@ -55,7 +55,7 @@ export default function GroupedButton(props) {
   }, [id]);
 
   return (
-    <Fragment>
+    <>
       {options &&
         options[0] &&
         options[0].items &&
@@ -87,6 +87,6 @@ export default function GroupedButton(props) {
             </div>
           )
         )}
-    </Fragment>
+    </>
   );
 }

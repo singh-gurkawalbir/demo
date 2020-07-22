@@ -5,7 +5,15 @@ import actionTypes from '../../../actions/types';
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
 
 export default function reducer(state = {}, action) {
-  const { type, tempId, id, resourceReferences, response } = action;
+  const {
+    type,
+    tempId,
+    id,
+    resourceReferences,
+    response,
+    parentId,
+    childId,
+  } = action;
   let newState;
 
   switch (type) {
@@ -25,7 +33,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_TRIAL_ISSUED:
       newState = {
         ...state,
-        integratorLicenseActionMessage:
+        platformLicenseActionMessage:
           'Congratulations! Your 30 days of unlimited flows starts now - what will you integrate next?',
       };
 
@@ -33,7 +41,7 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED:
       newState = {
         ...state,
-        integratorLicenseActionMessage:
+        platformLicenseActionMessage:
           'Your request has been received. We will contact you soon.',
       };
 
@@ -41,6 +49,21 @@ export default function reducer(state = {}, action) {
     case actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED:
       return produce(state, draft => {
         draft.numEnabledFlows = response;
+      });
+    case actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED:
+      return produce(state, draft => {
+        draft.licenseEntitlementUsage = response;
+      });
+    case actionTypes.CLEAR_CHILD_INTEGRATION:
+      return produce(state, draft => {
+        draft.parentChildMap = undefined;
+        delete draft.parentChildMap;
+      });
+
+    case actionTypes.UPDATE_CHILD_INTEGRATION:
+      return produce(state, draft => {
+        draft.parentChildMap = {};
+        draft.parentChildMap[parentId] = childId;
       });
 
     default:
@@ -80,12 +103,20 @@ export const resourceReferences = createSelector(
   }
 );
 
-export function integratorLicenseActionMessage(state) {
+export function platformLicenseActionMessage(state) {
   if (!state) {
     return;
   }
 
-  return state.integratorLicenseActionMessage;
+  return state.platformLicenseActionMessage;
+}
+
+export function getChildIntegrationId(state, parentId) {
+  if (!state || !state.parentChildMap) {
+    return;
+  }
+
+  return state.parentChildMap[parentId];
 }
 
 export const getNumEnabledFlows = createSelector(
@@ -100,6 +131,17 @@ export const getNumEnabledFlows = createSelector(
       numEnabledSandboxFlows: numEnabledFlows.numEnabledSandboxFlows || 0,
       numEnabledFreeFlows: numEnabledFlows.numEnabledFreeFlows || 0,
     };
+  }
+);
+
+export const getLicenseEntitlementUsage = createSelector(
+  state => state && state.licenseEntitlementUsage,
+  licenseEntitlementUsage => {
+    if (!licenseEntitlementUsage) {
+      return null;
+    }
+
+    return licenseEntitlementUsage;
   }
 );
 // #endregion

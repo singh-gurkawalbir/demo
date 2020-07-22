@@ -27,4 +27,9 @@ export default {
     label: 'Key ends with',
     editorTitle: 'Build Key ends with',
   },
+  's3.backupBucket': {
+    type: 'text',
+    label: 'Backup bucket name',
+    helpKey: 'export.s3.backupBucket',
+  }
 };

@@ -1,9 +1,9 @@
-import { useState, useCallback, Fragment, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch } from 'react-router-dom';
+import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, IconButton, Tooltip } from '@material-ui/core';
+import { Typography, IconButton } from '@material-ui/core';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
@@ -29,126 +29,19 @@ import SettingsIcon from '../../components/icons/SettingsIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
+import CloseIcon from '../../components/icons/CloseIcon';
+import HelpIcon from '../../components/icons/HelpIcon';
 import EditableText from '../../components/EditableText';
-import SwitchOnOff from '../../components/OnOff';
+import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
 import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
 import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
-import DateTimeDisplay from '../../components/DateTimeDisplay';
 import StatusCircle from '../../components/StatusCircle';
-import HelpIcon from '../../components/icons/HelpIcon';
+import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
-
-// #region FLOW SCHEMA: FOR REFERENCE DELETE ONCE FB IS COMPLETE
-/* 
-  var FlowSchema = new Schema({
- _userId: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
-  schedule: {type: String, cLocked: false, template: true, patch: true},
-  timezone: {type: String, cLocked: false, template: true, patch: true},
-  name: { type: String, template: true, maxSize: 300, patch: true },
-  description: {type: String, template: true, maxSize: 10 * 1024, patch: true},
-  lastModified: {type: Date, default: Date.now, index: true},
-  free: {type: Boolean, template: true},
-  _templateId: {type: Schema.Types.ObjectId, ref: 'Template', template: true},
-  externalId: {type: String},
-  wizardState: {type: String, enum: ['step1', 'step2', 'step3', 'done'], lowercase: true, template: true},
-  __startDateHelper: {type: Date},
-  // these are the initial exports that will run at the beginning of a flow and
-  // generate all the pages of data that will then flow through all of the pageProcessors
-  // defined below
-  pageGenerators: {
-    type: [{
-      application: { type: String },
-      _connectionId: {type: Schema.Types.ObjectId, ref: 'Connection'},
-      webhookOnly: {type: Boolean},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      _keepDeltaBehindFlowId: {type: Schema.Types.ObjectId, ref: 'Flow'},
-      _keepDeltaBehindExportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      schedule: {type: String, cLocked: false, patch: true},
-      skipRetries: {type: Boolean, patch: true},
-      __startDateHelper: {type: Date},
-      _id: false
-    }],
-  },
-  // the exports in this array are used to enhance the data, and the imports are used
-  // to submit the data.
-  pageProcessors: {
-    type: [{
-      type: {type: String, enum: ['export', 'import'], lowercase: true},
-      application: { type: String },
-      _connectionId: {type: Schema.Types.ObjectId, ref: 'Connection'},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'},
-      _importId: {type: Schema.Types.ObjectId, ref: 'Import'},
-      proceedOnFailure: {type: Boolean},
-      responseMapping: {
-        fields: {
-          type: [{
-            extract: { type: String },
-            generate: { type: String },
-            _id: false
-          }],
-          cLocked: false
-        },
-        lists: {
-          type: [{
-            generate: { type: String },
-            fields: [{
-              extract: { type: String },
-              generate: { type: String },
-              _id: false
-            }],
-            _id: false
-          }],
-          cLocked: false
-        }
-      },
-      hooks: {
-        postResponseMap: {
-          function: { type: String },
-          _scriptId: {type: Schema.Types.ObjectId, ref: 'Script'},
-          configuration: Schema.Types.Mixed
-        }
-      },
-      _id: false
-    }],
-  },
-  _runNextFlowIds: {type: [{type: Schema.Types.ObjectId, ref: 'Flow'}], template: true},
-  // Once the UI changes for IO-8003 are done, _runNextExportIds will be renamed to _runNextFlowIds while existing _runNextFlowIds is removed
-  _runNextExportIds: {
-    type: [{
-      _id: false,
-      _flowId: {type: Schema.Types.ObjectId, ref: 'Flow'},
-      _exportId: {type: Schema.Types.ObjectId, ref: 'Export'}
-    }],
-    template: true
-  },
-  // old schema, not needed. _exportId: {type: Schema.Types.ObjectId, ref: 'Export', template: true},
-  // old schema, not needed. _importId: {type: Schema.Types.ObjectId, ref: 'Import', template: true},
-  _integrationId: {type: Schema.Types.ObjectId, ref: 'Integration'},
-  _connectorId: {type: Schema.Types.ObjectId, ref: 'Connector'},
-  disabled: {type: Boolean, patch: true},
-  skipRetries: {type: Boolean, patch: true, template: true},
-  resolvedAt: {type: Date},
-  sandbox: {type: Boolean},
-  createdAt: {type: Date, default: Date.now}, // docs created after 17th April 2017 will have this field set
-  deletedAt: {type: Date},
-  _keepDeltaBehindFlowId: {type: Schema.Types.ObjectId, ref: 'Flow', template: true}, // this field is deprecated
-  runPageGeneratorsInParallel: {type: Boolean, patch: true, template: true},
-  settingsForm: {
-    form: { type: Schema.Types.Mixed },
-    init: {
-      _scriptId: { type: Schema.Types.ObjectId, ref: 'Script' },
-      function: { type: String }
-    },
-    submit: {
-      _scriptId: { type: Schema.Types.ObjectId, ref: 'Script' },
-      function: { type: String }
-    }
-  }
-  })
-*/
-// #endregion
+import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
+import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -174,10 +67,15 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     display: 'flex',
     overflow: 'auto',
+    background: theme.palette.background.paper,
   },
   generatorContainer: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    padding: theme.spacing(0, 0, 3, 3),
+    backgroundColor: theme.palette.background.default,
   },
   processorContainer: {
     display: 'flex',
@@ -194,22 +92,21 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'flex',
-    minHeight: 48,
+    fontSize: 14,
+    padding: theme.spacing(4, 0, 6, 0),
     alignItems: 'center',
+    marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
-  },
-  sourceTitle: {
-    marginBottom: theme.spacing(3),
+    color: theme.palette.secondary.main,
+
   },
   destinationTitle: {
-    width: 320,
     marginLeft: 100,
-    marginBottom: theme.spacing(3),
+    justifyContent: 'flex-start',
   },
   generatorRoot: {
-    backgroundColor: 'rgba(0,0,0,0.02)',
-    padding: theme.spacing(0, 0, 3, 3),
-    minWidth: 429,
+    backgroundColor: theme.palette.background.default,
+    minWidth: 460,
   },
   processorRoot: {
     padding: theme.spacing(0, 3, 3, 0),
@@ -246,10 +143,23 @@ const useStyles = makeStyles(theme => ({
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
   },
+  roundBtn: {
+    borderRadius: '50%',
+    background: theme.palette.background.paper,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    width: 18,
+    height: 18,
+    marginLeft: theme.spacing(2),
+  },
+  sourceTitle: {
+    marginLeft: -100,
+  }
 }));
 
 function FlowBuilder() {
   const match = useRouteMatch();
+  const location = useLocation();
   const { flowId, integrationId } = match.params;
   const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
@@ -265,6 +175,7 @@ function FlowBuilder() {
   const newFlowId = useSelector(state =>
     selectors.createdResourceId(state, flowId)
   );
+  const { confirmDialog } = useConfirmDialog();
   const flow = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'flows',
@@ -315,7 +226,7 @@ function FlowBuilder() {
     },
     [dispatch, flowId, isNewFlow]
   );
-  const handleMove = useCallback(
+  const handleMovePP = useCallback(
     (dragIndex, hoverIndex) => {
       const dragItem = pageProcessors[dragIndex];
       const newOrder = [...pageProcessors];
@@ -326,23 +237,50 @@ function FlowBuilder() {
     },
     [pageProcessors, patchFlow]
   );
-  const handleDelete = useCallback(
-    type => index => {
-      if (type === itemTypes.PAGE_PROCESSOR) {
-        const newOrder = [...pageProcessors];
+  const handleMovePG = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragItem = pageGenerators[dragIndex];
+      const newOrder = [...pageGenerators];
 
-        newOrder.splice(index, 1);
-        patchFlow('/pageProcessors', newOrder);
-      }
-
-      if (type === itemTypes.PAGE_GENERATOR) {
-        const newOrder = [...pageGenerators];
-
-        newOrder.splice(index, 1);
-        patchFlow('/pageGenerators', newOrder);
-      }
+      newOrder.splice(dragIndex, 1);
+      newOrder.splice(hoverIndex, 0, dragItem);
+      patchFlow('/pageGenerators', newOrder);
     },
-    [pageGenerators, pageProcessors, patchFlow]
+    [pageGenerators, patchFlow]
+  );
+  const handleDelete = useCallback(
+    type => () => index => {
+      confirmDialog({
+        title: 'Confirm remove',
+        message: 'Are you sure you want to remove this resource?',
+        buttons: [
+          {
+            label: 'Remove',
+            color: 'primary',
+            onClick: () => {
+              if (type === itemTypes.PAGE_PROCESSOR) {
+                const newOrder = [...pageProcessors];
+
+                newOrder.splice(index, 1);
+                patchFlow('/pageProcessors', newOrder);
+              }
+
+              if (type === itemTypes.PAGE_GENERATOR) {
+                const newOrder = [...pageGenerators];
+
+                newOrder.splice(index, 1);
+                patchFlow('/pageGenerators', newOrder);
+              }
+            },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    },
+    [pageGenerators, pageProcessors, patchFlow, confirmDialog]
   );
   const pushOrReplaceHistory = useCallback(
     to => {
@@ -399,6 +337,19 @@ function FlowBuilder() {
     },
     [handleDrawerOpen]
   );
+  const handleExitClick = useCallback(() => {
+    // Note that our App init must do some internal redirects since
+    // a new browser tab session always has a history depth of 3!
+    // if depth is more than 3, we are safe to just go back in the history queue.
+    if (history.length > 3) {
+      history.goBack();
+    }
+    // Otherwise parse the location and return the user to the integration details
+    // page.
+    const parts = location.pathname.split('/');
+    const newPath = `${parts.slice(0, 4).join('/')}/flows`;
+    history.push(newPath);
+  }, [history, location]);
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -475,29 +426,34 @@ function FlowBuilder() {
   // Replaces the url once the virtual flow resource is
   // persisted and we have the final flow id.
   if (newFlowId) {
-    history.replace(rewriteUrl(newFlowId));
+    const nestedPgOrPpPath = matchPath(location.pathname, {
+      path: `${match.path}/:mode/:resourceType/:resourceId`,
+    });
+
+    if (nestedPgOrPpPath && nestedPgOrPpPath.isExact) {
+      // Incase of a pg or pp opened ... replace url flowId with newFlowId
+      // @BugFix: IO-16074
+      history.replace(generatePath(nestedPgOrPpPath.path, {
+        ...nestedPgOrPpPath.params,
+        flowId: newFlowId,
+      }));
+    } else {
+      // In all other cases go back to flow url with new FlowId
+      history.replace(rewriteUrl(newFlowId));
+    }
 
     return null;
   }
   // #endregion
 
-  // eslint-disable-next-line
-  // console.log('render: <FlowBuilder>');
-
   return (
     <LoadResources required resources="imports, exports, flows">
       <ResourceDrawer
         flowId={flowId}
-        disabled={isViewMode}
         integrationId={integrationId}
       />
 
-      <ScheduleDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flow={flow}
-      />
+      <ScheduleDrawer flowId={flowId} />
       <ChartsDrawer flowId={flowId} />
       <SettingsDrawer
         integrationId={integrationId}
@@ -527,14 +483,14 @@ function FlowBuilder() {
           />
         }
         subtitle={
-          <Fragment>
+          <>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
-              <DateTimeDisplay dateTime={flow.lastModified} />
+              <CeligoTimeAgo date={flow.lastModified} />
             )}
-          </Fragment>
+          </>
         }
         infoText={flow.description}>
         {totalErrors ? (
@@ -544,7 +500,7 @@ function FlowBuilder() {
           </span>
         ) : null}
         <div className={classes.actions}>
-          {!isProduction() && flowDetails && flowDetails.lastExecutedAt && (
+          {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
             <IconButton
               disabled={isNewFlow}
               data-test="charts"
@@ -553,7 +509,8 @@ function FlowBuilder() {
             </IconButton>
           )}
           {!isDataLoaderFlow && (
-            <SwitchOnOff.component
+            <FlowToggle
+              integrationId={integrationId}
               resource={flowDetails}
               disabled={isNewFlow || isMonitorLevelAccess}
               isConnector={isIAType}
@@ -562,25 +519,28 @@ function FlowBuilder() {
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-
           {flowDetails && flowDetails.showScheduleIcon && (
-            <Tooltip title="Schedule" placement="bottom">
-              <IconButton
-                disabled={isNewFlow}
-                data-test="scheduleFlow"
-                onClick={handleDrawerClick('schedule')}>
-                <CalendarIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-          <Tooltip title="Settings" placement="bottom">
-            <IconButton
+            <IconButtonWithTooltip
+              tooltipProps={{
+                title: 'Schedule',
+                placement: 'bottom',
+              }}
               disabled={isNewFlow}
-              onClick={handleDrawerClick('settings')}
-              data-test="flowSettings">
-              <SettingsIcon />
-            </IconButton>
-          </Tooltip>
+              data-test="scheduleFlow"
+              onClick={handleDrawerClick('schedule')}>
+              <CalendarIcon />
+            </IconButtonWithTooltip>
+          )}
+          <IconButtonWithTooltip
+            tooltipProps={{
+              title: 'Settings',
+              placement: 'bottom',
+            }}
+            disabled={isNewFlow}
+            onClick={handleDrawerClick('settings')}
+            data-test="flowSettings">
+            <SettingsIcon />
+          </IconButtonWithTooltip>
 
           {!isIAType && (
             <FlowEllipsisMenu
@@ -588,8 +548,8 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
-          {isUserInErrMgtTwoDotZero ? (
-            <Fragment>
+          {isUserInErrMgtTwoDotZero && (
+            <>
               <div className={classes.divider} />
               <IconButton
                 disabled={isNewFlow}
@@ -603,8 +563,13 @@ function FlowBuilder() {
                 data-test="flowAuditLog">
                 <AuditLogIcon />
               </IconButton>
-            </Fragment>
-          ) : null}
+            </>
+          )}
+
+          <div className={classes.divider} />
+          <IconButton onClick={handleExitClick} size="small">
+            <CloseIcon />
+          </IconButton>
         </div>
       </CeligoPageBar>
       <div
@@ -621,18 +586,17 @@ function FlowBuilder() {
           {/* CANVAS START */}
           <div
             className={classes.generatorRoot}
-            style={{
-              minHeight: 240 * pageGenerators.length + 70,
-            }}>
+            >
             <Typography
               component="div"
               className={clsx(classes.title, classes.sourceTitle)}
               variant="overline">
-              {isDataLoaderFlow ? 'SOURCE' : 'SOURCE APPLICATIONS'}
+              {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
               {!isDataLoaderFlow && !isFreeFlow && (
                 <IconButton
                   data-test="addGenerator"
                   disabled={isViewMode}
+                  className={classes.roundBtn}
                   onClick={handleAddGenerator}>
                   <AddIcon />
                 </IconButton>
@@ -658,6 +622,7 @@ function FlowBuilder() {
                   index={i}
                   isViewMode={isViewMode || isFreeFlow}
                   isLast={pageGenerators.length === i + 1}
+                  onMove={handleMovePG}
                 />
               ))}
               {!pageGenerators.length && (
@@ -678,12 +643,13 @@ function FlowBuilder() {
               variant="overline">
               {isDataLoaderFlow
                 ? 'DESTINATION APPLICATION'
-                : 'DESTINATION & LOOKUP APPLICATIONS'}
+                : 'DESTINATIONS & LOOKUPS '}
 
               {showAddPageProcessor && !isFreeFlow && (
                 <IconButton
                   disabled={isViewMode}
                   data-test="addProcessor"
+                  className={classes.roundBtn}
                   onClick={handleAddProcessor}>
                   <AddIcon />
                 </IconButton>
@@ -712,7 +678,7 @@ function FlowBuilder() {
                   isViewMode={isViewMode || isFreeFlow}
                   isMonitorLevelAccess={isMonitorLevelAccess}
                   isLast={pageProcessors.length === i + 1}
-                  onMove={handleMove}
+                  onMove={handleMovePP}
                 />
               ))}
               {!pageProcessors.length && showAddPageProcessor && (
@@ -731,7 +697,7 @@ function FlowBuilder() {
                     You can add a destination application once you complete the
                     configuration of your data loader.
                   </Typography>
-                )}
+              )}
             </div>
           </div>
         </div>

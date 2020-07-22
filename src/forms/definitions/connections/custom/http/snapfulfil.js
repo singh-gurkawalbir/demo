@@ -45,18 +45,21 @@ export default {
       fieldId: 'http.auth.basic.password',
       helpKey: 'snapfulfil.connection.http.auth.basic.password',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.subdomain',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.subdomain',
+          'http.auth.basic.username',
+          'http.auth.basic.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

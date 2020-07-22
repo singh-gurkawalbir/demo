@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 
 describe('filter reducers', () => {
@@ -11,7 +11,7 @@ describe('filter reducers', () => {
     expect(newState).toEqual(oldState);
   });
 
-  describe(`PATCH_FILTER action`, () => {
+  describe('PATCH_FILTER action', () => {
     test('should set the filter on first action', () => {
       const name = 'testFilter';
       const filter = { keyword: 'findme', take: 5 };
@@ -42,7 +42,7 @@ describe('filter reducers', () => {
     });
   });
 
-  describe(`CLEAR_FILTER action`, () => {
+  describe('CLEAR_FILTER action', () => {
     test('should do nothing if filter doesnt exist', () => {
       const filter = { keyword: 'findme', take: 5 };
       let state;
@@ -68,7 +68,7 @@ describe('filter reducers', () => {
 });
 
 describe('filter selectors', () => {
-  describe(`filter`, () => {
+  describe('filter', () => {
     test('should return empty object when no match found.', () => {
       expect(selectors.filter(undefined, 'key')).toEqual({});
       expect(selectors.filter({}, 'key')).toEqual({});

@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import { matchPath, Link } from 'react-router-dom';
@@ -13,6 +14,9 @@ import CloneCrumb from './crumbs/Clone';
 import { IntegrationAppCrumb, StoreCrumb } from './crumbs/IntegrationApp';
 import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
+import suiteScriptRoutes from './suiteScript';
+import getRoutePath from '../../../utils/routePaths';
+import ConnectorCrumb from './crumbs/Connector';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -101,8 +105,9 @@ const integrationAppRoutes = [
 ];
 // Main route table.
 const routes = [
+  ...suiteScriptRoutes,
   {
-    path: '/pg/integrations/:integrationId/',
+    path: getRoutePath('/integrations/:integrationId/'),
     breadcrumb: IntegrationCrumb,
     childRoutes: [
       {
@@ -121,17 +126,9 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
+  { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
-    path: '/pg/connectors/:connectorId/connectorLicenses',
-    breadcrumb: () => 'Licenses',
-  },
-  {
-    path: '/pg/connectors/:connectorId/installBase',
-    breadcrumb: () => 'Install base',
-  },
-  { path: '/pg/dashboard' }, // exclusion of breadcrumb prop will skip this segment.
-  {
-    path: '/pg/integrationapps/:integrationAppName/:integrationId',
+    path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
       ...integrationAppRoutes,
@@ -143,7 +140,24 @@ const routes = [
     ],
   },
   {
-    path: '/pg/connectors/:integrationId/settings',
+    path: getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId'),
+    breadcrumb: IntegrationAppCrumb,
+    childRoutes: [
+      {
+        path: '/setup',
+        breadcrumb: () => 'Clone-configure and install',
+        childRoutes: integrationAppRoutes,
+      },
+    ],
+  },
+  {
+    path: getRoutePath('/templates/:integrationAppName/:integrationId'),
+    breadcrumb: IntegrationCrumb,
+  },
+  { path: getRoutePath('/templates'), breadcrumb: () => 'Templates' },
+
+  {
+    path: getRoutePath('/connectors/:integrationId/settings'),
     breadcrumb: IntegrationAppCrumb,
     childRoutes: [
       { path: '/users', breadcrumb: () => 'Users' },
@@ -175,7 +189,20 @@ const routes = [
     ],
   },
   {
-    path: '/pg/marketplace',
+    path: getRoutePath('/connectors'),
+    breadcrumb: 'Integration apps',
+    childRoutes: [
+      { path: '/edit/:resourceType/:resourceId', breadcrumb: EditResourceTypeCrumb },
+      { path: '/add/:resourceType/:resourceId', breadcrumb: AddResourceTypeCrumb },
+      { path: '/:connectorId',
+        breadcrumb: ConnectorCrumb,
+        childRoutes: [
+          { path: '/connectorLicenses', breadcrumb: 'Licenses' },
+          { path: '/installBase', breadcrumb: 'Install base' }]}
+    ]
+  },
+  {
+    path: getRoutePath('/marketplace'),
     breadcrumb: () => 'Marketplace',
     childRoutes: [
       { path: '/:app', breadcrumb: MarketplaceCrumb },
@@ -190,22 +217,22 @@ const routes = [
     ],
   },
   {
-    path: '/pg/clone',
-    breadcrumb: () => 'Clone',
+    path: getRoutePath('/clone'),
     childRoutes: [
       {
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
         childRoutes: [
-          { path: '/preview', breadcrumb: () => 'Preview' },
+          { path: '/preview', breadcrumb: () => 'Clone-detail' },
           { path: '/setup', breadcrumb: () => 'Install' },
         ],
       },
     ],
   },
-  { path: '/pg/recycleBin', breadcrumb: () => 'Recycle-bin' },
+  { path: getRoutePath('/recycleBin'), breadcrumb: () => 'Recycle-bin' },
+  { path: getRoutePath('/apis'), breadcrumb: () => 'My APIs' },
   {
-    path: '/pg/myAccount',
+    path: getRoutePath('/myAccount'),
     breadcrumb: () => 'My account',
     childRoutes: [
       { path: '/users', breadcrumb: () => 'Users' },
@@ -215,14 +242,14 @@ const routes = [
       { path: '/transfers', breadcrumb: () => 'Transfers' },
     ],
   },
-  { path: '/pg/templates', breadcrumb: () => 'Templates' },
-  { path: '/pg/accesstokens', breadcrumb: () => 'API tokens' },
+
+  { path: getRoutePath('/accesstokens'), breadcrumb: () => 'API tokens' },
   // Dev tools
-  { path: '/pg/resources', breadcrumb: () => 'Resources' },
-  { path: '/pg/editors', breadcrumb: () => 'Dev playground' },
-  { path: '/pg/permissions', breadcrumb: () => 'Permission explorer' },
+  { path: getRoutePath('/resources'), breadcrumb: () => 'Resources' },
+  { path: getRoutePath('/editors'), breadcrumb: () => 'Dev playground' },
+  { path: getRoutePath('/permissions'), breadcrumb: () => 'Permission explorer' },
   {
-    path: '/pg/:resourceType',
+    path: getRoutePath('/:resourceType'),
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
   },
 ];
@@ -275,7 +302,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
         const childPath = pathname.replace(match.url, '');
         let childCrumbs;
 
-        // possibly child routes? time to recuse.
+        // possibly child routes? time to recurse.
         if (r.childRoutes) {
           childCrumbs = parseUrl(childPath, r.childRoutes, newUrl, newParams);
 
@@ -312,7 +339,7 @@ export default function CeligoBreadcrumb({ location }) {
     selectors.shouldShowAppRouting(state)
   );
   const breadcrumbs = [
-    { url: '/pg', breadcrumb: () => 'Home' },
+    { url: getRoutePath(''), breadcrumb: () => 'Home' },
     ...parseUrl(location, shouldShowAppRouting ? routes : []),
   ];
 
@@ -328,12 +355,12 @@ export default function CeligoBreadcrumb({ location }) {
             key={url}
             variant="body2"
             className={clsx(classes.activeCrumb, classes.crumb)}>
-            <Crumb {...params} />
+            {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
             <div className={classes.crumb}>
-              <Crumb {...params} />
+              {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
             </div>
           </Link>
         )

@@ -4,20 +4,20 @@ export default {
     '/type': 'http',
     '/assistant': 'solidcommerce',
     '/http/auth/type': 'custom',
-    '/http/mediaType': 'xml',
-    '/http/ping/relativeURI': `/GetAllCompanyLists?appKey=${
-      formValues['/http/encrypted/appKey']
-    }&xslUri=&securityKey=${encodeURIComponent(
-      formValues['/http/encrypted/securityKey']
-    )}&includeWarehouses=True`,
-    '/http/ping/method': 'GET',
-    '/http/baseURI': `https://upsprodwebservices.upsefulfillment.com/ws.asmx`,
-    '/http/encrypted/securityKey': encodeURIComponent(
-      formValues['/http/encrypted/securityKey']
-    ),
+    '/http/mediaType': 'urlencoded',
+    '/http/successMediaType': 'xml',
+    '/http/ping/relativeURI': '/GetAllCompanyLists',
+    '/http/ping/method': 'POST',
+    '/http/baseURI': 'https://upsprodwebservices.upsefulfillment.com/ws.asmx',
     '/http/ping/successPath': '/LiquidateDirect/GetAllCompanyLists/DateTime',
     '/http/ping/errorPath': '/LiquidateDirect/Error/ErrorText',
+    '/http/ping/body': '{"xslUri":"","appKey":"{{{connection.http.encrypted.appKey}}}","securityKey":"{{{connection.http.encrypted.securityKey}}}","includeWarehouses":"True"}',
     '/http/headers': [
+      { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
+    ],
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/token/refreshHeaders': [
       { name: 'Content-Type', value: 'application/x-www-form-urlencoded' },
     ],
   }),
@@ -43,13 +43,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.encrypted.securityKey', 'http.encrypted.appKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.encrypted.securityKey', 'http.encrypted.appKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

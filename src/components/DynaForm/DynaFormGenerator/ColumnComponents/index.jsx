@@ -1,7 +1,8 @@
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
-import FormGenerator from '../';
 import * as selectors from '../../../../reducers';
+import FormGenerator from '..';
 
 function ColumnComponent(props) {
   const { fieldMap, formKey, container, classes } = props;

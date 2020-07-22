@@ -8,14 +8,16 @@ export default {
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
     } else {
+      const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
       retValues['/http/auth/oauth/authURI'] =
-        'https://app.hubspot.com/oauth/authorize';
+        `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
+      retValues['/http/auth/oauth/scope'] = 'oauth';
     }
 
     return {
@@ -36,7 +38,6 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
-      defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpKey: 'hubspot.connection.http.auth.type',
       options: [
         {
@@ -58,35 +59,90 @@ export default {
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
-        'contacts',
-        'content',
-        'reports',
-        'social',
-        'automation',
-        'forms',
-        'files',
-        'tickets',
-        'hubdb',
+        {
+          subHeader: 'Required',
+          scopes: [
+            'oauth',
+          ],
+        },
+        {
+          subHeader: 'Optional',
+          scopes: [
+            'automation',
+            'business-intelligence',
+            'contacts',
+            'content',
+            'crm.import',
+            'e-commerce',
+            'files',
+            'forms',
+            'forms-uploaded-files',
+            'hubdb',
+            'integration-sync',
+            'sales-email-read',
+            'social',
+            'tickets',
+            'timeline',
+            'transactional-email'
+          ]
+        }
       ],
+      defaultValue: r => {
+        const authUri = r?.http?.auth?.oauth?.authURI;
+
+        if (authUri && authUri.indexOf('optional_scope')) {
+          const encodedScopes = authUri && authUri.split('optional_scope=')[1];
+          const scopes = encodedScopes && decodeURIComponent(encodedScopes).split(' ');
+          scopes.unshift(...r.http.auth.oauth.scope);
+          return scopes;
+        }
+      },
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    application: {
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.type',
-      'http.auth.token.token',
-      'http.auth.oauth.scope',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.auth.token.token',
+          'http.auth.oauth.scope'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'cancel',
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['token'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
     },
     {
       id: 'oauth',
@@ -99,17 +155,11 @@ export default {
       ],
     },
     {
-      id: 'test',
-      visibleWhen: [
-        {
-          field: 'http.auth.type',
-          is: ['token'],
-        },
-      ],
+      id: 'cancel',
     },
     {
-      id: 'save',
-      label: 'Save',
+      id: 'test',
+      mode: 'secondary',
       visibleWhen: [
         {
           field: 'http.auth.type',

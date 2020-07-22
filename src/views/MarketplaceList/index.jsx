@@ -1,17 +1,16 @@
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardActions, Button, Typography } from '@material-ui/core';
-import applications from '../../constants/applications';
+import {applicationsList} from '../../constants/applications';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ConnectorTemplateContent from './ConnectorTemplateContent';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import {
   CONTACT_SALES_MESSAGE,
-  MULTIPLE_INSTALLS,
 } from '../../utils/messageStore';
 import * as selectors from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
@@ -19,22 +18,23 @@ import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { SUITESCRIPT_CONNECTOR_IDS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(2),
     display: 'grid',
-    gridTemplateColumns: `repeat(auto-fill, minmax(300px, 1fr));`,
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr));',
     gridGap: theme.spacing(2),
     '& > div': {
       maxWidth: '100%',
       minWidth: '100%',
     },
     [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: `repeat(1, minmax(100%, 1fr));`,
+      gridTemplateColumns: 'repeat(1, minmax(100%, 1fr));',
     },
     [theme.breakpoints.up('xs')]: {
-      gridTemplateColumns: `repeat(auto-fill, minmax(290px, 1fr));`,
+      gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr));',
     },
   },
   card: {
@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     position: 'absolute',
     bottom: 0,
-    width: `calc(100% - 32px)`,
+    width: 'calc(100% - 32px)',
   },
   title: {
     overflow: 'hidden',
@@ -123,6 +123,7 @@ export default function MarketplaceList() {
   const templates = useSelector(state =>
     selectors.marketplaceTemplates(state, application)
   );
+  const applications = applicationsList();
   const connector = applications.find(c => c.id === application);
   const applicationName = connector ? connector.name : application;
 
@@ -135,16 +136,15 @@ export default function MarketplaceList() {
   }, [connectors.length, dispatch, fetchedCollection, templates.length]);
   const { confirmDialog } = useConfirmDialog();
   const handleConnectorInstallClick = connector => {
-    if (connector.installed) {
+    if (connector._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
+      history.push(getRoutePath(`/suitescript/integrationapps/${SUITESCRIPT_CONNECTOR_IDS.salesforce}/setup`));
+    } else if (connector.installed) {
       confirmDialog({
         isPrompt: true,
-        title: 'Multiple Installs',
+        title: 'Confirm multiple installs',
         label: 'Tag',
-        message: MULTIPLE_INSTALLS,
+        message: 'Are you sure you want to install this integration app?  This integration app is already installed in your account.',
         buttons: [
-          {
-            label: 'Cancel',
-          },
           {
             label: 'Install',
             onClick: tag => {
@@ -157,6 +157,10 @@ export default function MarketplaceList() {
               );
               history.push(getRoutePath('/dashboard'));
             },
+          },
+          {
+            label: 'Cancel',
+            color: 'secondary',
           },
         ],
       });

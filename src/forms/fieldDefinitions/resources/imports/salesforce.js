@@ -3,7 +3,7 @@ import { isNewId } from '../../../../utils/resource';
 export default {
   'salesforce.api': {
     type: 'radiogroupforresetfields',
-    label: 'API type',
+    label: 'Salesforce API type',
     required: true,
     fieldsToReset: [
       { id: 'salesforce.operation', type: 'radiogroupforresetfields' },
@@ -399,6 +399,7 @@ export default {
     label: 'SObject type',
     type: 'refreshableselect',
     filterKey: 'salesforce-sObjects',
+    ignoreValidation: true,
     commMetaPath: r =>
       r && `salesforce/metadata/connections/${r._connectionId}/sObjectTypes`,
     connectionId: r => r && r._connectionId,

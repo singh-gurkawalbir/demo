@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDispatch } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';

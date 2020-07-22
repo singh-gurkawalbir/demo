@@ -4,8 +4,9 @@ export default {
       fieldId: 'idLockTemplate',
     },
     dataURITemplate: { fieldId: 'dataURITemplate' },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   },
   layout: {
-    fields: ['idLockTemplate', 'dataURITemplate'],
+    fields: ['idLockTemplate', 'dataURITemplate', 'apiIdentifier'],
   },
 };

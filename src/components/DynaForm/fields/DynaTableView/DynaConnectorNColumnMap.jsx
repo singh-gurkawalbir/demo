@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
+
 
 export default function DynaConnectorNColumnMap(props) {
   const { optionsMap, id, _integrationId } = props;
@@ -22,12 +23,12 @@ export default function DynaConnectorNColumnMap(props) {
   }, [_integrationId, dispatch, id]);
 
   // console.log('render: <DynaConnectorNColumnMap>');
-
+  const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
   return (
     <DynaTableView
       {...props}
       collapsable
-      isLoading={isLoading ? fieldType : false}
+      isLoading={isLoadingMap}
       shouldReset={shouldReset}
       metadata={metadata}
       handleCleanupHandler={handleCleanup}

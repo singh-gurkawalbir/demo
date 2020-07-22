@@ -13,7 +13,7 @@ import {
   throwExceptionUsingTheResponse,
   checkToThrowSessionValidationException,
 } from './index';
-import * as apiConsts from '../api/apiPaths';
+import * as apiConsts from './apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
 import actions from '../../actions';
 import { resourceStatus, accountShareHeader } from '../../reducers';
@@ -24,7 +24,7 @@ const status401 = new APIException({
 });
 
 describe('request interceptors...testing the various stages of an api request on how it is handled  ', () => {
-  process.env.NODE_ENV = `development`;
+  process.env.NODE_ENV = 'development';
   const jsonRespBody = { failure: 'some failure' };
   const textRespBody = "[{ failure: 'some failure' }]";
   const path = '/somePath';
@@ -76,11 +76,14 @@ describe('request interceptors...testing the various stages of an api request on
 
   describe('onRequestSaga', () => {
     const csrf = 'some value';
+    Object.defineProperty(window, 'sessionStorage', {
+      value: {
+        getItem: jest.fn().mockImplementation(() => csrf)
+      },
+      writable: true
+    });
 
-    window.sessionStorage = {};
-    window.sessionStorage.getItem = jest.fn().mockImplementation(() => csrf);
-
-    test(`default behavior: should make the api comm activity show up and the message of the comm activity being the path and request to "GET" if not defined`, () => {
+    test('default behavior: should make the api comm activity show up and the message of the comm activity being the path and request to "GET" if not defined', () => {
       const path = '/somePath';
       const opts = {};
       const args = { path, opts, hidden: undefined, message: undefined };
@@ -97,7 +100,7 @@ describe('request interceptors...testing the various stages of an api request on
       );
     });
 
-    test(`should introduce network latency in all requests`, () => {
+    test('should introduce network latency in all requests', () => {
       const path = '/somePath';
       const opts = {};
       const args = { path, opts, hidden: undefined, message: undefined };
@@ -128,7 +131,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
-    test(`should create a request payload which should have match the redux saga request specification and responseType being text`, () => {
+    test('should create a request payload which should have match the redux saga request specification and responseType being text', () => {
       const path = '/somePath';
       const opts = { headers: { header1: 'something' }, method: 'POST' };
       const args = { path, opts, hidden: undefined, message: undefined };
@@ -165,7 +168,7 @@ describe('request interceptors...testing the various stages of an api request on
       expect(saga.next().value).toEqual(finalRequestPayload);
     });
 
-    test(`should create a request payload which should have match the redux saga request specification and responseType being text and with additional headers`, () => {
+    test('should create a request payload which should have match the redux saga request specification and responseType being text and with additional headers', () => {
       const path = '/somePath';
       const opts = {
         headers: { header1: 'something' },

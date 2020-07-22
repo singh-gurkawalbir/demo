@@ -1,13 +1,16 @@
-import { useEffect, useCallback, Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
+import FormLabel from '@material-ui/core/FormLabel';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
+import RefreshIcon from '../../../icons/RefreshIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -16,13 +19,16 @@ const useStyles = makeStyles(theme => ({
   refreshFilters: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+    flexDirection: 'row !important',
   },
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
+    marginLeft: theme.spacing(1),
   },
   loading: {
-    flexDirection: `row !important`,
+    display: 'flex',
+    flexDirection: 'row !important',
     alignItems: 'center',
     padding: theme.spacing(1, 0),
   },
@@ -42,6 +48,8 @@ export default function DynaNetSuiteLookupFilters(props) {
     options = {},
     onFieldChange,
     editorId,
+    required,
+    disabled,
   } = props;
   const { disableFetch, commMetaPath } = options;
   let rule = [];
@@ -61,6 +69,7 @@ export default function DynaNetSuiteLookupFilters(props) {
     dispatch(
       actions.editor.init(editorId, 'netsuiteLookupFilter', {
         modifiedData,
+        _init_rule: rule,
         rule,
       })
     );
@@ -77,15 +86,8 @@ export default function DynaNetSuiteLookupFilters(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const filters = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-      }).data,
-    (left, right) => left.length === right.length
-  );
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
+
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
@@ -107,26 +109,27 @@ export default function DynaNetSuiteLookupFilters(props) {
     return (
       <div className={classes.loading}>
         <Typography className={classes.heading}>
-          Loading search filters.
+          Loading
         </Typography>
-        <Spinner size={24} color="primary" />
+        <Spinner size={24} />
       </div>
     );
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
-        Click{' '}
+        <FormLabel disabled={disabled} required={required} >
+          Refresh  search filters
+        </FormLabel>
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          here
-        </Button>{' '}
-        to refresh search filters.
+          <RefreshIcon />
+        </Button>
       </div>
       <FilterPanel
         id={id}
@@ -136,6 +139,6 @@ export default function DynaNetSuiteLookupFilters(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

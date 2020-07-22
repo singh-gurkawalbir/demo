@@ -15,7 +15,7 @@ describe('comms reducers', () => {
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
 
-  describe(`clear comms action `, () => {
+  describe('clear comms action ', () => {
     test('clear the comms part of the redux store', () => {
       const newState = reducer(undefined, actions.api.request(path, method));
       let completedApiActionState = reducer(
@@ -41,7 +41,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`request action`, () => {
+  describe('request action', () => {
     test('should set loading flag', () => {
       const newState = reducer(undefined, actions.api.request(path, method));
 
@@ -60,7 +60,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`completed action`, () => {
+  describe('completed action', () => {
     test('should clear loading flag', () => {
       const state = reducer(undefined, actions.api.request(path, method));
 
@@ -83,7 +83,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`failure action`, () => {
+  describe('failure action', () => {
     test('should set error message', () => {
       const state = reducer(
         undefined,
@@ -111,7 +111,7 @@ describe('comms reducers', () => {
     });
   });
 
-  describe(`retry action`, () => {
+  describe('retry action', () => {
     test('should start retryCount at 1 and increment by 1 for each subsequent call', () => {
       // force the retry value to be set...
       const state = reducer(undefined, actions.api.retry(path, method));
@@ -155,7 +155,7 @@ describe('comms selectors', () => {
   const method = 'GET';
   const commKey = commKeyGenerator(path, method);
 
-  describe(`isLoading`, () => {
+  describe('isLoading', () => {
     test('should be false on initial state', () => {
       const isLoading = selectors.isLoading(undefined, commKey);
 
@@ -176,7 +176,7 @@ describe('comms selectors', () => {
       expect(isLoading).toBe(false);
     });
   });
-  describe(`retryCount`, () => {
+  describe('retryCount', () => {
     test('should be 0 on initial state', () => {
       const count = selectors.retryCount(undefined, commKey);
 
@@ -199,138 +199,6 @@ describe('comms selectors', () => {
 
         expect(count).toBe(i);
       }
-    });
-  });
-  describe('allLoadingOrErrored', () => {
-    test('should return null on bad state', () => {
-      let result;
-
-      result = selectors.allLoadingOrErrored(undefined);
-      expect(result).toBeNull();
-
-      result = selectors.allLoadingOrErrored(null);
-      expect(result).toBeNull();
-
-      result = selectors.allLoadingOrErrored(123);
-      expect(result).toBeNull();
-
-      result = selectors.allLoadingOrErrored('hello world');
-      expect(result).toBeNull();
-
-      result = selectors.allLoadingOrErrored(true);
-      expect(result).toBeNull();
-    });
-
-    test('should return null on valid state, with no resource network activity', () => {
-      const result = selectors.allLoadingOrErrored([]);
-
-      expect(result).toBeNull();
-    });
-
-    test('should return null on valid state, with resource network activity but no pending loading or errors.', () => {
-      let state;
-
-      // assign
-      state = reducer(state, actions.api.request(path, method));
-      // check this action
-      state = reducer(state, actions.api.complete(path, method));
-
-      // act
-      const result = selectors.allLoadingOrErrored(state);
-
-      // assert
-      expect(result).toBeNull();
-    });
-
-    test('should return proper result when 1 resource is loading.', () => {
-      // assign
-      const state = reducer(
-        undefined,
-        actions.api.request('exports', method, 'Loading Exports')
-      );
-      // act
-      const result = selectors.allLoadingOrErrored(state);
-
-      // assert
-      expect(result).toEqual([
-        {
-          isHidden: false,
-          message: 'Loading Exports',
-          status: STATES.LOADING,
-          name: commKeyGenerator('exports', method),
-          retryCount: 0,
-          timestamp: expect.any(Number),
-        },
-      ]);
-    });
-
-    test('should return proper result when several resources are loading.', () => {
-      // assign
-      const pathA = `${path}/123`;
-      const pathB = `${path}/456`;
-      let state;
-
-      state = reducer(
-        state,
-        actions.api.request(
-          pathA,
-          method,
-          'Some msg indicating loading of Resource'
-        )
-      );
-      state = reducer(
-        state,
-        actions.api.request(
-          pathB,
-          method,
-          'Some msg indicating loading of Resource'
-        )
-      );
-
-      // act
-      const result = selectors.allLoadingOrErrored(state);
-
-      // assert
-      expect(result).toEqual([
-        {
-          isHidden: false,
-          message: 'Some msg indicating loading of Resource',
-          status: STATES.LOADING,
-          name: commKeyGenerator(pathA, method),
-          retryCount: 0,
-          timestamp: expect.any(Number),
-        },
-        {
-          isHidden: false,
-          message: 'Some msg indicating loading of Resource',
-          status: STATES.LOADING,
-          name: commKeyGenerator(pathB, method),
-          retryCount: 0,
-          timestamp: expect.any(Number),
-        },
-      ]);
-    });
-
-    test('should return proper result when a resource network call errored.', () => {
-      // assign
-      const state = reducer(
-        undefined,
-        actions.api.failure(path, method, 'my nice error')
-      );
-      // act
-      const result = selectors.allLoadingOrErrored(state);
-
-      // assert
-      expect(result).toEqual([
-        {
-          isHidden: false,
-          message: 'my nice error',
-          status: STATES.ERROR,
-          name: commKey,
-          retryCount: 0,
-          timestamp: expect.any(Number),
-        },
-      ]);
     });
   });
 });

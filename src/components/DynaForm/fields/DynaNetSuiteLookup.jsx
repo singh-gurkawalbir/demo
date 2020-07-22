@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -46,7 +46,6 @@ export default function DynaNetSuiteLookup(props) {
     resourceId,
     flowId,
     label,
-    helpText,
     options,
   } = props;
   const handleEditorClick = () => {
@@ -54,14 +53,12 @@ export default function DynaNetSuiteLookup(props) {
   };
 
   const dispatch = useDispatch();
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, JSON.stringify(rule));
     }
-
-    handleEditorClick();
   };
 
   const extractFields = useSelector(state =>
@@ -107,14 +104,15 @@ export default function DynaNetSuiteLookup(props) {
   }
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <NetSuiteLookupFilterEditorDialog
-          title="Lookup criteria"
+          title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={rule}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />
@@ -125,8 +123,7 @@ export default function DynaNetSuiteLookup(props) {
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>
-          {/* //Todo: helpText is needed here */}
-          <FieldHelp {...props} helpText={helpText || label} />
+          <FieldHelp {...props} />
         </div>
 
         <div className={classes.dynaNetsuiteFieldLookupWrapper}>
@@ -154,6 +151,6 @@ export default function DynaNetSuiteLookup(props) {
           </ActionButton>
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

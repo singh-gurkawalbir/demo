@@ -1,14 +1,18 @@
-import { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button, Grid } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import InfoIconButton from '../InfoIconButton';
+import IconTextButton from '../IconTextButton';
+import Spinner from '../Spinner';
+
 
 const useStyles = makeStyles(theme => ({
   step: {
@@ -20,41 +24,122 @@ const useStyles = makeStyles(theme => ({
   stepNumber: step => ({
     // eslint-disable-next-line no-nested-ternary
     background: step.completed
-      ? theme.palette.primary.main
+      ? theme.palette.common.white
       : step.isCurrentStep
-      ? theme.palette.success.main
-      : theme.palette.secondary.lightest,
-    color:
-      step.isCurrentStep || step.completed
-        ? theme.palette.background.paper
-        : '',
-    fontSize: '22px',
+        ? theme.palette.primary.main
+        : theme.palette.common.white,
+    // eslint-disable-next-line no-nested-ternary
+    color: step.completed
+      ? theme.palette.secondary.contrastText
+      : step.isCurrentStep
+        ? theme.palette.common.white
+        : theme.palette.secondary.contrastText,
+    border: '1px solid',
+    // eslint-disable-next-line no-nested-ternary
+    borderColor: step.completed
+      ? theme.palette.secondary.contrastText
+      : step.isCurrentStep
+        ? theme.palette.primary.main
+        : theme.palette.secondary.contrastText,
+    fontSize: '16px',
     borderRadius: '50%',
-    width: '40px',
-    height: '40px',
-    textAlign: 'center',
-    lineHeight: '40px',
-    marginTop: '-10px',
+    width: '30px',
+    height: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   }),
   stepText: {
     display: 'inline-flex',
   },
+  stepName: step => ({
+    paddingLeft: 14,
+    display: 'flex',
+    alignItems: 'center',
+    color: step.completed ? theme.palette.secondary.lightest : theme.palette.success.main,
+  }),
   successText: {
-    paddingRight: '15px',
     color: theme.palette.success.main,
   },
   stepRow: {
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    marginTop: '10px',
-    marginBottom: '10px',
+    marginBottom: theme.spacing(0.5),
+    display: 'flex',
+    background: theme.palette.background.paper,
+    height: theme.spacing(6),
   },
   imgBlock: {
     display: 'flex',
-    justifyContent: 'center',
+    maxWidth: 136,
     '& > img': {
       maxWidth: '100%',
       maxHeight: '100%',
     },
+  },
+  installIntegrationStepWrapper: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    padding: theme.spacing(1),
+    justifyContent: 'space-between',
+  },
+  logoWithAction: {
+    display: 'flex',
+  },
+  installActionBtnWrapper: {
+    width: 112,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(1),
+    paddingLeft: theme.spacing(2),
+    position: 'relative',
+    minHeight: theme.spacing(4),
+    borderLeft: `1px solid ${theme.palette.secondary.contrastText}`,
+  },
+  installActionBtn: {
+    padding: 0,
+    minWidth: 'unset',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  installBtn: {
+    color: `${theme.palette.primary.main} !important`,
+    fontWeight: 'bold',
+    '&:hover': {
+      background: 'none',
+    },
+  },
+  installInfoBtn: {
+    margin: 0,
+    '& svg': {
+      fontSize: 16,
+    },
+    '&:hover': {
+      background: 'none',
+    },
+  },
+  stepCountWithName: {
+    display: 'flex',
+    maxWidth: '60%',
+    wordBreak: 'break-word',
+  },
+  completedText: {
+    color: theme.palette.secondary.contrastText,
+    fontSize: 15,
+    lineHeight: '19px',
+  },
+  succcessIcon: {
+    fontSize: 33,
+    marginLeft: -1,
+  },
+  stepTextAll: {
+    color: theme.palette.secondary.contrastText,
+    fontSize: 15,
+  },
+  stepTextInstall: {
+    fontWeight: 'bold',
+    color: theme.palette.secondary.light,
   },
 }));
 
@@ -103,33 +188,41 @@ export default function InstallationStep(props) {
   if (!step) {
     return null;
   }
+  const { stepText, showSpinner } = integrationAppsUtil.getStepText(step, mode);
 
   const onStepClick = () => {
-    handleStepClick(step, connection);
+    handleStepClick(step, connection, index);
   };
 
   return (
-    <Grid item xs={12} className={classes.stepRow}>
-      <Grid container spacing={2}>
-        <Grid item xs={1} className={classes.step}>
-          <Typography variant="h4" className={classes.stepNumber}>
-            {index}
-          </Typography>
-        </Grid>
-        <Grid item xs={3} className={classes.step}>
-          <Typography>{step.name}</Typography>
-        </Grid>
-        <Grid item xs className={classes.step}>
-          <Typography>{step.description}</Typography>
-        </Grid>
-        <Grid item xs={2} className={clsx(classes.step, classes.imgBlock)}>
-          {step.imageURL && (
+
+    <div className={classes.stepRow}>
+      <div className={classes.installIntegrationStepWrapper}>
+        <div className={classes.stepCountWithName}>
+          {step.completed && !step.isCurrentStep ? (
+            <SuccessIcon className={clsx(classes.successText, classes.succcessIcon)} />
+          ) :
+            <div>
+              <Typography variant="h4" className={classes.stepNumber}>
+                {index}
+              </Typography>
+            </div>}
+          <div className={classes.stepName}>
+            <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>
+              {step.name}
+            </Typography>
+            <InfoIconButton info={step.description} className={classes.installInfoBtn} />
+          </div>
+        </div>
+        <div className={classes.logoWithAction}>
+          <div className={classes.imgBlock}>
+            {step.imageURL && (
             <img
               alt=""
               src={process.env.CDN_BASE_URI + step.imageURL.replace(/^\//g, '')}
             />
-          )}
-          {step.type === INSTALL_STEP_TYPES.CONNECTION && (
+            )}
+            {step.type === INSTALL_STEP_TYPES.CONNECTION && (
             <ApplicationImg
               size="small"
               type={
@@ -138,28 +231,31 @@ export default function InstallationStep(props) {
                   : ''
               }
             />
-          )}
-        </Grid>
-        <Grid item xs={2} className={classes.step}>
-          {!step.completed && (
-            <Button
-              data-test={integrationAppsUtil.getStepText(step, mode)}
+            )}
+          </div>
+          <div className={classes.installActionBtnWrapper}>
+            {!step.completed && (
+            <IconTextButton
+              data-test={stepText}
               disabled={!step.isCurrentStep}
               onClick={onStepClick}
-              variant="text">
-              {integrationAppsUtil.getStepText(step, mode)}
-            </Button>
-          )}
-          {step.completed && (
-            <Fragment>
-              <Typography onClick={onStepClick} className={classes.successText}>
-                {integrationAppsUtil.getStepText(step, mode)}
+              variant="text"
+              color="primary"
+              className={clsx(classes.installActionBtn, {[classes.installBtn]: (step.isCurrentStep && !step.completed)})}
+              >
+              {showSpinner && <Spinner color="primary" size={16} />} {stepText}
+            </IconTextButton>
+            )}
+            {step.completed && (
+            <>
+              <Typography onClick={onStepClick} className={classes.completedText}>
+                {showSpinner && <Spinner color="primary" size={16} />}  {stepText}
               </Typography>
-              <SuccessIcon />
-            </Fragment>
-          )}
-        </Grid>
-      </Grid>
-    </Grid>
+            </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

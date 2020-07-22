@@ -1,8 +1,12 @@
 import { put, select, call } from 'redux-saga/effects';
 import { resourceData, flowReferencesForResource } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
+import { SCOPES, updateFlowDoc } from '../../resourceForm';
 import actions from '../../../actions';
-import { getFlowUpdatesFromPatch } from '../../../utils/flowData';
+import {
+  getFlowUpdatesFromPatch,
+  getResourceStageUpdatedFromPatch,
+  getSubsequentStages,
+} from '../../../utils/flowData';
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
   const { merged: flow } = yield select(
@@ -25,12 +29,14 @@ function* updateResponseMapping({ flowId, resourceIndex }) {
   // But, as we got postResponseMapHook action after responseMapping , we need to reset from current resourceIndex
   // @TODO: Raghu Add a new action that resets specific stage on a resource for a flowId, then we can just reset responseMapping state instead of resetting entire resource state
   const resourceToReset = pageProcessors[resourceIndex];
-
+  const resourceType = resourceToReset.type === 'export' ? 'exports' : 'imports';
+  const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', resourceType)];
   if (resourceToReset) {
     yield put(
-      actions.flowData.reset(
+      actions.flowData.resetStages(
         flowId,
-        resourceToReset._exportId || resourceToReset._importId
+        resourceToReset._exportId || resourceToReset._importId,
+        stagesToReset
       )
     );
   }
@@ -40,6 +46,7 @@ export function* updateFlowOnResourceUpdate({
   resourceType,
   resourceId,
   patch,
+  context,
 }) {
   if (resourceType === 'flows') {
     const flowUpdates = getFlowUpdatesFromPatch(patch);
@@ -58,9 +65,17 @@ export function* updateFlowOnResourceUpdate({
   }
 
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
-    yield put(
-      actions.flowData.updateFlowsForResource(resourceId, resourceType)
-    );
+    const stagesToReset = [];
+    const updatedStage = getResourceStageUpdatedFromPatch(patch);
+    // If there is an updatedStage -> get list of all stages to update from that stage
+    if (updatedStage) {
+      stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));
+    }
+    // else go ahead and update the whole resource's state as stagesToReset is []
+    yield put(actions.flowData.updateFlowsForResource(resourceId, resourceType, stagesToReset));
+    if (context?.flowId) {
+      yield call(updateFlowDoc, { flowId: context.flowId, resourceType, resourceId });
+    }
   }
 }
 
@@ -70,7 +85,7 @@ export function* updateFlowOnResourceUpdate({
  * this script as hooks as part of their PP/PG's
  * 3. File Definitions , there by updates flow states using File Adapter PP/PGs using this fileDefID
  */
-export function* updateFlowsDataForResource({ resourceId, resourceType }) {
+export function* updateFlowsDataForResource({ resourceId, resourceType, stagesToReset }) {
   /*
    * flowRefs : [{flowId, resourceId}, ..] for all the flows ( PP / PG )
    */
@@ -86,9 +101,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType }) {
     const { flowId, resourceId } = flowRefs[flowIndex];
 
     // reset the state for that resourceId and subsequent state reset
-    yield put(actions.flowData.reset(flowId, resourceId));
-    // Fetch preview data for this resource in all used flows
-    // TODO @Raghu: fetch only for the current flow
+    yield put(actions.flowData.resetStages(flowId, resourceId, stagesToReset));
     flowIndex += 1;
   }
 }

@@ -11,13 +11,15 @@ const getValueAfterInsert = (value, insertPosition, insertedVal) => {
 
     if (firstIndexOfOpenBraces === -1 && firstIndexOfCloseBraces === -1) {
       return '';
-    } else if (
+    }
+    if (
       firstIndexOfCloseBraces !== -1 &&
       (firstIndexOfCloseBraces < firstIndexOfOpenBraces ||
         firstIndexOfOpenBraces === -1)
     ) {
       return val.substring(firstIndexOfCloseBraces + 2);
-    } else if (
+    }
+    if (
       firstIndexOfOpenBraces !== -1 &&
       (firstIndexOfOpenBraces < firstIndexOfCloseBraces ||
         firstIndexOfCloseBraces === -1)

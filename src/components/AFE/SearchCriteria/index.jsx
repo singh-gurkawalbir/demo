@@ -1,14 +1,15 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import TrashIcon from '../../icons/TrashIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
 import ActionButton from '../../ActionButton';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
 import operators from './operators';
+import Spinner from '../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -45,9 +46,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, fieldOptions = {} } = props;
+  const { editorId, disabled, value, onRefresh, fieldOptions = {} } = props;
   const {
     fields = [],
+    status,
     valueName: fieldValueName,
     labelName: fieldLabelName,
   } = fieldOptions;
@@ -82,18 +84,22 @@ export default function SearchCriteriaEditor(props) {
       })),
     [searchCriteria]
   );
+  const handleRefresh = useCallback(() => {
+    if (onRefresh) {
+      onRefresh(true);
+    }
+  }, [onRefresh]);
   const headers = ['Field', 'Operator', 'Search Value', 'Search Value 2'];
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
         {headers.map(headerText => (
-          <Typography
-            key={headerText}
-            variant="h5"
-            className={classes.childHeader}>
-            {headerText}
-          </Typography>
+          <div className={classes.childHeader} key={headerText}>
+            <span>{headerText}</span>
+            {headerText === 'Field' && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
+            {headerText === 'Field' && status === 'requested' && <Spinner size={24} />}
+          </div>
         ))}
       </div>
       <div key={initChangeIdentifier} className={classes.criteriaBody}>

@@ -1,4 +1,4 @@
-import { useMemo, Fragment, useEffect, useCallback } from 'react';
+import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd-cjs';
@@ -6,23 +6,27 @@ import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
+import themeProvider from '../theme/themeProvider';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
-import themeProvider from '../theme/themeProvider';
-import CeligoAppBar from './CeligoAppBar';
-import CeligoDrawer from './CeligoDrawer';
-import PageContent from './PageContent';
-import AuthDialog from '../components/AuthDialog';
-import AppErroredModal from './AppErroredModal';
-import NetworkSnackbar from '../components/NetworkSnackbar';
+import AlertDialog from '../components/AlertDialog';
+import { ConfirmDialogProvider } from '../components/ConfirmDialog';
+import ConflictAlertDialog from '../components/ConflictAlertDialog';
 import * as selectors from '../reducers';
 import actions from '../actions';
-import WithAuth from './AppRoutingWithAuth';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
-import { ConfirmDialogProvider } from '../components/ConfirmDialog';
-import ConflictAlertDialog from '../views/Resources/ConflictAlertDialog';
+import getRoutePath from '../utils/routePaths';
+import colors from '../theme/colors';
+import AppErroredModal from './AppErroredModal';
+import WithAuth from './AppRoutingWithAuth';
+import CrashReporter from './CrashReporter';
+import LoadingNotification from './LoadingNotification';
+import ErrorNotifications from './ErrorNotifications';
+import CeligoAppBar from './CeligoAppBar';
+import CeligoDrawer from './CeligoDrawer';
+import PageContent from './PageContent';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -34,26 +38,66 @@ const useStyles = makeStyles({
   },
 });
 
+const useSnackbarStyles = makeStyles({
+  variantInfo: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoAccent2,
+    },
+    '& div > span > svg': {
+      color: colors.celigoAccent2,
+    },
+  },
+  variantSuccess: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoSuccess,
+    },
+    '& div > span > svg': {
+      color: colors.celigoSuccess,
+    },
+  },
+  variantWarning: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoWarning,
+    },
+    '& div > span > svg': {
+      color: colors.celigoWarning,
+    },
+  },
+  variantError: {
+    backgroundColor: colors.celigoWhite,
+    '&:before': {
+      background: colors.celigoError,
+    },
+    '& div > span > svg': {
+      color: colors.celigoError,
+    },
+  },
+});
+
 function NonSigninHeaderComponents(props) {
   return (
-    <Fragment>
+    <>
       <CeligoAppBar {...props} />
       <AppErroredModal {...props} />
-      <AuthDialog {...props} />
+      <AlertDialog {...props} />
       <CeligoDrawer {...props} />
-    </Fragment>
+    </>
   );
 }
 
 export const PageContentComponents = () => (
   <Switch>
-    <Route path="/pg/signin" component={Signin} />
-    <Route path="/pg*" component={PageContent} />
+    <Route path={getRoutePath('/signin')} component={Signin} />
+    <Route path={[getRoutePath('/*'), getRoutePath('/')]} component={PageContent} />
   </Switch>
 );
 
 export default function App() {
   const classes = useStyles();
+  const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const themeName = useSelector(state =>
@@ -74,8 +118,8 @@ export default function App() {
     const domain = getDomain();
 
     /**
-     * We need to initialize the gainsight here for localhost.io only.
-     * We are injecting this intialization script into index.html from
+     * We need to initialize gainsight here for localhost.io only.
+     * We are injecting this initialization script into index.html from
      * backend for other domains as per the gainsight support's suggestion
      * for their "Product Mapper" to work properly.
      */
@@ -85,30 +129,36 @@ export default function App() {
   }, []);
 
   return (
-    <MuiThemeProvider key={reloadCount} theme={theme}>
-      <ConfirmDialogProvider>
-        <SnackbarProvider maxSnack={3}>
-          <FontStager />
-          <CssBaseline />
-          <DndProvider backend={HTML5Backend}>
-            <BrowserRouter>
-              <div className={classes.root}>
-                <NetworkSnackbar />
-                {/* Headers */}
-                <Switch>
-                  <Route path="/pg/signin" component={null} />
-                  <Route path="/pg*" component={NonSigninHeaderComponents} />
-                </Switch>
-                {/* page content */}
-                <WithAuth>
-                  <PageContentComponents />
-                </WithAuth>
-              </div>
-            </BrowserRouter>
-          </DndProvider>
-          <ConflictAlertDialog />
-        </SnackbarProvider>
-      </ConfirmDialogProvider>
+    <MuiThemeProvider theme={theme}>
+      <CrashReporter>
+        {/* the provider has to be pushed out because of new instance html5 instance */}
+        <DndProvider backend={HTML5Backend}>
+          <Fragment key={reloadCount}>
+            <ConfirmDialogProvider>
+              <SnackbarProvider classes={snackbarClasses} maxSnack={3}>
+                <FontStager />
+                <CssBaseline />
+                <BrowserRouter>
+                  <div className={classes.root}>
+                    <LoadingNotification />
+                    <ErrorNotifications />
+                    {/* Headers */}
+                    <Switch>
+                      <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
+                    </Switch>
+                    {/* page content */}
+                    <WithAuth>
+                      <PageContentComponents />
+                    </WithAuth>
+                  </div>
+                </BrowserRouter>
+                <ConflictAlertDialog />
+              </SnackbarProvider>
+            </ConfirmDialogProvider>
+          </Fragment>
+        </DndProvider>
+      </CrashReporter>
     </MuiThemeProvider>
   );
 }

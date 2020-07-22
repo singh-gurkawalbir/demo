@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import metadataFilterMap from './metadataFilterMap';
 
@@ -99,8 +100,11 @@ export default (
       case actionTypes.METADATA.RECEIVED_ERROR: {
         const defaultError = 'Error occured';
 
+        // In some case we are calling sagas directly from another sagas. And it will not route through REQUEST reducer action
+        if (!draft.application[connectionId]) {
+          draft.application[connectionId] = {};
+        }
         if (
-          draft.application[connectionId] &&
           draft.application[connectionId][key] &&
           draft.application[connectionId][key].status === 'refreshed'
         ) {
@@ -113,17 +117,6 @@ export default (
             data: [],
             errorMessage: metadataError || defaultError,
           };
-        }
-
-        break;
-      }
-
-      case actionTypes.METADATA.CLEAR_VALIDATIONS: {
-        if (
-          draft.application[connectionId] &&
-          draft.application[connectionId][key]
-        ) {
-          delete draft.application[connectionId][key].validationError;
         }
 
         break;
@@ -165,13 +158,13 @@ export default (
   });
 };
 
-export const optionsFromMetadata = ({
-  state,
+
+const optionsFromMetadataTransformFunct = (
+  applicationResource,
   connectionId,
   commMetaPath,
   filterKey,
-}) => {
-  const applicationResource = (state && state.application) || null;
+) => {
   const path = commMetaPath;
   const { status, data, errorMessage, validationError, changeIdentifier } =
     (applicationResource &&
@@ -189,8 +182,8 @@ export const optionsFromMetadata = ({
     metaFilter(data, {
       applicationResource,
       connectionId,
+      commMetaPath
     });
-
   return {
     data: transformedData,
     status,
@@ -199,6 +192,31 @@ export const optionsFromMetadata = ({
     changeIdentifier,
   };
 };
+
+// TODO: deprecate this function and use the makeOptionsFromMetadata
+export const optionsFromMetadata = ({
+  state,
+  connectionId,
+  commMetaPath,
+  filterKey,
+}) => {
+  const applicationResource = (state && state.application) || null;
+  return optionsFromMetadataTransformFunct(applicationResource,
+    connectionId,
+    commMetaPath,
+    filterKey);
+};
+
+
+export const makeOptionsFromMetadata = () => createSelector(
+  state => state?.application,
+  (_1, connectionId) => connectionId,
+  (_1, _2, commMetaPath) => commMetaPath,
+  (_1, _2, _3, filterKey) => filterKey,
+  optionsFromMetadataTransformFunct
+
+);
+
 
 export const optionsMapFromMetadata = (
   state,
@@ -240,9 +258,7 @@ export const optionsMapFromMetadata = (
     data: {
       optionsMap: [
         { ...optionsMap[0] },
-        Object.assign({}, optionsMap[1], {
-          options: options.data || optionsMap[1].options || [],
-        }),
+        { ...optionsMap[1], options: options.data || optionsMap[1].options || [], },
       ],
     },
   };

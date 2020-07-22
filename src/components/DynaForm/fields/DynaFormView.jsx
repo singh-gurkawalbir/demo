@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { getApp } from '../../../constants/applications';
@@ -17,7 +17,6 @@ import { emptyObject } from '../../../utils/constants';
 
 const emptyObj = {};
 const isParent = true;
-
 export function FormView(props) {
   const { resourceType, flowId, resourceId, value, formKey } = props;
   const formContext = useFormContext(formKey);
@@ -55,7 +54,8 @@ export function FormView(props) {
       return [
         {
           items: [
-            { label: type && type.toUpperCase(), value: `${isParent}` },
+            // if type is REST then we should show REST API
+            { label: type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
             { label: name, value: `${!isParent}` },
           ],
         },
@@ -95,8 +95,7 @@ export function FormView(props) {
     if (
       selectedApplication !== `${isParent}` &&
       staggedRes['/assistant'] === undefined
-    )
-      staggedRes['/assistant'] = assistantName;
+    ) staggedRes['/assistant'] = assistantName;
 
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...staggedRes, ...finalValues }),
@@ -130,7 +129,8 @@ export function FormView(props) {
     );
   };
 
-  const isFlowBuilderAssistant = flowId && assistantName;
+  const isFlowBuilderAssistant =
+    flowId && assistantName && assistantName !== 'financialforce';
 
   return isFlowBuilderAssistant ? (
     <DynaSelect

@@ -62,7 +62,7 @@ export const getCreateScriptMetadata = scriptId => ({
   },
 });
 
-export const saveScript = (values, options = {}) => {
+export const saveScript = (values, options = {}, context = {}) => {
   const { name, description, content, scriptId } = values;
   const { dispatch, isNew = false } = options;
   const patchSet = [];
@@ -90,5 +90,5 @@ export const saveScript = (values, options = {}) => {
   });
 
   dispatch(actions.resource.patchStaged(scriptId, patchSet, 'value'));
-  dispatch(actions.resource.commitStaged('scripts', scriptId, 'value'));
+  dispatch(actions.resource.commitStaged('scripts', scriptId, 'value', options, context));
 };

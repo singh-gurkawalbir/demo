@@ -10,9 +10,8 @@ import {
   requestDeregister,
   normalizeFlow,
   resourceConflictDetermination,
-} from './';
-import { apiCallWithRetry } from '../';
-import { status500 } from '../test';
+} from '.';
+import { apiCallWithRetry } from '..';
 import * as selectors from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
@@ -109,6 +108,7 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
+      expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
       expect(putEffect).toEqual(
@@ -125,8 +125,6 @@ describe('commitStagedChanges saga', () => {
           )
         )
       );
-
-      expect(saga.next().value).toEqual(put(actions.resource.clearStaged(id)));
 
       const finalEffect = saga.next();
 
@@ -166,14 +164,14 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
-      const putEffect = saga.next(updated).value;
+      expect(saga.next(updated).value).toEqual(
+        put(actions.resource.clearStaged(tempId))
+      );
+
+      const putEffect = saga.next().value;
 
       expect(putEffect).toEqual(
         put(actions.resource.received(resourceType, updated))
-      );
-
-      expect(saga.next().value).toEqual(
-        put(actions.resource.clearStaged(tempId))
       );
 
       expect(saga.next().value).toEqual(
@@ -328,7 +326,7 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
-      const final = saga.throw(status500);
+      const final = saga.throw();
 
       expect(final.done).toBe(true);
       expect(final.value).toBeUndefined();
@@ -383,7 +381,7 @@ availableResources.forEach(type => {
 
       expect(callEffect).toEqual(call(apiCallWithRetry, { path }));
 
-      const final = saga.throw(status500);
+      const final = saga.throw();
 
       expect(final.done).toBe(true);
       expect(final.value).toBeUndefined();
@@ -486,9 +484,7 @@ availableResources.forEach(type => {
       );
       const path = `/${type}/${id}/dependencies`;
       const mockResourceReferences = {
-        // eslint-disable-next-line prettier/prettier
         imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
-        // eslint-disable-next-line prettier/prettier
         exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }]
       };
       const callEffect = saga.next().value;
@@ -527,7 +523,7 @@ availableResources.forEach(type => {
   });
 });
 
-describe(`Deregister connection Saga`, () => {
+describe('Deregister connection Saga', () => {
   const integrationId = 143;
   const connectionId = 123;
 
@@ -544,7 +540,7 @@ describe(`Deregister connection Saga`, () => {
         opts: {
           method: 'DELETE',
         },
-        message: `Deregistering Connection`,
+        message: 'Deregistering Connection',
       })
     );
 
@@ -572,7 +568,7 @@ describe(`Deregister connection Saga`, () => {
         opts: {
           method: 'DELETE',
         },
-        message: `Deregistering Connection`,
+        message: 'Deregistering Connection',
       })
     );
 

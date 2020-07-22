@@ -1,16 +1,17 @@
-import { useEffect, useState, Fragment, useCallback } from 'react';
-import Button from '@material-ui/core/Button';
 import { FormLabel } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaNSSearchCriteriaWrapper: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -31,7 +32,6 @@ export default function DynaNSSearchCriteria(props) {
     id,
     onFieldChange,
     value = [],
-    label,
     resourceId,
     connectionId,
 
@@ -46,49 +46,44 @@ export default function DynaNSSearchCriteria(props) {
     setShowEditor(!showEditor);
   };
 
-  const { data: savedSearches } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    })
-  );
-  const onFetch = useCallback(() => {
-    dispatch(actions.metadata.request(connectionId, commMetaPath));
+  const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
+
+  const onFetch = useCallback((shouldRefreshCache) => {
+    dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
   }, [commMetaPath, connectionId, dispatch]);
 
   useEffect(() => {
     if (recordType) onFetch();
   }, [onFetch, recordType]);
 
-  const handleClose = (shouldCommit, _value) => {
+  const handleSave = (shouldCommit, _value) => {
     if (shouldCommit) {
       onFieldChange(id, _value);
     }
-
-    handleEditorClick();
   };
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SearchCriteriaDialog
-          title="Search Criteria"
+          title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
           fieldOptions={{
             fields: savedSearches,
+            status,
             valueName: 'value',
             labelName: 'label',
           }}
-          onClose={handleClose}
+          onSave={handleSave}
+          onRefresh={onFetch}
+          onClose={handleEditorClick}
           disabled={disabled}
         />
       )}
       <div className={classes.dynaNSSearchCriteriaWrapper}>
         <FormLabel className={classes.dynaFormLabel}>
-          Define criteria:
+          Additional search criteria:
         </FormLabel>
         <Button
           data-test={id}
@@ -96,12 +91,12 @@ export default function DynaNSSearchCriteria(props) {
           color="secondary"
           className={classes.dynaNSbtn}
           onClick={handleEditorClick}>
-          {label}
+          Launch
         </Button>
         {/* TODO (Aditya): we need to add the helptext for the upload file */}
 
-        <FieldHelp {...props} helpText={label} />
+        <FieldHelp {...props} />
       </div>
-    </Fragment>
+    </>
   );
 }

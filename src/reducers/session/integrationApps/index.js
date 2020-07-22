@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import installer, * as fromInstaller from './installer';
 import uninstaller, * as fromUninstaller from './uninstaller';
+import uninstaller2, * as fromUninstaller2 from './uninstaller2.0';
 import addStore, * as fromAddStore from './addStore';
 import settings, * as fromSettings from './settings';
 import addon, * as fromAddon from './addon';
@@ -9,6 +10,7 @@ import clone, * as fromClone from './clone';
 export default combineReducers({
   installer,
   uninstaller,
+  uninstaller2,
   settings,
   addStore,
   addon,
@@ -140,6 +142,10 @@ export function uninstallData(state, id, storeId) {
   return fromUninstaller.uninstallData(state && state.uninstaller, id, storeId);
 }
 
+export function uninstall2Data(state, id) {
+  return fromUninstaller2.uninstall2Data(state && state.uninstaller2, id);
+}
+
 export function addNewStoreSteps(state, id) {
   return fromAddStore.addNewStoreSteps(state && state.addStore, id);
 }
@@ -150,4 +156,8 @@ export function isAddOnInstallInProgress(state, id) {
 
 export function integrationClonedDetails(state, id) {
   return fromClone.integrationClonedDetails(state && state.clone, id);
+}
+
+export function canOpenOauthConnection(state, integrationId) {
+  return fromInstaller.canOpenOauthConnection(state && state.installer, integrationId);
 }

@@ -7,9 +7,9 @@ node_modules
 .Rhistory
 .history
 .env
+dep-tree
 /styleguide
 /coverage
 .vscode
 .DS_Store
-src/scripts
 package-lock.json

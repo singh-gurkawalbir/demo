@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-export const externalScripts = ['transform', 'filter'];
+export const externalScripts = ['transform', 'filter', 'handleRequest'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -36,6 +36,7 @@ export const hooksToFunctionNamesMap = {
   contentBasedFlowRouter: 'contentBasedFlowRouter',
   transform: 'transform',
   filter: 'filter',
+  handleRequest: 'handleRequest'
 };
 
 export const getScriptHookStub = hook => scriptHookStubs[hook];
@@ -52,6 +53,7 @@ export const hooksLabelMap = {
   transform: 'Transform',
   filter: 'Filter',
   formInit: 'Form init',
+  handleRequest: 'Handle request'
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];

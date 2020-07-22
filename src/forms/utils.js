@@ -1,5 +1,5 @@
 import jsonPatch, { deepClone } from 'fast-json-patch';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 import { C_LOCKED_FIELDS } from '../utils/constants';
 
 export const searchMetaForFieldByFindFunc = (meta, findFieldFunction) => {
@@ -125,6 +125,15 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
   );
 };
 
+export const isExpansionPanelRequired = (meta, fieldStates) => {
+  const requiredFields = fieldsStateToArray(fieldStates).filter(field => field.required);
+  const { layout, fieldMap } = meta;
+
+  return requiredFields.some(
+    ({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id)
+  );
+};
+
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   const visibleFields = fieldsStateToArray(fieldStates).filter(
     field => field.visible
@@ -143,8 +152,16 @@ export const fieldIDsExceptClockedFields = (meta, resourceType) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
-    )
-      acc.push(fieldMap[curr].id);
+    ) {
+      acc[curr] = {
+        ...fieldMap[curr],
+        defaultDisabled: true,
+      };
+    } else {
+      acc[curr] = {
+        ...fieldMap[curr],
+      };
+    }
 
     return acc;
   }, []);
@@ -279,8 +296,7 @@ export const sanitizePatchSet = ({
             .replace(/\//g, '.');
 
           // consider it as a remove patch
-          if (get(resource, modifiedPath))
-            removePatches.push({ path: patch.path, op: 'remove' });
+          if (get(resource, modifiedPath)) removePatches.push({ path: patch.path, op: 'remove' });
         } else if (
           !field ||
           field.defaultValue !== patch.value ||
@@ -304,7 +320,10 @@ export const sanitizePatchSet = ({
     valuePatches.map(p => p.path),
     resource
   );
-  const newSet = [...removePatches, ...missingPatchSet, ...valuePatches];
+  // Though we are adding the missing patches, in some scenarios the path is getting replaced later
+  // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
+  // and operation will resolve this issue.
+  const newSet = [...removePatches, ...sortBy([...missingPatchSet, ...valuePatches], ['path', 'op'])];
   const error = jsonPatch.validate(newSet, resource);
 
   if (error) {
@@ -339,8 +358,8 @@ const refGeneration = field => {
   const { fieldId, id, formId } = field;
 
   if (fieldId) return fieldId;
-  else if (id) return id;
-  else if (formId) return formId;
+  if (id) return id;
+  if (formId) return formId;
   throw new Error('cant generate reference');
 };
 
@@ -348,7 +367,12 @@ const getFieldConfig = (field = {}, resource = {}) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
-    newField.type = 'text';
+    if (!newField.type && newField?.supportsRefresh) {
+      // specific to suitescript
+      newField.type = 'refreshabletext';
+    } else {
+      newField.type = 'text';
+    }
   } else if (newField.type === 'expression') {
     newField.type = 'iaexpression';
     newField.flowId = resource._id;
@@ -356,6 +380,9 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.type = 'radiogroup';
   } else if (newField.type === 'file') {
     newField.type = 'uploadfile';
+    newField.isIAField = true;
+  } else if (newField.type === 'matchingCriteria') {
+    newField.type = 'matchingcriteria';
   } else if (newField.type === 'select' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
   } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
@@ -367,12 +394,23 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'relatedListsDialog') {
     newField.type = 'salesforcerelatedlistia';
     newField.resource = resource;
+  } else if (newField.type === 'link') {
+    newField.type = 'suitescripttable';
   } else if (newField.type === 'staticMapWidget') {
     newField.type = 'staticMap';
+  } else if (newField.type === 'textarea') {
+    newField.multiline = true;
+    newField.rowsMax = 10;
+  } else if (newField.type === 'checkbox' && newField.featureCheckConfig) {
+    newField.type = 'featurecheck';
+    newField.featureName = newField.featureCheckConfig.featureName;
   }
 
   if (newField.disabled) {
     newField.defaultDisabled = true;
+  }
+  if (newField.hidden) {
+    newField.visible = false;
   }
 
   return newField;
@@ -380,7 +418,7 @@ const getFieldConfig = (field = {}, resource = {}) => {
 
 function extractRules(fields, currFieldName, value) {
   return fields.map(field => {
-    const { name, hidden, required } = field;
+    const { name, hidden, required, disabled} = field;
     let rule = { ref: name };
 
     if (Object.prototype.hasOwnProperty.call(field, 'hidden') && !hidden) {
@@ -396,6 +434,14 @@ function extractRules(fields, currFieldName, value) {
         requiredRule: { field: currFieldName, is: [value] },
       };
     }
+
+    if (disabled) {
+      rule = {
+        ...rule,
+        disabledRule: { field: currFieldName, is: [value] },
+      };
+    }
+
 
     return rule;
   });
@@ -427,20 +473,24 @@ export const translateDependencyProps = fieldMap => {
 
     if (dependencies) {
       Object.keys(dependencies).forEach(value => {
-        const dependencyFields = dependencies[value].fields;
-
-        if (type === 'checkbox')
-          rules.push(
-            ...(extractRules(dependencyFields, key, value === 'enabled') || [])
-          );
-        else rules.push(...(extractRules(dependencyFields, key, value) || []));
+        Object.keys(dependencies?.[value]).forEach(componentType => {
+        // links are similar to fields property and these are dependencies defined for link components
+          const dependencyFields = dependencies[value][componentType];
+          // feature is a checkbox
+          if (type === 'checkbox' || type === 'featurecheck') {
+            rules.push(
+              ...(extractRules(dependencyFields, key, value === 'enabled') || [])
+            );
+          } else rules.push(...(extractRules(dependencyFields, key, value) || []));
+        });
       });
+
 
       delete fieldMapCopy[key].dependencies;
     }
 
     rules.forEach(rule => {
-      const { ref, visibleRule, requiredRule } = rule;
+      const { ref, visibleRule, requiredRule, disabledRule } = rule;
 
       // im doing this check to prevent pushing rules to non existent refs
       // this can happen when fields are hidden and removed from the meta
@@ -459,6 +509,13 @@ export const translateDependencyProps = fieldMap => {
             requiredRule
           );
         }
+
+        if (disabledRule) {
+          fieldMapCopy[ref].disabledWhenAll = pushRuleToMeta(
+            fieldMapCopy[ref].disabledWhenAll,
+            disabledRule
+          );
+        }
       }
     });
   });
@@ -466,7 +523,7 @@ export const translateDependencyProps = fieldMap => {
   return fieldMapCopy;
 };
 
-const translateFieldProps = (fields = [], _integrationId, resource) =>
+const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConnectionId, propsSpreadToFields) =>
   fields
     .map(field => {
       // TODO: generate correct name path
@@ -474,9 +531,11 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
       // name is the unique identifier....verify with Ashok
 
       return {
+        ...(propsSpreadToFields || {}),
         ...getFieldConfig(field, resource),
         defaultValue,
         name: `/${name}`,
+        ssLinkedConnectionId,
         _integrationId,
         id: name,
         helpText: tooltip,
@@ -492,8 +551,7 @@ const translateFieldProps = (fields = [], _integrationId, resource) =>
           },
         ],
       };
-    })
-    .filter(f => !f.hidden);
+    });
 const generateFieldsAndSections = (acc, field) => {
   const ref = refGeneration(field);
 
@@ -507,8 +565,7 @@ const generateFieldsAndSections = (acc, field) => {
   ) {
     let expansionPanelTitle;
 
-    if (field.properties && field.properties.sectionName)
-      ({ sectionName: expansionPanelTitle } = field.properties);
+    if (field.properties && field.properties.sectionName) ({ sectionName: expansionPanelTitle } = field.properties);
     else expansionPanelTitle = field.title;
     const matchingContainer = acc.containers.find(
       container =>
@@ -545,10 +602,11 @@ export const integrationSettingsToDynaFormMetadata = (
   meta,
   integrationId,
   skipContainerWrap,
-  options = {}
+  options = {},
+  ssLinkedConnectionId,
 ) => {
   const finalData = {};
-  const { resource, isFlow = false } = options;
+  const { resource, isFlow = false, isSuiteScriptIntegrator, propsSpreadToFields = {}} = options;
 
   if (!meta || (!meta.fields && !meta.sections)) return null;
   const { fields, sections } = meta;
@@ -557,7 +615,9 @@ export const integrationSettingsToDynaFormMetadata = (
     const addedFieldIdFields = translateFieldProps(
       fields,
       integrationId,
-      resource
+      resource,
+      ssLinkedConnectionId,
+      propsSpreadToFields
     );
 
     finalData.fieldMap = addedFieldIdFields.reduce(
@@ -573,7 +633,9 @@ export const integrationSettingsToDynaFormMetadata = (
       finalData.fieldMap = translateFieldProps(
         section.fields,
         integrationId,
-        resource
+        resource,
+        ssLinkedConnectionId,
+        propsSpreadToFields
       ).reduce(convertFieldsToFieldReferneceObj, finalData.fieldMap || {});
     });
 
@@ -585,26 +647,26 @@ export const integrationSettingsToDynaFormMetadata = (
     // type tab sends the entire form values
     // type tabIA sends per tab
     // for flow settings we send everything for advancedSettings we send per tab
-    finalData.layout.type = isFlow ? 'tab' : 'tabIA';
+
+    if (isSuiteScriptIntegrator) { finalData.layout.type = 'suitScriptTabIA'; } else { finalData.layout.type = isFlow ? 'tab' : 'tabIA'; }
 
     finalData.layout.containers = sections.map(section => ({
       collapsed: section.collapsed || true,
       label: section.title,
-      ...translateFieldProps(section.fields, integrationId, resource).reduce(
+      ...translateFieldProps(section.fields, integrationId, resource, ssLinkedConnectionId, propsSpreadToFields).reduce(
         generateFieldsAndSections,
         {}
       ),
     }));
   }
 
-  if (finalData.fieldMap)
-    finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
+  if (finalData.fieldMap) finalData.fieldMap = translateDependencyProps(finalData.fieldMap);
 
   // Wrap everything in a adavancedSettings container
   if (!skipContainerWrap) {
     finalData.layout = {
       type: 'collapse',
-      containers: [{ ...finalData.layout, label: 'Advanced Settings' }],
+      containers: [{ ...finalData.layout, label: 'Advanced' }],
     };
   }
 
@@ -617,6 +679,7 @@ export const integrationSettingsToDynaFormMetadata = (
 export const getDomain = () =>
   window.document.location.hostname.replace('www.', '');
 
+export const isEuRegion = () => ['eu.integrator.io'].includes(getDomain());
 export const isProduction = () =>
   ['integrator.io', 'eu.integrator.io'].includes(getDomain());
 export const conditionalLookupOptionsforNetsuite = [
@@ -730,8 +793,8 @@ export const sourceOptions = {
   ],
   as2: [
     {
-      label: 'Listen for real-time data from source application',
-      value: 'realtime',
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
     },
   ],
   s3: [
@@ -796,11 +859,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -814,11 +877,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -832,11 +895,11 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
@@ -850,19 +913,19 @@ export const destinationOptions = {
       value: 'transferFiles',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
     {
-      label: 'Lookup addition files (per record)',
+      label: 'Lookup additional files (per record)',
       value: 'lookupFiles',
     },
   ],
 
   as2: [
     {
-      label: 'Transfer files into destination application',
-      value: 'transferFiles',
+      label: 'Import records into destination application',
+      value: 'importRecords',
     },
   ],
   common: [
@@ -871,10 +934,63 @@ export const destinationOptions = {
       value: 'importRecords',
     },
     {
-      label: 'Lookup addition records (per record)',
+      label: 'Lookup additional records (per record)',
       value: 'lookupRecords',
     },
   ],
+};
+export const alterFileDefinitionRulesVisibility = fields => {
+  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
+  const fileDefinitionRulesField = fields.find(
+    field => field.id === 'file.filedefinition.rules'
+  );
+  const fileType = fields.find(field => field.id === 'file.type');
+  const fileDefinitionFieldsMap = {
+    filedefinition: 'edix12.format',
+    fixed: 'fixed.format',
+    'delimited/edifact': 'edifact.format',
+  };
+
+  // Incase of new resource - visibility of fileDefRules & fileDefFormat fields are based of fileType selected
+  // Whether resource is in new or edit stage -- inferred by userDefinitionId
+  if (
+    fileType &&
+    fileType.value &&
+    !fileDefinitionRulesField.userDefinitionId
+  ) {
+    // Delete existing visibility rules
+    delete fileDefinitionRulesField.visibleWhenAll;
+    delete fileDefinitionRulesField.visibleWhen;
+
+    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
+      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === formatFieldType
+      );
+
+      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
+    } else {
+      fileDefinitionRulesField.visible = false;
+    }
+  }
+  // fileDefinitionRulesField should be hidden when there is no file type.
+
+  if (fileType && !fileType.value) {
+    fileDefinitionRulesField.visible = false;
+  }
+  // userDefinitionId exists only in edit mode.
+
+  if (fileDefinitionRulesField.userDefinitionId) {
+    // make visibility of format fields false incase of edit mode of file adaptors
+    Object.values(fileDefinitionFieldsMap).forEach(field => {
+      const fileDefinitionFormatField = fields.find(
+        fdField => fdField.id === field
+      );
+
+      delete fileDefinitionFormatField.visibleWhenAll;
+      fileDefinitionFormatField.visible = false;
+    });
+  }
 };
 
 // #END_REGION Integration App from utils

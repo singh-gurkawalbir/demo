@@ -1,9 +1,11 @@
-import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../reducers';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
-import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../reducers';
 import { salesforceExportSelectOptions } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
+import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
   const { connectionId, filterKey, fieldName, formKey } = props;
@@ -13,14 +15,10 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${entityName}`;
   const dispatch = useDispatch();
-  const { data = [], status, errorMessage } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    })
-  );
+
+
+  const { data = [], status, errorMessage } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
+
   const options = salesforceExportSelectOptions(data, fieldName);
   const handleRefreshResource = () =>
     dispatch(actions.metadata.refresh(connectionId, commMetaPath));

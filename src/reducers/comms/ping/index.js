@@ -40,6 +40,7 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.TEST_CANCELLED: {
         draft[resourceId] = {
           status: PING_STATES.ABORTED,
+          message,
         };
         break;
       }

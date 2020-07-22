@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function BubbleSvg({ height, width, classes }) {
   return (
     <svg height={height} width={width} className={classes.bubble}>

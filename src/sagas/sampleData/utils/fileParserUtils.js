@@ -1,8 +1,6 @@
 import { call } from 'redux-saga/effects';
-import { invert } from 'lodash';
-import { evaluateExternalProcessor } from '../../../sagas/editor';
+import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
-import csvOptions from '../../../components/AFE/CsvConfigEditor/options';
 import { processJsonSampleData } from '../../../utils/sampleData';
 
 /*
@@ -15,50 +13,77 @@ const PARSERS = {
   xml: 'xmlParser',
 };
 
-/*
- * type: row / column
- * value: corresponds value in RowDelimiterMap/ColumnDelimiterMap
- * Returns label corresponding to the value of the map as evaluateExternalProcessor saga expects labels of delimiters
+/**
+ * NOTE: All the fields used to extract options for a file type are based on
+ * metadata field Ids for that resource
+ * as we infer props on resource form while editing
  */
-function getDelimiterLabel(type, value) {
-  const delimiterMap =
-    csvOptions[type === 'row' ? 'RowDelimiterMap' : 'ColumnDelimiterMap'];
+export const generateFileParserOptionsFromResource = (resource = {}) => {
+  const fileType = resource?.file?.type;
+  const fields = resource?.file?.[fileType] || {};
+  // console.log(fileType, resource);
 
-  // Extracts key from the value given against RowDelimiterMap & ColumnDelimiterMap
-  return value && invert(delimiterMap)[value];
-}
-
-// Any customization on file options before passing to processor is done here
-export const generateFileParserOptions = (options = {}, type) => {
-  if (type === 'csv' || type === 'xlsx') {
+  // For csv, xlsx - similar kind of props are supplies
+  // Some of them are not supported for xlsx yet
+  if (['csv', 'xlsx'].includes(fileType)) {
     return {
-      ...options,
-      rowDelimiter: getDelimiterLabel('row', options.rowDelimiter),
-      columnDelimiter: getDelimiterLabel('column', options.columnDelimiter),
-      multipleRowsPerRecord: !!(
-        options.keyColumns && options.keyColumns.length
-      ),
+      rowsToSkip: fields.rowsToSkip,
+      trimSpaces: fields.trimSpaces,
+      columnDelimiter: fields.columnDelimiter,
+      hasHeaderRow: fields.hasHeaderRow,
+      rowDelimiter: fields.rowDelimiter,
+      multipleRowsPerRecord:
+        fields.keyColumns &&
+        Array.isArray(fields.keyColumns) &&
+        fields.keyColumns.length,
+      keyColumns: fields.keyColumns,
     };
   }
 
-  return options;
+  if (fileType === 'xml') {
+    const rules = resource?.parsers?.[0]?.rules || {};
+    const { listNodes, includeNodes, excludeNodes, ...rest} = rules;
+
+    return {
+      resourcePath: fields.resourcePath,
+      ...rest,
+      // the export.parsers schema defines the following as arrays,
+      // while the processor logic uses strings.
+      listNodes: listNodes?.join('\n'),
+      includeNodes: includeNodes?.join('\n'),
+      excludeNodes: excludeNodes?.join('\n'),
+    };
+  }
+
+  // no additional props for json and xml - Add in future if updated
+  if (fileType === 'json') {
+    return {};
+  }
+  // If not the above ones, it is of type file definition
+  const fileDefinitionRules = resource.file && resource.file.filedefinition && resource.file.filedefinition.rules;
+  return {
+    rule: fileDefinitionRules,
+  };
 };
 
 export function* parseFileData({ sampleData, resource }) {
   const { file } = resource;
   const { type } = file;
-  const options = generateFileParserOptions(file[type], type);
+  const options = generateFileParserOptionsFromResource(resource);
   const processorData = {
     data: sampleData,
     processor: PARSERS[type],
     ...options,
   };
 
+  // console.log('parseFileData', processorData);
+
   try {
     const processedData = yield call(evaluateExternalProcessor, {
       processorData,
     });
 
+    // console.log(processedData);
     return processedData;
   } catch (e) {
     // Handle errors
@@ -86,7 +111,7 @@ export function* parseFileDefinition({ sampleData, resource }) {
           _fileDefinitionId,
         },
       },
-      message: `Fetching flows Preview`,
+      message: 'Loading',
       hidden: true,
     });
 

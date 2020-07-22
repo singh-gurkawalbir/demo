@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers/index';
@@ -156,7 +156,7 @@ function DynaAssistantOptions(props) {
         });
         patch.push({
           op: 'replace',
-          path: `/assistantMetadata/dontConvert`,
+          path: '/assistantMetadata/dontConvert',
           value: true,
         });
       }

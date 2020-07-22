@@ -1,4 +1,6 @@
+import React from 'react';
 import classNames from 'classnames';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import PropTypes from 'prop-types';
 import CircularProgress from '@material-ui/core/CircularProgress';

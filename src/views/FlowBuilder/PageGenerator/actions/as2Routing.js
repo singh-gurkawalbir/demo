@@ -1,15 +1,15 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@material-ui/core';
 import Icon from '../../../../components/icons/RoutingIcon';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import ModalDialog from '../../../../components/ModalDialog';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../components/LoadResources';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
 const getFieldMeta = defaultValue => ({
   fieldMap: {
@@ -61,9 +61,8 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
       dispatch(
         actions.resource.commitStaged('connections', connectionId, 'value')
       );
-      onClose();
     },
-    [dispatch, onClose, connectionId]
+    [dispatch, connectionId]
   );
   const value =
     connection && connection.as2 && connection.as2.contentBasedFlowRouter
@@ -75,17 +74,33 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
     disabled: isViewMode,
   });
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: `/connections/${connectionId}`,
+      disabled: isViewMode,
+      onSave: handleSubmit,
+      onClose,
+    }
+  );
+
   return (
     <ModalDialog show={open} onClose={onClose} disabled={isViewMode}>
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} disabled={isViewMode} />
         <DynaSubmit
           formKey={formKey}
-          disabled={isViewMode}
+          disabled={disableSave}
           data-test={`as2routing-${connectionId}`}
-          onClick={handleSubmit}>
-          Save
+          onClick={submitHandler()}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          disabled={disableSave}
+          color="secondary"
+          data-test={`as2routingsaveclose-${connectionId}`}
+          onClick={submitHandler(true)}>
+          {defaultLabels.saveAndCloseLabel}
         </DynaSubmit>
         <Button
           data-test={`cancelAs2routing-${connectionId}`}
@@ -102,6 +117,6 @@ export default {
   name: 'as2Routing',
   position: 'left',
   Icon,
-  helpText: helpTextMap['fb.pg.exports.as2routing'],
+  helpKey: 'fb.pg.exports.as2routing',
   Component: As2RoutingDialog,
 };

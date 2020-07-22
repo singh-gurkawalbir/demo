@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import xmlParser from './xmlParser';
 import csvParser from './csvParser';
 import csvDataGenerator from './csvDataGenerator';
@@ -14,6 +15,7 @@ import netsuiteLookupFilter from './netsuiteLookupFilter';
 import netsuiteQualificationCriteria from './netsuiteQualificationCriteria';
 import salesforceQualifier from './salesforceQualifier';
 import salesforceLookupFilter from './salesforceLookupFilter';
+import readme from './readme';
 
 const logicMap = {
   xmlParser,
@@ -32,6 +34,7 @@ const logicMap = {
   netsuiteQualificationCriteria,
   salesforceQualifier,
   salesforceLookupFilter,
+  readme,
 };
 
 function getLogic(editor) {
@@ -73,13 +76,34 @@ const requestOptions = editor => {
 const isDirty = editor => {
   const logic = getLogic(editor);
 
+  // give precedence to dirty method if implemented by editor
   if (logic.dirty) {
     return logic.dirty(editor);
   }
 
-  return undefined;
+  const initKeys = Object.keys(editor).filter(key => key.indexOf('_init') !== -1);
+  // If there are no initKeys , return undefined
+  // as we return a boolean only incase of initKeys passed - refer @editorDialog disableSave property
+  if (!initKeys.length) {
+    return;
+  }
+  for (let i = 0; i < initKeys.length; i += 1) {
+    const initKey = initKeys[i];
+    const originalKey = initKey.replace('_init_', '');
+    if (typeof editor[originalKey] === 'boolean' && !!editor[initKey] !== !!editor[originalKey]) {
+      return true;
+    }
+    if (
+      Array.isArray(editor[originalKey]) &&
+            !isEqual(editor[initKey], editor[originalKey])
+    ) return true;
+    if (
+      ['string', 'number'].includes(typeof editor[originalKey]) &&
+            editor[initKey] !== editor[originalKey]
+    ) return true;
+  }
+  return false;
 };
-
 const init = processor => {
   const logic = getLogic({ processor });
 

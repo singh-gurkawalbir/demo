@@ -12,6 +12,9 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: {
+      fieldId: 'application',
+    },
     gorgiasSubdomain: {
       type: 'text',
       id: 'gorgiasSubdomain',
@@ -49,15 +52,15 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'gorgiasSubdomain',
-      'http.auth.basic.username',
-      'http.auth.basic.password',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['gorgiasSubdomain',
+          'http.auth.basic.username',
+          'http.auth.basic.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

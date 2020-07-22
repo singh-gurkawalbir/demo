@@ -1,4 +1,5 @@
 import actionTypes from './types';
+import suiteScript from './suiteScript';
 
 export const availableResources = [
   'exports',
@@ -12,6 +13,7 @@ export const availableResources = [
   'tiles',
   'flows',
   'templates',
+  'apis',
 ];
 
 export const availableOSTypes = ['windows', 'linux', 'macOS'];
@@ -190,6 +192,9 @@ const marketplace = {
 const recycleBin = {
   restore: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.RESTORE, { resourceType, resourceId }),
+  restoreRedirectUrl: redirectTo =>
+    action(actionTypes.RECYCLEBIN.RESTORE_REDIRECT_TO, { redirectTo }),
+  restoreClear: () => action(actionTypes.RECYCLEBIN.RESTORE_CLEAR),
   purge: (resourceType, resourceId) =>
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
@@ -213,18 +218,22 @@ const resource = {
 
   request: (resourceType, id, message) =>
     action(actionTypes.RESOURCE.REQUEST, { resourceType, id, message }),
+  updateChildIntegration: (parentId, childId) =>
+    action(actionTypes.UPDATE_CHILD_INTEGRATION, { parentId, childId }),
+  clearChildIntegration: () => action(actionTypes.CLEAR_CHILD_INTEGRATION),
 
   requestCollection: (resourceType, message) =>
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message }),
 
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  updated: (resourceType, resourceId, master, patch) =>
+  updated: (resourceType, resourceId, master, patch, context) =>
     action(actionTypes.RESOURCE.UPDATED, {
       resourceType,
       resourceId,
       master,
       patch,
+      context,
     }),
   receivedCollection: (resourceType, collection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
@@ -267,12 +276,13 @@ const resource = {
   patchStaged: (id, patch, scope) =>
     action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
 
-  commitStaged: (resourceType, id, scope, options) =>
+  commitStaged: (resourceType, id, scope, options, context) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
       scope,
       options,
+      context,
     }),
 
   commitConflict: (id, conflict, scope) =>
@@ -464,11 +474,6 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
-  clearValidations: (connectionId, commMetaPath) =>
-    action(actionTypes.METADATA.CLEAR_VALIDATIONS, {
-      connectionId,
-      commMetaPath,
-    }),
   requestAssistantImportPreview: resourceId =>
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED, {
       resourceId,
@@ -515,11 +520,12 @@ const fileDefinitions = {
         }),
     },
     userDefined: {
-      save: (definitionRules, formValues, flowId) =>
+      save: (definitionRules, formValues, flowId, skipClose) =>
         action(actionTypes.FILE_DEFINITIONS.DEFINITION.USER_DEFINED.SAVE, {
           definitionRules,
           formValues,
           flowId,
+          skipClose
         }),
     },
   },
@@ -778,7 +784,13 @@ const integrationApp = {
           response,
         }
       ),
-
+    addOnLicenseMetadataFailed: integrationId =>
+      action(
+        actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA_FAILURE,
+        {
+          integrationId,
+        }
+      ),
     requestMappingMetadata: integrationId =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.MAPPING_METADATA_REQUEST, {
         integrationId,
@@ -822,6 +834,13 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED, params),
   },
   installer: {
+    setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
+        connectionId, openOauthConnection, id
+      }),
+    initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
+      id: integrationId,
+    }),
     installStep: (integrationId, installerFunction, storeId, addOnId) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, {
         id: integrationId,
@@ -829,23 +848,35 @@ const integrationApp = {
         storeId,
         addOnId,
       }),
-    scriptInstallStep: (integrationId, connectionId, connectionDoc) =>
+    scriptInstallStep: (
+      integrationId,
+      connectionId,
+      connectionDoc,
+      formSubmission
+    ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
+        formSubmission,
       }),
-    updateStep: (integrationId, installerFunction, update) =>
+    updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
         id: integrationId,
         installerFunction,
         update,
+        formMeta,
       }),
     completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE, {
         stepsToUpdate: stepCompleteResponse.stepsToUpdate,
         id,
         installerFunction,
+      }),
+    getCurrentStep: (integrationId, step) =>
+      action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.CURRENT_STEP, {
+        id: integrationId,
+        step,
       }),
   },
   uninstaller: {
@@ -888,6 +919,44 @@ const integrationApp = {
         integrationId,
       }),
   },
+  uninstaller2: {
+    init: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT, {
+        id: integrationId,
+      }),
+    failed: (integrationId, error) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.FAILED, {
+        id: integrationId,
+        error,
+      }),
+    receivedSteps: (integrationId, uninstallSteps) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.RECEIVED_STEPS, {
+        id: integrationId,
+        uninstallSteps,
+      }),
+    requestSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, {
+        id: integrationId,
+      }),
+    updateStep: (integrationId, update) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE, {
+        id: integrationId,
+        update,
+      }),
+    uninstallStep: (integrationId, formVal) =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, {
+        id: integrationId,
+        formVal,
+      }),
+    clearSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_STEPS, {
+        id: integrationId,
+      }),
+    complete: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
+        id: integrationId,
+      }),
+  },
   store: {
     addNew: integrationId =>
       action(actionTypes.INTEGRATION_APPS.STORE.ADD, { id: integrationId }),
@@ -922,11 +991,12 @@ const integrationApp = {
       }),
   },
   clone: {
-    receivedIntegrationClonedStatus: (id, integrationId) =>
+    receivedIntegrationClonedStatus: (id, integrationId, error, sandbox) =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
         id,
-        isCloned: true,
+        isCloned: !error,
         integrationId,
+        sandbox
       }),
     clearIntegrationClonedStatus: id =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
@@ -1008,11 +1078,12 @@ const file = {
       fileType,
       file,
     }),
-  processFile: ({ fileId, file, fileType }) =>
+  processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
       fileId,
       file,
       fileType,
+      fileProps,
     }),
   processedFile: ({ fileId, file, fileProps }) =>
     action(actionTypes.FILE.PROCESSED, {
@@ -1088,10 +1159,22 @@ const user = {
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.ACCOUNT_SWITCH, { id }),
+      requestLicenseEntitlementUsage: () =>
+        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_REQUEST),
       requestNumEnabledFlows: () =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_REQUEST, {}),
       receivedNumEnabledFlows: response =>
         action(actionTypes.LICENSE_NUM_ENABLED_FLOWS_RECEIVED, { response }),
+      receivedLicenseEntitlementUsage: response =>
+        action(actionTypes.LICENSE_ENTITLEMENT_USAGE_RECEIVED, { response }),
+      addLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_ADD_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
+      deleteLinkedConnectionId: connectionId =>
+        action(actionTypes.ACCOUNT_DELETE_SUITESCRIPT_LINKED_CONNECTION, {
+          connectionId,
+        }),
     },
   },
   preferences: {
@@ -1137,6 +1220,15 @@ const importSampleData = {
       resourceId,
       options,
       refreshCache,
+    }),
+  iaMetadataRequest: ({ _importId }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_REQUEST, {
+      _importId,
+    }),
+  iaMetadataReceived: ({ _importId, metadata }) =>
+    action(actionTypes.IMPORT_SAMPLEDATA.IA_METADATA_RECEIVED, {
+      _importId,
+      metadata,
     }),
 };
 const flowData = {
@@ -1185,14 +1277,15 @@ const flowData = {
       stage,
       refresh,
     }),
-  reset: (flowId, resourceId) =>
-    action(actionTypes.FLOW_DATA.RESET, { flowId, resourceId }),
+  resetStages: (flowId, resourceId, stages = []) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
-  updateFlowsForResource: (resourceId, resourceType) =>
+  updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
     action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
+      stagesToReset
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
   updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
@@ -1203,6 +1296,8 @@ const flowData = {
     }),
 };
 const app = {
+  fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
+  updateUIVersion: (version) => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
@@ -1241,7 +1336,7 @@ const editor = {
     action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
     action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: id => action(actionTypes.EDITOR_SAVE, { id }),
+  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
   saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
 };
@@ -1270,7 +1365,7 @@ const mapping = {
       value,
     }),
   delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: id => action(actionTypes.MAPPING.SAVE, { id }),
+  save: (id, context) => action(actionTypes.MAPPING.SAVE, { id, context }),
   saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
   updateFlowData: (id, value) =>
@@ -1281,7 +1376,13 @@ const mapping = {
   previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
   changeOrder: (id, value) =>
     action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
+  setNSAssistantFormLoaded: (id, value) =>
+    action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { id, value }),
+  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
+
 };
+
 const searchCriteria = {
   init: (id, value) =>
     action(actionTypes.SEARCH_CRITERIA.INIT, {
@@ -1300,7 +1401,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1308,6 +1409,7 @@ const resourceForm = {
       skipCommit,
       flowId,
       initData,
+      integrationId,
     }),
   initComplete: (
     resourceType,
@@ -1324,6 +1426,11 @@ const resourceForm = {
       isNew,
       skipCommit,
       flowId,
+    }),
+  initFailed: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.INIT_FAILED, {
+      resourceId,
+      resourceType,
     }),
   clearInitData: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
@@ -1666,12 +1773,13 @@ const errorManager = {
 const flow = {
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
-  runDataLoader: ({ flowId, customStartDate, fileContent, fileType }) =>
+  runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
     action(actionTypes.FLOW.RUN_DATA_LOADER, {
       flowId,
       customStartDate,
       fileContent,
       fileType,
+      fileName,
     }),
   isOnOffActionInprogress: (onOffInProgress, flowId) =>
     action(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, {
@@ -1772,7 +1880,7 @@ const exportData = {
       error: err,
     }),
 };
-// #endregion
+
 const editorSampleData = {
   request: ({
     flowId,
@@ -1860,6 +1968,7 @@ export default {
   analytics,
   transfer,
   responseMapping,
+  suiteScript,
   customSettings,
   exportData,
   editorSampleData,

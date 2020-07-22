@@ -1,3 +1,5 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -23,7 +25,7 @@ const useStyles = makeStyles(theme => ({
       borderWidth: [[0, 2, 2, 0]],
       display: 'inline-block',
       padding: 7,
-      transform: `rotate(-45deg)`,
+      transform: 'rotate(-45deg)',
       position: 'absolute',
     },
     '&:after': {

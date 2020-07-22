@@ -1,10 +1,11 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Typography, Button } from '@material-ui/core';
 import ModalDialog from '../../components/ModalDialog';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 function AppErroredModal({ history }) {
   const appErrored = useSelector(state => selectors.appErrored(state));
@@ -12,9 +13,9 @@ function AppErroredModal({ history }) {
 
   return appErrored ? (
     <ModalDialog show>
-      <Fragment>
+      <>
         <span>Application errored</span>
-      </Fragment>
+      </>
       <Typography>
         Oops! Something caused our app to crash. <br />
         To resume working, please reload.
@@ -25,7 +26,7 @@ function AppErroredModal({ history }) {
         color="primary"
         onClick={() => {
           dispatch(actions.app.clearError());
-          history.replace('/pg');
+          history.replace(getRoutePath(''));
           window.location.reload();
         }}>
         Reload

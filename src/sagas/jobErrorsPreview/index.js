@@ -15,7 +15,7 @@ function* requestJobErrorPreview({ jobId, errorFile }) {
     const previewData = yield call(apiCallWithRetry, {
       path: `/jobs/${jobId}/jobErrorFile/preview?runKey=${errorFileId}`,
       opts: { method: 'GET' },
-      message: ' Fetching Preview for Job Errors',
+      message: 'Loading',
     });
 
     yield put(

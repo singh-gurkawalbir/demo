@@ -123,17 +123,22 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common'],
         type: 'collapse',
         containers: [
           {
             collapsed: true,
-            label: 'What would you like to export from DynamoDB?',
+            label: 'General',
+            fields: ['common'],
+          },
+          {
+            collapsed: true,
+            label: 'What would you like to export?',
             fields: [
               'dynamodb.region',
               'dynamodb.method',
@@ -143,6 +148,12 @@ export default {
               'dynamodb.keyConditionExpression',
               'dynamodb.filterExpression',
               'dynamodb.projectionExpression',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: [
               'type',
               'delta.dateField',
               'once.booleanField',
@@ -150,6 +161,7 @@ export default {
               'dynamodb.onceExportSortKey',
             ],
           },
+          { collapsed: true, label: 'Advanced', fields: ['skipRetries'] },
         ],
       },
       {

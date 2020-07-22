@@ -1,8 +1,8 @@
 /* global describe, test, expect, beforeAll */
-import { advanceBy, advanceTo, clear } from 'jest-date-mock';
+// import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../actions';
 import {
   ACCOUNT_IDS,
@@ -14,7 +14,7 @@ import {
 import { COMM_STATES } from './comms/networkComms';
 
 describe('global selectors', () => {
-  describe(`isProfileDataReady`, () => {
+  describe('isProfileDataReady', () => {
     test('should return false on bad or empty state.', () => {
       expect(selectors.isProfileDataReady()).toBe(false);
       expect(selectors.isProfileDataReady({})).toBe(false);
@@ -321,7 +321,7 @@ describe('global selectors', () => {
       state = reducer(state, actions.api.complete('/exports', 'POST'));
       expect(selectors.resourceStatus(state, 'exports').isReady).toBe(true);
     });
-    test(`shouldn't re-add the forward slash in the resourceStatus selector to determine comm status for non resource calls`, () => {
+    test('shouldn\'t re-add the forward slash in the resourceStatus selector to determine comm status for non resource calls', () => {
       let state = reducer(
         {},
         actions.api.request(
@@ -468,7 +468,6 @@ describe('Reducers in the root reducer', () => {
     expect(state).toEqual({
       app: {
         appErrored: false,
-        drawerOpened: true,
         bannerOpened: true,
         count: 1,
       },
@@ -478,44 +477,6 @@ describe('Reducers in the root reducer', () => {
         loggedOut: true,
       },
     });
-  });
-});
-
-describe('Comm selector to verify comms exceeding threshold', () => {
-  const path = '/somePath';
-  const method = 'GET';
-
-  test('selector taking long should not show the component only if any comms msg is transiting less than the network threshold', () => {
-    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-
-    const state = reducer(undefined, actions.api.request(path, method));
-
-    advanceBy(5);
-
-    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
-
-    advanceBy(20000); // advance sufficiently large time
-
-    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(true);
-    clear();
-  });
-  test('verify comm selector for multiple resources', () => {
-    advanceTo(new Date(2018, 5, 27, 0, 0, 0)); // reset to date time.
-
-    let state = reducer(undefined, actions.api.request(path, method));
-
-    state = reducer(state, actions.api.request('someotherResource', method));
-
-    advanceBy(50);
-
-    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
-    state = reducer(state, actions.api.complete(path, method));
-    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(false);
-
-    advanceBy(20000); // advance sufficiently large time
-
-    expect(selectors.isAllLoadingCommsAboveThreshold(state)).toBe(true);
-    clear();
   });
 });
 
@@ -1186,7 +1147,6 @@ describe('publishedConnectors selector', () => {
 });
 
 describe('userAccessLevelOnConnection selector', () => {
-  // eslint-disable-next-line prettier/prettier
   test(`should return ${USER_ACCESS_LEVELS.ACCOUNT_OWNER} access level for account owner`, () => {
     const state = reducer(
       {
@@ -2318,7 +2278,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                             placeholder: 'Optional',
@@ -2703,7 +2663,7 @@ describe('integrationApp Settings reducers', () => {
                               'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                           },
                           {
-                            label: 'Column Delimiter:',
+                            label: 'Column delimiter:',
                             type: 'input',
                             name: 'columnDelimiter_5d9f71628a71fc911a4068d9',
                             placeholder: 'Optional',
@@ -3526,7 +3486,7 @@ describe('integrationApp Settings reducers', () => {
                         'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                     },
                     {
-                      label: 'Column Delimiter:',
+                      label: 'Column delimiter:',
                       type: 'input',
                       name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                       placeholder: 'Optional',
@@ -4306,7 +4266,7 @@ describe('integrationApp Settings reducers', () => {
                       'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
                   },
                   {
-                    label: 'Column Delimiter:',
+                    label: 'Column delimiter:',
                     type: 'input',
                     name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
                     placeholder: 'Optional',

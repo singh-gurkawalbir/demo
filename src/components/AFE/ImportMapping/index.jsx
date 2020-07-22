@@ -1,7 +1,5 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DndProvider } from 'react-dnd-cjs';
-import HTML5Backend from 'react-dnd-html5-backend-cjs';
 import { Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -9,7 +7,6 @@ import actions from '../../../actions';
 import mappingUtil from '../../../utils/mapping';
 import * as selectors from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
-import { adaptorTypeMap } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';
 import ButtonGroup from '../../ButtonGroup';
@@ -26,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   mappingContainer: {
-    height: `calc(100vh - 180px)`,
+    height: 'calc(100vh - 180px)',
     padding: theme.spacing(1, 0, 3),
     marginBottom: theme.spacing(1),
     maxWidth: '100%',
@@ -34,10 +31,10 @@ const useStyles = makeStyles(theme => ({
   },
   mapCont: {
     width: '0px',
-    flex: `1.1 1 0`,
+    flex: '1.1 1 0',
   },
   assistantContainer: {
-    flex: `1 1 0`,
+    flex: '1 1 0',
     width: '0px',
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
@@ -65,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mappingsBody: {
-    height: `calc(100% - 32px)`,
+    height: 'calc(100% - 32px)',
     overflow: 'auto',
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -82,6 +79,14 @@ const useStyles = makeStyles(theme => ({
   topHeading: {
     fontFamily: 'Roboto500',
   },
+  importMappingButtonGroup: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    width: '100%',
+    padding: '16px 0px',
+  },
+
 }));
 const emptyMappingRow = {};
 
@@ -101,12 +106,10 @@ export default function ImportMapping(props) {
     exportResource = {},
     options = {},
   } = props;
-  const { sObjectType, connectionId, recordType } = options;
+  const { sObjectType, connectionId, recordType, flowId } = options;
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
-    fetchSalesforceSObjectMetadata,
-    refreshGenerateFields,
     refreshExtractFields,
   } = optionalHanlder;
   const {
@@ -114,30 +117,28 @@ export default function ImportMapping(props) {
     lookups,
     changeIdentifier,
     preview = {},
-    lastModifiedKey,
+    lastModifiedRowKey = '',
     salesforceMasterRecordTypeId,
-    showSalesforceNetsuiteAssistant,
     importSampleData,
-    httpAssistantPreview,
+    isNSAssistantFormLoaded,
   } = useSelector(state => selectors.mapping(state, editorId));
+  const { data: previewData } = preview;
+  const mappingPreviewType = useSelector(state =>
+    selectors.mappingPreviewType(state, resource._id)
+  );
   const salesforceNetsuitePreviewData = useMemo(() => {
-    if (showSalesforceNetsuiteAssistant) {
-      const { data } = preview;
-
-      if (data && Array.isArray(data) && data.length) {
-        const [_val] = data;
+    if (mappingPreviewType === 'salesforce') {
+      if (previewData && Array.isArray(previewData) && previewData.length) {
+        const [_val] = previewData;
 
         return _val;
       }
 
-      return data;
+      return previewData;
     }
 
     return undefined;
-  }, [preview, showSalesforceNetsuiteAssistant]);
-  const showPreviewPane = !!(
-    showSalesforceNetsuiteAssistant || httpAssistantPreview
-  );
+  }, [mappingPreviewType, previewData]);
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
     application
@@ -146,22 +147,30 @@ export default function ImportMapping(props) {
   const saveInProgress = useSelector(
     state => selectors.mappingsSaveStatus(state, editorId).saveInProgress
   );
-  const saveCompleted = useSelector(
-    state => selectors.mappingsSaveStatus(state, editorId).saveCompleted
-  );
   const [state, setState] = useState({
     localMappings: [],
     localChangeIdentifier: -1,
   });
   const { localMappings, localChangeIdentifier } = state;
 
+  const handleRefreshGenerates = useCallback(
+    () => {
+      dispatch(
+        actions.mapping.refreshGenerates(
+          editorId
+        )
+      );
+    },
+    [dispatch, editorId],
+  );
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
-    if (localChangeIdentifier !== changeIdentifier)
+    if (localChangeIdentifier !== changeIdentifier) {
       setState({
         localMappings: mappings,
         localChangeIdentifier: changeIdentifier,
       });
+    }
   }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
 
   const tableData = useMemo(
@@ -186,51 +195,29 @@ export default function ImportMapping(props) {
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
 
-      if (value === '') {
-        if (
-          (field === 'extract' && generate === '') ||
-          (field === 'generate' &&
-            extract === '' &&
-            !('hardCodedValue' in _mapping))
-        ) {
-          dispatch(actions.mapping.delete(editorId, key));
-
-          return;
+      // check if value changes or user entered something in new row
+      if ((!key && value) || (key && _mapping[field] !== value)) {
+        if (key && value === '') {
+          if (
+            (field === 'extract' && generate === '') ||
+            (field === 'generate' &&
+              extract === '' &&
+              !('hardCodedValue' in _mapping))
+          ) {
+            dispatch(actions.mapping.delete(editorId, key));
+            return;
+          }
         }
+        dispatch(actions.mapping.patchField(editorId, field, key, value));
+        return;
       }
 
-      if (
-        field === 'generate' &&
-        application === adaptorTypeMap.SalesforceImport &&
-        value &&
-        value.indexOf('_child_') > -1
-      ) {
-        const childRelationshipField =
-          generateFields && generateFields.find(field => field.id === value);
-
-        if (childRelationshipField) {
-          const { childSObject, relationshipName } = childRelationshipField;
-
-          dispatch(
-            actions.mapping.patchIncompleteGenerates(
-              editorId,
-              key,
-              relationshipName
-            )
-          );
-          fetchSalesforceSObjectMetadata(childSObject);
-        }
+      if (lastModifiedRowKey !== key) {
+        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+        dispatch(actions.mapping.updateLastFieldTouched(editorId, _lastModifiedRowKey));
       }
-
-      dispatch(actions.mapping.patchField(editorId, field, key, value));
     },
-    [
-      application,
-      dispatch,
-      editorId,
-      fetchSalesforceSObjectMetadata,
-      generateFields,
-    ]
+    [dispatch, editorId, lastModifiedRowKey]
   );
   const patchSettings = useCallback(
     (key, settings) => {
@@ -250,10 +237,10 @@ export default function ImportMapping(props) {
   );
   const extractLabel = exportResource._connectionId
     ? `Export field (${mappingUtil.getApplicationName(
-        exportResource,
-        exportConn
-      )})`
-    : `Source Record Field`;
+      exportResource,
+      exportConn
+    )})`
+    : 'Source Record Field';
   const generateLabel = `Import field (${mappingUtil.getApplicationName(
     resource,
     importConn
@@ -279,34 +266,31 @@ export default function ImportMapping(props) {
     dispatch(actions.mapping.updateLookup(editorId, lookupsTmp));
   };
 
-  const handleSalesforceAssistantFieldClick = useCallback(
+  const handleSFNSAssistantFieldClick = useCallback(
     meta => {
-      if (lastModifiedKey)
+      if (disabled) {
+        return;
+      }
+      let value;
+      if (sObjectType) {
+        value = meta.id;
+      } else if (recordType) {
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
+      }
+      if (lastModifiedRowKey && value) {
         dispatch(
           actions.mapping.patchField(
             editorId,
             'generate',
-            lastModifiedKey,
-            meta.id
+            lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
+            value
           )
         );
+      }
     },
-    [dispatch, editorId, lastModifiedKey]
+    [dispatch, editorId, lastModifiedRowKey, recordType, sObjectType, disabled]
   );
-  const handleNetSuiteAssistantFieldClick = useCallback(
-    meta => {
-      if (lastModifiedKey)
-        dispatch(
-          actions.mapping.patchField(
-            editorId,
-            'generate',
-            lastModifiedKey,
-            meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id
-          )
-        );
-    },
-    [dispatch, editorId, lastModifiedKey]
-  );
+
   const handleClose = () => {
     if (onClose) {
       onClose();
@@ -316,6 +300,7 @@ export default function ImportMapping(props) {
   const handleDrop = useCallback(() => {
     dispatch(actions.mapping.changeOrder(editorId, localMappings));
   }, [dispatch, editorId, localMappings]);
+
   const handleMove = useCallback(
     (dragIndex, hoverIndex) => {
       const mappingsCopy = [...localMappings];
@@ -347,12 +332,15 @@ export default function ImportMapping(props) {
     );
   }
 
-  const httpAssistantPreviewData = useMemo(() => {
+  const httpAssistantPreviewObj = useMemo(() => {
+    if (mappingPreviewType !== 'http') {
+      return {};
+    }
+
     const model = {
       connection: importConn,
       data: [],
     };
-    const { data: previewData } = preview;
 
     if (previewData) {
       model.data = previewData;
@@ -362,21 +350,27 @@ export default function ImportMapping(props) {
         : [importSampleData];
     }
 
-    return JSON.stringify(model);
-  }, [importConn, importSampleData, preview]);
+    return {
+      rule: resource.http && resource.http.body && resource.http.body[0],
+      data: JSON.stringify(model),
+    };
+  }, [importConn, importSampleData, mappingPreviewType, previewData, resource]);
+  const showPreviewButton = !!(mappingPreviewType === 'netsuite'
+    ? isNSAssistantFormLoaded
+    : mappingPreviewType);
 
   return (
     <div className={classes.root}>
       <div
         className={clsx(classes.mappingContainer, {
-          [classes.mapCont]: showPreviewPane,
+          [classes.mapCont]: mappingPreviewType,
         })}
         key={`mapping-${editorId}`}>
         <div className={classes.header}>
           <Typography
             variant="h5"
             className={clsx(classes.childHeader, classes.topHeading, {
-              [classes.topHeadingCustomWidth]: showPreviewPane,
+              [classes.topHeadingCustomWidth]: mappingPreviewType,
             })}>
             {extractLabel}
             {!isExtractsLoading && (
@@ -400,7 +394,7 @@ export default function ImportMapping(props) {
             {isGenerateRefreshSupported && !isGeneratesLoading && (
               <RefreshButton
                 disabled={disabled}
-                onClick={refreshGenerateFields}
+                onClick={handleRefreshGenerates}
                 data-test="refreshGenerates"
               />
             )}
@@ -413,30 +407,28 @@ export default function ImportMapping(props) {
         </div>
 
         <div className={classes.mappingsBody} key={`${editorId}`}>
-          <DndProvider backend={HTML5Backend}>
-            {tableData.map((mapping, index) => (
-              <MappingRow
-                index={index}
-                id={`${mapping.key}-${mapping.rowIdentifier}`}
+          {tableData.map((mapping, index) => (
+            <MappingRow
+              index={index}
+              id={`${mapping.key}-${mapping.rowIdentifier}`}
                 // eslint-disable-next-line react/no-array-index-key
-                key={`${mapping.key}-${mapping.rowIdentifier}`}
-                mapping={mapping}
-                extractFields={extractFields}
-                onFieldUpdate={handleFieldUpdate}
-                generateFields={generateFields}
-                disabled={disabled}
-                updateLookupHandler={updateLookupHandler}
-                patchSettings={patchSettings}
-                application={application}
-                options={options}
-                lookups={lookups}
-                onDelete={handleDelete}
-                onMove={handleMove}
-                onDrop={handleDrop}
-                isDraggable={!disabled}
+              key={`${mapping.key}-${mapping.rowIdentifier}`}
+              mapping={mapping}
+              extractFields={extractFields}
+              onFieldUpdate={handleFieldUpdate}
+              generateFields={generateFields}
+              disabled={disabled}
+              updateLookupHandler={updateLookupHandler}
+              patchSettings={patchSettings}
+              application={application}
+              options={options}
+              lookups={lookups}
+              onDelete={handleDelete}
+              onMove={handleMove}
+              onDrop={handleDrop}
+              isDraggable={!disabled}
               />
-            ))}
-          </DndProvider>
+          ))}
           <MappingRow
             key={`${emptyRowIndex}`}
             index={emptyRowIndex}
@@ -454,45 +446,53 @@ export default function ImportMapping(props) {
             isDraggable={false}
           />
         </div>
-        <ButtonGroup>
-          {showPreviewPane && (
+        <ButtonGroup
+          className={classes.importMappingButtonGroup}>
+          <div>
+            <>
+              <MappingSaveButton
+                id={editorId}
+                disabled={!!(disabled || saveInProgress)}
+                color="primary"
+                dataTest="saveImportMapping"
+                submitButtonLabel="Save"
+                flowId={flowId}
+          />
+              <MappingSaveButton
+                id={editorId}
+                variant="outlined"
+                color="secondary"
+                dataTest="saveAndCloseImportMapping"
+                onClose={handleClose}
+                disabled={!!(disabled || saveInProgress)}
+                submitButtonLabel="Save & close"
+                flowId={flowId}
+          />
+              <Button
+                variant="text"
+                data-test="saveImportMapping"
+                disabled={!!saveInProgress}
+                onClick={handleClose}>
+                Cancel
+              </Button>
+            </>
+          </div>
+
+          {showPreviewButton && (
             <Button
-              variant="text"
+              variant="outlined"
+              color="primary"
               data-test="preview"
               disabled={!!(disabled || saveInProgress)}
               onClick={handlePreviewClick}>
               Preview
             </Button>
           )}
-          <MappingSaveButton
-            id={editorId}
-            disabled={!!(disabled || saveInProgress)}
-            color="primary"
-            dataTest="saveImportMapping"
-            submitButtonLabel="Save"
-          />
-          <MappingSaveButton
-            id={editorId}
-            variant="outlined"
-            color="secondary"
-            dataTest="saveAndCloseImportMapping"
-            onClose={handleClose}
-            disabled={!!(disabled || saveInProgress)}
-            showOnlyOnChanges
-            submitButtonLabel="Save & close"
-          />
-          <Button
-            variant="text"
-            data-test="saveImportMapping"
-            disabled={!!saveInProgress}
-            onClick={handleClose}>
-            {saveCompleted ? 'Close' : 'Cancel'}
-          </Button>
         </ButtonGroup>
       </div>
-      {showPreviewPane && (
+      {mappingPreviewType && (
         <div className={classes.assistantContainer}>
-          {showSalesforceNetsuiteAssistant && sObjectType && (
+          {mappingPreviewType === 'salesforce' && (
             <SalesforceMappingAssistant
               style={{
                 width: '100%',
@@ -502,27 +502,28 @@ export default function ImportMapping(props) {
               sObjectType={sObjectType}
               sObjectLabel={sObjectType}
               layoutId={salesforceMasterRecordTypeId}
-              onFieldClick={handleSalesforceAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
-          {showSalesforceNetsuiteAssistant && recordType && (
+          {mappingPreviewType === 'netsuite' && (
             <NetSuiteMappingAssistant
               style={{
                 width: '100%',
                 height: '100%',
               }}
+              mappingId={editorId}
               netSuiteConnectionId={connectionId}
               netSuiteRecordType={recordType}
-              onFieldClick={handleNetSuiteAssistantFieldClick}
+              onFieldClick={handleSFNSAssistantFieldClick}
               data={salesforceNetsuitePreviewData}
             />
           )}
-          {httpAssistantPreview && (
+          {mappingPreviewType === 'http' && (
             <HttpMappingAssistant
               editorId={`httpPreview-${editorId}`}
-              rule={httpAssistantPreview.rule}
-              data={httpAssistantPreviewData}
+              rule={httpAssistantPreviewObj.rule}
+              data={httpAssistantPreviewObj.data}
             />
           )}
         </div>

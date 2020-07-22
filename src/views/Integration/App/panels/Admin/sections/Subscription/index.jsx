@@ -1,7 +1,9 @@
-import { Fragment } from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
@@ -9,16 +11,20 @@ import actions from '../../../../../../../actions';
 import * as selectors from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
+import InfoIconButton from '../../../../../../../components/InfoIconButton';
 
 const metadata = {
   columns: [
     {
       heading: 'Name',
-      value: r => r && r.name,
-    },
-    {
-      heading: 'Description',
-      value: r => r.description,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && r.name}
+            <InfoIconButton info={r.description} size="xs" />
+          </>
+        );
+      },
     },
     {
       heading: 'Installed On',
@@ -27,7 +33,6 @@ const metadata = {
     },
     {
       heading: 'Action',
-
       value: function Installer(r) {
         return <AddonInstallerButton resource={r} />;
       },
@@ -94,25 +99,17 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
-  const subscribedAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnLicenses &&
-    addOnState.addOns.addOnLicenses.filter(model => {
-      if (supportsMultiStore) {
-        return model.storeId === storeId;
-      }
+  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
+    if (supportsMultiStore) {
+      return model.storeId === storeId;
+    }
 
-      return true;
-    });
+    return true;
+  });
 
   if (subscribedAddOns) {
     subscribedAddOns.forEach((f, i) => {
-      const addon =
-        addOnState &&
-        addOnState.addOns &&
-        addOnState.addOns.addOnMetaData &&
-        addOnState.addOns.addOnMetaData.find(addOn => addOn.id === f.id);
+      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
 
       subscribedAddOns[i]._id = i;
       subscribedAddOns[i].integrationId = integrationId;
@@ -127,12 +124,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
     });
   }
 
-  const hasSubscribedAddOns = subscribedAddOns && subscribedAddOns.length > 0;
-  const hasAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnMetaData &&
-    addOnState.addOns.addOnMetaData.length > 0;
+  const hasSubscribedAddOns = subscribedAddOns?.length > 0;
+  const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;
   const {
     plan,
     createdText,
@@ -153,7 +146,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Subscription details" />
       <div className={classes.root}>
         <div className={classes.content}>
@@ -222,7 +215,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           </div>
         )}
         {hasAddOns && hasSubscribedAddOns && (
-          <Fragment>
+          <>
             <div className={classes.header}>
               <Typography variant="h4" className={classes.heading}>
                 Add-Ons
@@ -235,9 +228,9 @@ export default function SubscriptionSection({ storeId, integrationId }) {
             </div>
 
             <CeligoTable data={subscribedAddOns} {...metadata} />
-          </Fragment>
+          </>
         )}
       </div>
-    </Fragment>
+    </>
   );
 }

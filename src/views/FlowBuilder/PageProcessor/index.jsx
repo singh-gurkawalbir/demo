@@ -1,4 +1,4 @@
-import { useRef, useMemo, Fragment, useCallback } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd-cjs';
@@ -19,7 +19,6 @@ import postResponseMapHook from './actions/postResponseMapHook';
 import responseTransformationAction from './actions/responseTransformation';
 import proceedOnFailureAction from './actions/proceedOnFailure';
 import { actionsMap, isImportMappingAvailable } from '../../../utils/flows';
-import helpTextMap from '../../../components/Help/helpTextMap';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {
@@ -27,14 +26,14 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   lineRight: {
-    minWidth: 130,
+    minWidth: 150,
   },
   lineLeft: {
     minWidth: 50,
   },
   dottedLine: {
     alignSelf: 'start',
-    marginTop: 150,
+    marginTop: 85,
     borderBottom: `3px dotted ${theme.palette.divider}`,
   },
   pending: {
@@ -71,6 +70,9 @@ const PageProcessor = ({
         resourceId
       )
     ) || {};
+  const rdbmsAppType = useSelector(
+    state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
+  );
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (
@@ -166,7 +168,7 @@ const PageProcessor = ({
   // #endregion
 
   const handleBlockClick = useCallback(() => {
-    const newId = generateNewId();
+    let newId = generateNewId();
 
     if (pending) {
       // generate newId
@@ -189,10 +191,18 @@ const PageProcessor = ({
           path: '/_connectionId',
           value: pp._connectionId,
         },
+        // rdbmsAppType refers to specific rdbms application inferred from connection of pending pp
+        // used to populate the same when user opens resource form
+        {
+          op: 'add',
+          path: '/rdbmsAppType',
+          value: rdbmsAppType,
+        },
       ];
 
-      // console.log('patchSet: ', patchSet);
-
+      // for pending resource, passing the PP index in newId
+      // which will be used in saga to add or replace the pending resource
+      newId = `${newId}.${index}`;
       dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
     }
 
@@ -212,9 +222,11 @@ const PageProcessor = ({
     match.url,
     pending,
     pp._connectionId,
+    rdbmsAppType,
     resource,
     resourceId,
     resourceType,
+    index
   ]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually
@@ -223,7 +235,7 @@ const PageProcessor = ({
       {
         ...inputFilterAction,
         isUsed: usedActions[actionsMap.inputFilter],
-        helpText: helpTextMap[`fb.pp.${resourceType}.inputFilter`],
+        helpKey: `fb.pp.${resourceType}.inputFilter`,
       },
     ];
 
@@ -241,31 +253,31 @@ const PageProcessor = ({
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap[`fb.pp.exports.hooks`],
+            helpKey: 'fb.pp.exports.hooks',
           }
         );
       } else {
         processorActions.push(
           ...(isImportMappingAvailable(resource)
             ? [
-                {
-                  ...importMappingAction,
-                  isUsed: usedActions[actionsMap.importMapping],
-                },
-              ]
+              {
+                ...importMappingAction,
+                isUsed: usedActions[actionsMap.importMapping],
+              },
+            ]
             : []),
           ...(!isLast
             ? [
-                {
-                  ...responseTransformationAction,
-                  isUsed: usedActions[actionsMap.responseTransformation],
-                },
-              ]
+              {
+                ...responseTransformationAction,
+                isUsed: usedActions[actionsMap.responseTransformation],
+              },
+            ]
             : []),
           {
             ...pageProcessorHooksAction,
             isUsed: usedActions[actionsMap.hooks],
-            helpText: helpTextMap[`fb.pp.imports.hooks`],
+            helpKey: 'fb.pp.imports.hooks',
           }
         );
       }
@@ -275,17 +287,17 @@ const PageProcessor = ({
           {
             ...responseMapping,
             isUsed: usedActions[actionsMap.responseMapping],
-            helpText: helpTextMap[`fb.pp.${resourceType}.responseMapping`],
+            helpKey: `fb.pp.${resourceType}.responseMapping`,
           },
           {
             ...postResponseMapHook,
             isUsed: usedActions[actionsMap.postResponseMap],
-            helpText: helpTextMap[`fb.pp.${resourceType}.postResponseMap`],
+            helpKey: `fb.pp.${resourceType}.postResponseMap`,
           },
           {
             ...proceedOnFailureAction,
             isUsed: usedActions[actionsMap.proceedOnFailure],
-            helpText: helpTextMap[`fb.pp.${resourceType}.proceedOnFailure`],
+            helpKey: `fb.pp.${resourceType}.proceedOnFailure`,
           }
         );
       }
@@ -294,12 +306,12 @@ const PageProcessor = ({
     return processorActions;
   }, [isLast, pending, pp.type, resource, resourceType, usedActions]);
   // #endregion
-
   // console.log('render: <PageProcessor>');
   // console.log(pp, usedActions);
+  const name = pending ? 'Pending configuration' : resource.name || resource.id;
 
   return (
-    <Fragment>
+    <>
       <div className={classes.ppContainer}>
         {index === 0 && (
           /* Initial left line connecting Source Apps */
@@ -307,10 +319,8 @@ const PageProcessor = ({
         )}
         <AppBlock
           integrationId={integrationId}
-          name={
-            pending ? 'Pending configuration' : resource.name || resource.id
-          }
-          onDelete={onDelete}
+          name={name}
+          onDelete={onDelete(name)}
           onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
@@ -340,7 +350,7 @@ const PageProcessor = ({
           />
         )}
       </div>
-    </Fragment>
+    </>
   );
 };
 

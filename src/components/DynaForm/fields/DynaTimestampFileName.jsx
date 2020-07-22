@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
@@ -11,6 +11,9 @@ import FieldHelp from '../FieldHelp';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const useStyles = makeStyles(theme => ({
+  fieldWrapper: {
+    width: '100%',
+  },
   suggestions: {
     width: '100%',
     marginLeft: 0,
@@ -200,7 +203,7 @@ export default function DynaTimestampFileName(props) {
   }
 
   return (
-    <FormControl>
+    <FormControl className={classes.fieldWrapper}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}

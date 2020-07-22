@@ -1,5 +1,5 @@
 import Iframe from 'react-iframe';
-import { useEffect, useCallback, useState, Fragment } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,8 @@ import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
 import * as selectors from '../../reducers';
 import actions from '../../actions';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -15,6 +17,7 @@ const useStyles = makeStyles({
 });
 
 export default function NetSuiteMappingAssistant({
+  mappingId,
   width = '100%',
   height = '100%',
   netSuiteConnectionId,
@@ -27,18 +30,20 @@ export default function NetSuiteMappingAssistant({
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
-  const netSuiteRecordMetadata = useSelector(state => {
-    const recordTypes = selectors.metadataOptionsAndResources({
-      state,
-      connectionId: netSuiteConnectionId,
-      commMetaPath: `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`,
-      filterKey: 'suitescript-recordTypes',
-    }).data;
+  const isNSAssistantFormLoaded = useSelector(state => {
+    const { isNSAssistantFormLoaded } = selectors.mapping(state, mappingId);
 
+    return !!isNSAssistantFormLoaded;
+  });
+
+  const recordTypes = useSelectorMemo(selectors.makeOptionsFromMetadata, netSuiteConnectionId, `netsuite/metadata/suitescript/connections/${netSuiteConnectionId}/recordTypes`, 'suitescript-recordTypes')?.data;
+
+  const netSuiteRecordMetadata = useMemo(() => {
     if (recordTypes) {
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
-  });
+  }, [netSuiteRecordType, recordTypes]);
+
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {
@@ -51,12 +56,17 @@ export default function NetSuiteMappingAssistant({
     }
   }, [dispatch, netSuiteConnectionId, netSuiteRecordMetadata]);
   const [netSuiteFormIsLoading, setNetSuiteFormIsLoading] = useState(false);
-  const [showNetSuiteForm, setShowNetSuiteForm] = useState(false);
   const [suiteletUrl, setSuiteletUrl] = useState();
   const handleSuiteletFrameLoad = () => {
     setNetSuiteFormIsLoading(false);
   };
 
+  const setNSAssistantFormLoaded = useCallback(
+    value => {
+      dispatch(actions.mapping.setNSAssistantFormLoaded(mappingId, value));
+    },
+    [dispatch, mappingId]
+  );
   const handleMessageReceived = useCallback(
     e => {
       if (
@@ -68,7 +78,7 @@ export default function NetSuiteMappingAssistant({
       }
 
       if (e.data.op === 'loadCompleted') {
-        setShowNetSuiteForm(true);
+        setNSAssistantFormLoaded(true);
         document
           .getElementById('netsuiteFormFrame')
           .contentWindow.postMessage(
@@ -87,7 +97,7 @@ export default function NetSuiteMappingAssistant({
         onFieldClick && onFieldClick(e.data.field);
       }
     },
-    [connection, onFieldClick]
+    [connection, onFieldClick, setNSAssistantFormLoaded]
   );
 
   useEffect(() => {
@@ -95,11 +105,18 @@ export default function NetSuiteMappingAssistant({
 
     return () => {
       window.removeEventListener('message', handleMessageReceived);
+
+      if (isNSAssistantFormLoaded) setNSAssistantFormLoaded(false);
     };
-  }, [connection, handleMessageReceived]);
+  }, [
+    connection,
+    handleMessageReceived,
+    isNSAssistantFormLoaded,
+    setNSAssistantFormLoaded,
+  ]);
 
   useEffect(() => {
-    if (showNetSuiteForm) {
+    if (isNSAssistantFormLoaded) {
       if (
         data &&
         data.data &&
@@ -121,7 +138,7 @@ export default function NetSuiteMappingAssistant({
         );
       }
     }
-  }, [connection, data, showNetSuiteForm]);
+  }, [connection, data, isNSAssistantFormLoaded]);
 
   const handleLaunchAssistantClick = () => {
     setNetSuiteFormIsLoading(true);
@@ -159,7 +176,6 @@ export default function NetSuiteMappingAssistant({
     !connection ||
     !connection.netsuite ||
     !connection.netsuite.account ||
-    !connection.netsuite.environment ||
     !connection.netsuite.dataCenterURLs ||
     !connection.netsuite.dataCenterURLs.systemDomain
   ) {
@@ -169,17 +185,17 @@ export default function NetSuiteMappingAssistant({
   if (!netSuiteRecordMetadata) {
     return (
       <Typography>
-        Loading record metadata...
+        Loading
         <Spinner />
       </Typography>
     );
   }
 
   return (
-    <Fragment>
+    <>
       {netSuiteFormIsLoading && (
         <Typography>
-          Loading {netSuiteRecordMetadata.label} form...
+          Loading
           {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
           <Spinner />
         </Typography>
@@ -192,13 +208,13 @@ export default function NetSuiteMappingAssistant({
           height={height}
           url={suiteletUrl}
           onLoad={handleSuiteletFrameLoad}
-          display={showNetSuiteForm ? 'block' : 'none'}
+          display={isNSAssistantFormLoaded ? 'block' : 'none'}
           frameBorder={0}
         />
       )}
 
-      {!showNetSuiteForm && (
-        <Fragment>
+      {!isNSAssistantFormLoaded && (
+        <>
           <div className={classes.NetsuiteRules}>
             <Button
               onClick={handleLaunchAssistantClick}
@@ -226,8 +242,8 @@ export default function NetSuiteMappingAssistant({
               </li>
             </ol>
           </div>
-        </Fragment>
+        </>
       )}
-    </Fragment>
+    </>
   );
 }

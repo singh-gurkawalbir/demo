@@ -1,10 +1,9 @@
-import { useEffect, useState, Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import { FormLabel } from '@material-ui/core';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
-import * as selectors from '../../../../reducers';
+import { fileDefinitionSampleData } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import {
@@ -13,7 +12,7 @@ import {
 } from '../../../AFE/FileDefinitionEditor/constants';
 import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
-import helpTextMap from '../../../Help/helpTextMap';
+import { safeParse } from '../../../../utils/string';
 
 /*
  * This editor is shown in case of :
@@ -23,7 +22,7 @@ import helpTextMap from '../../../Help/helpTextMap';
  */
 const useStyles = makeStyles(theme => ({
   fileDefinitionContainer: {
-    flexDirection: `row !important`,
+    flexDirection: 'row !important',
     width: '100%',
     alignItems: 'center',
   },
@@ -38,35 +37,68 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/**
+ * a util function to get resourcePath based on value / defaultPath
+ * If user updated resourcePath, returns path from the value
+ * Initially, returns resourcePath on saved resource
+ */
+function extractResourcePath(value, initialResourcePath) {
+  if (value) {
+    const jsonValue = safeParse(value) || {};
+    return jsonValue.resourcePath;
+  }
+  return initialResourcePath;
+}
+
+/**
+ * @props
+ * userDefinitionId : If the resource already has saved fileDefition, corresponding Id is passed
+ * fileDefinitionResourcePath : same as above, contains saved resourcePath
+ * options: format & definitionId selected in the form is passed through OptionsHandler as options
+ */
 function DynaFileDefinitionEditor(props) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const {
     id,
     label,
     resourceId,
     resourceType,
     onFieldChange,
+    fileDefinitionResourcePath,
     userDefinitionId,
     options = {},
     value,
     disabled,
     formKey,
-    helpKey,
   } = props;
+
   const formContext = useFormContext(formKey);
+  const { format, definitionId } = options;
+  const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
+  // Local states
   const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
-  const dispatch = useDispatch();
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
+  // Default values
   const parserType =
     resourceType === 'imports'
       ? 'fileDefinitionGenerator'
       : 'fileDefinitionParser';
   const processor = resourceType === 'imports' ? FILE_GENERATOR : FILE_PARSER;
-  const handleClose = (shouldCommit, editorValues) => {
+
+  // selector to fetch file definition sample data
+  const { sampleData, rule } = useSelector(state => fileDefinitionSampleData(state, {
+    userDefinitionId,
+    resourceType,
+    options: { format, definitionId, resourcePath }
+  }), shallowEqual);
+
+  // click handlers
+  const handleEditorClick = () => {
+    setShowEditor(!showEditor);
+  };
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
 
@@ -91,77 +123,32 @@ function DynaFileDefinitionEditor(props) {
         onFieldChange(id, rule);
       }
     }
+  }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
 
+  const handleClose = useCallback(() => {
     setShowEditor(false);
-  };
+  }, [setShowEditor]);
 
-  const { format, definitionId, resourcePath } = options;
-  /*
-   * Definition rules are fetched in 2 ways
-   * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
-   * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
-   */
-  // TODO: @Raghu Move this logic to a selector instead of having logic here
-  const { sampleData, rule } = useSelector(state => {
-    let template;
-
-    if (definitionId && format) {
-      template = selectors.fileDefinition(state, definitionId, {
-        format,
-        resourceType,
-      });
-    } else if (userDefinitionId) {
-      // selector to get that resource based on userDefId
-      template = selectors.resource(state, 'filedefinitions', userDefinitionId);
-    }
-
-    if (!template) return {};
-    const { sampleData, ...fileDefinitionRules } = template;
-    // Stringify rules as the editor expects a string
-    let rule;
-    let formattedSampleData;
-
-    if (resourceType === 'imports') {
-      rule = JSON.stringify(fileDefinitionRules, null, 2);
-      formattedSampleData =
-        sampleData &&
-        JSON.stringify(
-          Array.isArray(sampleData) && sampleData.length ? sampleData[0] : {},
-          null,
-          2
-        );
-    } else {
-      rule = JSON.stringify(
-        {
-          resourcePath: resourcePath || '',
-          fileDefinition: fileDefinitionRules,
-        },
-        null,
-        2
-      );
-      formattedSampleData = sampleData;
-    }
-
-    return { sampleData: formattedSampleData, rule };
-  });
-
+  // Effects to update values and sample data
   useEffect(() => {
     if (isRuleChanged) {
       onFieldChange(id, rule, true);
       // Processes the updated sample data and rules on change of format
-      dispatch(
-        actions.sampleData.request(
-          resourceId,
-          resourceType,
-          {
-            type: parserType,
-            file: sampleData,
-            editorValues: { rule, data: sampleData },
-            formValues: formContext.value,
-          },
-          'file'
-        )
-      );
+      if (sampleData) {
+        dispatch(
+          actions.sampleData.request(
+            resourceId,
+            resourceType,
+            {
+              type: parserType,
+              file: sampleData,
+              editorValues: { rule, data: sampleData },
+              formValues: formContext.value,
+            },
+            'file'
+          )
+        );
+      }
       setIsRuleChanged(false);
     }
   }, [
@@ -183,7 +170,7 @@ function DynaFileDefinitionEditor(props) {
   }, [rule]);
 
   return (
-    <Fragment>
+    <>
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
@@ -198,6 +185,7 @@ function DynaFileDefinitionEditor(props) {
                   : JSON.stringify(props.sampleData, null, 2))
               }
               rule={value}
+              onSave={handleSave}
               onClose={handleClose}
               disabled={disabled}
             />
@@ -212,11 +200,10 @@ function DynaFileDefinitionEditor(props) {
             onClick={handleEditorClick}>
             Launch
           </Button>
-          {/* TODO: surya we need to add the helptext for the upload file */}
-          <FieldHelp {...props} helpText={helpTextMap[helpKey] || label} />
+          <FieldHelp {...props} />
         </LoadResources>
       </div>
-    </Fragment>
+    </>
   );
 }
 

@@ -5,7 +5,7 @@ export default {
     '/assistant': 'parseur',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://api.parseur.com`,
+    '/http/baseURI': 'https://api.parseur.com',
     '/http/ping/relativeURI': '/parser',
     '/http/ping/method': 'GET',
     '/http/headers': [
@@ -29,13 +29,19 @@ export default {
         'Note: for security reasons this field must always be re-entered.',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.encrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

@@ -15,7 +15,7 @@ import {
   convertToExport,
   PARAMETER_LOCATION,
   DEFAULT_PROPS,
-} from './';
+} from '.';
 
 describe('getMatchingRoute', () => {
   const testCases = [
@@ -226,8 +226,8 @@ describe('getExportVersionAndResource', () => {
     [{}, undefined, undefined, {}],
     [{}, undefined, undefined, { versions: [] }],
     [{}, undefined, undefined, someAssistantData],
-    [{ version: 'v1', resource: 'r11' }, 'v1', 'ep1', someAssistantData],
-    [{ version: 'v2', resource: 'r21' }, undefined, 'ep1', someAssistantData],
+    [{ version: 'v1', resource: 'r11', operation: 'ep1' }, 'v1', 'ep1', someAssistantData],
+    [{ version: 'v2', resource: 'r21', operation: 'ep1' }, undefined, 'ep1', someAssistantData],
     [{}, 'someVersion', 'ep1', someAssistantData],
     [
       { version: 'v1', resource: 'r11' },
@@ -236,7 +236,7 @@ describe('getExportVersionAndResource', () => {
       someAssistantData,
     ],
     [
-      { version: 'v1', resource: 'r12' },
+      { version: 'v1', resource: 'r12', operation: 'r12_ep1' },
       undefined,
       'r12_ep1',
       someAssistantData,
@@ -248,7 +248,7 @@ describe('getExportVersionAndResource', () => {
       someAssistantData,
     ],
     [
-      { version: 'v2', resource: 'r22' },
+      { version: 'v2', resource: 'r22', operation: 'r22_ep1' },
       undefined,
       'r22_ep1',
       someAssistantData,
@@ -1148,7 +1148,7 @@ describe('generateValidReactFormFieldId', () => {
 });
 
 describe('convertToReactFormFields', () => {
-  let testCases = [
+  const testCases = [
     [
       {
         fieldDetailsMap: {},
@@ -1271,6 +1271,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
             type: 'textwithflowsuggestion',
@@ -1325,6 +1326,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
             type: 'textwithflowsuggestion',
@@ -1528,6 +1530,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly1',
             name: 'id_readOnly1',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 1',
             type: 'textwithflowsuggestion',
@@ -1582,6 +1585,7 @@ describe('convertToReactFormFields', () => {
             id: 'id_readOnly2',
             name: 'id_readOnly2',
             readOnly: true,
+            defaultDisabled: true,
             required: false,
             label: 'ReadOnly 2',
             type: 'textwithflowsuggestion',
@@ -1775,8 +1779,6 @@ describe('convertToReactFormFields', () => {
       },
     ],
   ];
-
-  testCases = [testCases[testCases.length - 1]];
 
   each(testCases).test(
     'should return %o when passed  %o ',

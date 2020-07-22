@@ -1,6 +1,6 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
-import { isEqual } from 'lodash';
+import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -10,9 +10,10 @@ import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
-import { REST_ASSISTANTS } from '../../utils/constants';
+import { REST_ASSISTANTS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
+import { updateFlowDoc } from '../resourceForm';
 
 function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -69,7 +70,44 @@ export function* resourceConflictDetermination({
   return { conflict: !!conflict, merged: updatedMerged };
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options }) {
+export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
+  if (!isBoolean(link)) {
+    return;
+  }
+  const userPreferences = yield select(selectors.userPreferences);
+  const isLinked =
+    userPreferences &&
+    userPreferences.ssConnectionIds &&
+    userPreferences.ssConnectionIds.includes(connectionId);
+  const userAccessLevel = yield select(selectors.userAccessLevel);
+  if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (link) {
+      if (!isLinked) {
+        yield put(
+          actions.user.preferences.update({
+            ssConnectionIds: [...(userPreferences.ssConnectionIds || []), connectionId],
+          })
+        );
+      }
+    } else if (isLinked) {
+      yield put(
+        actions.user.preferences.update({
+          ssConnectionIds: userPreferences.ssConnectionIds.filter(
+            (id) => id !== connectionId
+          ),
+        })
+      );
+    }
+  } else if (link) {
+    if (!isLinked) {
+      yield put(actions.user.org.accounts.addLinkedConnectionId(connectionId));
+    }
+  } else if (isLinked) {
+    yield put(actions.user.org.accounts.deleteLinkedConnectionId(connectionId));
+  }
+}
+
+export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
@@ -83,8 +121,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
 
   if (!patch || !patch.length) return; // nothing to do.
 
+  // integrations/<id>/connections for create and /connections for update
   // For accesstokens and connections within an integration for edit case
-  if (!isNew && resourceType.indexOf('integrations/') >= 0) {
+  if (!isNew && resourceType.startsWith('integrations/')) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
   }
@@ -125,7 +164,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   }
   // #endregion
 
-  const path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
+  let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
   if (!isNew) {
@@ -148,8 +187,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   ) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment
-    if (!Object.prototype.hasOwnProperty.call(merged, 'sandbox'))
-      merged.sandbox = isSandbox;
+    if (merged && !Object.prototype.hasOwnProperty.call(merged, 'sandbox')) merged.sandbox = isSandbox;
   }
 
   let updated;
@@ -159,11 +197,18 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
   // remove this code and let all docs be built on HTTP adaptor.
   if (
-    resourceType === 'connections' &&
+    // if it matches integrations/<id>/connections when creating a connection
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
     merged.assistant &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+  }
+  // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
+  // and connection will be auto registered to the integration.
+  // This is required for tile level monitor access users
+  if (resourceType === 'connections' && merged.integrationId && isNew) {
+    path = `/integrations/${merged.integrationId}/connections`;
   }
 
   try {
@@ -192,11 +237,11 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
   }
 
   /*
-     connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed) 
+     connections can be saved with valid or invalid credentials(i.e whether ping succeeded or failed)
      calling ping after connection save sets the offline flag appropriately in the backend.
      UI shouldnt set offline flag. It should read status from db.
   */
-  if (resourceType === 'connections' && updated._id && isNew) {
+  if (resourceType === 'connections' && updated?._id && isNew) {
     try {
       yield call(apiCallWithRetry, {
         path: `/connections/${updated._id}/ping`,
@@ -260,22 +305,28 @@ export function* commitStagedChanges({ resourceType, id, scope, options }) {
     }
   }
 
+  yield put(actions.resource.clearStaged(id, scope));
+
   yield put(actions.resource.received(resourceType, updated));
 
   if (!isNew) {
-    yield put(
-      actions.resource.updated(resourceType, updated._id, master, patch)
-    );
+    yield put(actions.resource.updated(resourceType, updated._id, master, patch, context));
   }
 
   if (options && options.action === 'flowEnableDisable') {
     yield put(actions.flow.isOnOffActionInprogress(false, id));
   }
 
-  yield put(actions.resource.clearStaged(id, scope));
-
   if (isNew) {
     yield put(actions.resource.created(updated._id, id, resourceType));
+  }
+
+  if (resourceType === 'connections' && merged.type === 'netsuite') {
+    yield call(
+      linkUnlinkSuiteScriptIntegrator,
+      { connectionId: merged._id,
+        link: merged.netsuite.linkSuiteScriptIntegrator }
+    );
   }
 }
 
@@ -353,6 +404,12 @@ export function* updateIntegrationSettings({
         sectionId,
       })
     );
+    // if flowId is present touch the flow to show changed lastmodified date
+    // note this is somewhat a hack
+    // it is believed that in time resource level settings will render this obsolete
+    if (flowId && options.action !== 'flowEnableDisable') {
+      yield call(updateFlowDoc, { flowId, resourceType: 'integrations', resourceId: integrationId });
+    }
 
     // If settings object is sent to response, we need to refetch resources as they are modified by IA
     if (response.settings) {
@@ -376,7 +433,7 @@ export function* updateIntegrationSettings({
       if (response.success) {
         // eslint-disable-next-line no-use-before-define
         yield call(getResource, { resourceType: 'flows', id: flowId });
-        const flowDetails = yield select(selectors.resource, 'flows', flowId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const patchSet = [
           {
             op: 'replace',
@@ -386,7 +443,7 @@ export function* updateIntegrationSettings({
           },
         ];
 
-        if (flowDetails.disabled !== values['/disabled']) {
+        if (flow.disabled !== values['/disabled']) {
           yield put(actions.resource.patchStaged(flowId, patchSet, 'value'));
 
           yield put(actions.resource.commitStaged('flows', flowId, 'value'));
@@ -396,6 +453,8 @@ export function* updateIntegrationSettings({
       // When a staticMapWidget is saved, the map object from field will be saved to one/many mappings as static-lookup mapping.
       // Hence we need to refresh imports and mappings to reflect the changes
       yield put(actions.resource.requestCollection('imports'));
+      // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
+      yield put(actions.resource.requestCollection('exports'));
     }
   }
 
@@ -536,7 +595,7 @@ export function* getResourceCollection({ resourceType }) {
   }
 
   if (resourceType === 'marketplacetemplates') {
-    path = `/templates/published`;
+    path = '/templates/published';
   }
 
   try {
@@ -562,7 +621,7 @@ export function* getResourceCollection({ resourceType }) {
       });
 
       if (!collection) collection = invitedTransfers;
-      else collection = [...collection, ...invitedTransfers];
+      else if (invitedTransfers) collection = [...collection, ...invitedTransfers];
     }
 
     yield put(actions.resource.receivedCollection(resourceType, collection));
@@ -607,7 +666,7 @@ export function* requestRegister({ connectionIds, integrationId }) {
         method: 'PUT',
         body: connectionIds,
       },
-      message: `Registering Connections`,
+      message: 'Registering Connections',
     });
 
     yield put(
@@ -627,7 +686,7 @@ export function* requestDeregister({ connectionId, integrationId }) {
       opts: {
         method: 'DELETE',
       },
-      message: `Deregistering Connection`,
+      message: 'Deregistering Connection',
     });
 
     yield put(
@@ -647,7 +706,7 @@ export function* requestRevoke({ connectionId }) {
       opts: {
         method: 'GET',
       },
-      message: `Revoking Connection`,
+      message: 'Revoking Connection',
     });
 
     if (response && response.errors) {
@@ -679,7 +738,7 @@ export function* requestDebugLogs({ connectionId }) {
 }
 
 export function* receivedResource({ resourceType, resource }) {
-  if (resourceType === 'connections' && !resource.offline) {
+  if (resourceType === 'connections' && resource && !resource.offline) {
     yield put(actions.connection.madeOnline(resource._id));
   }
 }
@@ -771,6 +830,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
+  takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
 
   ...metadataSagas,
 ];

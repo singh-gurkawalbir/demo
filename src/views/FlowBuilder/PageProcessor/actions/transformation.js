@@ -1,10 +1,9 @@
-import { useEffect, Fragment, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
-import helpTextMap from '../../../../components/Help/helpTextMap';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
@@ -75,7 +74,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
 function Transformation(props) {
   const { open } = props;
 
-  return <Fragment>{open && <TransformationDialog {...props} />}</Fragment>;
+  return <>{open && <TransformationDialog {...props} />}</>;
 }
 
 export default {
@@ -83,6 +82,6 @@ export default {
   name: 'lookupTransformation',
   position: 'middle',
   Icon,
-  helpText: helpTextMap['fb.pp.exports.transform'],
+  helpKey: 'fb.pp.exports.transform',
   Component: Transformation,
 };

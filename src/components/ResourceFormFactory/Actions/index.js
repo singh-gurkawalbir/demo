@@ -1,55 +1,55 @@
 import { useEffect, useState, useCallback } from 'react';
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import CancelButton from './CancelButton';
 import SaveButton from './SaveButton';
+import SaveAndCloseButton from './SaveAndCloseButton';
 import TestButton from './TestButton';
 import TestAndSaveButton from './TestAndSaveButton';
+import TestSaveAndCloseButton from './TestSaveAndCloseButton';
 import OAuthButton from './OAuthButton';
 import NetsuiteValidateButton from './NetsuiteValidateButton';
+import SaveAndCloseFileDefinitionButton from './SaveAndCloseFileDefinitionButton';
 import SaveFileDefinitionButton from './SaveFileDefinitionButton';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 import SaveAndContinueButton from './SaveAndContinueButton';
 
 export const useLoadingSnackbarOnSave = props => {
-  const { saveTerminated, onSave, resourceType } = props;
-  const [disableSave, setDisableSave] = useState(false);
-  const [snackbar, closeSnackbar] = useEnqueueSnackbar();
+  const {
+    saveTerminated,
+    onSave,
+    disableSaveOnClick,
+    setDisableSaveOnClick,
+  } = props;
+  const [isSaving, setIsSaving] = useState(false);
   const handleSubmitForm = useCallback(
     values => {
       onSave(values);
-      setDisableSave(true);
-      snackbar({
-        variant: 'info',
-        message: resourceType
-          ? `Saving your ${MODEL_PLURAL_TO_LABEL[resourceType] ||
-              resourceType} `
-          : 'Saving',
-        persist: true,
-      });
+      if (setDisableSaveOnClick) setDisableSaveOnClick(true);
+      setIsSaving(true);
     },
-    [onSave, resourceType, snackbar]
+    [onSave, setDisableSaveOnClick]
   );
 
-  useEffect(() => closeSnackbar, [closeSnackbar]);
   useEffect(() => {
     if (saveTerminated) {
-      setDisableSave(false);
-      closeSnackbar();
+      if (setDisableSaveOnClick) setDisableSaveOnClick(false);
+      setIsSaving(false);
     }
-  }, [closeSnackbar, saveTerminated]);
+  }, [saveTerminated, setDisableSaveOnClick]);
 
-  return { handleSubmitForm, disableSave };
+  return { handleSubmitForm, disableSave: disableSaveOnClick, isSaving };
 };
 
 export default {
   cancel: CancelButton,
   save: SaveButton,
+  saveandclose: SaveAndCloseButton,
   test: TestButton,
   testandsave: TestAndSaveButton,
+  testsaveandclose: TestSaveAndCloseButton,
   oauth: OAuthButton,
   validate: NetsuiteValidateButton,
   savedefinition: SaveFileDefinitionButton,
+  saveandclosedefinition: SaveAndCloseFileDefinitionButton,
   saveintegrationsettings: IntegrationSettingsSaveButton,
   saveandcontinue: SaveAndContinueButton,
 };

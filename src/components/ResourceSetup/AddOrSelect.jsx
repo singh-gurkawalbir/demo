@@ -1,12 +1,12 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import RadioGroup from '../../components/DynaForm/fields/radiogroup/DynaRadioGroup';
-import ResourceFormWithStatusPanel from '../../components/ResourceFormWithStatusPanel';
-import DynaForm from '../../components/DynaForm';
+import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
+import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
+import DynaForm from '../DynaForm';
 import * as selectors from '../../reducers';
 import LoadResources from '../LoadResources';
-import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
@@ -25,7 +25,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// TODO Sravan - Cancel button doesnt work.
 export default function AddOrSelect(props) {
   const {
     resourceId,
@@ -34,6 +33,8 @@ export default function AddOrSelect(props) {
     resource,
     environment,
     resourceType = 'connections',
+    manageOnly = false,
+    onClose
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);
@@ -43,7 +44,7 @@ export default function AddOrSelect(props) {
       RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]
     ];
   const resourceList = useSelector(state =>
-    selectors.filteredResourceList(state, resource, resourceType, environment)
+    selectors.filteredResourceList(state, resource, resourceType, environment, manageOnly)
   );
   const options = resourceList.map(c => ({
     label: c.offline ? `${c.name} - Offline` : c.name,
@@ -52,6 +53,10 @@ export default function AddOrSelect(props) {
   }));
   const newId = useSelector(state =>
     selectors.createdResourceId(state, resourceId)
+  );
+
+  const newDoc = useSelector(state =>
+    selectors.resource(state, resourceType, newId)
   );
   const isAuthorized = useSelector(state =>
     selectors.isAuthorized(state, newId)
@@ -66,7 +71,7 @@ export default function AddOrSelect(props) {
   };
 
   const handleSubmitComplete = () => {
-    onSubmitComplete(newId, isAuthorized);
+    onSubmitComplete(newId, newDoc, isAuthorized);
   };
 
   const fieldMeta = {
@@ -105,18 +110,18 @@ export default function AddOrSelect(props) {
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
         <RadioGroup
-          {...props}
+          value={props.value}
           id="selectType"
           className={classes.resourceFormRadioGroupWrapper}
           label="What would you like to do?"
           defaultValue={useNew ? 'new' : 'existing'}
-          fullWidth
+          isValid
           onFieldChange={handleTypeChange}
           options={[
             {
               items: [
-                { label: `Setup New ${resourceLabel}`, value: 'new' },
-                { label: `Use Existing ${resourceLabel}`, value: 'existing' },
+                { label: `Set up new ${resourceName}`, value: 'new' },
+                { label: `Use existing ${resourceName}`, value: 'existing' },
               ],
             },
           ]}
@@ -129,16 +134,19 @@ export default function AddOrSelect(props) {
               occupyFullWidth
               resourceType={resourceType}
               resourceId={resourceId}
+              submitButtonLabel="Save & close"
+              cancelButtonLabel="Cancel"
               onSubmitComplete={handleSubmitComplete}
               connectionType={connectionType}
+              onCancel={onClose}
             />
           ) : (
-            <Fragment>
+            <>
               <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
               <DynaSubmit formKey={formKey} onClick={handleSubmit}>
                 Done
               </DynaSubmit>
-            </Fragment>
+            </>
           )}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useCallback, useState, useMemo, Fragment } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../actions';
@@ -20,13 +20,13 @@ import PanelTitle from '../PanelTitle';
   {
     "fieldMap": {
       "A": {
-        "id":  "settingA", 
+        "id":  "settingA",
         "name": "setA",
         "label": "Label for A",
         "type": "text"
       }
       "B": {
-        "id":  "settingB", 
+        "id":  "settingB",
         "name": "setB",
         "label": "Turn me on!",
         "type": "checkbox"
@@ -49,6 +49,9 @@ const useStyles = makeStyles(theme => ({
   submitButton: {
     marginLeft: theme.spacing(1),
   },
+  formPreviewContainer: {
+    maxHeight: 'calc(100% - 54px) !important',
+  },
 }));
 
 export default function SettingsFormEditor({
@@ -59,6 +62,9 @@ export default function SettingsFormEditor({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
   const [settingsPreview, setSettingsPreview] = useState();
   const editor = useSelector(state => selectors.editor(state, editorId));
   const { data, result, error, lastChange, mode, status } = editor;
@@ -74,6 +80,11 @@ export default function SettingsFormEditor({
   const handleFormPreviewChange = useCallback(values => {
     setSettingsPreview(values);
   }, []);
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
 
   // any time the form metadata updates, we need to reset the settings since
   // the form itself could change the shape of the settings.
@@ -85,10 +96,11 @@ export default function SettingsFormEditor({
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: result,
+    fieldsMeta: result.data,
     remount: key,
     resourceId,
     resourceType,
+    ...formState
   });
 
   return (
@@ -122,16 +134,23 @@ export default function SettingsFormEditor({
       )}
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
-        {result && status !== 'error' ? (
-          <Fragment>
-            <DynaForm formKey={formKey} fieldMeta={result} />
+        {result && result.data && status !== 'error' ? (
+          <>
+            <DynaForm
+              formKey={formKey}
+              className={classes.formPreviewContainer}
+              key={key}
+              fieldMeta={result.data}
+              />
+
             <DynaSubmit
               formKey={formKey}
               className={classes.submitButton}
-              onClick={handleFormPreviewChange}>
+              onClick={handleFormPreviewChange}
+              showCustomFormValidations={showCustomFormValidations}>
               Test form
             </DynaSubmit>
-          </Fragment>
+          </>
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid
@@ -151,9 +170,11 @@ export default function SettingsFormEditor({
             readOnly
           />
         ) : (
-          <Typography>
-            Click the ‘test form’ button above to preview form output.
-          </Typography>
+          status !== 'error' && (
+            <Typography>
+              Click the ‘test form’ button above to preview form output.
+            </Typography>
+          )
         )}
       </PanelGridItem>
 

@@ -10,7 +10,7 @@ export default {
     const { adaptorType } = resourceObj;
     let lookup;
 
-    /* TODO: With support for different application being adding up, 
+    /* TODO: With support for different application being adding up,
     path for lookup to be updated below */
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:

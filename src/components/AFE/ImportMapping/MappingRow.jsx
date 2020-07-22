@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 6,
     color: theme.palette.text.hint,
   },
 
@@ -156,6 +156,7 @@ export default function MappingRow(props) {
     },
     [mapping, onFieldUpdate]
   );
+
   const handleDeleteClick = useCallback(() => {
     onDelete(key);
   }, [onDelete, key]);
@@ -190,6 +191,7 @@ export default function MappingRow(props) {
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
             onBlur={handleBlur('extract')}
+            triggerBlurOnTouch
           />
 
           {(isSubRecordMapping || isNotEditable) && (
@@ -212,6 +214,7 @@ export default function MappingRow(props) {
             options={generateFields}
             disabled={isSubRecordMapping || isRequired || disabled}
             onBlur={handleBlur('generate')}
+            triggerBlurOnTouch
           />
           {(isSubRecordMapping || isRequired) && (
             <Tooltip

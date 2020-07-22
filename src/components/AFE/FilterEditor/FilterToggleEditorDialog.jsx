@@ -1,3 +1,4 @@
+import React from 'react';
 import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
@@ -13,12 +14,15 @@ export default function FilterToggleEditorDialog(props) {
     entryFunction,
     insertStubKey,
     optionalSaveParams,
+    isSampleDataLoading,
+    isMonitorLevelAccess,
+    enableFilterForIA,
     ...rest
   } = props;
   const defaults = {
     width: '85vw',
     height: '60vh',
-    layout: 'column',
+    layout: 'compact',
     open: true,
     labels: ['Rules', 'JavaScript'],
   };
@@ -29,13 +33,14 @@ export default function FilterToggleEditorDialog(props) {
       type={type}
       {...defaults}
       {...rest}
-      disabled={disabled}
+      disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
       showLayoutOptions>
       <FilterEditor
-        disabled={disabled}
+        disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
         data={data}
         rule={rule}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
       <JavaScriptEditor
         data={data}
@@ -44,6 +49,7 @@ export default function FilterToggleEditorDialog(props) {
         entryFunction={entryFunction}
         insertStubKey={insertStubKey}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
     </ToggleEditorDialog>
   );

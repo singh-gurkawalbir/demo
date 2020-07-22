@@ -13,7 +13,7 @@ import {
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import { apiCallWithRetry } from './';
+import { apiCallWithRetry } from '.';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
@@ -177,7 +177,7 @@ describe('netsuiteUserRoles', () => {
   });
 });
 
-describe(`apiCallWithRetry saga`, () => {
+describe('apiCallWithRetry saga', () => {
   const path = '/somePath';
   const opts = {};
   const _400Exception = new APIException({

@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 // TODO:(Aditya): Work on test cases for Netsuite and Salesforce.
-import reducer from './';
+import reducer from '.';
 import actions from '../../../actions';
 
 /*
@@ -30,7 +30,7 @@ describe('NetSuiteAndSalesforce', () => {
       );
 
       expect(requestReducer).toMatchObject({
-        application: { '1234': { url: { status: 'requested' } } },
+        application: { 1234: { url: { status: 'requested' } } },
         assistants: { http: {}, rest: {} },
       });
     });
@@ -71,7 +71,7 @@ describe('NetSuiteAndSalesforce', () => {
 
       expect(receivedState).toMatchObject({
         application: {
-          '1234': {
+          1234: {
             url: {
               status: 'received',
               data: [
@@ -111,7 +111,7 @@ describe('NetSuiteAndSalesforce', () => {
       );
 
       expect(refreshReducer).toMatchObject({
-        application: { '1234': { url: { data: [], status: 'refreshed' } } },
+        application: { 1234: { url: { data: [], status: 'refreshed' } } },
         assistants: { http: {}, rest: {} },
       });
     });

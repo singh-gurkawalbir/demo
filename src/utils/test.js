@@ -7,7 +7,7 @@ import getRequestOptions from './requestOptions';
 import getExistingResourcePagePath from './resource';
 import getRoutePath from './routePaths';
 
-const uiRoutePathPrefix = '/pg';
+const uiRoutePathPrefix = '';
 
 describe('Json paths util method', () => {
   test('generate all json paths for a valid JSON object', () => {
@@ -18,6 +18,35 @@ describe('Json paths util method', () => {
       { id: 'a.e', type: 'string' },
       { id: 'a.f', type: 'number' },
       { id: 'b', type: 'string' },
+    ]);
+  });
+
+  test('should not recurse arrays when excludeArrayIndices is true', () => {
+    const sampleJSON = {
+      a: {
+        arr: [1, 2, 3],
+        arr2: [{
+          abc: 1,
+          def: 42,
+          moreArrays: [42, 42, 42]
+        }, {
+          abc: 'aaa',
+          def: true,
+          moreArrays2: [{
+            ghi: 'jkl'
+          }, {
+            ghi: 'mno'
+          }]
+        }]
+      },
+      b: {
+        c: 42
+      }
+    };
+    expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
+      { id: 'a.arr', type: 'array' },
+      { id: 'a.arr2', type: 'array' },
+      { id: 'b.c', type: 'number' },
     ]);
   });
 });

@@ -1,8 +1,20 @@
-import { useCallback, Fragment, useEffect } from 'react';
+import React, { useCallback, Fragment, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
-import useFormContext from '../../../Form/FormContext';
+import useFormContext from '../../../Form/FormContext;
+import {makeStyles} from '@material-ui/core/styles';
 
-export default function DynaSlider(props) {
+const useStyles = makeStyles((theme) => ({
+  titleSlider: {
+    paddingTop: theme.spacing(1),
+    marginLeft: theme.spacing(-1),
+    fontWeight: 'bold',
+  },
+  sliderWrapper: {
+    padding: theme.spacing(1, 2),
+  },
+}));
+function DynaSlider(props) {
+  const classes = useStyles();
   const {
     id,
     value,
@@ -37,8 +49,8 @@ export default function DynaSlider(props) {
   }, [id]);
 
   return (
-    <Fragment>
-      <Typography>{`Every ${sliderVal} ${unit}`} </Typography>
+    <div className={classes.sliderWrapper}>
+      <Typography className={classes.titleSlider}>{`Every ${sliderVal} ${unit}`} </Typography>
       <Slider
         value={parseInt(sliderVal, 10)}
         onChange={(evt, value) => {
@@ -49,6 +61,6 @@ export default function DynaSlider(props) {
         min={min}
         max={max}
       />
-    </Fragment>
+    </div>
   );
 }

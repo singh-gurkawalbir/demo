@@ -1,3 +1,4 @@
+import React from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
@@ -61,15 +62,15 @@ export function ResourceTypeFilter(props) {
       resource && resource._connectorId
         ? ['integration', 'flow', 'connection', 'import', 'export']
         : [
-            'integration',
-            'flow',
-            'export',
-            'import',
-            'connection',
-            'stack',
-            'asynchelper',
-            'filedefinition',
-          ],
+          'integration',
+          'flow',
+          'export',
+          'import',
+          'connection',
+          'stack',
+          'asynchelper',
+          'filedefinition',
+        ],
   };
 
   resourceTypeFilterOptionsByResourceType.all =
@@ -84,11 +85,10 @@ export function ResourceTypeFilter(props) {
           name: 'resourceType',
           id: 'resourceType',
         }}>
-        <MenuItem value="" disabled>
+        <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select resource type
         </MenuItem>
         {[
-          [OPTION_ALL.id, OPTION_ALL.label],
           ...resourceTypeFilterOptionsByResourceType[resourceType || 'all'].map(
             rt => [rt, RESOURCE_TYPE_SINGULAR_TO_LABEL[rt]]
           ),
@@ -126,13 +126,14 @@ export function ResourceIdFilter(props) {
 
   affectedResources[filters.resourceType] &&
     affectedResources[filters.resourceType].forEach(ar => {
-      if (resourceDetails[filterResourceType])
+      if (resourceDetails[filterResourceType]) {
         options.push({
           id: ar,
           name:
             resourceDetails[filterResourceType][ar] &&
             resourceDetails[filterResourceType][ar].name,
         });
+      }
     });
 
   options = sortBy(options, ['name']);

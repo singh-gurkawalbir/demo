@@ -4,7 +4,7 @@ import {
   ExpansionPanelDetails,
   ExpansionPanel,
 } from '@material-ui/core';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ExpandMoreIcon from '../../icons/ArrowDownIcon';
 import CeligoTable from '../../CeligoTable';
 

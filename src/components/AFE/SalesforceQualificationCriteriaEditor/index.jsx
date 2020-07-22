@@ -1,10 +1,11 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
 import DynaSalesforceQualificationCriteria from '../../DynaForm/fields/DynaSalesforceRealtimeQualifier';
 
 export default function SalesforceQualificationCriteriaEditor(props) {
   const { id } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,

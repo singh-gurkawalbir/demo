@@ -1,14 +1,23 @@
-export default {
-  optionsHandler: (fieldId, fields) => {
-    const webHookProviderField =
-      fields.find(field => field.id === 'webhook.provider') || {};
+import { isJsonString } from '../../../utils/string';
 
+export default {
+  validationHandler: field => {
+    // Used to validate sampleData field
+    // Incase of invalid json throws error to be shown on the field
+    if (field && field.id === 'sampleData') {
+      if (
+        field.value &&
+        typeof field.value === 'string' &&
+        !isJsonString(field.value)
+      ) return 'Sample Data must be a valid JSON';
+    }
+  },
+  optionsHandler: (fieldId, fields) => {
     if (fieldId === 'sampleData') {
       const webHookUrlField = fields.find(field => field.id === 'webhook.url');
 
       return {
         webHookUrl: webHookUrlField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
@@ -19,15 +28,29 @@ export default {
 
       return {
         webHookToken: webHookTokenField.value,
-        webHookProvider: webHookProviderField.value,
       };
     }
 
-    if (fieldId === 'webhook.token') {
-      return { webHookProvider: webHookProviderField.value };
-    }
 
     return null;
+  },
+  preSave: (formValues, resource) => {
+    const retValues = { ...formValues };
+
+    if (retValues['/webhook/verify'] === 'token') {
+      retValues['/webhook/token'] = retValues['/webhook/generateToken'];
+    }
+
+    if (resource && resource.webhook && resource.webhook.provider === 'slack') {
+      retValues['/webhook/key'] = retValues['/webhook/slackKey'];
+    }
+
+    delete retValues['/webhook/generateToken'];
+    delete retValues['/webhook/slackKey'];
+
+    return {
+      ...retValues,
+    };
   },
   fieldMap: {
     common: { formId: 'common' },
@@ -41,6 +64,12 @@ export default {
       fieldId: 'webhook.token',
       refreshOptionsOnChangesTo: ['webhook.provider'],
     },
+    'webhook.generateToken': {
+      fieldId: 'webhook.generateToken',
+    },
+    'webhook.slackKey': {
+      fieldId: 'webhook.slackKey',
+    },
     'webhook.url': {
       fieldId: 'webhook.url',
       refreshOptionsOnChangesTo: ['webhook.provider', 'webhook.token'],
@@ -53,22 +82,30 @@ export default {
       sampleData: r => r && r.sampleData,
       refreshOptionsOnChangesTo: ['webhook.url', 'webhook.provider'],
     },
-    advancedSettings: { formId: 'advancedSettings' },
+    pageSize: { fieldId: 'pageSize' },
+    dataURITemplate: { fieldId: 'dataURITemplate' },
+    skipRetries: { fieldId: 'skipRetries' },
   },
   layout: {
-    fields: ['common'],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Security',
+        label: 'General',
+        fields: ['common'],
+      },
+      {
+        collapsed: true,
+        label: 'Secure the listener',
         fields: [
           'webhook.verify',
           'webhook.algorithm',
           'webhook.encoding',
           'webhook.key',
+          'webhook.slackKey',
           'webhook.header',
           'webhook.token',
+          'webhook.generateToken',
           'webhook.path',
           'webhook.username',
           'webhook.password',
@@ -76,10 +113,10 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Public URL & sample data',
+        label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
+      { collapsed: true, label: 'Advanced', fields: ['pageSize', 'dataURITemplate', 'skipRetries'] },
     ],
   },
 };

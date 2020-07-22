@@ -1,5 +1,6 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
-import JavaScriptEditor from './';
+import JavaScriptEditor from '.';
 
 export default function JavaScriptEditorDialog(props) {
   const {
@@ -13,6 +14,7 @@ export default function JavaScriptEditorDialog(props) {
     insertStubKey,
     optionalSaveParams,
     resultMode,
+    isSampleDataLoading,
     ...rest
   } = props;
   const defaults = {
@@ -38,6 +40,7 @@ export default function JavaScriptEditorDialog(props) {
         disabled={disabled}
         resultMode={resultMode}
         optionalSaveParams={optionalSaveParams}
+        isSampleDataLoading={isSampleDataLoading}
       />
     </EditorDialog>
   );

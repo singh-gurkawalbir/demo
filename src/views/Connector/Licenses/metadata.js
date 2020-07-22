@@ -1,5 +1,8 @@
+import React from 'react';
+import moment from 'moment';
 import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/actions/Delete';
+import Edit from '../../../components/ResourceTable/actions/Edit';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 
@@ -20,14 +23,14 @@ export default {
     },
     {
       heading: 'Created on',
-      value: r => formatLastModified(r.created),
+      value: r => r.created ? moment(r.created).format('MMM D, YYYY') : '',
       orderBy: 'created',
     },
     {
       heading: 'Expires on',
       value(r) {
-        return (
-          <Typography color="error">{formatLastModified(r.expires)}</Typography>
+        return (r.expires ? (
+          <Typography color="error"> {moment(r.expires).format('MMM D, YYYY')} ({formatLastModified(r.expires)})</Typography>) : ''
         );
       },
       orderBy: 'expires',
@@ -37,5 +40,5 @@ export default {
       value: r => (r.sandbox ? 'Sandbox' : 'Production'),
     },
   ],
-  rowActions: [Delete],
+  rowActions: [Edit, Delete],
 };

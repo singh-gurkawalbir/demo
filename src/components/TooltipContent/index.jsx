@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
@@ -23,7 +24,7 @@ function TooltipContent({ children, className }) {
       component="div"
       variant="body2">
       {/<\/?[a-z][\s\S]*>/i.test(children) ? (
-        <RawHtml html={children} />
+        <RawHtml html={children} options={{allowedTags: ['a']}} />
       ) : (
         children
       )}

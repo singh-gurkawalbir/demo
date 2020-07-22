@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 
@@ -49,7 +49,7 @@ describe('user reducers', () => {
     });
   });
 
-  describe(`avatarUrl`, () => {
+  describe('avatarUrl', () => {
     test('should return undefined if no profile exists', () => {
       expect(selectors.avatarUrl(undefined)).toBeUndefined();
       expect(selectors.avatarUrl({})).toBeUndefined();

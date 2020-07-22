@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -56,7 +56,7 @@ export default function HandlebarsWithDefaults(props) {
         props: props.strict,
         autoEvaluateDelay: 300,
         template: props.rule,
-        initTemplate: props.rule,
+        _init_template: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
       })

@@ -1,36 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  CardContent,
-  Typography,
-  Card,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  Button,
-} from '@material-ui/core';
+import React, { useCallback, useMemo } from 'react';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
-import ActionButton from '../../../ActionButton';
-import ExitIcon from '../../../icons/ExitIcon';
 
-const useStyles = makeStyles(theme => ({
-  textField: {
-    minWidth: 200,
-  },
-  exitButton: {
-    float: 'right',
-    marginLeft: theme.spacing(1),
-  },
-}));
 
 export default function DynaMultiSubsidiaryMapping(props) {
   const { optionsMap, _integrationId, id } = props;
   const addSupportsRefreshToOptions = option => ({
     ...option,
-    required: ['paymentAccount', 'subsidiary'].includes(option.id),
     supportsRefresh: [
       'paymentAccount',
       'subsidiary',
@@ -62,90 +40,19 @@ export default function DynaMultiSubsidiaryMapping(props) {
     metadata.optionsMap = metadata.optionsMap.map(addSupportsRefreshToOptions);
   }
 
+
+  const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
+
   return (
     <DynaTableView
       {...props}
       hideLabel
-      isLoading={isLoading ? fieldType : false}
+      isLoading={isLoadingMap}
       shouldReset={shouldReset}
       metadata={metadata}
       handleCleanupHandler={handleCleanup}
       handleRefreshClickHandler={handleRefreshClick}
       optionsMap={modifiedOptionsMap}
     />
-  );
-}
-
-export function MultiSubsidiaryMapWidgetDialog(props) {
-  const defaults = {
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
-  const { onClose, value } = props;
-  const [data, setData] = useState(value);
-  const handleDataChange = value => {
-    setData(value);
-  };
-
-  return (
-    <Dialog
-      {...defaults}
-      onClose={() => onClose()}
-      scroll="paper"
-      maxWidth={false}>
-      <DialogContent>
-        <MultiSubsidiaryMapping {...props} onDataChange={handleDataChange} />
-      </DialogContent>
-      <DialogActions>
-        <Button
-          variant="outlined"
-          data-test="saveEditor"
-          color="primary"
-          onClick={() => onClose(true, data)}>
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
-export function MultiSubsidiaryMapping(props) {
-  const [showEditor, setShowEditor] = useState(false);
-  const classes = useStyles();
-  const { id, onFieldChange, title } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
-
-  const handleClose = useCallback(
-    (shouldSave, value) => {
-      if (shouldSave) {
-        onFieldChange(id, value);
-      }
-
-      handleEditorClick();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [handleEditorClick, id]
-  );
-
-  return (
-    <Fragment>
-      {showEditor && (
-        <MultiSubsidiaryMapWidgetDialog {...props} onClose={handleClose} />
-      )}
-      <Card className={classes.textField}>
-        <CardContent>
-          <Typography>{title}</Typography>
-          <ActionButton
-            data-test={id}
-            onClick={handleEditorClick}
-            className={classes.exitButton}>
-            <ExitIcon />
-          </ActionButton>
-        </CardContent>
-      </Card>
-    </Fragment>
   );
 }

@@ -37,9 +37,9 @@ export default function reducer(state = {}, action) {
           initData:
             state[key] && state[key].initData
               ? fieldsTouchedForMeta(
-                  fieldMeta,
-                  state[key] && state[key].initData
-                )
+                fieldMeta,
+                state[key] && state[key].initData
+              )
               : null,
           isNew,
           skipCommit,
@@ -47,6 +47,14 @@ export default function reducer(state = {}, action) {
           fieldMeta,
           flowId,
           showValidationBeforeTouched: false,
+        },
+      };
+    case actionTypes.RESOURCE_FORM.INIT_FAILED:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          initFailed: true,
         },
       };
 

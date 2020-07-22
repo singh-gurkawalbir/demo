@@ -1,4 +1,17 @@
+// import moment from 'moment';
 import { isNewId } from '../../../utils/resource';
+
+// const getAutoPurgeDescription = (id, autoPurgeAt) => {
+//   if (isNewId(id)) {
+//     return '';
+//   }
+//   if (moment(autoPurgeAt, moment.ISO_8601).isValid()) {
+//     const x = moment(autoPurgeAt);
+//     const y = moment();
+//     return `Auto purges in ${moment.duration(x.diff(y)).humanize()}`;
+//   }
+//   return undefined;
+// };
 
 export default {
   name: {
@@ -15,8 +28,10 @@ export default {
   autoPurgeAt: {
     type: 'select',
     label: 'Auto purge token',
-    required: r => isNewId(r && r._id),
-    defaultValue: 'none',
+    required: r => isNewId(r?._id) || !!r?._connectorId,
+    // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),
+    defaultValue: r => (!isNewId(r?._id) && !r?.autoPurgeAt && !r._connectorId) ? 'never' : r?.autoPurgeAt,
+    skipSort: true,
     // TODO dynamic options for connector tokens
     options: r => {
       const items = [
@@ -64,16 +79,16 @@ export default {
       r.fullAccess ||
       (r._connectorId &&
         r.autoPurgeAt &&
-        !r._connectionIds.length &&
-        !r._exportIds.length &&
-        !r._importIds.length)
+        !r?._connectionIds?.length &&
+        !r?._exportIds?.length &&
+        !r?._importIds?.length)
         ? 'true'
         : 'false',
     options: [
       {
         items: [
           {
-            label: 'Full Access',
+            label: 'Full access',
             value: 'true',
           },
           {
@@ -83,6 +98,7 @@ export default {
         ],
       },
     ],
+    required: true
   },
   _connectionIds: {
     type: 'selectresource',
@@ -91,6 +107,7 @@ export default {
     multiselect: true,
     allowEdit: false,
     allowNew: false,
+    skipPingConnection: true,
     filter: r =>
       r._integrationId
         ? { _integrationId: r._integrationId }
@@ -134,6 +151,22 @@ export default {
       r._integrationId
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
+    allowNew: false,
+    valueDelimiter: ',',
+    visibleWhen: [
+      {
+        field: 'fullAccess',
+        is: ['false'],
+      },
+    ],
+    ignoreEnvironmentFilter: true,
+  },
+  _apiIds: {
+    type: 'selectresource',
+    resourceType: 'apis',
+    label: 'My APIs',
+    multiselect: true,
+    allowEdit: false,
     allowNew: false,
     valueDelimiter: ',',
     visibleWhen: [

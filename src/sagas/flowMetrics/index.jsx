@@ -23,7 +23,7 @@ export function* requestFlowMetrics({ flowId, filters }) {
         body,
         method: 'POST',
       },
-      message: 'Fetching graph data.',
+      message: 'Loading',
     });
 
     if (csvResponse) {

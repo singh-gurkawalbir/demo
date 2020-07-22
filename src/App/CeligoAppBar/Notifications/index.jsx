@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import React, { useState, useCallback, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     '& > span': {
       height: 15,
       minWidth: 15,
-      transform: `scale(1) translate(33%, -20%)`,
+      transform: 'scale(1) translate(33%, -20%)',
       color: theme.palette.background.paper,
     },
   },
@@ -34,10 +34,8 @@ export default function Notifications() {
   // lengths match. It is hard to imagine a situation were the number of notifications
   // remains the same and the notifications themselves change. usually new ones get
   // added or removed (if rejected/accepted).
-  const notifications = useSelector(
-    state => selectors.userNotifications(state),
-    // if the following expression is 'true', no re-render is performed
-    (left, right) => left.length === right.length
+  const notifications = useSelector(state =>
+    selectors.userNotifications(state)
   );
   const handleClick = useCallback(
     event => {
@@ -78,7 +76,7 @@ export default function Notifications() {
   }
 
   return (
-    <Fragment>
+    <>
       <IconButton size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
@@ -104,11 +102,7 @@ export default function Notifications() {
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}
-                message={
-                  n.type === 'account'
-                    ? 'is inviting you to join their account.'
-                    : `${n.email} has shared the "${n.stackName}" stack with you.`
-                }
+                message={n.message}
               />
               {i < notifications.length - 1 && (
                 <Divider className={classes.divider} />
@@ -117,6 +111,6 @@ export default function Notifications() {
           ))}
         </div>
       </ArrowPopper>
-    </Fragment>
+    </>
   );
 }

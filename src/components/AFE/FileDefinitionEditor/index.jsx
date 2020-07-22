@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
@@ -25,13 +25,16 @@ export default function FileDefinitionEditor(props) {
   let resultTitle;
   let dataMode;
   let resultMode;
+  let dataTitle;
 
   if (processor === FILE_GENERATOR) {
-    resultTitle = 'Generated import';
+    resultTitle = 'Generated file';
+    dataTitle = 'Sample flow data';
     dataMode = 'json';
     resultMode = 'text';
   } else {
     resultTitle = 'Parsed output';
+    dataTitle = 'Sample file';
     dataMode = 'text';
     resultMode = 'json';
   }
@@ -40,7 +43,10 @@ export default function FileDefinitionEditor(props) {
     dispatch(
       actions.editor.init(editorId, processor, {
         rule: props.rule,
+        _init_rule: props.rule,
         data: props.data,
+        _init_data: props.data,
+        autoEvaluate: true,
       })
     );
   }, [dispatch, editorId, processor, props.data, props.rule]);
@@ -61,7 +67,7 @@ export default function FileDefinitionEditor(props) {
       dataMode={dataMode}
       resultMode={resultMode}
       ruleTitle="Type your file definition rules here"
-      dataTitle="Sample file"
+      dataTitle={dataTitle}
       resultTitle={resultTitle}
       disabled={disabled}
     />

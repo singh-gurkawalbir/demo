@@ -1,24 +1,11 @@
-import { useCallback } from 'react';
-import { makeStyles, Typography, IconButton } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { IconButton, TableCell, TableRow } from '@material-ui/core';
 import EditIcon from '../icons/EditIcon';
 import DeleteOutlinedIcon from '../icons/TrashIcon';
 
-const useStyles = makeStyles({
-  label: {
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    width: '75%',
-    float: 'left',
-  },
-  rowContainer: {
-    display: 'flex',
-  },
-});
-
 export default function LookupListRow(props) {
-  const { value, onEdit, onDelete } = props;
+  const { value, onEdit, onDelete, classes } = props;
   const { name } = value;
-  const classes = useStyles();
   const handleEdit = useCallback(() => {
     onEdit(value);
   }, [onEdit, value]);
@@ -27,9 +14,12 @@ export default function LookupListRow(props) {
   }, [onDelete, value]);
 
   return (
-    <div className={classes.rowContainer}>
-      <Typography className={classes.label}>{name}</Typography>
-      <div>
+    <TableRow
+      classes={{
+        root: classes.row,
+      }}>
+      <TableCell className={classes.columnName}>{name}</TableCell>
+      <TableCell className={classes.columnAction}>
         <IconButton
           key="Edit"
           aria-label="Edit"
@@ -47,7 +37,7 @@ export default function LookupListRow(props) {
           onClick={handleDelete}>
           <DeleteOutlinedIcon />
         </IconButton>
-      </div>
-    </div>
+      </TableCell>
+    </TableRow>
   );
 }

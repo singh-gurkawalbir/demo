@@ -1,5 +1,5 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React, { Fragment, useCallback, useMemo} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -7,11 +7,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import { ListSubheader } from '@material-ui/core';
 
-const styles = theme => ({
+
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
-    gridTemplateColumns: `1fr 100px 1fr`,
+    gridTemplateColumns: '1fr 100px 1fr',
   },
   paper: {
     height: 300,
@@ -26,7 +28,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
-});
+}));
 
 function not(a, b) {
   return a.filter(value => !b.includes(value));
@@ -36,12 +38,28 @@ function intersection(a, b) {
   return a.filter(value => b.includes(value));
 }
 
-function TransferList(props) {
-  const { left = [], setLeft, right = [], setRight, classes } = props;
+
+const SubHeader = ({subHeaderMap, scope, scopes, index}) => {
+  if (subHeaderMap && subHeaderMap[scope] && subHeaderMap[scopes[index - 1]] !== subHeaderMap[scopes[index]]) {
+    return (
+
+      <ListSubheader disableSticky>{subHeaderMap[scope]}</ListSubheader>
+
+    );
+  }
+  return null;
+};
+// this is necessary to preserve the order of scopes
+const sortPerOriginalScopesList = (scopesOrig) => (scopes) => scopesOrig?.filter(scope => scopes.includes(scope));
+export default function TransferList(props) {
+  const { left = [], setLeft, right = [], setRight, subHeaderMap, scopesOrig } = props;
+
+  const classes = useStyles();
+
   const [checked, setChecked] = React.useState([]);
-  const leftChecked = intersection(checked, left);
-  const rightChecked = intersection(checked, right);
-  const handleToggle = value => () => {
+  const leftChecked = useMemo(() => intersection(checked, left), [checked, left]);
+  const rightChecked = useMemo(() => intersection(checked, right), [checked, right]);
+  const handleToggle = useCallback(value => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -52,55 +70,62 @@ function TransferList(props) {
     }
 
     setChecked(newChecked);
-  };
+  }, [checked]);
 
-  const handleAllRight = () => {
-    setRight([...right, ...left]);
+  const handleAllRight = useCallback(() => {
+    setRight(sortPerOriginalScopesList(scopesOrig)([...right, ...left]));
     setLeft([]);
-  };
+  }, [left, right, scopesOrig, setLeft, setRight]);
 
-  const handleCheckedRight = () => {
-    setRight([...right, ...leftChecked]);
+  const handleCheckedRight = useCallback(() => {
+    setRight(sortPerOriginalScopesList(scopesOrig)([...right, ...leftChecked]));
     setLeft(not(left, leftChecked));
     setChecked(not(checked, leftChecked));
-  };
+  }, [checked, left, leftChecked, right, scopesOrig, setLeft, setRight]);
 
-  const handleCheckedLeft = () => {
-    setLeft([...left, ...rightChecked]);
+  const handleCheckedLeft = useCallback(() => {
+    setLeft(sortPerOriginalScopesList(scopesOrig)([...left, ...rightChecked]));
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
-  };
+  }, [checked, left, right, rightChecked, scopesOrig, setLeft, setRight]);
 
-  const handleAllLeft = () => {
-    setLeft([...left, ...right]);
+  const handleAllLeft = useCallback(() => {
+    setLeft(sortPerOriginalScopesList(scopesOrig)([...left, ...right]));
     setRight([]);
-  };
+  }, [left, right, scopesOrig, setLeft, setRight]);
 
   const customList = items => (
     <Paper className={classes.paper}>
       <List dense component="div" role="list">
-        {items.map &&
-          items.map(value => {
+        {items &&
+          items.map((value, index) => {
             const labelId = `transfer-list-item-${value}-label`;
 
             return (
-              <ListItem
-                key={value}
-                role="listitem"
-                button
-                data-test="selectListItem"
-                onClick={handleToggle(value)}>
-                <ListItemIcon>
-                  <Checkbox
-                    checked={checked.indexOf(value) !== -1}
-                    tabIndex={-1}
-                    disableRipple
-                    color="primary"
-                    inputProps={{ 'aria-labelledby': labelId }}
+              <Fragment key={value}>
+                <SubHeader
+                  subHeaderMap={subHeaderMap}
+                  scope={value}
+                  scopes={items}
+                  index={index}
+              />
+                <ListItem
+                  role="listitem"
+                  button
+                  data-test="selectListItem"
+                  onClick={handleToggle(value)}>
+                  <ListItemIcon>
+                    <Checkbox
+                      checked={checked.indexOf(value) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                      color="primary"
+                      inputProps={{ 'aria-labelledby': labelId }}
                   />
-                </ListItemIcon>
-                <ListItemText id={labelId} primary={value} />
-              </ListItem>
+                  </ListItemIcon>
+                  <ListItemText id={labelId} primary={value} />
+                </ListItem>
+              </Fragment>
             );
           })}
         <ListItem />
@@ -157,5 +182,3 @@ function TransferList(props) {
     </div>
   );
 }
-
-export default withStyles(styles)(TransferList);

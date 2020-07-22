@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, FormLabel, TextField } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
@@ -9,65 +9,60 @@ import EditIcon from '../../icons/EditIcon';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles({
-  editUserEmailWrapper: {
+  formWrapper: {
+    alignItems: 'flex-start',
+    display: 'flex',
+  },
+  fieldWrapper: {
     display: 'flex',
     width: '100%',
     alignItems: 'center',
   },
-  editUserEmailLabelWrapper: {
-    alignItems: 'flex-start',
-    display: 'flex',
-  },
-  editUserEmailField: {
+  field: {
     width: '100%',
   },
 });
 
 function DynaUserEmail(props) {
   const classes = useStyles();
-  const [state, setState] = useState({
-    openEmailModal: false,
-  });
+  const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
   const dispatch = useDispatch();
-  const clearComms = () => dispatch(actions.clearComms());
-  const handleOpenModal = modalKey => {
+  const clearComms = useCallback(() => dispatch(actions.clearComms()), [
+    dispatch,
+  ]);
+  const handleModalOpen = useCallback(() => {
     clearComms();
-    setState({ ...state, [modalKey]: true });
-  };
-
-  const handleCloseModal = modalKey => {
-    setState({ ...state, [modalKey]: false });
-  };
-
+    setShowChangeEmailModal(true);
+  }, [clearComms]);
+  const handleModalClose = useCallback(() => {
+    setShowChangeEmailModal(false);
+  }, []);
   const { id, value, label } = props;
 
   return (
     <FormControl>
-      <div className={classes.editUserEmailLabelWrapper}>
+      <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
-      <div className={classes.editUserEmailWrapper}>
+      <div className={classes.fieldWrapper}>
         <TextField
           id={id}
           type="email"
           value={value}
           disabled
-          className={classes.editUserEmailField}
+          className={classes.field}
           variant="filled"
         />
         <ActionButton
           data-test="editEmail"
           color="primary"
           variant="contained"
-          onClick={() => handleOpenModal('openEmailModal')}>
+          onClick={handleModalOpen}>
           <EditIcon />
         </ActionButton>
       </div>
-      <ChangeEmail
-        show={state.openEmailModal}
-        onhandleClose={() => handleCloseModal('openEmailModal')}
-      />
+      <ChangeEmail show={showChangeEmailModal} onClose={handleModalClose} />
     </FormControl>
   );
 }

@@ -1,97 +1,97 @@
-import { Component, Fragment } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { Button, Typography } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Typography, makeStyles } from '@material-ui/core';
+import * as selectors from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';
-import {
-  changeEmailFailure,
-  changeEmailSuccess,
-  changeEmailMsg,
-} from '../../reducers';
+import NotificationToaster from '../../components/NotificationToaster';
+import DynaForm from '../../components/DynaForm';
+import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 
-const mapDispatchToProps = dispatch => ({
-  changeEmail: message => {
-    dispatch(actions.auth.changeEmail(message));
+const useStyles = makeStyles(theme => ({
+  container: {
+    padding: 10,
+    backgroundColor: theme.palette.background.default,
+    overflowY: 'auto',
+    height: '100%',
+    width: '100%',
+    '& > div:first-child': {
+      flexDirection: 'column',
+    },
   },
-});
-const mapStateToProps = state => ({
-  error: changeEmailFailure(state),
-  success: changeEmailSuccess(state),
-  message: changeEmailMsg(state),
-});
+}));
+const changeEmailFieldMeta = {
+  fieldMap: {
+    newEmail: {
+      id: 'newEmail',
+      name: 'newEmail',
+      type: 'text',
+      label: 'New email',
+      required: true,
+    },
+    password: {
+      id: 'password',
+      name: 'password',
+      type: 'text',
+      inputType: 'password',
+      label: 'Password',
+      required: true,
+    },
+    label: {
+      id: 'label',
+      name: 'label',
+      type: 'labeltitle',
+      label:
+        'Note: we require your current password again to help safeguard your integrator.io account.',
+    },
+  },
+  layout: {
+    fields: ['newEmail', 'password', 'label'],
+  },
+};
 
-class ChangeEmail extends Component {
-  handleOnSubmit = e => {
-    e.preventDefault();
-    const payload = {
-      newEmail: e.target.newEmail.value,
-      password: e.target.password.value,
-    };
+export default function ChangeEmail({ show, onClose }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const error = useSelector(state => selectors.changeEmailFailure(state));
+  const success = useSelector(state => selectors.changeEmailSuccess(state));
+  const message = useSelector(state => selectors.changeEmailMsg(state));
+  const handleEmailChangeClick = useCallback(
+    formVal => {
+      const payload = {
+        newEmail: formVal.newEmail,
+        password: formVal.password,
+      };
 
-    this.props.changeEmail(payload);
-  };
+      dispatch(actions.auth.changeEmail(payload));
+    },
+    [dispatch]
+  );
 
-  render() {
-    const { show, onhandleClose, error, success, message } = this.props;
-
-    return (
-      <ModalDialog show={show} onClose={onhandleClose}>
-        Change Email
-        {success ? (
-          <Typography variant="body2">{message}</Typography>
-        ) : (
-          <div>
-            <form id="changeEmailForm" onSubmit={this.handleOnSubmit}>
-              <TextField
-                id="newEmail"
-                label="New Email"
-                margin="normal"
-                fullWidth
-                variant="filled"
-              />
-              <br />
-
-              <TextField
-                id="password"
-                label="Password"
-                margin="normal"
-                type="password"
-                variant="filled"
-                fullWidth
-              />
-            </form>
-            <Typography variant="body2">
-              Note: we require your current password again to help safeguard
-              your integrator.io account.
-            </Typography>
-          </div>
-        )}
-        {success ? (
-          <span />
-        ) : (
-          <Fragment>
-            {error && (
-              <Typography variant="body2" component="span" color="error">
-                {message}
-              </Typography>
-            )}
-
-            <Button
+  return (
+    <ModalDialog show={show} onClose={onClose}>
+      Change email
+      {error && (
+        <NotificationToaster variant="error" size="large">
+          <Typography variant="h6">{message}</Typography>
+        </NotificationToaster>
+      )}
+      {success ? (
+        <NotificationToaster variant="success" size="large">
+          <Typography variant="h6">{message}</Typography>
+        </NotificationToaster>
+      ) : (
+        <div className={classes.container}>
+          <DynaForm fieldMeta={changeEmailFieldMeta}>
+            <DynaSubmit
               data-test="changeEmail"
-              variant="outlined"
-              color="primary"
-              type="submit"
-              form="changeEmailForm"
-              value="Submit">
+              id="changeEmail"
+              onClick={handleEmailChangeClick}>
               Change email
-            </Button>
-          </Fragment>
-        )}
-      </ModalDialog>
-    );
-  }
+            </DynaSubmit>
+          </DynaForm>
+        </div>
+      )}
+    </ModalDialog>
+  );
 }
-
-// prettier-ignore
-export default connect(mapStateToProps,mapDispatchToProps)(ChangeEmail);

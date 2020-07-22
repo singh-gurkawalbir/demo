@@ -6,13 +6,14 @@ import {
   FormControl,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import * as selectors from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import FieldHelp from '../FieldHelp';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   nsSavedSearch: {
@@ -44,6 +45,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
     '&:last-child': {
       marginRight: theme.spacing(0.5),
+    },
+    '&.Mui-focused': {
+      color: 'inherit',
     },
   },
 }));
@@ -79,9 +83,8 @@ export default function DynaNSSavedSearch(props) {
     setSearchType(evt.target.value);
   };
 
-  const { data } = useSelector(state =>
-    selectors.metadataOptionsAndResources({ state, connectionId, commMetaPath })
-  );
+  const { data } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath);
+
   const netSuiteSystemDomain = useSelector(state => {
     const connection = selectors.resource(state, 'connections', connectionId);
 
@@ -116,7 +119,7 @@ export default function DynaNSSavedSearch(props) {
   }, [value, netSuiteSystemDomain]);
 
   return (
-    <Fragment>
+    <>
       <div>
         <FormControl
           required={required}
@@ -171,6 +174,6 @@ export default function DynaNSSavedSearch(props) {
           </div>
         )}
       </FormControl>
-    </Fragment>
+    </>
   );
 }

@@ -55,19 +55,22 @@ export default {
       fieldId: 'http.auth.token.refreshToken',
       visible: false,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.unencrypted.clientId',
-      'http.encrypted.clientSecret',
-      'http.auth.token.token',
-      'http.auth.token.refreshToken',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.clientId',
+          'http.encrypted.clientSecret',
+          'http.auth.token.token',
+          'http.auth.token.refreshToken'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

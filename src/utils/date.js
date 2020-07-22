@@ -1,13 +1,16 @@
-export default function prettyDate(dateString) {
-  const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-  };
+import moment from 'moment-timezone';
 
-  return new Date(dateString).toLocaleString(undefined, options);
+export function convertUtcToTimezone(
+  date,
+  dateFormat = 'MM/DD/YYYY',
+  timeFormat = 'h:mm:ss a',
+  timeZone = 'GMT',
+  dateOnly
+) {
+  const utcMoment = moment.utc(date, moment.ISO_8601);
+  const timeZoneDate = utcMoment.tz(timeZone);
+
+  return dateOnly ? timeZoneDate.format(`${dateFormat}`) : timeZoneDate.format(`${dateFormat} ${timeFormat}`);
 }
+
+export default {convertUtcToTimezone};

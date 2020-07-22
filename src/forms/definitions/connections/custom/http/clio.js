@@ -5,7 +5,7 @@ export default {
     '/assistant': 'clio',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://app.clio.com/`,
+    '/http/baseURI': 'https://app.clio.com/',
     '/http/auth/oauth/authURI': 'https://app.clio.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://app.clio.com/oauth/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',
@@ -14,13 +14,16 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

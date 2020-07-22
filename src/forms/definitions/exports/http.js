@@ -14,13 +14,20 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
+
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     } else if (
       retValues['/http/successMediaType'] === 'json' ||
       retValues['/http/successMediaType'] === 'xml'
     ) {
-      retValues['/file/csv'] = undefined;
+      delete retValues['/file/csv/rowsToSkip'];
+      delete retValues['/file/csv/trimSpaces'];
+      delete retValues['/file/csv/columnDelimiter'];
+      delete retValues['/file/csv/rowDelimiter'];
+      delete retValues['/file/csv/hasHeaderRow'];
+      delete retValues['/file/csv/rowsPerRecord'];
+      delete retValues['/file/csv/keyColumns'];
       retValues['/file'] = undefined;
       delete retValues['/file/type'];
       delete retValues['/file/csv/rowsToSkip'];
@@ -79,7 +86,9 @@ export default {
     if (retValues['/http/response/successPath'] === '') {
       retValues['/http/response/successPath'] = undefined;
     }
-
+    if (retValues['/http/response/successValues'] === '') {
+      retValues['/http/response/successValues'] = undefined;
+    }
     if (
       retValues['/http/response/failValues'] &&
       !retValues['/http/response/failValues'].length
@@ -89,6 +98,9 @@ export default {
 
     if (retValues['/http/response/failPath'] === '') {
       retValues['/http/response/failPath'] = undefined;
+    }
+    if (retValues['/http/response/failValues'] === '') {
+      retValues['/http/response/failValues'] = undefined;
     }
 
     if (
@@ -112,7 +124,9 @@ export default {
       retValues['/type'] = 'blob';
       retValues['/http/method'] = retValues['/http/blobMethod'];
     }
-
+    if (retValues['/http/requestMediaType'] === ' ') {
+      retValues['/http/requestMediaType'] = undefined;
+    }
     delete retValues['/http/blobMethod'];
     delete retValues['/outputMode'];
 
@@ -228,8 +242,7 @@ export default {
         },
       ],
       defaultValue: r => {
-        if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-          return 'blob';
+        if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'blob';
 
         return 'records';
       },
@@ -240,6 +253,7 @@ export default {
     'http.relativeURI': { fieldId: 'http.relativeURI' },
     'http.body': { fieldId: 'http.body' },
     'http.successMediaType': { fieldId: 'http.successMediaType' },
+    'http.requestMediaType': { fieldId: 'http.requestMediaType' },
     'http.errorMediaType': { fieldId: 'http.errorMediaType' },
     'http.response.resourcePath': { fieldId: 'http.response.resourcePath' },
     'http.response.successPath': { fieldId: 'http.response.successPath' },
@@ -332,16 +346,16 @@ export default {
     'file.csv': {
       id: 'file.csv',
       type: 'csvparse',
-      label: 'CSV parser helper:',
+      label: 'CSV parser helper',
       helpKey: 'file.csvParse',
-      defaultValue: r =>
-        (r.file && r.file.csv) || {
-          rowsToSkip: 0,
-          trimSpaces: false,
-          columnDelimiter: ',',
-          hasHeaderRow: false,
-          rowDelimiter: '\n',
-        },
+      defaultValue: r => r?.file?.csv || {
+        columnDelimiter: ',',
+        rowDelimiter: '\n',
+        hasHeaderRow: false,
+        keyColumns: [],
+        rowsToSkip: 0,
+        trimSpaces: false
+      },
       visibleWhenAll: [
         {
           field: 'outputMode',
@@ -375,25 +389,20 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    formView: { fieldId: 'formView' },
   },
 
   layout: {
     type: 'column',
     containers: [
       {
-        fields: ['common', 'outputMode'],
         type: 'collapse',
         containers: [
-          {
-            collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
-          },
+          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
           {
             collapsed: true,
             label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob')
-                return 'What would you like to transfer?';
+              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
               return 'What would you like to export?';
             },
@@ -403,25 +412,16 @@ export default {
               'http.headers',
               'http.relativeURI',
               'http.body',
-              'http.successMediaType',
-              'http.errorMediaType',
-              'http.response.resourcePath',
-              'http.response.successPath',
-              'http.response.successValues',
-              'http.response.failPath',
-              'http.response.failValues',
-              'http.response.errorPath',
-              'file.csv',
-              'type',
-              'delta.dateFormat',
-              'delta.lagOffset',
               'http.response.blobFormat',
             ],
           },
           {
             collapsed: true,
-            label: 'Configure Once',
+            label: 'Configure export type',
             fields: [
+              'type',
+              'delta.dateFormat',
+              'delta.lagOffset',
               'once.booleanField',
               'http.once.relativeURI',
               'http.once.method',
@@ -447,6 +447,37 @@ export default {
               'http.paging.lastPageStatusCode',
               'http.paging.lastPagePath',
               'http.paging.lastPageValues',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Non-standard API response patterns',
+            containers: [
+              {
+                fields: [
+                  'http.response.resourcePath',
+                  'http.response.errorPath',
+                  'http.response.successPath',
+                  'http.response.successValues',
+                  'http.response.failPath',
+                  'http.response.failValues',
+                  'http.successMediaType',
+                ]
+              },
+              {
+                type: 'indent',
+                containers: [
+                  {fields: [
+                    'file.csv',
+                  ]}
+                ]
+              },
+              {
+                fields: [
+                  'http.errorMediaType',
+                  'http.requestMediaType',
+                ]
+              }
             ],
           },
           {

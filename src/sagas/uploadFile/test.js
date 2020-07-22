@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import { call } from 'redux-saga/effects';
 import { apiCallWithRetry } from '../index';
-import { uploadFile } from './';
+import { uploadFile } from '.';
 
 describe('uploadFile sagas', () => {
   const resourceId = '123';

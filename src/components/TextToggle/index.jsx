@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
@@ -39,9 +40,10 @@ const useStyles = makeStyles(theme => ({
       borderTopLeftRadius: 24,
       borderBottomLeftRadius: 24,
     },
+
     '& button:last-child': {
-      borderTopRightRadius: 24,
-      borderBottomRightRadius: 24,
+      borderTopRightRadius: '24px !important',
+      borderBottomRightRadius: '24px !important',
     },
   },
   item: {

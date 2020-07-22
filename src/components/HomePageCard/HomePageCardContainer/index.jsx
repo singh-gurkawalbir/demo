@@ -1,3 +1,4 @@
+import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -18,8 +19,8 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'inline-block',
     '&:hover': {
-      transform: `translateY(-5px)`,
-      boxShadow: `0 0 7px rgba(0,0,0,0.1)`,
+      transform: 'translateY(-5px)',
+      boxShadow: '0 0 7px rgba(0,0,0,0.1)',
     },
     [theme.breakpoints.between('sm', 'md')]: {
       minWidth: '100%',

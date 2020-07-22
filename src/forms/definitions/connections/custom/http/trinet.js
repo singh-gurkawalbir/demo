@@ -9,7 +9,7 @@ export default {
       formValues['/http/unencrypted/companyId']
     }/org-details`,
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api.trinet.com/`,
+    '/http/baseURI': 'https://api.trinet.com/',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'apikey',
@@ -29,13 +29,19 @@ export default {
       helpKey: 'trinet.connection.http.auth.token.token',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.unencrypted.companyId', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.companyId', 'http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

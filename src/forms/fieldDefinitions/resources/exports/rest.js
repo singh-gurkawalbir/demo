@@ -104,7 +104,6 @@ export default {
   },
   'rest.linkHeaderRelation': {
     type: 'text',
-    required: true,
     label: 'Link header relation',
     visibleWhenAll: [
       {
@@ -145,6 +144,7 @@ export default {
   },
   'rest.pagingPostBody': {
     type: 'httprequestbody',
+    title: 'Build paging post body',
     label: 'Build paging post body',
     connectionId: r => r && r._connectionId,
     contentType: 'json',
@@ -216,6 +216,12 @@ export default {
             field: 'type',
             isNot: {
               values: ['delta'],
+            },
+          },
+          {
+            field: 'rest.postBody',
+            matchesRegEx: {
+              pattern: 'lastExportDateTime',
             },
           },
           {
@@ -301,7 +307,6 @@ export default {
     label: 'Transform script function',
   },
   // #endregion transform
-
   'rest.once.relativeURI': {
     type: 'relativeuri',
     label: 'Relative URI',

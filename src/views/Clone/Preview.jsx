@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -18,6 +18,8 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import InfoIconButton from '../../components/InfoIconButton';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,7 +80,9 @@ export default function ClonePreview(props) {
   Cloning can be used to create a copy of a flow, export, import, orchestration, or an entire integration. Cloning is useful for testing changes without affecting your production integrations (i.e. when you clone something you can choose a different set of connection records). Cloning supports both sandbox and production environments.`;
   const { resourceType, resourceId } = props.match.params;
   const [requested, setRequested] = useState(false);
+  const [cloneRequested, setCloneRequested] = useState(false);
   const dispatch = useDispatch();
+  const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const preferences = useSelector(state => selectors.userPreferences(state));
   const showIntegrationField = resourceType === 'flows';
@@ -91,13 +95,14 @@ export default function ClonePreview(props) {
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
-  const { isCloned, integrationId } = useSelector(
+  const { isCloned, integrationId, sandbox } = useSelector(
     state => selectors.integrationAppClonedDetails(state, resource._id),
     (left, right) =>
       left &&
       right &&
       left.isCloned === right.isCloned &&
-      left.integrationId === right.integrationId
+      left.integrationId === right.integrationId &&
+      left.sandbox === right.sandbox
   );
   const integrationAppName =
     isIAIntegration && getIntegrationAppUrlName(resource && resource.name);
@@ -124,20 +129,57 @@ export default function ClonePreview(props) {
   const columns = [
     {
       heading: 'Name',
-      value: r => r.doc.name || r.doc._id,
+      value: function NameWithInfoicon(r) {
+        return (
+          <>
+            {r && (r.doc.name || r.doc._id)}
+            <InfoIconButton info={r.doc.description} size="xs" />
+          </>
+        );
+      },
       orderBy: 'name',
     },
     { heading: 'Type', value: r => r.model },
-    { heading: 'Description', value: r => r.doc.description },
   ];
 
   useEffect(() => {
-    if (isCloned && isIAIntegration) {
-      props.history.push(
-        getRoutePath(
-          `/integrationapps/${integrationAppName}/${integrationId}/setup`
-        )
-      );
+    if (isIAIntegration) {
+      if (isCloned) {
+        if (!sandbox === (preferences.environment === 'sandbox')) {
+          confirmDialog({
+            title: 'Confirm switch',
+            message: `Your integration app has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            buttons: [
+              {
+                label: 'Yes, switch',
+                onClick: () => {
+                  props.history.push(getRoutePath('/'));
+                },
+              },
+              {
+                label: 'No, go back',
+                color: 'secondary',
+                onClick: () => {
+                  dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
+                  props.history.push(
+                    getRoutePath(
+                      `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+                    )
+                  );
+                },
+              },
+            ],
+          });
+        } else {
+          props.history.push(
+            getRoutePath(
+              `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+            )
+          );
+        }
+      } else {
+        setCloneRequested(false);
+      }
       dispatch(
         actions.integrationApp.clone.clearIntegrationClonedStatus(resource._id)
       );
@@ -150,6 +192,9 @@ export default function ClonePreview(props) {
     props.history,
     integrationId,
     resource._id,
+    confirmDialog,
+    sandbox,
+    preferences.environment,
   ]);
 
   useEffect(() => {
@@ -272,21 +317,21 @@ export default function ClonePreview(props) {
       fields:
         resourceType === 'flows'
           ? [
-              'name',
-              'environment',
-              'integration',
-              'description',
-              'message',
-              'components',
-            ]
+            'name',
+            'environment',
+            'integration',
+            'description',
+            'message',
+            'components',
+          ]
           : [
-              'tag',
-              'name',
-              'environment',
-              'description',
-              'message',
-              'components',
-            ],
+            'tag',
+            'name',
+            'environment',
+            'description',
+            'message',
+            'components',
+          ],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -311,6 +356,15 @@ export default function ClonePreview(props) {
     fieldsMeta: fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
+  if (!components || isEmpty(components)) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
+
 
   if (!components || isEmpty(components)) {
     return (
@@ -340,6 +394,7 @@ export default function ClonePreview(props) {
           }
         )
       );
+      setCloneRequested(true);
       dispatch(actions.clone.createComponents(resourceType, resourceId));
 
       return;
@@ -364,7 +419,7 @@ export default function ClonePreview(props) {
           }
         )
       );
-      props.history.push(`/pg/clone/${resourceType}/${resourceId}/setup`);
+      props.history.push(getRoutePath(`/clone/${resourceType}/${resourceId}/setup`));
     } else {
       dispatch(
         actions.template.installStepsReceived(
@@ -385,16 +440,24 @@ export default function ClonePreview(props) {
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title="Cloning" infoText={cloningDescription} />
-      <Fragment>
+      <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
-            <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-            <DynaSubmit formKey={formKey} data-test="clone" onClick={clone}>
+            <DynaForm
+              formKey={formKey}
+              fieldMeta={fieldMeta}
+              optionsHandler={fieldMeta.optionsHandler} />
+            <DynaSubmit
+              formKey={formKey}
+              skipDisableButtonForFormTouched
+              disabled={cloneRequested}
+              data-test="clone"
+              onClick={clone}>
               {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
             </DynaSubmit>
           </Grid>
         </Grid>
-      </Fragment>
+      </>
     </LoadResources>
   );
 }

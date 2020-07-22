@@ -1,3 +1,4 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Grid } from '@material-ui/core';
 import DismissIcon from '../../../components/icons/ErrorIcon';
@@ -26,8 +27,8 @@ export default function InvitationItem({
   id,
   name,
   email,
-  message,
   onActionClick,
+  message,
 }) {
   const classes = useStyles();
 

@@ -1,14 +1,19 @@
 import { makeStyles } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import DynaText from '../DynaText';
 import DynaSelect from '../DynaSelect';
 
-const useStyles = makeStyles({
-  btnDelta: {
-    marginTop: 5,
+const useStyles = makeStyles(theme => ({
+  dynaToggleTextWrapper: {
+    flexDirection: 'row !important',
   },
-});
+  dynabtn: {
+    marginTop: 26,
+    whiteSpace: 'nowrap',
+    marginLeft: theme.spacing(1),
+  },
+}));
 
 export default function DynaToggleSelectToText(props) {
   const classes = useStyles();
@@ -17,15 +22,16 @@ export default function DynaToggleSelectToText(props) {
   const { textHrefLabel, selectHrefLabel, ...rest } = props;
 
   return (
-    <Fragment>
+    <div className={classes.dynaToggleTextWrapper}>
       {isText ? <DynaText {...rest} /> : <DynaSelect {...rest} />}
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={classes.btnDelta}
-        onClick={() => setIsText(state => !state)}>
-        {isText ? textHrefLabel : selectHrefLabel}
-      </Button>
-    </Fragment>
+      <div className={classes.dynabtn}>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={() => setIsText(state => !state)}>
+          {isText ? textHrefLabel : selectHrefLabel}
+        </Button>
+      </div>
+    </div>
   );
 }

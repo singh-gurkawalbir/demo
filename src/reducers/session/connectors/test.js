@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import reducer from './';
+import reducer from '.';
 import actions from '../../../actions';
 
 describe('Connector metadata', () => {
@@ -20,7 +20,7 @@ describe('Connector metadata', () => {
     );
 
     expect(requestReducer).toEqual({
-      '1': { id: { fieldType: 'rest.headers', isLoading: true } },
+      1: { id: { fieldType: 'rest.headers', isLoading: true } },
     });
   });
 
@@ -45,7 +45,7 @@ describe('Connector metadata', () => {
     );
 
     expect(receivedState).toEqual({
-      '123123': {
+      123123: {
         'rest.headers': {
           data: { id: 'account', name: 'Account' },
           fieldType: 'id',
@@ -75,7 +75,7 @@ describe('Connector metadata', () => {
     );
 
     expect(receivedState1).toEqual({
-      '123123': {
+      123123: {
         'rest.headers': {
           data: { dummy: 'data' },
           fieldType: 'id',
@@ -103,7 +103,7 @@ describe('Connector metadata', () => {
     );
 
     expect(receivedState2).toEqual({
-      '123123': {
+      123123: {
         'rest.headers': {
           data: { dummy: 'data' },
           fieldType: 'id',
@@ -133,7 +133,7 @@ describe('Connector metadata', () => {
     );
 
     expect(receivedState).toEqual({
-      '123123': { 'rest.headers': { isLoading: false } },
+      123123: { 'rest.headers': { isLoading: false } },
     });
   });
 
@@ -151,7 +151,7 @@ describe('Connector metadata', () => {
       );
 
       expect(receivedState).toEqual({
-        '123123': { 'rest.headers': {} },
+        123123: { 'rest.headers': {} },
       });
     });
     test('should not clear other field metadata when clearMetadata is called for one field', () => {
@@ -173,7 +173,7 @@ describe('Connector metadata', () => {
       );
 
       expect(receivedState1).toEqual({
-        '123123': {
+        123123: {
           'rest.headers': {
             data: { dummy: 'data' },
             fieldType: 'id',
@@ -201,7 +201,7 @@ describe('Connector metadata', () => {
       );
 
       expect(receivedState2).toEqual({
-        '123123': {
+        123123: {
           'rest.headers': {
             data: { dummy: 'data' },
             fieldType: 'id',
@@ -222,7 +222,7 @@ describe('Connector metadata', () => {
       );
 
       expect(receivedState).toEqual({
-        '123123': {
+        123123: {
           'rest.headers': {},
           'rest.secondField': {
             data: { dummy: 'data' },

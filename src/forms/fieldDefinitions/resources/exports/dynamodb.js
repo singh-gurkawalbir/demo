@@ -49,7 +49,7 @@ export default {
     required: true,
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
-      `{ "#n1":"Name","#n2":"Id"}`,
+      '{ "#n1":"Name","#n2":"Id"}',
   },
   'dynamodb.expressionAttributeValues': {
     type: 'editor',
@@ -58,7 +58,7 @@ export default {
     required: true,
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      `{ ":p1":"A",":p2":"1"}`,
+      '{ ":p1":"A",":p2":"1"}',
   },
   'dynamodb.onceExportPartitionKey': {
     type: 'text',

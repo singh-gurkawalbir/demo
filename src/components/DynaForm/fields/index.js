@@ -4,6 +4,7 @@ import DynaSelect from './DynaSelect';
 import DynaLabel from './DynaLabel';
 import DynaCeligoTable from './DynaCeligoTable';
 import DynaSelectResource from './DynaSelectResource';
+import DynaSelectResourceType from './select/DynaSelectResourceType';
 import DynaSelectFlowResource from './DynaSelectFlowResource';
 import DynaSelectApplication from './DynaSelectApplication';
 import DynaFileTypeSelect from './select/DynaFileTypeSelect';
@@ -32,6 +33,7 @@ import DynaTrueFixedWidthColumnMapper from './DynaTableView/DynaTrueFixedWidthCo
 import DynaXMLMapper from './DynaTableView/DynaXMLMapper';
 import DynaTokenGenerator from './DynaTokenGenerator';
 import DynaApiIdentifier from './DynaApiIdentifier';
+import DynaNetSuiteDefaultValue from './DynaNetSuiteDefaultValue';
 import DynaStaticMap from './DynaTableView';
 import DynaNetsuiteUserRolesOptions from './DynaNetsuiteUserRoles';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
@@ -90,6 +92,7 @@ import DynaFormView from './DynaFormView';
 import DynaSkipRetries from './DynaSkipRetries';
 import DynaTransformRules from './DynaTransformRules';
 import DynaNetsuiteExportType from './DynaNetsuiteExportType';
+import SuiteScript from './SuiteScript';
 import DynaExportSelect from './DynaExportSelect';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaDataURITemplate from './DynaDataURITemplate';
@@ -97,8 +100,25 @@ import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
 import DynaSelectLookup from './DynaSelectLookup';
 import DynaURI from './DynaURI';
+import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
+import DynaSelectWithInput from './DynaSelectWithInput';
+import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
+import DynaSuiteScriptTable from './SuiteScript/tables';
+import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
+import DynaRoutingRules from './editors/DynaRoutingRules';
+import DynaMatchingCriteriaWithModal from './DynaMatchingCriteria';
+import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
+import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
+import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
+import DynaAs2Mode from './DynaAs2Mode';
+import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
+  refreshabletext: DynaRefreshableText,
+  matchingcriteria: DynaMatchingCriteriaWithModal,
+  suitescripttable: DynaSuiteScriptTable,
+  featurecheck: DynaFeatureCheck,
   mode: DynaMode,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
@@ -115,6 +135,7 @@ export default {
   subsidiaryMapWidget: DynaMultiSubsidiaryMapping,
   selectflowresource: DynaSelectFlowResource,
   selectresource: DynaSelectResource,
+  selectresourcetype: DynaSelectResourceType,
   selectapplication: DynaSelectApplication,
   filetypeselect: DynaFileTypeSelect,
   multiselect: DynaMultiSelect,
@@ -187,6 +208,7 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
+  checkboxtradingpartnerfield: DynaCheckboxTradingPartnerField,
   exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
@@ -201,10 +223,20 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuitedefaultvalue: DynaNetSuiteDefaultValue,
+  ...SuiteScript,
   exportSelect: DynaExportSelect,
   datauritemplate: DynaDataURITemplate,
   concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
   selectlookup: DynaSelectLookup,
+  csvhasheaderrow: DynaCsvHasHeaderRow,
+  selectwithinput: DynaSelectWithInput,
+  jsonresourcepath: DynaJsonResourcePath,
+  linksuitescriptintegrator: DynaLinkSuiteScriptIntegrator,
+  routingrules: DynaRoutingRules,
+  suitescriptuploadfile: DynaSuiteScriptUploadFile,
+  ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
+  as2Mode: DynaAs2Mode,
 };

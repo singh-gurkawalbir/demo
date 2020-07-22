@@ -21,12 +21,15 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     httpAdvanced: { formId: 'httpAdvanced' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

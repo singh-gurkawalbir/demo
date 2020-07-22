@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   lockIcon: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 6,
     color: theme.palette.text.hint,
   },
 

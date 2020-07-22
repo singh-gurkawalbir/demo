@@ -1,9 +1,10 @@
+import React from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   gridItem: {
-    border: `solid 1px rgb(0,0,0,0.3)`,
+    border: 'solid 1px rgb(0,0,0,0.3)',
     overflow: 'hidden',
     minWidth: 150,
     minHeight: 70,

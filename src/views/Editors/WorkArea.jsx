@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -50,7 +50,7 @@ export default function WorkArea({ onChange, rawData }) {
   const { mode } = sampleData[sampleType];
 
   return (
-    <Fragment>
+    <>
       <Paper className={classes.paper}>
         <Typography variant="body1">
           Click on any editor in the left margin to launch it. The sample data
@@ -92,6 +92,6 @@ export default function WorkArea({ onChange, rawData }) {
           />
         </div>
       </Paper>
-    </Fragment>
+    </>
   );
 }

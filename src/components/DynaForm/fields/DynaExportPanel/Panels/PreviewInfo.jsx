@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../../../IconTextButton';
@@ -19,12 +19,11 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: 5,
       height: '100%',
-      backgroundColor: theme.palette.success.main,
+      backgroundColor: props => props.resourceSampleData.status === 'error' ? theme.palette.error.main : theme.palette.success.main,
       position: 'absolute',
       left: 0,
       top: 0,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.contrastText,
+      borderRadius: theme.spacing(0.5, 0, 0, 0.5),
     },
   },
   previewData: {
@@ -67,15 +66,14 @@ export default function PreviewInfo(props) {
     resourceSampleData,
     previewStageDataList,
     panelType,
+    disabled,
   } = props;
-  const classes = useStyles();
+  const classes = useStyles(props);
   // ShowSampleDataStatus Fn shows Preview Status
   const sampleDataStatus = useMemo(() => {
-    if (resourceSampleData.status === 'requested')
-      return <Typography variant="body2"> Testing </Typography>;
+    if (resourceSampleData.status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (resourceSampleData.status === 'received')
-      return <Typography variant="body2"> Success! </Typography>;
+    if (resourceSampleData.status === 'received') return <Typography variant="body2"> Success! </Typography>;
   }, [resourceSampleData.status]);
   // showSampleDataOverview Fn Used to show Preview Info
   const sampleDataOverview = useMemo(() => {
@@ -112,7 +110,7 @@ export default function PreviewInfo(props) {
             color="secondary"
             className={classes.previewBtn}
             onClick={fetchExportPreviewData}
-            disabled={resourceSampleData.status === 'requested'}
+            disabled={disabled || resourceSampleData.status === 'requested'}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>

@@ -65,7 +65,7 @@ export default {
     hideDefaultData: true,
     ruleTitle:
       'Template (use handlebar expressions to map fields from your export data)',
-    label: 'Launch query builder',
+    label: 'Query builder',
     title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
     visibleWhen: [
@@ -96,7 +96,7 @@ export default {
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeNames) ||
-      `{ "#n1":"Name","#n2":"Id"}`,
+      '{ "#n1":"Name","#n2":"Id"}',
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',
@@ -114,7 +114,7 @@ export default {
     mode: 'json',
     defaultValue: r =>
       (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      `{ ":p1":"A",":p2":"1"}`,
+      '{ ":p1":"A",":p2":"1"}',
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',

@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -48,14 +48,12 @@ export default function DynaSalesforceLookup(props) {
   };
 
   const dispatch = useDispatch();
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, rule);
     }
-
-    handleEditorClick();
   };
 
   const extractFields = useSelector(state =>
@@ -98,14 +96,15 @@ export default function DynaSalesforceLookup(props) {
   }, [dispatch, extractFields, flowId, resourceId]);
 
   return (
-    <Fragment>
+    <>
       {showEditor && (
         <SalesforceLookupFilterEditorDialog
-          title="Where Clause"
+          title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}
           value={value}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           // disabled={disabled}
           options={options}
         />
@@ -144,6 +143,6 @@ export default function DynaSalesforceLookup(props) {
           </ActionButton>
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

@@ -1,6 +1,7 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
@@ -79,13 +80,12 @@ export default function DynaNSSavedSearchInternalID(props) {
   const classes = useStyles();
 
   return (
-    <Fragment>
+    <>
       <FormControl className={classes.dynaNSSearchInternalIDFormControl}>
         <div className={classes.dynaNSSearchInternalIDLabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
             {label}
           </FormLabel>
-          {/* //Todo: helpText is must here */}
           <FieldHelp {...props} />
         </div>
 
@@ -117,6 +117,6 @@ export default function DynaNSSavedSearchInternalID(props) {
           )}
         </div>
       </FormControl>
-    </Fragment>
+    </>
   );
 }

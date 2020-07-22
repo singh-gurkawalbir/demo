@@ -1,16 +1,18 @@
 export default {
   'ftp.directoryPath': {
-    type: 'text',
+    type: 'namewitheditor',
     label: 'Directory path',
+    editorTitle: 'Build directory path',
     placeholder: 'Enter FTP folder path, such as: MySite/Orders',
     required: true,
   },
   'ftp.fileName': {
-    type: 'timestampfilename',
+    type: 'ftpfilenamewitheditor',
+    editorTitle: 'Build file name',
     label: 'File name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    defaultValue: r => r && r.ftp && r.ftp.fileName,
     refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
@@ -25,7 +27,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: `{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}`,
+              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
             },
           },
         ],
@@ -50,11 +52,12 @@ export default {
     ],
   },
   'ftp.inProgressFileName': {
-    type: 'timestampfilename',
+    type: 'ftpfilenamewitheditor',
+    editorTitle: 'Build in progress file name',
     label: 'In progress file name',
     showAllSuggestions: true,
     defaultValue: r =>
-      (r && r.ftp && r.ftp.inProgressFileName) || 'file-{{timestamp}}',
+      (r && r.ftp && r.ftp.inProgressFileName),
     refreshOptionsOnChangesTo: ['file.type', 'ftp.fileName'],
     visibleWhenAll: [
       {
@@ -68,11 +71,12 @@ export default {
     ],
   },
   'ftp.blobFileName': {
-    type: 'timestampfilename',
+    type: 'ftpfilenamewitheditor',
+    editorTitle: 'Build file name',
     label: 'File name',
     required: true,
     showAllSuggestions: true,
-    defaultValue: r => (r && r.ftp && r.ftp.fileName) || 'file-{{timestamp}}',
+    defaultValue: r => r && r.ftp && r.ftp.fileName,
     refreshOptionsOnChangesTo: ['file.type'],
     validWhen: {
       someAreTrue: {
@@ -87,7 +91,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: `{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}`,
+              pattern: '{{timestamp}}|{{dateFormat|{{timestamp((?=.*x).*)}}|{{timestamp((?=.*X).*)}}|{{timestamp((?=.*mm)(?=.*ss).*)}}',
             },
           },
         ],
@@ -112,7 +116,8 @@ export default {
     ],
   },
   'ftp.blobInProgressFileName': {
-    type: 'text',
+    type: 'ftpfilenamewitheditor',
+    editorTitle: 'Build in progress file name',
     label: 'In progress file name',
     defaultValue: r => r && r.ftp && r.ftp.inProgressFileName,
     visibleWhenAll: [
@@ -126,4 +131,9 @@ export default {
       },
     ],
   },
+  'ftp.backupDirectoryPath': {
+    type: 'text',
+    label: 'Backup files path',
+    helpKey: 'import.ftp.backupDirectoryPath',
+  }
 };

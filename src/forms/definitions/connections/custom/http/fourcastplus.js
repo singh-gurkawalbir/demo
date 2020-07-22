@@ -63,18 +63,21 @@ export default {
       label: 'Password',
       helpKey: '4castplus.connection.http.encrypted.password',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.subdomain',
-      'http.unencrypted.username',
-      'http.encrypted.password',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.subdomain',
+          'http.unencrypted.username',
+          'http.encrypted.password'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

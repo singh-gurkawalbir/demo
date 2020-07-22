@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 
-import reducer, * as selectors from './';
+import reducer, * as selectors from '.';
 import actions from '../../../actions';
 
 describe('api access tokens reducers', () => {

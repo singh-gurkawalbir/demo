@@ -4,7 +4,7 @@ import actionTypes from '../../../actions/types';
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { id, type, update } = action;
+  const { id, type, update, formMeta, openOauthConnection, connectionId } = action;
 
   return produce(state, draft => {
     if (!id) {
@@ -16,10 +16,19 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.DONE:
         draft[id] = {};
         break;
+      case actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS:
+        draft[id] = {};
+        draft[id].openOauthConnection = openOauthConnection;
+        draft[id].connectionId = connectionId;
+        break;
+
       case actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE:
         if (!draft[id]) {
           draft[id] = {};
         }
+
+        // for 'form' type step
+        draft[id].formMeta = formMeta;
 
         if (update === 'inProgress') {
           draft[id].isTriggered = true;
@@ -43,6 +52,14 @@ export function integrationAppsInstaller(state, id) {
   }
 
   return state[id];
+}
+
+export function canOpenOauthConnection(state, id) {
+  if (!state || !state[id]) {
+    return { openOauthConnection: false };
+  }
+
+  return { openOauthConnection: state[id].openOauthConnection || false, connectionId: state[id].connectionId};
 }
 
 // #endregion

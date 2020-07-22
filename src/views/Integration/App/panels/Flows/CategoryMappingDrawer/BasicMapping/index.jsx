@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
@@ -9,10 +9,10 @@ export default function MappingWrapper(props) {
   const [initTriggered, setInitTriggered] = useState(false);
   const [resetMappings, setResetMappings] = useState(false);
   const resourceId = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
 
-    if (flowDetails) {
-      const firstPP = flowDetails.pageProcessors.find(
+    if (flow) {
+      const firstPP = flow.pageProcessors.find(
         pp => pp.type === 'import'
       );
 

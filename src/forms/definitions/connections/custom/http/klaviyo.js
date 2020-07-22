@@ -5,7 +5,7 @@ export default {
     '/assistant': 'klaviyo',
     '/http/auth/type': 'custom',
     '/http/mediaType': 'urlencoded',
-    '/http/baseURI': `https://a.klaviyo.com/api/`,
+    '/http/baseURI': 'https://a.klaviyo.com/api/',
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI':
       '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',
@@ -23,13 +23,19 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.encrypted.apiKey'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.encrypted.apiKey'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

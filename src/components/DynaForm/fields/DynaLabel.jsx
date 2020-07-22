@@ -1,8 +1,8 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ArrowPopper from '../../ArrowPopper';
-import helpTextMap from '../../Help/helpTextMap';
+import { getHelpTextMap } from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   helpPopper: {
@@ -35,10 +35,10 @@ function DynaLabel(props) {
   };
 
   const showArrowPopper =
-    !disablePopover && (helpText || (helpKey && helpTextMap[helpKey]));
+    !disablePopover && (helpText || (helpKey && getHelpTextMap()[helpKey]));
 
   return (
-    <Fragment>
+    <>
       {showArrowPopper && (
         <ArrowPopper
           placement="left"
@@ -47,7 +47,7 @@ function DynaLabel(props) {
           open={!!anchorEl}
           anchorEl={anchorEl}>
           <Typography className={classes.label}>
-            {helpText || helpTextMap[helpKey]}
+            {helpText || getHelpTextMap()[helpKey]}
           </Typography>
         </ArrowPopper>
       )}
@@ -58,7 +58,7 @@ function DynaLabel(props) {
         className={classes.textField}>
         {label}
       </Typography>
-    </Fragment>
+    </>
   );
 }
 

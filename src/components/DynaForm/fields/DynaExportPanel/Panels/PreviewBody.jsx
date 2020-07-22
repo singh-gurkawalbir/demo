@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import Spinner from '../../../../Spinner';
+import React, { useMemo, useEffect } from 'react';
+import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
 
@@ -8,6 +8,7 @@ export default function PreviewBody(props) {
     resourceSampleData,
     handlePanelViewChange,
     panelType,
+    defaultPanel,
     availablePreviewStages,
     previewStageDataList,
     resource,
@@ -17,9 +18,18 @@ export default function PreviewBody(props) {
     [panelType, resource]
   );
 
+  // Always default to defaultPanel whenever sample data is refreshed
+  useEffect(() => {
+    if (resourceSampleData.status === 'received') {
+      handlePanelViewChange(defaultPanel);
+    }
+  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange]);
+
   return (
     <div>
-      {resourceSampleData.status === 'requested' && <Spinner />}
+      {resourceSampleData.status === 'requested' && (
+        <PanelLoader />
+      )}
       {resourceSampleData.status === 'received' && (
         <div>
           <Templates.HeaderPanel

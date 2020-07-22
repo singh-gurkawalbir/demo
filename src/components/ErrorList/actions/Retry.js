@@ -1,8 +1,8 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import actions from '../../../actions';
-import Icon from '../../../components/icons/RefreshIcon';
+import Icon from '../../icons/RefreshIcon';
 
 export default {
   label: 'Retry',
@@ -20,11 +20,11 @@ export default {
     }, [dispatch, flowId, isResolved, resource.retryDataKey, resourceId]);
 
     return (
-      <Fragment>
+      <>
         <IconButton data-test="retry" size="small" onClick={handleClick}>
           <Icon />
         </IconButton>
-      </Fragment>
+      </>
     );
   },
 };

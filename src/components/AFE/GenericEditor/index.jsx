@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { func, string } from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CodePanel from './CodePanel';
@@ -7,17 +7,10 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
-import Spinner from '../../Spinner';
+import PanelLoader from '../../PanelLoader';
 
 const useStyles = makeStyles(() => ({
   ...layouts,
-  spinnerWrapper: {
-    display: 'flex',
-    height: '100%',
-    '&> div:first-child': {
-      margin: 'auto',
-    },
-  },
 }));
 const Editor = props => {
   const {
@@ -64,10 +57,9 @@ const Editor = props => {
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
         <PanelTitle title={dataTitle} />
+        {/* show spinner instead of data panel when sample data is loading */}
         {isSampleDataLoading ? (
-          <div className={classes.spinnerWrapper}>
-            <Spinner size={50} color="primary" />
-          </div>
+          <PanelLoader />
         ) : (
           <CodePanel
             name="data"
@@ -82,8 +74,10 @@ const Editor = props => {
         <PanelTitle title={resultTitle} />
         <CodePanel name="result" value={result} mode={resultMode} readOnly />
       </PanelGridItem>
-
-      <ErrorGridItem error={error} violations={violations} />
+      {/* Hide error panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        <ErrorGridItem error={error} violations={violations} />
+      )}
     </PanelGrid>
   );
 };

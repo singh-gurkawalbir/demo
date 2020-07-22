@@ -7,7 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': 'v1/contacts',
     '/http/ping/method': 'GET',
-    '/http/baseURI': `https://api2.autopilothq.com/`,
+    '/http/baseURI': 'https://api2.autopilothq.com/',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'autopilotapikey',
     '/http/auth/token/scheme': ' ',
@@ -20,13 +20,19 @@ export default {
       helpKey: 'autopilot.connection.http.auth.token.token',
       required: true,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name', 'http.auth.token.token'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.token.token'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

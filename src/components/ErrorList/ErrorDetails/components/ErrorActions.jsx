@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
@@ -54,7 +54,7 @@ export default function Actions({
   }, [dispatch, flowId, onClose, resourceId, retryId]);
 
   return (
-    <Fragment>
+    <>
       {retryId && (
         <Button variant="outlined" onClick={retry}>
           Retry
@@ -72,6 +72,6 @@ export default function Actions({
           Close
         </Button>
       )}
-    </Fragment>
+    </>
   );
 }

@@ -6,7 +6,18 @@ export default function trimObj(obj) {
       // Need to refactor this fix later
 
       if (
-        ['columnDelimiter', 'rowDelimiter', '/rest/authScheme'].includes(key)
+        [
+          'columnDelimiter',
+          'rowDelimiter',
+          '/file/csv/rowDelimiter',
+          '/file/csv/columnDelimiter',
+          '/rest/authScheme',
+          /** SuiteScript V2 fields */
+          '/export/file/csv/rowDelimiter',
+          '/export/file/csv/columnDelimiter',
+          '/import/file/csv/rowDelimiter',
+          '/import/file/csv/columnDelimiter',
+        ].includes(key)
       ) {
         acc[key] = typeof obj[key] === 'string' ? obj[key] : trimObj(obj[key]);
       } else {

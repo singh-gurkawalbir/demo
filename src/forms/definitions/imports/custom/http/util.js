@@ -60,6 +60,7 @@ export function pathParameterFieldsMeta({ operationParameters = [], values }) {
         type: 'text',
         value: values[pathParam.id],
         required: !!pathParam.required,
+        helpText: pathParam.description,
       };
 
       if (pathParam.options && pathParam.options.length > 0) {
@@ -292,9 +293,11 @@ export function fieldMeta({ resource, assistantData }) {
     common: {
       formId: 'common',
     },
+    formView: { fieldId: 'formView' },
     dataMappings: {
       formId: 'dataMappings',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
 
@@ -310,13 +313,22 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      fields: ['common'],
       type: 'collapse',
       containers: [
         {
           collapsed: true,
-          label: 'How would you like the data imported?',
-          fields: [...fieldIds, 'dataMappings'],
+          label: 'General',
+          fields: ['common', 'dataMappings', 'formView'],
+        },
+        {
+          collapsed: true,
+          label: 'How would you like the records imported?',
+          fields: [...fieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Advanced',
+          fields: ['apiIdentifier'],
         },
       ],
     },

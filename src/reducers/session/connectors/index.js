@@ -45,7 +45,8 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
 
   if (typeof metadata === 'object') {
     return metadata;
-  } else if (
+  }
+  if (
     Array.isArray(metadata) &&
     metadata.length &&
     typeof metadata[0] === 'object'

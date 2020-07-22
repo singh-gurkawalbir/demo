@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -12,6 +12,7 @@ import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function ManageLookup(props) {
   const {
@@ -27,8 +28,14 @@ export default function ManageLookup(props) {
     showDynamicLookupOnly = false,
     options = {},
   } = props;
-  const { merged: resource = {} } = useSelector(state =>
-    selectors.resourceData(state, resourceType, resourceId)
+  // to be removed after form refactor PR merges
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const { merged: resource = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
   );
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
@@ -155,6 +162,7 @@ export default function ManageLookup(props) {
       fieldMetadata,
       fieldId,
       recordType,
+      opts: options,
     });
   } else if (resource.adaptorType === 'RDBMSImport') {
     fieldMeta = rdbmsMetadata.getLookupMetadata({
@@ -178,7 +186,13 @@ export default function ManageLookup(props) {
     disabled,
     fieldsMeta: fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    ...formState,
   });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
 
   return (
     <div data-test="lookup-form">
@@ -193,6 +207,7 @@ export default function ManageLookup(props) {
       <DynaSubmit
         formKey={formKey}
         disabled={disabled}
+        showCustomFormValidations={showCustomFormValidations}
         data-test="saveLookupForm"
         onClick={handleSubmit}>
         Save

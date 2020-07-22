@@ -1,10 +1,11 @@
+import React from 'react';
 import EditorDialog from '../EditorDialog';
 import DynaNetSuiteQualificationCriteria from '../../DynaForm/fields/DynaNetSuiteQualificationCriteria';
 
 export default function NetSuiteQualificationCriteriaEditor(props) {
   const { id } = props;
   const defaults = {
-    layout: 'column',
+    layout: 'compact',
     width: '70vw',
     height: '55vh',
     open: true,

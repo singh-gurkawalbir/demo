@@ -19,11 +19,11 @@ export default {
   },
   'assistantMetadata.ignoreExisting': {
     type: 'checkbox',
-    label: 'Ignore existing records?',
+    label: 'Ignore existing records',
   },
   'assistantMetadata.ignoreMissing': {
     type: 'checkbox',
-    label: 'Ignore missing records?',
+    label: 'Ignore missing records',
   },
   'assistantMetadata.lookupType': {
     type: 'select',

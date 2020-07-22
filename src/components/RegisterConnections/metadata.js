@@ -1,3 +1,4 @@
+import React from 'react';
 import { formatLastModified, onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import { ConnectorNameComp } from '../ResourceTable/metadata';

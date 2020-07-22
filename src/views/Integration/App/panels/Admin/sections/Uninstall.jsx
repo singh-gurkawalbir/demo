@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
@@ -8,6 +8,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import * as selectors from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -42,35 +43,36 @@ export default function UninstallSection({ storeId, integrationId }) {
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
-      title: 'Uninstall',
-      message: `Are you sure you want to uninstall`,
+      title: 'Confirm uninstall',
+      message: 'Are you sure you want to uninstall?',
       buttons: [
         {
-          label: 'Cancel',
-        },
-        {
-          label: 'Yes',
+          label: 'Uninstall',
           onClick: () => {
             if (
               integration.settings &&
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
               );
             } else {
               history.push(
-                `/pg/integrationapps/${integrationAppName}/${integrationId}/uninstall`
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
               );
             }
           },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
         },
       ],
     });
   };
 
   return (
-    <Fragment>
+    <>
       <PanelHeader title="Uninstall" />
 
       <div className={classes.content}>
@@ -97,6 +99,6 @@ export default function UninstallSection({ storeId, integrationId }) {
           <DeleteIcon className={classes.rightIcon} />
         </Button>
       </div>
-    </Fragment>
+    </>
   );
 }

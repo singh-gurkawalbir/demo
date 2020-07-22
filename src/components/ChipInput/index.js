@@ -1,6 +1,6 @@
 import { Chip, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import EditIcon from '../icons/EditIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -36,7 +36,7 @@ export default function ChipInput(props) {
   };
 
   return (
-    <Fragment>
+    <>
       {isChipView && (
         <Chip
           {...props}
@@ -57,6 +57,6 @@ export default function ChipInput(props) {
           onBlur={handleBlur}
         />
       )}
-    </Fragment>
+    </>
   );
 }

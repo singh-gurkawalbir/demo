@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import * as selectors from '../../reducers';
@@ -73,7 +73,7 @@ class AuditLog extends Component {
       <LoadResources
         required
         resources="integrations, flows, exports, imports, connections">
-        <Fragment>
+        <>
           <div className={(classes.root, className)}>
             <Filters
               affectedResources={affectedResources}
@@ -92,7 +92,7 @@ class AuditLog extends Component {
               onClick={onClick}
             />
           </div>
-        </Fragment>
+        </>
       </LoadResources>
     );
   }

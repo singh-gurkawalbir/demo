@@ -8,7 +8,7 @@ import {
   requestTemplates,
   installConnector,
   contactSales,
-} from './';
+} from '.';
 
 describe('requestConnectors saga', () => {
   const testConnectors = [{ _id: '123' }, { _id: '456' }];

@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { fade } from '@material-ui/core/styles';
 import { makeStyles, Input } from '@material-ui/core';
@@ -81,7 +81,7 @@ export default function EditableText({
   };
 
   return (
-    <Fragment>
+    <>
       {isEdit ? (
         <Input
           autoFocus
@@ -107,6 +107,6 @@ export default function EditableText({
           <span onClick={handleEditClick}>{text || defaultText}</span>
         </div>
       )}
-    </Fragment>
+    </>
   );
 }

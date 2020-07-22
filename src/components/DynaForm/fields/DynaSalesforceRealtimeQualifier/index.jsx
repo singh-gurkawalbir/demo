@@ -1,11 +1,14 @@
-import { useEffect, useCallback, Fragment } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';
+import RefreshIcon from '../../../icons/RefreshIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -18,6 +21,16 @@ const useStyles = makeStyles(theme => ({
   refreshFiltersButton: {
     minWidth: 0,
     padding: 0,
+  },
+  loaderSObject: {
+    display: 'flex',
+    padding: theme.spacing(1, 0),
+  },
+  loaderSObjectText: {
+    marginRight: theme.spacing(2),
+  },
+  salesForceRealtimeFilterIcon: {
+    marginLeft: theme.spacing(1),
   },
 }));
 
@@ -39,6 +52,7 @@ export default function DynaSalesforceRealtimeQualifier(props) {
       actions.editor.init(editorId, 'salesforceQualifier', {
         data,
         rule: value,
+        _init_rule: value,
       })
     );
   }, [data, dispatch, editorId, value]);
@@ -53,16 +67,8 @@ export default function DynaSalesforceRealtimeQualifier(props) {
      */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const filters = useSelector(
-    state =>
-      selectors.metadataOptionsAndResources({
-        state,
-        connectionId,
-        commMetaPath,
-        filterKey: 'salesforce-recordType',
-      }).data,
-    (left, right) => left.length === right.length
-  );
+
+  const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-recordType')?.data;
 
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
@@ -82,26 +88,28 @@ export default function DynaSalesforceRealtimeQualifier(props) {
 
   if (!filters) {
     return (
-      <Typography>
-        Loading SObject fields.
-        <Spinner />
-      </Typography>
+      <div className={classes.loaderSObject}>
+        <Typography className={classes.loaderSObjectText}>
+          Loading
+        </Typography>
+        <Spinner size={24} />
+      </div>
     );
   }
 
   return (
-    <Fragment>
+    <>
       <div className={classes.refreshFilters}>
-        Click{' '}
+        Refresh search filters
         <Button
           data-test="refreshLookupFilters"
           className={classes.refreshFiltersButton}
           variant="text"
           color="primary"
           onClick={handleRefreshFiltersClick}>
-          here
-        </Button>{' '}
-        to refresh search filters.
+          <RefreshIcon className={classes.salesForceRealtimeFilterIcon} />
+        </Button>
+
       </div>
       <FilterPanel
         id={id}
@@ -111,6 +119,6 @@ export default function DynaSalesforceRealtimeQualifier(props) {
         filters={filters}
         onFieldChange={onFieldChange}
       />
-    </Fragment>
+    </>
   );
 }

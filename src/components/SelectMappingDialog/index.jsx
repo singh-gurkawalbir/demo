@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   IconButton,
   Typography,
@@ -9,8 +10,8 @@ import {
 import { useSelector } from 'react-redux';
 import CloseIcon from '../icons/CloseIcon';
 import * as selectors from '../../reducers';
-import LoadResources from '../../components/LoadResources';
-import CeligoTable from '../../components/CeligoTable';
+import LoadResources from '../LoadResources';
+import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 
 const useStyles = makeStyles(theme => ({

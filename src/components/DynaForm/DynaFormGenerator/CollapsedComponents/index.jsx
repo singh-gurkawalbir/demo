@@ -3,48 +3,18 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
-import { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import FormGenerator from '../';
+import FormGenerator from '..';
 import * as selectors from '../../../../reducers';
-import ExpandMoreIcon from '../../../icons/ArrowRightIcon';
+import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(1),
   },
-  expPanelSummary: {
-    flexDirection: 'row-reverse',
-    paddingLeft: 0,
-    minHeight: 'unset',
-    height: 38,
-    display: 'inline-flex',
-    '& > .MuiExpansionPanelSummary-expandIcon': {
-      padding: 0,
-      margin: theme.spacing(-0.5, 0.5, 0, 0),
-      '&.Mui-expanded': {
-        transform: `rotate(90deg)`,
-      },
-    },
-    '&.Mui-expanded': {
-      minHeight: 0,
-    },
-    '& > .MuiExpansionPanelSummary-content': {
-      margin: 0,
-      '&.Mui-expanded': {
-        margin: 0,
-      },
-    },
-  },
-  label: {
-    fontSize: 18,
-  },
-  expansionPanel: {
-    boxShadow: 'none',
-    background: 'none',
-  },
-  expDetails: {
-    padding: 0,
+  expPanelTitle: {
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -92,12 +62,19 @@ const ExpansionPannelExpandOnInValidState = props => {
     })
   );
 
+  const isPanelRequired = useSelector(state =>
+    selectors.isExpansionPanelRequiredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+
   useEffect(() => {
-    if (!expandOnce && isPanelErrored) {
+    if (!expandOnce && (isPanelErrored || isPanelRequired)) {
       setShouldExpand(true);
       setExpandOnce(true);
     }
-  }, [expandOnce, isPanelErrored]);
+  }, [expandOnce, isPanelErrored, isPanelRequired]);
 
   const toggleExpansionPanel = useCallback(() => {
     setShouldExpand(expand => !expand);
@@ -108,17 +85,15 @@ const ExpansionPannelExpandOnInValidState = props => {
   return (
     <div className={classes.child}>
       <ExpansionPanel
-        className={classes.expansionPanel}
         // eslint-disable-next-line react/no-array-index-key
         expanded={shouldExpand}>
         <ExpansionPanelSummary
           data-test={header}
-          className={classes.expPanelSummary}
           onClick={toggleExpansionPanel}
           expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.label}>{header}</Typography>
+          <Typography className={classes.expPanelTitle}>{header}</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.expDetails}>
+        <ExpansionPanelDetails >
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />
         </ExpansionPanelDetails>
       </ExpansionPanel>

@@ -47,13 +47,21 @@ export default {
         'https://www.googleapis.com/auth/youtubepartner-channel-audit',
       ],
     },
+    application: {
+      fieldId: 'application',
+    },
     restAdvanced: { formId: 'restAdvanced' },
   },
   layout: {
     fields: ['name', 'rest.scope'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['restAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.unencrypted.partnerUserId',
+          'http.encrypted.partnerUserSecret'] },
+      { collapsed: true, label: 'Advanced', fields: ['restAdvanced'] },
     ],
   },
 };

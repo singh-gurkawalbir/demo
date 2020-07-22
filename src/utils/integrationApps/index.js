@@ -1,18 +1,81 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS } from '../constants';
-import { isProduction } from '../../forms/utils';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 
 export const getIntegrationAppUrlName = (
-  integrationAppName,
-  isV2Integration
+  integrationAppName
 ) => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
     return 'integrationApp';
   }
 
-  return (
-    integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '') +
-    (isV2Integration ? 'V2' : '')
+  return integrationAppName.replace(/\W/g, '').replace(/Connector/gi, '');
+};
+
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+  const tabs = [
+    'general',
+    'readme',
+    'apitoken',
+    'subscription',
+    'uninstall'
+  ];
+  const sectionsToHide = [];
+
+  if (integrationId === STANDALONE_INTEGRATION.id) {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general');
+  }
+  if (!isIntegrationApp) {
+    sectionsToHide.push('subscription');
+    sectionsToHide.push('apitoken');
+    sectionsToHide.push('uninstall');
+  } else {
+    sectionsToHide.push('readme');
+    sectionsToHide.push('general');
+    if (!isParent) {
+      sectionsToHide.push('subscription');
+      sectionsToHide.push('apitoken');
+    } else if (supportsChild && children && children.length > 1) {
+      sectionsToHide.push('uninstall');
+    }
+  }
+  if (isMonitorLevelUser) {
+    sectionsToHide.push('uninstall');
+    sectionsToHide.push('apitoken');
+  }
+
+  return tabs.filter(
+    sec => !sectionsToHide.includes(sec)
   );
+};
+
+export const getTopLevelTabs = (options = {}) => {
+  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId, hideSettingsTab} = options;
+  const excludeTabs = [];
+  const showAdminTabs = !!getAdminLevelTabs(options).length;
+  const isStandalone = STANDALONE_INTEGRATION.id === integrationId;
+  if (isIntegrationApp) {
+    excludeTabs.push('users');
+    if (!hasAddOns) {
+      excludeTabs.push('addons');
+    }
+  } else {
+    excludeTabs.push('addons');
+  }
+  if (isParent) {
+    excludeTabs.push('flows');
+    excludeTabs.push('dashboard');
+  }
+  if (isStandalone) {
+    excludeTabs.push('admin');
+  }
+  if (isStandalone || hideSettingsTab) {
+    excludeTabs.push('settings');
+  }
+  if (!showAdminTabs) {
+    excludeTabs.push('admin');
+  }
+
+  return allTabs.filter(tab => !excludeTabs.includes(tab.path));
 };
 
 const getIntegrationApp = ({ _connectorId, name }) => {
@@ -96,42 +159,48 @@ const getIntegrationApp = ({ _connectorId, name }) => {
 export default {
   getStepText: (step = {}, mode) => {
     let stepText = '';
+    let showSpinner = false;
     const isUninstall = mode === 'uninstall';
 
     if (
       step._connectionId ||
       step.type === INSTALL_STEP_TYPES.STACK ||
       step.type === 'connection' ||
-      step.sourceConnection
+      step.type === 'ssConnection' ||
+      step.sourceConnection ||
+      step.type === INSTALL_STEP_TYPES.FORM
     ) {
       if (step.completed) {
-        stepText = 'Configured';
+        stepText = isUninstall ? 'Uninstalled' : 'Configured';
       } else if (step.isTriggered) {
-        stepText = 'Configuring...';
+        stepText = isUninstall ? 'Uninstalling' : 'Configuring';
+        showSpinner = true;
       } else {
-        stepText = 'Click to Configure';
+        stepText = isUninstall ? 'Uninstall' : 'Configure';
       }
-    } else if (step.installURL || step.uninstallURL) {
+    } else if (step.installURL || step.uninstallURL || step.url) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Installed';
       } else if (step.isTriggered) {
         if (step.verifying) {
-          stepText = 'Verifying...';
+          showSpinner = true;
+          stepText = 'Verifying';
         } else {
-          stepText = 'Verify Now';
+          stepText = 'Verify now';
         }
       } else {
-        stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+        stepText = isUninstall ? 'Uninstall' : 'Install';
       }
     } else if (step.completed) {
       stepText = isUninstall ? 'Done' : 'Configured';
     } else if (step.isTriggered) {
-      stepText = isUninstall ? 'Uninstalling...' : 'Installing...';
+      showSpinner = true;
+      stepText = isUninstall ? 'Uninstalling' : 'Installing';
     } else {
-      stepText = isUninstall ? 'Click to Uninstall' : 'Click to Install';
+      stepText = isUninstall ? 'Uninstall' : 'Install';
     }
 
-    return stepText;
+    return { stepText, showSpinner };
   },
   getHighestEditionForIntegrationApp: (integration = {}) => {
     const { _connectorId, name } = integration;
@@ -170,6 +239,7 @@ export default {
     return highestEdition;
   },
   isCloningSupported: (_connectorId, name) =>
-    !isProduction() &&
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
+
+export const getTitleIdFromSection = (sec) => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

@@ -8,8 +8,11 @@ export default {
     type: 'text',
     label: 'Configuration',
   },
-  'wrapper.sampleData': {
-    type: 'textarea',
-    label: 'Paste your sample data here',
+  sampleData: {
+    type: 'editor',
+    label: 'Paste destination record here',
+    helpKey: 'import.sampleData',
+    defaultValue: r =>
+      r && r.sampleData && JSON.stringify(r.sampleData, null, 2),
   },
 };

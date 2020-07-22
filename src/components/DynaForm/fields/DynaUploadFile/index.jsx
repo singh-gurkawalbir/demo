@@ -1,36 +1,70 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 
+function findRowDelimiter(sampleData) {
+  let rowDelimiter;
+  if (sampleData && typeof sampleData === 'string') {
+    if (sampleData.indexOf('\n\r') > -1) {
+      rowDelimiter = '\n\r';
+    } else if (sampleData.indexOf('\r\n') > -1) {
+      rowDelimiter = '\r\n';
+    } else if (sampleData.indexOf('\r') > -1) {
+      rowDelimiter = '\r';
+    } else if (sampleData.indexOf('\n') > -1) {
+      rowDelimiter = '\n';
+    }
+  }
+  return rowDelimiter;
+}
+
 function DynaUploadFile(props) {
   const {
     options = '',
     id,
+    maxSize,
     resourceId,
     resourceType,
     onFieldChange,
     formKey,
+    isIAField,
     placeholder,
+    persistData = false,
   } = props;
   const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
-  const [fileName, setFileName] = useState(DEFAULT_PLACEHOLDER);
+  const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
     state => getUploadedFile(state, fileId),
     shallowEqual
   );
 
   useEffect(() => {
-    const { status, file, fileType, name } = uploadedFile || {};
+    const { status, file, rawFile, fileType, name } = uploadedFile || {};
 
     if (status === 'received') {
-      setFileName(`${DEFAULT_PLACEHOLDER} (${name})`);
-      onFieldChange(id, file);
+      setFileName(name);
+      if (isIAField) {
+        onFieldChange(id, {
+          file,
+          type: 'file',
+          rawFile,
+          rowDelimiter: findRowDelimiter(file),
+          fileProps: {
+            name: rawFile.name,
+            size: rawFile.size,
+            type: rawFile.type
+          }
+        });
+      } else {
+        onFieldChange(id, file);
+      }
+
       dispatch(
         actions.sampleData.request(
           resourceId,
@@ -49,14 +83,17 @@ function DynaUploadFile(props) {
 
   useEffect(() => {
     // resets sample data on change of file type
-    if (options) {
+    // The below code includes clean up of sampleData, form field and file state
+    // when persistData is passed... no cleanup is done as it implies retaining existing state
+    // TODO @Raghu: Find a better way to clean up only when needed
+    if (options && !persistData) {
       dispatch(actions.sampleData.reset(resourceId));
       dispatch(actions.file.reset(fileId));
       onFieldChange(id, '', true);
-      setFileName(DEFAULT_PLACEHOLDER);
+      setFileName('');
     }
 
-    return () => dispatch(actions.file.reset(fileId));
+    return () => !persistData && dispatch(actions.file.reset(fileId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, options, resourceId, fileId]);
 
@@ -65,14 +102,22 @@ function DynaUploadFile(props) {
       const file = event.target.files[0];
 
       if (!file) return;
-      dispatch(actions.file.processFile({ fileId, file, fileType: options }));
+      dispatch(actions.file.processFile(
+        {
+          fileId,
+          file,
+          fileType: options,
+          fileProps: { maxSize },
+        }
+      ));
     },
-    [dispatch, fileId, options]
+    [dispatch, fileId, options, maxSize]
   );
 
   return (
     <FileUploader
       {...props}
+      label={DEFAULT_PLACEHOLDER}
       fileName={fileName}
       uploadError={uploadedFile && uploadedFile.error}
       handleFileChosen={handleFileChosen}

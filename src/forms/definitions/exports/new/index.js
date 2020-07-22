@@ -1,4 +1,4 @@
-import applications, {
+import {applicationsList,
   getWebhookConnectors,
   getWebhookOnlyConnectors,
 } from '../../../../constants/applications';
@@ -7,6 +7,7 @@ import { RDBMS_TYPES } from '../../../../utils/constants';
 
 export default {
   preSave: ({ type, application, executionType, apiType, ...rest }) => {
+    const applications = applicationsList();
     const app = applications.find(a => a.id === application) || {};
     const newValues = {
       ...rest,
@@ -27,6 +28,12 @@ export default {
 
       if (app.assistant) {
         newValues['/assistant'] = app.assistant;
+      }
+
+      // If there is no assistant for the export, we need to show generic adaptor form
+      // we are patching useTechAdaptorForm field to not to show default assistant form
+      if (!app.export && app.assistant) {
+        newValues['/useTechAdaptorForm'] = true;
       }
     }
 
@@ -119,6 +126,7 @@ export default {
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
+    const applications = applicationsList();
     const app = applications.find(a => a.id === appField.value) || {};
 
     if (fieldId === 'connection') {

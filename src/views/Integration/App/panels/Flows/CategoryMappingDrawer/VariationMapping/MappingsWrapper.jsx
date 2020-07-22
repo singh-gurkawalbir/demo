@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import * as selectors from '../../../../../../../reducers';
@@ -47,10 +47,10 @@ export default function VariationMappings(props) {
       return generatesMetadata;
     }) || {};
   const resourceId = useSelector(state => {
-    const flowDetails = selectors.resource(state, 'flows', flowId);
+    const flow = selectors.resource(state, 'flows', flowId);
 
-    if (flowDetails) {
-      const firstPP = flowDetails.pageProcessors.find(
+    if (flow) {
+      const firstPP = flow.pageProcessors.find(
         pp => pp.type === 'import'
       );
 

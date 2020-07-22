@@ -1,3 +1,5 @@
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import AuditLog from '../../../../../components/AuditLog';
 

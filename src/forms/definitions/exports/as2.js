@@ -1,46 +1,4 @@
-const alterFileDefinitionRulesVisibility = fields => {
-  // TODO @Raghu : Move this to metadata visibleWhen rules when we support combination of ANDs and ORs in Forms processor
-  const fileDefinitionRulesField = fields.find(
-    field => field.id === 'file.filedefinition.rules'
-  );
-  const fileType = fields.find(field => field.id === 'file.type');
-  const fileDefinitionFieldsMap = {
-    filedefinition: 'edix12.format',
-    fixed: 'fixed.format',
-    'delimited/edifact': 'edifact.format',
-  };
-
-  if (
-    fileType &&
-    fileType.value &&
-    !fileDefinitionRulesField.userDefinitionId
-  ) {
-    // Delete existing visibility rules
-    delete fileDefinitionRulesField.visibleWhenAll;
-    delete fileDefinitionRulesField.visibleWhen;
-
-    if (Object.keys(fileDefinitionFieldsMap).includes(fileType.value)) {
-      const formatFieldType = fileDefinitionFieldsMap[fileType.value];
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === formatFieldType
-      );
-
-      fileDefinitionRulesField.visible = !!fileDefinitionFormatField.value;
-    } else {
-      fileDefinitionRulesField.visible = false;
-    }
-  } else {
-    // make visibility of format fields false incase of edit mode of file adaptors
-    Object.values(fileDefinitionFieldsMap).forEach(field => {
-      const fileDefinitionFormatField = fields.find(
-        fdField => fdField.id === field
-      );
-
-      delete fileDefinitionFormatField.visibleWhenAll;
-      fileDefinitionFormatField.visible = false;
-    });
-  }
-};
+import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
   preSave: formValues => {
@@ -48,6 +6,10 @@ export default {
 
     newValues['/type'] = 'webhook';
 
+    const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+    if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
+      newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
+    }
     if (newValues['/file/json/resourcePath'] === '') {
       newValues['/file/json'] = undefined;
       delete newValues['/file/json/resourcePath'];
@@ -56,7 +18,6 @@ export default {
     if (newValues['/file/type'] === 'json') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/xml'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
@@ -65,15 +26,22 @@ export default {
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xml') {
       newValues['/file/xlsx'] = undefined;
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xlsx/hasHeaderRow'];
       delete newValues['/file/xlsx/rowsPerRecord'];
       delete newValues['/file/xlsx/keyColumns'];
@@ -81,13 +49,16 @@ export default {
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'xlsx') {
       newValues['/file/json'] = undefined;
-      newValues['/file/csv'] = undefined;
       newValues['/file/xml'] = undefined;
       newValues['/file/fileDefinition'] = undefined;
       delete newValues['/file/json/resourcePath'];
       delete newValues['/file/csv/rowsToSkip'];
       delete newValues['/file/csv/trimSpaces'];
       delete newValues['/file/csv/columnDelimiter'];
+      delete newValues['/file/csv/rowDelimiter'];
+      delete newValues['/file/csv/hasHeaderRow'];
+      delete newValues['/file/csv/rowsPerRecord'];
+      delete newValues['/file/csv/keyColumns'];
       delete newValues['/file/xml/resourcePath'];
       delete newValues['/file/fileDefinition/resourcePath'];
     } else if (newValues['/file/type'] === 'csv') {
@@ -128,8 +99,7 @@ export default {
       let definitionFieldId;
 
       // Fetch format specific Field Definition field to fetch id
-      if (fileType.value === 'filedefinition')
-        definitionFieldId = 'edix12.format';
+      if (fileType.value === 'filedefinition') definitionFieldId = 'edix12.format';
       else if (fileType.value === 'fixed') definitionFieldId = 'fixed.format';
       else definitionFieldId = 'edifact.format';
       const definition = fields.find(field => field.id === definitionFieldId);
@@ -173,41 +143,47 @@ export default {
       ],
       required: true,
     },
-    'file.fileDefinition.resourcePath': {
-      fieldId: 'file.fileDefinition.resourcePath',
-    },
     advancedSettings: { formId: 'advancedSettings' },
     exportOneToMany: { formId: 'exportOneToMany' },
+    exportPanel: {
+      fieldId: 'exportPanel',
+    },
   },
   layout: {
-    fields: ['common'],
-    type: 'collapse',
+    type: 'column',
     containers: [
       {
-        collapsed: true,
-        label: 'How should this export be parameterized?',
-        fields: ['exportOneToMany'],
-      },
-      {
-        collapsed: true,
-        label: 'What would you like to listen?',
-        fields: [
-          'file.type',
-          'file.csv',
-          'file.xml.resourcePath',
-          'file.json.resourcePath',
-          'file.xlsx.hasHeaderRow',
-          'file.xlsx.rowsPerRecord',
-          'file.xlsx.keyColumns',
-          'edix12.format',
-          'fixed.format',
-          'edifact.format',
-          'file.filedefinition.rules',
-          'file.fileDefinition.resourcePath',
+        type: 'collapse',
+        containers: [
+          { collapsed: true, label: 'General', fields: ['common', 'exportOneToMany'] },
+          {
+            collapsed: true,
+            label: 'How would you like to parse files?',
+            type: 'indent',
+            fields: [
+              'file.type',
+              'file.xml.resourcePath',
+              'file.json.resourcePath',
+              'file.xlsx.hasHeaderRow',
+              'file.xlsx.rowsPerRecord',
+              'file.xlsx.keyColumns',
+              'edix12.format',
+              'fixed.format',
+              'edifact.format',
+              'file.filedefinition.rules',
+            ],
+            containers: [{fields: [
+              'file.csv',
+            ]}]
+          },
+          { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },
-      { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
-    ],
+      {
+        fields: ['exportPanel'],
+      }
+    ]
+
   },
   actions: [
     {
@@ -220,8 +196,27 @@ export default {
       ],
     },
     {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          isNot: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
       // Button that saves file defs and then submit resource
       id: 'savedefinition',
+      visibleWhen: [
+        {
+          field: 'file.type',
+          is: ['filedefinition', 'fixed', 'delimited/edifact'],
+        },
+      ],
+    },
+    {
+      // Button that saves file defs and then submit resource
+      id: 'saveandclosedefinition',
       visibleWhen: [
         {
           field: 'file.type',

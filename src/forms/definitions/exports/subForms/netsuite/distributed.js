@@ -14,7 +14,8 @@ export default {
           recordTypeField &&
           recordTypeField.value !== recordTypeField.defaultValue,
       };
-    } else if (field === 'netsuite.distributed.qualifier') {
+    }
+    if (field === 'netsuite.distributed.qualifier') {
       return {
         commMetaPath: recordTypeField
           ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}?includeSelectOptions=true`

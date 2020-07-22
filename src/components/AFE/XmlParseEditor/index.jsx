@@ -1,6 +1,8 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 import CodePanel from '../GenericEditor/CodePanel';
 import XmlParsePanel from './XmlParsePanel';
 import PanelGrid from '../PanelGrid';
@@ -19,8 +21,8 @@ const useStyles = makeStyles({
 });
 
 export default function XmlParseEditor(props) {
-  const { editorId, disabled } = props;
-  const classes = useStyles(props);
+  const { editorId, disabled, rule = {}, editorDataTitle } = props;
+  const classes = useStyles();
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -28,24 +30,38 @@ export default function XmlParseEditor(props) {
     selectors.editorViolations(state, editorId)
   );
   const dispatch = useDispatch();
-  const handleDataChange = () => {
+  const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
+  useEffect(() => {
+    // trigger data change when editor is initialized and sample data changes while uploading new file
+    if (data !== undefined && props.data !== data) {
+      handleDataChange(props.data);
+    }
+    // trigger this only when sample data changes. Dont add other dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.data]);
 
   const handleInit = useCallback(() => {
     dispatch(
       actions.editor.init(editorId, 'xmlParser', {
         data: props.data,
-        advanced: true,
-        trimSpaces: false,
-        rule: props.rule,
+        // since we may be sharing the same editorId, we need to force
+        // all default values.
+        V0_json: rule?.V0_json === true || false,
+        resourcePath: rule.resourcePath,
+        trimSpaces: rule.trimSpaces,
+        stripNewLineChars: rule.stripNewLineChars,
+        attributePrefix: rule.attributePrefix,
+        textNodeName: rule.textNodeName,
+        listNodes: rule.listNodes,
+        includeNodes: rule.includeNodes,
+        excludeNodes: rule.excludeNodes,
       })
     );
-  }, [dispatch, editorId, props.data, props.rule]);
+  }, [dispatch, editorId, props.data, rule]);
 
-  useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+  useEffect(() => handleInit(), [handleInit]);
 
   return (
     <PanelGrid key={editorId} className={classes.template}>
@@ -54,7 +70,11 @@ export default function XmlParseEditor(props) {
         <XmlParsePanel disabled={disabled} editorId={editorId} />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
-        <PanelTitle title="XML to parse" />
+        <PanelTitle>
+          <div>
+            {editorDataTitle || (<Typography variant="body1">Sample XML file</Typography>)}
+          </div>
+        </PanelTitle>
         <CodePanel
           name="data"
           value={data}
@@ -64,7 +84,7 @@ export default function XmlParseEditor(props) {
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Parsed result" />
+        <PanelTitle title="Parsed output" />
         <CodePanel
           name="result"
           value={result ? result.data[0] : ''}

@@ -2,7 +2,7 @@ import { isNewId } from '../../../utils/resource';
 
 export default {
   preSave: (formValues, res) => {
-    const newValues = Object.assign({}, formValues);
+    const newValues = { ...formValues};
 
     if (newValues['/salesforce/oauth2FlowType'] === 'refreshToken') {
       newValues['/salesforce/username'] = undefined;
@@ -13,7 +13,7 @@ export default {
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name', required: true },
+    name: { fieldId: 'name' },
     'salesforce.sandbox': { fieldId: 'salesforce.sandbox' },
     'salesforce.oauth2FlowType': { fieldId: 'salesforce.oauth2FlowType' },
     'salesforce.info.email': {
@@ -44,21 +44,35 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'salesforce.concurrencyLevel': { fieldId: 'salesforce.concurrencyLevel' },
+    application: {
+      fieldId: 'application',
+    },
   },
   layout: {
-    fields: [
-      'name',
-      'salesforce.info.email',
-      'salesforce.info.organization_id',
-      'salesforce.sandbox',
-      'salesforce.oauth2FlowType',
-      'salesforce.username',
-    ],
     type: 'collapse',
     containers: [
       {
         collapsed: true,
-        label: 'Advanced Settings',
+        label: 'General',
+        fields: [
+          'name',
+          'application',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Application details',
+        fields: [
+          'salesforce.info.email',
+          'salesforce.info.organization_id',
+          'salesforce.sandbox',
+          'salesforce.oauth2FlowType',
+          'salesforce.username',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         fields: [
           '_borrowConcurrencyFromConnectionId',
           'salesforce.concurrencyLevel',

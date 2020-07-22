@@ -1,7 +1,8 @@
+import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import EditorField from '../../DynaEditor';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   editor: {
     height: 200,
   },
@@ -9,18 +10,18 @@ const useStyles = makeStyles({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
+    marginBottom: theme.spacing(2),
   },
-});
+}));
 
-export default function RawView({ props }) {
+export default function RawView(props) {
   const classes = useStyles();
 
-  // Only developers would ever see this raw settings view, so we can safely
-  // render the toggle editor button with no other conditions.
   return (
     <EditorField
       {...props}
       label="Settings"
+      helpKey="settings"
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       mode="json"

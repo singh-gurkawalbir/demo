@@ -5,7 +5,7 @@ export default {
     '/assistant': 'myobaccountright',
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
-    '/http/baseURI': `https://ar1.api.myob.com/accountright/`,
+    '/http/baseURI': 'https://ar1.api.myob.com/accountright/',
     '/http/auth/oauth/authURI':
       'https://secure.myob.com/oauth2/account/authorize',
     '/http/auth/oauth/tokenURI': 'https://secure.myob.com/oauth2/v1/authorize',
@@ -24,13 +24,16 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['name'],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

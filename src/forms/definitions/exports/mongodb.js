@@ -91,13 +91,12 @@ export default {
     type: 'column',
     containers: [
       {
-        fields: ['common'],
         type: 'collapse',
         containers: [
           {
             collapsed: true,
-            label: 'How should this export be parameterized?',
-            fields: ['exportOneToMany'],
+            label: 'General',
+            fields: ['common', 'exportOneToMany'],
           },
           {
             collapsed: true,
@@ -106,10 +105,12 @@ export default {
               'mongodb.collection',
               'mongodb.filter',
               'mongodb.projection',
-              'type',
-              'delta.dateField',
-              'once.booleanField',
             ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure export type',
+            fields: ['type', 'delta.dateField', 'once.booleanField'],
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],

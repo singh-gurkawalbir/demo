@@ -199,22 +199,26 @@ function replaceHTTPrefWithCorrespondingREST(str) {
       'connection.http.encrypted',
       'connection.rest.encrypted'
     );
-  } else if (str.indexOf('connection.http.unencrypted') !== -1) {
+  }
+  if (str.indexOf('connection.http.unencrypted') !== -1) {
     return str.replace(
       'connection.http.unencrypted',
       'connection.rest.unencrypted'
     );
-  } else if (str.indexOf('connection.http.auth.basic') !== -1) {
+  }
+  if (str.indexOf('connection.http.auth.basic') !== -1) {
     return str.replace(
       'connection.http.auth.basic',
       'connection.rest.basicAuth'
     );
-  } else if (str.indexOf('connection.http.auth.token.refreshToken') !== -1) {
+  }
+  if (str.indexOf('connection.http.auth.token.refreshToken') !== -1) {
     return str.replace(
       'connection.http.auth.token.refreshToken',
       'connection.rest.refreshToken'
     );
-  } else if (str.indexOf('connection.http.auth.token.token') !== -1) {
+  }
+  if (str.indexOf('connection.http.auth.token.token') !== -1) {
     return str.replace(
       'connection.http.auth.token.token',
       'connection.rest.bearerToken'
