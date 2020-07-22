@@ -37,7 +37,7 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
-      if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
+      if (['accesstokens', 'apis'].includes(resourceType)) {
         type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {
         type =
