@@ -16,6 +16,7 @@ import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
+import ConnectorCrumb from './crumbs/Connector';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -125,14 +126,6 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
-  {
-    path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
-    breadcrumb: () => 'Licenses',
-  },
-  {
-    path: getRoutePath('/connectors/:connectorId/installBase'),
-    breadcrumb: () => 'Install base',
-  },
   { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
@@ -194,6 +187,19 @@ const routes = [
       },
       { path: '/:section', breadcrumb: a => a.section },
     ],
+  },
+  {
+    path: getRoutePath('/connectors'),
+    breadcrumb: 'Integration apps',
+    childRoutes: [
+      { path: '/edit/:resourceType/:resourceId', breadcrumb: EditResourceTypeCrumb },
+      { path: '/add/:resourceType/:resourceId', breadcrumb: AddResourceTypeCrumb },
+      { path: '/:connectorId',
+        breadcrumb: ConnectorCrumb,
+        childRoutes: [
+          { path: '/connectorLicenses', breadcrumb: 'Licenses' },
+          { path: '/installBase', breadcrumb: 'Install base' }]}
+    ]
   },
   {
     path: getRoutePath('/marketplace'),
@@ -296,7 +302,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
         const childPath = pathname.replace(match.url, '');
         let childCrumbs;
 
-        // possibly child routes? time to recuse.
+        // possibly child routes? time to recurse.
         if (r.childRoutes) {
           childCrumbs = parseUrl(childPath, r.childRoutes, newUrl, newParams);
 
@@ -349,12 +355,12 @@ export default function CeligoBreadcrumb({ location }) {
             key={url}
             variant="body2"
             className={clsx(classes.activeCrumb, classes.crumb)}>
-            <Crumb {...params} />
+            {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
           </Typography>
         ) : (
           <Link key={url} color="inherit" to={url}>
             <div className={classes.crumb}>
-              <Crumb {...params} />
+              {typeof Crumb === 'function' ? <Crumb {...params} /> : Crumb}
             </div>
           </Link>
         )
