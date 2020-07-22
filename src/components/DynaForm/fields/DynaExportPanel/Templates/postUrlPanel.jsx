@@ -31,7 +31,7 @@ export default function PostUrlPanel(props) {
 
   return (
     <>
-      <Typography> Post Url </Typography>
+      <Typography> Post URL </Typography>
       <div className={classes.wrapper} > {postUrl} </div>
     </>
   );
