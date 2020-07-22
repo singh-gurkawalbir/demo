@@ -57,7 +57,7 @@ export default {
       actionItems = [AuditLogs, Revoke, Regenerate];
     }
 
-    if (!isOTT && r.revoked) {
+    if (!isOTT) {
       actionItems.push(Delete);
     }
     actionItems = [Edit, ...actionItems];

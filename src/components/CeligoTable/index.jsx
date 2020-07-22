@@ -281,7 +281,7 @@ export default function CeligoTable({
                     actions={(typeof rowActions === 'function'
                       ? rowActions(rowData, actionProps)
                       : rowActions
-                    ).map(({ icon, label, hasAccess, component: Action }) => ({
+                    ).map(({ icon, label, disableText, hasAccess, component: Action }) => ({
                       icon:
                         // TODO: @Adi, we can not use this same pattern for Icon as we do for label.
                         // remember that an Icon is a component, which is a function. So the typeof
@@ -291,6 +291,7 @@ export default function CeligoTable({
                         typeof icon === 'function'
                           ? icon(rowData, actionProps)
                           : icon,
+                      disableText,
                       hasAccess,
                       rowData,
                       actionProps,

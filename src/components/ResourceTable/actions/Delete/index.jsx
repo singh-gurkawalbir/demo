@@ -18,6 +18,11 @@ export default {
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
+  disableText: ({rowData, resourceType}) => {
+    if (resourceType === 'accesstokens' && !rowData.revoked) {
+      return 'To delete this api token you need to revoke it first.';
+    }
+  },
   component: function DeleteResource({ resourceType, rowData = {} }) {
     const { _id: resourceId } = rowData;
     const dispatch = useDispatch();
@@ -32,7 +37,7 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
-      if (['accesstokens', 'apis'].includes(resourceType)) {
+      if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
         type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {
         type =
