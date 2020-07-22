@@ -1,4 +1,4 @@
-import { takeLatest, select, call, put, takeEvery } from 'redux-saga/effects';
+import { select, call, put, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { resource, resourceFormState, resourceData } from '../../../reducers';
@@ -196,5 +196,5 @@ function* onResourceUpdate({
 
 export default [
   takeEvery(actionTypes.RESOURCE.CREATED, onResourceCreate),
-  takeLatest(actionTypes.RESOURCE.UPDATED, onResourceUpdate),
+  takeEvery(actionTypes.RESOURCE.UPDATED, onResourceUpdate),
 ];
