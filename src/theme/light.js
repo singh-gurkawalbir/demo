@@ -660,11 +660,11 @@ export default {
         minWidth: 140,
         textTransform: 'none',
       },
-      textColorPrimary: {
-        '&.Mui-selected': {
-          fontWeight: 'bold',
-        },
-      },
+      // textColorPrimary: {
+      //   '&.Mui-selected': {
+      //   },
+      // fontWeight: 'bold',
+      // },
       labelIcon: {
         minHeight: 'unset',
       },
