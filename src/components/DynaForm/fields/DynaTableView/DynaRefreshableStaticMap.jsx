@@ -72,7 +72,7 @@ export default function DynaRefreshableStaticMap(props) {
     return obj;
   }, [changeIdentifier, optionsMap, refreshMetadata, refreshStatus]);
 
-  const isLoadingMap = useMemo(() => ({[valueName]: status === 'requested'}), [status, valueName]);
+  const isLoadingMap = useMemo(() => ({[valueName]: ['requested', 'refreshed'].includes(status)}), [status, valueName]);
 
   const onFetch = useCallback(() => {
     if (!metadata && !disableOptionsLoad) {
