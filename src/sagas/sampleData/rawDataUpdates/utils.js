@@ -61,6 +61,8 @@ export function* removeRawDataOnResource({
   if (!resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
     return;
   }
+  // TODO @Raghu Remove this EMPTY_RAW_DATA and remove rawData prop once BE Fix is done
+  // As currently, we are not able to remove this prop once set. We assign EMPTY_RAW_DATA to handle that case
   const patchSet = [
     {
       op: 'replace',
