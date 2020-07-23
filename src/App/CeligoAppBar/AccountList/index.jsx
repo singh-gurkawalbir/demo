@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontFamily: 'source sans pro',
     padding: 0,
+    paddingRight: theme.spacing(1),
+    marginRight: theme.spacing(-1),
     '& svg': {
       color: theme.palette.secondary.light,
       marginLeft: theme.spacing(0.5),

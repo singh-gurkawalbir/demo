@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
     marginBottom: 6,
+    minHeight: 42,
+    paddingRight: theme.spacing(1),
   },
 }));
 
