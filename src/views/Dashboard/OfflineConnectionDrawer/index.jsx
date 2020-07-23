@@ -12,15 +12,17 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   subNavOpen: {
-    width: 824,
+    width: 1116,
   },
   subNavClosed: {
-    width: 624,
+    width: 824,
   },
   drawerPaper: {
     border: 'solid 1px',
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: theme.palette.common.white,
+
   },
   root: {
     padding: theme.spacing(0),
@@ -37,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
-    background: theme.palette.background.paper2,
+    background: theme.palette.background.default,
   },
   content: {
     width: '100%',
