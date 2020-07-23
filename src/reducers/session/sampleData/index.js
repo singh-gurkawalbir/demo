@@ -77,11 +77,6 @@ export default function (state = {}, action) {
   });
 }
 
-function getSampleData(resourceData, stage) {
-  // If stage mentioned, fetch stage data
-  return resourceData[stage] || DEFAULT_VALUE;
-}
-
 export function getResourceSampleData(state, resourceId, stage) {
   if (!resourceId || !state[resourceId]) return DEFAULT_VALUE;
 
@@ -89,15 +84,15 @@ export function getResourceSampleData(state, resourceId, stage) {
 
   if (!resourceData) return DEFAULT_VALUE;
 
-  return getSampleData(resourceData, stage);
+  return resourceData[stage] || DEFAULT_VALUE;
 }
 
 function getResourceSampleDataStatus(state, resourceId) {
-  return state[resourceId] && state[resourceId].status;
+  return state[resourceId]?.status;
 }
 
 function getResourceSampleDataError(state, resourceId) {
-  return state[resourceId] && state[resourceId].error;
+  return state[resourceId]?.error;
 }
 
 export function getResourceSampleDataWithStatus(state, resourceId, stage) {
