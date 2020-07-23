@@ -84,6 +84,9 @@ const useStyles = makeStyles(theme => ({
         whiteSpace: 'normal',
       },
     },
+  },
+  refreshIcon: {
+    cursor: 'pointer'
   }
 }));
 
@@ -312,7 +315,7 @@ export const DynaTable = props => {
               <div className={classes.header} key={r.id}>
                 <span className={classes.label}>{r.label || r.name}</span>
                 {r.supportsRefresh && !isLoading?.[r.id] && (
-                  <RefreshIcon onClick={onFetchResource(r.id)} />
+                  <RefreshIcon className={classes.refreshIcon} onClick={onFetchResource(r.id)} />
                 )}
                 {r.supportsRefresh && isLoading?.[r.id] && (
                   <Spinner size={24} />
