@@ -636,6 +636,7 @@ export default {
     MuiTabs: {
       root: {
         minHeight: 36,
+
       },
       scrollButtonsDesktop: {
         '& > svg': {
@@ -658,6 +659,7 @@ export default {
       root: {
         minHeight: 36,
         minWidth: 140,
+        padding: '8px 12px 4px',
         textTransform: 'none',
       },
       // textColorPrimary: {
