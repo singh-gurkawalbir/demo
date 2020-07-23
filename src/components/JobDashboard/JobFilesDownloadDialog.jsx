@@ -50,7 +50,7 @@ export default function JobFilesDownloadDialog({
       show
       onClose={onCloseClick}
       data-test="closeJobFilesDownloadDialog"
-      maxWidth="xl">
+      maxWidth={false}>
       <div>Download files</div>
       <div>
         <CeligoTable

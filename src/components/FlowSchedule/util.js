@@ -886,9 +886,10 @@ export const getScheduleStartMinute = (resource = {}, preferences) => {
     );
 
     if (
-      !resource.createdAt ||
+      resource && (
+        !resource.createdAt ||
       changeStartMinuteForFlowsCreatedAfter.diff(moment(resource.createdAt)) < 0
-    ) {
+      )) {
       scheduleStartMinute = 10;
     }
   }

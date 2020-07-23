@@ -1932,7 +1932,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
       if (operationDetails.headers[h] !== null) {
         const hv = operationDetails.headers[h].replace(
           /RECORD_IDENTIFIER/gi,
-          (!isEmpty(identifiers) && pathParams[identifiers[0].id]) || ''
+          (!isEmpty(identifiers) && pathParams[identifiers[0]?.id]) || ''
         ); // IO-6119. Static headers with preconfigured string is replaced dynamically with record identifier.
 
         importDoc.headers.push({ name: h, value: hv });
