@@ -18,7 +18,7 @@ export default function ActionMenu({ actions, selectAction }) {
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const renderActionMenu = useCallback(
-    ({ label, icon, disableText, hasAccess, actionProps, rowData, component }) => {
+    ({ label, icon, disabledActionText, hasAccess, actionProps, rowData, component }) => {
       const handleActionClick = () => {
         selectAction(component);
         handleMenuClose();
@@ -27,13 +27,13 @@ export default function ActionMenu({ actions, selectAction }) {
       if (hasAccess && !hasAccess({ state, ...actionProps, rowData })) {
         return;
       }
-      const disabledActionText = disableText?.({ state, ...actionProps, rowData });
+      const disabledActionTitle = disabledActionText?.({ state, ...actionProps, rowData });
 
       return (
-        disabledActionText ?
-          <Tooltip title={disabledActionText} placement="bottom" >
+        disabledActionTitle ?
+          <Tooltip title={disabledActionTitle} placement="bottom" >
             <div>
-              <MenuItem key={label} disabled onClick={handleActionClick}>
+              <MenuItem key={label} disabled>
                 {icon}
                 {label}
               </MenuItem>

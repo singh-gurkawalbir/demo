@@ -18,7 +18,7 @@ export default {
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
-  disableText: ({rowData, resourceType}) => {
+  disabledActionText: ({rowData, resourceType}) => {
     if (resourceType === 'accesstokens' && !rowData.revoked) {
       return 'To delete this api token you need to revoke it first.';
     }
