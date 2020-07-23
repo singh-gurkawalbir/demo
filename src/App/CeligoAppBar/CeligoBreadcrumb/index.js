@@ -217,7 +217,7 @@ const routes = [
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
         childRoutes: [
-          { path: '/preview', breadcrumb: 'Clone-detail' },
+          { path: '/preview', breadcrumb: 'Clone-details' },
           { path: '/setup', breadcrumb: 'Install' },
         ],
       },
