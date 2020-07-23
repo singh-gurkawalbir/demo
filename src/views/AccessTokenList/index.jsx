@@ -67,7 +67,7 @@ export default function AccessTokenList(props) {
               to={`${location.pathname}/add/accesstokens/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New API token
+              <AddIcon /> Create API token
             </IconTextButton>
           </div>
         </CeligoPageBar>
