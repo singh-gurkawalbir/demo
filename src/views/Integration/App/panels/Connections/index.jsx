@@ -14,6 +14,9 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
+import {
+  isTradingPartnerSupported,
+} from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +52,16 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       ),
     shallowEqual
   );
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(integrationId));
@@ -95,7 +108,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId, resourceType: 'connections'
+          actionProps={{ integrationId, resourceType: 'connections', showTradingPartner
           }}
         />
       </LoadResources>

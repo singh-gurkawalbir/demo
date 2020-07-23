@@ -47,7 +47,7 @@ const FirstLevelModal = props => {
         field => field.id === 'parentSObjectType'
       );
       const { referenceTo, relationshipName } =
-        options.find(option => option.value === selectedValue) || {};
+        options?.find(option => option.value === selectedValue) || {};
 
       return { referenceTo, relationshipName };
     }

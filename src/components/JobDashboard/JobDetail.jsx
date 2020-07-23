@@ -233,6 +233,13 @@ function JobDetail({
 
     onViewErrorsClick({ jobId: job._id, showResolved });
   }
+  function RowIcon({expanded, childLoaded}) {
+    if (expanded && !childLoaded) {
+      return <Spinner size={24} />;
+    }
+
+    return expanded ? <ArrowUpIcon /> : <ArrowDownIcon />;
+  }
 
   return (
     <>
@@ -248,7 +255,7 @@ function JobDetail({
                   data-test="toggleJobDetail"
                   className={classes.moreIcon}
                   onClick={handleExpandCollapseClick}>
-                  {expanded ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                  <RowIcon expanded={expanded} childLoaded={job.children} />
                 </IconButton>
               )}
             </li>
@@ -300,13 +307,7 @@ function JobDetail({
           />
         </TableCell>
       </TableRow>
-      {expanded && !job.children && (
-        <TableRow>
-          <TableCell className={classes.spinner}>
-            <Spinner size={20} /> <span>Loading</span>
-          </TableCell>
-        </TableRow>
-      )}
+
       {expanded &&
         job.children &&
         job.children.map(cJob => (

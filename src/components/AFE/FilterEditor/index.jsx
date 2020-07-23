@@ -110,7 +110,7 @@ export default function FilterEditor(props) {
       </PanelGridItem>
 
       <ErrorGridItem
-        error={error ? error.message : null}
+        error={error?.message}
         violations={violations}
       />
     </PanelGrid>

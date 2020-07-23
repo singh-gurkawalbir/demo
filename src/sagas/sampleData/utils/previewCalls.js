@@ -10,6 +10,7 @@ import {
 } from './flowDataUtils';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import { isNewId } from '../../../utils/resource';
+import { EMPTY_RAW_DATA } from '../../../utils/constants';
 
 export function* pageProcessorPreview({
   flowId,
@@ -120,7 +121,9 @@ export function* exportPreview({
   // Example: type: once should not be sent while previewing
   body = getFormattedResourceForPreview(body);
 
-  if (runOffline && body.rawData) {
+  const hasValidRawDataKey = body.rawData && body.rawData !== EMPTY_RAW_DATA;
+
+  if (runOffline && hasValidRawDataKey) {
     body = {
       ...body,
       verbose: true,
@@ -146,7 +149,7 @@ export function* exportPreview({
     return previewData;
   } catch (e) {
     // When runOffline mode fails make preview call without offlineMode and move further
-    if (runOffline && body.rawData) {
+    if (runOffline && hasValidRawDataKey) {
       return yield call(exportPreview, {
         resourceId,
         hidden,

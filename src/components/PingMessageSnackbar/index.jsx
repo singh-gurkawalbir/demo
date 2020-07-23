@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react';
-import {Snackbar, Typography} from '@material-ui/core';
+import React from 'react';
+import { Snackbar } from '@material-ui/core';
 import { PING_STATES } from '../../reducers/comms/ping';
-import ClosableSnackbarContent from './ClosableSnackbarContent';
+import NotificationToaster from '../NotificationToaster';
 import TestConnectionSnackbar from './TestConnectionSnackbar';
-import RawHtml from '../RawHtml';
+import ErrorContent from '../ErrorContent';
 
 const commStateToVariantType = {
   success: 'success',
@@ -11,21 +11,6 @@ const commStateToVariantType = {
   error: 'error',
   aborted: 'success',
 };
-
-const ErroredMessageList = ({ messages }) =>
-  messages?.length
-    ? messages.filter(msg => !!msg).map((msg, index) => (
-      <Fragment key={msg}>
-        { /* If the message contains html elements, render it as html */ }
-        {/<\/?[a-z][\s\S]*>/i.test(msg) ? (
-          <RawHtml html={msg} />
-        ) : (
-          <Typography color="error">{msg}</Typography>
-        )}
-        {index > 0 && <br />}
-      </Fragment>
-    ))
-    : null;
 
 export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask }) {
   const { commState, message } = commStatus;
@@ -35,25 +20,21 @@ export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask 
     return <TestConnectionSnackbar onCancel={onCancelTask} />;
   }
 
-  if (commState !== PING_STATES.ERROR || !message) {
+  if (commState !== PING_STATES.ERROR || !message?.[0]) {
     return null;
   }
 
   return (
-    <div>
-      <Snackbar
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        open
-        autoHideDuration={6000}>
-        <ClosableSnackbarContent
-          onClose={onClose}
-          variant={variant || 'info'}
-          message={<ErroredMessageList messages={message} />}
-        />
-      </Snackbar>
-    </div>
-  );
+    <Snackbar
+      open
+      autoHideDuration={6000}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <NotificationToaster
+        variant={variant || 'info'}
+        size="medium"
+        fullWidth
+        onClose={onClose}>
+        <ErrorContent error={message[0]} />
+      </NotificationToaster>
+    </Snackbar>);
 }

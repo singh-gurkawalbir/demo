@@ -1,10 +1,10 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
-import RawHtml from '../../../RawHtml';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import actions from '../../../../../actions';
+import * as selectors from '../../../../../reducers';
+import RawHtml from '../../../../RawHtml';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { DynaGenericSelect } from './RefreshGenericResource';
 
 const useStyles = makeStyles(() => ({
@@ -27,6 +27,7 @@ export default function DynaSelectOptionsGenerator(props) {
     filterKey,
     commMetaPath,
     disableFetch,
+    ignoreCache,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const classes = useStyles();
@@ -44,36 +45,34 @@ export default function DynaSelectOptionsGenerator(props) {
         actions.metadata.request(
           connectionId,
           options.commMetaPath || commMetaPath,
-          { bundleUrlHelp, bundlePath }
+          { bundleUrlHelp, bundlePath, ignoreCache }
         )
       );
     }
-  }, [
-    bundlePath,
-    bundleUrlHelp,
-    commMetaPath,
-    connectionId,
-    data,
-    disableOptionsLoad,
-    dispatch,
-    options.commMetaPath,
-  ]);
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, data, disableOptionsLoad, dispatch, ignoreCache, options.commMetaPath]);
   const onRefresh = useCallback(() => {
     if (disableOptionsLoad) {
       return;
     }
+    const opts = {
+      bundleUrlHelp,
+      bundlePath,
+
+    };
+    if (ignoreCache) {
+      opts.ignoreCache = true;
+    } else {
+      opts.refreshCache = true;
+    }
+
     dispatch(
       actions.metadata.refresh(
         connectionId,
         options.commMetaPath || commMetaPath,
-        {
-          refreshCache: true,
-          bundleUrlHelp,
-          bundlePath,
-        }
+        opts
       )
     );
-  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, options.commMetaPath]);
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, ignoreCache, options.commMetaPath]);
 
   return (
     <>
