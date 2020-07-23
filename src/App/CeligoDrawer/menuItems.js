@@ -53,13 +53,13 @@ export default function menuItems(
       Icon: ToolsIcon,
       children: [
         {
-          label: 'Flow builder',
+          label: 'Flow Builder',
           Icon: FlowBuilderIcon,
           path: '/integrations/none/flowBuilder/new',
           routeProps: getRoutePath('/integrations/:integrationId/flowBuilder'),
         },
         {
-          label: 'Data loader',
+          label: 'Data Loader',
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),

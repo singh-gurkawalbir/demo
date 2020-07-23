@@ -8,7 +8,7 @@ import BackArrowIcon from '../../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
-    background: theme.palette.background.default,
+    background: theme.palette.common.white,
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(2, 3),
