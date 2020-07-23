@@ -104,6 +104,6 @@ export default {
   position: 'left',
   Icon,
   helpText:
-    'This is the text currently in the hover state of actions in the current FB',
+    "Define an 'input filter' here to specify which source records should get processed. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).",
   Component: InputFilter,
 };
