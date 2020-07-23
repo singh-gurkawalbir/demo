@@ -39,10 +39,15 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: '1%',
   },
   childHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
     '& > div': {
       width: '100%',
     },
   },
+  deleteButton: {
+    marginTop: theme.spacing(1),
+  }
 }));
 
 export default function SearchCriteriaEditor(props) {
@@ -171,7 +176,7 @@ export default function SearchCriteriaEditor(props) {
               </div>
               <div
                 key="delete_button"
-                className={clsx({
+                className={clsx(classes.deleteButton, {
                   [classes.disabled]: disabled,
                 })}>
                 <ActionButton

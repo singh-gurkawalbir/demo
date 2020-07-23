@@ -25,7 +25,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     const {recordType} = exportConfig.netsuite.realtime;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
     yield put(
-      actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache, ignoreCache: true })
+      actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache })
     );
   } else if (exportType === 'salesforce') {
     const {sObjectType} = exportConfig.salesforce;

@@ -3,13 +3,14 @@ import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { isPageGeneratorResource } from './flows';
+import { USER_ACCESS_LEVELS } from './constants';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
   asyncHelpers: 'Async helper',
   connections: 'Connection',
-  connectors: 'Integration app',
+  connectors: 'Integration App',
   exports: 'Export',
   filedefinitions: 'File definition',
   flows: 'Flow',
@@ -743,4 +744,22 @@ export function getConnectionType(resource) {
   }
 
   return type;
+}
+export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
+  const isSandbox = environment === 'sandbox';
+  let enabled = false;
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+    ].includes(accessLevel)
+  ) {
+    if (isSandbox) {
+      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofSandboxTradingPartners > 0;
+    } else {
+      enabled = licenseActionDetails?.type === 'endpoint' && licenseActionDetails?.totalNumberofProductionTradingPartners > 0;
+    }
+
+    return enabled;
+  }
 }

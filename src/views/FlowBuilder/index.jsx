@@ -148,8 +148,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    width: 18,
-    height: 18,
+    padding: 0,
     marginLeft: theme.spacing(2),
   },
   sourceTitle: {

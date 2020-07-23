@@ -30,7 +30,7 @@ export function* getJobFamily({ jobId, type }) {
   );
   const { path, opts } = requestOptions;
   let job;
-
+  // console.log(path, opts);
   try {
     job = yield call(apiCallWithRetry, { path, opts });
   } catch (error) {

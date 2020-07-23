@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   titleStatusPanel: {
     color: theme.palette.secondary.main,
+    fontFamily: 'Roboto400',
   },
 }));
 const getStatusVariantAndMessage = ({

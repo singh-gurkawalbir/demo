@@ -59,6 +59,9 @@ export default function DynaSelectOptionsGenerator(props) {
     options.commMetaPath,
   ]);
   const onRefresh = useCallback(() => {
+    if (disableOptionsLoad) {
+      return;
+    }
     dispatch(
       actions.metadata.refresh(
         connectionId,

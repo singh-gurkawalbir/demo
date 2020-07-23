@@ -61,7 +61,7 @@ export default function ApiTokenSection({ integrationId }) {
           }}
           variant="text"
           color="primary">
-          <AddIcon /> New API token
+          <AddIcon /> Create API token
         </IconTextButton>
       </PanelHeader>
 

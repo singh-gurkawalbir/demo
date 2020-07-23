@@ -65,7 +65,8 @@ export default {
           id: 'lookup.sObjectType',
           name: 'sObjectType',
           defaultValue: lookup.sObjectType,
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
+          ignoreCache: true,
           filterKey: 'salesforce-sObjects',
           commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes`,
           label: 'SObject type',
@@ -110,7 +111,8 @@ export default {
         'lookup.resultField': {
           id: 'lookup.resultField',
           name: 'resultField',
-          type: 'refreshableselect',
+          type: 'suitescriptrefreshableselect',
+          ignoreCache: true,
           // Todo (Aditya): label is needed
           label: 'Value field',
           filterKey: 'salesforce-recordType',
@@ -269,9 +271,11 @@ export default {
           name: 'lookupSFSelect',
           type: 'select',
           label: 'Default lookup value',
-          required: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.failIfMatchNotFound', is: [false] },
+            { field: 'lookup.useNull', is: [false] },
+            { field: 'lookup.useEmptyString', is: [false] },
           ],
           options: [
             {
