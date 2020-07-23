@@ -27,9 +27,9 @@ const getParserValue = ({
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
   if (textNodeName) rules.textNodeName = textNodeName;
-  if (listNodes) rules.listNodes = listNodes.split('\n');
-  if (includeNodes) rules.includeNodes = includeNodes.split('\n');
-  if (excludeNodes) rules.excludeNodes = excludeNodes.split('\n');
+  if (listNodes && typeof listNodes.split === 'function') rules.listNodes = listNodes.split('\n');
+  if (includeNodes && typeof includeNodes.split === 'function') rules.includeNodes = includeNodes.split('\n');
+  if (excludeNodes && typeof excludeNodes.split === 'function') rules.excludeNodes = excludeNodes.split('\n');
 
   const value = [
     {

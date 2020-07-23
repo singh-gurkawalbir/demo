@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -93,6 +93,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
 
     return integration && integration.version;
   });
+  const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
@@ -141,6 +142,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
         })
       );
     } else {
+      setUpgradeSettingsRequested(true);
       dispatch(actions.integrationApp.settings.upgrade(integrationId, license));
     }
   };
@@ -172,14 +174,14 @@ export default function SubscriptionSection({ storeId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    disabled={upgradeRequested}
-                    onClick={handleUpgrade}>
-                    {upgradeText}
-                  </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  disabled={upgradeRequested || upgradeSettingsRequested}
+                  onClick={handleUpgrade}>
+                  {upgradeText}
+                </Button>
                 )}
               </Grid>
             </Grid>

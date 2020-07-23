@@ -158,8 +158,6 @@ export default {
   },
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
-    let errorStatus = false;
-    let errorMessage = '';
     const settings = {};
     let conditionalLookup;
 
@@ -269,15 +267,16 @@ export default {
       if (formVal._mode === 'static') {
         let atleastOneValMapped = false;
 
-        formVal._mapList.forEach(obj => {
+        formVal._mapList?.forEach(obj => {
           if (obj.export && obj.import) {
             atleastOneValMapped = true;
           }
         });
 
         if (!atleastOneValMapped) {
-          errorStatus = true;
-          errorMessage = 'You need to map at least one value.';
+          return {
+            errorMessage: 'You need to map at least one value.'
+          };
         }
       }
 
@@ -314,8 +313,6 @@ export default {
     return {
       settings,
       lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
       conditionalLookup,
     };
   },

@@ -12,7 +12,7 @@ import getValueAfterInsert from './util';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
-const getMatchingText = (value, textInsertPosition) => {
+const getMatchingText = (value = '', textInsertPosition) => {
   const inpValue = value.substring(0, textInsertPosition);
   const startIndexOfBraces = inpValue.lastIndexOf('{{');
   const matchedString = inpValue.substring(startIndexOfBraces + 2);
@@ -199,10 +199,7 @@ export default function Suggestions(props) {
       if (showSuggestionsWithoutHandlebar) {
         onValueUpdate(lookup.name);
       } else {
-        const valueToInsert =
-          adaptorType === 'HTTPImport'
-            ? `lookup "${lookup.name}" this`
-            : lookup.name;
+        const valueToInsert = `lookup.${lookup.name}`;
         // update text field with selected lookup
         const newValue = getValueAfterInsert(
           value,
@@ -213,13 +210,7 @@ export default function Suggestions(props) {
         onValueUpdate(newValue);
       }
     },
-    [
-      adaptorType,
-      textInsertPosition,
-      onValueUpdate,
-      showSuggestionsWithoutHandlebar,
-      value,
-    ]
+    [textInsertPosition, onValueUpdate, showSuggestionsWithoutHandlebar, value]
   );
   const handleLookupAdd = useCallback(
     lookup => {
