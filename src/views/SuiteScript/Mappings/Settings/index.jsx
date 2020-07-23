@@ -108,7 +108,6 @@ export default function MappingSettings(props) {
       const {
         settings,
         lookup: updatedLookup,
-        errorStatus,
         errorMessage,
       } = settingsUtil.getFormattedValue(
         { generate, extract, lookup },
@@ -116,7 +115,7 @@ export default function MappingSettings(props) {
       );
       const lookupObj = [];
 
-      if (errorStatus) {
+      if (errorMessage) {
         enquesnackbar({
           message: errorMessage,
           variant: 'error',

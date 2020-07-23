@@ -1421,10 +1421,6 @@ export default {
     type: 'checkbox',
     label: 'User directory is root',
   },
-  'ftp.tradingPartner': {
-    type: 'checkboxtradingpartnerfield',
-    label: 'External trading partner?',
-  },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
     label: 'Use implicit ftps',

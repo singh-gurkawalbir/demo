@@ -51,12 +51,6 @@ const allTabs = [
     Panel: ConnectionsPanel,
   },
   {
-    path: 'users',
-    label: 'Users',
-    Icon: GroupOfUsersIcon,
-    Panel: UsersPanel,
-  },
-  {
     path: 'notifications',
     label: 'Notifications',
     Icon: NotificationsIcon,
@@ -67,6 +61,12 @@ const allTabs = [
     label: 'Audit log',
     Icon: AuditLogIcon,
     Panel: AuditLogPanel,
+  },
+  {
+    path: 'users',
+    label: 'Users',
+    Icon: GroupOfUsersIcon,
+    Panel: UsersPanel,
   },
   {
     path: 'admin',
@@ -148,7 +148,7 @@ export default function IntegrationApp(props) {
     integrationAppUtil.isCloningSupported(
       integration._connectorId,
       integration.name
-    );
+    ) && accessLevel !== 'monitor';
 
   useEffect(() => {
     if (!addOnState || !addOnState.status) {

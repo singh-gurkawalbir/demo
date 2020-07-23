@@ -154,7 +154,7 @@ export function commsErrors(state) {
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
-    if (!c.isHidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
+    if (!c.hidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
       if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
     }
@@ -172,7 +172,7 @@ export function commsSummary(state) {
   if (commsState) {
     Object.keys(commsState).forEach(key => {
       const c = commsState[key];
-      if (!c.isHidden) {
+      if (!c.hidden) {
         if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
           hasError = true;
         } else if (c.retryCount > 0) {
@@ -948,7 +948,7 @@ export function flowType(state, flowId) {
   if (!exports) return '';
 
   if (isSimpleImportFlow(flow, exports)) {
-    return 'Data loader';
+    return 'Data Loader';
   }
 
   if (isRealtimeFlow(flow, exports)) {
@@ -3721,8 +3721,8 @@ export const makeFlowJobs = () => createSelector(
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
             name: cJob._exportId
-              ? resourceMap.exports[cJob._exportId].name
-              : resourceMap.imports[cJob._importId].name,
+              ? resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports[cJob._importId]?.name,
           };
 
           return { ...cJob, ...additionalChildProps };
@@ -5596,3 +5596,15 @@ export const getSuitescriptMappingSubRecordList = createSelector([
   }
   return emptySet;
 });
+export function tradingPartnerConnections(
+  state,
+  connectionId,
+) {
+  const connections = resourceList(state, { type: 'connections' }).resources;
+  const currConnection = resource(state, 'connections', connectionId);
+  return connections?.filter(c => (c.type === 'ftp' &&
+      c.ftp.hostURI === currConnection.ftp.hostURI &&
+      c.ftp.port === currConnection.ftp.port &&
+      c.sandbox === currConnection.sandbox
+  ));
+}

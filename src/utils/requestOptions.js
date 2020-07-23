@@ -131,7 +131,7 @@ export default function getRequestOptions(
       return {
         path: `/jobs/${resourceId}/family`,
         opts: { method: 'GET' },
-        hidden: true,
+        // hidden: true,
       };
     case actionTypes.JOB.REQUEST:
       return {
