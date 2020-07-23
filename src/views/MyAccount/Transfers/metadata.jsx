@@ -1,6 +1,7 @@
 import React from 'react';
 import Delete from './Actions/Delete';
 import Cancel from './Actions/Cancel';
+import TableHeadWithRefreshIcon from '../../../components/CeligoTable/TableHeadWithRefreshIcon';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 
 export default {
@@ -19,7 +20,7 @@ export default {
         heading: 'Integrations',
         value: r => r && r.integrations,
       },
-      { heading: 'Status', value: r => r && r.status },
+      { heading: <TableHeadWithRefreshIcon headerName="Status" resourceType="transfers" resourceCommPath="transfers/invited" />, value: r => r && r.status },
       {
         heading: 'Transfer date',
         value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,

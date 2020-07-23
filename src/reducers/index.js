@@ -4031,7 +4031,7 @@ export function getLastExportDateTime(state, flowId) {
 export function getTransferPreviewData(state) {
   return fromSession.getTransferPreviewData(state && state.session);
 }
-
+// TODO: We should move this logic to reducers
 export function transferListWithMetadata(state) {
   const transfers =
     resourceList(state, {
@@ -4043,22 +4043,6 @@ export function transferListWithMetadata(state) {
     let fromUser = '';
     let toUser = '';
     let integrations = [];
-
-    if (transfer.transferToUser && transfer.transferToUser._id) {
-      transfers[i].ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-    } else if (transfer.ownerUser && transfer.ownerUser._id) {
-      transfers[i].transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfers[i].isInvited = true;
-    }
-
     if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
       fromUser = transfers[i].ownerUser.name;
     }
@@ -4081,6 +4065,21 @@ export function transferListWithMetadata(state) {
       transfers[i].transferToUser.email
     ) {
       toUser = transfers[i].transferToUser.email;
+    }
+
+    if (transfer.transferToUser && transfer.transferToUser._id && !transfer.ownerUser) {
+      transfers[i].ownerUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+    } else if (transfer.ownerUser && transfer.ownerUser._id && !transfer.transferToUser) {
+      transfers[i].transferToUser = {
+        _id: preferences._id,
+        email: preferences.email,
+        name: 'Me',
+      };
+      transfers[i].isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {

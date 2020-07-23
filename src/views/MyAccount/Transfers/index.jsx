@@ -40,7 +40,7 @@ export default function Transfers() {
 
   return (
     <>
-      <LoadResources required resources="transfers,integrations">
+      <LoadResources resources="transfers,integrations">
         {!showInviteView && (
           <>
             <div className={classes.root}>
