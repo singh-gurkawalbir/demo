@@ -78,9 +78,7 @@ export default function (state = {}, action) {
 }
 
 export function getResourceSampleData(state, resourceId, stage) {
-  if (!resourceId || !state[resourceId]) return DEFAULT_VALUE;
-
-  const resourceData = state[resourceId].data;
+  const resourceData = state[resourceId]?.data;
 
   if (!resourceData) return DEFAULT_VALUE;
 
