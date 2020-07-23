@@ -126,14 +126,6 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
-  {
-    path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
-    breadcrumb: 'Licenses',
-  },
-  {
-    path: getRoutePath('/connectors/:connectorId/installBase'),
-    breadcrumb: 'Install base',
-  },
   { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
