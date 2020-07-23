@@ -77,33 +77,9 @@ export default function (state = {}, action) {
   });
 }
 
-function getRawData(resourceData) {
-  if (resourceData.raw) return resourceData.raw;
-
-  if (resourceData.parse) return resourceData.parse;
-
-  return DEFAULT_VALUE;
-}
-
-// It returns file's raw data stage with the associated file type
-function getRawFileData(resourceData) {
-  if (resourceData.rawFile) return resourceData.rawFile;
-  return DEFAULT_VALUE;
-}
-
-function getParsedData(resourceData) {
-  return resourceData.parse || resourceData.raw || DEFAULT_VALUE;
-}
-
 function getSampleData(resourceData, stage) {
   // If stage mentioned, fetch stage data
-  return stage
-    ? resourceData[stage] || DEFAULT_VALUE
-    : resourceData.transform || resourceData.parse || DEFAULT_VALUE;
-}
-
-function getPreviewData(resourceData) {
-  return resourceData.parse || DEFAULT_VALUE;
+  return resourceData[stage] || DEFAULT_VALUE;
 }
 
 export function getResourceSampleData(state, resourceId, stage) {
@@ -113,26 +89,7 @@ export function getResourceSampleData(state, resourceId, stage) {
 
   if (!resourceData) return DEFAULT_VALUE;
 
-  switch (stage) {
-    case 'raw':
-      return getRawData(resourceData);
-    case 'rawFile':
-      return getRawFileData(resourceData);
-    case 'parse':
-      return getParsedData(resourceData);
-    case 'preview':
-    // Added a new stage to handle preview mode for File adaptors
-    // TODO @Raghu: Go through existing stages , refactor as there are multiple stages - can lead to ambiguity
-      return getPreviewData(resourceData);
-    case 'csv':
-      return getSampleData(resourceData, 'csv');
-    case 'sample':
-      return getSampleData(resourceData);
-    case 'request':
-      return resourceData.request || DEFAULT_VALUE;
-    default:
-      return DEFAULT_VALUE;
-  }
+  return getSampleData(resourceData, stage);
 }
 
 function getResourceSampleDataStatus(state, resourceId) {
