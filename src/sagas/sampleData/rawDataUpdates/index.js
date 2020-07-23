@@ -1,4 +1,4 @@
-import { takeLatest, select, call, put, takeEvery } from 'redux-saga/effects';
+import { select, call, put, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { resource, resourceFormState, resourceData } from '../../../reducers';
@@ -15,7 +15,7 @@ import {
   isRestCsvMediaTypeExport,
 } from '../../../utils/resource';
 import { exportPreview } from '../utils/previewCalls';
-import { saveRawDataOnResource } from './utils';
+import { saveRawDataOnResource, removeRawDataOnResource } from './utils';
 import saveRawDataForFileAdaptors from './fileAdaptorUpdates';
 import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRulesGenerator';
 
@@ -72,6 +72,9 @@ function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
         resourceId,
         rawData: parseData && JSON.stringify(parseData),
       });
+    } else {
+      // If there is no preview data , remove rawDataKey if present on the resource
+      yield call(removeRawDataOnResource, { resourceId });
     }
   } else {
     // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
@@ -196,5 +199,5 @@ function* onResourceUpdate({
 
 export default [
   takeEvery(actionTypes.RESOURCE.CREATED, onResourceCreate),
-  takeLatest(actionTypes.RESOURCE.UPDATED, onResourceUpdate),
+  takeEvery(actionTypes.RESOURCE.UPDATED, onResourceUpdate),
 ];

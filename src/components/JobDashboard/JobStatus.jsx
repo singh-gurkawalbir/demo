@@ -18,8 +18,10 @@ const useStyles = makeStyles(theme => ({
   link: {
     fontFamily: 'Roboto400',
     color: theme.palette.primary.main,
+    padding: 0,
     '&:hover': {
       color: theme.palette.primary.light,
+      background: 'none',
     },
   },
 }));

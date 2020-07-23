@@ -14,6 +14,7 @@ import Revoke from '../../actions/Connections/Revoke';
 import Delete from '../../actions/Delete';
 import References from '../../actions/References';
 import Edit from '../../actions/Edit';
+import TradingPartner from '../../actions/Connections/TradingPartner';
 
 export default {
   columns: (r, actionProps) => {
@@ -78,7 +79,7 @@ export default {
       }
     }
     actionsToReturn = [ConfigureDebugger, ...actionsToReturn, AuditLogs, References];
-    if (actionProps.integrationId && !r._connectorId) {
+    if (actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
       actionsToReturn = [...actionsToReturn, Deregister];
     }
     if (r.type === 'netsuite' || r.type === 'salesforce') {
@@ -92,6 +93,9 @@ export default {
       actionsToReturn = [...actionsToReturn, Revoke];
     }
     actionsToReturn = [Edit, ...actionsToReturn];
+    if (r.type === 'ftp' && !r._connectorId && actionProps?.showTradingPartner) {
+      actionsToReturn = [...actionsToReturn, TradingPartner];
+    }
     if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
       actionsToReturn = [...actionsToReturn, Delete];
     }
