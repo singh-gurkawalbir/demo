@@ -85,18 +85,10 @@ export function getResourceSampleData(state, resourceId, stage) {
   return resourceData[stage] || DEFAULT_VALUE;
 }
 
-function getResourceSampleDataStatus(state, resourceId) {
-  return state[resourceId]?.status;
-}
-
-function getResourceSampleDataError(state, resourceId) {
-  return state[resourceId]?.error;
-}
-
 export function getResourceSampleDataWithStatus(state, resourceId, stage) {
   return {
     data: getResourceSampleData(state, resourceId, stage),
-    status: getResourceSampleDataStatus(state, resourceId),
-    error: getResourceSampleDataError(state, resourceId),
+    status: state[resourceId]?.status,
+    error: state[resourceId]?.error,
   };
 }
