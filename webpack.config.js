@@ -88,7 +88,8 @@ module.exports = (env, argv) => {
     config.plugins.push(new BundleAnalyzerPlugin());
   } else if (config.mode === 'development') {
     config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.devtool = 'inline-source-map';
+    config.output.filename = '[name].js';
+    config.devtool = 'eval-cheap-module-source-map';
     config.optimization.minimize = false;
     const getProxyOpts = () => {
       console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);

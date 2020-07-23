@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
@@ -7,6 +7,7 @@ import ModalDialog from '../../components/ModalDialog';
 import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -50,6 +51,7 @@ export default function ChangePassword({ show, onClose }) {
   const error = useSelector(state => selectors.changePasswordFailure(state));
   const success = useSelector(state => selectors.changePasswordSuccess(state));
   const message = useSelector(state => selectors.changePasswordMsg(state));
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleChangePasswordClick = useCallback(
     formVal => {
       const { currentPassword, newPassword } = formVal;
@@ -63,6 +65,19 @@ export default function ChangePassword({ show, onClose }) {
     [dispatch]
   );
 
+  useEffect(() => {
+    // Incase password change is successful, we should close changePassword form
+    // Show notification on top with success message
+    if (success && message) {
+      onClose();
+      enqueueSnackbar({
+        message,
+        variant: 'success',
+        persist: true,
+      });
+    }
+  }, [success, message, enqueueSnackbar, onClose]);
+
   return (
     <ModalDialog show={show} onClose={onClose}>
       <span>Change Password</span>
@@ -72,11 +87,7 @@ export default function ChangePassword({ show, onClose }) {
         </NotificationToaster>
       )}
 
-      {success ? (
-        <NotificationToaster variant="success" size="large">
-          <Typography variant="h6">{message}</Typography>
-        </NotificationToaster>
-      ) : (
+      {!success &&
         <div className={classes.container}>
           <Typography variant="body2">
             {`Please note that clicking 'Change Password' will sign you out of the
@@ -91,8 +102,7 @@ export default function ChangePassword({ show, onClose }) {
               Change password
             </DynaSubmit>
           </DynaForm>
-        </div>
-      )}
+        </div>}
     </ModalDialog>
   );
 }

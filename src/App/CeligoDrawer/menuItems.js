@@ -97,7 +97,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors', },
+        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors', },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
