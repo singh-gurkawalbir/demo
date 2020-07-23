@@ -87,27 +87,30 @@ export default function UserList({ integrationId, onEditUserClick }) {
 
   const statusHandler = useCallback(
     ({ status, message }) => {
-      enquesnackbar({
-        message,
-        variant: status,
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'center',
-        },
-        // eslint-disable-next-line react/display-name
-        action: key => (
-          <IconButton
-            data-test="closeUserListSnackbar"
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => {
-              closeSnackbar(key);
-            }}>
-            <CloseIcon />
-          </IconButton>
-        ),
-      });
+      // In case of empty message, skip calling enqueSnackbar
+      if (message) {
+        enquesnackbar({
+          message,
+          variant: status,
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center',
+          },
+          // eslint-disable-next-line react/display-name
+          action: key => (
+            <IconButton
+              data-test="closeUserListSnackbar"
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => {
+                closeSnackbar(key);
+              }}>
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+      }
     },
     [closeSnackbar, enquesnackbar]
   );

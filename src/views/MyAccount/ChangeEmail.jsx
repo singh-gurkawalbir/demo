@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -7,6 +7,7 @@ import ModalDialog from '../../components/ModalDialog';
 import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -56,6 +57,7 @@ export default function ChangeEmail({ show, onClose }) {
   const error = useSelector(state => selectors.changeEmailFailure(state));
   const success = useSelector(state => selectors.changeEmailSuccess(state));
   const message = useSelector(state => selectors.changeEmailMsg(state));
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const handleEmailChangeClick = useCallback(
     formVal => {
       const payload = {
@@ -68,6 +70,19 @@ export default function ChangeEmail({ show, onClose }) {
     [dispatch]
   );
 
+  useEffect(() => {
+    // Incase email change is successful, we should close Change Email form
+    // and Show notification on top with success message
+    if (success && message) {
+      onClose();
+      enqueueSnackbar({
+        message,
+        variant: 'success',
+        persist: true,
+      });
+    }
+  }, [success, message, enqueueSnackbar, onClose]);
+
   return (
     <ModalDialog show={show} onClose={onClose}>
       Change email
@@ -76,11 +91,7 @@ export default function ChangeEmail({ show, onClose }) {
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
       )}
-      {success ? (
-        <NotificationToaster variant="success" size="large">
-          <Typography variant="h6">{message}</Typography>
-        </NotificationToaster>
-      ) : (
+      {!success &&
         <div className={classes.container}>
           <DynaForm fieldMeta={changeEmailFieldMeta}>
             <DynaSubmit
@@ -90,8 +101,7 @@ export default function ChangeEmail({ show, onClose }) {
               Change email
             </DynaSubmit>
           </DynaForm>
-        </div>
-      )}
+        </div>}
     </ModalDialog>
   );
 }

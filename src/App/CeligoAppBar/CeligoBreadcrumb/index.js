@@ -16,6 +16,7 @@ import EditResourceTypeCrumb from './crumbs/EditResourceType';
 import AddResourceTypeCrumb from './crumbs/AddResourceType';
 import suiteScriptRoutes from './suiteScript';
 import getRoutePath from '../../../utils/routePaths';
+import ConnectorCrumb from './crumbs/Connector';
 
 const useStyles = makeStyles(theme => ({
   breadCrumb: {
@@ -196,6 +197,19 @@ const routes = [
     ],
   },
   {
+    path: getRoutePath('/connectors'),
+    breadcrumb: 'Integration Apps',
+    childRoutes: [
+      { path: '/edit/:resourceType/:resourceId', breadcrumb: EditResourceTypeCrumb },
+      { path: '/add/:resourceType/:resourceId', breadcrumb: AddResourceTypeCrumb },
+      { path: '/:connectorId',
+        breadcrumb: ConnectorCrumb,
+        childRoutes: [
+          { path: '/connectorLicenses', breadcrumb: 'Licenses' },
+          { path: '/installBase', breadcrumb: 'Install base' }]}
+    ]
+  },
+  {
     path: getRoutePath('/marketplace'),
     breadcrumb: 'Marketplace',
     childRoutes: [
@@ -296,7 +310,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
         const childPath = pathname.replace(match.url, '');
         let childCrumbs;
 
-        // possibly child routes? time to recuse.
+        // possibly child routes? time to recurse.
         if (r.childRoutes) {
           childCrumbs = parseUrl(childPath, r.childRoutes, newUrl, newParams);
 

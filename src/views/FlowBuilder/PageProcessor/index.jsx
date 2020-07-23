@@ -243,12 +243,12 @@ const PageProcessor = ({
       if (pp.type === 'export') {
         processorActions.push(
           {
-            ...outputFilterAction,
-            isUsed: usedActions[actionsMap.outputFilter],
-          },
-          {
             ...transformationAction,
             isUsed: usedActions[actionsMap.transformation],
+          },
+          {
+            ...outputFilterAction,
+            isUsed: usedActions[actionsMap.outputFilter],
           },
           {
             ...pageProcessorHooksAction,
