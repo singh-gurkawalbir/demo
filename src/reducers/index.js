@@ -3721,8 +3721,8 @@ export const makeFlowJobs = () => createSelector(
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
             name: cJob._exportId
-              ? resourceMap.exports[cJob._exportId].name
-              : resourceMap.imports[cJob._importId].name,
+              ? resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports[cJob._importId]?.name,
           };
 
           return { ...cJob, ...additionalChildProps };

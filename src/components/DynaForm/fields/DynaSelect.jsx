@@ -181,7 +181,7 @@ export default function DynaSelect(props) {
       options.reduce(
         (itemsSoFar, option) =>
           itemsSoFar.concat(
-            option.items.map(item => {
+            option?.items?.map(item => {
               let label;
               let value;
 

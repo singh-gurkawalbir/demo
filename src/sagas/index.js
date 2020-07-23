@@ -94,7 +94,7 @@ export function* apiCallWithRetry(args) {
     // logout effect succeeded then the apiResp would be undefined
     if (timeoutEffect || logout) return null;
 
-    const { data } = apiResp.response;
+    const { data } = apiResp.response || {};
 
     return data;
   } finally {
