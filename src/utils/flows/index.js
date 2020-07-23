@@ -52,6 +52,7 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     hooks,
     responseTransform = {},
     http = {},
+    netsuite = {},
   } = resource;
   const {
     responseMapping = {},
@@ -124,8 +125,9 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
       return !!script._scriptId;
     }
 
-    case actionsMap.hooks:
-      return !!hooks;
+    case actionsMap.hooks: {
+      return !!hooks || !!netsuite.restlet?.hooks || !!netsuite.distributed?.hooks;
+    }
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
 

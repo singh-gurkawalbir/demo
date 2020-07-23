@@ -16,6 +16,7 @@ export default function HandlebarsEditor(props) {
     disabled,
     enableAutocomplete,
     lookups = [],
+    rule
   } = props;
   const dispatch = useDispatch();
   const {
@@ -63,8 +64,8 @@ export default function HandlebarsEditor(props) {
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluateDelay: 500,
-        template: props.rule,
-        _init_template: props.rule,
+        template: typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2),
+        _init_template: rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
       })
@@ -76,7 +77,7 @@ export default function HandlebarsEditor(props) {
     editorId,
     props.data,
     props.isSampleDataLoading,
-    props.rule,
+    rule,
     props.strict,
   ]);
   const handlePreview = () => {

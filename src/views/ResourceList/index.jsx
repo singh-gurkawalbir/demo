@@ -79,7 +79,7 @@ export default function ResourceList(props) {
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
   let createResourceLabel = '';
   if (resourceType) {
-    if (['accesstokens', 'apis'].includes(resourceType)) {
+    if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;
     } else {
       createResourceLabel = resourceName.toLowerCase();
