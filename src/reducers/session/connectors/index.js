@@ -30,6 +30,11 @@ export default (state = {}, action) => {
       newState[_integrationId][fieldName] = {};
 
       return newState;
+    case actionTypes.CONNECTORS.STATUS_CLEAR:
+      if (newState[_integrationId][fieldName]) {
+        newState[_integrationId][fieldName].isLoading = false;
+      }
+      return newState;
     default:
       return state;
   }

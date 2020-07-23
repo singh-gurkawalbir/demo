@@ -120,7 +120,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
     return 'Create source';
   }
 
-  if (['accesstokens', 'apis'].includes(resourceType)) {
+  if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
 

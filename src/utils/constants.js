@@ -279,7 +279,6 @@ export const REST_ASSISTANTS = [
   'servicenow',
   'squareup',
   'stripe',
-  'surveymonkey',
   'twilio',
   'woocommerce',
   'zendesk',

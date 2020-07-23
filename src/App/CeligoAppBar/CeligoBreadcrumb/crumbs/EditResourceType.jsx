@@ -19,7 +19,7 @@ export default function EditResourceTypeCrumb({
     })
   );
   const action = isNewId(resourceId) ? 'Add' : 'Edit';
-  if (resourceType === 'accesstokens') {
+  if (resourceType === 'accesstokens' || resourceType === 'connectors') {
     return `${action} ${resourceLabel}`;
   }
 

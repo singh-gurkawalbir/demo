@@ -103,6 +103,6 @@ export default {
   name: 'inputFilter',
   position: 'left',
   Icon,
-  helpKey: 'pp.inputFilter',
+  helpKey: 'fb.pp.inputFilter',
   Component: InputFilter,
 };

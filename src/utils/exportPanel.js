@@ -185,3 +185,5 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
     other: JSON.stringify(safeParse(others), null, 2)
   };
 };
+
+export const getPostUrl = requestData => requestData?.data?.[0]?.url;
