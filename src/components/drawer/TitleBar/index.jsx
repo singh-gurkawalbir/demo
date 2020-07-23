@@ -8,7 +8,7 @@ import BackArrowIcon from '../../icons/BackArrowIcon';
 
 const useStyles = makeStyles(theme => ({
   titleBar: {
-    background: theme.palette.background.default,
+    background: theme.palette.common.white,
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(2, 3),
@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    color: theme.palette.secondary.main,
   },
   helpTextButton: {
     float: 'right',
@@ -71,7 +72,7 @@ export default function DrawerTitleBar({
           <BackArrowIcon />
         </IconButton>
       )}
-      <Typography variant="h4" className={classes.title}>
+      <Typography variant="h3" className={classes.title}>
         {title}
       </Typography>
       {helpKey && (

@@ -28,9 +28,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary.main,
     }
   },
-  pillButton: {
-    borderRadius: 15,
-  },
 }));
 
 function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
@@ -69,11 +66,10 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
     return (
       <IconTextButton
         disabled={disabled}
-        variant="outlined"
-        className={classes.pillButton}
+        variant="text"
         data-test="runFlow"
         onClick={onRunClick}>
-        Run now <RunIcon />
+        <RunIcon /> Run now
       </IconTextButton>
     );
   }

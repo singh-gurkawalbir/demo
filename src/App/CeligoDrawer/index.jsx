@@ -126,6 +126,7 @@ const useStyles = makeStyles(theme => ({
   },
   itemIconRoot: {
     minWidth: 45,
+    color: theme.palette.background.paper,
   },
   menuList: {
     overflowY: 'auto',

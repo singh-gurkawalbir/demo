@@ -164,6 +164,9 @@ const SuiteScriptMapping = (props) => {
             ssLinkedConnectionId,
             integrationId,
             flowId,
+            options: {
+              refreshCache: true,
+            }
           }
         )
       );
