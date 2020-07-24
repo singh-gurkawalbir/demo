@@ -539,20 +539,7 @@ export default {
       );
     }
 
-    if (!selectedGenerateObj) {
-      delete fieldMeta.fieldMap.defaultSFSelect;
-      delete fieldMeta.fieldMap.hardcodedSFSelect;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
-      delete fieldMeta.fieldMap.lookupSFSelect;
-      fields = fields.filter(
-        el =>
-          ![
-            'defaultSFSelect',
-            'hardcodedSFSelect',
-            'hardcodedCheckbox',
-            'lookupSFSelect',
-          ].includes(el));
-    } else if (selectedGenerateObj.type === 'boolean') {
+    if (selectedGenerateObj?.type === 'boolean') {
       fieldMeta.fieldMap.default.type = 'radiogroup';
       fieldMeta.fieldMap.hardcodedDefault.type = 'radiogroup';
       fieldMeta.fieldMap.lookupDefault.type = 'radiogroup';
@@ -568,7 +555,7 @@ export default {
       fieldMeta.fieldMap.hardcodedDefault.options = options;
       fieldMeta.fieldMap.lookupDefault.options = options;
       // show it set false to default
-    } else if (selectedGenerateObj.type === 'picklist') {
+    } else if (selectedGenerateObj?.type === 'picklist') {
       fieldMeta.fieldMap.default.type = 'select';
       fieldMeta.fieldMap.hardcodedDefault.type = 'select';
       fieldMeta.fieldMap.lookupDefault.type = 'select';
@@ -580,7 +567,7 @@ export default {
       fieldMeta.fieldMap.default.options = options;
       fieldMeta.fieldMap.hardcodedDefault.options = options;
       fieldMeta.fieldMap.lookupDefault.options = options;
-    } else if (selectedGenerateObj.type === 'textarea') {
+    } else if (selectedGenerateObj?.type === 'textarea') {
       fieldMeta.fieldMap.hardcodedDefault.multiline = true;
       fieldMeta.fieldMap.hardcodedDefault.rowsMax = 5;
       fieldMeta.fieldMap.lookupDefault.multiline = true;
