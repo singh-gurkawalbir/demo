@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { IconButton, MenuItem, Menu } from '@material-ui/core';
+import { IconButton, MenuItem, Menu, Tooltip } from '@material-ui/core';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 
 export default function ActionMenu({ actions, selectAction }) {
@@ -18,7 +18,7 @@ export default function ActionMenu({ actions, selectAction }) {
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const renderActionMenu = useCallback(
-    ({ label, icon, hasAccess, actionProps, rowData, component }) => {
+    ({ label, icon, disabledActionText, hasAccess, actionProps, rowData, component }) => {
       const handleActionClick = () => {
         selectAction(component);
         handleMenuClose();
@@ -27,12 +27,23 @@ export default function ActionMenu({ actions, selectAction }) {
       if (hasAccess && !hasAccess({ state, ...actionProps, rowData })) {
         return;
       }
+      const disabledActionTitle = disabledActionText?.({ state, ...actionProps, rowData });
 
       return (
-        <MenuItem key={label} onClick={handleActionClick}>
-          {icon}
-          {label}
-        </MenuItem>
+        disabledActionTitle ?
+          <Tooltip title={disabledActionTitle} placement="bottom" >
+            <div>
+              <MenuItem key={label} disabled>
+                {icon}
+                {label}
+              </MenuItem>
+            </div>
+          </Tooltip>
+          :
+          <MenuItem key={label} onClick={handleActionClick}>
+            {icon}
+            {label}
+          </MenuItem>
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
