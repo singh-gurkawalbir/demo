@@ -81,12 +81,12 @@ export default function RefreshableIntegrationAppSetting(props) {
   }, [fieldName, options, value, valueAndLabel]);
 
   useEffect(() => {
-    if (!value && newValue && !autofill && disabled) {
+    if (newValue && (newValue !== value) && !autofill && disabled) {
       setAutofill(true);
       onFieldChange(fieldName, newValue, true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newValue, autofill, fieldName, disabled, value]);
+  }, [newValue, autofill, fieldName, disabled]);
 
   useEffect(() => {
     if (netSuiteSystemDomain && value && value.id) {
