@@ -12,7 +12,6 @@ import {
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
 
-
 const useStyle = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -35,7 +34,6 @@ const useStyle = makeStyles(theme => ({
     right: 'unset',
   },
 }));
-
 
 const TabLabel = ({layout, fieldMap, label, tabType }) => (
   <FormContext.Consumer>
@@ -131,7 +129,6 @@ function FormWithSave(props) {
 
           })}
 
-
         </>
       )}
     </FormContext.Consumer>
@@ -148,7 +145,6 @@ export function TabIAComponent(props) {
   );
 }
 
-
 const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
   useEffect(() => {
     Object.values(fieldMap).forEach((field) => {
@@ -156,7 +152,6 @@ const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   return null;
 };
@@ -215,7 +210,6 @@ export function TabComponentSimple(props) {
 
   );
 }
-
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (

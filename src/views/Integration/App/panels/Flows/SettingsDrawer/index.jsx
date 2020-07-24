@@ -8,8 +8,9 @@ import * as selectors from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager } from '..';
+import { IAFormStateManager, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -85,6 +86,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
     null,
     parentUrl
   );
+  const activeTabProps = useActiveTab();
 
   return (
     <Drawer
@@ -98,6 +100,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
       <IAFormStateManager
+        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
         })}
