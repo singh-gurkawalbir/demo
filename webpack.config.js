@@ -90,6 +90,10 @@ module.exports = (env, argv) => {
     config.plugins.push(new ReactRefreshWebpackPlugin());
     config.output.filename = '[name].js';
     config.devtool = 'eval-cheap-module-source-map';
+    // if the above source-map scheme results in poor stack traces against pre-compiled code (line number)
+    // we can temporarily toggle back to the inline-source-map scheme below...
+    // config.devtool = 'inline-source-map';
+
     config.optimization.minimize = false;
     const getProxyOpts = () => {
       console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
