@@ -19,7 +19,14 @@ export default {
         heading: 'Integrations',
         value: r => r && r.integrations,
       },
-      { heading: 'Status', value: r => r && r.status },
+      { heading: 'Status',
+        value: r => {
+          if (r?.dismissed) {
+            return 'Dismissed';
+          }
+          return r?.status === 'unapproved' ? 'Pending acceptance' : r?.status.charAt(0).toUpperCase() + r?.status.slice(1);
+        }
+      },
       {
         heading: 'Transfer date',
         value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
