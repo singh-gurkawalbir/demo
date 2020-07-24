@@ -715,7 +715,7 @@ export default {
         { field: 'fieldMappingType', is: ['lookup'] },
       ];
     } else if (generateFieldType === 'checkbox') {
-      // hardcoded actions to be removed in case generate type is select
+      // hardcoded actions to be removed in case generate type is checkbox
       delete fieldMeta.fieldMap.hardcodedAction;
       fields = fields.filter(el => el !== 'hardcodedAction');
 
