@@ -56,8 +56,7 @@ const getFormattedLookup = (lookup, formVal) => {
         lookupTmp.default =
           formVal.lookupDefault ||
           formVal.lookupSelect ||
-          formVal.lookupCheckbox ||
-          formVal.lookupSFSelect;
+          formVal.lookupCheckbox;
         break;
       default:
     }
@@ -219,7 +218,7 @@ export default {
             break;
           case 'default':
             settings.hardCodedValue =
-              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
+              formVal.hardcodedDefault;
             break;
           default:
         }
@@ -242,7 +241,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default || formVal.defaultSFSelect;
+          settings.default = formVal.default;
           break;
         default:
       }
