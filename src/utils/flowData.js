@@ -138,14 +138,17 @@ const pathRegex = {
 export function getPreviewStageData(previewData, previewStage = 'parse') {
   const stages = (previewData && previewData.stages) || [];
 
-  // Incase of raw preview stage, returns the first stage data is in
-  // Incase of http/rest first stage is 'raw' but for NS/SF it is parse
+  // Incase of raw preview stage, returns the first stage data it is in
+  // Incase of http/rest first stage is 'raw' but for NS/SF/DB adaptors it is parse
+  // NOTE: 'raw' preview stage is explicitly used to extract the content to be stored in S3
   if (previewStage === 'raw') {
     // Fetches first of 'raw' or 'parse' stage from preview data
     const stageData = stages.find(
       stage => stage.name === 'raw' || stage.name === 'parse'
     );
-
+    if (stageData?.name === 'raw') {
+      return stageData.data?.[0];
+    }
     return stageData && stageData.data;
   }
 
