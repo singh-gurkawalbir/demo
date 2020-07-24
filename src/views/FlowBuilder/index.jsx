@@ -341,14 +341,20 @@ function FlowBuilder() {
     // a new browser tab session always has a history depth of 3!
     // if depth is more than 3, we are safe to just go back in the history queue.
     if (history.length > 3) {
-      history.goBack();
+      return history.goBack();
     }
-    // Otherwise parse the location and return the user to the integration details
-    // page.
+
+    // Otherwise parse the location and return the user to the integration
+    // details page.
     const parts = location.pathname.split('/');
-    const newPath = `${parts.slice(0, 4).join('/')}/flows`;
-    history.push(newPath);
+
+    if (parts[1].toLowerCase() === 'integrationapps') {
+      // if user is editing an IA flow, the url is 1 segment longer.
+      return history.push(parts.slice(0, 4).join('/'));
+    }
+    return history.push(parts.slice(0, 3).join('/'));
   }, [history, location]);
+
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
