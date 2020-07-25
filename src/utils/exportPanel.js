@@ -26,11 +26,11 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
 
-  // Handles File based preview stage for DL, Rest csv
-  // Other file adaptors are handled down under switch
-  if (isDataLoader || isRestCsvExport) {
+  // Handles File based preview stage
+  const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
+  if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
     return [
-      { label: 'Parsed output', value: 'preview' },
+      { label: 'Parsed output', value: 'parse' },
     ];
   }
 
@@ -51,12 +51,6 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
         { label: 'HTTP request', value: 'request' },
         { label: 'HTTP response', value: 'raw' },
         { label: 'Parsed output', value: 'parse' },
-      ];
-    case 'ftp':
-    case 's3':
-    case 'as2':
-      return [
-        { label: 'Parsed output', value: 'preview' },
       ];
     case 'mongodb':
     case 'dynamodb':
