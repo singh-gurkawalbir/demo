@@ -235,7 +235,7 @@ const PageProcessor = ({
       {
         ...inputFilterAction,
         isUsed: usedActions[actionsMap.inputFilter],
-        helpKey: `fb.pp.${resourceType}.inputFilter`,
+        helpKey: 'fb.pp.inputFilter',
       },
     ];
 
