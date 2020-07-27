@@ -68,8 +68,8 @@ export default function ApplicationsList({ filter }) {
   applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(
     a => {
-      const name = (connectorsMetadata?.find(c => c?.id === a) || {}).name || a;
-      return name?.toLowerCase().includes(filter.keyword && filter.keyword.toLowerCase());
+      const name = (connectorsMetadata?.find(c => c.id === a) || {}).name || a;
+      return name?.toLowerCase().includes(filter?.keyword?.toLowerCase());
     }
   );
   useEffect(() => {
