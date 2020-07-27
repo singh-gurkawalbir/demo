@@ -6,7 +6,6 @@ import { Button, MenuItem } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import actions from '../../actions';
 
-
 const useStyles = makeStyles({
   donwloadInstallerBtn: {
     padding: 0,

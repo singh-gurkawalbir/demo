@@ -14,8 +14,8 @@ const useEnableButtonOnTouchedForm = ({
   flowId,
   sectionId,
   isIAForm,
-  isFormTouchedForMeta,
-  ignoreFormTouchedCheck,
+  resourceType,
+  resourceId,
   showCustomFormValidations,
   ssLinkedConnectionId,
 }) => {
@@ -54,23 +54,12 @@ const useEnableButtonOnTouchedForm = ({
             sectionId
           )
         );
-      }e else dispatch(actions.form.showFormValidations(formKey));
+      } else dispatch(actions.form.showFormValidations(formKey));
 
       // Util user resolves form validation do we allow the onClick to take place ...
       if (formIsValid) onClick(value);
     },
-    [
-      ssLinkedConnectionId,
-      showCustomFormValidations,
-      isIAForm,
-      dispatch,
-      integrationId,
-      flowId,
-      sectionId,
-      formKey,
-      formIsValid,
-      onClick,
-    ]
+    [ssLinkedConnectionId, showCustomFormValidations, isIAForm, dispatch, formKey, formIsValid, onClick, resourceType, resourceId, integrationId, flowId, sectionId]
   );
 
   return { formTouched, onClickWhenValid };

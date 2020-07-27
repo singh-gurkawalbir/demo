@@ -1,4 +1,4 @@
-import { Fragment, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import * as selectors from '../../reducers';
@@ -69,7 +69,7 @@ export default function FormFragment({ defaultFields, formKey }) {
   // console.log('see rerender form ', formParentContext);
 
   return (
-    <Fragment>
+    <>
       {defaultFields.map(field => (
         <FieldComponent
           key={field.id}
@@ -82,6 +82,6 @@ export default function FormFragment({ defaultFields, formKey }) {
           registerField={registerField}
         />
       ))}
-    </Fragment>
+    </>
   );
 }

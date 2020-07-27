@@ -1,6 +1,6 @@
 /* global describe, test, expect, beforeAll */
 import actions from '../../../actions';
-import forms from './';
+import forms from '.';
 
 describe('reducer expression test cases', () => {
   const formKey = '123';

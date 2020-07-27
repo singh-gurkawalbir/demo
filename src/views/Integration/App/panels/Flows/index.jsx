@@ -21,7 +21,7 @@ import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 import { generateNewId } from '../../../../../utils/resource';
-import { GenerateActions } from '../../../../../components/drawer/Resource/Panel/ActionsFactory';
+import GenerateActions from '../../../../../components/drawer/Resource/Panel/ActionsFactory';
 
 const useStyles = makeStyles(theme => ({
   root: {

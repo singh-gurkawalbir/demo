@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { useEffect, useCallback } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
@@ -52,7 +51,7 @@ const NetsuiteValidateButton = props => {
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, resourceId)
   );
-  const matchingActionField = Object.values(fields)?.find(field => field.id === id);
+  const matchingActionField = fields && Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
 
   useEffect(() => {
@@ -103,14 +102,13 @@ const NetsuiteValidateButton = props => {
     }
   }, [fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible, registerField]);
 
-  if (!fields) return null;
-
   // Clean up action on un mount , to clear user roles when container is closed
   // TODO @Raghu: check ,should we clear on validate click? or on un mount?
   useEffect(() => () => dispatch(
     actions.resource.connections.netsuite.clearUserRoles(resourceId)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), []);
+  if (!fields) return null;
 
   if (id) {
     if (!fieldsIsVisible) return null;

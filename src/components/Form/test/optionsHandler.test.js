@@ -1,6 +1,6 @@
-/* global describe,test,expect,beforeAll,jest ,afterAll */
+/* global describe,test,expect,beforeEach,afterEach,jest */
 
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { createStore } from 'redux';
 import reducer from '../../../reducers';
 import { Component, reduxWrappedComponent } from './form.test';
@@ -32,31 +32,34 @@ describe('options handler', () => {
 
     layout: { fields: ['field1', 'field2', 'field3'] },
   };
-  // eslint-disable-next-line no-unused-vars
-  const optionsHandler = jest.fn((fieldId, fields, parentContext) => {
-    const options = [
-      {
-        items: [
-          {
-            label: 'A',
-            value: '1',
-          },
-          {
-            label: 'B',
-            value: '2',
-          },
-        ],
-      },
-    ];
 
-    return options;
-  });
   const formKey = 123;
   let store;
   let queryByDisplayValue;
+  let optionsHandler;
 
-  beforeAll(() => {
+  beforeEach(() => {
+    // eslint-disable-next-line no-unused-vars
+    optionsHandler = jest.fn((fieldId, fields, parentContext) => {
+      const options = [
+        {
+          items: [
+            {
+              label: 'A',
+              value: '1',
+            },
+            {
+              label: 'B',
+              value: '2',
+            },
+          ],
+        },
+      ];
+
+      return options;
+    });
     // build up the state
+
     store = createStore(reducer, {
       user: { profile: { name: 'profile 1' } },
     });
@@ -74,10 +77,11 @@ describe('options handler', () => {
       })
     ));
   });
-
-  afterAll(() => {
-    cleanup();
+  afterEach(() => {
+    // build up the state
+    optionsHandler.mockReset();
   });
+
   test('options handler is called initially for each field', () => {
     expect(optionsHandler.mock.calls.length).toBe(3); // Called for each field
   });
@@ -102,6 +106,6 @@ describe('options handler', () => {
         value: 'test2',
       },
     });
-    expect(optionsHandler.mock.calls.length).toBe(4);
+    expect(optionsHandler.mock.calls.length).toBe(3);
   });
 });

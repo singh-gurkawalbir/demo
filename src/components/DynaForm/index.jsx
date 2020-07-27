@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import React, { useEffect, useRef } from 'react';
 import DynaFormGenerator from './DynaFormGenerator';
 
-
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
     maxHeight: '100%',

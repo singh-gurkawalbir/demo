@@ -6,6 +6,7 @@ import * as selectors from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import consolidatedActions from './Actions';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 const mapStateToProps = (
   state,
@@ -130,6 +131,16 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   );
 };
 
+const Form = props => {
+  const { fieldMeta } = props;
+  const formKey = useFormInitWithPermissions({
+    ...props,
+    fieldsMeta: fieldMeta,
+  });
+
+  return <DynaForm {...props} formKey={formKey} />;
+};
+
 export function ActionsFactory({ variant = 'edit', ...props }) {
   const { resource, resourceType } = props;
   const { actions } = props.fieldMeta;
@@ -150,13 +161,13 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   }, [actions, resource?.type, resourceType, secondaryActions]);
 
   if (variant === 'view') {
-    return <DynaForm {...props} />;
+    return <Form {...props} />;
   }
 
   return (
-    <DynaForm {...props} isResourceForm>
+    <Form {...props} isResourceForm>
       <ActionButtons actions={actionButtons} formProps={props} />
-    </DynaForm>
+    </Form>
   );
 
   // // When action buttons is provided in the metadata then we generate the action buttons for you

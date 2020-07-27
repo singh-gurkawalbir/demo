@@ -1,7 +1,7 @@
-/* global describe,test,expect,afterEach ,beforeEach,beforeAll,afterAll */
+/* global describe,test,expect,beforeEach */
 
 import { MuiThemeProvider } from '@material-ui/core';
-import { cleanup, fireEvent, render, configure } from '@testing-library/react';
+import { fireEvent, render, configure } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -76,10 +76,6 @@ describe('validation warnings', () => {
 
     layout: { fields: ['field1', 'validField'] },
   };
-
-  afterEach(() => {
-    cleanup();
-  });
 
   describe('shown validation errors immediately', () => {
     // developer state
@@ -214,7 +210,7 @@ describe('visible behavior', () => {
   };
   let queryByDisplayValue;
 
-  beforeAll(() => {
+  beforeEach(() => {
     // build up the state
     store = createStore(reducer, {
       user: { profile: { name: 'profile 1' } },
@@ -227,9 +223,6 @@ describe('visible behavior', () => {
         componentProps: { formKey, fieldsMeta },
       })
     ));
-  });
-  afterAll(() => {
-    cleanup();
   });
   test('visibleField should be initially invisible since it does not meet its visible expression criteria', () => {
     // find a field with that default value
@@ -252,9 +245,17 @@ describe('visible behavior', () => {
   });
 
   test('visibleField should be again invisible after it visible expression criteria is not met ', () => {
-    // find a field with that default value
-    const ele = queryByDisplayValue('standard');
+    let ele = queryByDisplayValue('123');
+    // make it visible first
+    fireEvent.change(ele, {
+      target: {
+        value: 'standard',
+      },
+    });
+    expect(queryByDisplayValue('test')).toBeTruthy();
 
+    ele = queryByDisplayValue('standard');
+    // making it invisible
     fireEvent.change(ele, {
       target: {
         value: 'something else',
@@ -297,7 +298,7 @@ describe('required behavior', () => {
   };
   let queryByDisplayValue;
 
-  beforeAll(() => {
+  beforeEach(() => {
     // build up the state
     store = createStore(reducer, {
       user: { profile: { name: 'profile 1' } },
@@ -315,10 +316,6 @@ describe('required behavior', () => {
       })
     ));
   });
-  afterAll(() => {
-    cleanup();
-  });
-
   test('requiredField should be initially not required since it does not meet its requiredWhen expression criteria', () => {
     // find a field with that default value
     const formState = selectors.formState(store.getState(), '123');
@@ -347,9 +344,22 @@ describe('required behavior', () => {
   });
 
   test('requiredField should be again not required after it required expression criteria is not met ', () => {
-    // find a field with that default value
-    const ele = queryByDisplayValue('standard');
+    // make it required first
 
+    let ele = queryByDisplayValue('123');
+
+    fireEvent.change(ele, {
+      target: {
+        value: 'standard',
+      },
+    });
+    const formState = selectors.formState(store.getState(), '123');
+
+    expect(formState.fields.FIELD1.required).toBe(true);
+
+    ele = queryByDisplayValue('standard');
+
+    // make it not required
     fireEvent.change(ele, {
       target: {
         value: 'something else',
@@ -384,7 +394,7 @@ describe('changing form value prop', () => {
     const formKey = '123';
     let store;
 
-    beforeAll(() => {
+    beforeEach(() => {
       // build up the state
       store = createStore(reducer, {
         user: { profile: { name: 'profile 1' } },
@@ -398,9 +408,7 @@ describe('changing form value prop', () => {
         })
       );
     });
-    afterAll(() => {
-      cleanup();
-    });
+
     test('field has not been touched', () => {
       const formState = selectors.formState(store.getState(), 123);
 
@@ -468,11 +476,7 @@ describe('various layout specific behavior ', () => {
         },
       };
 
-      afterAll(() => {
-        cleanup();
-      });
-
-      beforeAll(() => {
+      beforeEach(() => {
         // build up the state
 
         store = createStore(reducer, {
@@ -550,11 +554,7 @@ describe('various layout specific behavior ', () => {
         },
       };
 
-      afterAll(() => {
-        cleanup();
-      });
-
-      beforeAll(() => {
+      beforeEach(() => {
         // build up the state
 
         store = createStore(reducer, {
@@ -595,7 +595,17 @@ describe('various layout specific behavior ', () => {
         expect(queryByTestId('expansion panel1')).not.toBeTruthy();
       });
       test('FIELD2 expansion panel should be visible when its visibleWhen criteria is met', () => {
-        const field1Ele = queryByDisplayValue('123');
+        let field1Ele = queryByDisplayValue('test');
+        // feeding a non number again
+
+        fireEvent.change(field1Ele, {
+          target: {
+            value: '123',
+          },
+        });
+
+        expect(queryByDisplayValue('123')).toBeTruthy();
+        field1Ele = queryByDisplayValue('123');
         // feeding a non number again
 
         fireEvent.change(field1Ele, {

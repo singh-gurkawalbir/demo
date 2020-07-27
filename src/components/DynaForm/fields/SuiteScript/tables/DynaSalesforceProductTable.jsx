@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -24,11 +23,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export const useGetSuiteScriptBaseCommPath = ({connectionId, integrationId}) => {
   const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
   const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
-
 
   return `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes`;
 };
@@ -55,7 +52,6 @@ export const BaseTableViewComponent = (props) => {
     []
   );
 
-
   return (<DynaTableView
     {...props}
     optionsMap={optionsMap}
@@ -69,7 +65,6 @@ export const BaseTableViewComponent = (props) => {
       />);
 };
 
-
 const SalesforceProductOptions = ({value,
   onFieldChange,
   options}) => (
@@ -79,7 +74,7 @@ const SalesforceProductOptions = ({value,
       options={options}
       label="Salesforce item Field" />);
 
-function DynaSuiteScriptTable(props) {
+export default function DynaSuiteScriptTable(props) {
   const {
     id,
     _integrationId: integrationId,
@@ -113,7 +108,6 @@ function DynaSuiteScriptTable(props) {
   const { data: allFieldsOptions} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     commMetaPath,
     'suiteScript-sObjects');
-
 
   const dispatch = useDispatch();
   const salesforceProductFieldId = `${id}_salesforceProductField`;
@@ -165,9 +159,7 @@ function DynaSuiteScriptTable(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   if (salesforceProductFieldOptions && !allFieldsOptions) { return <Spinner />; }
-
 
   return (
     <>
@@ -186,13 +178,4 @@ function DynaSuiteScriptTable(props) {
       />
     </>
   );
-}
-
-export default function DynaSuiteScriptTableWrapped(props) {
-  return (
-    <FormContext.Consumer >
-      {form => (
-        <DynaSuiteScriptTable {...props} registerField={form.registerField} />
-      )}
-    </FormContext.Consumer>);
 }

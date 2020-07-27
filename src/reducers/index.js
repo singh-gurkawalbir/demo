@@ -49,6 +49,7 @@ import {
   isAnyFieldVisibleForMeta,
   isExpansionPanelErrored,
   isAnyFieldTouchedForMeta,
+  isExpansionPanelRequired,
 } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -616,7 +617,6 @@ export const userProfile = createSelector(
   state => state?.user?.profile,
   profile => profile
 );
-
 
 export function developerMode(state) {
   return (
@@ -1470,7 +1470,6 @@ export function canOpenOauthConnection(state, integrationId) {
   return fromSession.canOpenOauthConnection(state && state.session, integrationId);
 }
 
-
 export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   // eslint-disable-next-line no-use-before-define
@@ -2043,7 +2042,6 @@ export function integrationAppSectionMetadata(
   return selectedSection;
 }
 
-
 export function suiteScriptIASectionMetadata(
   state,
   integrationId,
@@ -2062,7 +2060,6 @@ export function suiteScriptIASectionMetadata(
   const {sections = [] } =
     integrationResource || {};
   const allSections = sections;
-
 
   const selectedSection =
     allSections.find(
@@ -2194,7 +2191,6 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
 
     return map(flows, '_id');
   }
-
 
   return map(allIntegrationFlows, '_id');
 }
@@ -3605,7 +3601,6 @@ export function metadataOptionsAndResources({
   );
 }
 
-
 /*
  * TODO: @Raghu - Should be removed and use above selector
  * Function Definition needs to be changed to
@@ -3807,7 +3802,6 @@ export const makeFlowJobs = () => createSelector(
     });
   });
 
-
 export const makeFlowJob = () => {
   const cachedFlowJobsSelector = makeFlowJobs();
   return createSelector((state, ops) => cachedFlowJobsSelector(
@@ -3912,7 +3906,6 @@ export function integrationAppImportMetadata(state, importId) {
     importId
   );
 }
-
 
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
@@ -4770,7 +4763,6 @@ export const suiteScriptResourceData = (
   return data;
 };
 
-
 export const suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
@@ -4790,7 +4782,6 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   let requiredFlows = [];
   const allSections = sections;
 
-
   const selectedSection =
       allSections.find(
         sec =>
@@ -4805,7 +4796,6 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
     requiredFlows = map(selectedSection.flows, '_id');
   }
   const { fields, sections: subSections } = selectedSection;
-
 
   let flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
@@ -4941,7 +4931,6 @@ export function suiteScriptIAFormSaving(
     { ssLinkedConnectionId, integrationId }
   );
 }
-
 
 export function suiteScriptIAFormState(
   state,
@@ -5311,7 +5300,6 @@ export function suiteScriptMappingsSaveStatus(state) {
   return fromSession.suiteScriptMappingsSaveStatus(state && state.session);
 }
 
-
 export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
@@ -5426,7 +5414,6 @@ export const suiteScriptGenerates = createSelector(
     return {data: generates, status};
   }
 );
-
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flow = suiteScriptFlowDetail(state, {
@@ -5650,3 +5637,75 @@ export const getSuitescriptMappingSubRecordList = createSelector([
   }
   return emptySet;
 });
+
+export const applicationType = (state, resourceType, id) => {
+  const resourceObj = resource(state, resourceType, id);
+  const stagedResourceObj = stagedResource(state, id);
+
+  if (!resourceObj && (!stagedResource || !stagedResource.patch)) {
+    return '';
+  }
+
+  function getStagedValue(key) {
+    const result = stagedResourceObj?.patch?.find(p => p.op === 'replace' && p.path === key);
+
+    return result?.value;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = resourceType === 'connections'
+    ? getStagedValue('type') || resourceObj?.type
+    : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
+  const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
+
+  if (adaptorType === 'WebhookExport') {
+    return (
+      getStagedValue('/webhook/provider') ||
+      (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
+    );
+  }
+
+  if (adaptorType && adaptorType.startsWith('RDBMS')) {
+    const connection = resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resource && resource._connectionId)
+    );
+
+    return connection && connection.rdbms && connection.rdbms.type;
+  }
+
+  return assistant || adaptorType;
+};
+export const lookupProcessorResourceType = (state, resourceId) => {
+  const stagedProcessor = stagedResource(state, resourceId);
+
+  if (!stagedProcessor || !stagedProcessor.patch) {
+    // TODO: we need a better pattern for logging warnings. We need a common util method
+    // which logs these warning only if the build is dev... if build is prod, these
+    // console.warn/logs should not even be bundled by webpack...
+    // eslint-disable-next-line
+    /*
+     console.warn(
+      'No patch-set available to determine new Page Processor resourceType.'
+    );
+    */
+    return;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = stagedProcessor.patch.find(
+    p => p.op === 'replace' && p.path === '/adaptorType'
+  );
+
+  // console.log(`adaptorType-${id}`, adaptorType);
+
+  if (!adaptorType || !adaptorType.value) {
+    // eslint-disable-next-line
+    console.warn(
+      'No replace operation against /adaptorType found in the patch-set.'
+    );
+  }
+
+  return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+};

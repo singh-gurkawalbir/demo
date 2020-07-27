@@ -2,14 +2,13 @@ import { Tab, Tabs, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useState } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import FormGenerator from '..';
 import * as selectors from '../../../../reducers';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
 import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
-
+import actions from '../../../../actions';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -33,7 +32,6 @@ const useStyle = makeStyles(theme => ({
     right: 'unset',
   },
 }));
-
 
 const TabLabel = ({layout, formKey, fieldMap, label, tabType }) => {
   const isExpansionPanelErrored = useSelector(state =>
@@ -151,30 +149,23 @@ export function TabIAComponent(props) {
     </TabComponent>
   );
 }
-
-
-const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
+// this may not be necessary
+const useInitializeFieldStateHook = ({ fieldMap, formKey}) => {
+  const dispatch = useDispatch();
+  const fields = useSelector(formKey)?.fields;
   useEffect(() => {
     Object.values(fieldMap).forEach((field) => {
-      registerField(field);
+      // if field state missing force registration of fields
+      if (!fields[field?.id]) { dispatch(actions.form.registerField(formKey)(field)); }
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-
-  return null;
 };
 
-function InitializeAllFieldState({children, fieldMap}) {
-  return (
-    <FormContext.Consumer>
-      {form => (
-        <>
-          <InitializeFieldStateHook registerField={form.registerField} fieldMap={fieldMap} />
-          {children}
-        </>
-      )}
-    </FormContext.Consumer>);
+function InitializeAllFieldState({children, formKey, fieldMap}) {
+  useInitializeFieldStateHook({formKey, fieldMap});
+
+  return children;
 }
 // this is necessary when we clone props we want all of its children to receive them
 function SuiteScriptWithCompleteSave(props) {
@@ -219,7 +210,6 @@ export function TabComponentSimple(props) {
 
   );
 }
-
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (

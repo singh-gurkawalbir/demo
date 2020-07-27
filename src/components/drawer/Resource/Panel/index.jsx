@@ -19,6 +19,7 @@ import ApplicationImg from '../../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import getRoutePath from '../../../../utils/routePaths';
 import ActionsFactory from './ActionsFactory';
+import useDrawerEditUrl from './useDrawerEditUrl';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = (url) => !!matchPath(url, {
@@ -177,9 +178,6 @@ export default function Panel(props) {
       flowId,
     })
   );
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, id)
-  );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
     onClose();
@@ -193,98 +191,12 @@ export default function Panel(props) {
   const stagedProcessor = useSelector(state =>
     selectors.stagedResource(state, id)
   );
-  const applicationType = useSelector(state => {
-    const stagedResource = selectors.stagedResource(state, id);
-
-    if (!resource && (!stagedResource || !stagedResource.patch)) {
-      return '';
-    }
-
-    function getStagedValue(key) {
-      const result =
-        stagedResource &&
-        stagedResource.patch &&
-        stagedResource.patch.find(p => p.op === 'replace' && p.path === key);
-
-      return result && result.value;
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = resourceType === 'connections'
-      ? getStagedValue('type') || resource?.type
-      : getStagedValue('/adaptorType') || resource?.adaptorType;
-    const assistant = getStagedValue('/assistant') || resource?.assistant;
-
-    if (adaptorType === 'WebhookExport') {
-      return (
-        getStagedValue('/webhook/provider') ||
-        (resource && resource.webhook && resource.webhook.provider)
-      );
-    }
-
-    if (adaptorType && adaptorType.startsWith('RDBMS')) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        getStagedValue('/_connectionId') || (resource && resource._connectionId)
-      );
-
-      return connection && connection.rdbms && connection.rdbms.type;
-    }
-
-    return assistant || adaptorType;
-  });
+  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
-
-  const lookupProcessorResourceType = useCallback(() => {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      // TODO: we need a better pattern for logging warnings. We need a common util method
-      // which logs these warning only if the build is dev... if build is prod, these
-      // console.warn/logs should not even be bundled by webpack...
-      // eslint-disable-next-line
-      return console.warn(
-        'No patch-set available to determine new Page Processor resourceType.'
-      );
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/adaptorType'
-    );
-
-    // console.log(`adaptorType-${id}`, adaptorType);
-
-    if (!adaptorType || !adaptorType.value) {
-      // eslint-disable-next-line
-      console.warn(
-        'No replace operation against /adaptorType found in the patch-set.'
-      );
-    }
-
-    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }, [stagedProcessor]);
-
-  const getEditUrl = useCallback((id) => {
-    // console.log(location);
-    const segments = location.pathname.split('/');
-    const { length } = segments;
-
-    segments[length - 1] = id;
-    segments[length - 3] = 'edit';
-
-    if (resourceType === 'pageGenerator') {
-      segments[length - 2] = 'exports';
-    } else if (resourceType === 'pageProcessor') {
-      segments[length - 2] = lookupProcessorResourceType();
-    }
-
-    const url = segments.join('/');
-
-    return url;
-  }, [location.pathname, lookupProcessorResourceType, resourceType]);
+  const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
 
   function handleSubmitComplete() {
     if (isNew) {
@@ -307,7 +219,7 @@ export default function Panel(props) {
 
       if (isMultiStepSaveResource) {
         if (!resourceId) {
-          return history.replace(getEditUrl(id));
+          return history.replace(editUrl);
         }
       }
       // this is NOT a case where a user selected an existing resource,

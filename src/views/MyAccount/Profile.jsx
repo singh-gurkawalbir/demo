@@ -39,16 +39,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: 0,
   },
 }));
-const dateFormats = [
-  { value: 'MM/DD/YYYY', label: '12/31/1900' },
-  { value: 'DD/MM/YYYY', label: '31/12/1900' },
-  { value: 'DD-MMM-YYYY', label: '31-Dec-1900' },
-  { value: 'DD.MM.YYYY', label: '31.12.1900' },
-  { value: 'DD-MMMM-YYYY', label: '31-December-1900' },
-  { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
-  { value: 'YYYY/MM/DD', label: '1900/12/31' },
-  { value: 'YYYY-MM-DD', label: '1900-12-31' },
-];
 
 const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'DD/MM/YYYY', label: '31/12/1900' },
@@ -264,22 +254,21 @@ export default function ProfileComponent() {
 
   const formKey = useFormInitWithPermissions({
     fieldsMeta: fieldMeta,
-    metaValue,
-    remount:count
+    remount: count,
     ...formState
   });
 
   return (
     <>
       <PanelHeader title="Profile" />
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta}/>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
       <DynaSubmit
-          formKey={formKey}
-          showCustomFormValidations={showCustomFormValidations}
-          onClick={submitHandler()}
-          disabled={disableSave}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
+        formKey={formKey}
+        showCustomFormValidations={showCustomFormValidations}
+        onClick={submitHandler()}
+        disabled={disableSave}>
+        {defaultLabels.saveLabel}
+      </DynaSubmit>
       {getDomain() !== 'eu.integrator.io' && (
         <div>
           <PanelHeader

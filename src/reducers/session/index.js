@@ -13,7 +13,7 @@ import fileUpload, * as fromFileUpload from './fileUpload';
 import filters, * as fromFilters from './filters';
 import flowMetrics, * as fromFlowMetrics from './flowMetrics';
 import flows, * as fromFlows from './flows';
-import * as fromForm from './form';
+import form, * as fromForm from './form';
 import integrationApps, * as fromIntegrationApps from './integrationApps';
 import jobErrorsPreview, * as fromJobErrorsPreview from './jobErrorsPreview';
 import mappings, * as fromMappings from './mappings';
@@ -35,6 +35,7 @@ import templates, * as fromTemplates from './templates';
 import transfers, * as fromTransfers from './transfers';
 
 export default combineReducers({
+  form,
   recycleBin,
   stage,
   filters,
@@ -741,7 +742,6 @@ export function suiteScriptIAFormState(
     { ssLinkedConnectionId, integrationId }
   );
 }
-
 
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSuiteScript.isFlowOnOffInProgress(

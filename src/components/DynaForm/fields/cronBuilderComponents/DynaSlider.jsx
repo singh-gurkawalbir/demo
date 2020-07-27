@@ -1,7 +1,7 @@
-import React, { useCallback, Fragment, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
-import useFormContext from '../../../Form/FormContext;
 import {makeStyles} from '@material-ui/core/styles';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles((theme) => ({
   titleSlider: {
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 2),
   },
 }));
-function DynaSlider(props) {
+export default function DynaSlider(props) {
   const classes = useStyles();
   const {
     id,

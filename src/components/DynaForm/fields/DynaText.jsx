@@ -94,6 +94,7 @@ function DynaText(props) {
     }
   }, [id, onFieldChange, options, valueChanged]);
   const handleFieldChange = event => {
+    console.log('check event ', event.target.value);
     const { value, valueAsNumber } = event.target;
     let returnVal;
 

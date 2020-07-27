@@ -18,7 +18,6 @@ function form(state = {}, action) {
     disabled,
   } = formSpecificProps;
   const { fieldsMeta = {} } = formSpecificProps;
-
   // if default fields have changed then reset touched state
   return produce(state, draft => {
     switch (type) {
@@ -41,10 +40,11 @@ function form(state = {}, action) {
       case actionTypes.FORM.UPDATE:
         if (!formKey) break;
 
-        if (showValidationBeforeTouched !== undefined)
+        if (showValidationBeforeTouched !== undefined) {
           draft[
             formKey
           ].showValidationBeforeTouched = showValidationBeforeTouched;
+        }
 
         if (disabled !== undefined) draft[formKey].formIsDisabled = disabled;
 
