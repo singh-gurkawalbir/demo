@@ -5694,18 +5694,11 @@ export const lookupProcessorResourceType = (state, resourceId) => {
   }
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-  const adaptorType = stagedProcessor.patch.find(
+  const adaptorType = stagedProcessor?.patch?.find(
     p => p.op === 'replace' && p.path === '/adaptorType'
   );
 
   // console.log(`adaptorType-${id}`, adaptorType);
 
-  if (!adaptorType || !adaptorType.value) {
-    // eslint-disable-next-line
-    console.warn(
-      'No replace operation against /adaptorType found in the patch-set.'
-    );
-  }
-
-  return adaptorType.value.includes('Export') ? 'exports' : 'imports';
+  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
 };
