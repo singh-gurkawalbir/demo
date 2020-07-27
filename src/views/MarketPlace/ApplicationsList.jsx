@@ -67,9 +67,10 @@ export default function ApplicationsList({ filter }) {
   templates.forEach(t => { applications = applications.concat(t.applications); });
   applications = uniq(applications.filter(Boolean).sort());
   applications = applications.filter(
-    a =>
-      a &&
-      a.toLowerCase().includes(filter.keyword && filter.keyword.toLowerCase())
+    a => {
+      const name = (connectorsMetadata?.find(c => c?.id === a) || {}).name || a;
+      return name?.toLowerCase().includes(filter.keyword && filter.keyword.toLowerCase());
+    }
   );
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
