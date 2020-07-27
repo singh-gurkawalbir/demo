@@ -219,6 +219,10 @@ export default function Panel(props) {
         (resource && resource.webhook && resource.webhook.provider)
       );
     }
+    // For Data Loader cases, there is no image.
+    if (getStagedValue('/type') === 'simple' || resource?.type === 'simple') {
+      return '';
+    }
 
     if (adaptorType && adaptorType.startsWith('RDBMS')) {
       const connection = selectors.resource(
