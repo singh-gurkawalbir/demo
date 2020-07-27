@@ -92,6 +92,7 @@ export default function ResponseMappingDialog(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceId = resource._id;
+  const {adaptorType} = resource;
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
   const [closeOnSave, setCloseOnSave] = useState(false);
@@ -132,7 +133,8 @@ export default function ResponseMappingDialog(props) {
   }, [dispatch, extractFields, flowId, isImport, resourceId]);
 
   const defaultExtractFields = responseMappingUtil.getResponseMappingDefaultExtracts(
-    resourceType
+    resourceType,
+    adaptorType
   );
   const handleInit = useCallback(() => {
     dispatch(

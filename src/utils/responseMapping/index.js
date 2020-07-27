@@ -13,14 +13,23 @@ export const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'ignored',
   'statusCode',
 ];
-
+export const HTTP_IMPORT_RESPONSE_MAPPING_EXTRACTS = [
+  'id',
+  'errors',
+  'ignored',
+  'statusCode',
+  'headers'
+];
 export default {
-  getResponseMappingDefaultExtracts: resourceType => {
-    const extractFields =
-      resourceType === 'imports'
-        ? IMPORT_RESPONSE_MAPPING_EXTRACTS
-        : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
-
+  getResponseMappingDefaultExtracts: (resourceType, adaptorType) => {
+    let extractFields;
+    if (resourceType === 'imports' && adaptorType === 'HTTPImport') {
+      extractFields = HTTP_IMPORT_RESPONSE_MAPPING_EXTRACTS;
+    } else if (resourceType === 'imports' && adaptorType !== 'HTTPImport') {
+      extractFields = IMPORT_RESPONSE_MAPPING_EXTRACTS;
+    } else {
+      extractFields = LOOKUP_RESPONSE_MAPPING_EXTRACTS;
+    }
     return extractFields.map(m => ({
       id: m,
       name: m,
