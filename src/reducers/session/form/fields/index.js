@@ -87,8 +87,7 @@ export default function fields(state = {}, action) {
               fieldsRef[id].errorMessages = errorMessages;
             }
 
-            if (!fieldsRef[id].forceComputation)
-              fieldsRef[id].forceComputation = [];
+            if (!fieldsRef[id].forceComputation) { fieldsRef[id].forceComputation = []; }
             fieldsRef[id].forceComputation.push(key);
           });
 

@@ -58,11 +58,11 @@ const form = {
     }),
   forceFieldState: formKey => (
     id,
-    visible,
-    disabled,
-    required,
-    isValid,
-    errorMessages
+    { visible,
+      disabled,
+      required,
+      isValid,
+      errorMessages}
   ) =>
     action(actionTypes.FORM.FIELD.FORCE_STATE, {
       formKey,

@@ -13,7 +13,7 @@ export const FieldComponent = props => {
 
   if (!fieldState || !fieldState.visible) return null;
 
-  return renderer({ ...props, ...props.parentContext, fieldState });
+  return renderer({ ...props, fieldState });
 };
 
 export default function FormFragment({ defaultFields, formKey }) {
@@ -72,6 +72,7 @@ export default function FormFragment({ defaultFields, formKey }) {
     <>
       {defaultFields.map(field => (
         <FieldComponent
+          {...field}
           key={field.id}
           id={field.id}
           renderer={renderer}

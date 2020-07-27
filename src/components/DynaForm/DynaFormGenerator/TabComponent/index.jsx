@@ -9,6 +9,7 @@ import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
 import { getAllFormValuesAssociatedToMeta } from '../../../../forms/utils';
 import actions from '../../../../actions';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -149,10 +150,11 @@ export function TabIAComponent(props) {
     </TabComponent>
   );
 }
+
 // this may not be necessary
 const useInitializeFieldStateHook = ({ fieldMap, formKey}) => {
   const dispatch = useDispatch();
-  const fields = useSelector(formKey)?.fields;
+  const fields = useFormContext(formKey)?.fields;
   useEffect(() => {
     Object.values(fieldMap).forEach((field) => {
       // if field state missing force registration of fields
@@ -161,12 +163,6 @@ const useInitializeFieldStateHook = ({ fieldMap, formKey}) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
-
-function InitializeAllFieldState({children, formKey, fieldMap}) {
-  useInitializeFieldStateHook({formKey, fieldMap});
-
-  return children;
-}
 // this is necessary when we clone props we want all of its children to receive them
 function SuiteScriptWithCompleteSave(props) {
   return (
@@ -178,16 +174,18 @@ function SuiteScriptWithCompleteSave(props) {
 }
 
 export function SuiteScriptTabIACompleteSave(props) {
-  return (
-    <InitializeAllFieldState fieldMap={props.fieldMap}>
+  const {formKey, fieldMap} = props;
+  useInitializeFieldStateHook({formKey, fieldMap});
 
-      <TabComponent
-        {...props}
-        orientation="horizontal"
+  return (
+
+    <TabComponent
+      {...props}
+      orientation="horizontal"
     >
-        <SuiteScriptWithCompleteSave />
-      </TabComponent>
-    </InitializeAllFieldState>
+      <SuiteScriptWithCompleteSave />
+    </TabComponent>
+
   );
 }
 // this is necessary when we clone props we want all of its children to receive them
@@ -201,12 +199,13 @@ function TabWithCompleteSave(props) {
 }
 
 export function TabComponentSimple(props) {
+  const {formKey, fieldMap} = props;
+  useInitializeFieldStateHook({formKey, fieldMap});
+
   return (
-    <InitializeAllFieldState fieldMap={props.fieldMap}>
-      <TabComponent {...props}>
-        <TabWithCompleteSave />
-      </TabComponent>
-    </InitializeAllFieldState>
+    <TabComponent {...props}>
+      <TabWithCompleteSave />
+    </TabComponent>
 
   );
 }

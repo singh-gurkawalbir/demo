@@ -397,7 +397,7 @@ describe('reducer expression test cases', () => {
       test('FIELD1 should be visible since we force it to take a field state', () => {
         formState = forms(
           formState,
-          actions.form.forceFieldState(formKey)('FIELD1', true)
+          actions.form.forceFieldState(formKey)('FIELD1', {visible: true})
         );
         const { FIELD1 } = formState[formKey].fields;
 
@@ -471,12 +471,11 @@ describe('reducer expression test cases', () => {
         formState = forms(
           formState,
           actions.form.forceFieldState(formKey)(
-            'FIELD1',
-            null,
-            null,
-            null,
-            false,
-            'some error'
+            'FIELD1', {
+              isValid: false,
+              errorMessages: 'some error'
+            }
+
           )
         );
         const { FIELD1 } = formState[formKey].fields;

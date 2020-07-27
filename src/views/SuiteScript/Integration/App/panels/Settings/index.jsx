@@ -49,7 +49,6 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   return children;
 };
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
@@ -92,7 +91,6 @@ function SettingsPanelComponent({
   const classes = useStyles();
   const match = useRouteMatch();
   const {integrationAppName} = match?.params;
-
 
   const availableSections = useSelector(state => {
     const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);

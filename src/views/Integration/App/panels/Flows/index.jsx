@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Route,
   NavLink,
@@ -21,7 +21,8 @@ import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 import { generateNewId } from '../../../../../utils/resource';
-import GenerateActions from '../../../../../components/drawer/Resource/Panel/ActionsFactory';
+import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
+import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,15 +52,34 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
+  const actionButtons = useMemo(() => actions.map(action => ({
+    ...actionProps,
+    id: action?.id,
+    mode: 'primary'
+  })), [actions, actionProps]);
+  if (!actions || !actions.length) { return null; }
+
+  return <GenerateButtons
+    fieldMap={fieldMap}
+    actions={actionButtons}
+    consolidatedActions={consolidatedActions}
+
+/>;
+};
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
   const [formKey] = useState(generateNewId());
   const { integrationId, flowId, sectionId, fieldMeta } = props;
-  const allProps = {
+  const allProps = useMemo(() => ({
     ...props,
     resourceType: 'integrations',
     resourceId: integrationId,
-  };
+  }), [integrationId, props]);
+
+  const allActionProps = useMemo(() => ({
+    ...allProps, formKey
+  }), [allProps, formKey]);
 
   useEffect(() => {
     dispatch(
@@ -80,9 +100,9 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
-      <GenerateActions
-        actions={fieldMeta.actions}
-        actionProps={{ ...allProps, isIAForm: true, formKey }}
+      <ActionsPanel
+        {...fieldMeta}
+        actionProps={allActionProps}
       />
     </>
   );

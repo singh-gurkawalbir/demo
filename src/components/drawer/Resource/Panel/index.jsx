@@ -18,7 +18,7 @@ import Back from '../../../icons/BackArrowIcon';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import getRoutePath from '../../../../utils/routePaths';
-import ActionsFactory from './ActionsFactory';
+import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useDrawerEditUrl from './useDrawerEditUrl';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
@@ -254,7 +254,6 @@ export default function Panel(props) {
         return;
       }
 
-
       onClose();
     }
   }
@@ -338,8 +337,7 @@ export default function Panel(props) {
             onCloseNotificationToaster={onCloseNotificationToaster}
 
           />
-          {variant !== 'view' &&
-          <ActionsFactory
+          <ResourceFormActionsPanel
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             submitButtonColor={submitButtonColor}
@@ -349,7 +347,7 @@ export default function Panel(props) {
             resourceId={id}
             flowId={flowId}
             onCancel={abortAndClose}
-          />}
+          />
         </LoadResources>
       </div>
     </>
