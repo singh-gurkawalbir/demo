@@ -348,8 +348,9 @@ export function* handleFlowDataStageErrors({
 export function getPreProcessedResponseMappingData({
   resourceType,
   preProcessedData,
+  adaptorType
 }) {
-  const extractsObj = generateDefaultExtractsObject(resourceType);
+  const extractsObj = generateDefaultExtractsObject(resourceType, adaptorType);
 
   // Incase of lookups , add preProcessedData as part of data if exists else no data from lookup is passed
   if (resourceType === 'exports') {
