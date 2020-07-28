@@ -2361,7 +2361,7 @@ export const platformLicense = createSelector(
   userPreferences,
 
   // TODO: Surya make it even more granular the selector
-  // it should be made receptive to changes in the state.user.org.accounts
+  // it should be made receptive to changes to the state.user.org.accounts
   userState,
   (preferencesObj, userStateObj) =>
     fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
