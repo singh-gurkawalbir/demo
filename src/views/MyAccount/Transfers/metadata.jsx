@@ -41,5 +41,15 @@ export default {
 
     return columns;
   },
-  rowActions: [Cancel, Delete],
+  rowActions: r => {
+    const actionItems = [];
+    // User cannot perform delete/cancel action on invited transfers
+    if (r?.fromUser === 'Me' && ['unapproved', 'done', 'canceled', 'failed'].indexOf(r?.status) > -1) {
+      actionItems.push(Delete);
+    }
+    if (r?.fromUser === 'Me' && ['unapproved', 'queued'].indexOf(r?.status) > -1) {
+      actionItems.push(Cancel);
+    }
+    return actionItems;
+  },
 };
