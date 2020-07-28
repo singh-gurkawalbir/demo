@@ -64,7 +64,7 @@ export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
         const dataLoaderFileType = fileTypeToApplicationTypeMap[fileType] || fileType;
         // Incase of JSON, we need to stringify the content to pass while uploading
         const rawDataKey = yield call(uploadRawData, {
-          file: fileType === 'json' ? JSON.stringify(fileContent) : fileContent,
+          file: fileType.includes('json') ? JSON.stringify(fileContent) : fileContent,
           fileName: fileName || `file.${fileType}`,
           fileType: dataLoaderFileType,
         });

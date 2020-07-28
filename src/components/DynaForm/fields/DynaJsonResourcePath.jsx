@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import * as selectors from '../../../reducers';
 import DynaText from './DynaText';
 import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
@@ -17,21 +17,14 @@ import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
  */
 export default function DynaJsonResourcePath(props) {
   const { id, onFieldChange, value, label, resourceId, resourceType} = props;
-  const jsonContent = useSelector(state => {
-    // TODO: @Raghu Can be refactored to make a generic selector to get a fileType's data
-    const { data: uploadedData } = selectors.getResourceSampleDataWithStatus(
-      state,
-      resourceId,
-      'raw'
-    );
-    if (uploadedData && uploadedData.body) {
-      return uploadedData.body;
-    }
-    const resource = selectors.resource(state, resourceType, resourceId);
-    if (resource && resource.file.type === 'json' && resource.sampleData) {
-      return resource.sampleData;
-    }
-  });
+  const jsonContent = useSelector(
+    state =>
+      selectors.fileSampleData(state, {
+        resourceId,
+        resourceType,
+        fileType: 'json'
+      }), shallowEqual
+  );
 
   if (typeof value === 'string') {
     const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, value);

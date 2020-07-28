@@ -90,6 +90,11 @@ export default function AppRouting() {
         render={({ history }) => history.replace(getRoutePath('/dashboard'))}
         />
       <Route
+        path={['/pg/*']}
+        exact
+        render={({ history, match }) => history.replace(getRoutePath(match.url.replace('/pg/', '/')))}
+        />
+      <Route
         path={getRoutePath('/clone/:resourceType/:resourceId')}
         exact
         render={({ history, match }) => history.replace(

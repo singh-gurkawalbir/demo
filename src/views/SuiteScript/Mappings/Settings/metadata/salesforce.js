@@ -114,7 +114,7 @@ export default {
           type: 'suitescriptrefreshableselect',
           ignoreCache: true,
           // Todo (Aditya): label is needed
-          label: 'Value field',
+          label: 'Result field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
