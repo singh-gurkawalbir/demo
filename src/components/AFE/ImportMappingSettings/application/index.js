@@ -56,8 +56,7 @@ const getFormattedLookup = (lookup, formVal) => {
         lookupTmp.default =
           formVal.lookupDefault ||
           formVal.lookupSelect ||
-          formVal.lookupCheckbox ||
-          formVal.lookupSFSelect;
+          formVal.lookupCheckbox;
         break;
       default:
     }
@@ -158,8 +157,6 @@ export default {
   },
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
-    let errorStatus = false;
-    let errorMessage = '';
     const settings = {};
     let conditionalLookup;
 
@@ -221,7 +218,7 @@ export default {
             break;
           case 'default':
             settings.hardCodedValue =
-              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
+              formVal.hardcodedDefault;
             break;
           default:
         }
@@ -244,7 +241,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default || formVal.defaultSFSelect;
+          settings.default = formVal.default;
           break;
         default:
       }
@@ -269,15 +266,16 @@ export default {
       if (formVal._mode === 'static') {
         let atleastOneValMapped = false;
 
-        formVal._mapList.forEach(obj => {
+        formVal._mapList?.forEach(obj => {
           if (obj.export && obj.import) {
             atleastOneValMapped = true;
           }
         });
 
         if (!atleastOneValMapped) {
-          errorStatus = true;
-          errorMessage = 'You need to map at least one value.';
+          return {
+            errorMessage: 'You need to map at least one value.'
+          };
         }
       }
 
@@ -314,8 +312,6 @@ export default {
     return {
       settings,
       lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
       conditionalLookup,
     };
   },

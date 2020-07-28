@@ -17,6 +17,8 @@ import ApiTokensSection from './sections/ApiTokens';
 import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
 import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
+// import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,6 +45,15 @@ const useStyles = makeStyles(theme => ({
   },
   activeListItem: {
     color: theme.palette.primary.main,
+    '&:before': {
+      content: "''",
+      position: 'absolute',
+      left: 0,
+      height: '100%',
+      top: 0,
+      width: 3,
+      backgroundColor: theme.palette.primary.main,
+    },
   },
   icon: {
     marginRight: 5,

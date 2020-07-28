@@ -46,7 +46,8 @@ export function* changePassword({ updatedPassword }) {
       actions.api.failure(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        errorMsg
+        errorMsg,
+        true
       )
     );
   }
@@ -197,7 +198,8 @@ export function* changeEmail({ updatedEmail }) {
         actions.api.failure(
           changeEmailParams.path,
           changeEmailParams.opts.method,
-          'Existing email provided, Please try again.'
+          'Existing email provided, Please try again.',
+          true
         )
       );
     }
@@ -206,7 +208,8 @@ export function* changeEmail({ updatedEmail }) {
       actions.api.failure(
         changeEmailParams.path,
         changeEmailParams.opts.method,
-        'Cannot change user Email , Please try again.'
+        'Cannot change user Email , Please try again.',
+        true
       )
     );
   }

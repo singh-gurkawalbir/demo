@@ -53,13 +53,13 @@ export default function menuItems(
       Icon: ToolsIcon,
       children: [
         {
-          label: 'Flow builder',
+          label: 'Flow Builder',
           Icon: FlowBuilderIcon,
           path: '/integrations/none/flowBuilder/new',
           routeProps: getRoutePath('/integrations/:integrationId/flowBuilder'),
         },
         {
-          label: 'Data loader',
+          label: 'Data Loader',
           Icon: DataLoaderIcon,
           path: '/integrations/none/dataLoader/new',
           routeProps: getRoutePath('/integrations/:integrationId/dataloader'),
@@ -97,7 +97,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration apps', Icon: IntegrationAppsIcon, path: '/connectors', },
+        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors', },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },

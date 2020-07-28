@@ -114,7 +114,7 @@ export default {
           type: 'suitescriptrefreshableselect',
           ignoreCache: true,
           // Todo (Aditya): label is needed
-          label: 'Value field',
+          label: 'Result field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
@@ -271,9 +271,11 @@ export default {
           name: 'lookupSFSelect',
           type: 'select',
           label: 'Default lookup value',
-          required: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.failIfMatchNotFound', is: [false] },
+            { field: 'lookup.useNull', is: [false] },
+            { field: 'lookup.useEmptyString', is: [false] },
           ],
           options: [
             {

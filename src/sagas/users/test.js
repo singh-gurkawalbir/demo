@@ -89,6 +89,7 @@ describe('all modal sagas', () => {
             changePasswordParams.path,
             changePasswordParams.opts.method,
             'Invalid credentials provided.  Please try again.',
+            true,
           ),
         ),
       );
@@ -143,6 +144,7 @@ describe('all modal sagas', () => {
             changeEmailParams.path,
             changeEmailParams.opts.method,
             'Existing email provided, Please try again.',
+            true,
           ),
         ),
       );
@@ -170,6 +172,7 @@ describe('all modal sagas', () => {
             changeEmailParams.path,
             changeEmailParams.opts.method,
             'Cannot change user Email , Please try again.',
+            true,
           ),
         ),
       );

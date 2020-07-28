@@ -21,7 +21,10 @@ export function* onRequestSaga(request) {
   const { retryCount = 0 } = yield select(resourceStatus, path, method);
 
   // check if you are retrying ...if you are not retrying make a brand new request
-  if (retryCount === 0) yield put(actions.api.request(path, method, message, hidden));
+  if (retryCount === 0) {
+    // console.log(path, method, hidden);
+    yield put(actions.api.request(path, method, message, hidden));
+  }
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
   const additionalHeaders = yield select(accountShareHeader, path);

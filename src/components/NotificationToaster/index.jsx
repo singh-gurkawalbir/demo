@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     boxSizing: 'border-box',
     borderRadius: theme.spacing(0.5),
     padding: theme.spacing(0, 2),
-    minHeight: '50px',
+    minHeight: 50,
     transition: 'max-height .5s ease',
     '& > div:first-child': {
       width: props => (props.fullWidth ? '100%' : '85%'),
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     },
     '&:before': {
       content: '""',
-      width: '3px',
+      width: 3,
       height: '100%',
       position: 'absolute',
       background: theme.palette.secondary.lightest,
@@ -39,8 +39,15 @@ const useStyles = makeStyles(theme => ({
   },
   small: {
     borderRadius: theme.spacing(0.5),
-    maxWidth: '350px',
+    maxWidth: 350,
     display: 'inline-flex',
+    '&:before': { width: 5 },
+  },
+  medium: {
+    borderRadius: theme.spacing(0.5),
+    maxWidth: 700,
+    display: 'inline-flex',
+    '&:before': { width: 5 },
   },
   large: {
     border: '1px solid',
@@ -116,7 +123,6 @@ export default function NotificationToaster(props) {
   const classes = useStyles(props);
   const {
     className,
-    message,
     children,
     onClose,
     variant,
@@ -126,23 +132,22 @@ export default function NotificationToaster(props) {
   const Icon = variantIcon[variant];
 
   return (
-    <div>
-      <SnackbarContent
-        className={clsx(
-          classes[variant],
-          classes[size],
-          classes.root,
-          className
-        )}
-        aria-describedby="client-snackbar"
-        elevation={1}
-        message={
-          <div id="client-snackbar" className={classes.message}>
-            <Icon className={clsx(classes.icon, classes.iconVariant)} />
-            {children}
-          </div>
+    <SnackbarContent
+      className={clsx(
+        classes[variant],
+        classes[size],
+        classes.root,
+        className
+      )}
+      aria-describedby="client-snackbar"
+      elevation={4}
+      message={
+        <div id="client-snackbar" className={classes.message}>
+          <Icon className={clsx(classes.icon, classes.iconVariant)} />
+          {children}
+        </div>
         }
-        action={
+      action={
           // show Close Icon only when onClose function is passed.
           onClose && [
             <IconButton
@@ -156,8 +161,7 @@ export default function NotificationToaster(props) {
             </IconButton>,
           ]
         }
-        {...other}
+      {...other}
       />
-    </div>
   );
 }

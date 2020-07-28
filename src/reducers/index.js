@@ -53,6 +53,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isAS2Resource,
+  adaptorTypeMap
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -948,7 +949,7 @@ export function flowType(state, flowId) {
   if (!exports) return '';
 
   if (isSimpleImportFlow(flow, exports)) {
-    return 'Data loader';
+    return 'Data Loader';
   }
 
   if (isRealtimeFlow(flow, exports)) {
@@ -3721,8 +3722,8 @@ export const makeFlowJobs = () => createSelector(
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
             name: cJob._exportId
-              ? resourceMap.exports[cJob._exportId].name
-              : resourceMap.imports[cJob._importId].name,
+              ? resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports[cJob._importId]?.name,
           };
 
           return { ...cJob, ...additionalChildProps };
@@ -4186,6 +4187,18 @@ export function getAvailableResourcePreviewStages(
   const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
 
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
+}
+
+export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
+  const resourceObj = resourceData(
+    state,
+    resourceType,
+    resourceId,
+    'value'
+  ).merged;
+  // for rest and http
+  const appType = adaptorTypeMap[resourceObj?.adaptorType];
+  return ['http', 'rest'].includes(appType);
 }
 
 /*

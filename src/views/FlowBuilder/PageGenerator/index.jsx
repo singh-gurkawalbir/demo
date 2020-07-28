@@ -169,7 +169,7 @@ const PageGenerator = ({
 
       if (isDataLoader) {
         patchSet.push({ op: 'add', path: '/type', value: 'simple' });
-        patchSet.push({ op: 'add', path: '/name', value: 'Data loader' });
+        patchSet.push({ op: 'add', path: '/name', value: 'Data Loader' });
       } else {
         patchSet.push({
           op: 'add',
@@ -325,7 +325,11 @@ const PageGenerator = ({
           ...exportFilterAction,
           isUsed: usedActions[actionsMap.outputFilter],
         },
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        // We don't support preSavePage hook incase of Data loader
+        ...(
+          isDataLoader ? [] :
+            [{ ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] }]
+        )
       ];
     }
     return generatorActions;
