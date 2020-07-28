@@ -9,6 +9,7 @@ import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaSalesforceLookupFilters from './DynaSalesforceLookupFilters';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
+import DynaNetSuiteSubRecords from './DynaNetSuiteSubRecords';
 
 export default {
   suitescriptapimethod: DynaApiMethod,
@@ -21,5 +22,6 @@ export default {
   suitescriptnetsuitelookup: DynaNetSuiteLookup,
   suitescriptfilekeycolumn: DynaFileKeyColumn,
   suitescriptsalesforcelookupfilters: DynaSalesforceLookupFilters,
-  suitescriptrefreshableselect: DynaRefreshableSelect
+  suitescriptrefreshableselect: DynaRefreshableSelect,
+  suitescriptnetsuitesubrecords: DynaNetSuiteSubRecords,
 };
