@@ -100,17 +100,18 @@ export default {
             );
           }
 
-          if (isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-              tempFm.extract = tempFm.extract.substr('*.'.length);
-            } else {
-              // remove 0. in the begining of extract
-              if (tempFm.extract && /^0\./.test(tempFm.extract)) {
-                tempFm.extract = tempFm.extract.substr('0.'.length);
-              }
+          if (isGroupedSampleData && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+            tempFm.useFirstRow = true;
+          }
+          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+            tempFm.extract = tempFm.extract.substr('*.'.length);
+          } else if (tempFm.extract && /^0\./.test(tempFm.extract)) {
+            tempFm.extract = tempFm.extract.substr('0.'.length);
+          }
 
-              tempFm.useFirstRow = true;
-            }
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // Remove [' in the start and  remove '] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
           }
 
           if (fm.subRecordMapping && fm.subRecordMapping.recordType) {
