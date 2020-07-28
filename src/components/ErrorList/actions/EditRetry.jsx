@@ -6,7 +6,7 @@ import Icon from '../../icons/EditIcon';
 export default {
   label: 'Edit retry ',
   component: function EditRetry({ resource }) {
-    const { errorId } = resource;
+    const { errorId } = resource || {};
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
