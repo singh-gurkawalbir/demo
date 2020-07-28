@@ -6,7 +6,7 @@ import Icon from '../../icons/RevokeTokenIcon';
 export default {
   label: 'View error details',
   component: function ViewErrorDetails({ resource }) {
-    const { errorId } = resource;
+    const { errorId } = resource || {};
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
