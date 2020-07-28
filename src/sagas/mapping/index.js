@@ -23,9 +23,10 @@ export function* saveMappings({ id, context }) {
     importSampleData,
     netsuiteRecordType,
     subRecordMappingId,
+    exportRes,
   } = yield select(selectors.mapping, id);
   let _mappings = mappings.map(
-    ({ index, hardCodedValueTmp, rowIdentifier, ...others }) => others
+    ({ index, key, hardCodedValueTmp, rowIdentifier, ...others }) => others
   );
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
@@ -39,6 +40,7 @@ export function* saveMappings({ id, context }) {
     resource,
     flowSampleData,
     netsuiteRecordType,
+    exportRes
   });
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
@@ -100,6 +102,7 @@ export function* previewMappings({ id }) {
     flowSampleData,
     subRecordMappingId,
     netsuiteRecordType,
+    exportRes
   } = yield select(selectors.mapping, id);
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
@@ -120,6 +123,7 @@ export function* previewMappings({ id }) {
     resource,
     netsuiteRecordType,
     subRecordMappingId,
+    exportRes
   });
 
   const { _connectionId } = resourceCopy;

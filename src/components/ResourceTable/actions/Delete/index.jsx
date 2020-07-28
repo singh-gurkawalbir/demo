@@ -20,7 +20,7 @@ export default {
   icon: TrashIcon,
   disabledActionText: ({rowData, resourceType}) => {
     if (resourceType === 'accesstokens' && !rowData.revoked) {
-      return 'To delete this api token you need to revoke it first.';
+      return 'To delete this API token you need to revoke it first.';
     }
   },
   component: function DeleteResource({ resourceType, rowData = {} }) {

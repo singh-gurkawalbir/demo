@@ -41,5 +41,5 @@ export default {
       value: r => <AgentToken agentId={r._id} />,
     },
   ],
-  rowActions: () => [Edit, GenerateToken, References, Delete],
+  rowActions: () => [Edit, References, GenerateToken, Delete],
 };

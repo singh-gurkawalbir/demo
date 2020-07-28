@@ -50,7 +50,7 @@ export default {
   ],
   rowActions: r => {
     if (!r || !r.shared) {
-      return [Edit, GenerateToken, StackShares, AuditLogs, References, Delete];
+      return [Edit, AuditLogs, References, GenerateToken, StackShares, Delete];
     }
     return [];
   }

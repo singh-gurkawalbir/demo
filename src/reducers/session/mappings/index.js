@@ -31,6 +31,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             importSampleData = [],
+            exportRes,
             ...additionalOptions
           } = options;
           let formattedMappings;
@@ -58,7 +59,8 @@ export default function reducer(state = {}, action) {
               false,
               isGroupedSampleData,
               netsuiteRecordType,
-              additionalOptions
+              additionalOptions,
+              exportRes
             );
             lookups = lookupUtil.getLookupFromResource(resourceData);
           }
@@ -83,6 +85,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             salesforceMasterRecordTypeId,
+            exportRes
           };
 
           tmp.mappingsCopy = deepClone(tmp.mappings);
