@@ -2748,7 +2748,7 @@ export function userPermissionsOnConnection(state, connectionId) {
   return emptyObject;
 }
 
-export const resourcePermissions = (
+export const resourcePermissionsV2 = (
   state,
   resourceType,
   resourceId,
@@ -2826,6 +2826,26 @@ export const resourcePermissions = (
   }
 
   return permissions || emptyObject;
+};
+
+// wrapper to support child integration permissions
+export const resourcePermissions = (
+  state,
+  resourceType,
+  resourceId,
+  childResourceType) => {
+  if (resourceType !== 'integrations') {
+    return resourcePermissionsV2(state,
+      resourceType,
+      resourceId,
+      childResourceType);
+  }
+
+  const resourceData = resource(state, 'integrations', resourceId);
+  return resourcePermissionsV2(state,
+    resourceType,
+    resourceData?._parentId || resourceId,
+    childResourceType);
 };
 
 export function isFormAMonitorLevelAccess(state, integrationId) {
