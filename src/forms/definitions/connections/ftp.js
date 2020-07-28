@@ -63,7 +63,6 @@ export default {
     'ftp.userDirectoryIsRoot': { fieldId: 'ftp.userDirectoryIsRoot' },
     'ftp.concurrencyLevel': { fieldId: 'ftp.concurrencyLevel' },
     'ftp.entryParser': { fieldId: 'ftp.entryParser', required: false },
-    'ftp.tradingPartner': { fieldId: 'ftp.tradingPartner' },
     'ftp.requireSocketReUse': {
       fieldId: 'ftp.requireSocketReUse',
       visibleWhen: [{ field: 'ftp.type', is: ['ftps'] }],
@@ -123,7 +122,6 @@ export default {
           'ftp.password',
           'ftp.authKey',
           'ftp.useImplicitFtps',
-          'ftp.tradingPartner'
         ],
       },
       {

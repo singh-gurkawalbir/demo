@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, all, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -30,14 +30,46 @@ export function* fetchMetadata({
     return undefined;
   }
 
-  yield put(
-    actions.connectors.receivedMetadata(
-      metadata,
-      fieldType,
-      fieldName,
-      _integrationId
-    )
-  );
+  if (options?.autoPostBack) {
+    if (Array.isArray(metadata)) {
+      yield all(
+        metadata.map(fieldMeta =>
+          put(
+            actions.connectors.receivedMetadata(
+              fieldMeta,
+              null,
+              fieldMeta.name,
+              _integrationId
+            )
+          )
+        )
+      );
+    } else {
+      yield put(
+        actions.connectors.receivedMetadata(
+          metadata,
+          null,
+          metadata.name,
+          _integrationId
+        )
+      );
+    }
+    yield put(
+      actions.connectors.clearStatus(
+        fieldName,
+        _integrationId
+      )
+    );
+  } else {
+    yield put(
+      actions.connectors.receivedMetadata(
+        metadata,
+        fieldType,
+        fieldName,
+        _integrationId
+      )
+    );
+  }
 }
 
 export function* updateInstallBase({ _integrationIds, connectorId }) {

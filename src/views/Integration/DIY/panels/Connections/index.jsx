@@ -4,7 +4,9 @@ import { useHistory, useLocation } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import * as selectors from '../../../../../reducers';
-import { generateNewId } from '../../../../../utils/resource';
+import { generateNewId,
+  isTradingPartnerSupported,
+} from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -49,6 +51,17 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, tempId)
   );
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
+
 
   useEffect(() => {
     if (newResourceId) {
@@ -117,7 +130,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId: _integrationId, resourceType: 'connections',
+          actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner
           }}
         />
       </LoadResources>

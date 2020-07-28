@@ -388,6 +388,9 @@ const getFieldConfig = (field = {}, resource = {}) => {
   } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
     newField.type = 'integrationapprefreshableselect';
     newField.multiselect = true;
+  } else if (['select', 'multiselect'].includes(newField.type) && !newField.supportsRefresh) {
+    newField.multiselect = newField.type === 'multiselect';
+    newField.type = 'iaselect';
   } else if (newField.type === 'referencedFieldsDialog') {
     newField.type = 'salesforcereferencedfieldsia';
     newField.resource = resource;

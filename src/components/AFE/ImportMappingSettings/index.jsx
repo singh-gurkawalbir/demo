@@ -89,7 +89,6 @@ export default function ImportMappingSettings(props) {
       const {
         settings,
         lookup: updatedLookup,
-        errorStatus,
         errorMessage,
         conditionalLookup,
       } = ApplicationMappingSettings.getFormattedValue(
@@ -98,7 +97,7 @@ export default function ImportMappingSettings(props) {
       );
       const lookupObj = [];
 
-      if (errorStatus) {
+      if (errorMessage) {
         enquesnackbar({
           message: errorMessage,
           variant: 'error',

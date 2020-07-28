@@ -273,7 +273,7 @@ const getResourceFormAssets = ({
             resource &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
-              : resource.assistant)
+              : resource.assistant) && !resource.useTechAdaptorForm
           ) {
             meta = meta.custom.http.assistantDefinition(
               resource._id,
@@ -317,7 +317,7 @@ const getResourceFormAssets = ({
             resource &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
-              : resource.assistant)
+              : resource.assistant) && !resource.useTechAdaptorForm
           ) {
             meta = meta.custom.http.assistantDefinition(
               resource._id,

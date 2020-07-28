@@ -540,7 +540,7 @@ describe('Deregister connection Saga', () => {
         opts: {
           method: 'DELETE',
         },
-        message: 'Deregistering Connection',
+        message: 'Deregistering connection',
       })
     );
 
@@ -568,7 +568,7 @@ describe('Deregister connection Saga', () => {
         opts: {
           method: 'DELETE',
         },
-        message: 'Deregistering Connection',
+        message: 'Deregistering connection',
       })
     );
 

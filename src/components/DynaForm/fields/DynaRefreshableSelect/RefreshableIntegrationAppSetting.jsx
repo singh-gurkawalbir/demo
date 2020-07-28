@@ -12,12 +12,24 @@ export default function RefreshableIntegrationAppSetting(props) {
     options: defaultFieldOptions,
     value,
     properties,
+    autoPostBack,
     onFieldChange,
     disabled,
   } = props;
   const [netSuiteSavedSearchUrl, setNetSuiteSavedSearchUrl] = useState();
   const dispatch = useDispatch();
   const [autofill, setAutofill] = useState(false);
+  const handleFieldChange = useCallback((id, val) => {
+    if (autoPostBack) {
+      dispatch(
+        actions.connectors.refreshMetadata(val, id, _integrationId, {key: 'fieldValue', autoPostBack: true})
+      );
+      onFieldChange(id, val);
+    } else {
+      onFieldChange(id, val);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_integrationId, autoPostBack, dispatch]);
   const onRefresh = useCallback(() => {
     dispatch(
       actions.connectors.refreshMetadata(null, fieldName, _integrationId)
@@ -69,12 +81,12 @@ export default function RefreshableIntegrationAppSetting(props) {
   }, [fieldName, options, value, valueAndLabel]);
 
   useEffect(() => {
-    if (!value && newValue && !autofill && disabled) {
+    if (newValue && (newValue !== value) && !autofill && disabled) {
       setAutofill(true);
       onFieldChange(fieldName, newValue, true);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newValue, autofill, fieldName, disabled, value]);
+  }, [newValue, autofill, fieldName, disabled]);
 
   useEffect(() => {
     if (netSuiteSystemDomain && value && value.id) {
@@ -92,6 +104,7 @@ export default function RefreshableIntegrationAppSetting(props) {
       resourceToFetch={null}
       resetValue={null}
       onFetch={null}
+      onFieldChange={handleFieldChange}
       onRefresh={onRefresh}
       fieldStatus={!isLoading}
       fieldData={options || []}

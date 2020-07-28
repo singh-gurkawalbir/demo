@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
   tab: {
-    minWidth: theme.spacing(13.75),
+    minWidth: 'auto',
   },
 }));
 

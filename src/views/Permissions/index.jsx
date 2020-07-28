@@ -1,7 +1,7 @@
 import React from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import ReactJson from 'react-json-view';
+import JsonContent from '../../components/JsonContent';
 import * as selectors from '../../reducers';
 import CeligoPageBar from '../../components/CeligoPageBar';
 
@@ -12,20 +12,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Permissions() {
-  const theme = useTheme();
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
 
   return (
     <>
-      <CeligoPageBar title="Permission Explorer" />
+      <CeligoPageBar title="Permission explorer" />
       <div className={classes.root}>
-        <ReactJson
-          theme={theme.palette.type === 'dark' ? 'google' : undefined}
-          collapsed={1}
-          displayDataTypes={false}
-          src={permissions}
-        />
+        <JsonContent json={permissions} />
       </div>
     </>
   );
