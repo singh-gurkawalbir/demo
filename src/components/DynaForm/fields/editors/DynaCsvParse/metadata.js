@@ -29,8 +29,7 @@ export default function getFormMetadata(options) {
         label: 'Trim spaces',
         type: 'checkbox',
         helpKey: 'export.file.csv.trimSpaces',
-        defaultValue: options?.trimSpaces,
-        required: true,
+        defaultValue: !!options?.trimSpaces,
       },
       rowsToSkip: {
         id: 'rowsToSkip',
@@ -50,8 +49,7 @@ export default function getFormMetadata(options) {
         fieldToReset: 'keyColumns',
         fieldResetValue: [],
         helpKey: 'export.file.csv.hasHeaderRow',
-        defaultValue: options?.hasHeaderRow,
-        required: true,
+        defaultValue: !!options?.hasHeaderRow,
       },
       rowsPerRecord: {
         id: 'rowsPerRecord',
