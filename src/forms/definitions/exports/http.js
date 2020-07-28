@@ -354,7 +354,7 @@ export default {
         hasHeaderRow: false,
         keyColumns: [],
         rowsToSkip: 0,
-        trimSpaces: false
+        trimSpaces: true
       },
       visibleWhenAll: [
         {

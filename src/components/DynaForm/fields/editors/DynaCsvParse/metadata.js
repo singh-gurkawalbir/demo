@@ -29,7 +29,7 @@ export default function getFormMetadata(options) {
         label: 'Trim spaces',
         type: 'checkbox',
         helpKey: 'export.file.csv.trimSpaces',
-        defaultValue: options?.trimSpaces,
+        defaultValue: !!options?.trimSpaces,
       },
       rowsToSkip: {
         id: 'rowsToSkip',
