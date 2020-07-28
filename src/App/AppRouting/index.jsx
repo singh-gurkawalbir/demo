@@ -12,7 +12,6 @@ import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
 
-IntegrationAppInstallation;
 const RecycleBin = loadable(() =>
   import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
 );
@@ -56,7 +55,6 @@ const ConnectorInstallBase = loadable(() =>
 const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
-
 
 const SuiteScriptIntegration = loadable(() =>
   import(
@@ -161,7 +159,6 @@ export default function AppRouting() {
         ]}
         component={IntegrationAppUninstallation}
         />
-
 
       <Route
         path={[
