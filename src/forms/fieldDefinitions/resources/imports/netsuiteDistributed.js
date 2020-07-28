@@ -48,6 +48,8 @@ export default {
           { label: 'Add', value: 'add' },
           { label: 'Update', value: 'update' },
           { label: 'Add or update', value: 'addupdate' },
+          { label: 'Attach', value: 'attach' },
+          { label: 'Detach', value: 'detach' },
         ],
       },
     ],

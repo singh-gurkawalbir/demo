@@ -956,6 +956,7 @@ export default {
           recordType: netsuiteRecordType,
           isGroupedSampleData,
           exportRes,
+          resource,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
