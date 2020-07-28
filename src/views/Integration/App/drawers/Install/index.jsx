@@ -84,7 +84,8 @@ export default function ConnectorInstallation(props) {
     stores,
     supportsMultiStore,
     _connectorId,
-    initChild
+    initChild,
+    parentId
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
     if (integration) {
@@ -97,6 +98,7 @@ export default function ConnectorInstallation(props) {
         supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
         _connectorId: integration._connectorId,
         integrationInstallSteps: integration.installSteps,
+        parentId: integration._parentId
       };
     }
     return emptyObject;
@@ -252,6 +254,10 @@ export default function ConnectorInstallation(props) {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
+        } else if (parentId) {
+          props.history.push(
+            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
+          );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
@@ -273,6 +279,7 @@ export default function ConnectorInstallation(props) {
     childIntegrationMode,
     integrationChildAppName,
     initChild,
+    parentId,
     integrationInstallSteps]);
 
   if (!installSteps || !_connectorId) {
