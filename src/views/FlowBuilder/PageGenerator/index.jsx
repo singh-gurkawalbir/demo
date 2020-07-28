@@ -339,7 +339,8 @@ const PageGenerator = ({
     exportNeedsRouting,
     pending,
     usedActions,
-    multipleAs2ExportsOfSameConnectionId
+    multipleAs2ExportsOfSameConnectionId,
+    isDataLoader
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');
