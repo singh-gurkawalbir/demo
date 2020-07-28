@@ -91,8 +91,7 @@ export default function ResponseMappingDialog(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const resourceId = resource._id;
-  const {adaptorType} = resource;
+  const {_id: resourceId, adaptorType} = resource;
   const editorId = `responseMapping-${resourceId}`;
   const isImport = resourceType === 'imports';
   const [closeOnSave, setCloseOnSave] = useState(false);

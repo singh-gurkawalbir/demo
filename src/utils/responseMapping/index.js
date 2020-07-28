@@ -14,16 +14,11 @@ const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
 ];
 export default {
   getResponseMappingExtracts: (resourceType, adaptorType) => {
-    let extractFields;
     if (resourceType === 'imports') {
-      extractFields = [...IMPORT_RESPONSE_MAPPING_EXTRACTS];
-      if (adaptorType === 'HTTPImport') {
-        extractFields.push('headers');
-      }
-    } else {
-      extractFields = LOOKUP_RESPONSE_MAPPING_EXTRACTS;
+      if (adaptorType === 'HTTPImport') { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
+      return IMPORT_RESPONSE_MAPPING_EXTRACTS;
     }
-    return extractFields;
+    return LOOKUP_RESPONSE_MAPPING_EXTRACTS;
   },
   getResponseMappingDefaultExtracts(resourceType, adaptorType) {
     const extractFields = this.getResponseMappingExtracts(resourceType, adaptorType);
