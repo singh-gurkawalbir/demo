@@ -49,7 +49,7 @@ export default function getFormMetadata(options) {
         fieldToReset: 'keyColumns',
         fieldResetValue: [],
         helpKey: 'export.file.csv.hasHeaderRow',
-        defaultValue: options?.hasHeaderRow,
+        defaultValue: !!options?.hasHeaderRow,
       },
       rowsPerRecord: {
         id: 'rowsPerRecord',
