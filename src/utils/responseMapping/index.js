@@ -16,7 +16,7 @@ export default {
   getResponseMappingExtracts: (resourceType, adaptorType) => {
     let extractFields;
     if (resourceType === 'imports') {
-      extractFields = IMPORT_RESPONSE_MAPPING_EXTRACTS;
+      extractFields = [...IMPORT_RESPONSE_MAPPING_EXTRACTS];
       if (adaptorType === 'HTTPImport') {
         extractFields.push('headers');
       }
