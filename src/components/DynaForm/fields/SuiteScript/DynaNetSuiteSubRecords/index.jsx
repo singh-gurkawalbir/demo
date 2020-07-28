@@ -100,10 +100,6 @@ export default function DynaNetSuiteSubRecords(props) {
 
   const { confirmDialog } = useConfirmDialog();
 
-  // dispatch(
-  //   actions.suiteScript.resource.patchStaged(connectionId, 'flows', resourceId, patchSet, SCOPES.VALUE)
-  // );
-
   useEffect(() => {
     if (subRecordImports && JSON.stringify(subRecordImports) !== JSON.stringify(value)) {
       if (value === '') {

@@ -140,8 +140,6 @@ function SubRecordDrawer(props) {
         )
       );
       history.goBack();
-
-      // onSubmit(updatedFormValues);
     },
     [flow?.import?.netsuite?.subRecordImports, referenceFieldId, dispatch, connectionId, resourceContext.resourceId, history]
   );
