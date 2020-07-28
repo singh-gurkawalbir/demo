@@ -11,14 +11,12 @@ import {
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
 } from './resource';
-import {
-  LOOKUP_RESPONSE_MAPPING_EXTRACTS,
-  IMPORT_RESPONSE_MAPPING_EXTRACTS,
-} from './responseMapping';
+import responseMappingUtil from './responseMapping';
 import arrayUtils from './array';
 import jsonUtils from './json';
 import { isIntegrationApp } from './flows';
 import { isJsonString } from './string';
+
 
 const sampleDataStage = {
   exports: {
@@ -308,12 +306,9 @@ export const isPostDataNeededInResource = resource => {
  * Ex: For Lookups: [ 'data','errors','ignored','statusCode']
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
-export const generateDefaultExtractsObject = resourceType => {
+export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
   // TODO: @Raghu Confirm the below format to generate default objects
-  const defaultExtractsList =
-    resourceType === 'imports'
-      ? IMPORT_RESPONSE_MAPPING_EXTRACTS
-      : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
+  const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
     // eslint-disable-next-line no-param-reassign
@@ -371,7 +366,7 @@ export const getFormattedResourceForPreview = (
       }
     } else {
       // If there is no sampleResponseData, add default fields for lookups/imports
-      resource.sampleResponseData = generateDefaultExtractsObject(resourceType);
+      resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
     }
   }
 
