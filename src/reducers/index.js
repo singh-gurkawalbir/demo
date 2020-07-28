@@ -943,6 +943,7 @@ export function hasSettingsForm(state, resourceType, resourceId) {
   );
 }
 
+// optimize this selector further resource state should be per resource type
 export const makeResourceListSelector = () =>
   createSelector(
     userState,
@@ -2356,11 +2357,15 @@ export function connectionHasAs2Routing(state, id) {
 // #endregion
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export function platformLicense(state) {
-  const preferences = userPreferences(state);
+export const platformLicense = createSelector(
+  userPreferences,
 
-  return fromUser.platformLicense(state.user, preferences.defaultAShareId);
-}
+  // TODO: Surya make it even more granular the selector
+  // it should be made receptive to changes in the state.user.org.accounts
+  userState,
+  (preferencesObj, userStateObj) =>
+    fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
+);
 
 export function platformLicenseActionDetails(state) {
   let licenseActionDetails = {};
@@ -2434,198 +2439,201 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-export function platformLicenseWithMetadata(state) {
-  const license = platformLicense(state);
-  const licenseActionDetails = { ...license };
-  const nameMap = {
-    none: 'None',
-    free: 'Free',
-    limited: 'Limited',
-    standard: 'Standard',
-    premium: 'Premium',
-    enterprise: 'Enterprise',
-  };
+export const platformLicenseWithMetadata = createSelector(
+  platformLicense,
+  (license) => {
+    const licenseActionDetails = { ...license };
+    const nameMap = {
+      none: 'None',
+      free: 'Free',
+      limited: 'Limited',
+      standard: 'Standard',
+      premium: 'Premium',
+      enterprise: 'Enterprise',
+    };
 
-  if (!licenseActionDetails) {
-    return licenseActionDetails;
-  }
-
-  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
-  licenseActionDetails.inTrial = false;
-
-  if (licenseActionDetails.tier === 'free') {
-    if (licenseActionDetails.trialEndDate) {
-      licenseActionDetails.inTrial =
-        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    if (!licenseActionDetails) {
+      return licenseActionDetails;
     }
-  }
 
-  licenseActionDetails.hasSubscription = false;
+    licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+    licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
+    licenseActionDetails.inTrial = false;
 
-  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
-    licenseActionDetails.hasSubscription = true;
-  } else if (
-    licenseActionDetails.tier === 'free' &&
+    if (licenseActionDetails.tier === 'free') {
+      if (licenseActionDetails.trialEndDate) {
+        licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+      }
+    }
+
+    licenseActionDetails.hasSubscription = false;
+
+    if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+      licenseActionDetails.hasSubscription = true;
+    } else if (
+      licenseActionDetails.tier === 'free' &&
     !licenseActionDetails.inTrial
-  ) {
-    if (
-      licenseActionDetails.numAddOnFlows > 0 ||
+    ) {
+      if (
+        licenseActionDetails.numAddOnFlows > 0 ||
       licenseActionDetails.sandbox ||
       licenseActionDetails.numSandboxAddOnFlows > 0
-    ) {
-      licenseActionDetails.hasSubscription = true;
+      ) {
+        licenseActionDetails.hasSubscription = true;
+      }
     }
-  }
 
-  licenseActionDetails.isFreemium =
+    licenseActionDetails.isFreemium =
     licenseActionDetails.tier === 'free' &&
     !licenseActionDetails.hasSubscription &&
     !licenseActionDetails.inTrial;
-  licenseActionDetails.hasExpired = false;
+    licenseActionDetails.hasExpired = false;
 
-  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
-    licenseActionDetails.hasExpired =
+    if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+      licenseActionDetails.hasExpired =
       moment(licenseActionDetails.expires) - moment() < 0;
-  }
-
-  licenseActionDetails.isExpiringSoon = false;
-  let dateToCheck;
-
-  if (licenseActionDetails.hasSubscription) {
-    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
-      dateToCheck = licenseActionDetails.expires;
     }
-  } else if (licenseActionDetails.inTrial) {
-    dateToCheck = licenseActionDetails.trialEndDate;
-  }
 
-  if (dateToCheck) {
-    licenseActionDetails.isExpiringSoon =
+    licenseActionDetails.isExpiringSoon = false;
+    let dateToCheck;
+
+    if (licenseActionDetails.hasSubscription) {
+      if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+        dateToCheck = licenseActionDetails.expires;
+      }
+    } else if (licenseActionDetails.inTrial) {
+      dateToCheck = licenseActionDetails.trialEndDate;
+    }
+
+    if (dateToCheck) {
+      licenseActionDetails.isExpiringSoon =
       moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
-  }
+    }
 
-  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+    licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
 
-  if (licenseActionDetails.inTrial) {
-    licenseActionDetails.subscriptionName = 'Free trial';
-  }
+    if (licenseActionDetails.inTrial) {
+      licenseActionDetails.subscriptionName = 'Free trial';
+    }
 
-  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+    licenseActionDetails.expirationDate = licenseActionDetails.expires;
 
-  if (licenseActionDetails.inTrial) {
-    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
-  } else if (licenseActionDetails.isFreemium) {
-    licenseActionDetails.expirationDate = '';
-  }
+    if (licenseActionDetails.inTrial) {
+      licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+    } else if (licenseActionDetails.isFreemium) {
+      licenseActionDetails.expirationDate = '';
+    }
 
-  if (licenseActionDetails.expirationDate) {
-    licenseActionDetails.expirationDate = moment(
-      licenseActionDetails.expirationDate
-    ).format('MMM Do, YYYY');
-  }
+    if (licenseActionDetails.expirationDate) {
+      licenseActionDetails.expirationDate = moment(
+        licenseActionDetails.expirationDate
+      ).format('MMM Do, YYYY');
+    }
 
-  const names = {
-    free: 'Free',
-    light: 'Starter',
-    moderate: 'Professional',
-    heavy: 'Enterprise',
-    custom: 'Custom',
-  };
+    const names = {
+      free: 'Free',
+      light: 'Starter',
+      moderate: 'Professional',
+      heavy: 'Enterprise',
+      custom: 'Custom',
+    };
 
-  licenseActionDetails.usageTierName =
+    licenseActionDetails.usageTierName =
     names[licenseActionDetails.usageTier || 'free'];
 
-  const hours = {
-    free: 1,
-    light: 40,
-    moderate: 400,
-    heavy: 4000,
-    custom: 10000, // TODO - not sure how to get this
-  };
+    const hours = {
+      free: 1,
+      light: 40,
+      moderate: 400,
+      heavy: 4000,
+      custom: 10000, // TODO - not sure how to get this
+    };
 
-  licenseActionDetails.usageTierHours =
+    licenseActionDetails.usageTierHours =
     hours[licenseActionDetails.usageTier || 'free'];
-  licenseActionDetails.status = '';
+    licenseActionDetails.status = '';
 
-  if (licenseActionDetails.hasSubscription) {
-    licenseActionDetails.status = licenseActionDetails.hasExpired
-      ? 'expired'
-      : 'active';
-  }
+    if (licenseActionDetails.hasSubscription) {
+      licenseActionDetails.status = licenseActionDetails.hasExpired
+        ? 'expired'
+        : 'active';
+    }
 
-  if (
-    licenseActionDetails.tier === 'free' &&
+    if (
+      licenseActionDetails.tier === 'free' &&
     (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
-  ) {
-    licenseActionDetails.status = 'active';
-  }
+    ) {
+      licenseActionDetails.status = 'active';
+    }
 
-  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
-    licenseActionDetails
-  );
-
-  if (licenseActionDetails.numAddOnFlows > 0) {
-    licenseActionDetails.totalFlowsAvailable +=
-      licenseActionDetails.numAddOnFlows;
-  }
-
-  licenseActionDetails.totalSandboxFlowsAvailable = 0;
-
-  if (licenseActionDetails.sandbox) {
-    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
       licenseActionDetails
     );
-  }
 
-  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
-    licenseActionDetails.totalSandboxFlowsAvailable +=
+    if (licenseActionDetails.numAddOnFlows > 0) {
+      licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+    }
+
+    licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+    if (licenseActionDetails.sandbox) {
+      licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+        licenseActionDetails
+      );
+    }
+
+    if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+      licenseActionDetails.totalSandboxFlowsAvailable +=
       licenseActionDetails.numSandboxAddOnFlows;
-  }
+    }
 
-  if (
-    !(
-      (licenseActionDetails.status === 'active' ||
+    if (
+      !(
+        (licenseActionDetails.status === 'active' ||
         licenseActionDetails.isFreemium) &&
       licenseActionDetails.supportTier
-    )
-  ) {
-    licenseActionDetails.supportTier = '';
-  }
+      )
+    ) {
+      licenseActionDetails.supportTier = '';
+    }
 
-  const toReturn = {
-    actions: [],
-  };
+    const toReturn = {
+      actions: [],
+    };
 
-  toReturn.__trialExtensionRequested =
+    toReturn.__trialExtensionRequested =
     licenseActionDetails.__trialExtensionRequested;
 
-  if (licenseActionDetails.tier === 'none') {
-    toReturn.actions = ['start-free-trial'];
-  } else if (licenseActionDetails.tier === 'free') {
-    if (licenseActionDetails.inTrial) {
-      toReturn.actions = ['request-subscription'];
-    } else if (licenseActionDetails.hasSubscription) {
-      if (licenseActionDetails.hasExpired) {
-        toReturn.actions = ['request-upgrade'];
-      }
-    } else if (licenseActionDetails.trialEndDate) {
-      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
-    } else {
+    if (licenseActionDetails.tier === 'none') {
       toReturn.actions = ['start-free-trial'];
+    } else if (licenseActionDetails.tier === 'free') {
+      if (licenseActionDetails.inTrial) {
+        toReturn.actions = ['request-subscription'];
+      } else if (licenseActionDetails.hasSubscription) {
+        if (licenseActionDetails.hasExpired) {
+          toReturn.actions = ['request-upgrade'];
+        }
+      } else if (licenseActionDetails.trialEndDate) {
+        toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+      } else {
+        toReturn.actions = ['start-free-trial'];
+      }
+    } else if (licenseActionDetails.hasExpired) {
+      toReturn.actions = ['request-upgrade'];
+    } else if (licenseActionDetails.tier !== 'enterprise') {
+      toReturn.actions = ['request-upgrade'];
+    } else {
+      toReturn.actions = ['add-more-flows'];
     }
-  } else if (licenseActionDetails.hasExpired) {
-    toReturn.actions = ['request-upgrade'];
-  } else if (licenseActionDetails.tier !== 'enterprise') {
-    toReturn.actions = ['request-upgrade'];
-  } else {
-    toReturn.actions = ['add-more-flows'];
+
+    licenseActionDetails.subscriptionActions = toReturn;
+
+    return licenseActionDetails;
   }
 
-  licenseActionDetails.subscriptionActions = toReturn;
-
-  return licenseActionDetails;
-}
+);
 export function isLicenseValidToEnableFlow(state) {
   const licenseDetails = { enable: true };
   const license = platformLicenseWithMetadata(state);
