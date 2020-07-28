@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
+import { Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
-import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
-import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
-import WarningIcon from '../../../../components/icons/WarningIcon';
-import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
-import DebugIcon from '../../../../components/icons/DebugIcon';
-import RunIcon from '../../../../components/icons/RunIcon';
-import CloseIcon from '../../../../components/icons/CloseIcon';
-import * as selectors from '../../../../reducers';
-import ConnectionPanel from './panels/Connection';
-import RunDashboardPanel from './panels/RunDashboard';
-import AuditPanel from './panels/Audit';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
+import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
+import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
+import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
+import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
+import DebugIcon from '../../../../components/icons/DebugIcon';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import RunIcon from '../../../../components/icons/RunIcon';
+import WarningIcon from '../../../../components/icons/WarningIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import * as selectors from '../../../../reducers';
+import AuditPanel from './panels/Audit';
+import ConnectionPanel from './panels/Connection';
+import RunDashboardPanel from './panels/RunDashboard';
 
 const useStyles = makeStyles(theme => ({
   drawer: {

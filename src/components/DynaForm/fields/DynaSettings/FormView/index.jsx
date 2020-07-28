@@ -18,8 +18,8 @@ const useStyles = makeStyles({
 export default function FormView({
   resourceId,
   resourceType,
-  onFormChange,
   disabled,
+  formKey,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -46,13 +46,12 @@ export default function FormView({
     [dispatch, resourceId]
   );
 
-
   // TODO:verify this behaviour
-  const formKey = useFormInitWithPermissions({
-    remount: settingsFormState.key,
-    onChange: onFormChange,
+  useFormInitWithPermissions({
+    formKey,
+    remount: settingsFormState?.key,
     disabled,
-    fieldMeta: settingsFormState.meta,
+    fieldsMeta: settingsFormState?.meta,
     resourceId,
     resourceType,
     ...formState
@@ -76,7 +75,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm formKey={formKey} fieldMeta={formState.meta} />
+      <DynaForm formKey={formKey} fieldMeta={settingsFormState?.meta} />
     </div>
   );
 }

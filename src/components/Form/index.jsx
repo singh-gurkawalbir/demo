@@ -35,6 +35,27 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
+export const generateSimpleLayout = (fieldsMeta) => {
+  if (!fieldsMeta) return null;
+  const { fieldMap, layout } = fieldsMeta;
+
+  if (!fieldMap) return null;
+
+  // when no layout provided generate a simple one
+
+  if (!layout) {
+  // if no layout metadata accompanies the fieldMap,
+  // then the order in which the fields are defined in the map are used as the layout.
+    return {
+      fieldMap,
+      layout: { fields: Object.keys(fieldMap)}
+
+    };
+  }
+
+  return fieldsMeta;
+};
+
 export default function useForm({
   formKey,
   metaValue,
@@ -65,10 +86,11 @@ export default function useForm({
 
     setFormKeyUsed(finalFormKey);
 
-    if (fieldsMeta) {
+    const updatedFieldMeta = generateSimpleLayout(fieldsMeta);
+    if (updatedFieldMeta) {
       dispatch(
         actions.form.init(finalFormKey, {
-          ...normalizeAllPropsToFormApi(formSpecificProps),
+          ...normalizeAllPropsToFormApi({...formSpecificProps, fieldsMeta: updatedFieldMeta}),
         })
       );
     }

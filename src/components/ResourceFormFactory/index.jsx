@@ -128,7 +128,6 @@ export const ResourceFormFactory = props => {
   return (
     <FormStateManager
       {...props}
-      resource={resource}
       formState={formState}
       fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}

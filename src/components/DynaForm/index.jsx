@@ -1,7 +1,8 @@
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import DynaFormGenerator from './DynaFormGenerator';
+import { generateSimpleLayout } from '../Form';
 
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
@@ -27,6 +28,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between'
   }
 }));
+
 const DynaForm = props => {
   const {
     className,
@@ -39,8 +41,7 @@ const DynaForm = props => {
     ...rest
   } = props;
   const classes = useStyles();
-  const { fieldMap } = fieldMeta;
-  let { layout } = fieldMeta;
+
   // This is a helpful logger to find re-renders of forms.
   // Sometimes forms are rendered in hidden tabs/drawers and thus still
   // cause re-renders, even when hidden outputting the layout makes it easy
@@ -59,20 +60,12 @@ const DynaForm = props => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formRef.current]);
 
-  if (!formKey) return null;
+  const updatedFieldMeta = useMemo(() => generateSimpleLayout(fieldMeta), [fieldMeta]);
 
-  if (!layout) {
-    if (!fieldMap) {
-      return null;
-    }
+  if (!formKey || !updatedFieldMeta) return null;
+  const {layout, fieldMap} = updatedFieldMeta;
 
-    // if no layout metadata accompanies the fieldMap,
-    // then the order in which the fields are defined in the map are used as the layout.
-    layout = { fields: [] };
-    Object.keys(fieldMap).forEach(fieldId => {
-      layout.fields.push(fieldId);
-    });
-  }
+  if (!fieldMap) return null;
   return (
     <>
       <div ref={formRef} className={clsx(classes.fieldContainer, className)}>

@@ -19,7 +19,6 @@ import DashboardPanel from '../DIY/panels/Dashboard';
 import FlowsPanel from './panels/Flows';
 import SettingsPanel from './panels/Settings';
 
-
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
     padding: theme.spacing(3),

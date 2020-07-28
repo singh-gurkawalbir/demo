@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import FormGenerator from '..';
 import * as selectors from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,7 +21,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap, formKey, resource } = props;
+  const { containers, fieldMap, formKey, resourceType, resourceId } = props;
+
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
   const transformedContainers =
     containers &&
     containers.map((container, index) => {

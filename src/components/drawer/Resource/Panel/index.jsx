@@ -1,25 +1,22 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { IconButton, makeStyles, Typography } from '@material-ui/core';
 import clsx from 'clsx';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  useLocation,
-  generatePath,
-  useHistory,
-  matchPath,
+  matchPath, useHistory, useLocation,
   useRouteMatch
 } from 'react-router-dom';
-import { makeStyles, Typography, IconButton } from '@material-ui/core';
-import LoadResources from '../../../LoadResources';
-import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
-import * as selectors from '../../../../reducers';
+import useTraceUpdate from 'use-trace-update';
 import actions from '../../../../actions';
-import Close from '../../../icons/CloseIcon';
-import Back from '../../../icons/BackArrowIcon';
+import * as selectors from '../../../../reducers';
+import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import ApplicationImg from '../../../icons/ApplicationImg';
+import Back from '../../../icons/BackArrowIcon';
+import Close from '../../../icons/CloseIcon';
+import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
-import getRoutePath from '../../../../utils/routePaths';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
-import useDrawerEditUrl from './useDrawerEditUrl';
+import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = (url) => !!matchPath(url, {
@@ -95,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-const determineRequiredResources = type => {
+const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
 
   // Handling virtual resources types Page processor and Page generators
@@ -115,7 +112,7 @@ const determineRequiredResources = type => {
   if (resourceType.includes('exports') || resourceType.includes('imports')) return [...resourceType, 'connections'];
 
   return resourceType;
-};
+}, [type]);
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'pageGenerator') {
@@ -149,13 +146,13 @@ const useRedirectionToParentRoute = (resourceType, id) => {
     }
   }, [history, initFailed, match.url]);
 };
+
 export default function Panel(props) {
-  const { onClose, occupyFullWidth, flowId } = props;
+  const { onClose, occupyFullWidth, flowId, integrationId } = props;
   const [newId] = useState(generateNewId());
 
   const location = useLocation();
   const dispatch = useDispatch();
-  const history = useHistory();
   const match = useRouteMatch();
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
@@ -165,12 +162,7 @@ export default function Panel(props) {
     occupyFullWidth,
     match,
   });
-  const skipFormClose = useSelector(
-    state => selectors.resourceFormState(state, resourceType, id).skipClose
-  );
-  const newResourceId = useSelector(state =>
-    selectors.createdResourceId(state, id)
-  );
+
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
@@ -196,72 +188,11 @@ export default function Panel(props) {
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
-  const editUrl = useDrawerEditUrl(resourceType, id, location.pathname);
-
-  function handleSubmitComplete() {
-    if (isNew) {
-      // The following block of logic is used specifically for pageProcessor
-      // and pageGenerator forms. These forms allow a user to choose an
-      // existing resource. In this case we dont have any more work to do,
-      // we just need to match the temp 'new-xxx' id with the one the user
-      // selected.
-
-      if (resourceType === 'integrations') {
-        return history.replace(
-          getRoutePath(`/${resourceType}/${newResourceId}/flows`)
-        );
-      }
-
-      const resourceIdPatch = stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/resourceId'
-      );
-      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
-
-      if (isMultiStepSaveResource) {
-        if (!resourceId) {
-          return history.replace(editUrl);
-        }
-      }
-      // this is NOT a case where a user selected an existing resource,
-      // so move to step 2 of the form...
-
-      dispatch(actions.resource.created(resourceId, id));
-      // Incase of a resource with single step save, when skipFormClose is passed
-      // redirect to the updated URL with new resourceId as we do incase of edit - check else part
-      if (skipFormClose && !isMultiStepSaveResource) {
-        return history.replace(
-          generatePath(match.path, {
-            id: newResourceId || id,
-            resourceType,
-            operation,
-          })
-        );
-      }
-      // In other cases , close the drawer
-      onClose();
-    } else {
-      // Form should re render with created new Id
-      // Below code just replaces url with created Id and form re initializes
-      if (skipFormClose) {
-        history.replace(
-          generatePath(match.path, {
-            id: newResourceId || id,
-            resourceType,
-            operation,
-          })
-        );
-
-        return;
-      }
-
-      onClose();
-    }
-  }
-
+  const handleSubmitComplete = useHandleSubmitCompleteFn(resourceType, id, onClose);
   const showApplicationLogo =
     ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
-  const requiredResources = determineRequiredResources(resourceType);
+  const requiredResources = useDetermineRequiredResources(resourceType);
   const title = useMemo(
     () =>
       getTitle({
@@ -273,9 +204,9 @@ export default function Panel(props) {
     [id, location.search, resourceLabel, resourceType]
   );
   const [showNotificationToaster, setShowNotificationToaster] = useState(false);
-  const onCloseNotificationToaster = () => {
+  const onCloseNotificationToaster = useCallback(() => {
     setShowNotificationToaster(false);
-  };
+  }, []);
   // will be patching useTechAdaptorForm for assistants if export/import is not supported
   // based on this value, will be showing banner on the new export/import creation
   // using isNew as dependency and this will be false for export/import form
@@ -289,7 +220,16 @@ export default function Panel(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
   const variant = match.isExact ? 'edit' : 'view';
-
+  useTraceUpdate({
+    variant,
+    isNew,
+    resourceType,
+    flowId,
+    integrationId,
+    handleSubmitComplete,
+    showNotificationToaster,
+    onCloseNotificationToaster,
+  });
   return (
     <>
       <div className={classes.root}>
@@ -323,29 +263,29 @@ export default function Panel(props) {
         </div>
         <LoadResources required resources={requiredResources}>
           <ResourceFormWithStatusPanel
+            formKey={newId}
             className={classes.resourceFormWrapper}
             variant={variant}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
-            integrationId={props.integrationId}
-            formKey={newId}
+            flowId={flowId}
+            integrationId={integrationId}
             isFlowBuilderView={!!flowId}
             onSubmitComplete={handleSubmitComplete}
-            onCancel={abortAndClose}
             showNotificationToaster={showNotificationToaster}
             onCloseNotificationToaster={onCloseNotificationToaster}
-
           />
           <ResourceFormActionsPanel
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            submitButtonColor={submitButtonColor}
             formKey={newId}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
             flowId={flowId}
+            integrationId={integrationId}
+            cancelButtonLabel="Cancel"
+            submitButtonLabel={submitButtonLabel}
+            submitButtonColor={submitButtonColor}
             onCancel={abortAndClose}
           />
         </LoadResources>
