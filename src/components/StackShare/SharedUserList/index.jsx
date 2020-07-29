@@ -55,7 +55,7 @@ export default function SharedUserList() {
             <TableCell>Email</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Enable user</TableCell>
+            <TableCell>Off/On</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
         </TableHead>
