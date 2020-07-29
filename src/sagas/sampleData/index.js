@@ -54,8 +54,12 @@ export function* constructResourceFromFormValues({
     SCOPES.VALUE
   );
 
-  return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
-    .newDocument;
+  try {
+    return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
+      .newDocument;
+  } catch (e) {
+    return {};
+  }
 }
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {

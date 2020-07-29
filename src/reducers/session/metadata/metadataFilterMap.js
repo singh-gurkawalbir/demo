@@ -9,6 +9,7 @@ const emptySet = [];
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
+  'suitescript-settings-options': data => data?.options?.map(([value, label]) => ({value, label})),
   'suitescript-recordTypes': data =>
     data.map(item => ({
       label: item.name,
@@ -82,6 +83,10 @@ export default {
           item.id.indexOf('item[*].custcol') === 0
       )
       .map(item => ({ label: item.name, value: item.id })),
+  'suitescript-subrecord-referenceFields': data =>
+    data
+      .filter(item => item.type === 'select' && !item.id.includes('.internalid') && !item.id.includes('[*].'))
+      .map(item => ({ label: item.name.replace(' (Name)', ''), value: item.id })),
   'webservices-searchFilters': data =>
     data.fields &&
     data.fields.map(item => ({

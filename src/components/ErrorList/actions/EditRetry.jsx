@@ -1,24 +1,18 @@
-import React, { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
-import Icon from '../../icons/EditIcon';
 
 export default {
-  label: 'Edit retry ',
-  component: function EditRetry({ resource }) {
-    const { errorId } = resource;
+  label: 'Edit retry',
+  component: function EditRetry({rowData = {}}) {
+    const { errorId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
       history.push(`${match.url}/details/${errorId}/edit`);
     }, [errorId, history, match.url]);
-
-    return (
-      <>
-        <IconButton data-test="editRetry" size="small" onClick={handleClick}>
-          <Icon />
-        </IconButton>
-      </>
-    );
+    useEffect(() => {
+      handleClick();
+    }, [handleClick]);
+    return null;
   },
 };
