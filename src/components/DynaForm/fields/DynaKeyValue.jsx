@@ -108,7 +108,7 @@ export function KeyValueComponent(props) {
     onUpdate(removedEmptyValues);
   };
 
-  const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
+  const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
 

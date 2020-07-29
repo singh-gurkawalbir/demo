@@ -81,8 +81,18 @@ export default function DynaCsvParse(props) {
     uploadSampleDataFieldName
   } = props;
   const [formKey, setFormKey] = useState(1);
-  const [currentOptions, setCurrentOptions] = useState(value);
-  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType}));
+  const getInitOptions = useCallback(
+    (val) => {
+      if (!('trimSpaces' in val)) {
+        return {...val, trimSpaces: true};
+      }
+      return val;
+    },
+    [],
+  );
+  const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
+  const [currentOptions, setCurrentOptions] = useState(initOptions);
+  const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {

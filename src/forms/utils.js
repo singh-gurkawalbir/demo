@@ -359,7 +359,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource = {}) => {
+const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
@@ -379,11 +379,10 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.isIAField = true;
   } else if (newField.type === 'matchingCriteria') {
     newField.type = 'matchingcriteria';
-  } else if (newField.type === 'select' && newField.supportsRefresh) {
-    newField.type = 'integrationapprefreshableselect';
-  } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
-    newField.type = 'integrationapprefreshableselect';
-    newField.multiselect = true;
+  } else if (newField.supportsRefresh && (newField.type === 'select' || newField.type === 'multiselect')) {
+    if (newField.type === 'multiselect') { newField.multiselect = true; }
+    if (isSuiteScript) newField.type = 'suitescriptsettings';
+    else { newField.type = 'integrationapprefreshableselect'; }
   } else if (['select', 'multiselect'].includes(newField.type) && !newField.supportsRefresh) {
     newField.multiselect = newField.type === 'multiselect';
     newField.type = 'iaselect';
@@ -531,7 +530,7 @@ const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConn
 
       return {
         ...(propsSpreadToFields || {}),
-        ...getFieldConfig(field, resource),
+        ...getFieldConfig(field, resource, !!ssLinkedConnectionId),
         defaultValue,
         name: `/${name}`,
         ssLinkedConnectionId,

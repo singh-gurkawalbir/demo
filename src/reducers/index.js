@@ -2754,6 +2754,17 @@ export const resourcePermissions = (
   resourceId,
   childResourceType
 ) => {
+  // to support parent-child integration permissions
+  if (resourceType === 'integrations') {
+    const resourceData = resource(state, 'integrations', resourceId);
+    if (resourceData?._parentId) {
+      return resourcePermissions(
+        state,
+        resourceType,
+        resourceData._parentId,
+        childResourceType);
+    }
+  }
   //  when resourceType == connection and resourceID = connectionId, we fetch connection
   //  permission by checking for highest order connection permission under integrations
   if (resourceType === 'connections' && resourceId) {
