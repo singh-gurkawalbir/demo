@@ -1195,6 +1195,15 @@ export default {
           type: d.type,
           sublist: d.sublist,
         }));
+        const attachdetachFields = [{id: 'celigo_nlobjAttachToId', name: 'attachToInternalId'},
+          {id: 'celigo_nlobjAttachedType', name: 'attachedRecordType'},
+          {id: 'celigo_nlobjAttachedId', name: 'attachedRecordInternalId'},
+          {id: 'celigo_nlobjDetachFromId', name: 'detachToInternalId'},
+          {id: 'celigo_nlobjDetachedType', name: 'detachedRecordType'},
+          {id: 'celigo_nlobjDetachedId', name: 'detachedRecordInternalId'},
+          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'attributesRole'},
+          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'attributedField'}];
+        formattedGenerateFields = formattedGenerateFields.concat(attachdetachFields);
       } else {
         let formattedSampleData = [];
 
