@@ -9,6 +9,7 @@ const emptySet = [];
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
+  'suitescript-settings-options': data => data?.options?.map(([value, label]) => ({value, label})),
   'suitescript-recordTypes': data =>
     data.map(item => ({
       label: item.name,
