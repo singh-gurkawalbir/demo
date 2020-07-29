@@ -22,7 +22,6 @@ export default function (state = defaultState, action) {
         break;
 
       case actionTypes.APP_ERRORED:
-        console.log('app errored called');
         draft.appErrored = true;
         break;
 
