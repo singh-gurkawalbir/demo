@@ -154,8 +154,13 @@ export default (state = {}, action) => {
           'connectors/'.length,
           resourceType.indexOf('/installBase')
         );
+
+        // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
+        // we can not push update to child integrations. Can identify them by _parentId prop
+        const filteredCollection = collection?.filter(c => !c._parentId);
+
         const newCollection =
-          collection && collection.map(c => ({ ...c, _connectorId: id }));
+          filteredCollection?.map(c => ({ ...c, _connectorId: id }));
 
         return produce(state, draft => {
           draft.connectorInstallBase = newCollection || [];
