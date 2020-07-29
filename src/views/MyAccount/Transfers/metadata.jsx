@@ -20,7 +20,7 @@ export default {
         heading: 'Integrations',
         value: r => r && r.integrations,
       },
-      { heading: <TableHeadWithRefreshIcon headerName="Status" resourceType="transfers" resourceCommPath="transfers/invited" />,
+      { heading: <TableHeadWithRefreshIcon headerName="Status" resourceType="transfers" />,
         value: r => {
           if (r?.dismissed) {
             return 'Dismissed';

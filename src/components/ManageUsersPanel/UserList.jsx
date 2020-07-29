@@ -33,6 +33,9 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     marginLeft: theme.spacing(1),
   },
+  tableCellWithIcon: {
+    display: 'inline-flex'
+  }
 }));
 
 export default function UserList({ integrationId, onEditUserClick }) {
@@ -136,7 +139,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
                 />
               </TableCell>
               <TableCell>
-                <div style={{display: 'inline-flex'}}>
+                <div className={classes.tableCellWithIcon}>
                   <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
                   <Help
                     title="Status"

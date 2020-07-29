@@ -4032,8 +4032,7 @@ export function getLastExportDateTime(state, flowId) {
 export function getTransferPreviewData(state) {
   return fromSession.getTransferPreviewData(state && state.session);
 }
-// TODO:We are mutating the state data in this selector
-// Probably we should move mutate part to reducers
+
 export function transferListWithMetadata(state) {
   const transfers =
     resourceList(state, {

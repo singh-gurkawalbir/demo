@@ -23,10 +23,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function TableHeadWithRefreshIcon({headerName, resourceType, resourceCommPath}) {
+export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const resourceCommStatus = useSelector(state => selectors.commStatusPerPath(state, `/${resourceCommPath || resourceType}`, 'GET'));
+  const isLoading = useSelector(state => {
+    // Incase of transfers as we make two API calls for fetching transfers
+    // and invited transfers, checking for both the resourceTypes
+    if (resourceType === 'transfers') {
+      return ['transfers', 'transfers/invited'].some((resourceType) => selectors.commStatusPerPath(state, `/${resourceType}`, 'GET') === COMM_STATES.LOADING);
+    }
+    return selectors.commStatusPerPath(state, `/${resourceType}`, 'GET') === COMM_STATES.LOADING;
+  });
   const [refreshRequested, setRefreshRequested] = useState(false);
   const handleRefresh = useCallback(() => {
     setRefreshRequested(true);
@@ -35,10 +42,10 @@ export default function TableHeadWithRefreshIcon({headerName, resourceType, reso
   return (
     <span className={classes.status}>
       {headerName}
-      {(refreshRequested && resourceCommStatus === COMM_STATES.LOADING) ?
+      {(refreshRequested && isLoading) ?
         <Spinner className={classes.statusSpinner} size={24} color="primary" /> :
         <IconButton
-          data-test="newTransfer"
+          data-test="refreshStatus"
           variant="text"
           className={classes.refreshIconButton}
           onClick={handleRefresh}>
