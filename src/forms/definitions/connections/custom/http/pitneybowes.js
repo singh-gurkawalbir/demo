@@ -44,6 +44,7 @@ export default {
     };
   },
   fieldMap: {
+    name: { fieldId: 'name' },
     'http.sandbox': {
       id: 'http.sandbox',
       type: 'select',
