@@ -1195,12 +1195,12 @@ export default {
           type: d.type,
           sublist: d.sublist,
         }));
-        const attachdetachFields = [{id: 'celigo_nlobjAttachToId', name: 'attachToInternalId'},
-          {id: 'celigo_nlobjAttachedType', name: 'attachedRecordType'},
-          {id: 'celigo_nlobjAttachedId', name: 'attachedRecordInternalId'},
-          {id: 'celigo_nlobjDetachFromId', name: 'detachToInternalId'},
-          {id: 'celigo_nlobjDetachedType', name: 'detachedRecordType'},
-          {id: 'celigo_nlobjDetachedId', name: 'detachedRecordInternalId'},
+        const attachdetachFields = [{id: 'celigo_nlobjAttachToId', name: 'Attach To Internal ID'},
+          {id: 'celigo_nlobjAttachedType', name: 'Attached Record Type'},
+          {id: 'celigo_nlobjAttachedId', name: 'Attached Internal ID'},
+          {id: 'celigo_nlobjDetachFromId', name: 'Detach From Internal ID'},
+          {id: 'celigo_nlobjDetachedType', name: 'Detached Record Type'},
+          {id: 'celigo_nlobjDetachedId', name: 'Detached Internal ID'},
           {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'attributesRole'},
           {id: 'celigo_nlobjAttachDetachAttributesField', name: 'attributedField'}];
         formattedGenerateFields = formattedGenerateFields.concat(attachdetachFields);
