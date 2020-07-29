@@ -34,5 +34,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: [Edit, AuditLogs, Delete],
+  rowActions: () => [Edit, AuditLogs, Delete],
 };
