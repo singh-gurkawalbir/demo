@@ -5,7 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import { MODEL_PLURAL_TO_LABEL, generateNewId } from '../../utils/resource';
+import { MODEL_PLURAL_TO_LABEL, generateNewId,
+  isTradingPartnerSupported,
+} from '../../utils/resource';
 import infoText from './infoText';
 import IconTextButton from '../../components/IconTextButton';
 import * as selectors from '../../reducers';
@@ -64,10 +66,20 @@ export default function ResourceList(props) {
     selectors.makeResourceListSelector,
     filterConfig
   );
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state).accessLevel
+  );
+  const environment = useSelector(
+    state => selectors.userPreferences(state).environment
+  );
+  const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
   let createResourceLabel = '';
   if (resourceType) {
-    if (['accesstokens', 'apis'].includes(resourceType)) {
+    if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;
     } else {
       createResourceLabel = resourceName.toLowerCase();
@@ -140,6 +152,7 @@ export default function ResourceList(props) {
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
+              actionProps={{showTradingPartner}}
             />
           )}
         </LoadResources>

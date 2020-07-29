@@ -79,6 +79,10 @@ const connection = {
       connectionId,
       integrationId,
     }),
+  updateTradingPartner: (connectionId) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, {
+      connectionId,
+    }),
   requestRevoke: connectionId =>
     action(actionTypes.CONNECTION.REVOKE_REQUEST, {
       connectionId,
@@ -87,6 +91,10 @@ const connection = {
     action(actionTypes.CONNECTION.DEREGISTER_COMPLETE, {
       deregisteredId,
       integrationId,
+    }),
+  completeTradingPartner: (connectionIds) =>
+    action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE, {
+      connectionIds,
     }),
   updateIClients: (iClients, connectionId) =>
     action(actionTypes.CONNECTION.UPDATE_ICLIENTS, {
@@ -372,6 +380,11 @@ const connectors = {
     action(actionTypes.CONNECTORS.METADATA_CLEAR, {
       fieldName,
       _integrationId,
+    }),
+  clearStatus: (fieldName, _integrationId) =>
+    action(actionTypes.CONNECTORS.STATUS_CLEAR, {
+      fieldName,
+      _integrationId
     }),
   receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {

@@ -375,10 +375,10 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
-              'fileMetadata',
               'file.decompressFiles',
               'file.compressionFormat',
               'file.skipDelete',
+              'fileMetadata',
               'ftp.backupDirectoryPath',
               'file.encoding',
               'pageSize',

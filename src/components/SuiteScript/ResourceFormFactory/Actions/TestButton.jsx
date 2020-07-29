@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import DoneIcon from '@material-ui/icons/Done';
 import { useDispatch, useSelector } from 'react-redux';
-// import Chip from '@material-ui/core/Chip';
-// import CircularProgress from '@material-ui/core/CircularProgress';
 import PingMessageSnackbar from '../../../PingMessageSnackbar';
 import actions from '../../../../actions';
 import * as selectors from '../../../../reducers/index';

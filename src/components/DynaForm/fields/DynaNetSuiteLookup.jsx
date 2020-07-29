@@ -144,6 +144,7 @@ export default function DynaNetSuiteLookup(props) {
             />
           </div>
           <ActionButton
+            disabled={options?.disableFetch}
             data-test={id}
             onClick={handleEditorClick}
             className={classes.dynaNetsuiteLookupActionBtn}>

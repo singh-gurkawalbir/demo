@@ -17,7 +17,7 @@ const blockMap = {
   import: { label: 'Import', Icon: ImportIcon },
   lookup: { label: 'Lookup', Icon: LookupIcon },
   listener: { label: 'Listener', Icon: ListenerIcon },
-  dataLoader: { label: 'Data loader', Icon: DataLoaderIcon },
+  dataLoader: { label: 'Data Loader', Icon: DataLoaderIcon },
   exportTransfer: { label: 'Transfer', Icon: TransferDownIcon },
   importTransfer: { label: 'Transfer', Icon: TransferUpIcon },
 };

@@ -62,6 +62,7 @@ import { ReferencedFieldsModal } from './DynaSalesforceExportComponents/DynaTree
 import DynaNetSuiteLookupFilters from './DynaNetSuiteLookupFilters';
 import DynaNetSuiteLookup from './DynaNetSuiteLookup';
 import DynaIAExpression from './DynaIAExpression';
+import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
 import DynaIclient from './DynaIclient';
@@ -112,7 +113,6 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
-import DynaCheckboxTradingPartnerField from './checkbox/DynaCheckboxTradingPartnerField';
 
 export default {
   refreshabletext: DynaRefreshableText,
@@ -120,6 +120,7 @@ export default {
   suitescripttable: DynaSuiteScriptTable,
   featurecheck: DynaFeatureCheck,
   mode: DynaMode,
+  iaselect: DynaIASelect,
   mapping: DynaImportMapping,
   toggleSelectToText: DynaToggleSelectToText,
   selectscopes: DynaSelectScopes,
@@ -208,7 +209,6 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
-  checkboxtradingpartnerfield: DynaCheckboxTradingPartnerField,
   exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,

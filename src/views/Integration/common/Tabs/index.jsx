@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     overflow: 'visible',
   },
   tab: {
-    minWidth: theme.spacing(13.75),
+    minWidth: 'auto',
     color: theme.palette.secondary.main,
     fontSize: 14,
   },

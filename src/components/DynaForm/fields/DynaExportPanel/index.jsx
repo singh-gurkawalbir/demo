@@ -11,12 +11,10 @@ import {
   getAvailableResourcePreviewStages,
   isPageGenerator,
   drawerOpened,
-  makeResourceDataSelector,
   isExportPreviewDisabled,
 } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import Panels from './Panels';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -60,11 +58,6 @@ function DynaExportPanel(props) {
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { merged: resource = {} } = useSelectorMemo(
-    makeResourceDataSelector,
-    resourceType,
-    resourceId
-  );
   const isPageGeneratorExport = useSelector(state =>
     isPageGenerator(state, flowId, resourceId)
   );
@@ -170,7 +163,8 @@ function DynaExportPanel(props) {
         defaultPanel={defaultPanel}
         availablePreviewStages={availablePreviewStages}
         handlePanelViewChange={handlePanelViewChange}
-        resource={resource}
+        resourceId={resourceId}
+        resourceType={resourceType}
       />
     </div>
   );

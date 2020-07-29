@@ -27,6 +27,8 @@ export default function CodeEditor({
   wrap,
   showGutter,
   showInvisibles,
+  showLineNumbers = true,
+  displayIndentGuides = true,
   useWorker,
   enableAutocomplete,
   onChange,
@@ -123,9 +125,10 @@ export default function CodeEditor({
         onChange={handleChange}
         setOptions={{
           useWorker,
-          showInvisibles,
           wrap,
-          // showLineNumbers: true,
+          showInvisibles,
+          showLineNumbers,
+          displayIndentGuides,
           tabSize: 2,
         }}
         editorProps={{ $blockScrolling: true }}

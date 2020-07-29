@@ -126,7 +126,7 @@ export default function AddOnsPanel({ integrationId }) {
                   onClick={() => handleContactSales(data.name)}
                   variant="outlined"
                   color="primary">
-                  Contact Sales
+                  Contact sales
                 </Button>
               </CardActions>
             </Card>
@@ -134,7 +134,7 @@ export default function AddOnsPanel({ integrationId }) {
       </div>
       {showMessage && (
         <ModalDialog show onClose={onClose}>
-          <div>License Upgrade Request</div>
+          <div>License upgrade request</div>
           <div>{LICENSE_UPGRADE_REQUEST_RECEIVED}</div>
         </ModalDialog>
       )}

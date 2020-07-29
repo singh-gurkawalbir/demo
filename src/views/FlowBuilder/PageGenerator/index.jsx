@@ -169,7 +169,7 @@ const PageGenerator = ({
 
       if (isDataLoader) {
         patchSet.push({ op: 'add', path: '/type', value: 'simple' });
-        patchSet.push({ op: 'add', path: '/name', value: 'Data loader' });
+        patchSet.push({ op: 'add', path: '/name', value: 'Data Loader' });
       } else {
         patchSet.push({
           op: 'add',
@@ -309,44 +309,34 @@ const PageGenerator = ({
           isUsed: usedActions[actionsMap.schedule],
         });
       }
-
       if (exportNeedsRouting || connectionHasAs2Routing) {
         generatorActions.push({
           ...as2RoutingAction,
           isUsed: connectionHasAs2Routing || multipleAs2ExportsOfSameConnectionId,
         });
       }
-
-      if (isDataLoader) {
-        generatorActions = [
-          {
-            ...exportFilterAction,
-            isUsed: usedActions[actionsMap.outputFilter],
-          },
-          { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-        ];
-      } else {
-        generatorActions = [
-          ...generatorActions,
-          {
-            ...transformationAction,
-            isUsed: usedActions[actionsMap.transformation],
-          },
-          {
-            ...exportFilterAction,
-            isUsed: usedActions[actionsMap.outputFilter],
-          },
-          { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
-        ];
-      }
+      generatorActions = [
+        ...generatorActions,
+        {
+          ...transformationAction,
+          isUsed: usedActions[actionsMap.transformation],
+        },
+        {
+          ...exportFilterAction,
+          isUsed: usedActions[actionsMap.outputFilter],
+        },
+        // We don't support preSavePage hook incase of Data loader
+        ...(
+          isDataLoader ? [] :
+            [{ ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] }]
+        )
+      ];
     }
-
     return generatorActions;
   }, [
     blockType,
     connectionHasAs2Routing,
     exportNeedsRouting,
-    isDataLoader,
     pending,
     usedActions,
     multipleAs2ExportsOfSameConnectionId

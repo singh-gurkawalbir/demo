@@ -68,7 +68,7 @@ export default function TemplateList(props) {
               to={`${location.pathname}/add/templates/${generateNewId()}`}
               variant="text"
               color="primary">
-              <AddIcon /> New listing
+              <AddIcon /> Create listing
             </IconTextButton>
           </div>
         </CeligoPageBar>

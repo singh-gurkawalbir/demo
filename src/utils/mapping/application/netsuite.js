@@ -23,8 +23,9 @@ export default {
     mappings = {},
     recordType,
     isGroupedSampleData,
+    resource,
   }) => {
-    const toReturn = [];
+    let toReturn = [];
     let isItemSubtypeRecord = false;
 
     isItemSubtypeRecord =
@@ -74,6 +75,108 @@ export default {
           toReturn.push(tempFm);
         }
       });
+    let index;
+    if (resource && resource.netsuite_da?.operation === 'attach') {
+      toReturn = toReturn.filter(m => (!['detachToInternalId', 'detachedRecordType', 'detachedRecordInternalId'].includes(m.generate)));
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'attachToInternalId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'attachToInternalId',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'attachedRecordType'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'attachedRecordType',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'attachedRecordInternalId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'attachedRecordInternalId',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+    } else if (resource && resource.netsuite_da?.operation === 'detach') {
+      toReturn = toReturn.filter(m => (!['attachToInternalId', 'attachedRecordType', 'attachedRecordInternalId'].includes(m.generate)));
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'detachToInternalId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'detachToInternalId',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'detachedRecordType'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'detachedRecordType',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'detachedRecordInternalId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'detachedRecordInternalId',
+          isRequired: true
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+    } else {
+      toReturn = toReturn.filter(m => (!['attachToInternalId', 'detachToInternalId', 'attachedRecordType', 'detachedRecordType', 'attachedRecordInternalId', 'detachedRecordInternalId'].includes(m.generate)));
+    }
+
+    if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation)) {
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'attributesRole'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'attributesRole',
+        });
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'attributedField'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'attributedField',
+        });
+      }
+    }
     mappings.lists &&
       mappings.lists.forEach(lm => {
         lm.fields.forEach(fm => {
@@ -100,17 +203,18 @@ export default {
             );
           }
 
-          if (isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-              tempFm.extract = tempFm.extract.substr('*.'.length);
-            } else {
-              // remove 0. in the begining of extract
-              if (tempFm.extract && /^0\./.test(tempFm.extract)) {
-                tempFm.extract = tempFm.extract.substr('0.'.length);
-              }
+          if (isGroupedSampleData && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+            tempFm.useFirstRow = true;
+          }
+          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+            tempFm.extract = tempFm.extract.substr('*.'.length);
+          } else if (tempFm.extract && /^0\./.test(tempFm.extract)) {
+            tempFm.extract = tempFm.extract.substr('0.'.length);
+          }
 
-              tempFm.useFirstRow = true;
-            }
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // Remove [' in the start and  remove '] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
           }
 
           if (fm.subRecordMapping && fm.subRecordMapping.recordType) {

@@ -467,7 +467,7 @@ export function* requestProcessorData({
     const mappings = (flowNode && flowNode.responseMapping) || {};
     const preProcessedResponseMappingData = yield call(
       getPreProcessedResponseMappingData,
-      { resourceType, preProcessedData }
+      { resourceType, preProcessedData, adaptorType: resource?.adaptorType}
     );
 
     if (mappings && (mappings.fields.length || mappings.lists.length)) {

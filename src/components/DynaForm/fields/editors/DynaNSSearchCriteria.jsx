@@ -9,22 +9,22 @@ import * as selectors from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   dynaNSSearchCriteriaWrapper: {
-    flexDirection: 'row !important',
     width: '100%',
-    alignItems: 'center',
   },
   dynaNSbtn: {
-    marginRight: theme.spacing(0.5),
+    maxWidth: 100,
   },
   dynaFormLabel: {
     marginBottom: 0,
-    marginRight: 12,
     maxWidth: '50%',
     wordBreak: 'break-word',
   },
-}));
+  dynaNsSearchLabelWrapper: {
+    display: 'flex',
+  },
+});
 
 export default function DynaNSSearchCriteria(props) {
   const classes = useStyles();
@@ -82,9 +82,12 @@ export default function DynaNSSearchCriteria(props) {
         />
       )}
       <div className={classes.dynaNSSearchCriteriaWrapper}>
-        <FormLabel className={classes.dynaFormLabel}>
-          Additional search criteria:
-        </FormLabel>
+        <div className={classes.dynaNsSearchLabelWrapper}>
+          <FormLabel className={classes.dynaFormLabel}>
+            Additional search criteria
+          </FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <Button
           data-test={id}
           variant="outlined"
@@ -93,9 +96,6 @@ export default function DynaNSSearchCriteria(props) {
           onClick={handleEditorClick}>
           Launch
         </Button>
-        {/* TODO (Aditya): we need to add the helptext for the upload file */}
-
-        <FieldHelp {...props} />
       </div>
     </>
   );

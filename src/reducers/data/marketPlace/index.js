@@ -3,6 +3,7 @@ import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
+import { isEuRegion } from '../../../forms/utils';
 
 const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
@@ -14,8 +15,11 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.MARKETPLACE.CONNECTORS_RECEIVED:
         draft.connectors = connectors || [];
-        // to show v2 SF connector
-        draft.connectors.push({...sfConnector, canInstall: true });
+
+        // to show v2 SF connector only for non-eu region
+        if (!isEuRegion()) {
+          draft.connectors.push({...sfConnector, canInstall: true });
+        }
         break;
 
       case actionTypes.MARKETPLACE.TEMPLATES_RECEIVED:

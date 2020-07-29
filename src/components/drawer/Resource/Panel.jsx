@@ -120,7 +120,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
     return 'Create source';
   }
 
-  if (['accesstokens', 'apis'].includes(resourceType)) {
+  if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
     return `${opTitle} ${resourceLabel}`;
   }
 
@@ -218,6 +218,10 @@ export default function Panel(props) {
         getStagedValue('/webhook/provider') ||
         (resource && resource.webhook && resource.webhook.provider)
       );
+    }
+    // For Data Loader cases, there is no image.
+    if (getStagedValue('/type') === 'simple' || resource?.type === 'simple') {
+      return '';
     }
 
     if (adaptorType && adaptorType.startsWith('RDBMS')) {

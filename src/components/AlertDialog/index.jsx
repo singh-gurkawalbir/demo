@@ -18,7 +18,10 @@ const contentWrapper = {
 const StaleUIVersion = () => (
   <ModalDialog show>
     <Typography variant="h3">Reload page</Typography>
-    <Typography >It looks like your browser has cached an older version of our app.Click &apos;Reload&apos; to refresh the page.</Typography>
+    <Typography>
+      It looks like your browser has cached an older version of our app.
+      Click &apos;Reload&apos; to refresh the page.
+    </Typography>
     <Button
       data-test="ok"
       onClick={() => {
@@ -60,9 +63,9 @@ const WarningSessionContent = () => {
 const ExpiredSessionContent = () => (
   <>
     <DialogTitle>
-      <Typography>Your Session has Expired</Typography>
+      <Typography>Your session has expired</Typography>
       <br />
-      <Typography>Please login again</Typography>
+      <Typography>Please sign in again</Typography>
     </DialogTitle>
     <DialogContent style={contentWrapper}>
       <SignInForm dialogOpen />

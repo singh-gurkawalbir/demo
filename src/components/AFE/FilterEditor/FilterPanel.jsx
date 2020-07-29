@@ -55,6 +55,10 @@ export default function FilterPanel({
     },
     [dispatch, editorId]
   );
+  const patchEditorValidation = useCallback(isInvalid => {
+    dispatch(actions.editor.patch(editorId, { isInvalid }));
+  }, [dispatch, editorId]);
+
   const jsonPathsFromData = useMemo(() => {
     let d;
 
@@ -125,6 +129,7 @@ export default function FilterPanel({
   };
 
   const handleFilterRulesChange = () => {
+    patchEditorValidation(!isValid());
     if (isValid()) {
       const rule = getRules();
 

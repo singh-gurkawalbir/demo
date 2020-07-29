@@ -48,16 +48,11 @@ const getFormattedLookup = (lookup, formVal) => {
       case 'useDefaultOnMultipleMatches':
         lookupTmp.useDefaultOnMultipleMatches = true;
         lookupTmp.default =
-          formVal.lookupDefault ||
-          formVal.lookupSelect ||
-          formVal.lookupCheckbox;
+          formVal.lookupDefault;
         break;
       case 'default':
         lookupTmp.default =
-          formVal.lookupDefault ||
-          formVal.lookupSelect ||
-          formVal.lookupCheckbox ||
-          formVal.lookupSFSelect;
+          formVal.lookupDefault;
         break;
       default:
     }
@@ -158,8 +153,6 @@ export default {
   },
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
-    let errorStatus = false;
-    let errorMessage = '';
     const settings = {};
     let conditionalLookup;
 
@@ -220,17 +213,17 @@ export default {
             settings.hardCodedValue = null;
             break;
           case 'default':
-            settings.hardCodedValue =
-              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
+            settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+              ? formVal.hardcodedDefault.join(',')
+              : formVal.hardcodedDefault;
             break;
           default:
         }
-      } else if (formVal.hardcodedSelect) {
-        settings.hardCodedValue = Array.isArray(formVal.hardcodedSelect)
-          ? formVal.hardcodedSelect.join(',')
-          : formVal.hardcodedSelect;
-      } else if (formVal.hardcodedCheckbox) {
-        settings.hardCodedValue = formVal.hardcodedCheckbox;
+      } else if (formVal.hardcodedDefault) {
+        // in some cases hardcodedDefault is shown without hardcodedAction
+        settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+          ? formVal.hardcodedDefault.join(',')
+          : formVal.hardcodedDefault;
       }
     } else if (
       formVal.fieldMappingType === 'standard' ||
@@ -244,7 +237,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default || formVal.defaultSFSelect;
+          settings.default = formVal.default;
           break;
         default:
       }
@@ -269,15 +262,16 @@ export default {
       if (formVal._mode === 'static') {
         let atleastOneValMapped = false;
 
-        formVal._mapList.forEach(obj => {
+        formVal._mapList?.forEach(obj => {
           if (obj.export && obj.import) {
             atleastOneValMapped = true;
           }
         });
 
         if (!atleastOneValMapped) {
-          errorStatus = true;
-          errorMessage = 'You need to map at least one value.';
+          return {
+            errorMessage: 'You need to map at least one value.'
+          };
         }
       }
 
@@ -314,8 +308,6 @@ export default {
     return {
       settings,
       lookup: updatedLookup,
-      errorStatus,
-      errorMessage,
       conditionalLookup,
     };
   },

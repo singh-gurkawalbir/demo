@@ -1,6 +1,6 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
-import { adaptorTypeMap } from '../resource';
+import { adaptorTypeMap, isNetSuiteBatchExport } from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
 import netsuiteMappingUtil from './application/netsuite';
@@ -859,7 +859,8 @@ export default {
     getRawMappings,
     isGroupedSampleData,
     netsuiteRecordType,
-    options = {}
+    options = {},
+    exportRes
   ) => {
     if (!resourceObj) {
       return;
@@ -913,6 +914,7 @@ export default {
       isGroupedSampleData,
       resource: resourceObj,
       netsuiteRecordType,
+      exportRes,
       options,
     });
   },
@@ -921,6 +923,7 @@ export default {
     resource = {},
     isGroupedSampleData,
     netsuiteRecordType,
+    exportRes,
     options = {},
   }) => {
     let _mappings = mappings;
@@ -952,6 +955,8 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
+          exportRes,
+          resource,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -967,11 +972,13 @@ export default {
           mappings: _mappings,
           isGroupedSampleData,
           useFirstRowSupported: true,
+          exportRes,
           resource,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
+          exportRes,
           useFirstRowSupported: false,
           resource,
         });
@@ -986,6 +993,7 @@ export default {
     resource,
     flowSampleData,
     netsuiteRecordType,
+    exportRes,
   }) => {
     switch (appType) {
       case adaptorTypeMap.NetSuiteDistributedImport:
@@ -995,6 +1003,7 @@ export default {
           generateFields,
           flowSampleData,
           recordType: netsuiteRecordType,
+          exportRes
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -1012,6 +1021,7 @@ export default {
           useFirstRowSupported: true,
           resource,
           flowSampleData,
+          exportRes
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.generateMappingFieldsAndList({
@@ -1020,6 +1030,7 @@ export default {
           useFirstRowSupported: false,
           resource,
           flowSampleData,
+          exportRes,
         });
 
       default:
@@ -1030,6 +1041,7 @@ export default {
     isGroupedSampleData,
     useFirstRowSupported = false,
     resource = {},
+    exportRes,
   }) => {
     let tempFm;
     const toReturn = [];
@@ -1038,7 +1050,7 @@ export default {
       mappings.fields.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource)) _fm.useFirstRow = true;
+        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportRes)) _fm.useFirstRow = true;
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
@@ -1051,16 +1063,12 @@ export default {
             : tempFm.generate;
 
           if (useFirstRowSupported && isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-              tempFm.extract = tempFm.extract.substr('*.'.length);
-            } else {
+            if (tempFm.extract && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
               tempFm.useFirstRow = true;
             }
-
-            if (isCsvOrXlsxResource(resource)) {
-              tempFm.generate = fm.generate;
-            }
           }
+          // remove *. if present after setting useFirstRow
+          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) { tempFm.extract = tempFm.extract.substr('*.'.length); }
 
           tempFm.extract = unwrapTextForSpecialChars(tempFm.extract);
           toReturn.push(tempFm);
@@ -1076,6 +1084,7 @@ export default {
     isGroupedSampleData,
     useFirstRowSupported = false,
     resource = {},
+    exportRes,
   }) => {
     let generateParts;
     const lists = [];
@@ -1118,7 +1127,7 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData) {
+      } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData && isNetSuiteBatchExport(exportRes)) {
         if (
           !mapping.useFirstRow &&
           mapping.extract &&

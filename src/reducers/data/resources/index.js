@@ -154,8 +154,13 @@ export default (state = {}, action) => {
           'connectors/'.length,
           resourceType.indexOf('/installBase')
         );
+
+        // IO-16602, We shouldn't show child integrations in the install base for IAF 2.0 as
+        // we can not push update to child integrations. Can identify them by _parentId prop
+        const filteredCollection = collection?.filter(c => !c._parentId);
+
         const newCollection =
-          collection && collection.map(c => ({ ...c, _connectorId: id }));
+          filteredCollection?.map(c => ({ ...c, _connectorId: id }));
 
         return produce(state, draft => {
           draft.connectorInstallBase = newCollection || [];
@@ -235,6 +240,21 @@ export default (state = {}, action) => {
 
       return state;
 
+    case actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE: {
+      // cant implement immer here with current implementation. Need to revisit again.
+      if (connectionIds?.length) {
+        connectionIds.forEach(({ _id: cId}) => {
+          resourceIndex = newState.connections.findIndex(r => r._id === cId);
+          if (resourceIndex !== -1) {
+            newState.connections[resourceIndex].ftp.tradingPartner = !(state.connections[resourceIndex].ftp.tradingPartner);
+          }
+        });
+
+        return newState;
+      }
+
+      return state;
+    }
     case actionTypes.CONNECTION.DEREGISTER_COMPLETE:
       resourceIndex = state.integrations.findIndex(
         r => r._id === integrationId
