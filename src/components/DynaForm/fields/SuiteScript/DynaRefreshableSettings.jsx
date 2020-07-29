@@ -24,7 +24,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
 
 
   const onRefresh = useCallback(() =>
-    dispatch(actions.metadata.refresh(ssLinkedConnectionId, commMetaPath)), [commMetaPath, dispatch, ssLinkedConnectionId], []);
+    dispatch(actions.metadata.request(ssLinkedConnectionId, commMetaPath)), [commMetaPath, dispatch, ssLinkedConnectionId], []);
 
 
   const options = useMemo(() => data || defaultFieldOptions?.[0]?.items || [], [data, defaultFieldOptions]);
