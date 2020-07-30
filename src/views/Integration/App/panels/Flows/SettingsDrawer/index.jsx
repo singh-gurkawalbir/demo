@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     '& > * div.MuiTabs-vertical': {
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
+      marginRight: theme.spacing(2),
     },
     '& > div[class*= "fieldsContainer"]': {
       height: '100%',

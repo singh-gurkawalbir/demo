@@ -183,7 +183,7 @@ const connectors = [
     assistant: 'aptrinsic',
   },
   { id: 'ariba', name: 'SAP Ariba', type: 'http', assistant: 'ariba' },
-  { id: 'sapariba', name: 'SAP Ariba', type: 'http', webhookOnly: true },
+  { id: 'sapariba', name: 'SAP Ariba', type: 'webhook', webhookOnly: true },
   { id: 'asana', name: 'Asana', type: 'rest', assistant: 'asana' },
   { id: 'saplitmos', name: 'SAP Litmos', type: 'http', assistant: 'saplitmos' },
   { id: 'sapbydesign', name: 'SAP Business ByDesign', type: 'http', assistant: 'sapbydesign' },
