@@ -484,7 +484,7 @@ export default {
         paddingLeft: 15,
       },
       inputAdornedEnd: {
-        paddingRight: 15,
+        paddingRight: 30,
       },
     },
     MuiInputAdornment: {
