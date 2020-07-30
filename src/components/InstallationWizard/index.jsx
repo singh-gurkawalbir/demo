@@ -27,6 +27,7 @@ import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
+import {applicationsList} from '../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -157,6 +158,14 @@ export default function InstallationWizard(props) {
       }
 
       delete connObj._id;
+      const applications = applicationsList();
+      const applicationObj = applications.find(app => {
+        if (connObj.rdbms) {
+          return connObj.rdbms.type === app.id;
+        }
+        return connObj?.assistant ? connObj?.assistant === app.id : connObj?.type === app.id;
+      });
+      connObj.application = applicationObj?.name;
       dispatch(
         actions.resource.patchStaged(
           newId,
