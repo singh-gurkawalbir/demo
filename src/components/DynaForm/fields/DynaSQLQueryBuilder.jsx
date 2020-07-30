@@ -158,14 +158,6 @@ export default function DynaSQLQueryBuilder(props) {
         method === 'putItem'
       );
     } else if (
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.DynamodbImport
-    ) {
-      parsedRule = sqlUtil.getSampleDynamodbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'putItem'
-      );
-    } else if (
       adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.RDBMSImport && rdbmsSubType === 'snowflake'
     ) {
       parsedRule = sqlUtil.getSampleSnowflakeTemplate(

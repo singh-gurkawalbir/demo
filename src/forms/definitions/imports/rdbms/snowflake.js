@@ -78,7 +78,6 @@ export default {
       arrayIndex: 0,
       label: 'Query builder',
       title: 'SQL Query Builder',
-      defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
       refreshOptionsOnChangesTo: ['rdbms.lookups',
         'rdbms.queryType',
         'modelMetadata'],
