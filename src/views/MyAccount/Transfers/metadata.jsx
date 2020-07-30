@@ -25,10 +25,10 @@ export default {
           if (r?.dismissed) {
             return 'Dismissed';
           }
-          if (r?.accepted && ['queued', 'started'].indexOf(r?.status) > -1) {
+          if (r?.fromUser === 'Me' && r?.accepted && ['queued', 'started'].indexOf(r?.status) > -1) {
             return 'Processing';
           }
-          if (r?.accepted && r?.status === 'done') {
+          if (r?.fromUser === 'Me' && r?.accepted && r?.status === 'done') {
             return 'Accepted';
           }
           return r?.status === 'unapproved' ? 'Pending acceptance' : r?.status.charAt(0).toUpperCase() + r?.status.slice(1);
@@ -48,7 +48,7 @@ export default {
     if (r?.fromUser === 'Me' && ['unapproved', 'done', 'canceled', 'failed'].indexOf(r?.status) > -1) {
       actionItems.push(Delete);
     }
-    if (r?.fromUser === 'Me' && ['unapproved', 'queued'].indexOf(r?.status) > -1) {
+    if (r?.fromUser === 'Me' && ['unapproved', 'queued'].indexOf(r?.status) > -1 && !r?.dismissed) {
       actionItems.push(Cancel);
     }
     return actionItems;

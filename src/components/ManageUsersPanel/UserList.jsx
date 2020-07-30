@@ -138,16 +138,14 @@ export default function UserList({ integrationId, onEditUserClick }) {
                   className={classes.helpIcon}
                 />
               </TableCell>
-              <TableCell>
-                <div className={classes.tableCellWithIcon}>
-                  <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
-                  <Help
-                    title="Status"
-                    helpKey="users.status"
-                    caption="users.status"
-                    className={classes.helpIcon}
+              <TableCell className={classes.tableCellWithIcon}>
+                <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
+                <Help
+                  title="Status"
+                  helpKey="users.status"
+                  caption="users.status"
+                  className={classes.helpIcon}
                 />
-                </div>
               </TableCell>
               {isAccountOwner && (
                 <>

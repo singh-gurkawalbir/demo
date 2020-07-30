@@ -5,7 +5,6 @@ import { IconButton } from '@material-ui/core';
 import actions from '../../actions';
 import RefreshIcon from '../icons/RefreshIcon';
 import Spinner from '../Spinner';
-import { COMM_STATES } from '../../reducers/comms/networkComms';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -26,14 +25,7 @@ const useStyles = makeStyles(theme => ({
 export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isLoading = useSelector(state => {
-    // Incase of transfers as we make two API calls for fetching transfers
-    // and invited transfers, checking for both the resourceTypes
-    if (resourceType === 'transfers') {
-      return ['transfers', 'transfers/invited'].some((resourceType) => selectors.commStatusPerPath(state, `/${resourceType}`, 'GET') === COMM_STATES.LOADING);
-    }
-    return selectors.commStatusPerPath(state, `/${resourceType}`, 'GET') === COMM_STATES.LOADING;
-  });
+  const isResourceLoading = useSelector(state => selectors.isResourceLoading(state, resourceType));
   const [refreshRequested, setRefreshRequested] = useState(false);
   const handleRefresh = useCallback(() => {
     setRefreshRequested(true);
@@ -42,7 +34,7 @@ export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
   return (
     <span className={classes.status}>
       {headerName}
-      {(refreshRequested && isLoading) ?
+      {(refreshRequested && isResourceLoading) ?
         <Spinner className={classes.statusSpinner} size={24} color="primary" /> :
         <IconButton
           data-test="refreshStatus"
