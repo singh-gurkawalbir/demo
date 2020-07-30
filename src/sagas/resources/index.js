@@ -75,11 +75,11 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
     return;
   }
   const userPreferences = yield select(selectors.userPreferences);
-  const isLinked =
-    userPreferences &&
-    userPreferences.ssConnectionIds &&
-    userPreferences.ssConnectionIds.includes(connectionId);
+  const isLinked = userPreferences
+    && userPreferences.ssConnectionIds
+    && userPreferences.ssConnectionIds.includes(connectionId);
   const userAccessLevel = yield select(selectors.userAccessLevel);
+
   if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
     if (link) {
       if (!isLinked) {
@@ -142,8 +142,8 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     // we reverse this process and convert it back to the old schema ...also we delete this flag
 
     if (
-      resourceIsDataLoaderFlow ||
-      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
+      resourceIsDataLoaderFlow
+      || (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
     ) {
       if (merged.pageGenerators && merged.pageGenerators.length > 0) {
         merged._exportId = merged.pageGenerators[0]._exportId;
@@ -198,9 +198,9 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // remove this code and let all docs be built on HTTP adaptor.
   if (
     // if it matches integrations/<id>/connections when creating a connection
-    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
-    merged.assistant &&
-    REST_ASSISTANTS.indexOf(merged.assistant) > -1
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections')))
+    && merged.assistant
+    && REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
   }
@@ -229,9 +229,9 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // seems the PUT API response does not contain the content. We need to
   // insert it to prevent unwanted GET requests.
   if (
-    resourceType === 'scripts' &&
-    merged.content &&
-    updated.content === undefined
+    resourceType === 'scripts'
+    && merged.content
+    && updated.content === undefined
   ) {
     updated.content = merged.content;
   }
@@ -270,9 +270,9 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
 
   if (['exports', 'imports'].includes(resourceType)) {
     if (
-      merged.assistant &&
-      merged.assistantMetadata &&
-      !isEqual(merged.assistantMetadata, updated.assistantMetadata)
+      merged.assistant
+      && merged.assistantMetadata
+      && !isEqual(merged.assistantMetadata, updated.assistantMetadata)
     ) {
       const assistantMetadata = merged.assistantMetadata || {};
 
@@ -404,7 +404,8 @@ export function* updateIntegrationSettings({
         sectionId,
       })
     );
-    // if flowId is present touch the flow to show changed lastmodified date
+
+    // if flowId is present touch the flow to show changed lastModified date
     // note this is somewhat a hack
     // it is believed that in time resource level settings will render this obsolete
     if (flowId && options.action !== 'flowEnableDisable') {
@@ -554,8 +555,8 @@ export function* deleteResource({ resourceType, id }) {
 
   try {
     if (
-      resourceType.indexOf('/licenses') === -1 &&
-      resourceType.indexOf('transfers') === -1
+      resourceType.indexOf('/licenses') === -1
+      && resourceType.indexOf('transfers') === -1
     ) {
       const resourceReferences = yield call(requestReferences, {
         resourceType,
@@ -587,9 +588,9 @@ export function* getResourceCollection({ resourceType }) {
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   if (
-    resourceType &&
-    resourceType.includes('suitescript/connections/') &&
-    resourceType.includes('/tiles')
+    resourceType
+    && resourceType.includes('suitescript/connections/')
+    && resourceType.includes('/tiles')
   ) {
     hideNetWorkSnackbar = true;
   }
@@ -708,6 +709,7 @@ export function* updateTradingPartner({ connectionId }) {
       },
       message: 'Updating trading partner',
     });
+
     yield put(
       actions.connection.completeTradingPartner(response?._connectionIds || [])
     );
@@ -746,8 +748,8 @@ export function* requestDebugLogs({ connectionId }) {
     response = yield call(apiCallWithRetry, { path });
     yield put(
       actions.connection.receivedDebugLogs(
-        response ||
-          'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
+        response
+          || 'There are no logs available for this connection. Please run your flow so that we can record the outgoing and incoming traffic to this connection.',
         connectionId
       )
     );
@@ -771,9 +773,9 @@ export function* authorizedConnection({ connectionId }) {
   );
 
   if (
-    connectionResource &&
-    (connectionResource.type === 'netsuite' ||
-      connectionResource.type === 'salesforce')
+    connectionResource
+    && (connectionResource.type === 'netsuite'
+      || connectionResource.type === 'salesforce')
   ) {
     yield put(actions.resource.request('connections', connectionId));
   }

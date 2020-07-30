@@ -8,7 +8,6 @@ import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(3, 0, 0, 2),
@@ -123,7 +122,6 @@ export default function Subscription() {
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch, setShowStartFreeDialog]);
 
-
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
@@ -145,9 +143,9 @@ export default function Subscription() {
   const { numEnabledPaidFlows, numEnabledSandboxFlows } = useSelector(
     state => selectors.getNumEnabledFlows(state),
     (left, right) =>
-      left.numEnabledPaidFlows === right.numEnabledPaidFlows &&
-      left.numEnabledSandboxFlows === right.numEnabledSandboxFlows &&
-      left.numEnabledFreeFlows === right.numEnabledFreeFlows
+      left.numEnabledPaidFlows === right.numEnabledPaidFlows
+      && left.numEnabledSandboxFlows === right.numEnabledSandboxFlows
+      && left.numEnabledFreeFlows === right.numEnabledFreeFlows
   );
   const productionRemainingFlows = Math.max(
     licenseActionDetails.totalFlowsAvailable - numEnabledPaidFlows,
@@ -169,8 +167,8 @@ export default function Subscription() {
 
   if (licenseActionDetails.totalSandboxFlowsAvailable > 0) {
     sandboxConsumedFlowsPercentage = Math.floor(
-      (numEnabledSandboxFlows * 100) /
-        licenseActionDetails.totalSandboxFlowsAvailable
+      (numEnabledSandboxFlows * 100)
+        / licenseActionDetails.totalSandboxFlowsAvailable
     );
   }
 
@@ -320,8 +318,8 @@ export default function Subscription() {
                 <Typography variant="h3">
                   Production integration flows
                 </Typography>
-                {licenseActionDetails.totalFlowsAvailable ===
-                    Number.MAX_SAFE_INTEGER ? (
+                {licenseActionDetails.totalFlowsAvailable
+                    === Number.MAX_SAFE_INTEGER ? (
                       <div className={classes.bold}>Unlimited</div>
                   ) : (
                     <div>
@@ -331,8 +329,8 @@ export default function Subscription() {
                             {numEnabledPaidFlows} of{' '}
                             {licenseActionDetails.totalFlowsAvailable} (
                             <span className={classes.normal}>
-                              {licenseActionDetails.totalFlowsAvailable -
-                                  licenseActionDetails.numAddOnFlows}{' '}
+                              {licenseActionDetails.totalFlowsAvailable
+                                  - licenseActionDetails.numAddOnFlows}{' '}
                               from subscription +{' '}
                               {licenseActionDetails.numAddOnFlows} Add-on
                               flows)
@@ -364,8 +362,8 @@ export default function Subscription() {
                   <div>
                     <span className={classes.bold}>
                       {numEnabledSandboxFlows} of{' '}
-                      {licenseActionDetails.totalSandboxFlowsAvailable ===
-                          Number.MAX_SAFE_INTEGER
+                      {licenseActionDetails.totalSandboxFlowsAvailable
+                          === Number.MAX_SAFE_INTEGER
                         ? 'Unlimited'
                         : licenseActionDetails.totalSandboxFlowsAvailable}
                     </span>
@@ -387,10 +385,10 @@ export default function Subscription() {
               </div>
             </div>
           </div>
-          {licenseActionDetails &&
-                licenseActionDetails.subscriptionActions &&
-                licenseActionDetails.subscriptionActions.actions &&
-                licenseActionDetails.subscriptionActions.actions.length > 0 && (
+          {licenseActionDetails
+                && licenseActionDetails.subscriptionActions
+                && licenseActionDetails.subscriptionActions.actions
+                && licenseActionDetails.subscriptionActions.actions.length > 0 && (
                   <div className={classes.block}>
                     <Typography variant="h4" className={classes.subHeading}>
                       Want to upgrade ?

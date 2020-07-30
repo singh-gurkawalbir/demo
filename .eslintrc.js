@@ -149,9 +149,17 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'react/jsx-wrap-multilines': 'off',
+    'no-multiple-empty-lines': ['error', { 'max': 1 }],
+    'no-multi-spaces': ["error", { 'ignoreEOLComments': true }],
+    'key-spacing': 'error',
+    "padding-line-between-statements": [
+      "error",
+      { blankLine: "always", prev: "*", next: "return" },
+      { blankLine: "always", prev: ["const", "let", "var"], next: "*"},
+      { blankLine: "any",    prev: ["const", "let", "var"], next: ["const", "let", "var"]},
+    ],
     // The following rules would actually benefit us if turned on
     // they are turned off so that we can transition into the new toolchain more easily
-    'operator-linebreak': 'off',
     'consistent-return': 'off',
     'import/no-cycle': 'off',
   },
