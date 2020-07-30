@@ -4064,7 +4064,7 @@ export function transferListWithMetadata(state) {
     }).resources || [];
   const preferences = userProfilePreferencesProps(state);
 
-  const transferWithMetadata = transfers.map((transfer) => {
+  const transfersWithMetadata = transfers.map((transfer) => {
     let fromUser = '';
     let toUser = '';
     let integrations = [];
@@ -4134,7 +4134,7 @@ export function transferListWithMetadata(state) {
     return transfer;
   });
 
-  return transferWithMetadata;
+  return transfersWithMetadata;
 }
 
 export function isRestCsvMediaTypeExport(state, resourceId) {
