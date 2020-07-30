@@ -11,6 +11,11 @@ export default {
     placeholder: 'Please select a record type',
     connectionId: r => r && r.ssLinkedConnectionId,
   },
+  'import.netsuite.subRecordImports': {
+    required: false,
+    type: 'suitescriptnetsuitesubrecords',
+    connectionId: r => r && r.ssLinkedConnectionId,
+  },
   'import.netsuite.operation': {
     type: 'radiogroupforresetfields',
     fieldsToReset: [

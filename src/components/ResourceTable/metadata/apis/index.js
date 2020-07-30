@@ -1,6 +1,7 @@
 import React from 'react';
 import Delete from '../../actions/Delete';
 import { formatLastModified } from '../../../CeligoTable/util';
+import AuditLogs from '../../actions/AuditLogs';
 import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Edit from '../../actions/Edit';
 import { ScriptName } from '..';
@@ -33,5 +34,5 @@ export default {
       orderBy: 'lastModified',
     },
   ],
-  rowActions: () => [Edit, Delete],
+  rowActions: () => [Edit, AuditLogs, Delete],
 };
