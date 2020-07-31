@@ -25,7 +25,7 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
   </>
 );
 
-export const GetResourceReferenceLink = ({ r }) => {
+export const GetResourceReferenceLink = ({ r, onClick }) => {
   const { name, id, resourceType } = r;
   const routePath = useSelector(state =>
     selectors.getResourceEditUrl(state, resourceType, id)
@@ -33,7 +33,7 @@ export const GetResourceReferenceLink = ({ r }) => {
 
   return (
     <LoadResources resources={[resourceType]}>
-      <Link to={routePath}>{name || id}</Link>
+      <Link onClick={onClick} to={routePath}>{name || id}</Link>
     </LoadResources>
   );
 };
