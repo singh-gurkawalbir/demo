@@ -6,7 +6,7 @@ export default {
     {
       heading: 'Name',
       // eslint-disable-next-line react/display-name
-      value: r => <GetResourceReferenceLink r={r} />,
+      value: (r, { onClose }) => <GetResourceReferenceLink r={r} onClick={onClose} />,
     },
     {
       heading: 'Type',

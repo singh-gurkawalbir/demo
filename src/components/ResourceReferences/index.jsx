@@ -72,7 +72,7 @@ function ResourceReferences(props) {
                 is referenced by the resources below. Only resources 
                 that have no references can be deleted.`}
             </Typography>
-            <CeligoTable data={resourceReferences} {...metadata} />
+            <CeligoTable actionProps={{ onClose }} data={resourceReferences} {...metadata} />
           </div>
         </ModalDialog>
       )}
