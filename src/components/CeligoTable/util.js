@@ -62,6 +62,7 @@ export const useGetScriptName = id => {
   const script = useSelector(state =>
     selectors.resource(state, 'scripts', id)
   );
+
   return (script && script.name) || id;
 };
 

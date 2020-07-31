@@ -6,7 +6,6 @@ import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Edit from '../../actions/Edit';
 import { ScriptName } from '..';
 
-
 export default {
   columns: [
     {
