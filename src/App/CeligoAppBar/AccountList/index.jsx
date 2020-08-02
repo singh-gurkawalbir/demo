@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   accountListPopper: {
     maxWidth: 250,
-    left: '124px !important',
+    left: '116px !important',
     top: '5px !important',
   },
   accountListPopperArrow: {
