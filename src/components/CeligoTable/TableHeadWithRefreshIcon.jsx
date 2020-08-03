@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isResourceLoading = useSelector(state => selectors.isResourceLoading(state, resourceType));
+  const isResourceCollectionLoading = useSelector(state => selectors.isResourceCollectionLoading(state, resourceType));
   const [refreshRequested, setRefreshRequested] = useState(false);
   const handleRefresh = useCallback(() => {
     setRefreshRequested(true);
@@ -34,7 +34,7 @@ export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
   return (
     <span className={classes.status}>
       {headerName}
-      {(refreshRequested && isResourceLoading) ?
+      {(refreshRequested && isResourceCollectionLoading) ?
         <Spinner className={classes.statusSpinner} size={24} color="primary" /> :
         <IconButton
           data-test="refreshStatus"

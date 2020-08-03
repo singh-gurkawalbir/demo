@@ -3128,7 +3128,7 @@ export function isDataReady(state, resource) {
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
-export function isResourceLoading(state, resourceName) {
+export function isResourceCollectionLoading(state, resourceName) {
   // Incase of transfers as we make two API calls for fetching
   // transfers and invited transfers, checking for both the keys
   if (resourceName === 'transfers') {
