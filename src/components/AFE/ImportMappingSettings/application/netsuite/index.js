@@ -670,6 +670,20 @@ export default {
       delete fieldMeta.fieldMap.useAsAnInitializeValue;
       fields = fields.filter(el => el !== 'useAsAnInitializeValue');
     }
+    if (['celigo_nlobjAttachedType', 'celigo_nlobjDetachedType'].includes(fieldId)) {
+      delete fieldMeta.fieldMap.hardcodedAction;
+      fields = fields.filter(el => el !== 'hardcodedAction');
+      fieldMeta.fieldMap.hardcodedDefault = {
+        ...fieldMeta.fieldMap.hardcodedDefault,
+        filterKey: 'suitescript-recordTypes',
+        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+        type: 'refreshableselect',
+        label: 'Value',
+        connectionId,
+        placeholder: '',
+      };
+      fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
+    }
 
     if (
       recordType &&

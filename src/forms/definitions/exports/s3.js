@@ -374,10 +374,11 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['fileMetadata',
+            fields: [
               'file.decompressFiles',
               'file.compressionFormat',
               'file.skipDelete',
+              'fileMetadata',
               's3.backupBucket',
               'file.encoding',
               'pageSize',

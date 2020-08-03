@@ -956,6 +956,7 @@ export default {
           recordType: netsuiteRecordType,
           isGroupedSampleData,
           exportRes,
+          resource,
         });
       case adaptorTypeMap.FTPImport:
       case adaptorTypeMap.HTTPImport:
@@ -1194,6 +1195,15 @@ export default {
           type: d.type,
           sublist: d.sublist,
         }));
+        const attachdetachFields = [{id: 'celigo_nlobjAttachToId', name: 'Attach To Internal ID'},
+          {id: 'celigo_nlobjAttachedType', name: 'Attached Record Type'},
+          {id: 'celigo_nlobjAttachedId', name: 'Attached Internal ID'},
+          {id: 'celigo_nlobjDetachFromId', name: 'Detach From Internal ID'},
+          {id: 'celigo_nlobjDetachedType', name: 'Detached Record Type'},
+          {id: 'celigo_nlobjDetachedId', name: 'Detached Internal ID'},
+          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'attributesRole'},
+          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'attributedField'}];
+        formattedGenerateFields = formattedGenerateFields.concat(attachdetachFields);
       } else {
         let formattedSampleData = [];
 

@@ -160,7 +160,7 @@ const DynaHttpRequestBody = props => {
           <FormLabel className={classes.dynaHttpReqLabel}>
             {label}
           </FormLabel>
-          <FieldHelp {...props} helpText={label} />
+          <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
