@@ -488,7 +488,7 @@ function JobErrorTable({
               className={classes.btnErrorTable}
               onClick={handleDownloadAllErrorsClick}
               disabled={isJobInProgress}>
-              Download all errors
+              Download all errors1
             </Button>
             <Button
               data-test="uploadProcessedErrors"

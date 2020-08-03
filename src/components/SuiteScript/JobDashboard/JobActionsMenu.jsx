@@ -68,6 +68,27 @@ export default function JobActionsMenu({
     menuOptions.push({ label: 'Run flow', action: 'runFlow' });
     // }
 
+    if (job.exportedFileId) {
+      menuOptions.push({
+        label: 'Download exported file',
+        action: 'downloadExportedFile',
+      });
+    }
+
+    if (job.importedFileId) {
+      menuOptions.push({
+        label: 'Download imported file',
+        action: 'downloadImportedFile',
+      });
+    }
+
+    if (job.errorFileId) {
+      menuOptions.push({
+        label: 'Download all errors',
+        action: 'downloadAllErrors',
+      });
+    }
+
     if (job.log && (job.status === JOB_STATUS.FAILED || job.numError > 0)) {
       menuOptions.push({
         label: 'Download SuiteScript logs',
@@ -130,8 +151,14 @@ export default function JobActionsMenu({
   function handleActionClick(action) {
     handleMenuClose();
 
-    if (action === 'downloadSuiteScriptLogs') {
-      let downloadUrl = `/api/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${job._id}/download?jobType=${job.type}&fileType=suitescriptlogs`;
+    if (['downloadExportedFile', 'downloadImportedFile', 'downloadAllErrors', 'downloadSuiteScriptLogs'].includes(action)) {
+      const fileTypeMap = {
+        downloadExportedFile: 'export',
+        downloadImportedFile: 'import',
+        downloadAllErrors: 'error',
+        downloadSuiteScriptLogs: 'suitescriptlogs'
+      };
+      let downloadUrl = `/api/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${job._id}/download?jobType=${job.type}&fileType=${fileTypeMap[action]}`;
 
       if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
         downloadUrl += `&integrator-ashareid=${
