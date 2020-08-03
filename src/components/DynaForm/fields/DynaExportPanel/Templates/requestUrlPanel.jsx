@@ -8,6 +8,7 @@ import { getRequestURL } from '../../../../../utils/exportPanel';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     border: '1px solid',
+    wordBreak: 'break-all',
     borderColor: theme.palette.secondary.lightest,
     width: '100%',
     borderRadius: theme.spacing(0.5),
