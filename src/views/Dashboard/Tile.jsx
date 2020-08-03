@@ -169,13 +169,19 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        history.push(
-          getRoutePath(
-            `/dashboard/${tile._integrationId}/offlineconnections/${
-              tile.offlineConnections[0]
-            }`
-          )
-        );
+        if (tile._connectorId) {
+          history.push(
+            getRoutePath(
+              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
+            )
+          );
+        } else {
+          history.push(
+            getRoutePath(
+              `/integrations/${tile._integrationId}/connections`
+            )
+          );
+        }
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
