@@ -115,6 +115,7 @@ export default function SearchCriteriaDialog(props) {
         key={`${id}-${fullScreen ? 'lg' : 'sm'}`}>
         <SearchCriteriaEditor
           editorId={id}
+          disabled={disabled}
           value={value}
           onRefresh={onRefresh}
           fieldOptions={fieldOptions}

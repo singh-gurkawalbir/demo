@@ -102,7 +102,7 @@ export default function SearchCriteriaEditor(props) {
         {headers.map(headerText => (
           <div className={classes.childHeader} key={headerText}>
             <span>{headerText}</span>
-            {headerText === 'Field' && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
+            {headerText === 'Field' && !disabled && status !== 'requested' && <RefreshIcon disabled={disabled} onClick={handleRefresh} />}
             {headerText === 'Field' && status === 'requested' && <Spinner size={24} />}
           </div>
         ))}

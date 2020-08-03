@@ -34,7 +34,6 @@ export default function DynaNSSearchCriteria(props) {
     value = [],
     resourceId,
     connectionId,
-
     disabled,
     filterKey,
     options = {},
