@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { isPostUrlAvailableForPreviewPanel } from '../../../../../reducers';
-import { getPostUrl } from '../../../../../utils/exportPanel';
+import { isRequestUrlAvailableForPreviewPanel } from '../../../../../reducers';
+import { getRequestURL } from '../../../../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -17,22 +17,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function PostUrlPanel(props) {
+export default function RequestUrlPanel(props) {
   const { previewStageDataList, resourceId, resourceType } = props;
   const classes = useStyles();
-  const isPostUrlAvailable = useSelector(state =>
-    isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType)
+  const isRequestUrlAvailable = useSelector(state =>
+    isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType)
   );
-  const postUrl = getPostUrl(previewStageDataList?.request);
+  const requestURL = getRequestURL(previewStageDataList?.request);
 
-  if (!isPostUrlAvailable || !postUrl) {
+  if (!isRequestUrlAvailable || !requestURL) {
     return null;
   }
 
   return (
     <>
-      <Typography> Post URL </Typography>
-      <div className={classes.wrapper} > {postUrl} </div>
+      <Typography> Request URL </Typography>
+      <div className={classes.wrapper} > {requestURL} </div>
     </>
   );
 }
