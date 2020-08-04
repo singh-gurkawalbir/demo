@@ -14,8 +14,6 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
-import ConnectionsDrawer from './drawers/Connections';
-import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -26,8 +24,6 @@ import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
-import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
-import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import CloseIcon from '../../components/icons/CloseIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -466,8 +462,6 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
-      <ConnectionsDrawer flowId={flowId} integrationId={integrationId} />
-      <AuditLogDrawer flowId={flowId} integrationId={integrationId} />
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
@@ -553,24 +547,6 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
-          {isUserInErrMgtTwoDotZero && (
-            <>
-              <div className={classes.divider} />
-              <IconButton
-                disabled={isNewFlow}
-                onClick={handleDrawerClick('connections')}
-                data-test="flowConnections">
-                <ConnectionsIcon />
-              </IconButton>
-              <IconButton
-                disabled={isNewFlow}
-                onClick={handleDrawerClick('auditlog')}
-                data-test="flowAuditLog">
-                <AuditLogIcon />
-              </IconButton>
-            </>
-          )}
-
           <div className={classes.divider} />
           <IconButton onClick={handleExitClick} size="small">
             <CloseIcon />
