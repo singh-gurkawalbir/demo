@@ -89,15 +89,13 @@ export default {
       ],
       defaultValue: r => {
         const authUri = r?.http?.auth?.oauth?.authURI;
+        const selectedScopes = r?.http?.auth?.oauth?.scope || [];
 
         if (authUri && authUri.indexOf('optional_scope')) {
           const encodedScopes = authUri && authUri.split('optional_scope=')[1];
           const scopes = encodedScopes && decodeURIComponent(encodedScopes).split(' ');
-          if (!scopes) {
-            return r.http.auth.oauth.scope;
-          }
-          scopes.unshift(...r.http.auth.oauth.scope);
-          return scopes;
+          if (!scopes || !scopes.length) { return selectedScopes; }
+          return [...selectedScopes, ...scopes];
         }
       },
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
