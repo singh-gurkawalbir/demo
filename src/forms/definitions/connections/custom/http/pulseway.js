@@ -7,11 +7,13 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v2/systems',
     '/http/ping/method': 'GET',
+    '/http/ping/successPath': 'data',
   }),
   fieldMap: {
     name: { fieldId: 'name' },
     'http.baseURI': {
       fieldId: 'http.baseURI',
+      defaultValue: r => (r && r.http && r.http.baseURI) || 'https://api.pulseway.com'
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
