@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
       return props.variant === 'edit' ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: 0,
+    padding: '0px !important',
   },
   notification: {
     margin: theme.spacing(2, 0),
