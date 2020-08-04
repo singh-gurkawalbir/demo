@@ -9,6 +9,7 @@ import { IAFormStateManager } from '../../Flows';
 const useStyles = makeStyles(theme => ({
   configureform: {
     padding: theme.spacing(2, 3),
+    minHeight: 250,
     '& + div': {
       padding: theme.spacing(2, 0),
       margin: theme.spacing(0, 3),

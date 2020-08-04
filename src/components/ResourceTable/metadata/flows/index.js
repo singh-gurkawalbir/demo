@@ -80,9 +80,9 @@ export default {
           return (
             <RunCell
               flowId={r._id}
-              integrationId={r._integrationId}
+              integrationId={actionProps?.parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
-              storeId={actionProps.storeId}
+              storeId={actionProps?.storeId}
             />
           );
         },

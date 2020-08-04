@@ -140,9 +140,12 @@ export default function InstallationWizard(props) {
   }
 
   const handleStepClick = (step, conn) => {
-    const { _connectionId, installURL, type } = step;
+    const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
 
+    if (completed) {
+      return false;
+    }
     // handle connection step click
     if (type === INSTALL_STEP_TYPES.CONNECTION) {
       if (step.isTriggered) {
