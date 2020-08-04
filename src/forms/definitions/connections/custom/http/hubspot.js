@@ -17,7 +17,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/oauth/scope'] = 'oauth';
+      retValues['/http/auth/oauth/scope'] = ['oauth'];
     }
 
     return {
@@ -93,6 +93,9 @@ export default {
         if (authUri && authUri.indexOf('optional_scope')) {
           const encodedScopes = authUri && authUri.split('optional_scope=')[1];
           const scopes = encodedScopes && decodeURIComponent(encodedScopes).split(' ');
+          if (!scopes) {
+            return r.http.auth.oauth.scope;
+          }
           scopes.unshift(...r.http.auth.oauth.scope);
           return scopes;
         }
