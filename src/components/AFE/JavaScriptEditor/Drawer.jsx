@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import JavaScriptEditor from '.';
 
-export default function JavaScriptEditorDialog(props) {
+export default function JavaScriptEditorDrawer(props) {
   const {
     id,
     rule,
@@ -24,7 +24,7 @@ export default function JavaScriptEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       id={id}
       {...defaults}
       {...rest}
@@ -42,6 +42,6 @@ export default function JavaScriptEditorDialog(props) {
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

@@ -10,7 +10,7 @@ import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
 import * as selectors from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDrawer from '../../../AFE/JavaScriptEditor/Drawer';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
@@ -195,7 +195,7 @@ export default function DynaHook(props) {
   return (
     <>
       {showEditor && (
-        <JavaScriptEditorDialog
+        <JavaScriptEditorDrawer
           title="Script editor"
           id={id}
           key={id}

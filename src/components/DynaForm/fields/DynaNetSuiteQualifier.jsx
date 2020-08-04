@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import OpenInNewIcon from '../../icons/FilterIcon';
-import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
+import NetSuiteQualificationCriteriaEditorDrawer from '../../AFE/NetSuiteQualificationCriteriaEditor/Drawer';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import ActionButton from '../../ActionButton';
@@ -98,7 +98,7 @@ export default function DynaNetSuiteQualifier(props) {
           <FieldHelp {...props} />
         </div>
         {showEditor && (
-          <NetSuiteQualificationCriteriaEditor
+          <NetSuiteQualificationCriteriaEditorDrawer
             title="Field specific qualification criteria"
             id={id}
             value={rule}

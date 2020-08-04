@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import actions from '../../../actions';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
@@ -39,13 +39,13 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
   );
 };
 
-export default function AFE2EditorDialog({
+export default function AFE2EditorDrawer({
   showVersionToggle,
   onVersionToggle,
   editorVersion,
   ...props
 }) {
-  const { id } = props;
+  const { id, disabled } = props;
   const dispatch = useDispatch();
   const handleVersionToggle = useCallback(
     newVersion => {
@@ -59,12 +59,12 @@ export default function AFE2EditorDialog({
       return (
         <EditorToggleAction
           editorVersion={editorVersion}
-          disabled={props.disabled}
+          disabled={disabled}
           onVersionToggle={handleVersionToggle}
         />
       );
     }
-  }, [editorVersion, handleVersionToggle, props.disabled, showVersionToggle]);
+  }, [editorVersion, handleVersionToggle, disabled, showVersionToggle]);
 
-  return <EditorDialog toggleAction={editorToggleAction} {...props} />;
+  return <EditorDrawer toggleAction={editorToggleAction} {...props} />;
 }

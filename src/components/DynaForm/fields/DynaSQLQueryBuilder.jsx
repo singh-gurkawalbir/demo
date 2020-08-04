@@ -6,7 +6,7 @@ import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
-import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
@@ -254,7 +254,7 @@ export default function DynaSQLQueryBuilder(props) {
     <>
       <div className={classes.sqlContainer}>
         {showEditor && (
-          <SqlQueryBuilderEditorDialog
+          <SqlQueryBuilderEditorDrawer
             key={changeIdentifier}
             title={title}
             id={`${resourceId}-${id}`}

@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import DynaNetSuiteLookupFilters from '../../DynaForm/fields/DynaNetSuiteLookupFilters';
 
-export default function NetSuiteLookupFilterEditorDialog(props) {
+export default function NetSuiteLookupFilterEditorDrawer(props) {
   const { id } = props;
   const defaults = {
     layout: 'compact',
@@ -12,13 +12,13 @@ export default function NetSuiteLookupFilterEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       {...defaults}
       {...props}
       showFullScreen
       showLayoutOptions={false}
       hidePreviewAction>
       <DynaNetSuiteLookupFilters editorId={id} {...props} />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import TransformEditorDialog from '../../AFE/TransformEditor/Dialog';
+import TransformEditorDrawer from '../../AFE/TransformEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor';
@@ -73,7 +73,7 @@ export default function DynaTransformRules(props) {
   return (
     <div>
       {showEditor && (
-        <TransformEditorDialog
+        <TransformEditorDrawer
           title="Transform Mapping"
           id={id + resourceId}
           data=""

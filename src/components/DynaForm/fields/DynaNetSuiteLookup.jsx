@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import * as selectors from '../../../reducers';
-import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEditor';
+import NetSuiteLookupFilterEditorDrawer from '../../AFE/NetSuiteLookupFilterEditor/Drawer';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
@@ -106,7 +106,7 @@ export default function DynaNetSuiteLookup(props) {
   return (
     <>
       {showEditor && (
-        <NetSuiteLookupFilterEditorDialog
+        <NetSuiteLookupFilterEditorDrawer
           title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}

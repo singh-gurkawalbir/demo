@@ -1,9 +1,9 @@
 import React from 'react';
 import CsvParseEditor from './CsvParser';
 import CsvGenerateEditor from './CsvGenerator';
-import AFE2EditorDialog from '../AFE2EditorDialog';
+import AFE2EditorDrawer from '../AFE2Editor/Drawer';
 
-export default function CsvConfigEditorDialog(props) {
+export default function CsvConfigEditorDrawer(props) {
   // csvEditorType: ['parse', 'generate']
   const {
     id,
@@ -22,7 +22,7 @@ export default function CsvConfigEditorDialog(props) {
   };
 
   return (
-    <AFE2EditorDialog
+    <AFE2EditorDrawer
       id={id}
       {...defaults}
       {...rest}
@@ -46,6 +46,6 @@ export default function CsvConfigEditorDialog(props) {
           editorDataTitle={editorDataTitle}
         />
       )}
-    </AFE2EditorDialog>
+    </AFE2EditorDrawer>
   );
 }

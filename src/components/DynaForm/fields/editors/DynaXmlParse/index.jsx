@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
-import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
+import XmlParseEditorDrawer from '../../../../AFE/XmlParseEditor/Drawer';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
@@ -188,7 +188,7 @@ export default function DynaXmlParse({
     <>
       <div className={classes.container}>
         {showEditor && (
-          <XmlParseEditorDialog
+          <XmlParseEditorDrawer
             title="XML parser helper"
             id={id + resourceId}
             data={data}

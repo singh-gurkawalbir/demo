@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo, Fragment } from 'react';
+import React, { useCallback, useMemo, Fragment } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -65,8 +66,9 @@ const DynaHttpRequestBody = props => {
     disableEditorV2 = false,
   } = props;
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const contentType = options.contentType || props.contentType;
-  const [showEditor, setShowEditor] = useState(false);
   const { merged: resourceData = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -110,8 +112,8 @@ const DynaHttpRequestBody = props => {
     supportLookup,
   ]);
   const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
+    history.push(`${match.url}/${id}`);
+  }, [history, match.url, id]);
   // TODO: break into different function. To be done across all editors
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -133,28 +135,26 @@ const DynaHttpRequestBody = props => {
 
   return (
     <Fragment key={`${resourceId}-${id}`}>
-      {showEditor && (
-        <DynaEditorWithFlowSampleData
-          contentType={contentType === 'json' ? 'json' : 'xml'}
-          title={`${
-            contentType === 'json'
-              ? 'Build JSON Document'
-              : 'Build XML Document'
-          }`}
-          fieldId={id}
-          onFieldChange={onFieldChange}
-          lookups={lookups}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          action={action}
-          editorType="httpRequestBody"
-          flowId={flowId}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          disableEditorV2={disableEditorV2}
-          rule={formattedRule}
+      <DynaEditorWithFlowSampleData
+        contentType={contentType === 'json' ? 'json' : 'xml'}
+        title={`${
+          contentType === 'json'
+            ? 'Build JSON Document'
+            : 'Build XML Document'
+        }`}
+        fieldId={id}
+        onFieldChange={onFieldChange}
+        lookups={lookups}
+        onSave={handleSave}
+        action={action}
+        editorType="httpRequestBody"
+        flowId={flowId}
+        resourceId={resourceId}
+        resourceType={resourceType}
+        disableEditorV2={disableEditorV2}
+        rule={formattedRule}
+        path={id}
         />
-      )}
       <div className={classes.dynaHttpRequestBodyWrapper}>
         <div className={classes.dynaHttpRequestlabelWrapper}>
           <FormLabel className={classes.dynaHttpReqLabel}>
@@ -170,7 +170,6 @@ const DynaHttpRequestBody = props => {
           onClick={handleEditorClick}>
           Launch
         </Button>
-
       </div>
       <ErroredMessageComponent {...props} />
     </Fragment>

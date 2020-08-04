@@ -1,8 +1,8 @@
 import React from 'react';
 import HttpRequestBodyEditor from '.';
-import AFE2EditorDialog from '../AFE2EditorDialog';
+import AFE2EditorDrawer from '../AFE2Editor/Drawer';
 
-export default function HttpRequestBodyDialog(props) {
+export default function HttpRequestBodyDrawer(props) {
   const {
     id,
     rule,
@@ -22,7 +22,7 @@ export default function HttpRequestBodyDialog(props) {
   };
 
   return (
-    <AFE2EditorDialog
+    <AFE2EditorDrawer
       id={id}
       {...defaults}
       {...rest}
@@ -37,6 +37,6 @@ export default function HttpRequestBodyDialog(props) {
         isSampleDataLoading={isSampleDataLoading}
         disabled={disabled}
       />
-    </AFE2EditorDialog>
+    </AFE2EditorDrawer>
   );
 }

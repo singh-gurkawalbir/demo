@@ -1,15 +1,15 @@
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import HttpRequestBodyEditorDialog from '../../AFE/HttpRequestBodyEditor/Dialog';
-import UrlEditorDialog from '../../AFE/UrlEditor/Dialog';
+import HttpRequestBodyEditorDrawer from '../../AFE/HttpRequestBodyEditor/Drawer';
+import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
+import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
 import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
-import CsvConfigEditorDialog from '../../AFE/CsvConfigEditor/Dialog';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
@@ -85,7 +85,7 @@ const DynaEditorWithFlowSampleData = ({
   return (
     <>
       {editorType === 'httpRequestBody' && (
-        <HttpRequestBodyEditorDialog
+        <HttpRequestBodyEditorDrawer
           {...props}
           id={`${resourceId}-${fieldId}`}
           rule={formattedRule}
@@ -97,7 +97,7 @@ const DynaEditorWithFlowSampleData = ({
         />
       )}
       {editorType === 'uri' && (
-        <UrlEditorDialog
+        <UrlEditorDrawer
           {...props}
           id={`${resourceId}-${fieldId}`}
           rule={formattedRule}
@@ -109,7 +109,7 @@ const DynaEditorWithFlowSampleData = ({
         />
       )}
       {editorType === 'csvGenerate' && (
-        <CsvConfigEditorDialog
+        <CsvConfigEditorDrawer
           {...props}
           /** rule to be passed as json */
           rule={formattedRule}

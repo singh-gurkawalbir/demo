@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
-import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDrawer from '../../../../components/AFE/JavaScriptEditor/Drawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 function PostResponseMapHookDialog({
@@ -65,7 +65,7 @@ function PostResponseMapHookDialog({
   );
 
   return (
-    <JavaScriptEditorDialog
+    <JavaScriptEditorDrawer
       title="Script editor"
       id={resourceId + flowId}
       key={resourceId + flowId}

@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import FilterEditor from './index';
 
-export default function FilterEditorDialog(props) {
+export default function FilterEditorDrawer(props) {
   const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
     width: '85vw',
@@ -12,13 +12,13 @@ export default function FilterEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       id={id}
       {...defaults}
       {...rest}
       disabled={disabled}
       showLayoutOptions={false}>
       <FilterEditor disabled={disabled} editorId={id} data={data} rule={rule} />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

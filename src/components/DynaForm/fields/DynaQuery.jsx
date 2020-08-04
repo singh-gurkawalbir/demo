@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
-import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import DynaText from './DynaText';
 
 /**
@@ -29,7 +29,7 @@ export default function DynaQuery(props) {
     <>
       <DynaText {...props} disabled multiline />
       {showEditor && (
-        <SqlQueryBuilderEditorDialog
+        <SqlQueryBuilderEditorDrawer
           title="Lookups"
           dataTest="lookupQuery"
           id={`lookupQueryBuilder-${id}`}

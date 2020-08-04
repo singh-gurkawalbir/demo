@@ -10,7 +10,7 @@ import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import ModalDialog from '../../ModalDialog';
-import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -97,7 +97,7 @@ export default function DynaSqlQuery(props) {
       aria-labelledby="form-dialog-title">
       <div>{label}</div>
       <div className={classes.editorContainer}>
-        <SqlQueryBuilderEditorDialog
+        <SqlQueryBuilderEditorDrawer
           title="SQL Query"
           id={`${id}-inline`}
           rule={value}

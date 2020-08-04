@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import DynaNetSuiteQualificationCriteria from '../../DynaForm/fields/DynaNetSuiteQualificationCriteria';
 
-export default function NetSuiteQualificationCriteriaEditor(props) {
+export default function NetSuiteQualificationCriteriaEditorDrawer(props) {
   const { id } = props;
   const defaults = {
     layout: 'compact',
@@ -12,13 +12,13 @@ export default function NetSuiteQualificationCriteriaEditor(props) {
   };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       {...defaults}
       {...props}
       showFullScreen
       showLayoutOptions={false}
       hidePreviewAction>
       <DynaNetSuiteQualificationCriteria editorId={id} {...props} />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

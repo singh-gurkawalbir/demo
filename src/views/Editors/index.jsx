@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles, Drawer, List } from '@material-ui/core';
-import UrlEditorDialog from '../../components/AFE/UrlEditor/Dialog';
-import MergeEditorDialog from '../../components/AFE/MergeEditor/Dialog';
-import FileDefinitionEditorDialog from '../../components/AFE/FileDefinitionEditor/Dialog';
-import HttpRequestBodyEditorDialog from '../../components/AFE/HttpRequestBodyEditor/Dialog';
-import CsvConfigEditorDialog from '../../components/AFE/CsvConfigEditor/Dialog';
-import XmlParseEditorDialog from '../../components/AFE/XmlParseEditor/Dialog';
-import TransformEditorDialog from '../../components/AFE/TransformEditor/Dialog';
-import JavaScriptEditorDialog from '../../components/AFE/JavaScriptEditor/Dialog';
-import SqlQueryBuilderEditorDialog from '../../components/AFE/SqlQueryBuilderEditor/Dialog';
+import UrlEditorDrawer from '../../components/AFE/UrlEditor/Drawer';
+import MergeEditorDrawer from '../../components/AFE/MergeEditor/Drawer';
+import FileDefinitionEditorDrawer from '../../components/AFE/FileDefinitionEditor/Drawer';
+import HttpRequestBodyEditorDrawer from '../../components/AFE/HttpRequestBodyEditor/Drawer';
+import CsvConfigEditorDrawer from '../../components/AFE/CsvConfigEditor/Drawer';
+import XmlParseEditorDrawer from '../../components/AFE/XmlParseEditor/Drawer';
+import TransformEditorDrawer from '../../components/AFE/TransformEditor/Drawer';
+import JavaScriptEditorDrawer from '../../components/AFE/JavaScriptEditor/Drawer';
+import SqlQueryBuilderEditorDrawer from '../../components/AFE/SqlQueryBuilderEditor/Drawer';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import FilterEditorDialog from '../../components/AFE/FilterEditor/Dialog';
+import FilterEditorDrawer from '../../components/AFE/FilterEditor/Drawer';
 import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Drawer';
 import { safeParse } from '../../utils/string';
 import WorkArea from './WorkArea';
@@ -150,7 +150,7 @@ export default function Editors() {
     switch (editorName) {
       case 'UrlEditor':
         return (
-          <UrlEditorDialog
+          <UrlEditorDrawer
             title="Create URL template"
             id={editorName}
             data={rawData}
@@ -160,7 +160,7 @@ export default function Editors() {
         );
       case 'HttpRequestBodyEditor':
         return (
-          <HttpRequestBodyEditorDialog
+          <HttpRequestBodyEditorDrawer
             title="Create HTTP request body"
             id={editorName}
             data={rawData}
@@ -170,7 +170,7 @@ export default function Editors() {
         );
       case 'MergeEditor':
         return (
-          <MergeEditorDialog
+          <MergeEditorDrawer
             title="Apply default values"
             id={editorName}
             data={rawData}
@@ -181,7 +181,7 @@ export default function Editors() {
 
       case 'CsvParseEditor':
         return (
-          <CsvConfigEditorDialog
+          <CsvConfigEditorDrawer
             title="Delimited file parser"
             csvEditorType="parse"
             id={editorName}
@@ -193,7 +193,7 @@ export default function Editors() {
 
       case 'XmlParseEditor':
         return (
-          <XmlParseEditorDialog
+          <XmlParseEditorDrawer
             title="XML parser"
             id={editorName}
             data={rawData}
@@ -204,7 +204,7 @@ export default function Editors() {
 
       case 'TransformEditor':
         return (
-          <TransformEditorDialog
+          <TransformEditorDrawer
             title="Transform editor"
             id={editorName}
             data={rawData}
@@ -214,7 +214,7 @@ export default function Editors() {
         );
       case 'JavaScriptEditor':
         return (
-          <JavaScriptEditorDialog
+          <JavaScriptEditorDrawer
             title="Javascript editor"
             id={editorName}
             data={rawData}
@@ -224,7 +224,7 @@ export default function Editors() {
         );
       case 'FileDefinitionEditor':
         return (
-          <FileDefinitionEditorDialog
+          <FileDefinitionEditorDrawer
             title="File definition rules"
             id={editorName}
             data={rawData}
@@ -234,7 +234,7 @@ export default function Editors() {
         );
       case 'SQLQueryBuilderEditor':
         return (
-          <SqlQueryBuilderEditorDialog
+          <SqlQueryBuilderEditorDrawer
             title="SQL query builder"
             id={editorName}
             sampleData={rawData}
@@ -247,7 +247,7 @@ export default function Editors() {
         );
       case 'FilterEditor':
         return (
-          <FilterEditorDialog
+          <FilterEditorDrawer
             title="Filter editor"
             id={editorName}
             data={rawData}

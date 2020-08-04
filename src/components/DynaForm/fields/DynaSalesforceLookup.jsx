@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import * as selectors from '../../../reducers';
-import SalesforceLookupFilterEditorDialog from '../../AFE/SalesforceLookupFilterEditor';
+import SalesforceLookupFilterEditorDrawer from '../../AFE/SalesforceLookupFilterEditor/Drawer';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
@@ -98,7 +98,7 @@ export default function DynaSalesforceLookup(props) {
   return (
     <>
       {showEditor && (
-        <SalesforceLookupFilterEditorDialog
+        <SalesforceLookupFilterEditorDrawer
           title="Define lookup criteria"
           id={id}
           data={formattedExtractFields}

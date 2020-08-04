@@ -4,7 +4,7 @@ import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
-import CsvConfigEditorDialog from '../../../../AFE/CsvConfigEditor/Dialog';
+import CsvConfigEditorDrawer from '../../../../AFE/CsvConfigEditor/Drawer';
 import FieldHelp from '../../../FieldHelp';
 import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
@@ -180,7 +180,7 @@ export default function DynaCsvParse(props) {
     <>
       <div className={classes.container}>
         {showEditor && (
-          <CsvConfigEditorDialog
+          <CsvConfigEditorDrawer
             title="CSV parser helper"
             id={`csvParser-${id}-${resourceId}`}
             mode="csv"

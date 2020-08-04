@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormContext } from 'react-forms-processor/dist';
-import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
+import FileDefinitionEditorDrawer from '../../../AFE/FileDefinitionEditor/Drawer';
 import { fileDefinitionSampleData } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
@@ -172,7 +172,7 @@ function DynaFileDefinitionEditor(props) {
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           {showEditor && (
-            <FileDefinitionEditorDialog
+            <FileDefinitionEditorDrawer
               title={label || 'File definition editor'}
               id={id + resourceId}
               processor={processor}

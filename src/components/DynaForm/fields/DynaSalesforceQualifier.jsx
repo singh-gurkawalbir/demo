@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
+import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/FilterIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
@@ -62,7 +62,7 @@ export default function DynaSalesforceQualifier(props) {
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
       {showEditor && (
-        <SalesforceEditorDialog
+        <SalesforceEditorDrawer
           title="Field specific qualification criteria"
           id={id}
           value={value}

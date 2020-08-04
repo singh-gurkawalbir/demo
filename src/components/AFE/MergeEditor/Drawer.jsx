@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import MergeEditor from '.';
 
-export default function MergeEditorDialog(props) {
+export default function MergeEditorDrawer(props) {
   const { id, rule, data, disabled, ...rest } = props;
   const defaults = {
     layout: 'compact',
@@ -12,13 +12,13 @@ export default function MergeEditorDialog(props) {
   };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       id={id}
       {...defaults}
       {...rest}
       disabled={disabled}
       showFullScreen>
       <MergeEditor editorId={id} rule={rule} data={data} disabled={disabled} />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

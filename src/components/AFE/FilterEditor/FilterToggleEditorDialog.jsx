@@ -1,5 +1,5 @@
 import React from 'react';
-import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
+import ToggleEditorDialog from '../EditorDrawer/toggleEditorDialog';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
 
