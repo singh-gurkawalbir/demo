@@ -1,4 +1,3 @@
-import getUnixTime from 'date-fns/getUnixTime';
 import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
@@ -74,6 +73,8 @@ export const getLabel = key => {
   }
 };
 
+export const getAxisLabel = key => key === 'averageTimeTaken' ? 'Time (ms)' : '# of transmissions';
+
 function convertToFullText(text) {
   switch (text) {
     case 's':
@@ -109,7 +110,7 @@ export const parseFlowMetricsJson = response => {
   response.data
     .map(item => ({
       time: item._time,
-      timeInMills: getUnixTime(new Date(item._time)),
+      timeInMills: new Date(item._time).getTime(),
       flowId: item.f,
       resourceId: item.ei,
       attribute: convertToFullText(item._measurement),
