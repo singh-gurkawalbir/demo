@@ -6,7 +6,7 @@ import FormGenerator from '..';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(1),
+    padding: '10px 16px 0px 16px',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     boxShadow: 'none',

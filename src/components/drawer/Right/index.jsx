@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   contentContainer: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(3),
     position: 'relative',
     height: '100%',
   },
