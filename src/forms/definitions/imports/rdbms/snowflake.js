@@ -5,7 +5,11 @@ export default {
     if (newValues['/rdbms/queryType'] === 'BULK INSERT') {
       newValues['/rdbms/query'] = undefined;
     }
-
+    if (newValues['/rdbms/queryType'] === 'MERGE') {
+      newValues['/rdbms/bulkInsert'] = undefined;
+      delete newValues['/rdbms/bulkInsert/tableName'];
+      delete newValues['/rdbms/bulkInsert/batchSize'];
+    }
     if (newValues['/rdbms/queryType'] === 'INSERT') {
       newValues['/rdbms/bulkInsert'] = undefined;
       delete newValues['/rdbms/bulkInsert/tableName'];
@@ -24,7 +28,7 @@ export default {
         field => field.fieldId === 'rdbms.lookups'
       );
       const queryTypeField = fields.find(
-        field => field.fieldId === 'rdbms.queryType'
+        field => field.id === 'rdbms.queryType'
       );
       const modelMetadataField = fields.find(
         field => field.fieldId === 'modelMetadata'
@@ -32,11 +36,8 @@ export default {
       let queryTypeVal;
 
       if (queryTypeField) {
-        if (fieldId === 'rdbms.query') {
-          queryTypeVal = queryTypeField && queryTypeField.value;
-        }
+        queryTypeVal = queryTypeField && queryTypeField.value;
       }
-
       return {
         queryType: queryTypeVal,
         modelMetadataFieldId: modelMetadataField.fieldId,
@@ -83,7 +84,7 @@ export default {
       visibleWhen: [
         {
           field: 'rdbms.queryType',
-          is: ['INSERT'],
+          is: ['INSERT', 'MERGE'],
         },
       ],
     },
@@ -103,6 +104,7 @@ export default {
           items: [
             { label: 'Use BULK INSERT', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
+            { label: 'Use Merge SQLQuery', value: 'MERGE' },
           ],
         },
       ],

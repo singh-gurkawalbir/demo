@@ -325,7 +325,11 @@ const PageGenerator = ({
           ...exportFilterAction,
           isUsed: usedActions[actionsMap.outputFilter],
         },
-        { ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] },
+        // We don't support preSavePage hook incase of Data loader
+        ...(
+          isDataLoader ? [] :
+            [{ ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] }]
+        )
       ];
     }
     return generatorActions;
@@ -335,7 +339,8 @@ const PageGenerator = ({
     exportNeedsRouting,
     pending,
     usedActions,
-    multipleAs2ExportsOfSameConnectionId
+    multipleAs2ExportsOfSameConnectionId,
+    isDataLoader
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');

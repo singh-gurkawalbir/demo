@@ -104,6 +104,7 @@ import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
 import DynaJsonResourcePath from './DynaJsonResourcePath';
+import DynaRefreshableSettings from './SuiteScript/DynaRefreshableSettings';
 import DynaFeatureCheck from './SuiteScript/DynaFeatureCheck';
 import DynaSuiteScriptTable from './SuiteScript/tables';
 import DynaLinkSuiteScriptIntegrator from './DynaLinkSuiteScriptIntegrator';
@@ -115,6 +116,7 @@ import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 
 export default {
+  suitescriptsettings: DynaRefreshableSettings,
   refreshabletext: DynaRefreshableText,
   matchingcriteria: DynaMatchingCriteriaWithModal,
   suitescripttable: DynaSuiteScriptTable,

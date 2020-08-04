@@ -1,26 +1,27 @@
 import { deepClone } from 'fast-json-patch/lib/core';
 
-export const LOOKUP_RESPONSE_MAPPING_EXTRACTS = [
+const LOOKUP_RESPONSE_MAPPING_EXTRACTS = [
   'data',
   'errors',
   'ignored',
   'statusCode',
 ];
-
-export const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
+const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'id',
   'errors',
   'ignored',
   'statusCode',
 ];
-
 export default {
-  getResponseMappingDefaultExtracts: resourceType => {
-    const extractFields =
-      resourceType === 'imports'
-        ? IMPORT_RESPONSE_MAPPING_EXTRACTS
-        : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
-
+  getResponseMappingExtracts: (resourceType, adaptorType) => {
+    if (resourceType === 'imports') {
+      if (adaptorType === 'HTTPImport') { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
+      return IMPORT_RESPONSE_MAPPING_EXTRACTS;
+    }
+    return LOOKUP_RESPONSE_MAPPING_EXTRACTS;
+  },
+  getResponseMappingDefaultExtracts(resourceType, adaptorType) {
+    const extractFields = this.getResponseMappingExtracts(resourceType, adaptorType);
     return extractFields.map(m => ({
       id: m,
       name: m,

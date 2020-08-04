@@ -89,10 +89,4 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
-  actions: [
-    {
-      id: 'save',
-      label: 'Save',
-    },
-  ],
 };

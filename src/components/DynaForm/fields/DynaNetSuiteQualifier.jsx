@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import { isArray } from 'lodash';
 import OpenInNewIcon from '../../icons/FilterIcon';
 import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
 import FieldHelp from '../FieldHelp';
@@ -35,7 +34,7 @@ export default function DynaNetSuiteQualifier(props) {
     isValid,
     name,
     onFieldChange,
-    placeholder,
+    placeholder = 'Define criteria',
     required,
     defaultValue,
     value,
@@ -75,7 +74,7 @@ export default function DynaNetSuiteQualifier(props) {
     if (shouldCommit) {
       const { rule } = editorValues;
 
-      onFieldChange(id, JSON.stringify(rule));
+      onFieldChange(id, Array.isArray(rule) ? JSON.stringify(rule) : rule);
     }
   };
 
@@ -118,7 +117,8 @@ export default function DynaNetSuiteQualifier(props) {
           disabled
           required={required}
           error={!isValid}
-          value={isArray(value) ? JSON.stringify(value) : value}
+          // eslint-disable-next-line no-nested-ternary
+          value={Array.isArray(value) ? JSON.stringify(value) : (value === null ? placeholder : value)}
           variant="filled"
         />
 

@@ -48,16 +48,11 @@ const getFormattedLookup = (lookup, formVal) => {
       case 'useDefaultOnMultipleMatches':
         lookupTmp.useDefaultOnMultipleMatches = true;
         lookupTmp.default =
-          formVal.lookupDefault ||
-          formVal.lookupSelect ||
-          formVal.lookupCheckbox;
+          formVal.lookupDefault;
         break;
       case 'default':
         lookupTmp.default =
-          formVal.lookupDefault ||
-          formVal.lookupSelect ||
-          formVal.lookupCheckbox ||
-          formVal.lookupSFSelect;
+          formVal.lookupDefault;
         break;
       default:
     }
@@ -218,17 +213,17 @@ export default {
             settings.hardCodedValue = null;
             break;
           case 'default':
-            settings.hardCodedValue =
-              formVal.hardcodedDefault || formVal.hardcodedSFSelect;
+            settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+              ? formVal.hardcodedDefault.join(',')
+              : formVal.hardcodedDefault;
             break;
           default:
         }
-      } else if (formVal.hardcodedSelect) {
-        settings.hardCodedValue = Array.isArray(formVal.hardcodedSelect)
-          ? formVal.hardcodedSelect.join(',')
-          : formVal.hardcodedSelect;
-      } else if (formVal.hardcodedCheckbox) {
-        settings.hardCodedValue = formVal.hardcodedCheckbox;
+      } else if (formVal.hardcodedDefault) {
+        // in some cases hardcodedDefault is shown without hardcodedAction
+        settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+          ? formVal.hardcodedDefault.join(',')
+          : formVal.hardcodedDefault;
       }
     } else if (
       formVal.fieldMappingType === 'standard' ||
@@ -242,7 +237,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default || formVal.defaultSFSelect;
+          settings.default = formVal.default;
           break;
         default:
       }

@@ -64,7 +64,13 @@ export default {
         'MERCHANT_PROFILE_WRITE',
         'MERCHANT_PROFILE_READ'
       ],
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      visibleWhenAll: r => {
+        if (r?.http?._iClientId) {
+          return [{ field: 'http.auth.type', isNot: ['oauth'] },
+            { field: 'http.auth.type', isNot: ['basic'] }];
+        }
+        return [{ field: 'http.auth.type', is: ['oauth'] }];
+      }
     },
     application: {
       fieldId: 'application',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
@@ -57,10 +57,11 @@ function ImportMapping({
 
     return !!mappingPreviewType;
   });
-  const handleClose = (...args) => {
-    setSelectedMapping(null);
-    onClose(...args);
-  };
+  const handleClose = useCallback((...args) => {
+    if (selectedMapping) {
+      setSelectedMapping(null);
+    } else onClose(...args);
+  }, [onClose, selectedMapping]);
 
   const subrecords = useSelector(
     state => {
