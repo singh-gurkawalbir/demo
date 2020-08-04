@@ -70,7 +70,7 @@ export const getLabel = key => {
     case 'ignored':
       return 'Flow: Ignored';
     default:
-      return 'Flow: Average time taken';
+      return 'Flow: Average Processing Time/Success Record';
   }
 };
 
