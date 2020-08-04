@@ -138,10 +138,10 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
     if (actions) return actions;
-    let actionButtons = ['save', 'saveandclose', 'cancel'];
+    let actionButtons = ['save', 'cancel'];
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && resource?.type !== 'other') {
-      actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
+      actionButtons = ['testandsave', 'cancel', 'test'];
     }
     return actionButtons.map(id => ({
       id,
