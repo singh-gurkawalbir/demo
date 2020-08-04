@@ -61,8 +61,6 @@ export default {
         'TIMECARDS_SETTINGS_READ',
         'TIMECARDS_SETTINGS_WRITE',
         'CASH_DRAWER_READ',
-        'MERCHANT_PROFILE_WRITE',
-        'MERCHANT_PROFILE_READ'
       ],
       visibleWhenAll: r => {
         if (r?.http?._iClientId) {
