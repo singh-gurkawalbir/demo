@@ -87,7 +87,7 @@ const DynaTextWithFlowSuggestion = props => {
   };
 
   const handleLookupModalShown = useCallback(
-    (val) => {
+    val => {
       setLookupModalShown(val);
     },
     [setLookupModalShown],

@@ -153,7 +153,7 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     marginLeft: -100,
-  }
+  },
 }));
 
 function FlowBuilder() {
@@ -352,6 +352,7 @@ function FlowBuilder() {
       // if user is editing an IA flow, the url is 1 segment longer.
       return history.push(parts.slice(0, 4).join('/'));
     }
+
     return history.push(parts.slice(0, 3).join('/'));
   }, [history, location]);
 

@@ -39,7 +39,7 @@ export default function FilterEditor(props) {
         lastValidData: props.data,
         rule: props.rule,
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [dispatch, editorId, optionalSaveParams, props.data, props.rule, props.isSampleDataLoading]);

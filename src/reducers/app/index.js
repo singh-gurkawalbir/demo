@@ -10,6 +10,7 @@ const defaultState = {
 // #region Reducers
 export default function (state = defaultState, action) {
   const {version, type } = action;
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.APP_RELOAD:

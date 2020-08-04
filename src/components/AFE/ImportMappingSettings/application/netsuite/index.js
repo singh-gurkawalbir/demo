@@ -761,7 +761,6 @@ export default {
       ];
     }
 
-
     if (isCategoryMapping) {
       fields = fields.filter(
         el =>

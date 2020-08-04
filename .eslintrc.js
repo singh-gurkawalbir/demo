@@ -107,8 +107,9 @@ module.exports = {
     'react/no-unused-prop-types': 'off',
     // Doesn't always help with a lot of PureComponents:
     'react/require-default-props': 'off',
-    // The following rules are set by our UI team
-    'max-len': 'off',
+    // This is a lot of custom work to fix line length...
+    // save this change for last.
+    'max-len': 'off', // ['error', { code: 120, ignoreComments: true }],
     'react/jsx-filename-extension': [
       'warn',
       { extensions: ['.js', '.jsx'] },
@@ -125,10 +126,17 @@ module.exports = {
       },
     ],
     'react/jsx-props-no-spreading': 'off',
-    'arrow-parens': 'off',
+    'arrow-parens': ['error', 'as-needed'],
     'object-curly-newline': 'off',
     'function-paren-newline': 'off',
-    'comma-dangle': 'off',
+    'comma-dangle': ['error', { 
+      objects: 'always-multiline', 
+      arrays: 'always-multiline',
+      imports: 'always-multiline',
+      exports: 'always-multiline',
+      functions: 'only-multiline',
+      // functions: 'never' }
+    }],
     'implicit-arrow-linebreak': 'off',
     'react/destructuring-assignment': 'off',
     'import/no-extraneous-dependencies': [
@@ -152,12 +160,13 @@ module.exports = {
     'no-multiple-empty-lines': ['error', { 'max': 1 }],
     'no-multi-spaces': ["error", { 'ignoreEOLComments': true }],
     'key-spacing': 'error',
-    "padding-line-between-statements": [
+    'padding-line-between-statements': [
       "error",
       { blankLine: "always", prev: "*", next: "return" },
       { blankLine: "always", prev: ["const", "let", "var"], next: "*"},
       { blankLine: "any",    prev: ["const", "let", "var"], next: ["const", "let", "var"]},
     ],
+    'operator-linebreak': ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
     // The following rules would actually benefit us if turned on
     // they are turned off so that we can transition into the new toolchain more easily
     'consistent-return': 'off',

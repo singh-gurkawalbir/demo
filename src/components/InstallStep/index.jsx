@@ -13,7 +13,6 @@ import InfoIconButton from '../InfoIconButton';
 import IconTextButton from '../IconTextButton';
 import Spinner from '../Spinner';
 
-
 const useStyles = makeStyles(theme => ({
   step: {
     position: 'relative',
@@ -201,12 +200,12 @@ export default function InstallationStep(props) {
         <div className={classes.stepCountWithName}>
           {step.completed && !step.isCurrentStep ? (
             <SuccessIcon className={clsx(classes.successText, classes.succcessIcon)} />
-          ) :
-            <div>
+          )
+            : <div>
               <Typography variant="h4" className={classes.stepNumber}>
                 {index}
               </Typography>
-            </div>}
+              </div>}
           <div className={classes.stepName}>
             <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>
               {step.name}

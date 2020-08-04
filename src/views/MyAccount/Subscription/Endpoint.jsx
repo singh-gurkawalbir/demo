@@ -18,7 +18,6 @@ import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(3, 0, 0, 2),
@@ -204,7 +203,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.light,
     paddingLeft: theme.spacing(1),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-  }
+  },
 }));
 
 export default function Endpoint() {
@@ -260,6 +259,7 @@ export default function Endpoint() {
         },
       ],
     });
+
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
 
@@ -277,6 +277,7 @@ export default function Endpoint() {
         },
       ],
     });
+
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
@@ -317,7 +318,6 @@ export default function Endpoint() {
       </SpinnerWrapper>
     );
   }
-
 
   return (
     <>

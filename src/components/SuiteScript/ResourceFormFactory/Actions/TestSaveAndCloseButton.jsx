@@ -30,6 +30,7 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
   const { confirmDialog } = useConfirmDialog();
+
   useEffect(() => {
     if (commErrorMessage) {
       confirmDialog({
@@ -55,7 +56,7 @@ const ConfirmDialog = props => {
         onDialogClose: () => {
           handleSaveCompleted();
           handleCloseAndClearForm();
-        }
+        },
       });
     } else confirmDialog(null);
   }, [
@@ -212,7 +213,7 @@ const TestAndSaveButton = props => {
     dispatchLocalAction({ type: 'saveCompleted' });
   }, []);
 
-  const handleTestAndSave = useCallback((values) => {
+  const handleTestAndSave = useCallback(values => {
     testClear();
     handleTestConnection(values);
     dispatchLocalAction({ type: 'setFormValues', formValues: values });

@@ -10,7 +10,7 @@ import {
   Redirect, Route,
   Switch,
 
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
@@ -48,7 +48,6 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
 
   return children;
 };
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -93,18 +92,19 @@ function SettingsPanelComponent({
   const match = useRouteMatch();
   const {integrationAppName} = match?.params;
 
-
   const availableSections = useSelector(state => {
     const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
+
     return sections.reduce((newArray, s) => {
       if (!!s.fields || !!s.sections?.length) {
         newArray.push({
           path: s.titleId,
           label: s.title,
           Section: 'FlowsConfiguration',
-          id: s.id
+          id: s.id,
         });
       }
+
       return newArray;
     }, []);
   }, isEqual);
@@ -131,6 +131,7 @@ function SettingsPanelComponent({
           </div>
         </div>);
     }
+
     return (
       <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />
     );

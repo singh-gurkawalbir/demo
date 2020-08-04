@@ -1,6 +1,7 @@
 export default {
   preSave: formValues => {
     const newValues = formValues;
+
     newValues['/import/file/method'] = newValues['/import/rakuten/method'];
 
     return newValues;

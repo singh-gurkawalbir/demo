@@ -12,6 +12,7 @@ const FileTypeSelect = props => {
   const fileDefinitionFormat = useSelector(state => {
     if (userDefinitionId) {
       const definition = selectors.resource(state, 'filedefinitions', userDefinitionId);
+
       return definition && definition.format;
     }
   });

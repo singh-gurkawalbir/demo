@@ -388,7 +388,6 @@ function AppBlock({
         </Typography>
       </div>
 
-
     </div>
   );
 }

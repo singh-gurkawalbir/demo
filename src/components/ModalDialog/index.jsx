@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     '& > .MuiTypography-root': {
       color: theme.palette.secondary.main,
-    }
+    },
   },
   closeButton: {
     position: 'absolute',

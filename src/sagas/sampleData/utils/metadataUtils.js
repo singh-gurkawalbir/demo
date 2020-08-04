@@ -13,12 +13,13 @@ export default function* fetchMetadata({
     commMetaPath,
     filterKey,
   });
+
   // Incase of refreshMode, fetch NS/SF metadata each time requested
   if (refresh || !metadata || !metadata.data) {
     yield call(getNetsuiteOrSalesforceMeta, {
       connectionId,
       commMetaPath,
-      addInfo: { refreshCache: refresh}
+      addInfo: { refreshCache: refresh},
     });
     metadata = yield select(getMetadataOptions, {
       connectionId,

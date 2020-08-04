@@ -204,7 +204,7 @@ export default function AccountList() {
         anchorEl={anchorEl}
         classes={{
           popper: classes.accountListPopper,
-          arrow: classes.accountListPopperArrow
+          arrow: classes.accountListPopperArrow,
         }}
         placement="bottom-end"
         onClose={handleClose}>

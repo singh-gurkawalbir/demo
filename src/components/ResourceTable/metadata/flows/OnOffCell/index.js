@@ -9,7 +9,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import RemoveMargin from '../RemoveMargin';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
     marginTop: theme.spacing(1),
   },
@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 12,
   },
 }));
+
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
 // with a saga controlling the async parts, and a simple status selector created
@@ -113,12 +114,12 @@ export default function OnOffCell({
 
               patchFlow('/disabled', !disabled);
             }
-          }
+          },
         },
         {
           label: 'Cancel',
           color: 'secondary',
-        }]
+        }],
     });
   }, [
     confirmDialog,

@@ -440,7 +440,6 @@ function extractRules(fields, currFieldName, value) {
       };
     }
 
-
     return rule;
   });
 }
@@ -474,6 +473,7 @@ export const translateDependencyProps = fieldMap => {
         Object.keys(dependencies?.[value]).forEach(componentType => {
         // links are similar to fields property and these are dependencies defined for link components
           const dependencyFields = dependencies[value][componentType];
+
           // feature is a checkbox
           if (type === 'checkbox' || type === 'featurecheck') {
             rules.push(
@@ -482,7 +482,6 @@ export const translateDependencyProps = fieldMap => {
           } else rules.push(...(extractRules(dependencyFields, key, value) || []));
         });
       });
-
 
       delete fieldMapCopy[key].dependencies;
     }

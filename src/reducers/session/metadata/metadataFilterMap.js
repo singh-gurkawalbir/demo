@@ -6,6 +6,7 @@ This file consists of filter map which is used to filter netsuite and salesforce
 */
 
 const emptySet = [];
+
 export default {
   // raw stage is to retrieve the actual data stored  in the state without filters
   raw: data => data,
@@ -228,11 +229,11 @@ export default {
     data.fields.map(({label, name, picklistValues}) =>
       ({label, name, options: picklistValues && picklistValues.map(({label, value}) => ({label, value}))})
     ),
-  'suiteScript-sObjects-field-options-extracts': (data) => (
+  'suiteScript-sObjects-field-options-extracts': data => (
     data?.extracts?.map(({text, id}) =>
       ({label: text, value: id})
     )),
-  'suiteScript-sObjects-field-options-generates': (data) => (
+  'suiteScript-sObjects-field-options-generates': data => (
       data?.generates?.map(({text, id}) =>
         ({label: text, value: id})
       )),

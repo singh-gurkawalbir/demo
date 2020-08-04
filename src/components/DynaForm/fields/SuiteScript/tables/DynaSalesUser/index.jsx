@@ -9,7 +9,8 @@ import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 // view only component
-const camelCase = (str) => str.charAt(0).toLowerCase() + str.slice(1);
+const camelCase = str => str.charAt(0).toLowerCase() + str.slice(1);
+
 export default function DynaSalesUser(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId} = props;
   const dispatch = useDispatch();
@@ -34,8 +35,8 @@ export default function DynaSalesUser(props) {
   const [option, selectOption] = useState('');
 
   const filteredResults = useMemo(() => users && users?.filter(user => !option ? true : option === user?.profile), [option, users]);
-  if (status !== 'received') { return (<Spinner />); }
 
+  if (status !== 'received') { return (<Spinner />); }
 
   return (
     <>

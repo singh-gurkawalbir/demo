@@ -348,7 +348,7 @@ export function* handleFlowDataStageErrors({
 export function getPreProcessedResponseMappingData({
   resourceType,
   preProcessedData,
-  adaptorType
+  adaptorType,
 }) {
   const extractsObj = generateDefaultExtractsObject(resourceType, adaptorType);
 

@@ -28,7 +28,6 @@ export function suiteScriptIAFeatureCheckState(
   return fromFeatureCheck.suiteScriptIAFeatureCheckState(state && state.featureCheck, { ssLinkedConnectionId, integrationId, featureName});
 }
 
-
 export function resourceFormState(
   state,
   { resourceType, resourceId, ssLinkedConnectionId, integrationId }

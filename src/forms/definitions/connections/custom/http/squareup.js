@@ -67,8 +67,9 @@ export default {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
             { field: 'http.auth.type', isNot: ['basic'] }];
         }
+
         return [{ field: 'http.auth.type', is: ['oauth'] }];
-      }
+      },
     },
     application: {
       fieldId: 'application',

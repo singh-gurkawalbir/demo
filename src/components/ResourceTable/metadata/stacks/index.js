@@ -52,6 +52,7 @@ export default {
     if (!r || !r.shared) {
       return [Edit, AuditLogs, References, GenerateToken, StackShares, Delete];
     }
+
     return [];
-  }
+  },
 };

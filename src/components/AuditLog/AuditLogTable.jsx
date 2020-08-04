@@ -6,14 +6,13 @@ import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ShowMoreDrawer from '../drawer/ShowMore';
 
-
 const useStyles = makeStyles({
   root: {
     width: '100%',
     overflowX: 'auto',
   },
   tablePaginationRoot: {
-    float: 'right'
+    float: 'right',
   },
 });
 

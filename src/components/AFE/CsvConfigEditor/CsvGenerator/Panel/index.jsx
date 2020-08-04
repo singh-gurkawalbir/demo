@@ -64,6 +64,7 @@ export default function CsvGeneratePanel(props) {
       return false;
     }
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+
     return resource?.adaptorType === 'HTTPImport';
   });
   const patchEditor = (option, value) => {

@@ -11,7 +11,7 @@ export default function DynaIASelect(props) {
     _integrationId,
     autoPostBack,
     multiselect,
-    onFieldChange
+    onFieldChange,
   } = props;
   const dispatch = useDispatch();
   const handleFieldChange = useCallback((id, val) => {
@@ -19,7 +19,7 @@ export default function DynaIASelect(props) {
       dispatch(
         actions.connectors.refreshMetadata(val, id, _integrationId, {
           key: 'fieldValue',
-          autoPostBack: true
+          autoPostBack: true,
         })
       );
       onFieldChange(id, val);
@@ -38,10 +38,10 @@ export default function DynaIASelect(props) {
   );
   const IASelect = multiselect ? DynaMultiSelect : DynaSelect;
 
-  return options?.length ?
-    <IASelect
+  return options?.length
+    ? <IASelect
       {...props}
       options={[{items: options}]}
-      onFieldChange={handleFieldChange} /> :
-    <IASelect {...props} />;
+      onFieldChange={handleFieldChange} />
+    : <IASelect {...props} />;
 }

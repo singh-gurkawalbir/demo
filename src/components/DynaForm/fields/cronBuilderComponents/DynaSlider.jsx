@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   titleSlider: {
     paddingTop: theme.spacing(1),
     marginLeft: theme.spacing(-1),
@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 2),
   },
 }));
+
 function DynaSlider(props) {
   const classes = useStyles();
   const {

@@ -76,6 +76,7 @@ export default function ConnectionStatusPanel(props) {
       if (resource.type === 'netsuite') {
         return selectors.netsuiteUserRoles(state, connectionId)?.status;
       }
+
       return selectors.testConnectionCommState(state, connectionId).commState;
     }
   );

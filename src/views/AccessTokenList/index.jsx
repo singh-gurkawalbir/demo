@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const defaultFilter = {
-  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
 export default function AccessTokenList(props) {

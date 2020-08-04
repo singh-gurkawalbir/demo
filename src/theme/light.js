@@ -642,8 +642,8 @@ export default {
         '& > svg': {
           border: '1px solid',
           borderColor: colors.celigoNeutral3,
-        }
-      }
+        },
+      },
     },
     MuiListSubheader: {
       gutters: {

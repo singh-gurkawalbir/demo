@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   resourceBtnName: {
     color: theme.palette.secondary.main,
-  }
+  },
 }));
 
 export default function ResourceButton({ onClick, variant }) {

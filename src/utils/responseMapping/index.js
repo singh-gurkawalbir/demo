@@ -12,16 +12,20 @@ const IMPORT_RESPONSE_MAPPING_EXTRACTS = [
   'ignored',
   'statusCode',
 ];
+
 export default {
   getResponseMappingExtracts: (resourceType, adaptorType) => {
     if (resourceType === 'imports') {
       if (adaptorType === 'HTTPImport') { return [...IMPORT_RESPONSE_MAPPING_EXTRACTS, 'headers']; }
+
       return IMPORT_RESPONSE_MAPPING_EXTRACTS;
     }
+
     return LOOKUP_RESPONSE_MAPPING_EXTRACTS;
   },
   getResponseMappingDefaultExtracts(resourceType, adaptorType) {
     const extractFields = this.getResponseMappingExtracts(resourceType, adaptorType);
+
     return extractFields.map(m => ({
       id: m,
       name: m,

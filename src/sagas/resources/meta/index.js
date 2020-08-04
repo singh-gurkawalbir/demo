@@ -104,12 +104,12 @@ export function* getNetsuiteOrSalesforceMeta({
   }
 }
 
-
 function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
   const {
     connectionId,
     commMetaPath,
   } = params;
+
   yield race({
     getMetadata: call(getNetsuiteOrSalesforceMeta, params),
     abortMetadata: take(
@@ -120,7 +120,6 @@ function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
     ),
   });
 }
-
 
 export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
   const { path, opts } = getRequestOptions(

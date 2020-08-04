@@ -2292,6 +2292,7 @@ describe('integrationApps reducer test cases', () => {
       addon: {},
       clone: {},
     };
+
     describe('INIT action', () => {
       test('should create an integrationId reference inside uninstaller2 state object', () => {
         const newState = reducer(
@@ -2300,6 +2301,7 @@ describe('integrationApps reducer test cases', () => {
             '123'
           )
         );
+
         state.uninstaller2 = {123: {}};
         expect(newState).toEqual(state);
       });
@@ -2311,6 +2313,7 @@ describe('integrationApps reducer test cases', () => {
             '123'
           )
         );
+
         state.uninstaller2[123] = {};
         expect(newState).toEqual(state);
       });
@@ -2326,6 +2329,7 @@ describe('integrationApps reducer test cases', () => {
             'some error msg'
           )
         );
+
         state.uninstaller2[123].error = 'some error msg';
         expect(newState).toEqual(state);
       });
@@ -2337,6 +2341,7 @@ describe('integrationApps reducer test cases', () => {
             'some error msg'
           )
         );
+
         state.uninstaller2 = {123: {error: 'some error msg'}};
         expect(newState).toEqual(state);
       });
@@ -2349,6 +2354,7 @@ describe('integrationApps reducer test cases', () => {
             'some error msg'
           )
         );
+
         state.uninstaller2[123].error = 'some error msg';
         expect(newState).toEqual(state);
       });
@@ -2356,6 +2362,7 @@ describe('integrationApps reducer test cases', () => {
 
     describe('RECEIVED_STEPS action', () => {
       const uninstallSteps = [{type: 'form'}, {type: 'url'}];
+
       test('should update steps in the state', () => {
         state.uninstaller2 = {123: {key: 'value'}};
         const newState = reducer(
@@ -2365,6 +2372,7 @@ describe('integrationApps reducer test cases', () => {
             uninstallSteps
           )
         );
+
         state.uninstaller2[123].steps = uninstallSteps;
         state.uninstaller2[123].isFetched = true;
         expect(newState).toEqual(state);
@@ -2377,6 +2385,7 @@ describe('integrationApps reducer test cases', () => {
             uninstallSteps
           )
         );
+
         state.uninstaller2 = {123: {steps: uninstallSteps, isFetched: true}};
         expect(newState).toEqual(state);
       });
@@ -2389,6 +2398,7 @@ describe('integrationApps reducer test cases', () => {
             uninstallSteps
           )
         );
+
         state.uninstaller2[123].steps = uninstallSteps;
         state.uninstaller2[123].isFetched = true;
         expect(newState).toEqual(state);
@@ -2404,6 +2414,7 @@ describe('integrationApps reducer test cases', () => {
             '123'
           )
         );
+
         delete state.uninstaller2[123];
         expect(newState).toEqual(state);
       });
@@ -2415,6 +2426,7 @@ describe('integrationApps reducer test cases', () => {
             '123'
           )
         );
+
         delete state.uninstaller2[123];
         expect(newState).toEqual(state);
       });
@@ -2430,6 +2442,7 @@ describe('integrationApps reducer test cases', () => {
             'inProgress'
           )
         );
+
         state.uninstaller2[123].steps[0].isTriggered = true;
         expect(newState).toEqual(state);
       });
@@ -2442,6 +2455,7 @@ describe('integrationApps reducer test cases', () => {
             'completed'
           )
         );
+
         state.uninstaller2[123].steps[2].isTriggered = false;
         state.uninstaller2[123].steps[2].completed = true;
         expect(newState).toEqual(state);
@@ -2455,6 +2469,7 @@ describe('integrationApps reducer test cases', () => {
             'reset'
           )
         );
+
         expect(newState).toEqual(state);
       });
     });
@@ -2478,6 +2493,7 @@ describe('integrationApps reducer test cases', () => {
             [{type: 'form'}, {type: 'url'}]
           )
         );
+
         expect(selectors.uninstall2Data(newState, '123')).toEqual(expectedData);
       });
     });

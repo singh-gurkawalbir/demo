@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 
-
 const useStyles = makeStyles(theme => ({
   featureText: {
     fontSize: 15,
@@ -50,7 +49,6 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
       history.replace(`${match.url}/${env}/${type}`);
       setTitle(type);
     }, [history, match, env, type, setTitle]);
-
 
   return (
     <div className={classes.productionUsageWrapper}>

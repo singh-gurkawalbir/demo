@@ -7,11 +7,10 @@ import FormGenerator from '..';
 import {
   getAllFormValuesAssociatedToMeta,
 
-  isAnyFieldTouchedForMeta, isExpansionPanelErrored
+  isAnyFieldTouchedForMeta, isExpansionPanelErrored,
 } from '../../../../forms/utils';
 import IntegrationSettingsSaveButton from '../../../ResourceFormFactory/Actions/IntegrationSettingsSaveButton';
 import SuiteScriptSaveButton from '../../../SuiteScript/ResourceFormFactory/Actions/SuiteScriptIASettingsSaveButton';
-
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -35,7 +34,6 @@ const useStyle = makeStyles(theme => ({
     right: 'unset',
   },
 }));
-
 
 const TabLabel = ({layout, fieldMap, label, tabType }) => (
   <FormContext.Consumer>
@@ -127,10 +125,9 @@ function FormWithSave(props) {
               { layout, fieldMap },
               form.fields
             ),
-            postProcessValuesFn
+            postProcessValuesFn,
 
           })}
-
 
         </>
       )}
@@ -148,15 +145,13 @@ export function TabIAComponent(props) {
   );
 }
 
-
 const InitializeFieldStateHook = ({ fieldMap, registerField}) => {
   useEffect(() => {
-    Object.values(fieldMap).forEach((field) => {
+    Object.values(fieldMap).forEach(field => {
       registerField(field);
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   return null;
 };
@@ -215,7 +210,6 @@ export function TabComponentSimple(props) {
 
   );
 }
-
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (

@@ -44,6 +44,7 @@ export default function SalesforceMappingAssistant({
       return left.editLayoutSections.length === right.editLayoutSections.length;
     }
   );
+
   useEffect(() => {
     if (connectionId && sObjectType && layoutId) {
       dispatch(

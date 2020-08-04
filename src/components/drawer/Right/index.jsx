@@ -130,6 +130,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
 
   let fullPath;
+
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = `${match.url}/${path}`;
   } else if (Array.isArray(path)) {

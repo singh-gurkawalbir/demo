@@ -8,7 +8,6 @@ import * as selectors from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import SpinnerWrapper from '../../../SpinnerWrapper';
 
-
 const useStyles = makeStyles(theme => ({
   uploadButton: {
     marginRight: theme.spacing(0.5),
@@ -45,11 +44,11 @@ const useStyles = makeStyles(theme => ({
   defaultText: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-    color: '#b1c6d7'
+    color: '#b1c6d7',
   },
   uploadFileContainer: {
     padding: theme.spacing(1),
-  }
+  },
 }));
 
 export default function UploadFile() {
@@ -71,6 +70,7 @@ export default function UploadFile() {
   }, [dispatch, isFileUploaded, location, history, templateId]);
   const handleUploadFileChange = e => {
     const file = e.target.files[0];
+
     dispatch(actions.file.previewZip(file));
     setUploadInProgress(true);
   };
@@ -82,6 +82,7 @@ export default function UploadFile() {
       </SpinnerWrapper>
     );
   }
+
   return (
     <div className={classes.uploadFileContainer}>
       <Typography variant="h5">Your installation will begin after choosing a zip file.</Typography>

@@ -199,7 +199,7 @@ export default {
       hasHeaderRow: false,
       keyColumns: [],
       rowsToSkip: 0,
-      trimSpaces: true
+      trimSpaces: true,
     },
     visibleWhenAll: [
       {

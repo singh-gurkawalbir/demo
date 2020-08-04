@@ -163,6 +163,7 @@ export default function ImportMapping(props) {
     },
     [dispatch, editorId],
   );
+
   useEffect(() => {
     // update local mapping state when mappings in data layer changes
     if (localChangeIdentifier !== changeIdentifier) {
@@ -205,15 +206,18 @@ export default function ImportMapping(props) {
               !('hardCodedValue' in _mapping))
           ) {
             dispatch(actions.mapping.delete(editorId, key));
+
             return;
           }
         }
         dispatch(actions.mapping.patchField(editorId, field, key, value));
+
         return;
       }
 
       if (lastModifiedRowKey !== key) {
         const _lastModifiedRowKey = key === undefined ? 'new' : key;
+
         dispatch(actions.mapping.updateLastFieldTouched(editorId, _lastModifiedRowKey));
       }
     },
@@ -272,6 +276,7 @@ export default function ImportMapping(props) {
         return;
       }
       let value;
+
       if (sObjectType) {
         value = meta.id;
       } else if (recordType) {

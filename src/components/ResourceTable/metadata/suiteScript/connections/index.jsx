@@ -27,18 +27,18 @@ export default {
         other: 'Other',
         rakuten: 'Rakuten',
         salesforce: 'Salesforce',
-        sears: 'Sears'
-      }[resource.type] || resource.type)
+        sears: 'Sears',
+      }[resource.type] || resource.type),
     },
     {
       heading: 'API',
       value: resource =>
-        (resource[resource.type === 'sftp' ? 'ftp' : resource.type].hostURI)
+        (resource[resource.type === 'sftp' ? 'ftp' : resource.type].hostURI),
     },
     {
       heading: 'Username',
       value: resource =>
-        (resource[resource.type === 'sftp' ? 'ftp' : resource.type].username)
+        (resource[resource.type === 'sftp' ? 'ftp' : resource.type].username),
     },
   ],
 };

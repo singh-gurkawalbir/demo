@@ -18,7 +18,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 
 export default function ConnectionDrawer({
   connectorId,
-  handleSubmitComplete
+  handleSubmitComplete,
 }) {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
@@ -29,6 +29,7 @@ export default function ConnectionDrawer({
   const linkedConnectionId = useSelector(state => selectors.suiteScriptIntegratorLinkedConnectionId(state, account));
   const linkedConnectionName = useSelector(state => {
     const r = selectors.resource(state, 'connections', linkedConnectionId);
+
     return r?.name;
   });
 
@@ -43,7 +44,7 @@ export default function ConnectionDrawer({
           uppercase: true,
           required: true,
         },
-      }
+      },
     }),
     []
   );
@@ -117,7 +118,7 @@ export default function ConnectionDrawer({
           {
             label: 'No, go back',
             color: 'secondary',
-          }
+          },
         ],
       });
       setConnection(null);

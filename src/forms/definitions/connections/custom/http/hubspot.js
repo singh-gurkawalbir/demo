@@ -9,6 +9,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
     } else {
       const scopes = retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth');
+
       retValues['/http/auth/oauth/authURI'] =
         `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -83,9 +84,9 @@ export default {
             'social',
             'tickets',
             'timeline',
-            'transactional-email'
-          ]
-        }
+            'transactional-email',
+          ],
+        },
       ],
       defaultValue: r => {
         const authUri = r?.http?.auth?.oauth?.authURI;
@@ -93,7 +94,9 @@ export default {
         if (authUri && authUri.indexOf('optional_scope')) {
           const encodedScopes = authUri && authUri.split('optional_scope=')[1];
           const scopes = encodedScopes && decodeURIComponent(encodedScopes).split(' ');
+
           scopes.unshift(...r.http.auth.oauth.scope);
+
           return scopes;
         }
       },

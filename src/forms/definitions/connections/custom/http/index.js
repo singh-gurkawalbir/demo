@@ -182,7 +182,6 @@ import concurinvoice from './concurinvoice';
 import concurexpense from './concurexpense';
 import concurall from './concurall';
 
-
 export default {
   concurexpense,
   bigquery,

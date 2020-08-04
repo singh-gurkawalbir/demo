@@ -63,7 +63,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluateDelay: 500,
         _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [

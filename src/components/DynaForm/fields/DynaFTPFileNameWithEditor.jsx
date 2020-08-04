@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row !important',
   },
 }));
+
 export default function DynaFTPFileNameWithEditor(props) {
   const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
   const [showEditor, setShowEditor] = useState(false);
@@ -33,6 +34,7 @@ export default function DynaFTPFileNameWithEditor(props) {
     handleEditorClick();
   };
   const classes = useStyles();
+
   return (
     <>
       {showEditor && (

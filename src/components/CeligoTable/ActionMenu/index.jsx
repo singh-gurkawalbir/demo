@@ -30,20 +30,19 @@ export default function ActionMenu({ actions, selectAction }) {
       const disabledActionTitle = disabledActionText?.({ state, ...actionProps, rowData });
 
       return (
-        disabledActionTitle ?
-          <Tooltip title={disabledActionTitle} placement="bottom" >
+        disabledActionTitle
+          ? <Tooltip title={disabledActionTitle} placement="bottom" >
             <div>
               <MenuItem key={label} disabled>
                 {icon}
                 {label}
               </MenuItem>
             </div>
-          </Tooltip>
-          :
-          <MenuItem key={label} onClick={handleActionClick}>
+            </Tooltip>
+          : <MenuItem key={label} onClick={handleActionClick}>
             {icon}
             {label}
-          </MenuItem>
+            </MenuItem>
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

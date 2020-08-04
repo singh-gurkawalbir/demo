@@ -82,6 +82,7 @@ export default function DynaNetSuiteSubRecords(props) {
         filterKey: 'suitescript-subrecord-referenceFields',
       }).data
   );
+
   useEffect(() => {
     if (!referenceFields || referenceFields.length === 0) {
       dispatch(actions.metadata.request(connectionId, `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`));

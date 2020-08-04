@@ -79,6 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const emptySet = [];
+
 export default function MappingRow(props) {
   const {
     id,

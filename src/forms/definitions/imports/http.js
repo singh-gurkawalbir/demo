@@ -1425,9 +1425,9 @@ export default {
                 fields:
                 [
                   'file.csv',
-                ]
-              }
-            ]
+                ],
+              },
+            ],
           },
           {type: 'collapse',
             containers: [
@@ -1462,7 +1462,7 @@ export default {
                 ],
               },
             ],
-          }
+          },
         ],
       },
       {

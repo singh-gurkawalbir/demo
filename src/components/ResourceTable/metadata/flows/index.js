@@ -57,7 +57,7 @@ export default {
         value: function Schedule(r) {
           return <ScheduleCell flowId={r._id} name={r.name} />;
         },
-      }
+      },
     ];
 
     if (actionProps.isIntegrationApp) {
@@ -67,7 +67,7 @@ export default {
           align: 'center',
           value: function Settings(r) {
             return <SettingsCell flowId={r._id} name={r.name} />;
-          }
+          },
         }
       );
     }
@@ -102,13 +102,13 @@ export default {
             />
           );
         },
-      }
+      },
     ];
 
     return columns;
   },
 
-  rowActions: (r, /* actionProps */) => {
+  rowActions: r => {
     const isIntegrationApp = !!r._connectorId;
     const isStandalone = !r._integrationId;
     // all possible: detach, clone, audit, references, download, delete
@@ -120,8 +120,8 @@ export default {
       return [EditCell, AuditLogs];
     }
 
-
     let actions = [EditCell, AuditLogs, References, Download, Clone];
+
     if (!isStandalone) {
       actions.push(Detach);
     }

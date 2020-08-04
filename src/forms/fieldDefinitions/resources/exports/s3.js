@@ -31,5 +31,5 @@ export default {
     type: 'text',
     label: 'Backup bucket name',
     helpKey: 'export.s3.backupBucket',
-  }
+  },
 };

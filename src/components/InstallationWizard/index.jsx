@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 29,
   },
 
-  stepTable: { maxWidth: 750, },
+  stepTable: { maxWidth: 750 },
   floatRight: {
     float: 'right',
   },
@@ -128,7 +128,7 @@ export default function InstallationWizard(props) {
     resourceType,
     templateId,
     isInstallFailed,
-    destinationEnvironment
+    destinationEnvironment,
   ]);
 
   if (!installSteps) {

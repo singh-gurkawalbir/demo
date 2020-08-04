@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   fileUploadLabelWrapper: {
     width: '100%',
     marginTop: 'auto',
-    marginBottom: 'auto'
+    marginBottom: 'auto',
 
   },
   fileUploadRoot: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
 
   },
   uploadContainer: {
@@ -45,11 +45,11 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
-    padding: 4
+    padding: 4,
   },
   uploadFileErrorContainer: {
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 }));
 
 const getParserValue = ({
@@ -75,16 +75,17 @@ export default function DynaCsvParse(props) {
     resourceType,
     disabled,
     ssLinkedConnectionId,
-    uploadSampleDataFieldName
+    uploadSampleDataFieldName,
   } = props;
   const [formKey, setFormKey] = useState(1);
   const [currentOptions, setCurrentOptions] = useState(value);
-  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId, }));
+  const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId }));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions(newOptions);
       const parsersValue = getParserValue(newOptions);
+
       if (!isValid) {
         onFieldChange(id, { ...parsersValue, __invalid: true });
       } else {
@@ -139,6 +140,7 @@ export default function DynaCsvParse(props) {
       }));
       setFormKey(formKey + 1);
       const value = getParserValue(editorValues);
+
       onFieldChange(id, value);
 
       dispatch(
@@ -178,7 +180,7 @@ export default function DynaCsvParse(props) {
                 labelWrapper: classes.fileUploadLabelWrapper,
                 uploadFile: classes.uploadContainer,
                 actionContainer: classes.actionContainer,
-                errorContainer: classes.uploadFileErrorContainer
+                errorContainer: classes.uploadFileErrorContainer,
               }
             }
           />
@@ -189,6 +191,7 @@ export default function DynaCsvParse(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadSampleDataFieldName]
   );
+
   return (
     <>
       <div className={classes.container}>

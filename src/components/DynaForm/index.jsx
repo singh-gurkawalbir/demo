@@ -30,8 +30,8 @@ const useStyles = makeStyles(theme => ({
   },
   resourceFormButtons: {
     display: 'flex',
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 }));
 const DynaForm = props => {
   const {
@@ -57,6 +57,7 @@ const DynaForm = props => {
     [formState]
   );
   const formRef = useRef();
+
   useEffect(() => {
     if (!autoFocus) return;
 
@@ -82,6 +83,7 @@ const DynaForm = props => {
 
     // return null;
   }
+
   return (
     <Form
       {...rest}
@@ -98,7 +100,7 @@ const DynaForm = props => {
             */}
           <ButtonGroup
             className={clsx({
-              [classes.resourceFormButtons]: isResourceForm
+              [classes.resourceFormButtons]: isResourceForm,
             })}>{children}
           </ButtonGroup>
         </div>

@@ -205,7 +205,7 @@ export default {
           defaultValue: !(lookup.allowFailures),
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-          ]
+          ],
         },
         hardcodedDefault: {
           id: 'hardcodedDefault',
@@ -358,6 +358,7 @@ export default {
             commMetaPath: `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}/searchFilters?includeJoinFilters=true`,
           };
         }
+
         return null;
       },
     };

@@ -27,6 +27,7 @@ const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
 };
+
 export default function InstallBase(props) {
   const { match, history } = props;
   const { connectorId } = match.params;

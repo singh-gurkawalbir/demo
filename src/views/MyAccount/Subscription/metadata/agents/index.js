@@ -2,7 +2,6 @@ import React from 'react';
 import References from '../../actions/references';
 import ResourceDrawerLink from '../../../../../components/ResourceDrawerLink';
 
-
 export default {
   columns: () => {
     const columns = [
@@ -18,7 +17,7 @@ export default {
         value: function Type(r) {
           return <References resourceType="agents" rowData={r} />;
         },
-      }
+      },
     ];
 
     return columns;

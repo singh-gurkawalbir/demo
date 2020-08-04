@@ -42,7 +42,7 @@ function DynaWebhookTokenGenerator(props) {
     setFieldIds = [],
     formContext,
     name,
-    provider: webHookProvider
+    provider: webHookProvider,
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();

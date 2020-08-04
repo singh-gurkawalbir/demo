@@ -59,6 +59,7 @@ export default function JobActionsMenu({
   ].includes(job.uiStatus);
   const isFlowJob = job.type === JOB_TYPES.FLOW;
   const menuOptions = [];
+
   if (!isFlowBuilderView) {
     if (
       userPermissionsOnIntegration.flows &&
@@ -77,6 +78,7 @@ export default function JobActionsMenu({
     state => selectors.flowDetails(state, job._flowId),
     shallowEqual
   );
+
   if (isFlowJob) {
     if (!isJobInProgress) {
       if (
@@ -88,7 +90,7 @@ export default function JobActionsMenu({
         menuOptions.push({
           label: 'Run flow',
           action: 'runFlow',
-          icon: <RunIcon />
+          icon: <RunIcon />,
         });
       }
     }
@@ -113,7 +115,7 @@ export default function JobActionsMenu({
       menuOptions.push({
         label: 'Mark resolved',
         action: 'resolveJob',
-        icon: <CheckmarkIcon />
+        icon: <CheckmarkIcon />,
       });
     }
   }
@@ -124,7 +126,7 @@ export default function JobActionsMenu({
         menuOptions.push({
           label: `${job.files.length > 1 ? 'Download files' : 'Download file'}`,
           action: 'downloadFiles',
-          icon: <DownloadIcon />
+          icon: <DownloadIcon />,
         });
       }
 

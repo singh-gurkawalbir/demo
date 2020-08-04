@@ -6,7 +6,6 @@ import TransferList from '../../TransferList';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
 
-
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
     width: '100%',
@@ -81,12 +80,15 @@ export default function DynaSelectScopesDialog(props) {
 
     const subHeaderMap = scopesOrig.reduce((acc, ele) => {
       const {subHeader, scopes} = ele;
+
       scopes && scopes.forEach(scope => {
         acc[scope] = subHeader;
       });
+
       return acc;
     }, {});
     const flattenedScopes = scopesOrig.flatMap(ele => ele?.scopes);
+
     return { subHeaderMap, flattenedScopes};
   }, [scopesOrig]);
 
@@ -122,7 +124,6 @@ export default function DynaSelectScopesDialog(props) {
           onClick={() => setShowScopesModal(true)}>
           {label}
         </Button>
-
 
         <ErroredMessageComponent {...props} />
       </FormControl>

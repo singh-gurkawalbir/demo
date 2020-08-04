@@ -24,16 +24,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export const useGetSuiteScriptBaseCommPath = ({connectionId, integrationId}) => {
   const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
   const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
 
-
   return `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes`;
 };
 
-export const BaseTableViewComponent = (props) => {
+export const BaseTableViewComponent = props => {
   const classes = useStyles();
   const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
   const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
@@ -55,7 +53,6 @@ export const BaseTableViewComponent = (props) => {
     []
   );
 
-
   return (<DynaTableView
     {...props}
     optionsMap={optionsMap}
@@ -68,7 +65,6 @@ export const BaseTableViewComponent = (props) => {
     disableDeleteRows={disabled}
       />);
 };
-
 
 const SalesforceProductOptions = ({value,
   onFieldChange,
@@ -114,7 +110,6 @@ function DynaSuiteScriptTable(props) {
     commMetaPath,
     'suiteScript-sObjects');
 
-
   const dispatch = useDispatch();
   const salesforceProductFieldId = `${id}_salesforceProductField`;
 
@@ -132,7 +127,9 @@ function DynaSuiteScriptTable(props) {
     const selectedOptionList = allFieldsOptions &&
   allFieldsOptions.length && allFieldsOptions.find(opt => opt.label === selectOptionLabel)?.options;
     const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
+
     setShouldReset(state => !state);
+
     return [
       {
         id: 'extracts',
@@ -165,9 +162,7 @@ function DynaSuiteScriptTable(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   if (salesforceProductFieldOptions && !allFieldsOptions) { return <Spinner />; }
-
 
   return (
     <>

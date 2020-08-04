@@ -15,6 +15,7 @@ export default function DynaFeatureCheck(props) {
   const {status, message} = useSelector(state => selectors.suiteScriptIAFeatureCheckState(state, { ssLinkedConnectionId, integrationId, featureName}));
   const [enquesnackbar] = useEnqueueSnackbar();
   const {confirmDialog} = useConfirmDialog();
+
   useEffect(() => () => {
     dispatch(actions.suiteScript.featureCheck.clear(ssLinkedConnectionId, integrationId, featureName));
   }, [dispatch, featureName, integrationId, ssLinkedConnectionId]);
@@ -49,8 +50,8 @@ export default function DynaFeatureCheck(props) {
               onClick: () => {
                 fieldChange(id, value);
               },
-            }
-          ]
+            },
+          ],
         });
       }
       fieldChange(id, value);
@@ -63,6 +64,7 @@ export default function DynaFeatureCheck(props) {
     return (
       <LoadingMask message="Checking feature..." />);
   }
+
   return (
     <DynaCheckbox {...props} onFieldChange={onFieldChange} />
   );

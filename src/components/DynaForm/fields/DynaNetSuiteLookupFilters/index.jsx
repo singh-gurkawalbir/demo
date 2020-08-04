@@ -88,7 +88,6 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath)?.data;
 
-
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
       dispatch(actions.metadata.request(connectionId, commMetaPath));

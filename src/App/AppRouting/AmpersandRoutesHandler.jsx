@@ -12,7 +12,7 @@ export default function AmpersandRoutesHandler({ match }) {
     integrationId,
     flowId,
     accessTokenAction,
-    accessTokenId
+    accessTokenId,
   } = match.params;
   const integrationName = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)?.name
@@ -126,6 +126,7 @@ export default function AmpersandRoutesHandler({ match }) {
           to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)}
       />;
       }
+
       return <Redirect
         to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/admin/apitoken/edit/accesstokens/${accessTokenId}`)}
       />;
@@ -136,6 +137,7 @@ export default function AmpersandRoutesHandler({ match }) {
           to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${childId}/flows/Product/${flowId}/utilityMapping/commonAttributes`)}
          />;
       }
+
       return <Redirect
         to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)}
       />;

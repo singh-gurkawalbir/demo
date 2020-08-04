@@ -26,7 +26,7 @@ import DeleteCell from '../../../components/ResourceTable/metadata/suiteScript/f
 import actions from '../../../actions';
 import SuiteScriptMappingDrawer from '../Mappings/Drawer';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
     alignItems: 'center',
@@ -130,10 +130,10 @@ function FlowBuilder() {
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(1);
   const [tabValue, setTabValue] = useState(0);
-  const drawerOpened = useSelector((state) => selectors.drawerOpened(state));
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isIntegrationApp = useSelector(state => !!selectors.suiteScriptResource(state, {resourceType: 'integrations', id: integrationId, ssLinkedConnectionId})?._connectorId);
   const flow = useSelector(
-    (state) =>
+    state =>
       selectors.suiteScriptResourceData(state, {
         resourceType: 'flows',
         id: flowId,
@@ -143,7 +143,7 @@ function FlowBuilder() {
     shallowEqual
   );
   const pushOrReplaceHistory = useCallback(
-    (to) => {
+    to => {
       if (match.isExact) {
         history.push(to);
       } else {
@@ -153,13 +153,13 @@ function FlowBuilder() {
     [history, match.isExact]
   );
   const handleDrawerOpen = useCallback(
-    (path) => {
+    path => {
       pushOrReplaceHistory(`${match.url}/${path}`);
     },
     [match.url, pushOrReplaceHistory]
   );
   const handleDrawerClick = useCallback(
-    (path) => () => {
+    path => () => {
       handleDrawerOpen(path);
     },
     [handleDrawerOpen]
@@ -175,7 +175,7 @@ function FlowBuilder() {
     dispatch(actions.patchFilter('suitescriptjobs', { currentPage: 0 }));
   }, [bottomDrawerSize, dispatch]);
   const handleTitleChange = useCallback(
-    (title) => {
+    title => {
       dispatch(
         actions.suiteScript.resource.patchStaged(
           ssLinkedConnectionId,

@@ -64,6 +64,7 @@ const TestButton = props => {
       setIsTesting(false);
     }
   }, [testConnectionCommState, isTesting, pingLoading]);
+
   return (
     <>
       <PingMessage resourceId={resourceId} />

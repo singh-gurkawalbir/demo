@@ -210,6 +210,7 @@ export default function IntegrationApp(props) {
     supportsChild: !!(integration && integration.settings && integration.settings.supportsMultiStore),
     isMonitorLevelUser: accessLevel === 'monitor',
   }).length;
+
   if (!showAdminTab) {
     filterTabs.push('admin');
   }

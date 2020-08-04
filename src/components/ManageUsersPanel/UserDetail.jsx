@@ -25,6 +25,7 @@ const useStyles = makeStyles({
     padding: 0,
   },
 });
+
 // TODO: Refactor this component
 export default function UserDetail(props) {
   const classes = useStyles();
@@ -181,6 +182,7 @@ export default function UserDetail(props) {
   );
   const { user, integrationId, isAccountOwner } = props;
   let userAccessLevel = user.accessLevel;
+
   if (
     user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
     user.integrationAccessLevel &&

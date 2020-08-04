@@ -13,7 +13,6 @@ import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
-
 const useStyles = makeStyles(theme => ({
   googleBtn: {
     borderRadius: 4,
@@ -47,6 +46,7 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
   { value: 'YYYY/MM/DD', label: '1900/12/31' },
   { value: 'YYYY-MM-DD', label: '1900-12-31' }];
+
 export default function ProfileComponent() {
   const classes = useStyles();
 
@@ -241,9 +241,11 @@ export default function ProfileComponent() {
     },
   }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);
   const [count, setCount] = useState(0);
+
   useEffect(() => {
     setCount(count => count + 1);
   }, [fieldMeta]);
+
   return (
     <>
       <PanelHeader title="Profile" />

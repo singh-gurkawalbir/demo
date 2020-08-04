@@ -5,7 +5,6 @@ import PanelHeader from '../../../../../../../components/PanelHeader';
 import ResourceForm from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import * as selectors from '../../../../../../../reducers';
 
-
 const useStyles = makeStyles(theme => ({
   formContainer: {
     padding: theme.spacing(3),

@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     marginTop: theme.spacing(1),
-  }
+  },
 }));
 
 export default function SearchCriteriaEditor(props) {

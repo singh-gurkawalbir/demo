@@ -8,7 +8,6 @@ import * as selectors from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
 
-
 export default function FlowToggle({
   resource: flow,
   disabled,
@@ -28,7 +27,6 @@ export default function FlowToggle({
   );
   const istwoDotZeroFrameWork = integration && integration.installSteps &&
   integration.installSteps.length;
-
 
   useEffect(() => {
     if (!onOffInProgress) {

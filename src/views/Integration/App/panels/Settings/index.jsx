@@ -62,15 +62,17 @@ export default function SettingsPanel({
   );
   const flowSections = useSelector(state => {
     const sections = selectors.integrationAppFlowSections(state, integrationId, storeId);
+
     return sections.reduce((newArray, s) => {
       if (!!s.fields || !!s.sections) {
         newArray.push({
           path: s.titleId,
           label: s.title,
           Section: 'FlowsConfiguration',
-          id: s.titleId
+          id: s.titleId,
         });
       }
+
       return newArray;
     }, []);
   }, isEqual);
@@ -82,7 +84,7 @@ export default function SettingsPanel({
       Section: GeneralSection,
       id: 'common',
     },
-    ...flowSections
+    ...flowSections,
   ]), [flowSections]);
 
   const filterTabs = [];
@@ -117,6 +119,7 @@ export default function SettingsPanel({
           </div>
         </div>);
     }
+
     return (
       <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />
     );

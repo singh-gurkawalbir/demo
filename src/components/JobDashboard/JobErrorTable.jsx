@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
 }));
 
@@ -564,8 +564,8 @@ function JobErrorTable({
                   {
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => r.resolved ?
-                      (<span className={classes.resolved}>Yes</span>)
+                    value: r => r.resolved
+                      ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
                   },
                   {
