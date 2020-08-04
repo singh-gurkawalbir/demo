@@ -116,6 +116,7 @@ export default function SearchCriteriaDialog(props) {
         <SearchCriteriaEditor
           editorId={id}
           value={value}
+          disabled={disabled}
           onRefresh={onRefresh}
           fieldOptions={fieldOptions}
         />
