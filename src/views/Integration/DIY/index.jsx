@@ -159,6 +159,8 @@ export default function Integration(props) {
     integrationsFilterConfig
   ).resources;
 
+  const pageTitle = name || 'Standalone integration';
+
   const childIntegration = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
 
@@ -478,7 +480,7 @@ export default function Integration(props) {
       <LoadResources required resources="integrations,marketplacetemplates">
         <CeligoPageBar
           title={
-            hasIntegration ? (
+            (hasIntegration && !isIntegrationApp) ? (
               <EditableText
                 text={name}
                 disabled={!canEdit}
@@ -491,7 +493,7 @@ export default function Integration(props) {
                 }
               />
             ) : (
-              'Standalone integrations'
+              {pageTitle}
             )
           }
           infoText={
