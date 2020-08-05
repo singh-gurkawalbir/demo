@@ -14,7 +14,7 @@ import {
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import * as selectors from '../../../../reducers';
-import { getLabel } from '../../../../utils/flowMetrics';
+import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
 import actions from '../../../../actions';
 import Spinner from '../../../../components/Spinner';
 import SpinnerWrapper from '../../../../components/SpinnerWrapper';
@@ -100,7 +100,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             yAxisId={id}
             type="number"
             label={{
-              value: '# of transmissions',
+              value: getAxisLabel(id),
               angle: -90,
               position: 'insideLeft',
               textAnchor: 'middle',
