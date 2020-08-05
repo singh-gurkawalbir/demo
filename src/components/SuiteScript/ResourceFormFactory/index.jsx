@@ -130,24 +130,28 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   );
 };
 
-export function ActionsFactory({ variant = 'edit', ...props }) {
+export function ActionsFactory({ variant = 'edit', isGeneralSettings, ...props }) {
   const { resource, resourceType } = props;
   const { actions } = props.fieldMeta;
   const secondaryActions = ['test', 'validate'];
 
   const actionButtons = useMemo(() => {
     // if props has defined actions return it
+
     if (actions) return actions;
-    let actionButtons = ['save', 'cancel'];
+    let actionButtons;
+    // eslint-disable-next-line brace-style
+    if (isGeneralSettings) { actionButtons = ['save', 'cancel']; }
+    else actionButtons = ['save', 'saveandclose', 'cancel'];
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && resource?.type !== 'other') {
-      actionButtons = ['testandsave', 'cancel', 'test'];
+      actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
     }
     return actionButtons.map(id => ({
       id,
       mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
     }));
-  }, [actions, resource?.type, resourceType, secondaryActions]);
+  }, [actions, isGeneralSettings, resource?.type, resourceType, secondaryActions]);
 
   if (variant === 'view') {
     return <DynaForm {...props} />;

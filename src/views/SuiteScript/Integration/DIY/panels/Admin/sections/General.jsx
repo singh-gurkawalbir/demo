@@ -47,6 +47,8 @@ export default function GeneralSection({
           resourceId={integrationId}
           submitButtonLabel="Save"
           disabled={!canEdit}
+          // TODO: update in ActionsFactory
+          isGeneralSettings
         />
       </div>
     </>
