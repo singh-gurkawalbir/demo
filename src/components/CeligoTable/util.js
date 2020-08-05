@@ -7,7 +7,6 @@ import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
 import * as selectors from '../../reducers';
-import LoadResources from '../LoadResources';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <>
@@ -24,19 +23,6 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
     {resource.shared && <Typography>Shared</Typography>}
   </>
 );
-
-export const GetResourceReferenceLink = ({ r, onClick }) => {
-  const { name, id, resourceType } = r;
-  const routePath = useSelector(state =>
-    selectors.getResourceEditUrl(state, resourceType, id)
-  );
-
-  return (
-    <LoadResources resources={[resourceType]}>
-      <Link onClick={onClick} to={routePath}>{name || id}</Link>
-    </LoadResources>
-  );
-};
 
 export const useGetConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
