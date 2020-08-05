@@ -493,7 +493,7 @@ export default function Integration(props) {
                 }
               />
             ) : (
-              {pageTitle}
+              pageTitle
             )
           }
           infoText={
