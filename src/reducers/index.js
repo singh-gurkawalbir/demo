@@ -4200,7 +4200,7 @@ export function getAvailableResourcePreviewStages(
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
 
-export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
+export function isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
   const resourceObj = resourceData(
     state,
     resourceType,
