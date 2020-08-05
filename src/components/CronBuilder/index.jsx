@@ -1,6 +1,11 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
 
+
+const isEveryNUnit = (val) => val?.includes('*') || val?.includes('/');
+
+const isEveryUnit = (val) => val?.includes('*') && !(val?.includes('/'));
+
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;
   //* (sec) *(min) *(hour) *(week) *(day) *(month)
@@ -293,16 +298,18 @@ export default function CronBuilder(props) {
   const [externalTabState, setExternalTabStateFn] = useState({
     activeTab: 0,
     tabHistory: {
-      0: 0,
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
+      0: isEveryNUnit(splitVal[1]) ? 0 : 1,
+      // eslint-disable-next-line no-nested-ternary
+      1: isEveryUnit(splitVal[2]) ? 0 : (isEveryNUnit(splitVal[2]) ? 1 : 2),
+      2: isEveryUnit(splitVal[3]) ? 0 : 1,
+      3: isEveryUnit(splitVal[4]) ? 0 : 1,
+      4: isEveryUnit(splitVal[5]) ? 0 : 1,
     },
   });
   const setExternalTabState = useCallback(
     (index, val) => {
       setReset(false);
+      setIsCronTouched(true);
       setExternalTabStateFn(state => {
         const stateCopy = { ...state };
 
@@ -341,7 +348,6 @@ export default function CronBuilder(props) {
         }, '?');
 
       onChange(finalResult, !isCronTouched);
-      setIsCronTouched(true);
     },
     [
       externalTabState,
