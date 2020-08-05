@@ -74,11 +74,6 @@ const editors = [
       'This processor allows user to build Sql Query using handlerbars and json as input to it',
   },
   {
-    name: 'JSONEditor',
-    label: 'JSON editor',
-    description: 'This processor allows user to edit JSON Object',
-  },
-  {
     name: 'FilterEditor',
     label: 'Filter editor',
     description:
@@ -131,6 +126,8 @@ export default function Editors() {
       if (editorName === 'SettingsFormEditor') {
         setDrawerKey(drawerKey => drawerKey + 1);
         history.push('editors/editSettings');
+      } else {
+        history.push(`editors/${editorName}`);
       }
 
       setEditorName(editorName);

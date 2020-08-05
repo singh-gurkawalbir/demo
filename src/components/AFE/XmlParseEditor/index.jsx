@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -23,6 +23,7 @@ const useStyles = makeStyles({
 export default function XmlParseEditor(props) {
   const { editorId, disabled, rule = {}, editorDataTitle } = props;
   const classes = useStyles();
+  const [editorInit, setEditorInit] = useState(false);
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -61,7 +62,12 @@ export default function XmlParseEditor(props) {
     );
   }, [dispatch, editorId, props.data, rule]);
 
-  useEffect(() => handleInit(), [handleInit]);
+  useEffect(() => {
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [editorInit, handleInit]);
 
   return (
     <PanelGrid key={editorId} className={classes.template} height="calc(100vh - 170px)" width="100%">
