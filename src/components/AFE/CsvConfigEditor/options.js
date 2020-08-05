@@ -3,6 +3,7 @@ export default {
     { label: 'Comma (,)', value: ',' },
     { label: 'Pipe (|)', value: '|' },
     { label: 'Semicolon (;)', value: ';' },
+    { label: 'Asterisk (*)', value: '*' },
     { label: 'Space', value: ' ' },
     { label: 'Tab', value: '\t' },
   ],

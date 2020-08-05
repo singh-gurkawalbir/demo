@@ -15,8 +15,10 @@ const useStyles = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      marginLeft: theme.spacing(-1),
+      paddingRight: 0,
+    },
   },
 }));
 

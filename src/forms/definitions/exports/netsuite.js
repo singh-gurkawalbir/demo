@@ -300,6 +300,9 @@ export default {
     },
     'netsuite.restlet.criteria': {
       fieldId: 'netsuite.restlet.criteria',
+      disabledWhen: [
+        { field: 'netsuite.restlet.recordType', is: [''] },
+      ],
       visibleWhenAll: [
         { field: 'netsuite.api.type', is: ['restlet'] },
         { field: 'netsuite.execution.type', is: ['scheduled'] },

@@ -73,10 +73,11 @@ export default function ConnectionStatusPanel(props) {
     resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
     state => {
-      if (resource.type === 'netsuite') {
+      const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
+      if (resource.type === 'netsuite' && !commStatus) {
         return selectors.netsuiteUserRoles(state, connectionId)?.status;
       }
-      return selectors.testConnectionCommState(state, connectionId).commState;
+      return commStatus;
     }
   );
   const isIAIntegration = useSelector(state => {
