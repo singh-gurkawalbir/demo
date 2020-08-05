@@ -90,7 +90,7 @@ export default {
   },
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample file (that would be imported)',
+    label: 'Sample file (that would be generated)',
     mode: r => r && r.file && r.file.type,
     visibleWhenAll: [
       {
