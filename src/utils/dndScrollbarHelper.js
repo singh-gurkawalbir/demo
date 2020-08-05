@@ -1,7 +1,7 @@
 import throttle from 'lodash/throttle';
 
-const OFFSET = 100; // This is the top/bottom offset you use to start scrolling in the div.
-const PX_DIFF = 20;
+const OFFSET = 250; // This is the top/bottom offset you use to start scrolling in the div.
+const PX_DIFF = 25;
 
 let scrollIncrement = 0;
 let isScrolling = false;
@@ -12,19 +12,26 @@ let clientRectTop = 0;
 
 // Scroll up in the sidebar.
 const goUp = () => {
+  if (scrollIncrement - PX_DIFF < 0) {
+    return;
+  }
+
   scrollIncrement -= PX_DIFF;
   sidebarElement.scrollTop = scrollIncrement;
 
-  if (isScrolling && scrollIncrement >= 0) {
+  if (isScrolling) {
     window.requestAnimationFrame(goUp);
   }
 };
 
 // Scroll down in the sidebar.
 const goDown = () => {
+  if (scrollIncrement + PX_DIFF > scrollHeightSidebar) {
+    return;
+  }
   scrollIncrement += PX_DIFF;
   sidebarElement.scrollTop = scrollIncrement;
-  if (isScrolling && scrollIncrement <= scrollHeightSidebar) {
+  if (isScrolling) {
     window.requestAnimationFrame(goDown);
   }
 };
@@ -62,6 +69,7 @@ export const addEventListenerForSidebar = element => {
   const clientRect = sidebarElement.getBoundingClientRect();
   clientRectTop = clientRect.top;
   clientRectBottom = clientRect.bottom;
+  isScrolling = false;
   sidebarElement.addEventListener('dragover', throttleOnDragOver);
 };
 
