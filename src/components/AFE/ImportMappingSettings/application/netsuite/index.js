@@ -701,9 +701,11 @@ export default {
             fieldId,
             recordType,
           }),
-          defaultValue: generateFieldType === 'multiselect' && value.hardCodedValue
-            ? value.hardCodedValue.split(',')
-            : value.hardCodedValue,
+          // eslint-disable-next-line no-nested-ternary
+          defaultValue: metaKey === 'lookupDefault' ? lookup.default :
+            (generateFieldType === 'multiselect' && value.hardCodedValue
+              ? value.hardCodedValue.split(',')
+              : value.hardCodedValue),
         };
       });
       fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
