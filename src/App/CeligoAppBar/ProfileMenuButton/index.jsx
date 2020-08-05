@@ -197,9 +197,9 @@ export default function ProfileMenuButton() {
             variant="text"
             color="primary"
             className={classes.bottomActionsBtn}
-            href="/classic"
+            href="/legacy"
             >
-            Switch to classic UI
+            Switch to legacy UI
           </IconTextButton>
         </div>
       </ArrowPopper>

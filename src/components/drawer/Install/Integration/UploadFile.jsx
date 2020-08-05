@@ -46,9 +46,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
     color: '#b1c6d7',
   },
-  uploadFileContainer: {
-    padding: theme.spacing(1),
-  },
 }));
 
 export default function UploadFile() {
@@ -84,7 +81,7 @@ export default function UploadFile() {
   }
 
   return (
-    <div className={classes.uploadFileContainer}>
+    <div>
       <Typography variant="h5">Your installation will begin after choosing a zip file.</Typography>
       <FormControl className={classes.formControlUploadFile}>
         <div className={classes.fileUploadLabelWrapper}>

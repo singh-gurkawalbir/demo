@@ -42,6 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     minWidth: '450px',
+    borderRadius: 0,
   },
   sm: {
     minWidth: theme.breakpoints.values.sm,

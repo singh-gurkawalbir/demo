@@ -26,7 +26,6 @@ function DynaSlider(props) {
     step,
     max,
     min,
-    setReset,
   } = props;
   const handleChange = useCallback(
     (evt, slidervalue) => {
@@ -52,7 +51,6 @@ function DynaSlider(props) {
       <Slider
         value={parseInt(sliderVal, 10)}
         onChange={(evt, value) => {
-          setReset && setReset(false);
           handleChange(evt, value);
         }}
         step={step}

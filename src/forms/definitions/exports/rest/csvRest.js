@@ -64,7 +64,7 @@ export default {
     uploadFile: {
       id: 'uploadFile',
       type: 'uploadfile',
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be parsed)',
       options: 'csv',
       visibleWhen: [
         {

@@ -174,7 +174,7 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
   const { headers, ...rest } = (bodyHeaderData && bodyHeaderData[0]) || {};
-  const { body, ...others} = rest || {};
+  const { body, url, ...others} = rest || {};
 
   return {
     body: JSON.stringify(safeParse(body), null, 2),
@@ -183,4 +183,4 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
   };
 };
 
-export const getPostUrl = requestData => requestData?.data?.[0]?.url;
+export const getRequestURL = requestData => requestData?.data?.[0]?.url;

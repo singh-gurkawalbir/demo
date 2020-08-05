@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TablePagination from '@material-ui/core/TablePagination';
 import Button from '@material-ui/core/Button';
@@ -11,6 +11,8 @@ import CeligoTable from '../../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import ButtonsGroup from '../../ButtonGroup';
+import * as selectors from '../../../reducers';
+import openExternalUrl from '../../../utils/window';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -107,6 +109,10 @@ function JobErrorTable({
     ? jobErrors.filter(je => selectedErrorIds.includes(je._id) && !je.resolved)
       .length
     : 0;
+  const additionalHeaders = useSelector(
+    state => selectors.accountShareHeader(state, ''),
+    shallowEqual
+  );
 
   function handleChangePage(event, newPage) {
     setCurrentPage(newPage);
@@ -165,6 +171,18 @@ function JobErrorTable({
     }
   }
 
+  function handleDownloadAllErrorsClick() {
+    let downloadUrl = `/api/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${job._id}/download?jobType=${job.type}&fileType=error`;
+
+    if (additionalHeaders && additionalHeaders['integrator-ashareid']) {
+      downloadUrl += `&integrator-ashareid=${
+        additionalHeaders['integrator-ashareid']
+      }`;
+    }
+
+    openExternalUrl({ url: downloadUrl });
+  }
+
   const handleJobErrorSelectChange = selected => {
     setSelectedErrors(selected);
   };
@@ -209,6 +227,16 @@ function JobErrorTable({
                 ? `Mark resolved ${numSelectedResolvableErrors} errors`
                 : 'Mark resolved'}
             </Button>
+            { job.errorFileId && (
+              <Button
+                data-test="downloadAllErrors"
+                variant="outlined"
+                color="secondary"
+                className={classes.btnErrorTable}
+                onClick={handleDownloadAllErrorsClick}>
+                Download all errors
+              </Button>
+            )}
           </ButtonsGroup>
 
           <>

@@ -38,7 +38,7 @@ export default function PreviewBody(props) {
       )}
       {resourceSampleData.status === 'received' && (
         <>
-          <Templates.PostUrlPanel
+          <Templates.RequestUrlPanel
             previewStageDataList={previewStageDataList}
             resourceId={resourceId}
             resourceType={resourceType}

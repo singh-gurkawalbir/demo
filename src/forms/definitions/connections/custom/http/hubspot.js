@@ -18,7 +18,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] =
         'https://api.hubapi.com/oauth/v1/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/oauth/scope'] = 'oauth';
+      retValues['/http/auth/oauth/scope'] = ['oauth'];
     }
 
     return {
@@ -90,14 +90,17 @@ export default {
       ],
       defaultValue: r => {
         const authUri = r?.http?.auth?.oauth?.authURI;
+        const selectedScopes = r?.http?.auth?.oauth?.scope || [];
 
         if (authUri && authUri.indexOf('optional_scope')) {
           const encodedScopes = authUri && authUri.split('optional_scope=')[1];
           const scopes = encodedScopes && decodeURIComponent(encodedScopes).split(' ');
 
-          scopes.unshift(...r.http.auth.oauth.scope);
+          if (!scopes || !scopes.length) {
+            return selectedScopes;
+          }
 
-          return scopes;
+          return [...selectedScopes, ...scopes];
         }
       },
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],

@@ -7,6 +7,7 @@ import * as selectors from '../../reducers';
 const useStyles = makeStyles(theme => ({
   permissionErrors: {
     color: theme.palette.error.main,
+    padding: theme.spacing(2, 3),
   },
 }));
 

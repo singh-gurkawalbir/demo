@@ -216,12 +216,15 @@ export function TabComponentSimple(props) {
 
 export function TabComponentWithoutSave({ index, ...rest }) {
   return (
-    <TabComponent
-      {...rest}
-      orientation="horizontal"
-      index={index === undefined ? 0 : index + 1}>
-      <FormGenerator />
-    </TabComponent>
+    <InitializeAllFieldState fieldMap={rest.fieldMap}>
+
+      <TabComponent
+        {...rest}
+        orientation="horizontal"
+        index={index === undefined ? 0 : index + 1}>
+        <FormGenerator />
+      </TabComponent>
+    </InitializeAllFieldState>
   );
 }
 
