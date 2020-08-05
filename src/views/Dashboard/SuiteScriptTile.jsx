@@ -137,8 +137,8 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
   const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
-  // Opacity to blur selected tile
-  const opacity = isDragging ? 0.2 : 1;
+  // need to show different styling for selected card
+  const isCardSelected = !!isDragging;
 
   drag(drop(ref));
 
@@ -162,8 +162,8 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
           </Button>
         </ModalDialog>
       )}
-      <div style={{ opacity }} ref={ref}>
-        <HomePageCardContainer onClick={handleTileClick}>
+      <div ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected}>
           <Header>
             <Status
               label={status.label}

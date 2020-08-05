@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash';
 import { TILE_STATUS } from '../../utils/constants';
+import {addEventListenerForSidebar, removeEventListenerForSidebar} from '../../utils/dndScrollbarHelper';
 
 export function sortTiles(tiles = [], tilesOrder = []) {
   let maxIndex = Math.max(tiles.length, tilesOrder.length);
@@ -62,12 +63,18 @@ export function tileStatus(tile) {
  * It supplies required config to support drag and drop functionality among tiles
  */
 
-export const dragTileConfig = (index, onDrop) => ({
+export const dragTileConfig = (index, onDrop, containerRef) => ({
   item: { type: 'TILE', index },
   collect: monitor => ({
     isDragging: monitor.isDragging(),
   }),
+  begin: monitor => {
+    // for scrollbar element, need to go three levels up and send element as argument
+    addEventListenerForSidebar(containerRef.current?.parentElement?.parentElement?.parentElement);
+    return monitor.getItem();
+  },
   end: dropResult => {
+    removeEventListenerForSidebar();
     if (dropResult) {
       onDrop();
     }
