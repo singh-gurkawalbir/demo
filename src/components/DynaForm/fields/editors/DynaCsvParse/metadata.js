@@ -81,8 +81,8 @@ export default function getFormMetadata(options) {
             field: 'rowsPerRecord',
             is: [true],
           },
-        ]
-      }
+        ],
+      },
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'keyColumns') {
@@ -101,6 +101,7 @@ export default function getFormMetadata(options) {
         const hasHeaderRowField = fields.find(
           field => field.id === 'hasHeaderRow'
         );
+
         return {
           columnDelimiter: columnDelimiterField?.value,
           rowDelimiter: rowDelimiterField?.value,
@@ -112,7 +113,8 @@ export default function getFormMetadata(options) {
       }
 
       return null;
-    }
+    },
   };
+
   return fieldMeta;
 }

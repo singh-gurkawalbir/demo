@@ -54,7 +54,7 @@ const MappingSaveButton = props => {
     onSave,
     resourceType: 'mappings',
     disableSaveOnClick,
-    setDisableSaveOnClick
+    setDisableSaveOnClick,
   });
   const handleButtonClick = () => {
     if (validationErrMsg) {

@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   contentContainer: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(3),
     position: 'relative',
     height: '100%',
   },
@@ -130,6 +130,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
 
   let fullPath;
+
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = `${match.url}/${path}`;
   } else if (Array.isArray(path)) {

@@ -62,7 +62,6 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   );
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
-
   useEffect(() => {
     if (newResourceId) {
       dispatch(
@@ -130,7 +129,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner
+          actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner,
           }}
         />
       </LoadResources>

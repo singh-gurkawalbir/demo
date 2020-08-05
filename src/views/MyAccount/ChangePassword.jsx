@@ -87,7 +87,7 @@ export default function ChangePassword({ show, onClose }) {
         </NotificationToaster>
       )}
 
-      {!success &&
+      {!success && (
         <div className={classes.container}>
           <Typography variant="body2">
             {`Please note that clicking 'Change Password' will sign you out of the
@@ -102,7 +102,8 @@ export default function ChangePassword({ show, onClose }) {
               Change password
             </DynaSubmit>
           </DynaForm>
-        </div>}
+        </div>
+      )}
     </ModalDialog>
   );
 }

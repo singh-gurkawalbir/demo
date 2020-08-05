@@ -9,7 +9,6 @@ import * as selectors from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
-
 const useStyles = makeStyles({
   NetsuiteRules: {
     padding: 10,
@@ -43,7 +42,6 @@ export default function NetSuiteMappingAssistant({
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
   }, [netSuiteRecordType, recordTypes]);
-
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {

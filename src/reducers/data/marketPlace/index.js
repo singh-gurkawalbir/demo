@@ -44,6 +44,7 @@ export function connectors(state, application, sandbox, licenses) {
 
   connectors = connectors.map(c => {
     const conn = c;
+
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }

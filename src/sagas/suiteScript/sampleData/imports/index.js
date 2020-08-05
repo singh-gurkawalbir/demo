@@ -11,11 +11,12 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const { import: importConfig} = flow;
   const {type: importType, _connectionId, netsuite, salesforce} = importConfig;
+
   if (importType === 'netsuite') {
     const recordType = options.recordType || netsuite?.recordType;
 
@@ -39,6 +40,7 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
       }
     } else {
       const { sObjectType } = salesforce;
+
       yield put(
         actions.metadata.request(
           ssLinkedConnectionId,
@@ -49,24 +51,30 @@ export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId
     }
   } else if (['rakuten', 'sears', 'newegg'].includes(importType)) {
     let method;
+
     if (importType === 'sears') {
       const { sears } = importConfig;
+
       method = sears.method;
     } else if (importType === 'rakuten') {
       // TODO confirm with Shiva on this
       const { rakuten } = importConfig;
+
       method = rakuten.method;
     } else if (importType === 'newegg') {
       const { newegg } = importConfig;
+
       method = newegg.method;
     }
 
     const connections = yield select(selectors.suiteScriptResourceList, {ssLinkedConnectionId, resourceType: 'connections'});
     const connection = connections.find(conn => conn.id === _connectionId);
+
     if (connection) {
       const methodObj = connection.apiMethods.find(m => m.id === method);
       const { fields } = methodObj;
       const previewData = fields.map(({label, id}) => ({id, name: label}));
+
       return yield put(
         actions.suiteScript.importSampleData.received({ ssLinkedConnectionId, integrationId, flowId, data: previewData}));
     }

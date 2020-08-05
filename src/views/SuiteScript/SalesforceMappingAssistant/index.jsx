@@ -44,6 +44,7 @@ export default function SalesforceMappingAssistant({
       return left.editLayoutSections.length === right.editLayoutSections.length;
     }
   );
+
   useEffect(() => {
     if (connectionId && sObjectType && layoutId) {
       dispatch(
@@ -83,7 +84,7 @@ export default function SalesforceMappingAssistant({
     <Frame
       data-test="salesforceMappingAssistant"
       style={style}
-      head={
+      head={(
         <>
           <link
             href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/css/bootstrap.css"
@@ -96,7 +97,7 @@ export default function SalesforceMappingAssistant({
             type="text/css"
           />
         </>
-      }>
+      )}>
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">
           New {sObjectLabel || sObjectType} --- Click in a field below to select

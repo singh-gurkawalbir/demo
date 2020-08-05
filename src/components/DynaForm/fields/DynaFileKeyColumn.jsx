@@ -9,13 +9,13 @@ import Spinner from '../../Spinner';
 const useStyles = makeStyles(theme => ({
   keyColumnFormWrapper: {
     display: 'flex',
-    flexDirection: 'row !important'
+    flexDirection: 'row !important',
   },
   spinnerWrapper: {
     marginLeft: theme.spacing(1),
     marginTop: theme.spacing(4),
     alignSelf: 'flex-start',
-  }
+  },
 }));
 const getColumns = result => {
   if (!result || !result.data || !result.data.length) {
@@ -56,7 +56,7 @@ export default function DynaFileKeyColumn(props) {
    * This field is supported by Csv/Xlsx file types
    */
   const csvData = useSelector(state => selectors.fileSampleData(state, {
-    resourceId, resourceType, fileType: options.fileType || 'csv'
+    resourceId, resourceType, fileType: options.fileType || 'csv',
   }));
 
   const multiSelectOptions = useMemo(() => {
@@ -81,7 +81,6 @@ export default function DynaFileKeyColumn(props) {
     }));
   }, [csvData, dispatch, id, options]);
 
-
   useEffect(() => {
     if (!editorInit) {
       handleInit();
@@ -89,6 +88,7 @@ export default function DynaFileKeyColumn(props) {
     }
   }, [editorInit, handleInit]);
   const isCsvDataDifferent = csvData !== data;
+
   useEffect(() => {
     // csvData !== data pushed outside the useeffect and used simple boolean evaluation used(isCsvDataDifferent)
     if (editorInit && csvData && isCsvDataDifferent) {
@@ -103,7 +103,6 @@ export default function DynaFileKeyColumn(props) {
       dispatch(actions.editor.patch(id, { ...options }));
     }
   }, [dispatch, editorInit, id, options]);
-
 
   return (
     <FormControl

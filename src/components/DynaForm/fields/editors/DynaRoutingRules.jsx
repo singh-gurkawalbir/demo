@@ -5,7 +5,6 @@ import FieldHelp from '../../FieldHelp';
 import DynaHook from '../DynaHook';
 import ModalDialog from '../../../ModalDialog';
 
-
 const useStyles = makeStyles({
   dynaRoutingRulesWrapper: {
     width: '100%',

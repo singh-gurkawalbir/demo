@@ -66,7 +66,7 @@ export default {
       required: true,
     },
     application: {
-      fieldId: 'application'
+      fieldId: 'application',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },

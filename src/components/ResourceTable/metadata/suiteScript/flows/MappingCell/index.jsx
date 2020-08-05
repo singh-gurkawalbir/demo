@@ -14,6 +14,7 @@ export default function MappingCell({flow}) {
   }, [location.pathname, flow._id, history]);
 
   if (!showMapping) return null;
+
   return (
     <>
       <RemoveMargin>

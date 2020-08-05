@@ -34,7 +34,7 @@ export default function DynaSettings(props) {
     onFieldChange,
     label = 'Custom settings',
     collapsed = true,
-    fieldsOnly = false
+    fieldsOnly = false,
   } = props;
   const classes = useStyles();
   const match = useRouteMatch();

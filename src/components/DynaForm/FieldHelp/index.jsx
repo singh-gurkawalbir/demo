@@ -24,7 +24,7 @@ export default function FieldHelp({
   helpText,
   helpKey,
   resourceContext,
-  noApi = false
+  noApi = false,
 }) {
   const classes = useStyles();
   const { developer } = useSelector(state => selectors.userProfile(state));

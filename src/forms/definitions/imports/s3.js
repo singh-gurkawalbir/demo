@@ -87,6 +87,7 @@ export default {
     if (fieldId === 's3.fileKey') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileName = fileNameField.value;
+
       if (!fileName) return;
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const newExtension = [
@@ -201,7 +202,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be generated):',
+      placeholder: 'Sample file (that would be generated)',
       helpKey: 'import.uploadFile',
     },
     'file.csv': { fieldId: 'file.csv' },
@@ -256,7 +257,7 @@ export default {
         type: 'indent',
         containers: [{fields: [
           'file.csv',
-        ]}]
+        ]}],
       },
       {
         collapsed: true,

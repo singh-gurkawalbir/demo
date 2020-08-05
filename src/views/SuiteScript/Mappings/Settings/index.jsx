@@ -37,7 +37,6 @@ const useStyles = makeStyles(theme => ({
  * disabled property set to true in case of monitor level access
  */
 
-
 export default function MappingSettings(props) {
   const classes = useStyles();
   const {
@@ -63,6 +62,7 @@ export default function MappingSettings(props) {
     });
     const selectedFlow = flows && flows.find(flow => flow._id === flowId);
     const {type, _connectionId } = (selectedFlow && selectedFlow.import) || {};
+
     return {importType: type, connectionId: _connectionId};
   }, shallowEqual);
 
@@ -74,6 +74,7 @@ export default function MappingSettings(props) {
 
   const lookup = useMemo(() => {
     if (!value || !value.lookupName) return;
+
     return lookups.find(l => l.name === value.lookupName);
   }, [lookups, value]);
   const fieldMeta = useMemo(
@@ -87,7 +88,7 @@ export default function MappingSettings(props) {
           ssLinkedConnectionId,
           connectionId,
           lookup,
-          recordType
+          recordType,
         });
       }
       if (importType === 'salesforce') {

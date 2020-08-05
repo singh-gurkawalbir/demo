@@ -198,8 +198,8 @@ const routes = [
         breadcrumb: ConnectorCrumb,
         childRoutes: [
           { path: '/connectorLicenses', breadcrumb: 'Licenses' },
-          { path: '/installBase', breadcrumb: 'Install base' }]}
-    ]
+          { path: '/installBase', breadcrumb: 'Install base' }]},
+    ],
   },
   {
     path: getRoutePath('/marketplace'),

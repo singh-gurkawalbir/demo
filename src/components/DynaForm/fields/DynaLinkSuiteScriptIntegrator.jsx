@@ -15,6 +15,7 @@ export default function DynaLinkSuiteScriptIntegrator(props) {
 
   const isSuiteScriptLinkedConnection = useSelector(state => {
     const preferences = selectors.userPreferences(state);
+
     return preferences?.ssConnectionIds?.includes(resourceContext.resourceId);
   });
 

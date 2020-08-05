@@ -144,7 +144,7 @@ export default function EditorDrawer({
           label: 'No, go back',
           color: 'secondary',
         },
-      ]
+      ],
     });
   }, [confirmDialog, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(

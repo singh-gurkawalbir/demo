@@ -134,6 +134,7 @@ export default (
 
             if (resourceType.endsWith('/tiles')) {
               const tiles = parseTiles(collection);
+
               draft[ssLinkedConnectionId].tiles = tiles?.map(tile => ({
                 ...tile,
                 ssLinkedConnectionId,
@@ -224,6 +225,7 @@ export default (
       case actionTypes.SUITESCRIPT.RESOURCE.RECEIVED:
         {
           const { ssLinkedConnectionId, integrationId, resource } = action;
+
           if (['exports', 'imports'].includes(resourceType)) {
             resourceType = 'flows';
           }
@@ -235,6 +237,7 @@ export default (
 
             if (resourceType === 'flows') {
               const flowId = generateUniqueFlowId(resource._id, resource.type);
+
               index = draft[ssLinkedConnectionId].flows.findIndex(
                 r =>
                   r._id === flowId &&
@@ -249,6 +252,7 @@ export default (
               );
               if (index > -1) {
                 const existingIntegration = draft[ssLinkedConnectionId][resourceType][index];
+
                 if (!existingIntegration.isNotEditable) {
                   existingIntegration.displayName = resource.name;
                 }
@@ -491,7 +495,6 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
   // };
 }
 
-
 export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
   const integration = resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
 
@@ -504,9 +507,9 @@ export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
       draft.settings = emptyObject;
     }
     if (draft?.sections?.length) {
-      draft.sections.forEach((section) => {
+      draft.sections.forEach(section => {
         if (section?.sections?.length) {
-          section?.sections.forEach((sect) => {
+          section?.sections.forEach(sect => {
             // eslint-disable-next-line no-param-reassign
             sect.title = sect.title || 'Common';
           });

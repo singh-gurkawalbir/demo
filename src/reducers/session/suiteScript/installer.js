@@ -58,7 +58,6 @@ export default (state = {}, action) => {
         draft[id][connectionId] = doc;
         break;
 
-
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE:
         if (draft[id] && draft[id].steps) {
           step = draft[id].steps.find(

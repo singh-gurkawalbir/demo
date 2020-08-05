@@ -197,7 +197,7 @@ export default {
         ],
         containers: [{fields: [
           'file.csv',
-        ]}]
+        ]}],
       },
       {
         collapsed: true,

@@ -25,11 +25,12 @@ export default {
           '_exportIds',
           '_importIds',
           '_apiIds'],
-      }
+      },
     ],
   },
   preSave: (formValues, resource) => {
     const accessTokenData = { ...formValues };
+
     if (accessTokenData['/autoPurgeAt'] === 'never') {
       accessTokenData['/autoPurgeAt'] = undefined;
     // eslint-disable-next-line no-restricted-globals

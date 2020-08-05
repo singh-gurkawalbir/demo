@@ -41,9 +41,9 @@ export default {
     visibleWhen: [
       {
         field: 'import.netsuite.operation',
-        is: ['add']
-      }
-    ]
+        is: ['add'],
+      },
+    ],
   },
   'import.netsuite.ignoreMissing': {
     type: 'checkbox',
@@ -52,9 +52,9 @@ export default {
     visibleWhen: [
       {
         field: 'import.netsuite.operation',
-        is: ['update']
-      }
-    ]
+        is: ['update'],
+      },
+    ],
   },
   'import.netsuite.internalIdLookup.expression': {
     type: 'suitescriptnetsuitelookup',

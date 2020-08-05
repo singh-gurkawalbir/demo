@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import classNames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
+import clsx from 'clsx';
 import CodeEditor from '../../CodeEditor';
 import * as selectors from '../../../reducers';
 import actions from '../../../actions';
@@ -129,7 +127,7 @@ export default function DynaSqlQuery(props) {
         <FormLabel className={classes.label}>{label}</FormLabel>
 
         <div
-          className={classNames(
+          className={clsx(
             classes.inlineEditorContainer,
             editorClassName
           )}>

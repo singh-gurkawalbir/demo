@@ -23,7 +23,7 @@ const requestBody = ({
     replaceTabWithSpace,
     replaceNewlineWithSpace,
     wrapWithQuotes,
-    customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
+    customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
 
   },
   data: [JSON.parse(data)],
@@ -37,13 +37,15 @@ const validate = editor => ({
 const init = editor => {
   const { rule = {}, ...others } = editor;
   const initRules = {};
+
   Object.keys(rule).forEach(key => {
     initRules[`_init_${key}`] = rule[key];
   });
+
   return {
     ...others,
     ...rule,
-    ...initRules
+    ...initRules,
   };
 };
 

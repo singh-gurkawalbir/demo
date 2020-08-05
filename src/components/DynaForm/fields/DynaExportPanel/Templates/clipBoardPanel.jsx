@@ -24,7 +24,6 @@ export default function ClipBoardPanel(props) {
   const { text } = props;
   const classes = useStyles();
 
-
   return (
     <div className={classes.clipBoardContainer}>
       <CopyToClipboard

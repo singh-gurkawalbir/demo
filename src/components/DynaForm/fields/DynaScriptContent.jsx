@@ -75,7 +75,6 @@ export default function DynaScriptContent(props) {
     );
   }
 
-
   return (
     <EditorField
       {...props}

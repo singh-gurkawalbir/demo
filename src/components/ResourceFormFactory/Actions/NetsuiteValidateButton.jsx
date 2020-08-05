@@ -30,6 +30,8 @@ const NetsuiteValidateButton = props => {
     onFieldChange,
   } = props;
   const handleValidate = values => {
+    // clear the ping comm status first as validity will be determined by netsuite user roles
+    dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(
       actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
     );

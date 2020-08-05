@@ -73,6 +73,7 @@ export default function ApplicationsList({ filter }) {
     applications = applications.filter(
       a => {
         const {name} = connectorsMetadata?.find(c => c.id === a) || {};
+
         return a.toLowerCase().includes(lowerCaseFilter) ||
                name?.toLowerCase().includes(lowerCaseFilter);
       }

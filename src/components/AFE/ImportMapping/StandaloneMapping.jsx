@@ -269,7 +269,7 @@ export default function StandaloneMapping(props) {
     application,
     subRecordMappingId,
     connection,
-    exportRes: exportResource
+    exportRes: exportResource,
   };
 
   if (isSalesforce) {

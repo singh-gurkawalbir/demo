@@ -312,9 +312,18 @@ export const sanitizePatchSet = ({
     return [...removePatches, ...valuePatches];
   }
 
+  let resouceAfterRemovePatches;
+
+  if (removePatches?.length) {
+    resouceAfterRemovePatches = jsonPatch.applyPatch(deepClone(resource), removePatches).newDocument;
+  } else {
+    resouceAfterRemovePatches = resource;
+  }
+
+  // we should generate missing patches against a resource with its remove patches applied to it
   const missingPatchSet = getMissingPatchSet(
     valuePatches.map(p => p.path),
-    resource
+    resouceAfterRemovePatches
   );
   // Though we are adding the missing patches, in some scenarios the path is getting replaced later
   // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
@@ -440,7 +449,6 @@ function extractRules(fields, currFieldName, value) {
       };
     }
 
-
     return rule;
   });
 }
@@ -474,6 +482,7 @@ export const translateDependencyProps = fieldMap => {
         Object.keys(dependencies?.[value]).forEach(componentType => {
         // links are similar to fields property and these are dependencies defined for link components
           const dependencyFields = dependencies[value][componentType];
+
           // feature is a checkbox
           if (type === 'checkbox' || type === 'featurecheck') {
             rules.push(
@@ -482,7 +491,6 @@ export const translateDependencyProps = fieldMap => {
           } else rules.push(...(extractRules(dependencyFields, key, value) || []));
         });
       });
-
 
       delete fieldMapCopy[key].dependencies;
     }

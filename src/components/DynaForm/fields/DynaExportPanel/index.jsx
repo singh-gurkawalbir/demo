@@ -74,6 +74,7 @@ function DynaExportPanel(props) {
     if (!availablePreviewStages.length) return;
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
     const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
+
     return defaultStage ? defaultStage.value : lastStage.value;
   }, [availablePreviewStages]);
   // set the panel type with the default panel

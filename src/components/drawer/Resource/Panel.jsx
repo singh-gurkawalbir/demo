@@ -6,7 +6,7 @@ import {
   generatePath,
   useHistory,
   matchPath,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
@@ -20,7 +20,7 @@ import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
 import getRoutePath from '../../../utils/routePaths';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-const isNestedDrawer = (url) => !!matchPath(url, {
+const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
   strict: false});
@@ -156,6 +156,7 @@ export default function Panel(props) {
   const match = useRouteMatch();
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
+
   useRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
@@ -269,7 +270,7 @@ export default function Panel(props) {
     return adaptorType.value.includes('Export') ? 'exports' : 'imports';
   }, [stagedProcessor]);
 
-  const getEditUrl = useCallback((id) => {
+  const getEditUrl = useCallback(id => {
     // console.log(location);
     const segments = location.pathname.split('/');
     const { length } = segments;
@@ -344,7 +345,6 @@ export default function Panel(props) {
         return;
       }
 
-
       onClose();
     }
   }
@@ -367,6 +367,7 @@ export default function Panel(props) {
   const onCloseNotificationToaster = () => {
     setShowNotificationToaster(false);
   };
+
   // will be patching useTechAdaptorForm for assistants if export/import is not supported
   // based on this value, will be showing banner on the new export/import creation
   // using isNew as dependency and this will be false for export/import form
@@ -375,21 +376,24 @@ export default function Panel(props) {
       const useTechAdaptorForm = stagedProcessor?.patch?.find(
         p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
       );
+
       setShowNotificationToaster(!!useTechAdaptorForm?.value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
+
   return (
     <>
       <div className={classes.root}>
         <div className={classes.title}>
-          {isNestedDrawer(location.pathname) &&
+          {isNestedDrawer(location.pathname) && (
           <IconButton
             data-test="backDrawer"
             className={classes.backButton}
             onClick={onClose}>
             <Back />
-          </IconButton>}
+          </IconButton>
+          )}
           <div className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}

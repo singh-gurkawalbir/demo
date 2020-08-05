@@ -187,6 +187,7 @@ export const isImportMappingAvailable = importResource => {
 
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
+
   // For File Adaptor XML Imports, no support for import mapping
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
@@ -674,10 +675,9 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-
 export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
-  (flow.pageGenerators
-     && flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
+  (flow.pageGenerators &&
+     flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
     (
       flow.pageProcessors &&
     flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));

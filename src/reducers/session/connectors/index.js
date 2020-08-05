@@ -34,6 +34,7 @@ export default (state = {}, action) => {
       if (newState[_integrationId][fieldName]) {
         newState[_integrationId][fieldName].isLoading = false;
       }
+
       return newState;
     default:
       return state;
