@@ -689,6 +689,14 @@ export default {
 
       // changing metadata for hardcodedDefault and lookupDefault
       ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {
+        let fieldValue;
+        if (metaKey === 'hardcodedDefault') {
+          fieldValue = generateFieldType === 'multiselect' && value.hardCodedValue
+            ? value.hardCodedValue.split(',')
+            : value.hardCodedValue;
+        } else {
+          fieldValue = lookup.default;
+        }
         fieldMeta.fieldMap[metaKey] = {
           ...fieldMeta.fieldMap[metaKey],
           type: 'netsuitedefaultvalue',
@@ -701,11 +709,7 @@ export default {
             fieldId,
             recordType,
           }),
-          // eslint-disable-next-line no-nested-ternary
-          defaultValue: metaKey === 'lookupDefault' ? lookup.default :
-            (generateFieldType === 'multiselect' && value.hardCodedValue
-              ? value.hardCodedValue.split(',')
-              : value.hardCodedValue),
+          defaultValue: fieldValue,
         };
       });
       fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
