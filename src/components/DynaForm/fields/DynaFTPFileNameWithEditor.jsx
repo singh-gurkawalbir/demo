@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
 import ActionButton from '../../ActionButton';
@@ -19,37 +20,35 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DynaFTPFileNameWithEditor(props) {
   const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
-  const [showEditor, setShowEditor] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
   const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
-  const handleClose = (shouldCommit, editorValues) => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
+  const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
   };
   const classes = useStyles();
   return (
     <>
-      {showEditor && (
       <div>
         <DynaEditorWithFlowSampleData
           title={editorTitle}
           fieldId={id}
-          onClose={handleClose}
+          onSave={handleSave}
           editorType="uri"
           flowId={flowId}
           resourceId={resourceId}
           resourceType={resourceType}
           disableEditorV2={disableEditorV2}
           rule={value}
+          path={id}
           />
       </div>
-      )}
       <div className={classes.dynaRowWrapper}>
         <DynaTimestampFileName
           {...props}
