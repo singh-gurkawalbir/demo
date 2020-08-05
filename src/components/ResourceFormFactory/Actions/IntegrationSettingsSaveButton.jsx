@@ -58,7 +58,7 @@ export default function IntegrationSettingsSaveButton(props) {
           // eslint-disable-next-line no-param-reassign
           updatedValues[f.name] = {
             value: values[f.name],
-            path: f.properties.path
+            path: f.properties?.path
           };
         }
         return updatedValues;
