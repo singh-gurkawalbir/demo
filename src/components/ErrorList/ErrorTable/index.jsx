@@ -14,6 +14,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 const rowsPerPageOptions = [10, 25, 50];
+const DEFAULT_ROWS_PER_PAGE = 50;
 
 export default function ErrorTable(props) {
   const classes = useStyles();
@@ -26,7 +27,7 @@ export default function ErrorTable(props) {
   } = props;
   const { filterKey, defaultFilter } = actionProps;
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
   const handleChangeRowsPerPage = useCallback(event => {
     setRowsPerPage(parseInt(event.target.value, 10));
   }, []);
