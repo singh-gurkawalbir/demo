@@ -4062,51 +4062,18 @@ export function transferListWithMetadata(state) {
     resourceList(state, {
       type: 'transfers',
     }).resources || [];
-  const preferences = userProfilePreferencesProps(state);
 
-  const transfersWithMetadata = transfers.map((transfer) => {
+  const transfersWithMetadata = produce(transfers, (draft) => draft.forEach((transfer) => {
     let fromUser = '';
     let toUser = '';
     let integrations = [];
-    if (transfer.ownerUser && transfer.ownerUser.name) {
-      fromUser = transfer.ownerUser.name;
-    }
-
-    if (
-      transfer.isInvited &&
-      transfer.ownerUser &&
-      transfer.ownerUser.email
-    ) {
-      fromUser = transfer.ownerUser.email;
-    }
-
-    if (transfer.transferToUser && transfer.transferToUser.name) {
-      toUser = transfer.transferToUser.name;
-    }
-
-    if (
-      !transfer.isInvited &&
-      transfer.transferToUser &&
-      transfer.transferToUser.email
-    ) {
-      toUser = transfer.transferToUser.email;
-    }
 
     if (transfer.transferToUser && transfer.transferToUser._id && !transfer.ownerUser) {
-      // eslint-disable-next-line no-param-reassign
-      transfer.ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
+      fromUser = 'Me';
+      toUser = transfer.transferToUser.email;
     } else if (transfer.ownerUser && transfer.ownerUser._id && !transfer.transferToUser) {
-      // eslint-disable-next-line no-param-reassign
-      transfer.transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfer.isInvited = true; // eslint-disable-line no-param-reassign
+      fromUser = transfer.ownerUser.email;
+      toUser = 'Me';
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -4131,8 +4098,7 @@ export function transferListWithMetadata(state) {
     transfer.fromUser = fromUser; // eslint-disable-line no-param-reassign
     transfer.toUser = toUser; // eslint-disable-line no-param-reassign
     transfer.integrations = integrations; // eslint-disable-line no-param-reassign
-    return transfer;
-  });
+  }));
 
   return transfersWithMetadata;
 }
