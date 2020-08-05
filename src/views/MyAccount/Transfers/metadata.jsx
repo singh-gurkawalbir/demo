@@ -22,16 +22,19 @@ export default {
       },
       { heading: <TableHeadWithRefreshIcon headerName="Status" resourceType="transfers" />,
         value: r => {
-          if (r?.dismissed) {
+          if (!r) {
+            return '';
+          }
+          if (r.dismissed) {
             return 'Dismissed';
           }
-          if (r?.fromUser === 'Me' && r?.accepted && ['queued', 'started'].indexOf(r?.status) > -1) {
+          if (r.fromUser === 'Me' && r.accepted && ['queued', 'started'].indexOf(r.status) > -1) {
             return 'Processing';
           }
-          if (r?.fromUser === 'Me' && r?.accepted && r?.status === 'done') {
+          if (r.fromUser === 'Me' && r.accepted && r.status === 'done') {
             return 'Accepted';
           }
-          return r?.status === 'unapproved' ? 'Pending acceptance' : r?.status.charAt(0).toUpperCase() + r?.status.slice(1);
+          return r.status === 'unapproved' ? 'Pending acceptance' : r.status.charAt(0).toUpperCase() + r.status.slice(1);
         }
       },
       {

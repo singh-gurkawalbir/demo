@@ -4068,15 +4068,15 @@ export function transferListWithMetadata(state) {
     let toUser = '';
     let integrations = [];
 
-    if (transfer.transferToUser && transfer.transferToUser._id && !transfer.ownerUser) {
+    if (transfer.transferToUser?._id && !transfer.ownerUser) {
       fromUser = 'Me';
       toUser = transfer.transferToUser.email;
-    } else if (transfer.ownerUser && transfer.ownerUser._id && !transfer.transferToUser) {
+    } else if (transfer.ownerUser?._id && !transfer.transferToUser) {
       fromUser = transfer.ownerUser.email;
       toUser = 'Me';
     }
 
-    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+    if (transfer.toTransfer?.integrations) {
       transfer.toTransfer.integrations.forEach(i => {
         let { name } = i;
 
