@@ -193,6 +193,7 @@ export function SuiteScriptTabIACompleteSave(props) {
     </InitializeAllFieldState>
   );
 }
+
 // this is necessary when we clone props we want all of its children to receive them
 function TabWithCompleteSave(props) {
   return (

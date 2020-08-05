@@ -25,6 +25,7 @@ export const SCOPES = {
   VALUE: 'value',
   SCRIPT: 'script',
 };
+
 Object.freeze(SCOPES);
 
 export function* patchFormField({

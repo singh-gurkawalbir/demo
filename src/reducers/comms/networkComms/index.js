@@ -9,6 +9,7 @@ export const COMM_STATES = {
   ERROR: 'error',
   SUCCESS: 'success',
 };
+
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {

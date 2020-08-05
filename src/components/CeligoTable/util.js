@@ -44,6 +44,7 @@ export const useGetConnectorName = resource => {
 
   return 'RDBMS';
 };
+
 export const useGetScriptName = id => {
   const script = useSelector(state =>
     selectors.resource(state, 'scripts', id)
