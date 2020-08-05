@@ -64,7 +64,7 @@ export default function XmlParseEditor(props) {
   useEffect(() => handleInit(), [handleInit]);
 
   return (
-    <PanelGrid key={editorId} className={classes.template}>
+    <PanelGrid key={editorId} className={classes.template} height="calc(100vh - 170px)" width="100%">
       <PanelGridItem gridArea="rule">
         <PanelTitle title="XML parse options" />
         <XmlParsePanel disabled={disabled} editorId={editorId} />

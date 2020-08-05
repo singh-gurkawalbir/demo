@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -31,10 +32,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaNetSuiteLookup(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    // disabled,
     errorMessages,
     id,
     isValid,
@@ -48,18 +47,20 @@ export default function DynaNetSuiteLookup(props) {
     label,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const dispatch = useDispatch();
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, JSON.stringify(rule));
     }
-  };
+  }, [id, onFieldChange]);
 
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
@@ -105,18 +106,14 @@ export default function DynaNetSuiteLookup(props) {
 
   return (
     <>
-      {showEditor && (
-        <NetSuiteLookupFilterEditorDrawer
-          title="Define lookup criteria"
-          id={id}
-          data={formattedExtractFields}
-          value={rule}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          // disabled={disabled}
-          options={options}
+      <NetSuiteLookupFilterEditorDrawer
+        title="Define lookup criteria"
+        id={id}
+        data={formattedExtractFields}
+        value={rule}
+        onSave={handleSave}
+        options={options}
         />
-      )}
 
       <FormControl className={classes.dynaNetsuiteLookupFormControl}>
         <div className={classes.dynaNetsuiteLookupLabelWrapper}>

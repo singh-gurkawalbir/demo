@@ -6,7 +6,7 @@ import Icon from '../../../../components/icons/HookIcon';
 import JavaScriptEditorDrawer from '../../../../components/AFE/JavaScriptEditor/Drawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function PostResponseMapHookDialog({
+function PostResponseMapHookDrawer({
   flowId,
   resource,
   isViewMode,
@@ -80,6 +80,7 @@ function PostResponseMapHookDialog({
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       isSampleDataLoading={sampleDataStatus === 'requested'}
+      path="postResponseMapHook"
     />
   );
 }
@@ -88,7 +89,7 @@ function PostResponseMapHook(props) {
   const { open } = props;
 
   return (
-    <>{open && <PostResponseMapHookDialog {...props} />}</>
+    <>{open && <PostResponseMapHookDrawer {...props} />}</>
   );
 }
 

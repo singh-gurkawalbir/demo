@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
 import React, { useState, useCallback, useMemo } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../../../../reducers';
@@ -103,8 +104,9 @@ export default function DynaXmlParse({
   uploadSampleDataFieldName
 }) {
   const classes = useStyles();
-  const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
+  const history = useHistory();
+  const match = useRouteMatch();
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -118,8 +120,8 @@ export default function DynaXmlParse({
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
 
   const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     // console.log(shouldCommit, editorValues);
@@ -134,9 +136,6 @@ export default function DynaXmlParse({
     }
   }, [formKey, getInitOptions, id, onFieldChange]);
 
-  const handleEditorClose = useCallback(() => {
-    setShowEditor(false);
-  }, []);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
@@ -187,19 +186,18 @@ export default function DynaXmlParse({
   return (
     <>
       <div className={classes.container}>
-        {showEditor && (
-          <XmlParseEditorDrawer
-            title="XML parser helper"
-            id={id + resourceId}
-            data={data}
-            resourceType={resourceType}
-            rule={currentOptions}
-            onSave={handleEditorSave}
-            onClose={handleEditorClose}
-            disabled={disabled}
-            editorDataTitle={editorDataTitle}
+        <XmlParseEditorDrawer
+          title="XML parser helper"
+          id={id + resourceId}
+          data={data}
+          resourceType={resourceType}
+          rule={currentOptions}
+          onSave={handleEditorSave}
+          disabled={disabled}
+          editorDataTitle={editorDataTitle}
+          path={id}
         />
-        )}
+
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>XML parser helper</FormLabel>
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />

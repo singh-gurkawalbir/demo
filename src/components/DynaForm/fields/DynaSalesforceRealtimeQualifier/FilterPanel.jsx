@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
-    height: '100%',
     overflowY: 'auto',
   },
 }));
@@ -206,7 +205,7 @@ export default function FilterPanel({
   }, [builderInitComplete, referencedFieldsResolved]);
 
   return (
-    <div className={classes.container}>
+    <div className={classes.container} height="calc(100vh - 170px)" width="100%">
       <div className="salesforce-Qualifier" ref={qbuilder} />
     </div>
   );

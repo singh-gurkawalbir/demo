@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,8 +53,9 @@ const getTransformRule = value => {
 export default function DynaTransformRules(props) {
   const classes = useStyles();
   const { id, resourceId, value, label, onFieldChange, disabled } = props;
+  const history = useHistory();
+  const match = useRouteMatch();
   const rule = getTransformRule(value);
-  const [showEditor, setShowEditor] = useState(false);
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule: newRule } = editorValues;
@@ -62,27 +64,22 @@ export default function DynaTransformRules(props) {
     }
   }, [id, onFieldChange, rule]);
 
-  const handleClose = useCallback(() => {
-    setShowEditor(false);
-  }, []);
-
-  const toggleEditor = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   return (
     <div>
-      {showEditor && (
-        <TransformEditorDrawer
-          title="Transform Mapping"
-          id={id + resourceId}
-          data=""
-          rule={rule && rule[0]}
-          onSave={handleSave}
-          onClose={handleClose}
-          disabled={disabled}
+      <TransformEditorDrawer
+        title="Transform Mapping"
+        id={id + resourceId}
+        data=""
+        rule={rule && rule[0]}
+        onSave={handleSave}
+        disabled={disabled}
+        path={id}
         />
-      )}
+
       <Typography className={classes.label}>{label}</Typography>
       <div className={classes.root}>
         <div className={classes.editorContainer}>
@@ -92,7 +89,7 @@ export default function DynaTransformRules(props) {
           <ActionButton
             disabled={disabled}
             data-test="editTransformation"
-            onClick={toggleEditor}>
+            onClick={handleEditorClick}>
             <EditIcon />
           </ActionButton>
         </div>

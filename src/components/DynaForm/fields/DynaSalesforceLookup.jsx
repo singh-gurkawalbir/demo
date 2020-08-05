@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -25,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaSalesforceLookup(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -43,9 +43,11 @@ export default function DynaSalesforceLookup(props) {
     multiline,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const dispatch = useDispatch();
   const handleSave = (shouldCommit, editorValues) => {
@@ -97,18 +99,15 @@ export default function DynaSalesforceLookup(props) {
 
   return (
     <>
-      {showEditor && (
-        <SalesforceLookupFilterEditorDrawer
-          title="Define lookup criteria"
-          id={id}
-          data={formattedExtractFields}
-          value={value}
-          onSave={handleSave}
-          onClose={handleEditorClick}
+      <SalesforceLookupFilterEditorDrawer
+        title="Define lookup criteria"
+        id={id}
+        data={formattedExtractFields}
+        value={value}
+        onSave={handleSave}
           // disabled={disabled}
-          options={options}
+        options={options}
         />
-      )}
 
       <FormControl className={classes.dynaTextFormControl}>
         <div className={classes.dynaTextLabelWrapper}>

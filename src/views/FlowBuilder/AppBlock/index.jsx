@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
@@ -187,6 +188,8 @@ function AppBlock({
   ...rest
 }) {
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
@@ -276,7 +279,7 @@ function AppBlock({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
           })}
-          onClick={() => setActiveAction(a.name)}
+          onClick={() => { setActiveAction(a.name); a.name === 'postResponseMapHook' && history.push(`${match.url}/postResponseMapHook`); }}
           data-test={a.name}>
           <a.Icon />
         </ActionIconButton>

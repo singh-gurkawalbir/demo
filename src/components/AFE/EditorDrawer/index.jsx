@@ -79,7 +79,7 @@ export default function EditorDrawer(props) {
     patchOnSave = false,
     toggleAction,
     flowId,
-    path,
+    path = id,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -141,9 +141,9 @@ export default function EditorDrawer(props) {
     dispatch(actions.editor.changeLayout(id));
   }, [dispatch, id]);
   const handleLayoutChange = useCallback(
-    (event, _layout) => {
+    (event, newLayout) => {
       patchEditorLayoutChange();
-      _layout && setLayout(_layout);
+      newLayout && setLayout(newLayout);
     },
     [patchEditorLayoutChange]
   );

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
@@ -56,8 +57,9 @@ export default function DynaSQLQueryBuilder(props) {
   } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
-  const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
     extractFieldsLoaded: false,
@@ -199,9 +201,9 @@ export default function DynaSQLQueryBuilder(props) {
 
   // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -253,24 +255,23 @@ export default function DynaSQLQueryBuilder(props) {
   return (
     <>
       <div className={classes.sqlContainer}>
-        {showEditor && (
-          <SqlQueryBuilderEditorDrawer
-            key={changeIdentifier}
-            title={title}
-            id={`${resourceId}-${id}`}
-            rule={parsedRule}
-            lookups={lookups}
-            sampleData={formattedSampleData}
-            defaultData={formattedDefaultData}
-            onFieldChange={onFieldChange}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            action={lookupField}
-            disabled={disabled}
-            showDefaultData={!hideDefaultData}
-            ruleTitle={ruleTitle}
+        <SqlQueryBuilderEditorDrawer
+          key={changeIdentifier}
+          title={title}
+          id={`${resourceId}-${id}`}
+          rule={parsedRule}
+          lookups={lookups}
+          sampleData={formattedSampleData}
+          defaultData={formattedDefaultData}
+          onFieldChange={onFieldChange}
+          onSave={handleSave}
+          action={lookupField}
+          disabled={disabled}
+          showDefaultData={!hideDefaultData}
+          ruleTitle={ruleTitle}
+          path={id}
           />
-        )}
+
         <div className={classes.sqlLabelWrapper}>
           <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
           <FieldHelp {...props} />

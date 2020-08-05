@@ -39,7 +39,7 @@ const Editor = props => {
   const gridTemplate = templateClassName || classes[`${layout}Template`];
 
   return (
-    <PanelGrid className={gridTemplate}>
+    <PanelGrid className={gridTemplate} height="calc(100vh - 170px)" width="100%">
       <PanelGridItem gridArea="rule">
         <PanelTitle title={ruleTitle} />
         <CodePanel

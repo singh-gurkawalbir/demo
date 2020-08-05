@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -74,9 +75,12 @@ function DynaFileDefinitionEditor(props) {
   } = props;
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
-  // Local states
-  const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   // Default values
   const parserType =
@@ -92,10 +96,6 @@ function DynaFileDefinitionEditor(props) {
     options: { format, definitionId, resourcePath }
   }), shallowEqual);
 
-  // click handlers
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
@@ -122,10 +122,6 @@ function DynaFileDefinitionEditor(props) {
       }
     }
   }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
-
-  const handleClose = useCallback(() => {
-    setShowEditor(false);
-  }, [setShowEditor]);
 
   // Effects to update values and sample data
   useEffect(() => {
@@ -171,23 +167,22 @@ function DynaFileDefinitionEditor(props) {
     <>
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
-          {showEditor && (
-            <FileDefinitionEditorDrawer
-              title={label || 'File definition editor'}
-              id={id + resourceId}
-              processor={processor}
-              data={
+          <FileDefinitionEditorDrawer
+            title={label || 'File definition editor'}
+            id={id + resourceId}
+            processor={processor}
+            data={
                 sampleData ||
                 (resourceType === 'exports'
                   ? props.sampleData
                   : JSON.stringify(props.sampleData, null, 2))
               }
-              rule={value}
-              onSave={handleSave}
-              onClose={handleClose}
-              disabled={disabled}
+            rule={value}
+            onSave={handleSave}
+            disabled={disabled}
+            path={id}
             />
-          )}
+
           <FormLabel className={classes.fileDefinitionLabel}>
             {label}:
           </FormLabel>

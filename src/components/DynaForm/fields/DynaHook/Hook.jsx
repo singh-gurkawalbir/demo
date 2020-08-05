@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -54,7 +55,8 @@ const scriptsFilterConfig = { type: 'scripts' };
 const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook(props) {
-  const [showEditor, setShowEditor] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const dispatch = useDispatch();
@@ -100,8 +102,8 @@ export default function DynaHook(props) {
       requestForPreHookData();
     }
 
-    setShowEditor(!showEditor);
-  }, [requestForPreHookData, showEditor]);
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url, requestForPreHookData]);
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
@@ -194,26 +196,23 @@ export default function DynaHook(props) {
 
   return (
     <>
-      {showEditor && (
-        <JavaScriptEditorDrawer
-          title="Script editor"
-          id={id}
-          key={id}
-          disabled={disabled}
-          data={JSON.stringify(preHookData, null, 2)}
-          scriptId={value._scriptId}
-          insertStubKey={hookStage}
-          entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
-          context={scriptContext}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          resultMode={editorResultMode}
-          optionalSaveParams={optionalSaveParams}
-          flowId={flowId}
-          patchOnSave
-          isSampleDataLoading={isSampleDataLoading}
+      <JavaScriptEditorDrawer
+        title="Script editor"
+        id={id}
+        key={id}
+        disabled={disabled}
+        data={JSON.stringify(preHookData, null, 2)}
+        scriptId={value._scriptId}
+        insertStubKey={hookStage}
+        entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
+        context={scriptContext}
+        onSave={handleSave}
+        resultMode={editorResultMode}
+        optionalSaveParams={optionalSaveParams}
+        flowId={flowId}
+        patchOnSave
+        isSampleDataLoading={isSampleDataLoading}
         />
-      )}
       {showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}

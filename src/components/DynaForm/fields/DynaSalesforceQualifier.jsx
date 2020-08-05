@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
@@ -30,7 +31,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaSalesforceQualifier(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -47,9 +47,11 @@ export default function DynaSalesforceQualifier(props) {
     label,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -61,19 +63,17 @@ export default function DynaSalesforceQualifier(props) {
 
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
-      {showEditor && (
-        <SalesforceEditorDrawer
-          title="Field specific qualification criteria"
-          id={id}
-          value={value}
-          resourceId={resourceId}
-          flowId={flowId}
-          onSave={handleSave}
-          onClose={handleEditorClick}
+      <SalesforceEditorDrawer
+        title="Field specific qualification criteria"
+        id={id}
+        value={value}
+        resourceId={resourceId}
+        flowId={flowId}
+        onSave={handleSave}
           // disabled={disabled}
-          options={options}
+        options={options}
         />
-      )}
+
       <div className={classes.textField}>
         <div className={classes.dynaSalesforceQualifierlabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>

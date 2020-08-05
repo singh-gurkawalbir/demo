@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import OpenInNewIcon from '../../icons/FilterIcon';
@@ -25,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaNetSuiteQualifier(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -42,6 +42,11 @@ export default function DynaNetSuiteQualifier(props) {
     options,
   } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   useEffect(() => {
     if (options.commMetaPath) {
@@ -66,17 +71,14 @@ export default function DynaNetSuiteQualifier(props) {
     onFieldChange,
     options.resetValue,
   ]);
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, Array.isArray(rule) ? JSON.stringify(rule) : rule);
     }
-  };
+  }, [id, onFieldChange]);
 
   let rule = [];
 
@@ -97,17 +99,13 @@ export default function DynaNetSuiteQualifier(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        {showEditor && (
-          <NetSuiteQualificationCriteriaEditorDrawer
-            title="Field specific qualification criteria"
-            id={id}
-            value={rule}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            // disabled={disabled}
-            options={options}
+        <NetSuiteQualificationCriteriaEditorDrawer
+          title="Field specific qualification criteria"
+          id={id}
+          value={rule}
+          onSave={handleSave}
+          options={options}
           />
-        )}
 
         <TextField
           key={id}

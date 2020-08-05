@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -31,7 +32,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaNetSuiteLookup(props) {
   const { ssLinkedConnectionId, integrationId, resourceContext } = props;
-  const [showEditor, setShowEditor] = useState(false);
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
   const classes = useStyles();
   const {
@@ -47,9 +47,11 @@ export default function DynaNetSuiteLookup(props) {
     label,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
 
   const dispatch = useDispatch();
   const handleSave = (shouldCommit, editorValues) => {
@@ -107,19 +109,15 @@ export default function DynaNetSuiteLookup(props) {
 
   return (
     <>
-      {showEditor && (
-        <NetSuiteLookupFilterEditorDrawer
-          title="Define lookup criteria"
-          id={id}
-          data={extractFields}
-          value={rule}
-          // onClose={handleClose}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          options={options}
-          autoEvaluate={false}
+      <NetSuiteLookupFilterEditorDrawer
+        title="Define lookup criteria"
+        id={id}
+        data={extractFields}
+        value={rule}
+        onSave={handleSave}
+        options={options}
+        autoEvaluate={false}
         />
-      )}
 
       <FormControl className={classes.dynaNetsuiteLookupFormControl}>
         <div className={classes.dynaNetsuiteLookupLabelWrapper}>

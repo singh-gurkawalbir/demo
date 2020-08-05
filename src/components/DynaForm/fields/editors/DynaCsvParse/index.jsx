@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -93,7 +94,11 @@ export default function DynaCsvParse(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
-  const [showEditor, setShowEditor] = useState(false);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions(newOptions);
@@ -109,9 +114,6 @@ export default function DynaCsvParse(props) {
     },
     [id, onFieldChange]
   );
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
 
   const dispatch = useDispatch();
   /*
@@ -179,23 +181,22 @@ export default function DynaCsvParse(props) {
   return (
     <>
       <div className={classes.container}>
-        {showEditor && (
-          <CsvConfigEditorDrawer
-            title="CSV parser helper"
-            id={`csvParser-${id}-${resourceId}`}
-            mode="csv"
-            data={csvData}
-            resourceType={resourceType}
-            csvEditorType="parse"
+        <CsvConfigEditorDrawer
+          title="CSV parser helper"
+          id={`csvParser-${id}-${resourceId}`}
+          mode="csv"
+          data={csvData}
+          resourceType={resourceType}
+          csvEditorType="parse"
             // /** rule to be passed as json */
             // rule={rule}
-            rule={currentOptions}
-            editorDataTitle={editorDataTitle}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            disabled={disabled}
+          rule={currentOptions}
+          editorDataTitle={editorDataTitle}
+          onSave={handleSave}
+          disabled={disabled}
+          path={id}
           />
-        )}
+
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
