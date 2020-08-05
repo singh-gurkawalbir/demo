@@ -1,7 +1,7 @@
 import throttle from 'lodash/throttle';
 
 const OFFSET = 250; // This is the top/bottom offset you use to start scrolling in the div.
-const PX_DIFF = 25;
+const PX_DIFF = 20;
 
 let scrollIncrement = 0;
 let isScrolling = false;
