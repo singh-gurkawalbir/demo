@@ -22,7 +22,6 @@ export default function CronBuilder(props) {
           max: 55,
           step: 5,
           unit: 'minute',
-          setReset,
           clearFields: ['everySelectedMinute'],
           defaultValue: splitVal[1] || '',
         },
@@ -33,7 +32,6 @@ export default function CronBuilder(props) {
           type: 'groupedButton',
           clearFields: ['everyNMinutes'],
           unit: 'minute',
-          setReset,
           defaultValue: splitVal[1] || '',
           options: [
             {
@@ -51,8 +49,6 @@ export default function CronBuilder(props) {
           name: 'everyHour',
           unit: 'hour',
           type: 'cronlabel',
-          setReset,
-
           clearFields: ['everyNHours', 'eachSelectedHour'],
           defaultValue: splitVal[2] || '',
         },
@@ -61,8 +57,6 @@ export default function CronBuilder(props) {
           name: 'everyNHours',
           label: 'Every n hours',
           type: 'slider',
-          setReset,
-
           unit: 'hour',
           min: 1,
           max: 23,
@@ -76,7 +70,6 @@ export default function CronBuilder(props) {
           label: 'Each selected',
           type: 'groupedButton',
           clearFields: ['everyNHours', 'everyHour'],
-          setReset,
           defaultValue: splitVal[2] || '',
           options: [
             {
@@ -114,8 +107,6 @@ export default function CronBuilder(props) {
           name: 'everyDay',
           unit: 'day',
           type: 'cronlabel',
-          setReset,
-
           clearFields: ['eachDay'],
           defaultValue: splitVal[3] || '',
         },
@@ -124,8 +115,6 @@ export default function CronBuilder(props) {
           clearFields: ['everyDay'],
           name: 'eachDay',
           label: 'Each selected day',
-          setReset,
-
           type: 'groupedButton',
           defaultValue: splitVal[3] || '',
 
@@ -174,8 +163,6 @@ export default function CronBuilder(props) {
           name: 'everyMonth',
           unit: 'month',
           type: 'cronlabel',
-          setReset,
-
           defaultValue: splitVal[4] || '',
           clearFields: ['eachMonth'],
         },
@@ -185,8 +172,6 @@ export default function CronBuilder(props) {
           name: 'eachMonth',
           label: 'Each selected month',
           type: 'groupedButton',
-          setReset,
-
           defaultValue: splitVal[4] || '',
           options: [
             {
@@ -214,8 +199,6 @@ export default function CronBuilder(props) {
           unit: 'week',
           type: 'cronlabel',
           clearFields: ['eachWeek'],
-          setReset,
-
           defaultValue: splitVal[5] || '',
         },
         eachWeek: {
@@ -224,8 +207,6 @@ export default function CronBuilder(props) {
           name: 'eachWeek',
           label: 'Each selected day',
           type: 'groupedButton',
-          setReset,
-
           defaultValue: splitVal[5] || '',
           options: [
             {
@@ -292,7 +273,7 @@ export default function CronBuilder(props) {
         ],
       },
     }),
-    [setReset, splitVal]
+    [splitVal]
   );
   const [isCronTouched, setIsCronTouched] = useState(false);
   const [externalTabState, setExternalTabStateFn] = useState({
