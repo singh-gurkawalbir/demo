@@ -53,17 +53,6 @@ export default function IntegrationSettingsSaveButton(props) {
         values = formValues;
       }
 
-      // values = Object.values(flowSettingsMemo?.fieldMap)?.filter(f => f.yieldValueAndLabel).reduce((updatedValues, f) => {
-      //   if (values[f.name] && typeof values[f.name] === 'string') {
-      //     // eslint-disable-next-line no-param-reassign
-      //     updatedValues[f.name] = {
-      //       id: values[f.name],
-      //       label: f.options.find(op => op.value === values[f.name])?.label
-      //     };
-      //   }
-      //   return updatedValues;
-      // }, values);
-
       values = Object.values(flowSettingsMemo?.fieldMap)?.filter(f => f.type === 'xmlMapper').reduce((updatedValues, f) => {
         if (values[f.name] && Array.isArray(values[f.name])) {
           // eslint-disable-next-line no-param-reassign
