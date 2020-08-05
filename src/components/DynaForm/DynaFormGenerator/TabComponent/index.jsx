@@ -81,13 +81,15 @@ function TabComponent(props) {
         }}>
         {containers.map(({ label, ...layout }) => (
           <Tab
-            label={<TabLabel
-              layout={layout}
-              fieldMap={fieldMap}
-              label={label}
-              tabType={type}
+            label={(
+              <TabLabel
+                layout={layout}
+                fieldMap={fieldMap}
+                label={label}
+                tabType={type}
 
-              />}
+              />
+)}
             key={label}
             data-test={label}
           />
@@ -165,7 +167,8 @@ function InitializeAllFieldState({children, fieldMap}) {
           {children}
         </>
       )}
-    </FormContext.Consumer>);
+    </FormContext.Consumer>
+  );
 }
 // this is necessary when we clone props we want all of its children to receive them
 function SuiteScriptWithCompleteSave(props) {

@@ -122,36 +122,39 @@ function DynaMapSubsidaries(props) {
 
       {fieldMappingType === 'Always Use'
 
-        ? (<DynaSelect
-          label="Select Subsidiary"
-          id={id}
-          disabled={disabled}
-          onFieldChange={(id, value) => {
-            setSubsidaryValue(value);
-          }}
-          options={generateOptions}
-          value={subsidaryValue} />) : (
-            <>
-              {metadataStatus === 'requested' ? <Spinner /> : (
-                <SalesforceSubsidarySelect
-                  disabled={disabled}
-                  salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
-                  selectedOption={selectedOption}
-                  mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
-                  onFieldChange={onFieldChange}
-              />)}
-              <BaseTableViewComponent
-                {...props}
-                optionsMap={optionsMap}
-                value={tableValue}
-                onFieldChange={(id, value) => {
-                  setTableValue(value);
-                }}
-                hideLabel
-                shouldReset={shouldReset}
-                disableDeleteRows={disabled}
+        ? (
+          <DynaSelect
+            label="Select Subsidiary"
+            id={id}
+            disabled={disabled}
+            onFieldChange={(id, value) => {
+              setSubsidaryValue(value);
+            }}
+            options={generateOptions}
+            value={subsidaryValue} />
+        ) : (
+          <>
+            {metadataStatus === 'requested' ? <Spinner /> : (
+              <SalesforceSubsidarySelect
+                disabled={disabled}
+                salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
+                selectedOption={selectedOption}
+                mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
+                onFieldChange={onFieldChange}
+              />
+            )}
+            <BaseTableViewComponent
+              {...props}
+              optionsMap={optionsMap}
+              value={tableValue}
+              onFieldChange={(id, value) => {
+                setTableValue(value);
+              }}
+              hideLabel
+              shouldReset={shouldReset}
+              disableDeleteRows={disabled}
       />
-            </>
+          </>
 
         )}
 
@@ -165,5 +168,6 @@ export default function DynaMapSubsidariesWrapped(props) {
       {form => (
         <DynaMapSubsidaries {...props} fields={form.fields} registerField={form.registerField} />
       )}
-    </FormContext.Consumer>);
+    </FormContext.Consumer>
+  );
 }

@@ -75,14 +75,15 @@ function ResourceDrawer(props) {
           )}
         </div>
       </Drawer>
-      {open &&
+      {open && (
       <Route
         path={`${match.url}${DRAWER_PATH}`}>
         <ResourceDrawer
           flowId={flowId}
           integrationId={integrationId}
         />
-      </Route>}
+      </Route>
+      )}
 
     </>
   );

@@ -79,12 +79,12 @@ export default function XmlParsePanel({ editorId, disabled }) {
             <FormControlLabel
               disabled={disabled}
               key={label}
-              control={
+              control={(
                 <Radio
                   color="primary"
                   checked={label === 'Automatic' ? V0_json : !V0_json}
                 />
-              }
+              )}
               label={label}
             />
           ))}
@@ -99,19 +99,19 @@ export default function XmlParsePanel({ editorId, disabled }) {
         {!V0_json && (
           <>
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
                   disabled={disabled}
                   checked={trimSpaces}
                   onChange={() => patchEditor('trimSpaces', !trimSpaces)}
                   color="primary"
                 />
-              }
+              )}
               label="Trim spaces"
             />
 
             <FormControlLabel
-              control={
+              control={(
                 <Checkbox
                   disabled={disabled}
                   checked={stripNewLineChars}
@@ -119,7 +119,7 @@ export default function XmlParsePanel({ editorId, disabled }) {
                   onChange={() =>
                     patchEditor('stripNewLineChars', !stripNewLineChars)}
                 />
-              }
+              )}
               label="Strip newline chars"
             />
 

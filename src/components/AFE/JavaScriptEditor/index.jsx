@@ -104,7 +104,8 @@ export default function JavaScriptEditor(props) {
             mode="json"
             readOnly={disabled}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />

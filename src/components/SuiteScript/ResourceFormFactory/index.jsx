@@ -107,14 +107,16 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
       // remove form disabled prop...
       // they dont necessary apply to action button
       const { disabled, ...rest } = formProps;
-      const actionContainer = <Action
-        key={action.id}
-        dataTest={action.id}
-        proceedOnChange={proceedOnChange}
-        {...rest}
-        {...action}
-        {...actionProps}
-      />;
+      const actionContainer = (
+        <Action
+          key={action.id}
+          dataTest={action.id}
+          proceedOnChange={proceedOnChange}
+          {...rest}
+          {...action}
+          {...actionProps}
+      />
+      );
 
       if (action.mode === 'secondary') {
         secondaryActions.push(actionContainer);

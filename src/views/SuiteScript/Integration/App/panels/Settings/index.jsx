@@ -129,7 +129,8 @@ function SettingsPanelComponent({
               You don&apos;t have any custom settings for this integration.
             </span>
           </div>
-        </div>);
+        </div>
+      );
     }
 
     return (
@@ -169,14 +170,17 @@ function SettingsPanelComponent({
                       sectionId={path}
                       id={id}
                       />
-                  </>) : <Section
+                  </>
+                ) : (
+                  <Section
                     integrationAppName={integrationAppName}
                     integrationId={integrationId}
                     ssLinkedConnectionId={ssLinkedConnectionId}
                     sectionId={path}
                     id={id}
                     {...sectionProps}
-                />}
+                />
+                )}
 
               </Route>
             ))}

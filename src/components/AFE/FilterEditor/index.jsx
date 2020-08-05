@@ -95,7 +95,8 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={{ showGutter: false }}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

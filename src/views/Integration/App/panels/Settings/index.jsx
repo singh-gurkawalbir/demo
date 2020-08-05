@@ -117,7 +117,8 @@ export default function SettingsPanel({
               You don&apos;t have any custom settings for this integration.
             </span>
           </div>
-        </div>);
+        </div>
+      );
     }
 
     return (
@@ -156,11 +157,14 @@ export default function SettingsPanel({
                       sectionId={path}
                       parentUrl={match.url}
                       />
-                  </>) : <Section
+                  </>
+                ) : (
+                  <Section
                     integrationId={integrationId}
                     storeId={storeId}
                     {...sectionProps}
-                />}
+                />
+                )}
 
               </Route>
             ))}

@@ -53,17 +53,19 @@ export const BaseTableViewComponent = props => {
     []
   );
 
-  return (<DynaTableView
-    {...props}
-    optionsMap={optionsMap}
-    metadata={{optionsMap}}
-    hideLabel
-    shouldReset={shouldReset}
-    className={classes.dynaStaticMapWidgetWrapper}
-    value={computedValue}
-    onFieldChange={handleMapChange}
-    disableDeleteRows={disabled}
-      />);
+  return (
+    <DynaTableView
+      {...props}
+      optionsMap={optionsMap}
+      metadata={{optionsMap}}
+      hideLabel
+      shouldReset={shouldReset}
+      className={classes.dynaStaticMapWidgetWrapper}
+      value={computedValue}
+      onFieldChange={handleMapChange}
+      disableDeleteRows={disabled}
+      />
+  );
 };
 
 const SalesforceProductOptions = ({value,
@@ -73,7 +75,8 @@ const SalesforceProductOptions = ({value,
       value={value}
       onFieldChange={onFieldChange}
       options={options}
-      label="Salesforce item Field" />);
+      label="Salesforce item Field" />
+);
 
 function DynaSuiteScriptTable(props) {
   const {
@@ -166,12 +169,14 @@ function DynaSuiteScriptTable(props) {
 
   return (
     <>
-      {salesforceProductFieldOptions && <SalesforceProductOptions
+      {salesforceProductFieldOptions && (
+      <SalesforceProductOptions
         value={selectOption}
         onFieldChange={salesforceProductFieldChange}
         options={salesforceProductOptions}
         connectionId={connectionId}
-      />}
+      />
+      )}
       <BaseTableViewComponent
         {...props}
         optionsMap={optionsMap}
@@ -189,5 +194,6 @@ export default function DynaSuiteScriptTableWrapped(props) {
       {form => (
         <DynaSuiteScriptTable {...props} registerField={form.registerField} />
       )}
-    </FormContext.Consumer>);
+    </FormContext.Consumer>
+  );
 }

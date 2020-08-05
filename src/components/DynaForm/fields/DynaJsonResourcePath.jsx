@@ -72,10 +72,12 @@ export default function DynaJsonResourcePath(props) {
     });
   }, [jsonContent, onFieldChange]);
 
-  return <DynaText
-    id={id}
-    onFieldChange={handleOnResourcePathChange}
-    value={value && value.resourcePathToShow}
-    label={label}
-/>;
+  return (
+    <DynaText
+      id={id}
+      onFieldChange={handleOnResourcePathChange}
+      value={value && value.resourcePathToShow}
+      label={label}
+/>
+  );
 }

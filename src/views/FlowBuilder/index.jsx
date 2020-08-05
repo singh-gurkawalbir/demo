@@ -474,7 +474,7 @@ function FlowBuilder() {
       <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
-        title={
+        title={(
           <EditableText
             disabled={isViewMode}
             text={flow.name}
@@ -487,8 +487,8 @@ function FlowBuilder() {
                 : classes.editableTextInput
             }
           />
-        }
-        subtitle={
+        )}
+        subtitle={(
           <>
             Last saved:{' '}
             {isNewFlow ? (
@@ -497,7 +497,7 @@ function FlowBuilder() {
               <CeligoTimeAgo date={flow.lastModified} />
             )}
           </>
-        }
+        )}
         infoText={flow.description}>
         {totalErrors ? (
           <span className={classes.errorStatus}>

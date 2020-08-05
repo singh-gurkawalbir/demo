@@ -383,8 +383,9 @@ export default function Endpoint() {
             </Button>
           </Typography>
         </NotificationToaster>
-      </div>)}
-      {showExpireMessage &&
+      </div>
+      )}
+      {showExpireMessage && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -400,7 +401,8 @@ export default function Endpoint() {
             and keep them all!
           </Typography>
         </NotificationToaster>
-      </div>}
+      </div>
+      )}
       <Typography variant="h4" className={classes.heading}>
         Subscription
       </Typography>
@@ -504,7 +506,8 @@ export default function Endpoint() {
                           Add more flows
                         </Button>
                       )}
-                  </div>)}
+                  </div>
+          )}
         </div>
       </div>
       <div className={classes.subscriptionBox}>
@@ -581,7 +584,8 @@ export default function Endpoint() {
                     />
           </div>
         </div>
-      </div>)}
+      </div>
+)}
       <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );

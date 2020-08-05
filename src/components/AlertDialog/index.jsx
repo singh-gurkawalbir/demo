@@ -137,7 +137,8 @@ export default function AlertDialog() {
             ) : (
               showSessionStatus === 'expired' && <ExpiredSessionContent />
             )}
-          </Dialog>)
+          </Dialog>
+        )
         : isUiVersionDifferent && <StaleUIVersion />}
     </div>
   );

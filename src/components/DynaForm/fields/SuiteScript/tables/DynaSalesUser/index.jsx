@@ -40,12 +40,14 @@ export default function DynaSalesUser(props) {
 
   return (
     <>
-      {profiles && <DynaSelect
+      {profiles && (
+      <DynaSelect
         value={option}
         placeholder="--All--"
         onFieldChange={(id, value) => selectOption(value)}
         options={generatedSalesforceSubsidiaryFieldOptions}
-        label="Select Salesforce Profile" />}
+        label="Select Salesforce Profile" />
+      )}
       <CeligoTable
         data={filteredResults}
         {...metadata}

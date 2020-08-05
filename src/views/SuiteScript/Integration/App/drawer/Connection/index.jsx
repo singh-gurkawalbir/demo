@@ -148,7 +148,8 @@ export default function ConnectionDrawer({
             Cancel
           </Button>
         </DynaForm>
-        {connection && <ResourceSetupDrawer
+        {connection && (
+        <ResourceSetupDrawer
           resourceId={connection.newId}
           resource={connection.doc}
           resourceType="connections"
@@ -156,7 +157,8 @@ export default function ConnectionDrawer({
           onSubmitComplete={handleSubmitComplete}
           manageOnly
           addOrSelect
-          />}
+          />
+        )}
       </div>
     </RightDrawer>
   );

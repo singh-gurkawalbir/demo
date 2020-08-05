@@ -39,9 +39,11 @@ export default function DynaIASelect(props) {
   const IASelect = multiselect ? DynaMultiSelect : DynaSelect;
 
   return options?.length
-    ? <IASelect
-      {...props}
-      options={[{items: options}]}
-      onFieldChange={handleFieldChange} />
+    ? (
+      <IASelect
+        {...props}
+        options={[{items: options}]}
+        onFieldChange={handleFieldChange} />
+    )
     : <IASelect {...props} />;
 }

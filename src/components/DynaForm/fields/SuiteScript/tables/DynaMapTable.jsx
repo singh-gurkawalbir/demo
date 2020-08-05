@@ -93,5 +93,6 @@ export default function DynaSuiteScriptTable(props) {
       shouldReset={shouldReset}
       disableDeleteRows={disabled}
       handleRefreshClickHandler={handleRefreshClick}
-      />);
+      />
+  );
 }

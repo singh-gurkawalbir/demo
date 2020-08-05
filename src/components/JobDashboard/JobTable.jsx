@@ -215,7 +215,7 @@ function JobTable({
           ))}
         </TableBody>
       </Table>
-      {(showErrorDialogFor?.jobId || _JobId) &&
+      {(showErrorDialogFor?.jobId || _JobId) && (
       <ErrorDrawer
         // for now, force tall (default)
         // height={isFlowBuilderView ? 'short' : 'tall'}
@@ -227,7 +227,8 @@ function JobTable({
         numError={showErrorDialogFor.numError}
         numResolved={showErrorDialogFor.numResolved}
         onClose={handleErrorDrawerClose}
-        />}
+        />
+      )}
     </>
   );
 }

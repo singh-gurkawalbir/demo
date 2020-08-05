@@ -65,9 +65,10 @@ export default {
           return null;
         }
 
-        return (<DeleteCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
+        return (
+          <DeleteCell
+            ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
+            flow={resource}
         />
         );
       },

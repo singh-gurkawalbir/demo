@@ -50,7 +50,8 @@ const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
     <Spinner color="primary" />
-  </Loader>);
+  </Loader>
+);
 
 export const SuiteScriptForm = props => {
   const dispatch = useDispatch();

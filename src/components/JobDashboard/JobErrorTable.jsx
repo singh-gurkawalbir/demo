@@ -594,11 +594,13 @@ function JobErrorTable({
                   {
                     heading: 'Retry data',
                     align: 'center',
-                    value: r => <EditRetryCell
-                      retryId={r._retryId}
-                      isEditable={r.metadata?.isParent &&
+                    value: r => (
+                      <EditRetryCell
+                        retryId={r._retryId}
+                        isEditable={r.metadata?.isParent &&
                       r.retryObject?.isDataEditable}
-                      dateTime={r.createdAt} />,
+                        dateTime={r.createdAt} />
+                    ),
                   },
                 ]}
               />

@@ -76,6 +76,8 @@ export default function ProgressBar({ usedCount, totalCount, env, type, setTitle
         onClick={onButtonClick}
         className={classes.productionUsageListLink}>
         List
-      </Button>)}
-    </div>);
+      </Button>
+      )}
+    </div>
+  );
 }

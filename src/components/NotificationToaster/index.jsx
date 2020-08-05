@@ -141,12 +141,12 @@ export default function NotificationToaster(props) {
       )}
       aria-describedby="client-snackbar"
       elevation={4}
-      message={
+      message={(
         <div id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {children}
         </div>
-        }
+      )}
       action={
           // show Close Icon only when onClose function is passed.
           onClose && [

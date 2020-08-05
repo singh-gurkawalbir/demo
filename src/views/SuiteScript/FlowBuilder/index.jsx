@@ -228,7 +228,7 @@ function FlowBuilder() {
           flowId={flowId}
         />
         <CeligoPageBar
-          title={
+          title={(
             <EditableText
               disabled={isViewMode || !flow.editable || isIntegrationApp}
               text={flow.ioFlowName || flow.name}
@@ -241,15 +241,15 @@ function FlowBuilder() {
                 : classes.editableTextInput
             }
           />
-        }
-          subtitle={
+          )}
+          subtitle={(
             <>
               {flow.lastModified &&
               `Last saved: ${(
                 <DateTimeDisplay dateTime={flow.lastModified} />
               )}`}
             </>
-        }
+          )}
       >
           <div className={classes.actions}>
             <OnOffCell ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
@@ -281,10 +281,12 @@ function FlowBuilder() {
           >
               <SettingsIcon />
             </IconButtonWithTooltip>
-            { !isIntegrationApp && <DeleteCell
+            { !isIntegrationApp && (
+            <DeleteCell
               ssLinkedConnectionId={ssLinkedConnectionId}
               flow={flow}
-              isFlowBuilderView /> }
+              isFlowBuilderView />
+            ) }
           </div>
         </CeligoPageBar>
         {flow && (

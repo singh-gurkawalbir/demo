@@ -110,19 +110,19 @@ export default function CsvGeneratePanel(props) {
         </FormControl>
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={includeHeader}
               data-test="includeHeader"
               onChange={() => patchEditor('includeHeader', !includeHeader)}
             />
-          }
+          )}
           label="Include header"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={truncateLastRowDelimiter}
@@ -134,12 +134,12 @@ export default function CsvGeneratePanel(props) {
                 );
               }}
             />
-          }
+          )}
           label="Truncate last row delimiter"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={wrapWithQuotes}
@@ -148,12 +148,12 @@ export default function CsvGeneratePanel(props) {
                 patchEditor('wrapWithQuotes', !wrapWithQuotes);
               }}
             />
-          }
+          )}
           label="Wrap with quotes"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={replaceTabWithSpace}
@@ -162,12 +162,12 @@ export default function CsvGeneratePanel(props) {
                 patchEditor('replaceTabWithSpace', !replaceTabWithSpace);
               }}
             />
-          }
+          )}
           label="Replace tab with space"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={replaceNewlineWithSpace}
@@ -179,7 +179,7 @@ export default function CsvGeneratePanel(props) {
                 );
               }}
             />
-          }
+          )}
           label="Replace new line with space"
         />
         {customHeaderRowsSupported && (

@@ -386,13 +386,14 @@ export default function Panel(props) {
     <>
       <div className={classes.root}>
         <div className={classes.title}>
-          {isNestedDrawer(location.pathname) &&
+          {isNestedDrawer(location.pathname) && (
           <IconButton
             data-test="backDrawer"
             className={classes.backButton}
             onClick={onClose}>
             <Back />
-          </IconButton>}
+          </IconButton>
+          )}
           <div className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
