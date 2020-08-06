@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   refreshIconButton: {
     marginLeft: theme.spacing(1),
     padding: 0,
-  }
+  },
 }));
 
 export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
@@ -31,18 +31,21 @@ export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
     setRefreshRequested(true);
     dispatch(actions.resource.requestCollection(resourceType));
   }, [dispatch, setRefreshRequested, resourceType]);
+
   return (
     <span className={classes.status}>
       {headerName}
-      {(refreshRequested && isResourceCollectionLoading) ?
-        <Spinner className={classes.statusSpinner} size={24} color="primary" /> :
-        <IconButton
-          data-test="refreshStatus"
-          variant="text"
-          className={classes.refreshIconButton}
-          onClick={handleRefresh}>
-          <RefreshIcon />
-        </IconButton>}
+      {(refreshRequested && isResourceCollectionLoading)
+        ? <Spinner className={classes.statusSpinner} size={24} color="primary" />
+        : (
+          <IconButton
+            data-test="refreshStatus"
+            variant="text"
+            className={classes.refreshIconButton}
+            onClick={handleRefresh}>
+            <RefreshIcon />
+          </IconButton>
+        )}
     </span>
   );
 }

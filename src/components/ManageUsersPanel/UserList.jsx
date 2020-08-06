@@ -34,8 +34,8 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
   tableCellWithIcon: {
-    display: 'inline-flex'
-  }
+    display: 'inline-flex',
+  },
 }));
 
 export default function UserList({ integrationId, onEditUserClick }) {
