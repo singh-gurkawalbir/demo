@@ -27,7 +27,7 @@ const metadata = {
       },
     },
     {
-      heading: 'Installed On',
+      heading: 'Installed on',
       value: r =>
         r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
     },
@@ -197,7 +197,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
               <Typography variant="h4" className={classes.heading}>
-                Add-Ons
+                Add-ons
               </Typography>
               <Typography className={classes.message}>
                 You don`t have any add-ons yet. Add-ons let you customize
@@ -220,7 +220,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           <>
             <div className={classes.header}>
               <Typography variant="h4" className={classes.heading}>
-                Add-Ons
+                Add-ons
               </Typography>
               <Typography variant="body2">
                 Add-ons let you customize your subscription to meet your
