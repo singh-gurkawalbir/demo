@@ -1400,7 +1400,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
             return 'How would you like the files transferred?';
           }
 

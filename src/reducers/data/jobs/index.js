@@ -130,7 +130,7 @@ export default (state = DEFAULT_STATE, action) => {
           flowJobs: [jobWithDefaultProps, ...state.flowJobs],
         };
       }
-    } else if (job.type === JOB_TYPES.BULK_RETRY) {
+    } else if (job?.type === JOB_TYPES.BULK_RETRY) {
       let index = state.bulkRetryJobs.findIndex(j => j._id === job._id);
 
       if (index === -1) {
