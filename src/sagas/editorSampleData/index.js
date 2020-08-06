@@ -117,7 +117,6 @@ export function* requestEditorSampleData({
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-    body[resourceType === 'imports' ? 'import' : 'export'].isHTTP = false;
     body.fieldPath = fieldType;
 
     const opts = {
