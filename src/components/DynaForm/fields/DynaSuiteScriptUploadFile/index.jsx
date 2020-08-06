@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import { getUploadedFile } from '../../../../reducers';
 
 const uploadFileType = 'csv';
+
 function DynaSuiteScriptUploadFile(props) {
   const {
     id,

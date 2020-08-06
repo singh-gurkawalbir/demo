@@ -37,6 +37,7 @@ describe('initialize all app relevant resources sagas', () => {
           'Retrieving user\'s accounts'
         )
       );
+
       expect(saga.next().value).toEqual(
         all([getLicensesEffect, getOrgUsersEffect, getOrgAccountsEffect])
       );
@@ -372,6 +373,7 @@ describe('auth saga flow', () => {
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
     const resourcePermissions = saga.next().value;
+
     expect(resourcePermissions).toEqual(select(selectors.resourcePermissions));
   });
 });

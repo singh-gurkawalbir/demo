@@ -8,7 +8,7 @@ export default function useSaveStatusIndicator(props) {
     method = 'put',
     onSave,
     disabled = false,
-    onClose
+    onClose,
   } = props;
   // Local states
   const [disableSave, setDisableSave] = useState(disabled);
@@ -18,7 +18,7 @@ export default function useSaveStatusIndicator(props) {
   const commStatus = useSelector(state => commStatusPerPath(state, path, method));
   // Generates a submitHandler which updates states on saving
   const submitHandler = useCallback(
-    (closeOnSave) => (values) => {
+    closeOnSave => values => {
       onSave(values);
       setCloseOnSuccess(closeOnSave);
       setDisableSave(true);
@@ -46,9 +46,9 @@ export default function useSaveStatusIndicator(props) {
   const defaultLabels = useMemo(() => {
     const saveLabel = (saveInProgress && !closeOnSuccess) ? 'Saving' : 'Save';
     const saveAndCloseLabel = (saveInProgress && closeOnSuccess) ? 'Saving' : 'Save & close';
+
     return { saveLabel, saveAndCloseLabel };
   }, [closeOnSuccess, saveInProgress]);
-
 
   return { submitHandler, disableSave, saveInProgress, defaultLabels };
 }

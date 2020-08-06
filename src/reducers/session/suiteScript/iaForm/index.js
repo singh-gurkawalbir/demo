@@ -5,6 +5,7 @@ const iaFormKey = (
   ssLinkedConnectionId,
   integrationId,
 ) => `${ssLinkedConnectionId}-${integrationId}`;
+
 export default (state = {}, action) => {
   const {
     type,
@@ -15,6 +16,7 @@ export default (state = {}, action) => {
     ssLinkedConnectionId,
     integrationId,
   );
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.IA_FORM.INIT_COMPLETE:
@@ -22,6 +24,7 @@ export default (state = {}, action) => {
         draft[key] = { initComplete: true,
           showFormValidationsBeforeTouch: false,
         };
+
         return;
 
       case actionTypes.SUITESCRIPT.IA_FORM.INIT_CLEAR:
@@ -32,15 +35,16 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.IA_FORM.SHOW_FORM_VALIDATION_ERRORS:
         if (!draft[key])draft[key] = {};
         draft[key].showFormValidationsBeforeTouch = true;
+
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT:
         if (!draft[key])draft[key] = {};
         draft[key].status = 'saving';
 
-
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_COMPLETE:
         draft[key].status = 'success';
+
         return;
       case actionTypes.SUITESCRIPT.IA_FORM.SUBMIT_FAILED:
         draft[key].status = 'failed';

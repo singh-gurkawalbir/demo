@@ -14,7 +14,7 @@ export default function PreviewBody(props) {
     availablePreviewStages,
     previewStageDataList,
     resourceId,
-    resourceType
+    resourceType,
   } = props;
   const resource = useSelector(state =>
     resourceData(state, resourceType, resourceId).merged, shallowEqual
@@ -38,7 +38,7 @@ export default function PreviewBody(props) {
       )}
       {resourceSampleData.status === 'received' && (
         <>
-          <Templates.PostUrlPanel
+          <Templates.RequestUrlPanel
             previewStageDataList={previewStageDataList}
             resourceId={resourceId}
             resourceType={resourceType}

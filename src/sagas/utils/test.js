@@ -9,7 +9,6 @@ describe('resourceConflictResolution', () => {
     origin: this refers to the latest copy of that record from the server
     merged: this refers to local changes on top of master
 
-
     */
 
   const master = {

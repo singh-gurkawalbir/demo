@@ -92,12 +92,14 @@ export default function AlertDialog() {
 
   useEffect(() => {
     let versionPollingTimer;
+
     // stop polling when version is different
     if (isAuthenticated && !isUiVersionDifferent) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
       }, Number(process.env.UI_VERSION_PING));
     }
+
     return () => {
       clearTimeout(versionPollingTimer);
     };
@@ -125,17 +127,18 @@ export default function AlertDialog() {
     };
   }, [dispatch, sessionValidTimestamp]);
 
-
   return (
     <div>
-      {showSessionStatus ?
-        <Dialog disableEnforceFocus open style={contentWrapper}>
-          {showSessionStatus === 'warning' ? (
-            <WarningSessionContent />
-          ) : (
-            showSessionStatus === 'expired' && <ExpiredSessionContent />
-          )}
-        </Dialog>
+      {showSessionStatus
+        ? (
+          <Dialog disableEnforceFocus open style={contentWrapper}>
+            {showSessionStatus === 'warning' ? (
+              <WarningSessionContent />
+            ) : (
+              showSessionStatus === 'expired' && <ExpiredSessionContent />
+            )}
+          </Dialog>
+        )
         : isUiVersionDifferent && <StaleUIVersion />}
     </div>
   );

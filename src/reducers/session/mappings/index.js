@@ -85,7 +85,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             salesforceMasterRecordTypeId,
-            exportRes
+            exportRes,
           };
 
           tmp.mappingsCopy = deepClone(tmp.mappings);
@@ -170,6 +170,7 @@ export default function reducer(state = {}, action) {
           }
 
           const objCopy = { ...draft[id].mappings[index] };
+
           objCopy.rowIdentifier += 1;
 
           let inputValue = value;
@@ -209,6 +210,7 @@ export default function reducer(state = {}, action) {
           draft[id].lastModifiedRowKey = objCopy.key;
         } else if (value) {
           const newKey = shortid.generate();
+
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,

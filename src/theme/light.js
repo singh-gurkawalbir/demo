@@ -484,7 +484,7 @@ export default {
         paddingLeft: 15,
       },
       inputAdornedEnd: {
-        paddingRight: 15,
+        paddingRight: 30,
       },
     },
     MuiInputAdornment: {
@@ -642,8 +642,8 @@ export default {
         '& > svg': {
           border: '1px solid',
           borderColor: colors.celigoNeutral3,
-        }
-      }
+        },
+      },
     },
     MuiListSubheader: {
       gutters: {

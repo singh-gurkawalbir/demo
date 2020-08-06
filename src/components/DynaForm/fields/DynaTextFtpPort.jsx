@@ -42,7 +42,6 @@ function DynaTextFtpPort(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ftptype]);
 
-
   const handleFieldChange = useCallback(
     event => {
       const { value, name } = event.target;

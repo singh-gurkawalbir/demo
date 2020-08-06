@@ -81,14 +81,15 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClos
 
   const fileDefinitionDetails = {
     definitionId,
-    resourcePath
+    resourcePath,
   };
+
   // Once definition is saved, save the resource with the id
   yield call(saveResourceWithDefinitionID, {
     formValues,
     fileDefinitionDetails,
     flowId,
-    skipClose
+    skipClose,
   });
 }
 

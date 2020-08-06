@@ -55,9 +55,10 @@ export function* saveRawDataOnResource({
  */
 export function* removeRawDataOnResource({
   resourceId,
-  resourceType = 'exports'
+  resourceType = 'exports',
 }) {
   const resourceObj = yield select(resource, resourceType, resourceId) || {};
+
   if (!resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
     return;
   }
@@ -67,9 +68,10 @@ export function* removeRawDataOnResource({
     {
       op: 'replace',
       path: '/rawData',
-      value: EMPTY_RAW_DATA
+      value: EMPTY_RAW_DATA,
     },
   ];
+
   // Save the resource
   yield put(actions.resource.patchStaged(resourceId, patchSet, 'value'));
   yield put(actions.resource.commitStaged(resourceType, resourceId, 'value'));

@@ -110,47 +110,47 @@ function Filters({ integrationId, flowId, uiAssistant }) {
                 </FormLabel>
                 <FormGroup className={classes.formGroup}>
                   <FormControlLabel
-                    control={
+                    control={(
                       <Checkbox
                         color="primary"
                         checked={!!attributes.required}
                         onChange={handleAttributeChange('required')}
                         value="required"
                       />
-                    }
+                    )}
                     label="Required"
                   />
                   <FormControlLabel
-                    control={
+                    control={(
                       <Checkbox
                         color="primary"
                         checked={!!attributes.preferred}
                         onChange={handleAttributeChange('preferred')}
                         value="preferred"
                       />
-                    }
+                    )}
                     label="Preferred"
                   />
                   <FormControlLabel
-                    control={
+                    control={(
                       <Checkbox
                         color="primary"
                         checked={!!attributes.conditional}
                         onChange={handleAttributeChange('conditional')}
                         value="conditional"
                       />
-                    }
+                    )}
                     label="Conditional"
                   />
                   <FormControlLabel
-                    control={
+                    control={(
                       <Checkbox
                         color="primary"
                         checked={!!attributes.optional}
                         onChange={handleAttributeChange('optional')}
                         value="optional"
                       />
-                    }
+                    )}
                     label="Optional"
                   />
                 </FormGroup>

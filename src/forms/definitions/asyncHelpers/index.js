@@ -57,7 +57,7 @@ export default {
         fields: ['http.submit.sameAsStatus',
           'http.submit.resourcePath',
           'http.submit.transform'],
-      }
+      },
     ],
   },
 };

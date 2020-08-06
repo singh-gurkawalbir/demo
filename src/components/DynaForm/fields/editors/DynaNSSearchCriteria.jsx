@@ -48,7 +48,7 @@ export default function DynaNSSearchCriteria(props) {
 
   const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
-  const onFetch = useCallback((shouldRefreshCache) => {
+  const onFetch = useCallback(shouldRefreshCache => {
     dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
   }, [commMetaPath, connectionId, dispatch]);
 

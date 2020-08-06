@@ -1,7 +1,6 @@
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import classNames from 'classnames';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -13,11 +12,8 @@ const useStyles = makeStyles({
   },
 });
 
-function Header(props) {
+export default function Header({ children }) {
   const classes = useStyles();
-  const { children } = props;
 
-  return <div className={classNames(classes.wrapper)}>{children}</div>;
+  return <div className={classes.wrapper}>{children}</div>;
 }
-
-export default Header;

@@ -17,7 +17,6 @@ import jsonUtils from './json';
 import { isIntegrationApp } from './flows';
 import { isJsonString } from './string';
 
-
 const sampleDataStage = {
   exports: {
     inputFilter: 'flowInput',
@@ -144,9 +143,11 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
     const stageData = stages.find(
       stage => stage.name === 'raw' || stage.name === 'parse'
     );
+
     if (stageData?.name === 'raw') {
       return stageData.data?.[0];
     }
+
     return stageData && stageData.data;
   }
 
@@ -189,6 +190,7 @@ export const resetStagesForFlowResource = (flow, index, stages = [], isPageGener
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
   const resourceIds = keys(flow[resourceMap]);
+
   if (resourceIds.includes(resourceId)) {
     stages.forEach(stage => {
       if (flow[resourceMap][resourceId][stage]) {
@@ -385,6 +387,7 @@ export const getFormattedResourceForPreview = (
  */
 export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
+
   if (patchSetPath === '/transform') return 'transform';
   if (patchSetPath === '/filter') return 'outputFilter';
   if (patchSetPath === '/inputFilter') return 'inputFilter';
@@ -409,14 +412,17 @@ export const getSubsequentStages = (stage, resourceType) => {
   const stageMap = sampleDataStage[resourceType];
   const nextStages = [];
   const keys = jsonUtils.getObjectKeysFromValue(stageMap, stage);
+
   if (!keys.length) {
     return [];
   }
   nextStages.push(...keys);
   for (let i = 0; i < keys.length; i += 1) {
     const currStage = keys[i];
+
     nextStages.push(...(getSubsequentStages(currStage, resourceType)));
   }
+
   return nextStages;
 };
 

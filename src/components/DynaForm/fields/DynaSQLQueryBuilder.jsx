@@ -14,7 +14,6 @@ import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
 
-
 const useStyles = makeStyles({
   sqlContainer: {
     width: '100%',
@@ -27,7 +26,7 @@ const useStyles = makeStyles({
   },
   sqlLabelWrapper: {
     display: 'flex',
-  }
+  },
 });
 
 export default function DynaSQLQueryBuilder(props) {
@@ -68,7 +67,7 @@ export default function DynaSQLQueryBuilder(props) {
     'imports',
     resourceId
   );
-  const { adaptorType: resourceAdapterType } = resourceData;
+  const { adaptorType: resourceAdapterType, _connectionId: connectionId} = resourceData;
   const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
@@ -129,7 +128,10 @@ export default function DynaSQLQueryBuilder(props) {
       );
     }
   }, [dispatch, extractFields, flowId, resourceId]);
-
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', connectionId)
+  );
+  const rdbmsSubType = connection?.rdbms?.type;
   let parsedRule =
     typeof arrayIndex === 'number' && Array.isArray(value)
       ? value[arrayIndex]
@@ -153,6 +155,14 @@ export default function DynaSQLQueryBuilder(props) {
         sampleData,
         extractPaths,
         method === 'putItem'
+      );
+    } else if (
+      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.RDBMSImport && rdbmsSubType === 'snowflake'
+    ) {
+      parsedRule = sqlUtil.getSampleSnowflakeTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
       );
     } else {
       parsedRule = sqlUtil.getSampleSQLTemplate(

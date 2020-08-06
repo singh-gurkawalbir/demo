@@ -245,7 +245,7 @@ export default function BottomDrawer({
                       icon={<DebugIcon />}
                       key={connectionId}
                       component="div"
-                      label={
+                      label={(
                         <div className={classes.customTabContainer}>
                           {connectionIdNameMap[connectionId]} - DEBUG
                           <IconButton
@@ -254,7 +254,7 @@ export default function BottomDrawer({
                             <CloseIcon />
                           </IconButton>
                         </div>
-                      }
+                      )}
                     />
                   )
               )}

@@ -164,7 +164,7 @@ export default {
       linkIntegrator: (resourceId, link) =>
         action(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, {
           connectionId: resourceId,
-          link
+          link,
         }),
     },
     patchStaged: (
@@ -253,27 +253,27 @@ export default {
   },
   importSampleData: {
     request: ({ssLinkedConnectionId, integrationId, flowId, options}) => action(actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST, {
-      ssLinkedConnectionId, integrationId, flowId, options
-    })
+      ssLinkedConnectionId, integrationId, flowId, options,
+    }),
   },
   sampleData: {
     request: ({
       ssLinkedConnectionId,
       integrationId,
       flowId,
-      options
+      options,
     }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST, {
         ssLinkedConnectionId,
         integrationId,
         flowId,
-        options
+        options,
       }),
     received: ({
       ssLinkedConnectionId,
       integrationId,
       flowId,
-      previewData
+      previewData,
     }) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED, {
         ssLinkedConnectionId,
@@ -286,13 +286,13 @@ export default {
         ssLinkedConnectionId,
         integrationId,
         flowId,
-        error
+        error,
       }),
     reset: ({ssLinkedConnectionId, integrationId, flowId}) =>
       action(actionTypes.SUITESCRIPT.SAMPLEDATA.RESET, {
         ssLinkedConnectionId,
         integrationId,
-        flowId
+        flowId,
       }),
   },
   job: {
@@ -518,7 +518,7 @@ export default {
     completeSetup: (connectorId, ssLinkedConnectionId) =>
       action(actionTypes.SUITESCRIPT.INSTALLER.POST_INSTALL, {
         connectorId,
-        ssLinkedConnectionId
+        ssLinkedConnectionId,
       }),
     done: connectorId =>
       action(actionTypes.SUITESCRIPT.INSTALLER.DONE, {
@@ -528,30 +528,30 @@ export default {
   mapping: {
     init: ({ ssLinkedConnectionId, integrationId, flowId, subRecordMappingId }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT, {
-        ssLinkedConnectionId, integrationId, flowId, subRecordMappingId
+        ssLinkedConnectionId, integrationId, flowId, subRecordMappingId,
       }),
     initComplete: ({ ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.INIT_COMPLETE, {
-        ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options
+        ssLinkedConnectionId, integrationId, flowId, generatedMappings, subRecordFields, lookups, options,
       }),
     patchField: ({ field, key, value }) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, { field, key, value }),
-    delete: (key) =>
+    delete: key =>
       action(actionTypes.SUITESCRIPT.MAPPING.DELETE, {
-        key
+        key,
       }),
     patchSettings: (key, settings) =>
       action(actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS, {
-        key, settings
+        key, settings,
       }),
 
-    updateLookups: (lookups) =>
+    updateLookups: lookups =>
       action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS, {
-        lookups
+        lookups,
       }),
-    changeOrder: (mappings) =>
+    changeOrder: mappings =>
       action(actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER, {
-        mappings
+        mappings,
       }),
     save: () =>
       action(actionTypes.SUITESCRIPT.MAPPING.SAVE, {}),
@@ -564,13 +564,13 @@ export default {
     patchIncompleteGenerates: (
       {key, value},
     ) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value }),
-    updateMappings: (mappings) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
-      mappings
+    updateMappings: mappings => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS, {
+      mappings,
     }),
-    updateLastFieldTouched: (key) => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
+    updateLastFieldTouched: key => action(actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
     clear: () => action(actionTypes.SUITESCRIPT.MAPPING.CLEAR, {}),
     checkForSFSublistExtractPatch: (key, value) => action(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
-    setSFSubListFieldName: (value) => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
-    patchExtractList: (value) => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),
-  }
+    setSFSubListFieldName: value => action(actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME, {value}),
+    patchExtractList: value => action(actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST, {value}),
+  },
 };

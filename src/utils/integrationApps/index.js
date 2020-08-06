@@ -1,8 +1,6 @@
 import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION } from '../constants';
 
-export const getIntegrationAppUrlName = (
-  integrationAppName
-) => {
+export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
     return 'integrationApp';
   }
@@ -16,7 +14,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
     'readme',
     'apitoken',
     'subscription',
-    'uninstall'
+    'uninstall',
   ];
   const sectionsToHide = [];
 
@@ -53,6 +51,7 @@ export const getTopLevelTabs = (options = {}) => {
   const excludeTabs = [];
   const showAdminTabs = !!getAdminLevelTabs(options).length;
   const isStandalone = STANDALONE_INTEGRATION.id === integrationId;
+
   if (isIntegrationApp) {
     excludeTabs.push('users');
     if (!hasAddOns) {
@@ -242,4 +241,4 @@ export default {
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
 };
 
-export const getTitleIdFromSection = (sec) => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';
+export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

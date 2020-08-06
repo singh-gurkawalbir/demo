@@ -1,12 +1,12 @@
 import React from 'react';
-import { GetResourceReferenceLink } from '../CeligoTable/util';
+import ResourceLink from './ResourceLink';
 
 export default {
   columns: [
     {
       heading: 'Name',
-      // eslint-disable-next-line react/display-name
-      value: r => <GetResourceReferenceLink r={r} />,
+      value: (r, { onClose }) =>
+        <ResourceLink name={r.name} resourceType={r.resourceType} id={r.id} onClick={onClose} />,
     },
     {
       heading: 'Type',

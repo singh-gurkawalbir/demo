@@ -53,7 +53,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isAS2Resource,
-  adaptorTypeMap
+  adaptorTypeMap,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -155,6 +155,7 @@ export function commsErrors(state) {
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
+
     if (!c.hidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
       if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
@@ -173,6 +174,7 @@ export function commsSummary(state) {
   if (commsState) {
     Object.keys(commsState).forEach(key => {
       const c = commsState[key];
+
       if (!c.hidden) {
         if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
           hasError = true;
@@ -563,7 +565,6 @@ export const userProfile = createSelector(
   state => state?.user?.profile,
   profile => profile
 );
-
 
 export function developerMode(state) {
   return (
@@ -1004,6 +1005,7 @@ export function flowUsesUtilityMapping(state, id) {
   if (!flow) return false;
   const integration = resource(state, 'integrations', flow._integrationId);
   const isApp = flow._connectorId;
+
   if (!isApp) return false;
 
   const flowSettings = getIAFlowSettings(integration, flow._id);
@@ -1083,8 +1085,10 @@ export function isIAConnectionSetupPending(state, connectionId) {
     _integrationId
   );
   const { steps } = addNewStoreSteps;
+
   if (steps && Array.isArray(steps)) {
     const installStep = steps.find(s => s._connectionId === connectionId);
+
     if (!installStep?.completed) {
       return true;
     }
@@ -1186,6 +1190,7 @@ export function matchingConnectionList(state, connection = {}, environment, mana
 
         if (['netsuite'].indexOf(connection.type) > -1) {
           const accessLevel = manageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
+
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
@@ -1417,7 +1422,6 @@ export function canOpenOauthConnection(state, integrationId) {
   return fromSession.canOpenOauthConnection(state && state.session, integrationId);
 }
 
-
 export function integrationConnectionList(state, integrationId, childId, tableConfig) {
   const integration = resource(state, 'integrations', integrationId) || {};
   // eslint-disable-next-line no-use-before-define
@@ -1429,9 +1433,11 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
     let registeredConnections = [];
+
     if (!childId) {
       childIntegrations.forEach(intId => {
         const integration = resource(state, 'integrations', intId);
+
         if (integration) {
           registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
         }
@@ -1439,6 +1445,7 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
     } else {
       const parentIntegration = resource(state, 'integrations', integrationId);
       const childIntegration = resource(state, 'integrations', childId);
+
       if (parentIntegration) {
         registeredConnections = registeredConnections.concat(parentIntegration._registeredConnectionIds);
       }
@@ -1455,6 +1462,7 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
       if (childId && childId !== integrationId) {
         return [integrationId, childId].includes(conn._integrationId);
       }
+
       return childIntegrations.includes(conn._integrationId);
     });
   }
@@ -1539,6 +1547,7 @@ export function integrationAppResourceList(
 
   flowIds.forEach(fid => {
     const flow = resource(state, 'flows', fid) || {};
+
     flows.push({_id: flow._id, name: flow.name});
     connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
@@ -1990,7 +1999,6 @@ export function integrationAppSectionMetadata(
   return selectedSection;
 }
 
-
 export function suiteScriptIASectionMetadata(
   state,
   integrationId,
@@ -2009,7 +2017,6 @@ export function suiteScriptIASectionMetadata(
   const {sections = [] } =
     integrationResource || {};
   const allSections = sections;
-
 
   const selectedSection =
     allSections.find(
@@ -2134,6 +2141,7 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
           ? flowStore === store.label
           : flows.indexOf(f._id) > -1;
       });
+
       return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
@@ -2141,7 +2149,6 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
 
     return map(flows, '_id');
   }
-
 
   return map(allIntegrationFlows, '_id');
 }
@@ -2173,6 +2180,7 @@ export function integrationInstallSteps(state, integrationId) {
 }
 
 const emptyStepsArr = [];
+
 export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
   const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
     state && state.session,
@@ -2188,6 +2196,7 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
   }
 
   const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+
   if (visibleSteps.length === 0) {
     return { steps: emptyStepsArr, error, isFetched, isComplete };
   }
@@ -2214,7 +2223,7 @@ export function addNewStoreSteps(state, integrationId) {
     return addNewStoreSteps;
   }
 
-  const modifiedSteps = produce(steps, (draft) => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -2227,6 +2236,7 @@ export function addNewStoreSteps(state, integrationId) {
 
 export function isIAV2UninstallComplete(state, { integrationId }) {
   const integration = fromData.integrationAppSettings(state.data, integrationId);
+
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
 
@@ -2236,12 +2246,15 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   );
 
   const { steps: uninstallSteps, isFetched } = uninstallData;
+
   if (isFetched) {
     if (!uninstallSteps || uninstallSteps.length === 0) return true;
+
     return !(uninstallSteps.find(s =>
       !s.completed
     ));
   }
+
   return false;
 }
 
@@ -2249,6 +2262,7 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
 // the clone check once the functionality is clear and tested for all scenarios
 export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
   const integration = resource(state, 'integrations', integrationId);
+
   if (!integration) return false;
   let isCloned = false;
 
@@ -2264,6 +2278,7 @@ export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
       integration.uninstallSteps &&
         integration.uninstallSteps.length) ||
     isCloned;
+
   return isFrameWork2;
 }
 
@@ -2272,17 +2287,22 @@ export function integrationAppChildIdOfFlow(state, integrationId, flowId) {
     return null;
   }
   const integration = fromData.resource(state.data, 'integrations', integrationId);
+
   if (integration?.settings?.supportsMultiStore) {
     const { stores } = integrationAppSettings(state, integrationId);
+
     if (!flowId && stores?.length) {
       return stores[0].value;
     }
+
     return stores.find(store => integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
   }
   if (isIntegrationAppVersion2(state, integrationId, true)) {
     if (!flowId) return integrationId;
+
     return fromData.resource(state.data, 'flows', flowId)?._integrationId;
   }
+
   return null;
 }
 
@@ -2757,6 +2777,7 @@ export const resourcePermissions = (
   // to support parent-child integration permissions
   if (resourceType === 'integrations') {
     const resourceData = resource(state, 'integrations', resourceId);
+
     if (resourceData?._parentId) {
       return resourcePermissions(
         state,
@@ -2801,6 +2822,7 @@ export const resourcePermissions = (
     }
     if (resourceId) {
       let value = permissions[resourceType][resourceId];
+
       if (!value && resourceType === 'integrations') {
         value = permissions[resourceType].all;
       }
@@ -2896,6 +2918,7 @@ export function canEditSettingsForm(state, resourceType, resourceId, integration
   // if the resource belongs to an IA and the user cannot publish, then
   // a user can thus also not edit
   const visibleForUser = !isIAResource || allowedToPublish;
+
   return developer && !viewOnly && visibleForUser;
 }
 
@@ -3054,7 +3077,7 @@ export function tiles(state) {
   let status;
 
   return tiles.map(t => {
-    integration = integrations.find((i) => i._id === t._integrationId) || {};
+    integration = integrations.find(i => i._id === t._integrationId) || {};
 
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
@@ -3072,7 +3095,7 @@ export function tiles(state) {
     }
 
     if (t._connectorId) {
-      connector = published.find((i) => i._id === t._connectorId) || {
+      connector = published.find(i => i._id === t._connectorId) || {
         user: {},
       };
 
@@ -3133,9 +3156,10 @@ export function isResourceCollectionLoading(state, resourceName) {
   // transfers and invited transfers, checking for both the keys
   if (resourceName === 'transfers') {
     return [commKeyGen(`/${resourceName}`, 'GET'), commKeyGen(`/${resourceName}/invited`, 'GET')].some(
-      (resourceKey) => fromComms.isLoading(state?.comms, resourceKey)
+      resourceKey => fromComms.isLoading(state?.comms, resourceKey)
     );
   }
+
   return fromComms.isLoading(state?.comms, commKeyGen(`/${resourceName}`, 'GET'));
 }
 
@@ -3439,7 +3463,7 @@ export function auditLogs(
   const result = {
     logs: [],
     count: 0,
-    totalCount: 0
+    totalCount: 0,
   };
 
   if (options.storeId) {
@@ -3470,6 +3494,7 @@ export function auditLogs(
   result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
   result.count = result.logs.length;
   result.totalCount = auditLogs.length;
+
   return result;
 }
 
@@ -3524,6 +3549,7 @@ export function optionsFromMetadata({
 
 export const makeOptionsFromMetadata = () => {
   const madeSelector = fromMetadata.makeOptionsFromMetadata();
+
   return (state,
     connectionId,
     commMetaPath,
@@ -3575,7 +3601,6 @@ export function metadataOptionsAndResources({
     }) || emptyObject
   );
 }
-
 
 /*
  * TODO: @Raghu - Should be removed and use above selector
@@ -3778,9 +3803,9 @@ export const makeFlowJobs = () => createSelector(
     });
   });
 
-
 export const makeFlowJob = () => {
   const cachedFlowJobsSelector = makeFlowJobs();
+
   return createSelector((state, ops) => cachedFlowJobsSelector(
     state, ops),
   (_1, ops) => ops,
@@ -3883,7 +3908,6 @@ export function integrationAppImportMetadata(state, importId) {
     importId
   );
 }
-
 
 export function getImportSampleData(state, resourceId, options = {}) {
   const { merged: resource } = resourceData(state, 'imports', resourceId);
@@ -4018,6 +4042,7 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
     'exports',
     resourceId
   );
+
   if (isNewId(resourceId)) {
     return !resource.isLookup;
   }
@@ -4063,7 +4088,7 @@ export function transferListWithMetadata(state) {
       type: 'transfers',
     }).resources || [];
 
-  const transfersWithMetadata = produce(transfers, (draft) => draft.forEach((transfer) => {
+  const transfersWithMetadata = produce(transfers, draft => draft.forEach(transfer => {
     let fromUser = '';
     let toUser = '';
     let integrations = [];
@@ -4122,6 +4147,7 @@ export function isDataLoaderExport(state, resourceId, flowId) {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
     const { merged: flowObj = {} } = resourceData(state, 'flows', flowId, 'value');
+
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
               flowObj.pageGenerators[0].application === 'dataLoader');
@@ -4132,6 +4158,7 @@ export function isDataLoaderExport(state, resourceId, flowId) {
     resourceId,
     'value'
   );
+
   return resourceObj.type === 'simple';
 }
 /**
@@ -4146,6 +4173,7 @@ export function isExportPreviewDisabled(state, resourceId, resourceType) {
     resourceId,
     'value'
   );
+
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
   // their preview does not depend on connection, so it can be enabled
   // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
@@ -4157,6 +4185,7 @@ export function isExportPreviewDisabled(state, resourceId, resourceType) {
   ) {
     return false;
   }
+
   // In all other cases, where preview depends on connection being online, return the same
   return isConnectionOffline(state, resourceObj._connectionId);
 }
@@ -4181,7 +4210,7 @@ export function getAvailableResourcePreviewStages(
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 }
 
-export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
+export function isRequestUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
   const resourceObj = resourceData(
     state,
     resourceType,
@@ -4190,6 +4219,7 @@ export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceTyp
   ).merged;
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
+
   return ['http', 'rest'].includes(appType);
 }
 
@@ -4317,6 +4347,7 @@ export function isPreviewPanelAvailableForResource(
     'connections',
     resourceObj._connectionId
   );
+
   if (isDataLoaderExport(state, resourceId, flowId)) {
     return true;
   }
@@ -4569,10 +4600,11 @@ export const getScriptContext = createSelector(
 // #region suiteScript
 export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
   const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+
   return sections.map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
   }));
 }
 
@@ -4582,6 +4614,7 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
   const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
   let selectedGeneral = general;
+
   if (Array.isArray(general)) {
     selectedGeneral = general.find(s => s.title === 'General');
   }
@@ -4591,7 +4624,7 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
       ...sections] : sections).map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
   }));
 }
 
@@ -4721,7 +4754,6 @@ export const suiteScriptResourceData = (
   return data;
 };
 
-
 export const suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
@@ -4741,7 +4773,6 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   let requiredFlows = [];
   const allSections = sections;
 
-
   const selectedSection =
       allSections.find(
         sec =>
@@ -4757,17 +4788,18 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   }
   const { fields, sections: subSections } = selectedSection;
 
-
   let flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
     integrationId: id,
     ssLinkedConnectionId,
   });
+
   flows = flows
     .filter(f => requiredFlows.includes(f.flowGUID))
     .sort(
       (a, b) => requiredFlows.indexOf(a.flowGUID) - requiredFlows.indexOf(b.flowGUID)
     );
+
   return {
     flows,
     fields,
@@ -4892,7 +4924,6 @@ export function suiteScriptIAFormSaving(
     { ssLinkedConnectionId, integrationId }
   );
 }
-
 
 export function suiteScriptIAFormState(
   state,
@@ -5111,6 +5142,7 @@ export function httpAssistantSupportsMappingPreview(state, importId) {
 
   if (_integrationId && http) {
     const connection = resource(state, 'connections', _connectionId);
+
     return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
   }
 
@@ -5178,6 +5210,7 @@ export function netsuiteAccountHasSuiteScriptIntegrations(state, connectionId) {
 
 export function canLinkSuiteScriptIntegrator(state, connectionId) {
   const preferences = userPreferences(state);
+
   if (preferences && preferences.ssConnectionIds) {
     if (preferences.ssConnectionIds.includes(connectionId)) {
       return true;
@@ -5185,10 +5218,12 @@ export function canLinkSuiteScriptIntegrator(state, connectionId) {
 
     const linkedAccounts = [];
     let connection = resource(state, 'connections', connectionId);
+
     if (!connection?.netsuite?.account || connection._connectorId) {
       return false;
     }
     const connectionAccount = connection.netsuite.account.toUpperCase();
+
     preferences.ssConnectionIds.forEach(connId => {
       connection = resource(state, 'connections', connId);
       if (connection && connection.netsuite && connection.netsuite.account) {
@@ -5205,12 +5240,14 @@ export function canLinkSuiteScriptIntegrator(state, connectionId) {
 
 export function suiteScriptIntegratorLinkedConnectionId(state, account) {
   const preferences = userPreferences(state);
+
   if (!preferences || !preferences.ssConnectionIds || !account) {
     return;
   }
 
   let linkedConnectionId;
   let connection;
+
   preferences.ssConnectionIds.forEach(connId => {
     connection = resource(state, 'connections', connId);
     if (
@@ -5219,20 +5256,23 @@ export function suiteScriptIntegratorLinkedConnectionId(state, account) {
       linkedConnectionId = connId;
     }
   });
+
   return linkedConnectionId;
 }
 
 const emptyArr = [];
+
 export function suiteScriptIntegrationAppInstallerData(state, id) {
   if (!state) return null;
   const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
-  const modifiedSteps = produce(installer.steps || emptyArr, (draft) => {
+  const modifiedSteps = produce(installer.steps || emptyArr, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
+
   return {...installer, steps: modifiedSteps};
 }
 
@@ -5262,13 +5302,13 @@ export function suiteScriptMappingsSaveStatus(state) {
   return fromSession.suiteScriptMappingsSaveStatus(state && state.session);
 }
 
-
 export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flows = suiteScriptResourceList(state, {
     resourceType: 'flows',
     integrationId,
     ssLinkedConnectionId,
   });
+
   return flows && flows.find(flow => flow._id === flowId);
 }
 
@@ -5277,24 +5317,29 @@ export function suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId
   const flow = suiteScriptFlowDetail(state, {
     integrationId,
     ssLinkedConnectionId,
-    flowId
+    flowId,
   });
+
   if (flow?.import?.netsuite?.subRecordImports?.length) {
     let selectedSubRecord = emptyObject;
-    const iterateSubRecord = (subRecords) => {
+    const iterateSubRecord = subRecords => {
       if (subRecords?.length) {
         for (let i = 0; i < subRecords.length; i += 1) {
           if (subRecords[i].mappingId === subRecordMappingId) {
             selectedSubRecord = subRecords[i];
+
             return;
           }
           iterateSubRecord(subRecords[i]?.subRecordImports);
         }
       }
     };
+
     iterateSubRecord(flow.import.netsuite.subRecordImports);
+
     return selectedSubRecord;
   }
+
   return emptyObject;
 }
 
@@ -5302,11 +5347,13 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { import: importConfig } = flow;
   const { type: importType, _connectionId } = importConfig;
+
   if (importType === 'netsuite') {
     const recordType = options.recordType || importConfig.netsuite?.recordType;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
@@ -5333,6 +5380,7 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
 
     return { data, status };
   }
+
   return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 
@@ -5340,20 +5388,24 @@ export const suiteScriptGenerates = createSelector(
   [
     (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
       const options = {};
+
       if (subRecordMappingId) {
         const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+
         options.recordType = recordType;
       }
+
       return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
     },
     (state, {ssLinkedConnectionId, integrationId, flowId}) => {
       const flow = suiteScriptFlowDetail(state, {
         integrationId,
         ssLinkedConnectionId,
-        flowId
+        flowId,
       });
+
       return flow?.import?.type;
-    }
+    },
 
   ],
   ({ data, status }, importType) => {
@@ -5374,20 +5426,22 @@ export const suiteScriptGenerates = createSelector(
 
       return 0; // names must be equal
     });
+
     return {data: generates, status};
   }
 );
-
 
 export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}) {
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { export: exportConfig } = flow;
   const { type: exportType, _connectionId } = exportConfig;
+
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
     const {recordType} = exportConfig.netsuite.realtime;
 
@@ -5414,8 +5468,10 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectMetadata',
     });
+
     return { data, status };
   }
+
   return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
 }
 
@@ -5428,17 +5484,18 @@ export const suiteScriptExtracts = createSelector(
     }
     const {data, status} = flowData;
     let formattedFields;
+
     if (status === 'received') {
       formattedFields = [];
       data?.forEach(extract => {
         formattedFields.push({
           id: extract.id || extract.value,
-          name: extract.name || extract.label || extract.id
+          name: extract.name || extract.label || extract.id,
         });
         if (flow?.export?.netsuite?.type === 'restlet' && extract.type === 'select') {
           formattedFields.push({
             id: `${extract.id}.internalid`,
-            name: `${extract.name} (InternalId)`
+            name: `${extract.name} (InternalId)`,
           });
         }
       });
@@ -5453,6 +5510,7 @@ export const suiteScriptExtracts = createSelector(
 
       return 0; // names must be equal
     });
+
     return {data: sortedFields, status};
   }
 
@@ -5462,8 +5520,9 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
   const flow = suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { import: importConfig} = flow;
 
@@ -5475,6 +5534,7 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
   const {sObjectType} = salesforce;
 
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
+
   return metadataOptionsAndResources({
     state,
     connectionId: ssLinkedConnectionId,
@@ -5495,6 +5555,7 @@ export function suiteScriptConnections(state, ssLinkedConnectionId) {
 export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
   const { resourcePath, definitionId, format } = options;
   let template;
+
   if (definitionId && format) {
     template = fileDefinition(state, definitionId, {
       format,
@@ -5547,12 +5608,15 @@ export function fileSampleData(state, { resourceId, resourceType, fileType}) {
     resourceId,
     stage,
   );
+
   if (!rawData) {
     const resourceObj = resource(state, resourceType, resourceId);
+
     if (resourceObj?.file?.type === fileType) {
       return resourceObj.sampleData;
     }
   }
+
   return rawData?.body;
 }
 export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId}) {
@@ -5562,14 +5626,17 @@ export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, r
     resourceId,
     'rawFile',
   );
+
   if (!rawData) {
     const resourceObj = suiteScriptResource(state, {resourceType, id: resourceId, ssLinkedConnectionId});
+
     if (
       resourceObj?.export?.file?.csv
     ) {
       return resourceObj.export.sampleData;
     }
   }
+
   return rawData?.body;
 }
 export const getSuitescriptMappingSubRecordList = createSelector([
@@ -5578,27 +5645,29 @@ export const getSuitescriptMappingSubRecordList = createSelector([
     flowId}) => suiteScriptFlowDetail(state, {
     integrationId,
     ssLinkedConnectionId,
-    flowId
+    flowId,
   }),
-], (flow) => {
+], flow => {
   if (flow?.import?.netsuite?.subRecordImports?.length) {
     // recursively fetch subrecordMapping
     const subRecordList = [];
-    const iterateSubRecord = (subRecords) => {
+    const iterateSubRecord = subRecords => {
       if (subRecords?.length) {
         subRecords.forEach(_subRecordImp => {
           subRecordList.push({
             id: _subRecordImp.mappingId,
-            name: `${_subRecordImp.recordType} (Subrecord)`
+            name: `${_subRecordImp.recordType} (Subrecord)`,
           });
           iterateSubRecord(_subRecordImp?.subRecordImports);
         });
       }
     };
+
     iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
 
     return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
   }
+
   return emptySet;
 });
 export function tradingPartnerConnections(
@@ -5607,6 +5676,7 @@ export function tradingPartnerConnections(
 ) {
   const connections = resourceList(state, { type: 'connections' }).resources;
   const currConnection = resource(state, 'connections', connectionId);
+
   return connections?.filter(c => (c.type === 'ftp' &&
       c.ftp.hostURI === currConnection.ftp.hostURI &&
       c.ftp.port === currConnection.ftp.port &&

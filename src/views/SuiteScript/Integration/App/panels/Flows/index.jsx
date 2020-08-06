@@ -120,7 +120,6 @@ function FlowPanel({ integrationId, ssLinkedConnectionId }) {
   );
 }
 
-
 export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
 

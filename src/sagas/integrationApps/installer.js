@@ -78,6 +78,7 @@ export function* installStep({ id, installerFunction, storeId, addOnId }) {
 }
 export function* installInitChild({id}) {
   const path = `/integrations/${id}/initChild`;
+
   try {
     const childIntegration = yield call(apiCallWithRetry, {
       path,
@@ -99,7 +100,6 @@ export function* installInitChild({id}) {
     yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
 }
-
 
 export function* installScriptStep({
   id,
@@ -323,5 +323,5 @@ export default [
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.ADD, addNewStore),
   takeLatest(actionTypes.INTEGRATION_APPS.STORE.INSTALL, installStoreStep),
-  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild)
+  takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, installInitChild),
 ];

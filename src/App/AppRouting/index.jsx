@@ -56,7 +56,6 @@ const ConnectorLicenses = loadable(() =>
   import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
 );
 
-
 const SuiteScriptIntegration = loadable(() =>
   import(
     /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
@@ -166,13 +165,12 @@ export default function AppRouting() {
         component={IntegrationAppUninstallation}
         />
 
-
       <Route
         path={[
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
-          getRoutePath('/integrations/:integrationId/:tab')
+          getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
         />

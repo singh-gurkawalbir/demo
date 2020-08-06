@@ -42,7 +42,7 @@ function DynaWebhookTokenGenerator(props) {
     setFieldIds = [],
     formContext,
     name,
-    provider: webHookProvider
+    provider: webHookProvider,
   } = props;
   const { value: formValues } = formContext;
   const classes = useStyles();
@@ -146,13 +146,14 @@ function DynaWebhookTokenGenerator(props) {
         </div>
       </div>
       <div>
-        {value?.match(/^[A-Za-z0-9]/) &&
+        {value?.match(/^[A-Za-z0-9]/) && (
           <div style={{display: 'inline-flex'}}>
             <WarningIcon className={classes.tokenWarning} />
             <Typography variant="body2">
               Make sure to copy and store this token. For security, we won&apos;t show it again after you click Save or leave this page.
             </Typography>
-          </div>}
+          </div>
+        )}
       </div>
     </>
   );

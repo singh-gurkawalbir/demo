@@ -188,6 +188,7 @@ export default function (state = {}, action) {
 
       case actionTypes.FLOW_DATA.RESET_STAGES: {
         const flow = draft[flowId];
+
         if (!flow) break;
         // Fetch first occurence of resourceId usage in flow
         const pageGeneratorIndexToReset = flow.pageGenerators.findIndex(

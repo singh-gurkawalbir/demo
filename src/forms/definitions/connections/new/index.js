@@ -1,6 +1,5 @@
 import {applicationsList} from '../../../../constants/applications';
 
-
 export default {
   preSave: ({ application, ...rest }) => {
     const applications = applicationsList();

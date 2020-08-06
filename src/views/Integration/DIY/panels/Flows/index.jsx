@@ -49,6 +49,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const flowsFilterConfig = { ...flowFilter, type: 'flows' };
   const isIntegrationApp = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', integrationId);
+
     return !!(integration && integration._connectorId);
   });
   const allFlows = useSelectorMemo(
@@ -153,7 +154,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           data={flows}
           filterKey={filterKey}
           {...flowTableMeta}
-          actionProps={{ resourceType: 'flows' }}
+          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows' }}
         />
       </LoadResources>
     </div>

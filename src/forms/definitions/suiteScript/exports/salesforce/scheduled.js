@@ -65,7 +65,7 @@ export default {
             fields: [
               'export.salesforce.soqlErrorMessageField.id',
             ],
-          }
+          },
         ],
       },
     ],

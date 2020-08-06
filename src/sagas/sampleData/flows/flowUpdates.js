@@ -31,6 +31,7 @@ function* updateResponseMapping({ flowId, resourceIndex }) {
   const resourceToReset = pageProcessors[resourceIndex];
   const resourceType = resourceToReset.type === 'export' ? 'exports' : 'imports';
   const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', resourceType)];
+
   if (resourceToReset) {
     yield put(
       actions.flowData.resetStages(
@@ -67,6 +68,7 @@ export function* updateFlowOnResourceUpdate({
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
     const stagesToReset = [];
     const updatedStage = getResourceStageUpdatedFromPatch(patch);
+
     // If there is an updatedStage -> get list of all stages to update from that stage
     if (updatedStage) {
       stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));

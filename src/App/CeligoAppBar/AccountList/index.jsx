@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   accountListPopper: {
     maxWidth: 250,
-    left: '124px !important',
+    left: '116px !important',
     top: '5px !important',
   },
   accountListPopperArrow: {
@@ -204,7 +204,7 @@ export default function AccountList() {
         anchorEl={anchorEl}
         classes={{
           popper: classes.accountListPopper,
-          arrow: classes.accountListPopperArrow
+          arrow: classes.accountListPopperArrow,
         }}
         placement="bottom-end"
         onClose={handleClose}>

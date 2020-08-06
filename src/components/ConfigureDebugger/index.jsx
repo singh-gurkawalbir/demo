@@ -15,10 +15,9 @@ import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import useConfirmDialog from '../ConfirmDialog';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
-
 const useStyles = makeStyles(theme => ({
   submit: {
-    margin: theme.spacing(3, 1, 0, 0)
+    margin: theme.spacing(3, 1, 0, 0),
   },
   cancel: {
     marginTop: theme.spacing(3),
@@ -110,7 +109,7 @@ export default function ConfigureDebugger(props) {
           label: 'No, go back',
           color: 'secondary',
         },
-      ]
+      ],
     });
   }, [onClose, confirmDialog]);
 
@@ -122,6 +121,7 @@ export default function ConfigureDebugger(props) {
       onClose,
     }
   );
+
   // TODO @Raghu: Convert this into a Right Drawer
   return (
     <Drawer

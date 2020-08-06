@@ -8,7 +8,7 @@ import {
   TabComponentSimple,
   TabComponentWithoutSave,
   TabComponentWithoutSaveVertical,
-  SuiteScriptTabIACompleteSave
+  SuiteScriptTabIACompleteSave,
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
 import BoxComponents from './BoxComponents';
@@ -58,6 +58,7 @@ export default function FormGenerator(props) {
 
     return getCorrespondingFieldMap(fields, fieldMap);
   }, [fieldMap, fields]);
+
   if (!layout || !fieldMap) return null;
 
   const fieldsComponent = fields && (

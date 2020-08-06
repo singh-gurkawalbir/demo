@@ -9,7 +9,6 @@ import Spinner from '../../../Spinner';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
-
 /**
  * TODO: Azhar to check and update the button styles
  */

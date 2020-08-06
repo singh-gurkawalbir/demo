@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
       width: 1,
       position: 'absolute',
       right: -12,
-    }
+    },
   },
   previewCheckbox: {
     marginLeft: 8,
@@ -90,7 +90,7 @@ const useStyles = makeStyles(theme => ({
   previewBtnContainer: {
     display: 'flex',
     minHeight: 29,
-  }
+  },
 }));
 
 export default function ToggleEditorDialog(props) {
@@ -173,7 +173,6 @@ export default function ToggleEditorDialog(props) {
       onClose();
     }
   }, [confirmDialog, isEditorDirty, onClose]);
-
 
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(activeEditorId));

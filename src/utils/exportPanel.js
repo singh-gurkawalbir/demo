@@ -28,6 +28,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
 
   // Handles File based preview stage
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
+
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
     return [
       { label: 'Parsed output', value: 'parse' },
@@ -87,6 +88,7 @@ const formatPreviewData = records => {
 
   if (Array.isArray(records)) {
     const rows = [];
+
     records.forEach(record => rows.push(record));
     page_of_records.push({rows});
   } else {
@@ -172,12 +174,13 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
   const { headers, ...rest } = (bodyHeaderData && bodyHeaderData[0]) || {};
-  const { body, ...others} = rest || {};
+  const { body, url, ...others} = rest || {};
+
   return {
     body: JSON.stringify(safeParse(body), null, 2),
     headers: JSON.stringify(safeParse(headers), null, 2),
-    other: JSON.stringify(safeParse(others), null, 2)
+    other: JSON.stringify(safeParse(others), null, 2),
   };
 };
 
-export const getPostUrl = requestData => requestData?.data?.[0]?.url;
+export const getRequestURL = requestData => requestData?.data?.[0]?.url;

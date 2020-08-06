@@ -97,7 +97,7 @@ export default function menuItems(
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
         { label: 'Templates', path: '/templates', Icon: DataLoaderIcon },
-        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors', },
+        { label: 'Integration Apps', Icon: IntegrationAppsIcon, path: '/connectors' },
         { label: 'Recycle bin', path: '/recycleBin', Icon: RecycleBinIcon },
       ],
     },
@@ -129,7 +129,7 @@ export default function menuItems(
       label: 'Celigo University',
       Icon: UniversityIcon,
       href: getUniversityUrl,
-      component: 'a'
+      component: 'a',
     },
     {
       label: 'Marketplace',

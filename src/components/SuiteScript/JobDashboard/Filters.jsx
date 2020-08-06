@@ -161,7 +161,7 @@ export default function Filters({
           data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
-          control={
+          control={(
             <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={hideEmpty}
@@ -169,7 +169,7 @@ export default function Filters({
               color="primary"
               onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
-          }
+          )}
         />
       </div>
 

@@ -18,15 +18,17 @@ const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
 const getLabel = (items, value) => {
   const item = items.find(item => item.value === value);
+
   if (typeof item?.label === 'string') {
     return item.label;
   }
   if (item?.optionSearch) {
     return item.optionSearch;
   }
+
   return '';
 };
-const optionSearch = (search) => ({label, optionSearch}) => search && (
+const optionSearch = search => ({label, optionSearch}) => search && (
   (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
  (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
 const useAutoScrollOption = (items, open, listRef, value) => {
@@ -42,22 +44,25 @@ const useAutoScrollOption = (items, open, listRef, value) => {
   useEffect(() => {
     // clear out search result after
     const timerId = setTimeout(() => setSearch(''), AUTO_CLEAR_SEARCH);
+
     return () => {
       clearTimeout(timerId);
     };
   }, [search]);
-  const keydownListener = useCallback((e) => {
+  const keydownListener = useCallback(e => {
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
     }
     if (e.keyCode === 38) {
       if (scrolIndex <= 0) { return; }
       setScrolIndex(index => index - 1);
+
       return;
     }
     if (e.keyCode === 40) {
       if (scrolIndex >= items.length) { return; }
       setScrolIndex(index => index + 1);
+
       return;
     }
     if (e.key) {
@@ -78,6 +83,7 @@ const useAutoScrollOption = (items, open, listRef, value) => {
     if (open) {
       window.addEventListener('keydown', keydownListener, true);
     }
+
     return () => window.removeEventListener('keydown', keydownListener, true);
   }, [keydownListener, open]);
 
@@ -91,10 +97,11 @@ const useAutoScrollOption = (items, open, listRef, value) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrolIndex]);
+
   return scrolIndex;
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   fieldWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -105,13 +112,13 @@ const useStyles = makeStyles((theme) => ({
   focusVisibleMenuItem: {
     backgroundColor: theme.palette.secondary.lightest,
     transition: 'all .8s ease',
-  }
+  },
 }));
-
 
 const Row = ({ index, style, data }) => {
   const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id} = data;
   const { label, value, subHeader, disabled = false } = items[index];
+
   if (subHeader) {
     return (
       <ListSubheader disableSticky key={subHeader} style={style}>
@@ -143,7 +150,6 @@ const Row = ({ index, style, data }) => {
   );
 };
 
-
 export default function DynaSelect(props) {
   const {
     disabled,
@@ -159,7 +165,7 @@ export default function DynaSelect(props) {
     className,
     label,
     onFieldChange,
-    skipSort
+    skipSort,
   } = props;
 
   const listRef = React.createRef();
@@ -223,7 +229,6 @@ export default function DynaSelect(props) {
   } else {
     finalTextValue = value;
   }
-
 
   const renderValue = useCallback(selected => getLabel(items, selected), [items]);
 

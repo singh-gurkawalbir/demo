@@ -9,7 +9,6 @@ import Spinner from '../../Spinner';
 import CodeEditor from '../../CodeEditor';
 import ButtonGroup from '../../ButtonGroup';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -47,6 +46,7 @@ function DrawerContent({jobId, flowJobId}) {
     if (!retryId) return undefined;
 
     const meta = selectors.jobErrorRetryObject(state, retryId);
+
     return meta?.retryData;
   });
 

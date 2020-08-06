@@ -113,6 +113,7 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
       onSave: handleSubmit,
     }
   );
+
   return (
     <div className={classes.root}>
       <PanelHeader title="Settings" >

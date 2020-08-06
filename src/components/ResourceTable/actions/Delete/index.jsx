@@ -15,6 +15,7 @@ export default {
     if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
       return 'Delete license';
     }
+
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
@@ -37,6 +38,7 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
+
       if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
         type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {

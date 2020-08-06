@@ -41,7 +41,6 @@ export default {
       history.push(flowBuilderTo);
     }, [history, flowBuilderTo]);
 
-
     return null;
   },
 };

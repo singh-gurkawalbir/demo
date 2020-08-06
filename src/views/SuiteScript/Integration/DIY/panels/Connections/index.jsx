@@ -7,7 +7,6 @@ import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/L
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/connections';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
