@@ -1,7 +1,7 @@
 import React from 'react';
-import Restore from '../../components/ResourceTable/commonActions/RecycleBin/Restore';
-import Purge from '../../components/ResourceTable/commonActions/RecycleBin/Purge';
-import DateTimeDiaply from '../../components/DateTimeDisplay';
+import Restore from './actions/Restore';
+import Purge from './actions/Purge';
+import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
   columns: [
@@ -17,7 +17,7 @@ export default {
     },
     {
       heading: 'Deleted date',
-      value: r => r.doc && <DateTimeDiaply dateTime={r.doc.lastModified} />,
+      value: r => r.doc && <DateTimeDisplay dateTime={r.doc.lastModified} />,
       orderBy: 'doc.lastModified',
     },
     {

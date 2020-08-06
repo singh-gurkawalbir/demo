@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import CeligoTable from '../../components/CeligoTable';
+import ResourceTable from '../../components/ResourceTable';
 import CheckPermissions from '../../components/CheckPermissions';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
@@ -15,7 +15,6 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../reducers';
 import { PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
-import metadata from './metadata';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 
@@ -98,12 +97,7 @@ export default function RecycleBin(props) {
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
-              <CeligoTable
-                data={list.resources}
-                filterKey="recycleBinTTL"
-                {...metadata}
-                actionProps={{ resourceType: 'recycleBinTTL' }}
-              />
+              <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}
           </LoadResources>
         </div>
