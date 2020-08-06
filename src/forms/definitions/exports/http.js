@@ -410,6 +410,7 @@ export default {
               'http.method',
               'http.blobMethod',
               'http.headers',
+              'http.requestMediaType',
               'http.relativeURI',
               'http.body',
               'http.response.blobFormat',
@@ -475,7 +476,6 @@ export default {
               {
                 fields: [
                   'http.errorMediaType',
-                  'http.requestMediaType',
                 ]
               }
             ],
