@@ -250,7 +250,7 @@ export default function ClonePreview(props) {
         type: 'text',
         label: 'Name',
         helpKey: `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.name`,
-        required: true,
+        required: !isIAIntegration,
         defaultValue: isIAIntegration
           ? resource && resource.name
           : `Clone - ${resource ? resource.name : ''}`,
