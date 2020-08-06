@@ -37,7 +37,7 @@ export default function reducer(state = {}, action) {
         };
 
         break;
-      case actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR:
+      case actionTypes.EDITOR_SAMPLE_DATA.FAILED:
         draft[resourceId][flowId][fieldType] = {
           status: 'failed',
         };

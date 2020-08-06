@@ -146,7 +146,7 @@ export function* requestEditorSampleData({
         );
       } else {
         yield put(
-          actions.editorSampleData.receivedError({
+          actions.editorSampleData.failed({
             resourceId,
             flowId,
             fieldType,
@@ -156,7 +156,7 @@ export function* requestEditorSampleData({
     } catch (e) {
       // TODO: How do we show error in case getContext api fails with some response
       yield put(
-        actions.editorSampleData.receivedError({
+        actions.editorSampleData.failed({
           resourceId,
           flowId,
           fieldType,
