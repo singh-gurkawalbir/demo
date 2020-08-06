@@ -33,7 +33,7 @@ export default function AddOrSelect(props) {
     environment,
     resourceType = 'connections',
     manageOnly = false,
-    onClose
+    onClose,
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);

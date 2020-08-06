@@ -26,12 +26,13 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: 'none',
       color: theme.palette.primary.main,
-    }
+    },
   },
 }));
 
 function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
   const classes = useStyles();
+
   if (isRequested) return <Spinner size={20} />;
 
   if (variant === 'icon') {
@@ -209,7 +210,6 @@ export default function RunFlowButton({
         );
         // Removes uploaded file from session as it is no longer needed once triggered flow run
         dispatch(actions.file.reset(flowId));
-
 
         if (onRunStart) onRunStart();
         break;

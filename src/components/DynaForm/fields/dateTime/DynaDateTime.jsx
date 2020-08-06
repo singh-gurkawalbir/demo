@@ -30,6 +30,7 @@ export default function DateTimePicker(props) {
   }, shallowEqual);
 
   let userFormat;
+
   if (dateFormat) {
     if (timeFormat) {
       userFormat = `${dateFormat} ${timeFormat}`;

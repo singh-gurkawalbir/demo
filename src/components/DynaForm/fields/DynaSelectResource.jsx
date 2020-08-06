@@ -283,7 +283,7 @@ function DynaSelectResource(props) {
         patchSet.push({
           op: 'add',
           path: '/statusExport',
-          value: true
+          value: true,
         });
       }
 

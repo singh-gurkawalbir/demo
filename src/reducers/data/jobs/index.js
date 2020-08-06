@@ -601,6 +601,7 @@ export const flowJobsPagingDetails = createSelector(
 
 export function flowJobs(state, options) {
   const {paging, flowJobs, bulkRetryJobs} = state;
+
   if (!paging && !flowJobs && !bulkRetryJobs) {
     return DEFAULT_STATE.flowJobs;
   }
@@ -611,6 +612,7 @@ export function flowJobs(state, options) {
   );
 
   let allflowJobs = flowJobs;
+
   if (!options?.includeAll) {
     allflowJobs = flowJobs
       .slice(
@@ -618,6 +620,7 @@ export function flowJobs(state, options) {
         (paging.currentPage + 1) * paging.rowsPerPage
       );
   }
+
   return allflowJobs.map(job => {
     const additionalProps = {
       uiStatus: job.status,

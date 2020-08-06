@@ -12,7 +12,6 @@ import IconTextButton from '../../../../../../components/IconTextButton';
 import Help from '../../../../../../components/Help';
 import BackArrowIcon from '../../../../../../components/icons/BackArrowIcon';
 
-
 const useStyles = makeStyles(theme => ({
   titleBar: {
     background: theme.palette.background.paper,

@@ -5,7 +5,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
-
 export default function DynaRefreshableStaticMap(props) {
   const {
     connectionId,
@@ -106,7 +105,6 @@ export default function DynaRefreshableStaticMap(props) {
       )
     );
   };
-
 
   return (
     <DynaTableView

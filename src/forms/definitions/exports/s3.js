@@ -16,6 +16,7 @@ export default {
     const newValues = { ...formValues };
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
     }
@@ -147,7 +148,7 @@ export default {
 
       return {
         hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value
+        fileType: fileType.value,
       };
     }
 
@@ -218,7 +219,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be parsed)',
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
@@ -229,9 +230,9 @@ export default {
         },
         {
           field: 'file.type',
-          is: ['csv']
+          is: ['csv'],
         },
-      ], },
+      ] },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
@@ -359,7 +360,7 @@ export default {
             containers: [{fields: [
               'parsers',
               'file.csv',
-            ]}]
+            ]}],
           },
           {
             collapsed: true,
@@ -390,8 +391,8 @@ export default {
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
   },
   actions: [
     {

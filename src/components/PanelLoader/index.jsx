@@ -14,6 +14,7 @@ const useStyles = makeStyles({
 
 export default function PanelLoader({ message }) {
   const classes = useStyles();
+
   return (
     <div className={classes.spinnerWrapper}>
       <div>

@@ -1,6 +1,7 @@
 import moment from 'moment';
 
 const HOURS_LIST = Array.from(Array(24).keys());
+
 export const FREQUENCY = {
   MANUAL: { value: 'MANUAL', label: 'Manual (only when I click "Run Now")' },
   ONCE_WEEKLY: { value: '168-HOURS', label: 'Once weekly' },
@@ -30,7 +31,7 @@ export const WEEK_DAYS = {
   SUNDAY: 'Sunday',
 };
 
-export const getHoursExpression = (scheduleDetails) => {
+export const getHoursExpression = scheduleDetails => {
   const period =
     scheduleDetails.frequency.substring(
       0,
@@ -47,6 +48,7 @@ export const getHoursExpression = (scheduleDetails) => {
   let jobTime = period;
   let hoursExp = [startHour.toString()];
   const hoursExp2 = [];
+
   if (parseInt(endHour, 10) < parseInt(startHour, 10)) {
     endHour += 24;
   }
@@ -63,11 +65,13 @@ export const getHoursExpression = (scheduleDetails) => {
     jobTime += period;
   }
   hoursExp = hoursExp2.concat(hoursExp);
+
   return hoursExp.join(',');
 };
 
-export const getCronExpression = (scheduleDetails) => {
+export const getCronExpression = scheduleDetails => {
   const { frequency, startTime } = scheduleDetails;
+
   if (['', FREQUENCY.MANUAL.value].includes(frequency)) {
     return '';
   }
@@ -76,6 +80,7 @@ export const getCronExpression = (scheduleDetails) => {
   let startMin;
   const minutesInterval = 15;
   const days = [];
+
   if (frequency === FREQUENCY.EVERY_15_MINUTES.value) {
     min = '*';
   } else if (frequency === FREQUENCY.EVERY_30_MINUTES.value) {
@@ -92,16 +97,18 @@ export const getCronExpression = (scheduleDetails) => {
     startMin = moment(startTime, 'h:mm A').get('minute');
     min = [startMin, startMin + minutesInterval - 1].join('-');
   }
-  Object.keys(WEEK_DAYS).forEach((d) => {
+  Object.keys(WEEK_DAYS).forEach(d => {
     if (scheduleDetails[d.toLowerCase()] === d) {
       days.push(d.substr(0, 3));
     }
   });
+
   return [min, hour, '?', '*', days.join(',')].join(' ');
 };
 
 const getEndTimeOptions = (frequency, scheduleStartMinute) => {
   let minutes = 0;
+
   if (frequency === FREQUENCY.EVERY_30_MINUTES.value) {
     minutes = 30;
   } else if (frequency === FREQUENCY.EVERY_15_MINUTES.value) {
@@ -109,7 +116,7 @@ const getEndTimeOptions = (frequency, scheduleStartMinute) => {
   }
 
   return HOURS_LIST.map(
-    (hour) =>
+    hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
@@ -121,7 +128,7 @@ const getEndTimeOptions = (frequency, scheduleStartMinute) => {
 
 export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
   const startTimeData = HOURS_LIST.map(
-    (hour) =>
+    hour =>
       moment()
         .startOf('day')
         .add(hour, 'h')
@@ -132,12 +139,12 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
   const startTimeOptions = [];
   const endTimeOptions = [];
 
-  startTimeData.forEach((opt) => {
+  startTimeData.forEach(opt => {
     startTimeOptions.push({ label: opt, value: opt });
   });
 
   if (scheduleDetails && scheduleDetails.endTimeOptions) {
-    scheduleDetails.endTimeOptions.forEach((opt) => {
+    scheduleDetails.endTimeOptions.forEach(opt => {
       endTimeOptions.push({ label: opt, value: opt });
     });
   }
@@ -153,7 +160,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
         defaultValue: scheduleDetails.frequency,
         options: [
           {
-            items: Object.keys(FREQUENCY).map((k) => FREQUENCY[k]),
+            items: Object.keys(FREQUENCY).map(k => FREQUENCY[k]),
           },
         ],
         skipSort: true,
@@ -217,7 +224,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
         defaultValue: scheduleDetails.daysToRunOn,
         options: [
           {
-            items: Object.keys(WEEK_DAYS).map((d) => ({
+            items: Object.keys(WEEK_DAYS).map(d => ({
               value: d,
               label: WEEK_DAYS[d],
             })),
@@ -240,7 +247,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
         defaultValue: scheduleDetails.daysToRunOn[0],
         options: [
           {
-            items: Object.keys(WEEK_DAYS).map((d) => ({
+            items: Object.keys(WEEK_DAYS).map(d => ({
               value: d,
               label: WEEK_DAYS[d],
             })),
@@ -267,7 +274,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'endTime') {
-        const frequency = fields.find((field) => field.id === 'frequency')
+        const frequency = fields.find(field => field.id === 'frequency')
           .value;
         const options = getEndTimeOptions(frequency, scheduleStartMinute);
 
@@ -275,7 +282,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
           {
             items:
               (options &&
-                options.map((opt) => ({
+                options.map(opt => ({
                   label: opt,
                   value: opt,
                 }))) ||
@@ -291,6 +298,7 @@ export const getMetadata = ({ scheduleDetails, scheduleStartMinute }) => {
 
 export const getScheduleDetails = (flow, scheduleStartMinute) => {
   const details = { ...flow.scheduleDetails };
+
   if (!details.frequency) {
     details.frequency = FREQUENCY.MANUAL.value;
   }
@@ -299,7 +307,7 @@ export const getScheduleDetails = (flow, scheduleStartMinute) => {
     scheduleStartMinute
   );
   details.daysToRunOn = [];
-  Object.keys(WEEK_DAYS).forEach((d) => {
+  Object.keys(WEEK_DAYS).forEach(d => {
     if (details[d.toLowerCase()] === d) {
       details.daysToRunOn.push(d);
     }

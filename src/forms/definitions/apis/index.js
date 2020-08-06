@@ -3,6 +3,7 @@ import { isNewId } from '../../../utils/resource';
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
+
     retValues['/_scriptId'] = retValues['/script']._scriptId;
     retValues['/function'] = retValues['/script'].function;
     delete retValues['/script'];
@@ -13,6 +14,7 @@ export default {
     }
     delete retValues['/shipworksApiIdentifier'];
     delete retValues['/apiIdentifier'];
+
     return retValues;
   },
   fieldMap: {
@@ -37,7 +39,7 @@ export default {
       hookType: 'script',
       defaultValue: r => ({
         _scriptId: r._scriptId,
-        function: r.function
+        function: r.function,
       }),
       hookStage: '',
       label: 'Script',
@@ -93,7 +95,7 @@ export default {
       helpKey: 'apiIdentifier',
       type: 'apiidentifier',
       visible: r => r && !isNewId(r._id),
-      defaultValue: r => `v1/apis/${r._id}/request`
+      defaultValue: r => `v1/apis/${r._id}/request`,
     },
     shipworksApiIdentifier: {
       id: 'shipworksApiIdentifier',

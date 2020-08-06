@@ -6,7 +6,6 @@ import * as selectors from '../../../../reducers';
 import RefreshGenericResource from '../DynaRefreshableSelect/RefreshGenericResource';
 import DynaText from '../DynaText';
 
-
 export default function DynaRefreshableText(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, onFieldChange, sectionId} = props;
   const dispatch = useDispatch();
@@ -14,14 +13,12 @@ export default function DynaRefreshableText(props) {
 
   const { data, status, errorMessage } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId, commMetaPath, 'raw');
 
-
   useEffect(() => {
     if (status === 'received') {
       onFieldChange(id, data?.value);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, status, id]);
-
 
   const onRefresh = useCallback(() => {
     dispatch(

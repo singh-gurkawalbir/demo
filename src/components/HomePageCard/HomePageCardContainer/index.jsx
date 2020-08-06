@@ -1,7 +1,6 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
-import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -32,18 +31,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function HomePageCardContainer(props) {
+export default function HomePageCardContainer({ children, onClick }) {
   const classes = useStyles();
-  const { children } = props;
 
   return (
     <Paper
-      className={classNames(classes.wrapper)}
+      className={classes.wrapper}
       elevation={0}
-      onClick={props.onClick}>
+      onClick={onClick}>
       <div>{children}</div>
     </Paper>
   );
 }
-
-export default HomePageCardContainer;

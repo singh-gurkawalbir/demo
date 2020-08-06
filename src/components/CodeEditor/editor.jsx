@@ -106,6 +106,7 @@ export default function CodeEditor({
 
   if (skipDelay) v = value;
   const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
+
   return (
     <>
       <AceEditor

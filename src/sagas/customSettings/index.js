@@ -12,6 +12,7 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   if (!resource) return; // nothing to do.
   let initScriptId; let
     initFunc;
+
   if (resource.settingsForm &&
     resource.settingsForm.init) {
     initScriptId = resource.settingsForm.init._scriptId;

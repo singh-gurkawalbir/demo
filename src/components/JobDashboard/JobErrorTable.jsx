@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
 }));
 
@@ -488,7 +488,7 @@ function JobErrorTable({
               className={classes.btnErrorTable}
               onClick={handleDownloadAllErrorsClick}
               disabled={isJobInProgress}>
-              Download all errors
+              Download all errors1
             </Button>
             <Button
               data-test="uploadProcessedErrors"
@@ -564,8 +564,8 @@ function JobErrorTable({
                   {
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => r.resolved ?
-                      (<span className={classes.resolved}>Yes</span>)
+                    value: r => r.resolved
+                      ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
                   },
                   {
@@ -594,11 +594,13 @@ function JobErrorTable({
                   {
                     heading: 'Retry data',
                     align: 'center',
-                    value: r => <EditRetryCell
-                      retryId={r._retryId}
-                      isEditable={r.metadata?.isParent &&
+                    value: r => (
+                      <EditRetryCell
+                        retryId={r._retryId}
+                        isEditable={r.metadata?.isParent &&
                       r.retryObject?.isDataEditable}
-                      dateTime={r.createdAt} />,
+                        dateTime={r.createdAt} />
+                    ),
                   },
                 ]}
               />

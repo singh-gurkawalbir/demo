@@ -5,7 +5,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import * as selectors from '../../../../reducers';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 
-
 function DynaSalesforceSelectOptionsGenerator(props) {
   const {
     id, field: fieldId,
@@ -17,18 +16,14 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   } = props;
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/refreshMetadata?field=${sectionId}.${id}&type=${fieldId}`;
 
-
   const dispatch = useDispatch();
 
   const { data, status, errorMessage } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId, commMetaPath, 'suitescript-settings-options');
 
-
   const onRefresh = useCallback(() =>
     dispatch(actions.metadata.request(ssLinkedConnectionId, commMetaPath)), [commMetaPath, dispatch, ssLinkedConnectionId], []);
 
-
   const options = useMemo(() => data || defaultFieldOptions?.[0]?.items || [], [data, defaultFieldOptions]);
-
 
   return (
     <DynaGenericSelect
@@ -40,6 +35,5 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     />
   );
 }
-
 
 export default DynaSalesforceSelectOptionsGenerator;

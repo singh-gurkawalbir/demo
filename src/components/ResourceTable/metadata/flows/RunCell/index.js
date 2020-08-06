@@ -81,5 +81,6 @@ export default function RunCell({
   return (
     <RemoveMargin>
       <RunFlowButton flowId={flowId} onRunStart={handleOnRunStart} />
-    </RemoveMargin>);
+    </RemoveMargin>
+  );
 }

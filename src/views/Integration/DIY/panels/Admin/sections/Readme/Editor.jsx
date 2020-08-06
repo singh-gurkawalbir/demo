@@ -75,7 +75,7 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
           label: 'No, go back',
           color: 'secondary',
         },
-      ]
+      ],
     });
   }, [confirmDialog, isEditorDirty, onClose]);
 

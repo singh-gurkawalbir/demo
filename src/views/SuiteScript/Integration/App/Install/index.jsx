@@ -21,7 +21,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import ConnectionDrawer from '../drawer/Connection';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: theme.spacing(2),
@@ -37,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     padding: theme.spacing(3),
   },
-  stepTable: { maxWidth: 750, },
+  stepTable: { maxWidth: 750 },
   floatRight: {
     float: 'right',
   },
@@ -101,7 +100,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [connectorId, dispatch, history, setupDone, ssIntegrationId, ssLinkedConnectionId, urlName]);
 
-  const verifySFBundle = useCallback((connectionId) => {
+  const verifySFBundle = useCallback(connectionId => {
     if (!currentStep.isTriggered && !connectionId) {
       dispatch(
         actions.suiteScript.installer.updateStep(
@@ -131,7 +130,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
-  const verifyNSBundle = useCallback((connectionId) => {
+  const verifyNSBundle = useCallback(connectionId => {
     if (!currentStep.isTriggered && !connectionId) {
       dispatch(
         actions.suiteScript.installer.updateStep(
@@ -162,8 +161,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
     }
   }, [connectorId, currentStep, dispatch, ssLinkedConnectionId, ssName]);
 
-
-  const handleStepClick = useCallback((step) => {
+  const handleStepClick = useCallback(step => {
     const {
       connectionType,
       installURL,
@@ -197,6 +195,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
       }
 
       const doc = connectionType === 'netsuite' ? NETSUITE_CONNECTION : SALESFORCE_CONNECTION;
+
       if (doc) {
         dispatch(
           actions.suiteScript.resource.patchStaged(
@@ -304,7 +303,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
   if (error) {
     enqueueSnackbar({
       message: error,
-      variant: 'error'
+      variant: 'error',
     });
   }
   if (isInstallComplete && !setupDone) {
@@ -314,7 +313,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
       </SpinnerWrapper>
     );
   }
-
 
   return (
 
@@ -327,10 +325,11 @@ export default function SuiteScriptIntegrationAppInstallation() {
 
       <div className={classes.root}>
         <div className={classes.innerContent}>
-          { packageCommStatus === COMM_STATES.LOADING &&
+          { packageCommStatus === COMM_STATES.LOADING && (
           <SpinnerWrapper>
             <Spinner size={24} />
-          </SpinnerWrapper>}
+          </SpinnerWrapper>
+          )}
           <ConnectionDrawer
             connectorId={connectorId}
             handleSubmitComplete={handleSubmitComplete} />

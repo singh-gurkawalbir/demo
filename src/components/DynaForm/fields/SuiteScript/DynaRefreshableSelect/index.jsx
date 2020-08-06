@@ -33,11 +33,9 @@ export default function DynaSelectOptionsGenerator(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-
   const { status, data, errorMessage, validationError } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     options.commMetaPath || commMetaPath,
     options.filterKey || filterKey);
-
 
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
@@ -59,6 +57,7 @@ export default function DynaSelectOptionsGenerator(props) {
       bundlePath,
 
     };
+
     if (ignoreCache) {
       opts.ignoreCache = true;
     } else {

@@ -15,7 +15,6 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${entityName}`;
   const dispatch = useDispatch();
 
-
   const { data = [], status, errorMessage } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
   const options = salesforceExportSelectOptions(data, fieldName);

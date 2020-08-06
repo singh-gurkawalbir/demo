@@ -20,6 +20,7 @@ export default (state = {}, action) => {
     integrationId,
     featureName,
   );
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.FEATURE_CHECK.REQUEST:
@@ -47,6 +48,7 @@ export default (state = {}, action) => {
   });
 };
 const emptyObj = {};
+
 export function suiteScriptIAFeatureCheckState(
   state,
   { ssLinkedConnectionId, integrationId, featureName}

@@ -16,6 +16,7 @@ export default function SuiteScriptMappingDrawer(props) {
   const isMappingLoaded = useSelector(
     state => {
       const {mappings} = selectors.suiteScriptMappings(state);
+
       return !!mappings;
     }
   );
@@ -23,6 +24,7 @@ export default function SuiteScriptMappingDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+
   return (
     <RightDrawer
       path={['mapping', ':flowId/mapping']}

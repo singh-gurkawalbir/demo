@@ -17,6 +17,7 @@ export default function AddResourceTypeCrumb({
       flowId,
     })
   );
+
   if (resourceType === 'accesstokens' || resourceType === 'connectors') {
     return `Create ${resourceLabel}`;
   }

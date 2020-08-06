@@ -6,13 +6,13 @@ import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
 import { flowAllowsScheduling, flowType } from '../../../../../../utils/suiteScript';
 
-
 export default function ScheduleCell({flow}) {
   const history = useHistory();
   const allowSchedule = flowAllowsScheduling(flow);
 
   if (!allowSchedule) {
     const type = flowType(flow);
+
     if (type !== 'Scheduled') {
       return <Chip size="small" label={type} />;
     }

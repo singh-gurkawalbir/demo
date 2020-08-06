@@ -116,6 +116,7 @@ export default function IntegrationAppAddNewStore(props) {
     if (isSetupComplete) {
       // redirect to integration Settings
       let childId;
+
       dispatch(actions.integrationApp.store.clearSteps(integrationId));
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows'));
@@ -124,6 +125,7 @@ export default function IntegrationAppAddNewStore(props) {
       dispatch(actions.resource.requestCollection('connections'));
       if (integrationStores.length > initialStores.length) {
         const newStore = differenceBy(integrationStores, initialStores, 'value');
+
         childId = newStore?.length && newStore[0].value;
       }
       if (childId) {

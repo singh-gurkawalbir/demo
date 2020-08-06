@@ -1341,7 +1341,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be generated)',
       helpKey: 'import.uploadFile',
       mode: r => r && r.file && r.file.type,
       visibleWhenAll: [
@@ -1425,9 +1425,9 @@ export default {
                 fields:
                 [
                   'file.csv',
-                ]
-              }
-            ]
+                ],
+              },
+            ],
           },
           {type: 'collapse',
             containers: [
@@ -1462,7 +1462,7 @@ export default {
                 ],
               },
             ],
-          }
+          },
         ],
       },
       {

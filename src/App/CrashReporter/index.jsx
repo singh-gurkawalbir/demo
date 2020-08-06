@@ -27,8 +27,9 @@ export default class CrashReporter extends React.Component {
         message: error.message,
         stack: error.stack,
       },
-      errorInfo
+      errorInfo,
     };
+
     reportCrash(err);
   }
 
@@ -53,7 +54,8 @@ export default class CrashReporter extends React.Component {
             }}>
             Reload
           </Button>
-        </ModalDialog>);
+        </ModalDialog>
+      );
     }
 
     return this.props.children;

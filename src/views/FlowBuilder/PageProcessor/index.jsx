@@ -226,7 +226,7 @@ const PageProcessor = ({
     resource,
     resourceId,
     resourceType,
-    index
+    index,
   ]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually

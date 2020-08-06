@@ -91,7 +91,7 @@ export default function ChangeEmail({ show, onClose }) {
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
       )}
-      {!success &&
+      {!success && (
         <div className={classes.container}>
           <DynaForm fieldMeta={changeEmailFieldMeta}>
             <DynaSubmit
@@ -101,7 +101,8 @@ export default function ChangeEmail({ show, onClose }) {
               Change email
             </DynaSubmit>
           </DynaForm>
-        </div>}
+        </div>
+      )}
     </ModalDialog>
   );
 }

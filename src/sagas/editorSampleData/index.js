@@ -47,6 +47,7 @@ export function* requestEditorSampleData({
         resourceId,
         'parse'
       );
+
       if (parsedData && parsedData.data) {
         sampleData = parsedData.data;
       }

@@ -7,7 +7,7 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 import * as selectors from '../../../../../reducers';
 
 export default {
-  label: (rowData) => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
   icon: TradingPartnerIcon,
   component: function TradingPartner({ rowData = {}}) {
     const { _id: connectionId } = rowData;
@@ -18,6 +18,7 @@ export default {
       selectors.tradingPartnerConnections(state, connectionId)
     );
     let connectionsList = '';
+
     connections.forEach(c => {
       connectionsList += `<p> ${c.name} </p>`;
     });
@@ -37,12 +38,12 @@ export default {
             label: 'Confirm',
             onClick: () => {
               updateTradingPartner();
-            }
+            },
           },
           {
             label: 'Cancel',
             color: 'secondary',
-          }]
+          }],
       });
     }, [confirmDialog, rowData?.ftp?.tradingPartner, updateTradingPartner, connectionsList]);
 

@@ -19,7 +19,6 @@ import UninstallSection from './sections/Uninstall';
 import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
 // import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
@@ -89,7 +88,7 @@ const allSections = [
     label: 'Uninstall',
     Section: UninstallSection,
     id: 'uninstall',
-  }
+  },
 ];
 const emptyObj = {};
 
@@ -111,7 +110,7 @@ export default function AdminPanel({ integrationId, childId }) {
     if (integration) {
       return {
         isIntegrationApp: !!integration._connectorId,
-        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function),
       };
     }
 
@@ -127,7 +126,7 @@ export default function AdminPanel({ integrationId, childId }) {
     isIntegrationApp,
     isParent,
     supportsChild,
-    isMonitorLevelUser
+    isMonitorLevelUser,
   });
 
   const availableSections = allSections.filter(

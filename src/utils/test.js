@@ -28,21 +28,22 @@ describe('Json paths util method', () => {
         arr2: [{
           abc: 1,
           def: 42,
-          moreArrays: [42, 42, 42]
+          moreArrays: [42, 42, 42],
         }, {
           abc: 'aaa',
           def: true,
           moreArrays2: [{
-            ghi: 'jkl'
+            ghi: 'jkl',
           }, {
-            ghi: 'mno'
-          }]
-        }]
+            ghi: 'mno',
+          }],
+        }],
       },
       b: {
-        c: 42
-      }
+        c: 42,
+      },
     };
+
     expect(getJsonPaths(sampleJSON, '', { excludeArrayIndices: true })).toEqual([
       { id: 'a.arr', type: 'array' },
       { id: 'a.arr2', type: 'array' },

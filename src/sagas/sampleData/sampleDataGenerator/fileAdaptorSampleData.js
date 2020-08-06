@@ -11,6 +11,7 @@ export default function* requestFileAdaptorSampleData({ resource }) {
       sampleData,
       resource,
     });
+
     return Array.isArray(fileSampleData) ? fileSampleData[0] : fileSampleData;
   }
 

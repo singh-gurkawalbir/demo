@@ -13,7 +13,7 @@ import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
 import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
 import SalesforceSubListDialog from './SalesforceSubList';
 
-const getAppType = (resType) => {
+const getAppType = resType => {
   if (resType === 'netsuite') return 'Netsuite';
   if (resType === 'rakuten') return 'Rakuten';
   if (resType === 'sears') return 'Sears';
@@ -80,7 +80,7 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
-    cursor: 'pointer'
+    cursor: 'pointer',
   },
   disableRefresh: {
     pointerEvents: 'none',
@@ -101,11 +101,11 @@ const useStyles = makeStyles(theme => ({
     '& > button': {
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
-    }
+    },
   },
 
 }));
-const SuiteScriptMapping = (props) => {
+const SuiteScriptMapping = props => {
   const {onClose, ssLinkedConnectionId, integrationId, flowId, subRecordMappingId } = props;
   const [state, setState] = useState({
     localMappings: [],
@@ -134,14 +134,15 @@ const SuiteScriptMapping = (props) => {
   const sfLayoutId = useSelector(state => {
     const salesforceMasterRecordTypeInfo = selectors.suiteScriptSalesforceMasterRecordTypeInfo(state, {integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     });
+
     return salesforceMasterRecordTypeInfo?.data?.recordTypeId;
   });
   const saveInProgress = useSelector(
     state => selectors.suiteScriptMappingsSaveStatus(state).saveInProgress
   );
-  const {status: importSampleDataStatus, } = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
+  const {status: importSampleDataStatus } = useSelector(state => selectors.suiteScriptGenerates(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}));
   const {status: flowSampleDataStatus} = useSelector(state => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}));
 
   const handleInit = useCallback(() => {
@@ -166,7 +167,7 @@ const SuiteScriptMapping = (props) => {
             flowId,
             options: {
               refreshCache: true,
-            }
+            },
           }
         )
       );
@@ -195,6 +196,7 @@ const SuiteScriptMapping = (props) => {
 
       if (field === 'extract' && value.indexOf('_child_') > -1) {
         dispatch(actions.suiteScript.mapping.checkForSFSublistExtractPatch(key, value));
+
         return;
       }
       if ((!key && value) || (key && _mapping[field] !== value)) {
@@ -208,14 +210,17 @@ const SuiteScriptMapping = (props) => {
                   !('hardCodedValue' in _mapping))
           ) {
             dispatch(actions.suiteScript.mapping.delete(key));
+
             return;
           }
         }
         dispatch(actions.suiteScript.mapping.patchField({ field, key, value}));
+
         return;
       }
       if (lastModifiedRowKey !== key) {
         const _lastModifiedRowKey = key === undefined ? 'new' : key;
+
         dispatch(actions.suiteScript.mapping.updateLastFieldTouched(_lastModifiedRowKey));
       }
     },
@@ -227,6 +232,7 @@ const SuiteScriptMapping = (props) => {
         return;
       }
       let value;
+
       if (sObjectType) {
         value = meta.id;
       } else if (recordType) {
@@ -237,7 +243,7 @@ const SuiteScriptMapping = (props) => {
           actions.suiteScript.mapping.patchField({
             field: 'generate',
             key: lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
-            value
+            value,
           })
         );
       }
@@ -306,6 +312,7 @@ const SuiteScriptMapping = (props) => {
 
   useEffect(() => {
     handleInit();
+
     return () => {
       dispatch(actions.suiteScript.mapping.clear());
     };
@@ -328,6 +335,7 @@ const SuiteScriptMapping = (props) => {
   }, [sfLayoutId, salesforceLayoutId]);
 
   const showPreviewPane = ['netsuite', 'salesforce'].includes(importType) && isManageLevelUser;
+
   return (
     <div className={classes.root}>
       <div
@@ -349,7 +357,7 @@ const SuiteScriptMapping = (props) => {
                 className={
                   clsx(classes.refreshButton,
                     {
-                      [classes.disableRefresh]: !isManageLevelUser
+                      [classes.disableRefresh]: !isManageLevelUser,
                     }
                   )
                 }
@@ -374,7 +382,7 @@ const SuiteScriptMapping = (props) => {
                 className={
                   clsx(classes.refreshButton,
                     {
-                      [classes.disableRefresh]: !isManageLevelUser
+                      [classes.disableRefresh]: !isManageLevelUser,
                     }
                   )
                 }
@@ -512,7 +520,7 @@ export default function SuiteScriptMappingWrapper(props) {
             ssLinkedConnectionId,
             integrationId,
             flowId,
-            options: {recordType: subRecordType}
+            options: {recordType: subRecordType},
           }
         )
       );
@@ -533,6 +541,7 @@ export default function SuiteScriptMappingWrapper(props) {
     },
     [dispatch, flowId, integrationId, ssLinkedConnectionId]
   );
+
   useEffect(() => {
     if (
       !importSampleDataLoaded &&
@@ -542,7 +551,6 @@ export default function SuiteScriptMappingWrapper(props) {
     }
   }, [importSampleDataStatus, importSampleDataLoaded, setImportSampleDataLoaded]);
 
-
   useEffect(() => {
     if (
       !flowSampleDataLoaded &&
@@ -551,7 +559,6 @@ export default function SuiteScriptMappingWrapper(props) {
       setFlowSampleDataLoaded(true);
     }
   }, [flowSampleDataLoaded, flowSampleDataStatus]);
-
 
   useEffect(() => {
     if (!importSampleData && !importSampleDataLoaded) {
@@ -570,6 +577,7 @@ export default function SuiteScriptMappingWrapper(props) {
       </SpinnerWrapper>
     );
   }
+
   return (
     <SuiteScriptMapping {...props} />
 

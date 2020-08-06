@@ -23,7 +23,7 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '
 import {
   tileStatus,
   dragTileConfig,
-  dropTileConfig
+  dropTileConfig,
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';

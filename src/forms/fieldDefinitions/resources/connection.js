@@ -13,6 +13,7 @@ export default {
       const expression = [
         { _id: { $ne: r._id } },
       ];
+
       if (r._connectorId) {
         // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
         expression.push({_connectorId: r._connectorId});
@@ -30,7 +31,7 @@ export default {
         if (r.type === 'netsuite') {
           expression.push({
             'netsuite.account': r?.netsuite?.account,
-            'netsuite.environment': r?.netsuite?.environment
+            'netsuite.environment': r?.netsuite?.environment,
           });
         }
       }
@@ -68,12 +69,14 @@ export default {
     label: 'Application',
     defaultValue: r => {
       const isNew = isNewId(r._id);
+
       if (isNew) {
         return r.application;
       }
       const applications = applicationsList();
       const application = r.assistant || (r.type === 'rdbms' ? r.rdbms.type : r.type);
       const app = applications.find(a => a.id === application) || {};
+
       return app.name;
     },
     defaultDisabled: true,
@@ -1066,6 +1069,7 @@ export default {
         if (isEuRegion()) {
           return 'https://eu.integrator.io/connection/oauth2callback';
         }
+
         return 'https://integrator.io/connection/oauth2callback';
       }
 

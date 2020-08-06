@@ -129,7 +129,6 @@ function JobTable({
     onSelectChange(jobIds);
   }
 
-
   const handleViewErrorsClick = useCallback(({
     jobId,
     parentJobId,
@@ -163,6 +162,7 @@ function JobTable({
       const urlExtractFields = history.location.pathname.split('/');
       const indexToBeStripped = urlExtractFields.length - urlExtractFields.indexOf('viewErrors');
       const strippedRoute = urlExtractFields.slice(0, -indexToBeStripped).join('/');
+
       history.replace(strippedRoute);
     }
   }, [_JobId, dispatch, flowJobId, handleViewErrorsClick, openedJobErrors, history, showErrorDialogFor]);
@@ -215,7 +215,7 @@ function JobTable({
           ))}
         </TableBody>
       </Table>
-      {(showErrorDialogFor?.jobId || _JobId) &&
+      {(showErrorDialogFor?.jobId || _JobId) && (
       <ErrorDrawer
         // for now, force tall (default)
         // height={isFlowBuilderView ? 'short' : 'tall'}
@@ -227,7 +227,8 @@ function JobTable({
         numError={showErrorDialogFor.numError}
         numResolved={showErrorDialogFor.numResolved}
         onClose={handleErrorDrawerClose}
-        />}
+        />
+      )}
     </>
   );
 }

@@ -20,6 +20,7 @@ export const SCOPES = {
   VALUE: 'value',
   SCRIPT: 'script',
 };
+
 Object.freeze(SCOPES);
 
 export function* createFormValuesPatchSet({
@@ -267,7 +268,7 @@ function* suiteScriptSubmitIA({
   ssLinkedConnectionId,
   integrationId,
   sectionId,
-  values
+  values,
 }) {
   // get IntegrationAppName
   const integration = yield select(selectors.suiteScriptResource, {
@@ -289,6 +290,7 @@ function* suiteScriptSubmitIA({
 
     if (!resp?.success) {
       yield put(actions.api.failure(path, 'GET', inferErrorMessage(resp)[0], false));
+
       return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId));
     }
   } catch (error) {
@@ -297,11 +299,13 @@ function* suiteScriptSubmitIA({
 
   // refetch settings with latest doc
   const isSuccessful = yield call(requestSuiteScriptMetadata, {resourceType: 'settings', ssLinkedConnectionId, integrationId});
+
   if (!isSuccessful) { return yield put(actions.suiteScript.iaForm.submitFailed(ssLinkedConnectionId, integrationId)); }
 
   yield put(actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
   // refresh flows after saving Suitescript IA settings
   const flowpath = `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows`;
+
   yield put(actions.resource.requestCollection(flowpath));
 }
 

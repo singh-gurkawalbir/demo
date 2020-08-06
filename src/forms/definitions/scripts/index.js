@@ -33,7 +33,7 @@ export default {
         collapsed: false,
         label: 'Script content',
         fields: ['insertFunction', 'content'],
-      }
+      },
     ],
   },
 };

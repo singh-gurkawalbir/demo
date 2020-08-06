@@ -221,8 +221,9 @@ describe('refreshHelperFunctions saga', () => {
   process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 1;
   const localStorage = {
     setItem: jest.fn(),
-    getItem: jest.fn()
+    getItem: jest.fn(),
   };
+
   Object.defineProperty(window, 'localStorage', { value: localStorage });
 
   test('should create a new helperFunction instance when there isn\'t any in the local storage ', () => {
