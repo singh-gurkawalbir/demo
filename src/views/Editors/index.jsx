@@ -120,16 +120,9 @@ export default function Editors() {
   const [editorName, setEditorName] = useState();
   const [rawData, setRawData] = useState();
   const [rawDataKey, setRawDataKey] = useState(1);
-  const [drawerKey, setDrawerKey] = useState(0);
   const handleEditorChange = useCallback(
     editorName => {
-      if (editorName === 'SettingsFormEditor') {
-        setDrawerKey(drawerKey => drawerKey + 1);
-        history.push('editors/editSettings');
-      } else {
-        history.push(`editors/${editorName}`);
-      }
-
+      history.push(`editors/${editorName}`);
       setEditorName(editorName);
     },
     [history]
@@ -143,6 +136,14 @@ export default function Editors() {
     },
     [rawDataKey]
   );
+
+  const handleClose = useCallback(() => {
+    if (editorName === 'SettingsFormEditor') {
+      history.goBack();
+    }
+    setEditorName();
+  }, [history, editorName]);
+
   const currentEditor = useMemo(() => {
     switch (editorName) {
       case 'UrlEditor':
@@ -152,7 +153,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'HttpRequestBodyEditor':
@@ -162,7 +163,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'MergeEditor':
@@ -172,7 +173,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
 
@@ -184,7 +185,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
 
@@ -195,7 +196,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
 
@@ -206,7 +207,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'JavaScriptEditor':
@@ -216,7 +217,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'FileDefinitionEditor':
@@ -226,7 +227,7 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'SQLQueryBuilderEditor':
@@ -239,7 +240,7 @@ export default function Editors() {
             data={rawData}
             defaultData={JSON.stringify({}, null, 2)}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
         );
       case 'FilterEditor':
@@ -249,13 +250,23 @@ export default function Editors() {
             id={editorName}
             data={rawData}
             onSave={handleSave}
-            onClose={setEditorName}
+            onClose={handleClose}
           />
+        );
+      case 'SettingsFormEditor':
+        return (
+          <SettingsFormEditorDrawer
+            editorId="settingsForm"
+            hideSaveAction="true"
+            settingsForm={{ form: safeParse(rawData) }}
+            onClose={handleClose}
+            path="SettingsFormEditor"
+      />
         );
       default:
         return null;
     }
-  }, [editorName, handleSave, rawData]);
+  }, [editorName, handleClose, handleSave, rawData]);
 
   return (
     <>
@@ -285,16 +296,6 @@ export default function Editors() {
           <WorkArea rawData={rawData} onChange={setRawData} />
         </main>
       </div>
-      <SettingsFormEditorDrawer
-        key={drawerKey}
-        editorId="settingsForm"
-        hideSaveAction="true"
-        // resourceId={resourceId}
-        // resourceType={resourceType}
-        settingsForm={{ form: safeParse(rawData) }}
-        // eslint-disable-next-line react/jsx-handler-names
-        onClose={history.goBack}
-      />
     </>
   );
 }
