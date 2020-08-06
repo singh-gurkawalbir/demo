@@ -117,7 +117,7 @@ export function* requestEditorSampleData({
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-
+    body[resourceType === 'imports' ? 'import' : 'export'].isHTTP = false;
     body.fieldPath = fieldType;
 
     const opts = {
@@ -125,26 +125,37 @@ export function* requestEditorSampleData({
       body,
     };
     const path = '/processors/handleBar/getContext';
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Loading',
-      hidden: false,
-    });
+    try {
+      const response = yield call(apiCallWithRetry, {
+        path,
+        opts,
+        message: 'Loading',
+        hidden: false,
+      });
 
-    if (response) {
-      const { context, templateVersion } = response;
+      if (response) {
+        const { context, templateVersion } = response;
 
-      yield put(
-        actions.editorSampleData.received({
-          flowId,
-          resourceId,
-          fieldType,
-          sampleData: context,
-          templateVersion,
-        })
-      );
-    } else {
+        yield put(
+          actions.editorSampleData.received({
+            flowId,
+            resourceId,
+            fieldType,
+            sampleData: context,
+            templateVersion,
+          })
+        );
+      } else {
+        yield put(
+          actions.editorSampleData.receivedError({
+            resourceId,
+            flowId,
+            fieldType,
+          })
+        );
+      }
+    } catch (e) {
+      // TODO: How do we show error in case getContext api fails with some response
       yield put(
         actions.editorSampleData.receivedError({
           resourceId,
