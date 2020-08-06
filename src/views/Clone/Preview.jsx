@@ -8,6 +8,7 @@ import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
@@ -248,6 +249,7 @@ export default function ClonePreview(props) {
         name: 'name',
         type: 'text',
         label: 'Name',
+        helpKey: `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.name`,
         required: true,
         defaultValue: isIAIntegration
           ? resource && resource.name
