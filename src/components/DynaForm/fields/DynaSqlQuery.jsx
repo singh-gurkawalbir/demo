@@ -11,6 +11,7 @@ import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import ModalDialog from '../../ModalDialog';
 import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -28,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
     height: theme.spacing(10),
+  },
+  dynaSqlQueryWrapper: {
+    display: 'flex',
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
@@ -126,8 +130,10 @@ export default function DynaSqlQuery(props) {
       <div className={classes.container}>
         {showEditor && editorDialog}
 
-        <FormLabel className={classes.label}>{label}</FormLabel>
-
+        <div className={classes.dynaSqlQueryWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <div
           className={classNames(
             classes.inlineEditorContainer,
