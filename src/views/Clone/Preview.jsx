@@ -89,7 +89,7 @@ export default function ClonePreview(props) {
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
   const isIAIntegration =
-    resourceType === 'integrations' && resource._connectorId;
+    !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
@@ -243,6 +243,17 @@ export default function ClonePreview(props) {
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
+      name: {
+        id: 'name',
+        name: 'name',
+        type: 'text',
+        label: 'Name',
+        required: true,
+        defaultValue: isIAIntegration
+          ? resource && resource.name
+          : `Clone - ${resource ? resource.name : ''}`,
+        visible: !isIAIntegration,
+      },
       tag: {
         id: 'tag',
         name: 'tag',
@@ -250,16 +261,6 @@ export default function ClonePreview(props) {
         label: 'Tag',
         defaultValue: `Clone - ${resource ? resource.name : ''}`,
         visible: isIAIntegration,
-      },
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: isIAIntegration
-          ? resource && resource.name
-          : `Clone - ${resource ? resource.name : ''}`,
-        visible: !isIAIntegration,
       },
       environment: {
         id: 'environment',
@@ -333,8 +334,8 @@ export default function ClonePreview(props) {
             'components',
           ]
           : [
-            'tag',
             'name',
+            'tag',
             'environment',
             'description',
             'message',
