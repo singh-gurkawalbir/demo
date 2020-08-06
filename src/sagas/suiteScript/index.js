@@ -19,5 +19,5 @@ export const suiteScriptSagas = [
   ...installerSagas,
   ...importSampleDataSagas,
   ...mappingSagas,
-  ...flowSampleDataSagas
+  ...flowSampleDataSagas,
 ];

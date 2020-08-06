@@ -32,8 +32,9 @@ export default function reducer(state = {}, action) {
         const {autoEvaluate: autoEvaluateProp, ...rest} = options || {};
         const optionsCopy = deepClone(rest);
         const formattedInitOptions = init ? init(optionsCopy) : optionsCopy;
-        const autoEvaluate = (draft[id] && 'autoEvaluate' in draft[id]) ?
-          draft[id].autoEvaluate : autoEvaluateProp;
+        const autoEvaluate = (draft[id] && 'autoEvaluate' in draft[id])
+          ? draft[id].autoEvaluate : autoEvaluateProp;
+
         draft[id] = {
           processor,
           defaultOptions: formattedInitOptions,
@@ -103,11 +104,14 @@ export default function reducer(state = {}, action) {
 
       case actionTypes.EDITOR_SAVE_COMPLETE: {
         const editor = draft[id];
+
         editor.saveStatus = 'completed';
 
         const initKeys = Object.keys(editor).filter(key => key.indexOf('_init_') !== -1);
+
         initKeys.forEach(initKey => {
           const key = initKey.replace('_init_', '');
+
           editor[`_init_${key}`] = editor[key];
         });
         break;

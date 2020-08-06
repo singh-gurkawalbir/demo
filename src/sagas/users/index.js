@@ -390,9 +390,7 @@ export function* acceptSharedInvite({ resourceType, id }) {
     return true;
   }
 
-
   const userPreferences = yield select(selectors.userPreferences);
-
 
   if (
     resourceType === 'account' &&

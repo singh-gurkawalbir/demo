@@ -7,10 +7,8 @@ import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
 import ButtonsGroup from '../ButtonGroup';
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   message: {
-    marginBottom: theme.spacing(3),
     fontSize: 15,
     lineHeight: '19px',
   },
@@ -23,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     right: 0,
     top: 0,
   },
-}));
+});
 
 export const ConfirmDialog = props => {
   const {

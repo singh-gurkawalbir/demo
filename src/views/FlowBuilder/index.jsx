@@ -153,7 +153,7 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     marginLeft: -100,
-  }
+  },
 }));
 
 function FlowBuilder() {
@@ -352,6 +352,7 @@ function FlowBuilder() {
       // if user is editing an IA flow, the url is 1 segment longer.
       return history.push(parts.slice(0, 4).join('/'));
     }
+
     return history.push(parts.slice(0, 3).join('/'));
   }, [history, location]);
 
@@ -473,7 +474,7 @@ function FlowBuilder() {
       <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
-        title={
+        title={(
           <EditableText
             disabled={isViewMode}
             text={flow.name}
@@ -486,8 +487,8 @@ function FlowBuilder() {
                 : classes.editableTextInput
             }
           />
-        }
-        subtitle={
+        )}
+        subtitle={(
           <>
             Last saved:{' '}
             {isNewFlow ? (
@@ -496,7 +497,7 @@ function FlowBuilder() {
               <CeligoTimeAgo date={flow.lastModified} />
             )}
           </>
-        }
+        )}
         infoText={flow.description}>
         {totalErrors ? (
           <span className={classes.errorStatus}>

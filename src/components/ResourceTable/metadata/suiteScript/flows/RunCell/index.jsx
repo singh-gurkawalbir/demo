@@ -14,6 +14,7 @@ export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
       id: flow._integrationId,
       ssLinkedConnectionId,
     });
+
     return integration && integration.urlName;
   });
   const handleOnRunStart = useCallback(() => {

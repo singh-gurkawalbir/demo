@@ -6,12 +6,14 @@ import * as selectors from '../../../../../reducers';
 import RightDrawer from '../../../../../components/drawer/Right';
 import FlowSchedule from '../../../../../components/SuiteScript/FlowSchedule';
 
-const useStyle = makeStyles((theme) => ({
+const useStyle = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      marginLeft: theme.spacing(-1),
+      paddingRight: 0,
+    },
   },
   suiteScriptFlowScheduleDrawer: {
     '& > .MuiPaper-root': {
@@ -26,13 +28,14 @@ function RoutingWrapper(props) {
   const match = useRouteMatch();
   const flowId = props.flowId || match.params.flowId;
   const { ssLinkedConnectionId } = props;
-  const flow = useSelector((state) =>
+  const flow = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',
       id: flowId,
       ssLinkedConnectionId,
     })
   );
+
   return (
     <FlowSchedule
       flow={flow}
@@ -45,6 +48,7 @@ function RoutingWrapper(props) {
 
 export default function ScheduleDrawer(props) {
   const classes = useStyle();
+
   return (
     <RightDrawer
       path={[':flowId/schedule', 'schedule']}

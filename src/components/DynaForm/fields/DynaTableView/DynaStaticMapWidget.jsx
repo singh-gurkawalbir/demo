@@ -7,7 +7,6 @@ import DynaSelect from '../DynaSelect';
 import * as selectors from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
-
 const useStyles = makeStyles(theme => ({
   margin: {
     marginTop: '20px',

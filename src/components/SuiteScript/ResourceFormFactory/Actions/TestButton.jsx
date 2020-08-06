@@ -86,6 +86,7 @@ const TestButton = props => {
   );
 
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
+
   useEffect(() => {
     if (isTesting && !pingLoading) {
       setIsTesting(false);

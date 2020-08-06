@@ -85,9 +85,10 @@ export default function ConnectorInstallation(props) {
     supportsMultiStore,
     _connectorId,
     initChild,
-    parentId
+    parentId,
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
+
     if (integration) {
       return {
         name: integration.name,
@@ -98,33 +99,37 @@ export default function ConnectorInstallation(props) {
         supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
         _connectorId: integration._connectorId,
         integrationInstallSteps: integration.installSteps,
-        parentId: integration._parentId
+        parentId: integration._parentId,
       };
     }
+
     return emptyObject;
   }, shallowEqual
   );
   const {
     name: childIntegrationName,
     id: childIntegrationId,
-    mode: childIntegrationMode
+    mode: childIntegrationMode,
   } = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
 
     if (id) {
       const integration = selectors.resource(state, 'integrations', id);
+
       if (integration) {
         return {
           name: integration.name,
           id: integration._id,
-          mode: integration.mode
+          mode: integration.mode,
         };
       }
     }
+
     return emptyObject;
   }, shallowEqual);
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
+
     return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
@@ -141,6 +146,7 @@ export default function ConnectorInstallation(props) {
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
+
   if (openOauthConnection) {
     dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
     setConnection({
@@ -153,6 +159,7 @@ export default function ConnectorInstallation(props) {
       'connections',
       connection && connection._connectionId
     );
+
     return getConnectionType(selectedConnection);
   });
   const integrationAppName = getIntegrationAppUrlName(integrationName);
@@ -337,7 +344,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = (step) => {
+  const handleStepClick = step => {
     const {
       _connectionId,
       installURL,
@@ -456,7 +463,6 @@ export default function ConnectorInstallation(props) {
     e.preventDefault();
     openExternalUrl({url: helpUrl});
   };
-
 
   return (
     <LoadResources required resources="connections,integrations,published">

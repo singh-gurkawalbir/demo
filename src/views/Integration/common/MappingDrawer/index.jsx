@@ -41,6 +41,7 @@ function MappingDrawer({integrationId}) {
   const mappingEditorId = `${importId}-${flowId}`;
   const hasPreviewPanel = useSelector(state => {
     const mappingPreviewType = selectors.mappingPreviewType(state, importId);
+
     return !!mappingPreviewType;
   });
 

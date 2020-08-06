@@ -76,11 +76,12 @@ describe('request interceptors...testing the various stages of an api request on
 
   describe('onRequestSaga', () => {
     const csrf = 'some value';
+
     Object.defineProperty(window, 'sessionStorage', {
       value: {
-        getItem: jest.fn().mockImplementation(() => csrf)
+        getItem: jest.fn().mockImplementation(() => csrf),
       },
-      writable: true
+      writable: true,
     });
 
     test('default behavior: should make the api comm activity show up and the message of the comm activity being the path and request to "GET" if not defined', () => {

@@ -44,6 +44,7 @@ export default {
     if (!app.import && app.assistant) {
       newValues['/useTechAdaptorForm'] = true;
     }
+
     return newValues;
   },
   fieldMap: {

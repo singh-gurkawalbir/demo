@@ -36,7 +36,6 @@ export default function LicenseTable() {
   );
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
 
-
   const data = {
     production: {
       endpoints: {
@@ -82,11 +81,12 @@ export default function LicenseTable() {
         totalResources: licenseActionDetails?.totalNumberofSandboxAgents,
         totalUsedResources: licenseEntitlementUsage?.sandbox?.agentUsage?.numActive,
       },
-    }
+    },
   };
   const {resource, totalResources, totalUsedResources} = data[env][type];
 
   let metadata;
+
   if (type === 'endpoints') {
     metadata = endpointsMetadata;
   } else if (type === 'flows') {
@@ -114,6 +114,7 @@ export default function LicenseTable() {
     integrationsFilterConfig
   ).resources;
   const resourceList = [];
+
   if (type === 'endpoints') {
     resource.forEach(res => {
       res.connections.forEach(conn => {
@@ -132,15 +133,16 @@ export default function LicenseTable() {
   } else if (type === 'tradingpartners') {
     resource.forEach(res => {
       const connection = connections.find(c => (c._id === res._id));
+
       connection && resourceList.push({...connection});
     });
   } else if (type === 'agents') {
     resource.forEach(res => {
       const agent = agents.find(a => (a._id === res._id));
+
       agent && resourceList.push({...agent});
     });
   }
-
 
   return (
     <>

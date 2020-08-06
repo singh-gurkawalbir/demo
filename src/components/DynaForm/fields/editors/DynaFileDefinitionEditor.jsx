@@ -46,8 +46,10 @@ const useStyles = makeStyles(theme => ({
 function extractResourcePath(value, initialResourcePath) {
   if (value) {
     const jsonValue = safeParse(value) || {};
+
     return jsonValue.resourcePath;
   }
+
   return initialResourcePath;
 }
 
@@ -93,7 +95,7 @@ function DynaFileDefinitionEditor(props) {
   const { sampleData, rule } = useSelector(state => fileDefinitionSampleData(state, {
     userDefinitionId,
     resourceType,
-    options: { format, definitionId, resourcePath }
+    options: { format, definitionId, resourcePath },
   }), shallowEqual);
 
   const handleSave = useCallback((shouldCommit, editorValues) => {

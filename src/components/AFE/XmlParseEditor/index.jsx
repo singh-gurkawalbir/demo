@@ -34,6 +34,7 @@ export default function XmlParseEditor(props) {
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
+
   useEffect(() => {
     // trigger data change when editor is initialized and sample data changes while uploading new file
     if (data !== undefined && props.data !== data) {

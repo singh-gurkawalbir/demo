@@ -59,6 +59,7 @@ export default function* saveRawDataForFileAdaptors({
     tempResourceId,
     type,
   });
+
   // Updated this to check for undefined... as there is a case where user can upload empty file
   // In which case , we get rawData as '' which is falsy too
   if (rawData !== undefined) {

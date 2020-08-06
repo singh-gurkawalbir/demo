@@ -23,7 +23,7 @@ const getParserValue = ({
   const rules = {
     V0_json: V0_json === 'true',
     trimSpaces,
-    stripNewLineChars
+    stripNewLineChars,
   };
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
@@ -36,7 +36,7 @@ const getParserValue = ({
     {
       type: 'xml',
       version: 1,
-      rules
+      rules,
     },
   ];
 
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   fileUploadLabelWrapper: {
     width: '100%',
     marginTop: 'auto',
-    marginBottom: 'auto'
+    marginBottom: 'auto',
 
   },
   fileUploadRoot: {
@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
 
   },
   uploadContainer: {
@@ -87,11 +87,11 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
-    padding: 4
+    padding: 4,
   },
   uploadFileErrorContainer: {
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 }));
 
 export default function DynaXmlParse({
@@ -101,7 +101,7 @@ export default function DynaXmlParse({
   resourceId,
   resourceType,
   disabled,
-  uploadSampleDataFieldName
+  uploadSampleDataFieldName,
 }) {
   const classes = useStyles();
   const [formKey, setFormKey] = useState(1);
@@ -110,7 +110,7 @@ export default function DynaXmlParse({
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
-    (val) => ({ resourcePath, ...val?.[0]?.rules}),
+    val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
@@ -128,6 +128,7 @@ export default function DynaXmlParse({
 
     if (shouldCommit) {
       const parsersValue = getParserValue(editorValues);
+
       setCurrentOptions(getInitOptions(parsersValue));
 
       setForm(getForm(editorValues));
@@ -141,6 +142,7 @@ export default function DynaXmlParse({
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
+
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -172,7 +174,7 @@ export default function DynaXmlParse({
                 labelWrapper: classes.fileUploadLabelWrapper,
                 uploadFile: classes.uploadContainer,
                 actionContainer: classes.actionContainer,
-                errorContainer: classes.uploadFileErrorContainer
+                errorContainer: classes.uploadFileErrorContainer,
               }
             }
           />
@@ -183,6 +185,7 @@ export default function DynaXmlParse({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadSampleDataFieldName]
   );
+
   return (
     <>
       <div className={classes.container}>

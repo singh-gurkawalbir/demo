@@ -57,7 +57,7 @@ export default {
       ...retValues,
       '/type': 'http',
       '/assistant': 'acumatica',
-      '/http/mediaType': 'json'
+      '/http/mediaType': 'json',
     };
   },
   fieldMap: {
@@ -193,7 +193,7 @@ export default {
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
-      fieldId: 'application'
+      fieldId: 'application',
     },
   },
   layout: {

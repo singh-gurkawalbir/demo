@@ -37,7 +37,7 @@ export default function DynaNetSuiteDefaultValue(props) {
     disabled,
     onFieldChange,
     filterKey,
-    options = {}
+    options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -49,7 +49,6 @@ export default function DynaNetSuiteDefaultValue(props) {
       filterKey: options.filterKey || filterKey,
     })
   );
-
 
   const handleBlur = useCallback((id1, val) => {
     onFieldChange(id, val);
@@ -73,11 +72,10 @@ export default function DynaNetSuiteDefaultValue(props) {
     return <Spinner />;
   }
 
-
   return multiselect ? (
     <DynaRefreshableSelect {...props} />
-  ) :
-    (
+  )
+    : (
       <div className={classes.selectWrapper}>
         <div className={classes.labelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>

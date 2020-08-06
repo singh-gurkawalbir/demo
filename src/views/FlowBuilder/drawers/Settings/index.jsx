@@ -15,8 +15,10 @@ const useStyles = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      marginLeft: theme.spacing(-1),
+      paddingRight: 0,
+    },
   },
 }));
 
@@ -43,7 +45,7 @@ export default function SettingsDrawer({
           helpKey: 'flow.name',
           label: 'Name',
           defaultValue: flow && flow.name,
-          required: true
+          required: true,
         },
         description: {
           id: 'description',
@@ -98,7 +100,7 @@ export default function SettingsDrawer({
             ],
           },
           {
-            fields: ['settings']
+            fields: ['settings'],
           },
         ],
       },

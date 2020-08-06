@@ -7,6 +7,7 @@ import { getUploadedFile } from '../../../../reducers';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
+
   if (sampleData && typeof sampleData === 'string') {
     if (sampleData.indexOf('\n\r') > -1) {
       rowDelimiter = '\n\r';
@@ -18,6 +19,7 @@ function findRowDelimiter(sampleData) {
       rowDelimiter = '\n';
     }
   }
+
   return rowDelimiter;
 }
 
@@ -57,8 +59,8 @@ function DynaUploadFile(props) {
           fileProps: {
             name: rawFile.name,
             size: rawFile.size,
-            type: rawFile.type
-          }
+            type: rawFile.type,
+          },
         });
       } else {
         onFieldChange(id, file);

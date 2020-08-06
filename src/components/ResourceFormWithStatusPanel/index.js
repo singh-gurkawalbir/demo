@@ -21,11 +21,11 @@ const useStyles = makeStyles(theme => ({
       return props.variant === 'edit' ? '100%' : 660;
     },
     maxHeight: 'unset',
-    padding: 0,
+    padding: '0px !important',
   },
   notification: {
     margin: theme.spacing(2, 0),
-  }
+  },
 }));
 
 export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
@@ -38,6 +38,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height);
   }, []);
+
   return (
     <div
       className={clsx(className, {

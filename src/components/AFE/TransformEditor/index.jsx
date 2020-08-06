@@ -51,7 +51,7 @@ export default function TransformEditor(props) {
         _init_data: props.data,
         _init_rule: props.rule,
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [

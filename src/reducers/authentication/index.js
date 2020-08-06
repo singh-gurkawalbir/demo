@@ -60,7 +60,6 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH_WARNING:
         draft.warning = true;
 
-
         break;
 
       default:

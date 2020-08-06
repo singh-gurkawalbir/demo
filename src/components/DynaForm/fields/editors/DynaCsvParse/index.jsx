@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   fileUploadLabelWrapper: {
     width: '100%',
     marginTop: 'auto',
-    marginBottom: 'auto'
+    marginBottom: 'auto',
 
   },
   fileUploadRoot: {
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
 
   },
   uploadContainer: {
@@ -46,11 +46,11 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
-    padding: 4
+    padding: 4,
   },
   uploadFileErrorContainer: {
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 }));
 
 const getParserValue = ({
@@ -59,7 +59,7 @@ const getParserValue = ({
   hasHeaderRow,
   keyColumns,
   rowsToSkip,
-  trimSpaces
+  trimSpaces,
 }) => ({
   columnDelimiter,
   rowDelimiter,
@@ -79,14 +79,15 @@ export default function DynaCsvParse(props) {
     resourceId,
     resourceType,
     disabled,
-    uploadSampleDataFieldName
+    uploadSampleDataFieldName,
   } = props;
   const [formKey, setFormKey] = useState(1);
   const getInitOptions = useCallback(
-    (val) => {
+    val => {
       if (!('trimSpaces' in val)) {
         return {...val, trimSpaces: true};
       }
+
       return val;
     },
     [],
@@ -104,6 +105,7 @@ export default function DynaCsvParse(props) {
       setCurrentOptions(newOptions);
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
+
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -120,12 +122,13 @@ export default function DynaCsvParse(props) {
    * Fetches Raw data - CSV file to be parsed based on the rules
    */
   const csvData = useSelector(state => selectors.fileSampleData(state, {
-    resourceId, resourceType, fileType: 'csv'
+    resourceId, resourceType, fileType: 'csv',
   }));
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       const parsedVal = getParserValue(editorValues);
+
       setCurrentOptions(parsedVal);
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
       setFormKey(formKey + 1);
@@ -167,7 +170,7 @@ export default function DynaCsvParse(props) {
                 labelWrapper: classes.fileUploadLabelWrapper,
                 uploadFile: classes.uploadContainer,
                 actionContainer: classes.actionContainer,
-                errorContainer: classes.uploadFileErrorContainer
+                errorContainer: classes.uploadFileErrorContainer,
               }
             }
           />
@@ -178,6 +181,7 @@ export default function DynaCsvParse(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadSampleDataFieldName]
   );
+
   return (
     <>
       <div className={classes.container}>

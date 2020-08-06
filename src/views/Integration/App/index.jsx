@@ -210,6 +210,7 @@ export default function IntegrationApp(props) {
     supportsChild: !!(integration && integration.settings && integration.settings.supportsMultiStore),
     isMonitorLevelUser: accessLevel === 'monitor',
   }).length;
+
   if (!showAdminTab) {
     filterTabs.push('admin');
   }
@@ -303,7 +304,7 @@ export default function IntegrationApp(props) {
       <QueuedJobsDrawer />
       <CeligoPageBar
         title={integration.name}
-        titleTag={
+        titleTag={(
           <ChipInput
             disabled={!['owner', 'manage'].includes(accessLevel)}
             value={integration.tag || 'tag'}
@@ -311,7 +312,7 @@ export default function IntegrationApp(props) {
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
-        }
+        )}
         infoText={integration.description}>
         {isCloningSupported && integration && !supportsMultiStore && (
           <IconTextButton

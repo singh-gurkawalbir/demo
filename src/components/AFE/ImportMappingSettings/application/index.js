@@ -270,7 +270,7 @@ export default {
 
         if (!atleastOneValMapped) {
           return {
-            errorMessage: 'You need to map at least one value.'
+            errorMessage: 'You need to map at least one value.',
           };
         }
       }

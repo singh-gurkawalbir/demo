@@ -77,6 +77,7 @@ export function* evaluateExternalProcessor({ processorData }) {
   }
 
   const { violations, processor, body } = reqOpts;
+
   // console.log('reqOpts', reqOpts);
   if (violations) {
     return { violations };

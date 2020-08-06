@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../index';
 import {
   resourceData,
   getResourceSampleDataWithStatus,
-  isRestCsvMediaTypeExport
+  isRestCsvMediaTypeExport,
 } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
@@ -19,7 +19,7 @@ import { pageProcessorPreview } from './utils/previewCalls';
 import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
-  isAS2Resource
+  isAS2Resource,
 } from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
 /*
@@ -149,9 +149,11 @@ function* getProcessorOutput({ processorData }) {
  */
 function* updateDataForStages({resourceId, dataForEachStageMap }) {
   const stages = Object.keys(dataForEachStageMap);
+
   for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
     const stage = stages[stageIndex];
     const stageData = dataForEachStageMap[stage];
+
     yield put(actions.sampleData.update(resourceId, stageData, stage));
   }
 }
@@ -165,6 +167,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
     resourceType,
   });
   const { file: fileProps} = body || {};
+
   // If there are no editorValues passed from the editor,
   // parse the resourceBody and construct props to process file content
   if (!values.editorValues) {
@@ -180,13 +183,16 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
+
     dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
+
     return;
   }
   // For all other file types processor call gives us the JSON format based on the options user configured
   if (type === 'xlsx') {
     const { result } = yield call(getCsvFromXlsx, file);
+
     dataForEachStageMap.csv = { data: [{ body: result }] };
     // save csv content of xlsx file uploaded to be 'data' for the processor call
     processorData.data = result;
@@ -206,6 +212,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   }
   processorData.processor = processorData.processor || PARSERS[type];
   const processorOutput = yield call(getProcessorOutput, { processorData });
+
   if (processorOutput && processorOutput.data) {
     dataForEachStageMap.parse = processorOutput.data;
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
@@ -230,10 +237,12 @@ function* fetchExportPreviewData({
     resourceType,
   });
   const isRestCsvExport = yield select(isRestCsvMediaTypeExport, resourceId);
+
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
   if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
     // extract all details needed for a file sampledata
     const { data: fileDetails } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
+
     if (!fileDetails) {
       // when no file uploaded , try fetching sampleData on resource
       const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
@@ -241,6 +250,7 @@ function* fetchExportPreviewData({
       if (parsedData) {
         return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
       }
+
       // If no sample data on resource too...
       // Show empty data representing no data is being passed
       return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
@@ -254,10 +264,11 @@ function* fetchExportPreviewData({
       file: fileDetails?.body,
       formValues: values,
     };
+
     return yield call(processRawData, {
       resourceId,
       resourceType,
-      values: fileProps
+      values: fileProps,
     });
   }
   // For all other adaptors, go make preview api call for the sampleData

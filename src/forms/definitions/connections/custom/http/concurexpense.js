@@ -1,5 +1,5 @@
 export default {
-  preSave: (formValues) => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'concurexpense',

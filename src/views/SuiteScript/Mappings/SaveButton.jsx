@@ -75,6 +75,7 @@ const MappingSaveButton = props => {
 
     handleSubmitForm();
   };
+
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
       onClose();

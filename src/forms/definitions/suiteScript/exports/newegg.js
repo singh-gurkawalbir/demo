@@ -16,7 +16,7 @@ export default {
           {
             label: 'What would you like to export?',
             fields: ['export.newegg.method', 'export.newegg.methodConfig'],
-          }
+          },
         ],
       },
     ],

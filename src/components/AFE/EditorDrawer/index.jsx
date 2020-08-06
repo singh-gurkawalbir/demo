@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Button
+  Button,
 } from '@material-ui/core';
 // TODO: Azhar, please fix these icons message.
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1),
     padding: theme.spacing(1),
     marginRight: theme.spacing(2),
-    display: 'flex'
+    display: 'flex',
   },
   toggleContainer: {
     display: 'flex',
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
   actions: {
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   wrapper: {
     '& Button': {
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
       width: 1,
       position: 'absolute',
       right: -12,
-    }
+    },
   },
 }));
 /**
@@ -136,7 +136,6 @@ export default function EditorDrawer(props) {
     handleClose();
   }, [editor, enquesnackbar, saveEditor, handleClose]);
 
-
   const patchEditorLayoutChange = useCallback(() => {
     dispatch(actions.editor.changeLayout(id));
   }, [dispatch, id]);
@@ -160,7 +159,7 @@ export default function EditorDrawer(props) {
           {
             label: 'No, go back',
             color: 'secondary',
-          }
+          },
         ],
       });
     } else {

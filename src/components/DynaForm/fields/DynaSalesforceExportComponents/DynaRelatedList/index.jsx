@@ -336,7 +336,6 @@ function FirstLevelModal(props) {
   );
 }
 
-
 export function useCallMetadataAndReturnStatus(props) {
   const { options: selectedSObject, connectionId } = props;
   const dispatch = useDispatch();

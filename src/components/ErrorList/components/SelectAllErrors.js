@@ -43,16 +43,16 @@ export default function SelectAllErrors({
 
   return (
     <Checkbox
-      icon={
+      icon={(
         <span>
           <CheckboxUnselectedIcon />
         </span>
-      }
-      checkedIcon={
+      )}
+      checkedIcon={(
         <span>
           <CheckboxSelectedIcon />
         </span>
-      }
+      )}
       onChange={event => handleChange(event)}
       checked={isAllSelected}
       disabled={!!actionInProgress}

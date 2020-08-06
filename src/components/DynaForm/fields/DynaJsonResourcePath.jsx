@@ -22,15 +22,16 @@ export default function DynaJsonResourcePath(props) {
       selectors.fileSampleData(state, {
         resourceId,
         resourceType,
-        fileType: 'json'
+        fileType: 'json',
       }), shallowEqual
   );
 
   if (typeof value === 'string') {
     const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, value);
+
     onFieldChange(id, {
       resourcePathToShow: value.replace(/\.?\*$/, ''),
-      resourcePathToSave: (Array.isArray(parsedJsonContent) && !value) ? '*' : value
+      resourcePathToSave: (Array.isArray(parsedJsonContent) && !value) ? '*' : value,
     });
   }
 
@@ -40,6 +41,7 @@ export default function DynaJsonResourcePath(props) {
     if (jsonContent && value && typeof value === 'object') {
       const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, value.resourcePathToShow);
       let resourcePathToSave = value.resourcePathToShow;
+
       if (Array.isArray(parsedJsonContent)) {
         if (!resourcePathToSave) {
           resourcePathToSave = '*';
@@ -55,6 +57,7 @@ export default function DynaJsonResourcePath(props) {
   const handleOnResourcePathChange = useCallback((id, newValue) => {
     const parsedJsonContent = extractSampleDataAtResourcePath(jsonContent, newValue);
     let resourcePathToSave;
+
     // If user gives * itself, we don't make any modifications as it is a valid one
     // In other cases, if parsed content is array, resourcePathToSave adds .* to save
     if (Array.isArray(parsedJsonContent) && newValue !== '*') {
@@ -65,14 +68,16 @@ export default function DynaJsonResourcePath(props) {
     }
     onFieldChange(id, {
       resourcePathToShow: newValue,
-      resourcePathToSave
+      resourcePathToSave,
     });
   }, [jsonContent, onFieldChange]);
 
-  return <DynaText
-    id={id}
-    onFieldChange={handleOnResourcePathChange}
-    value={value && value.resourcePathToShow}
-    label={label}
-/>;
+  return (
+    <DynaText
+      id={id}
+      onFieldChange={handleOnResourcePathChange}
+      value={value && value.resourcePathToShow}
+      label={label}
+/>
+  );
 }

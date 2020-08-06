@@ -7,7 +7,6 @@ import { useLoadingSnackbarOnSave } from '.';
 import { preSaveValidate } from '../../AFE/EditorDrawer/util';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
-
 export default function EditorSaveButton(props) {
   const {
     id,
@@ -48,7 +47,7 @@ export default function EditorSaveButton(props) {
     onSave,
     resourceType,
     disableSaveOnClick,
-    setDisableSaveOnClick
+    setDisableSaveOnClick,
   });
   const handleButtonClick = useCallback(() => {
     if (!preSaveValidate({ editor, enquesnackbar })) {

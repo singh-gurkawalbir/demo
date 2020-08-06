@@ -31,7 +31,7 @@ export default {
             </div>
           );
         },
-      }
+      },
     ];
 
     return columns;

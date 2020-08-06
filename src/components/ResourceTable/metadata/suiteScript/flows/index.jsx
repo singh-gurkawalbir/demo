@@ -16,11 +16,11 @@ export default {
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+      ),
     },
     {
       heading: 'Type',
-      value: resource => flowType(resource)
+      value: resource => flowType(resource),
     },
     {
       heading: 'Mapping',
@@ -29,7 +29,7 @@ export default {
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+      ),
     },
     {
       heading: 'Schedule',
@@ -38,7 +38,7 @@ export default {
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+      ),
     },
     {
       heading: 'Run',
@@ -47,7 +47,7 @@ export default {
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+      ),
     },
     {
       heading: 'Off/On',
@@ -56,7 +56,7 @@ export default {
           ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
           flow={resource}
         />
-      )
+      ),
     },
     {
       heading: !actionProps.isConnector ? 'Delete' : '',
@@ -64,12 +64,14 @@ export default {
         if (actionProps.isConnector) {
           return null;
         }
-        return (<DeleteCell
-          ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
-          flow={resource}
+
+        return (
+          <DeleteCell
+            ssLinkedConnectionId={actionProps.ssLinkedConnectionId}
+            flow={resource}
         />
         );
-      }
-    }
+      },
+    },
   ],
 };

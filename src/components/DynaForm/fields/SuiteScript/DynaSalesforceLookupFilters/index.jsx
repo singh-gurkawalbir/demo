@@ -93,7 +93,7 @@ export default function DynaSalesforceLookupFilters(props) {
     if (!disableFetch && commMetaPath) {
       dispatch(
         actions.metadata.request(connectionId, commMetaPath, {
-          ignoreCache: true
+          ignoreCache: true,
         })
       );
     }

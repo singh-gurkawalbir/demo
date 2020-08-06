@@ -6,7 +6,7 @@ import {
   NavLink,
   Redirect, Route,
   Switch,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';

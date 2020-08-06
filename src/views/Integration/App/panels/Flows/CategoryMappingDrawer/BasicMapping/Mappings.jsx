@@ -448,13 +448,13 @@ export default function ImportMapping(props) {
                     id={`fieldMappingExtract-${mapping.index}`}
                     labelName="name"
                     valueName="id"
-                    endAdornment={
+                    endAdornment={(
                       <ListIconComponent
                         mapping={mapping}
                         extractFields={extractFields}
                         generateFields={generateFields}
                       />
-                    }
+                    )}
                     value={mapping.extract || mapping.hardCodedValueTmp}
                     options={extractFields}
                     disabled={mapping.isNotEditable || disabled}

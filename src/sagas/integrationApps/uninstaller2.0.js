@@ -59,6 +59,7 @@ export function* uninstallStep({ id, formVal }) {
       )
     );
     yield put(actions.resource.requestCollection('integrations'));
+
     // once all steps are done, mark state as complete
     return yield put(
       actions.integrationApp.uninstaller2.complete(
@@ -105,6 +106,7 @@ export function* requestSteps({ id }) {
   );
 
   const visibleSteps = uninstallSteps.filter(s => !s.completed);
+
   if (!visibleSteps || visibleSteps.length === 0) {
     return yield call(uninstallStep, { id });
   }

@@ -147,20 +147,20 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           disabled={disabled}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={trimSpaces}
               data-test="trimSpaces"
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
-          }
+          )}
           label="Trim spaces"
         />
         <FormControlLabel
           disabled={disabled}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={hasHeaderRow}
@@ -171,7 +171,7 @@ export default function CsvParsePanel(props) {
                 patchEditor('hasHeaderRow', !hasHeaderRow, true);
               }}
             />
-          }
+          )}
           label="File has header"
         />
         <FormControl disabled={disabled} className={classes.formControl}>
@@ -191,7 +191,7 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           disabled={disabled || !result}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={multipleRowsPerRecord}
@@ -201,7 +201,7 @@ export default function CsvParsePanel(props) {
                 patchEditor('keyColumns', []);
               }}
             />
-          }
+          )}
           label="Multiple rows per record"
         />
         {multipleRowsPerRecord && allColumns && (

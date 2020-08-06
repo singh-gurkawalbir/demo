@@ -22,7 +22,6 @@ export default function DynaSuiteScriptTable(props) {
 
   const [shouldReset, setShouldReset] = useState(false);
 
-
   // get IntegrationAppName
   const integration = useSelector(state =>
     selectors.suiteScriptResource(state, {
@@ -32,12 +31,11 @@ export default function DynaSuiteScriptTable(props) {
     })
   );
 
-  const getCommPath = useCallback((fieldId) =>
+  const getCommPath = useCallback(fieldId =>
     `suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/settings/refreshMetadata?field=${id}&type=${fieldId}&isSVBConnector=${integration?.urlName === 'svbns'}`,
   [id, integration?.urlName, integrationId, ssLinkedConnectionId]);
 
-
-  const handleRefreshClick = useCallback((field) => {
+  const handleRefreshClick = useCallback(field => {
     dispatch(
       actions.metadata.refresh(
         ssLinkedConnectionId,
@@ -55,10 +53,11 @@ export default function DynaSuiteScriptTable(props) {
 
   const isLoading = useMemo(() => ({
     extracts: statusExtracts === 'refreshed',
-    generates: statusGenerates === 'refreshed'
+    generates: statusGenerates === 'refreshed',
   }), [statusExtracts, statusGenerates]);
   const optionsMap = useMemo(() => {
     setShouldReset(state => !state);
+
     return [
       {
         id: 'extracts',
@@ -85,7 +84,6 @@ export default function DynaSuiteScriptTable(props) {
     extracts, supportsExtractsRefresh, generateFieldHeader, generatesRefresh,
     generates, supportsGeneratesRefresh]);
 
-
   return (
     <BaseTableViewComponent
       {...props}
@@ -95,5 +93,6 @@ export default function DynaSuiteScriptTable(props) {
       shouldReset={shouldReset}
       disableDeleteRows={disabled}
       handleRefreshClickHandler={handleRefreshClick}
-      />);
+      />
+  );
 }
