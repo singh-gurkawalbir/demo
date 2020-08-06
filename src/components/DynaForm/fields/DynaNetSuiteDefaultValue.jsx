@@ -13,7 +13,7 @@ import ActionButton from '../../ActionButton';
 const useStyles = makeStyles(() => ({
   formControl: {
     display: 'flex',
-    flexDirection: 'row !important',
+    flexDirection: 'row',
     '& > div:first-child': { width: '100%' },
   },
   labelWrapper: {
@@ -82,7 +82,7 @@ export default function DynaNetSuiteDefaultValue(props) {
       )
     );
   }, [commMetaPath, connectionId, dispatch, options.commMetaPath]);
-  if (!status) {
+  if (!status || status === 'requested') {
     return <Spinner />;
   }
 
