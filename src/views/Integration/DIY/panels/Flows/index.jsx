@@ -6,7 +6,7 @@ import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import AttachFlowsDialog from '../../../../../components/AttachFlows';
-import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
+import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import CeligoTable from '../../../../../components/CeligoTable';
 import LoadResources from '../../../../../components/LoadResources';
 import IconTextButton from '../../../../../components/IconTextButton';

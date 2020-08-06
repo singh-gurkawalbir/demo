@@ -1,6 +1,6 @@
 import React from 'react';
-import Restore from '../../components/ResourceTable/actions/RecycleBin/Restore';
-import Purge from '../../components/ResourceTable/actions/RecycleBin/Purge';
+import Restore from '../../components/ResourceTable/commonActions/RecycleBin/Restore';
+import Purge from '../../components/ResourceTable/commonActions/RecycleBin/Purge';
 import DateTimeDiaply from '../../components/DateTimeDisplay';
 
 export default {

@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import { Typography } from '@material-ui/core';
-import Delete from '../../../components/ResourceTable/actions/Delete';
-import Edit from '../../../components/ResourceTable/actions/Edit';
+import Delete from '../../../components/ResourceTable/commonActions/Delete';
+import Edit from '../../../components/ResourceTable/commonActions/Edit';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
 import { formatLastModified } from '../../../components/CeligoTable/util';
 

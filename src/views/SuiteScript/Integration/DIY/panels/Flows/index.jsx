@@ -5,7 +5,7 @@ import * as selectors from '../../../../../../reducers';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
-import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
+import metadata from '../../../../../../components/ResourceTable/suiteScript/flows/metadata';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 

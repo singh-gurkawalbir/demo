@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
+import metadata from '../../../../../../components/ResourceTable/suiteScript/flows/metadata';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import * as selectors from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';

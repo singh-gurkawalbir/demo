@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
-import metadata from '../../../../../components/ResourceTable/metadata/connections';
+import metadata from '../../../../../components/ResourceTable/connections/metadata';
 import * as selectors from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {

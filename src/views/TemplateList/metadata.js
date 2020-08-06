@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
-import Delete from '../../components/ResourceTable/actions/Delete';
-import UploadZipFile from '../../components/ResourceTable/actions/UploadZipFile';
-import Download from '../../components/ResourceTable/actions/Download';
-import TogglePublish from '../../components/ResourceTable/actions/TogglePublish';
+import Delete from '../../components/ResourceTable/commonActions/Delete';
+import UploadZipFile from '../../components/ResourceTable/commonActions/UploadZipFile';
+import Download from '../../components/ResourceTable/commonActions/Download';
+import TogglePublish from '../../components/ResourceTable/commonActions/TogglePublish';
+import Edit from '../../components/ResourceTable/commonActions/Edit';
 import { formatLastModified } from '../../components/CeligoTable/util';
 import ResourceDrawerLink from '../../components/ResourceDrawerLink';
-import Edit from '../../components/ResourceTable/actions/Edit';
 
 export default {
   columns: [
