@@ -3301,24 +3301,26 @@ export const makeResourceDataSelector = () => {
 export const resourceData = makeResourceDataSelector();
 
 export function isEditorV2Supported(state, resourceId, resourceType) {
-  const { merged: resource = {} } = resourceData(
+  const { merged: res = {} } = resourceData(
     state,
     resourceType,
     resourceId
   );
-
+  // AFE 2.0 not supported for Native REST Adaptor
+  if (['RESTImport', 'RESTExport'].includes(res.adaptorType)) {
+    const restConnection = resource(state, 'connections', res._connectionId);
+    return !!restConnection.isHTTP;
+  }
   return [
     'HTTPImport',
     'HTTPExport',
-    'RESTImport',
-    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(resource.adaptorType);
+  ].includes(res.adaptorType);
 }
 
 export function resourceFormField(state, resourceType, resourceId, id) {
