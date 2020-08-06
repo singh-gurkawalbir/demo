@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
@@ -56,6 +57,11 @@ export default function DynaCsvGenerate(props) {
     flowId,
   } = props;
   const [formKey, setFormKey] = useState(1);
+  const history = useHistory();
+  const match = useRouteMatch();
+  const handleEditorClick = useCallback(() => {
+    history.push(`${match.url}/${id}`);
+  }, [history, id, match.url]);
   const isHttpImport = useSelector(state => {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
 
@@ -77,7 +83,6 @@ export default function DynaCsvGenerate(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
-  const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, resourceId, resourceType });
@@ -93,9 +98,6 @@ export default function DynaCsvGenerate(props) {
     },
     [id, onFieldChange, resourceId, resourceType]
   );
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
@@ -111,24 +113,23 @@ export default function DynaCsvGenerate(props) {
   return (
     <>
       <div className={classes.csvContainer}>
-        {showEditor && (
-          <DynaEditorWithFlowSampleData
-            title="CSV generator helper"
-            id={`csvGenerate-${id}-${resourceId}`}
-            mode="csv"
-            csvEditorType="generate"
+        <DynaEditorWithFlowSampleData
+          title="CSV generator helper"
+          id={`csvGenerate-${id}-${resourceId}`}
+          mode="csv"
+          csvEditorType="generate"
           /** rule to be passed as json */
-            rule={currentOptions}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            disabled={disabled}
-            flowId={flowId}
-            editorType="csvGenerate"
-            resourceId={resourceId}
-            resourceType={resourceType}
-            fieldId="file.csv"
+          rule={currentOptions}
+          onSave={handleSave}
+          disabled={disabled}
+          flowId={flowId}
+          editorType="csvGenerate"
+          resourceId={resourceId}
+          resourceType={resourceType}
+          fieldId="file.csv"
+          path={id}
         />
-        )}
+
         <div className={classes.csvLabelWrapper}>
           <FormLabel className={classes.csvLabel}>{label}</FormLabel>
           <FieldHelp {...props} />

@@ -21,19 +21,19 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaFTPFileNameWithEditor(props) {
   const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
+  const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const handleEditorClick = useCallback(() => {
     history.push(`${match.url}/${id}`);
   }, [history, id, match.url]);
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-  };
-  const classes = useStyles();
+  }, [id, onFieldChange]);
 
   return (
     <>
