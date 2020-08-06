@@ -2082,7 +2082,7 @@ describe('integrationAppSettings reducer', () => {
         supportsMultiStore: true,
       },
       stores: [
-        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
 
@@ -2100,7 +2100,7 @@ describe('integrationAppSettings reducer', () => {
         supportsMultiStore: true,
       },
       stores: [
-        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
   });

@@ -62,7 +62,7 @@ export default function SettingsDrawer({
           type: 'multiselect',
           placeholder: 'Please select flow',
           helpKey: 'flow._runNextFlowIds',
-          label: 'Next data flow:',
+          label: 'Next integration flow:',
           displayEmpty: true,
           defaultValue: (flow && flow._runNextFlowIds) || [],
           options: [
