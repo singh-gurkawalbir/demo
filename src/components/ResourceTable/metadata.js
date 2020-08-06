@@ -11,6 +11,7 @@ import scripts from './scripts/metadata';
 import stacks from './stacks/metadata';
 import apis from './apis/metadata';
 import recycleBinTTL from './recycleBinTTL/metadata';
+import templates from './templates/metadata';
 
 export const ConnectorNameComp = ({ r }) => (
   <>{useGetConnectorName(r)}</>
@@ -30,6 +31,7 @@ const metadata = {
   accesstokens,
   apis,
   recycleBinTTL,
+  templates,
 };
 
 export default function (resourceType) {

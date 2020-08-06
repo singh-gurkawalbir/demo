@@ -1,6 +1,6 @@
-import { stringCompare } from '../../utils/sort';
+import { stringCompare } from '../utils/sort';
 
-export const templateList = [
+const templates = [
   { label: '3dCart', value: '3dcart' },
   { label: '3PL Central', value: '3plcentral' },
   { label: 'ADP', value: 'adp' },
@@ -64,8 +64,6 @@ export const templateList = [
   { label: 'Zuora', value: 'zuora' },
 ];
 
-templateList.sort(stringCompare('label'));
+templates.sort(stringCompare('label'));
 
-export default {
-  templateList,
-};
+export default templates;

@@ -6,14 +6,13 @@ import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import * as selectors from '../../reducers';
 import LoadResources from '../../components/LoadResources';
-import CeligoTable from '../../components/CeligoTable';
+import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import IconTextButton from '../../components/IconTextButton';
 import AddIcon from '../../components/icons/AddIcon';
 import InfoText from '../ResourceList/infoText';
-import metadata from './metadata';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
@@ -82,12 +81,7 @@ export default function TemplateList(props) {
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
-              <CeligoTable
-                data={list.resources}
-                filterKey="templates"
-                {...metadata}
-                actionProps={{ resourceType: 'templates' }}
-              />
+              <ResourceTable resources={list.resources} resourceType="templates" />
             )}
           </LoadResources>
         </div>

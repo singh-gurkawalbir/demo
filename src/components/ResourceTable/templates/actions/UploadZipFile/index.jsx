@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import UploadIcon from '../../../icons/UploadIcon';
+import UploadIcon from '../../../../icons/UploadIcon';
 import UploadFileDialog from './UploadFileDialog';
 
 export default {
