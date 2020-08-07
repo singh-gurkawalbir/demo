@@ -137,6 +137,11 @@ export function reloadCount(state) {
 export function isUiVersionDifferent(state) {
   return fromApp.isUiVersionDifferent(state?.app);
 }
+
+export function isUserAcceptedAccountTransfer(state) {
+  return fromApp.isUserAcceptedAccountTransfer(state?.app);
+}
+
 export function appErrored(state) {
   return fromApp.appErrored(state && state.app);
 }

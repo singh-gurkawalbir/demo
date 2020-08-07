@@ -47,11 +47,12 @@ export default function Notifications() {
     setAnchorEl(null);
   }, []);
   const handleActionClick = useCallback(
-    (resourceType, action, id) => () => {
+    (resourceType, action, id, isAccountTransfer) => () => {
+      setAnchorEl(null);
       switch (action) {
         case 'accept':
           return dispatch(
-            actions.user.sharedNotifications.acceptInvite(resourceType, id)
+            actions.user.sharedNotifications.acceptInvite(resourceType, id, isAccountTransfer)
           );
         case 'reject':
           return dispatch(
@@ -99,6 +100,7 @@ export default function Notifications() {
               <InvitationItem
                 id={n.id}
                 type={n.type}
+                isAccountTransfer={n.type === 'transfer' && n.account === true}
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}

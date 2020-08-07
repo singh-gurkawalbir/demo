@@ -200,6 +200,8 @@ export function* auth({ email, password }) {
     const {accessLevel} = yield select(selectors.resourcePermissions);
     if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
       yield put(actions.resource.requestCollection('transfers'));
+    } else {
+      yield put(actions.resource.requestCollection('transfers/invited'));
     }
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
