@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import * as selectors from '../../reducers';
@@ -89,6 +89,14 @@ export default function ClonePreview(props) {
   const resource =
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const isIAIntegration =
     !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
@@ -248,6 +256,7 @@ export default function ClonePreview(props) {
         id: 'name',
         name: 'name',
         type: 'text',
+        required: !isIAIntegration,
         label: 'Name',
         helpKey: `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.name`,
         required: !isIAIntegration,
@@ -286,6 +295,7 @@ export default function ClonePreview(props) {
         name: 'integration',
         type: 'select',
         label: 'Integration',
+        required: true,
         refreshOptionsOnChangesTo: ['environment'],
         options: [
           {
@@ -304,14 +314,14 @@ export default function ClonePreview(props) {
         type: 'labeltitle',
         disablePopover: true,
         label: resource && resource.description,
-        visible: !isIAIntegration,
+        visible: (!isIAIntegration && !!(resource?.description)),
       },
       message: {
         id: 'message',
         name: 'message',
         disablePopover: true,
         type: 'labeltitle',
-        label: `The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`,
+        label: `The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}.`,
       },
       components: {
         id: 'components',
@@ -427,19 +437,21 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
-      <CeligoPageBar title="Cloning" infoText={cloningDescription} />
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={cloningDescription} />
       <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
+              formState={formState}
               fieldMeta={fieldMeta}
               optionsHandler={fieldMeta.optionsHandler}>
               <DynaSubmit
-                skipDisableButtonForFormTouched
+                ignoreFormTouchedCheck
+                showCustomFormValidations={showCustomFormValidations}
                 disabled={cloneRequested}
                 data-test="clone"
                 onClick={clone}>
-                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
               </DynaSubmit>
             </DynaForm>
           </Grid>

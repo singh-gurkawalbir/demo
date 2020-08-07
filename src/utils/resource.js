@@ -477,9 +477,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   let integrationId;
 
   if (href.indexOf('/integrationapps') > 0) {
-    [, , , integrationId] = newurl;
-  } else if (href.indexOf('/integrations') > 0) {
     [, , integrationId] = newurl;
+  } else if (href.indexOf('/integrations') > 0) {
+    [, integrationId] = newurl;
   }
 
   if (integrationId && integrations.find(i => i._id === integrationId)) {
