@@ -65,6 +65,45 @@ export const templateList = [
 ];
 templateList.sort(stringCompare('label'));
 
-export default {
-  templateList,
+const getAssistants = () => {
+  let localStorageAssistants;
+
+  try {
+    localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
+  } catch (e) {
+    localStorageAssistants = [];
+  }
+
+  return localStorageAssistants;
 };
+export const applicationsList = () => {
+  const assistants = getAssistants();
+  const applications = templateList.filter(templates => {
+    const assistant = assistants.find(a => a.id === templates.value);
+
+    return !assistant || !templates.value;
+  });
+
+  assistants.forEach(asst => {
+    if (
+      ![
+        'yammer',
+        'hybris',
+        'etsy',
+        'concur',
+        'concurall',
+        'concurv4',
+        'constantcontact',
+      ].includes(asst.id)
+    ) {
+      applications.push({
+        value: asst.id,
+        label: asst.name
+      });
+    }
+  });
+  applications.sort(stringCompare('label'));
+
+  return applications;
+};
+export default templateList;
