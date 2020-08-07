@@ -18,6 +18,12 @@ export default {
       baseURI = 'https://mws.amazonservices.com.au';
     }
 
+    // backend not accepting empty string for iclientId. So in case iclientId is
+    // not selected, sending null instead of empty string.
+    if (!formValues['/http/_iClientId']) {
+      formValues['/http/_iClientId'] = null; // eslint-disable-line no-param-reassign
+    }
+
     return {
       ...formValues,
       '/type': 'http',
