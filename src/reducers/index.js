@@ -3149,6 +3149,20 @@ export function isDataReady(state, resource) {
   );
 }
 
+// Below selector will take resourceName as argument and returns
+// true if resource is Loading.
+export function isResourceCollectionLoading(state, resourceName) {
+  // Incase of transfers as we make two API calls for fetching
+  // transfers and invited transfers, checking for both the keys
+  if (resourceName === 'transfers') {
+    return [commKeyGen(`/${resourceName}`, 'GET'), commKeyGen(`/${resourceName}/invited`, 'GET')].some(
+      resourceKey => fromComms.isLoading(state?.comms, resourceKey)
+    );
+  }
+
+  return fromComms.isLoading(state?.comms, commKeyGen(`/${resourceName}`, 'GET'));
+}
+
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
 export function resourceStatus(
@@ -4073,53 +4087,21 @@ export function transferListWithMetadata(state) {
     resourceList(state, {
       type: 'transfers',
     }).resources || [];
-  const preferences = userProfilePreferencesProps(state);
 
-  transfers.forEach((transfer, i) => {
+  const transfersWithMetadata = produce(transfers, draft => draft.forEach(transfer => {
     let fromUser = '';
     let toUser = '';
     let integrations = [];
 
-    if (transfer.transferToUser && transfer.transferToUser._id) {
-      transfers[i].ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-    } else if (transfer.ownerUser && transfer.ownerUser._id) {
-      transfers[i].transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfers[i].isInvited = true;
+    if (transfer.transferToUser?._id && !transfer.ownerUser) {
+      fromUser = 'Me';
+      toUser = transfer.transferToUser.email;
+    } else if (transfer.ownerUser?._id && !transfer.transferToUser) {
+      fromUser = transfer.ownerUser.email;
+      toUser = 'Me';
     }
 
-    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
-      fromUser = transfers[i].ownerUser.name;
-    }
-
-    if (
-      transfers[i].isInvited &&
-      transfers[i].ownerUser &&
-      transfers[i].ownerUser.email
-    ) {
-      fromUser = transfers[i].ownerUser.email;
-    }
-
-    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
-      toUser = transfers[i].transferToUser.name;
-    }
-
-    if (
-      !transfers[i].isInvited &&
-      transfers[i].transferToUser &&
-      transfers[i].transferToUser.email
-    ) {
-      toUser = transfers[i].transferToUser.email;
-    }
-
-    if (transfer.toTransfer && transfer.toTransfer.integrations) {
+    if (transfer.toTransfer?.integrations) {
       transfer.toTransfer.integrations.forEach(i => {
         let { name } = i;
 
@@ -4138,12 +4120,12 @@ export function transferListWithMetadata(state) {
     }
 
     integrations = integrations.join('\n');
-    transfers[i].fromUser = fromUser;
-    transfers[i].toUser = toUser;
-    transfers[i].integrations = integrations;
-  });
+    transfer.fromUser = fromUser; // eslint-disable-line no-param-reassign
+    transfer.toUser = toUser; // eslint-disable-line no-param-reassign
+    transfer.integrations = integrations; // eslint-disable-line no-param-reassign
+  }));
 
-  return { resources: transfers };
+  return transfersWithMetadata;
 }
 
 export function isRestCsvMediaTypeExport(state, resourceId) {
