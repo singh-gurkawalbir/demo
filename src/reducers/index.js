@@ -137,6 +137,11 @@ export function reloadCount(state) {
 export function isUiVersionDifferent(state) {
   return fromApp.isUiVersionDifferent(state?.app);
 }
+
+export function isUserAcceptedAccountTransfer(state) {
+  return fromApp.isUserAcceptedAccountTransfer(state?.app);
+}
+
 export function appErrored(state) {
   return fromApp.appErrored(state && state.app);
 }
@@ -4044,50 +4049,14 @@ export function transferListWithMetadata(state) {
     resourceList(state, {
       type: 'transfers',
     }).resources || [];
-  const preferences = userProfilePreferencesProps(state);
 
-  transfers.forEach((transfer, i) => {
-    let fromUser = '';
-    let toUser = '';
+  const updatedTransfers = [...transfers];
+
+  updatedTransfers.forEach((transfer, i) => {
     let integrations = [];
 
-    if (transfer.transferToUser && transfer.transferToUser._id) {
-      transfers[i].ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-    } else if (transfer.ownerUser && transfer.ownerUser._id) {
-      transfers[i].transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfers[i].isInvited = true;
-    }
-
-    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
-      fromUser = transfers[i].ownerUser.name;
-    }
-
-    if (
-      transfers[i].isInvited &&
-      transfers[i].ownerUser &&
-      transfers[i].ownerUser.email
-    ) {
-      fromUser = transfers[i].ownerUser.email;
-    }
-
-    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
-      toUser = transfers[i].transferToUser.name;
-    }
-
-    if (
-      !transfers[i].isInvited &&
-      transfers[i].transferToUser &&
-      transfers[i].transferToUser.email
-    ) {
-      toUser = transfers[i].transferToUser.email;
+    if (transfer.ownerUser && transfer.ownerUser._id) {
+      updatedTransfers[i].isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -4109,12 +4078,10 @@ export function transferListWithMetadata(state) {
     }
 
     integrations = integrations.join('\n');
-    transfers[i].fromUser = fromUser;
-    transfers[i].toUser = toUser;
-    transfers[i].integrations = integrations;
+    updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: transfers };
+  return { resources: updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved') };
 }
 
 export function isRestCsvMediaTypeExport(state, resourceId) {

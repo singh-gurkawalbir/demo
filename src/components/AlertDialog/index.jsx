@@ -33,6 +33,23 @@ const StaleUIVersion = () => (
     </Button>
   </ModalDialog>
 );
+const UserAcceptedAccountTransfer = () => (
+  <ModalDialog show>
+    <Typography variant="h3">Success!</Typography>
+    <Typography>
+      You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
+    </Typography>
+    <Button
+      data-test="ok"
+      onClick={() => {
+        window.location.reload();
+      }}
+      variant="outlined"
+      color="primary">
+      Reload
+    </Button>
+  </ModalDialog>
+);
 const WarningSessionContent = () => {
   const dispatch = useDispatch();
 
@@ -90,10 +107,14 @@ export default function AlertDialog() {
     selectors.isUiVersionDifferent(state)
   );
 
+  const isUserAcceptedAccountTransfer = useSelector(state =>
+    selectors.isUserAcceptedAccountTransfer(state)
+  );
+
   useEffect(() => {
     let versionPollingTimer;
     // stop polling when version is different
-    if (isAuthenticated && !isUiVersionDifferent) {
+    if (isAuthenticated && !isUiVersionDifferent && !isUserAcceptedAccountTransfer) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
       }, Number(process.env.UI_VERSION_PING));
@@ -101,7 +122,7 @@ export default function AlertDialog() {
     return () => {
       clearTimeout(versionPollingTimer);
     };
-  }, [dispatch, isAuthenticated, isUiVersionDifferent]);
+  }, [dispatch, isAuthenticated, isUiVersionDifferent, isUserAcceptedAccountTransfer]);
 
   useEffect(() => {
     let warningSessionTimer;
@@ -128,15 +149,16 @@ export default function AlertDialog() {
 
   return (
     <div>
-      {showSessionStatus ?
+      {showSessionStatus &&
         <Dialog disableEnforceFocus open style={contentWrapper}>
           {showSessionStatus === 'warning' ? (
             <WarningSessionContent />
           ) : (
             showSessionStatus === 'expired' && <ExpiredSessionContent />
           )}
-        </Dialog>
-        : isUiVersionDifferent && <StaleUIVersion />}
+        </Dialog>}
+      {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
+      {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
     </div>
   );
 }

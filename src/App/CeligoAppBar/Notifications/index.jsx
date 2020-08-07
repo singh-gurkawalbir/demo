@@ -7,6 +7,8 @@ import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import InvitationItem from './InvitationItem';
+import LoadResources from '../../../components/LoadResources';
+import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -37,6 +39,9 @@ export default function Notifications() {
   const notifications = useSelector(state =>
     selectors.userNotifications(state)
   );
+  const isAccountOwner = useSelector(state =>
+    selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
+  );
   const handleClick = useCallback(
     event => {
       setAnchorEl(!anchorEl ? event.currentTarget : null);
@@ -47,11 +52,12 @@ export default function Notifications() {
     setAnchorEl(null);
   }, []);
   const handleActionClick = useCallback(
-    (resourceType, action, id) => () => {
+    (resourceType, action, id, isAccountTransfer) => () => {
+      setAnchorEl(null);
       switch (action) {
         case 'accept':
           return dispatch(
-            actions.user.sharedNotifications.acceptInvite(resourceType, id)
+            actions.user.sharedNotifications.acceptInvite(resourceType, id, isAccountTransfer)
           );
         case 'reject':
           return dispatch(
@@ -67,16 +73,20 @@ export default function Notifications() {
 
   if (!notifications || notifications.length === 0) {
     return (
-      <Tooltip title="No notifications" placement="bottom">
-        <IconButton size="small" color="inherit">
-          <NotificationsIcon />
-        </IconButton>
-      </Tooltip>
+      <>
+        <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
+        <Tooltip title="No notifications" placement="bottom">
+          <IconButton size="small" color="inherit">
+            <NotificationsIcon />
+          </IconButton>
+        </Tooltip>
+      </>
     );
   }
 
   return (
     <>
+      <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
       <IconButton size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
@@ -99,6 +109,7 @@ export default function Notifications() {
               <InvitationItem
                 id={n.id}
                 type={n.type}
+                isAccountTransfer={n.type === 'transfer' && n.account === true}
                 onActionClick={handleActionClick}
                 name={n.nameOrCompany}
                 email={n.email}
