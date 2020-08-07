@@ -37,7 +37,7 @@ const UserAcceptedAccountTransfer = () => (
   <ModalDialog show>
     <Typography variant="h3">Success!</Typography>
     <Typography>
-      You are now the owner of this account. Go to <em>My Account &gt; Users</em> to invite and manage permissions for other users in this account.
+      You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
     </Typography>
     <Button
       data-test="ok"
