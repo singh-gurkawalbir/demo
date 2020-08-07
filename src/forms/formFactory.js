@@ -100,8 +100,8 @@ const applyCustomSettings = ({
       draft.settings = { fieldId: 'settings' };
     }
   });
-  const preSaveProxy = (values, resource) => {
-    const newValues = preSave ? preSave(values, resource) : values;
+  const preSaveProxy = (values, resource, options) => {
+    const newValues = preSave ? preSave(values, resource, options) : values;
 
     return produce(newValues, (draft) => {
       if (Object.hasOwnProperty.call(draft, '/settings')) {
