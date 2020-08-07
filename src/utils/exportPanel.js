@@ -3,7 +3,7 @@
  */
 import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
-import { isJsonString, safeParse } from './string';
+import { isJsonString } from './string';
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -124,20 +124,8 @@ const formatBodyForRawStage = previewData => {
 
 /*
  * Used by View layer to show the preview data
- * We stringify the previewData after formatting to show in preview panel
  */
-export const getStringifiedPreviewData = (previewData, stage) => {
-  // stage specific formatting is done here
-  let formattedPreviewData;
-
-  if (stage === 'raw') {
-    formattedPreviewData = formatBodyForRawStage(previewData);
-  }
-
-  formattedPreviewData = formatPreviewData(previewData && previewData.data);
-
-  return JSON.stringify(formattedPreviewData, null, 2);
-};
+export const getFormattedPreviewData = previewData => formatPreviewData(previewData?.data);
 
 export const getPreviewDataPageSizeInfo = previewData => {
   if (!previewData || !previewData.data) return '1 Page 0 Records';
@@ -173,13 +161,13 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
   const parsedPreviewData =
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
-  const { headers, ...rest } = (bodyHeaderData && bodyHeaderData[0]) || {};
+  const { headers, ...rest } = (bodyHeaderData?.[0]) || {};
   const { body, url, ...others} = rest || {};
 
   return {
-    body: JSON.stringify(safeParse(body), null, 2),
-    headers: JSON.stringify(safeParse(headers), null, 2),
-    other: JSON.stringify(safeParse(others), null, 2),
+    body,
+    headers,
+    others,
   };
 };
 

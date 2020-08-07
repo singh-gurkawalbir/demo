@@ -5,6 +5,7 @@ import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipBoardPanel from './clipBoardPanel';
 import { getBodyHeaderFieldsForPreviewData } from '../../../../../utils/exportPanel';
+import JsonContent from '../../../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -39,7 +40,7 @@ export default function TabbedPanel(props) {
     setTabValue(newValue);
   }
 
-  const { body, headers, other } = getBodyHeaderFieldsForPreviewData(
+  const { body, headers, others } = getBodyHeaderFieldsForPreviewData(
     previewStageDataList[panelType],
     panelType
   );
@@ -50,12 +51,12 @@ export default function TabbedPanel(props) {
       case 'header':
         return headers;
       default:
-        return other;
+        return others;
     }
   }, [
     body,
     headers,
-    other,
+    others,
     tabValue,
   ]);
 
@@ -90,17 +91,17 @@ export default function TabbedPanel(props) {
           />
           <Tab
             label="Other"
-            value="other"
-            id="tab-other"
-            aria-controls="tab-other"
+            value="others"
+            id="tab-others"
+            aria-controls="tab-others"
           />
           )
         </Tabs>
         <div>
-          <pre>{tabContent}</pre>
+          <JsonContent json={tabContent} />
         </div>
       </div>
-      <ClipBoardPanel text={tabContent} />
+      <ClipBoardPanel content={tabContent} />
     </div>
   );
 }
