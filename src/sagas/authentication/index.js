@@ -70,6 +70,7 @@ export function* retrievingAssistantDetails() {
     'intercom',
     'segment',
     'shipwire',
+    'integratorio',
     'shopify',
     'slack',
     'stripe',
