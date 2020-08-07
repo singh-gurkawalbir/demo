@@ -31,7 +31,7 @@ export default {
             containers: [{
               fields: [
                 'export.file.csv',
-              ]
+              ],
             }],
           },
           {

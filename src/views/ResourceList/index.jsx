@@ -78,6 +78,7 @@ export default function ResourceList(props) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
   let createResourceLabel = '';
+
   if (resourceType) {
     if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;

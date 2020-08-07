@@ -30,6 +30,7 @@ export default (state = {}, action) => {
           rowIdentifier: 0,
           key: shortid.generate(),
         }));
+
         draft.mappings = {
           mappings: formattedMappings,
           mappingsCopy: deepClone(formattedMappings),
@@ -41,12 +42,13 @@ export default (state = {}, action) => {
           subRecordFields,
           flowId,
           status: 'success',
-          ...options
+          ...options,
         };
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.CHANGE_ORDER: {
         const { mappings } = action;
+
         draft.mappings.mappings = mappings;
         break;
       }
@@ -137,6 +139,7 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_SETTINGS: {
         const { settings, key: rowKey } = action;
+
         // ssLinkedConnectionId, integrationId, flowId, key, settings
         draft.mappings.changeIdentifier += 1;
         const index = draft.mappings.mappings.findIndex(m => m.key === rowKey);
@@ -189,6 +192,7 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.MAPPING.UPDATE_LOOKUPS:
       {
         const { lookups } = action;
+
         draft.mappings.lookups = lookups;
         const {
           isSuccess,
@@ -200,6 +204,7 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const { key, value } = action;
+
         draft.mappings.changeIdentifier += 1;
         if (!draft.mappings.incompleteGenerates) {
           draft.mappings.incompleteGenerates = [];
@@ -219,6 +224,7 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.MAPPING.UPDATE_MAPPINGS: {
         const { mappings } = action;
+
         draft.mappings.changeIdentifier += 1;
         draft.mappings.mappings = mappings;
         break;
@@ -244,17 +250,21 @@ export default (state = {}, action) => {
         break;
       case actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
         const { key } = action;
+
         draft.mappings.lastModifiedRowKey = key;
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {
         const { value } = action;
+
         draft.mappings.sfSubListExtractFieldName = value;
 
         if (!value) {
           const key = draft.mappings.lastModifiedRowKey;
+
           if (key) {
             const index = draft.mappings.mappings.findIndex(m => m.key === key);
+
             draft.mappings.mappings[index].rowIdentifier += 1;
           } else {
             draft.mappings.changeIdentifier += 1;
@@ -265,34 +275,42 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST: {
         const { value } = action;
         const extractList = deepClone(value);
+
         if (Array.isArray(extractList) && extractList.length) {
           const key = draft.mappings.lastModifiedRowKey;
+
           if (key) {
             const index = draft.mappings.mappings.findIndex(m => m.key === key);
+
             if (index !== -1) {
               const [extract] = extractList;
+
               draft.mappings.mappings[index].extract = extract;
               draft.mappings.mappings[index].rowIdentifier += 1;
               extractList.splice(0, 1);
             }
             let positionToInsert = index + 1;
+
             extractList.forEach(ext => {
               const newMapping = {
                 extract: ext,
                 rowIdentifier: 0,
                 key: shortid.generate(),
               };
+
               draft.mappings.mappings.splice(positionToInsert, 0, newMapping);
               positionToInsert += 1;
             });
           } else {
             let positionToInsert = draft.mappings.mappings.length;
+
             extractList.forEach(ext => {
               const newMapping = {
                 extract: ext,
                 rowIdentifier: 0,
                 key: shortid.generate(),
               };
+
               draft.mappings.mappings.splice(positionToInsert, 0, newMapping);
               positionToInsert += 1;
             });
@@ -327,6 +345,7 @@ export function mappingState(state) {
   if (!state || !state.mappings) {
     return emptyObj;
   }
+
   return state.mappings;
 }
 
@@ -335,7 +354,7 @@ export function mappingsChanged(state) {
     return false;
   }
 
-  const { mappings, mappingsCopy, lookups, lookupsCopy
+  const { mappings, mappingsCopy, lookups, lookupsCopy,
   } = state.mappings;
   let isMappingsChanged = mappings.length !== mappingsCopy.length;
 

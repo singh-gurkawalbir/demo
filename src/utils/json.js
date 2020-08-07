@@ -92,11 +92,13 @@ export default {
   // returns an array of keys matched with the given value for obj[key]
   getObjectKeysFromValue: (obj = {}, value) => {
     const keysList = [];
+
     Object.keys(obj).forEach(key => {
       if (obj[key] === value) {
         keysList.push(key);
       }
     });
+
     return keysList;
-  }
+  },
 };

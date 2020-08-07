@@ -593,10 +593,12 @@ export function resourceList(
       Array.isArray(searchBy) && searchBy.length
         ? `${searchBy.map(key => searchKey(r, key)).join('|')}`
         : `${r._id}|${r.name}|${r.description}`;
+
     return searchableText.toUpperCase().indexOf(keyword.toUpperCase()) >= 0;
   };
-  const matchTest = (rOrig) => {
+  const matchTest = rOrig => {
     const r = type === 'recycleBinTTL' ? rOrig?.doc : rOrig;
+
     return stringTest(r);
   };
 

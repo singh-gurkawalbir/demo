@@ -70,6 +70,7 @@ export default function CsvGenerateEditor(props) {
       );
     }
   }, [data, dispatch, editorId, editorInit, props.data]);
+
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">

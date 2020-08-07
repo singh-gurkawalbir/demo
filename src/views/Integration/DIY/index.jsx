@@ -147,7 +147,7 @@ export default function Integration(props) {
         sandbox: integration.sandbox,
         installSteps: integration.installSteps,
         uninstallSteps: integration.uninstallSteps,
-        supportsChild: integration && integration.initChild && integration.initChild.function
+        supportsChild: integration && integration.initChild && integration.initChild.function,
       };
     }
 
@@ -187,6 +187,7 @@ export default function Integration(props) {
   );
   const currentChildMode = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', childId);
+
     return integration?.mode;
   });
 
@@ -204,6 +205,7 @@ export default function Integration(props) {
   // This piece of code works when addon structure is introduced and may require minor changes.
   const {addOnStatus, hasAddOns} = useSelector(state => {
     const addOnState = selectors.integrationAppAddOnState(state, integrationId);
+
     return {addOnStatus: addOnState.status,
       hasAddOns: addOnState?.addOns?.addOnMetaData?.length > 0};
   }, shallowEqual);
@@ -220,7 +222,7 @@ export default function Integration(props) {
     supportsChild,
     children,
     isMonitorLevelUser,
-    hideSettingsTab
+    hideSettingsTab,
   }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
@@ -313,6 +315,7 @@ export default function Integration(props) {
       const newChildId = e.target.value;
       let newTab = tab;
       const childIntegration = integrations.find(i => i._id === newChildId);
+
       if (childIntegration) {
         if (childIntegration.mode === 'install') {
           return history.push(
@@ -366,7 +369,6 @@ export default function Integration(props) {
       })
     );
   }
-
 
   useEffect(() => {
     if (isIntegrationApp && !addOnStatus) {
@@ -448,6 +450,7 @@ export default function Integration(props) {
     );
   }
   let redirectToPage;
+
   if (currentChildMode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`

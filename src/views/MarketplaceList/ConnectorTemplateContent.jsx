@@ -4,7 +4,6 @@ import { Typography, Tooltip, Chip, Zoom } from '@material-ui/core';
 import Truncate from 'react-truncate';
 import ApplicationImg from '../../components/icons/ApplicationImg';
 
-
 const useStyles = makeStyles(theme => ({
   description: {
     maxHeight: '60px',

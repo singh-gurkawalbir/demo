@@ -1,5 +1,5 @@
 export default {
-  preSave: (formValues) => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'concur',
@@ -70,7 +70,7 @@ export default {
       'http.unencrypted.username',
       'http.encrypted.password',
       'http.unencrypted.consumerKey',
-      'http.auth.token.token'
+      'http.auth.token.token',
     ],
     type: 'collapse',
     containers: [

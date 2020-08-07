@@ -9,7 +9,7 @@ import metadata from '../../../../../../components/ResourceTable/metadata/suiteS
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',

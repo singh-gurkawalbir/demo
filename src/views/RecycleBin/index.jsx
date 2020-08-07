@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
+
 export const LoadingMask = ({message}) => (
   <Loader open>
     <Typography variant="h4">{message}</Typography>
@@ -35,7 +36,7 @@ export const LoadingMask = ({message}) => (
 );
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
-  sort: { orderBy: 'doc.name', order: 'asc' }
+  sort: { orderBy: 'doc.name', order: 'asc' },
 };
 
 export default function RecycleBin(props) {

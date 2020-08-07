@@ -87,7 +87,7 @@ export default function DynaHook(props) {
     editorResultMode,
     requestForPreHookData,
     isSampleDataLoading,
-    resourceType
+    resourceType,
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -135,6 +135,7 @@ export default function DynaHook(props) {
 
   const handleCreateScriptSave = useCallback(values => {
     const options = { dispatch, isNew: true };
+
     saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
   }, [dispatch, flowId, tempScriptId]);
 

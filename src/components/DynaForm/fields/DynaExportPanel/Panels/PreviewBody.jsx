@@ -14,7 +14,7 @@ export default function PreviewBody(props) {
     availablePreviewStages,
     previewStageDataList,
     resourceId,
-    resourceType
+    resourceType,
   } = props;
   const resource = useSelector(state =>
     resourceData(state, resourceType, resourceId).merged, shallowEqual

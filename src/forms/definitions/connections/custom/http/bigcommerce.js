@@ -166,7 +166,7 @@ export default {
         'store_channel_settings',
         'store_channel_listings',
         'store_storefront_api',
-        'store_storefront_api_customer_impersonation'
+        'store_storefront_api_customer_impersonation',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },

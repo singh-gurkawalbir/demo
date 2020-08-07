@@ -8,7 +8,6 @@ import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(3, 0, 0, 2),
@@ -122,7 +121,6 @@ export default function Subscription() {
 
     return dispatch(actions.user.org.accounts.requestTrialLicense());
   }, [dispatch, setShowStartFreeDialog]);
-
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>

@@ -8,7 +8,6 @@ import actions from '../../../../actions';
 import RefreshableTreeComponent from './RefreshableTreeComponent';
 import ModalDialog from '../../../../components/ModalDialog';
 
-
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
     flexDirection: 'row !important',
@@ -20,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     height: '92%',
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   btnGroup: {
 
@@ -29,10 +28,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const emptyObj = {};
+
 export default function SalesforceSubListDialog() {
   const classes = useStyles();
   const dispatch = useDispatch();
-
 
   const [selectedValues, setSelectedValues] = useState([]);
   const {relationshipName, sObjectType, ssLinkedConnectionId} = useSelector(state => {
@@ -41,6 +40,7 @@ export default function SalesforceSubListDialog() {
     const {data} = selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId});
     const childRelationshipField = data && data.find(field => field.value === sfSubListExtractFieldName);
     const {relationshipName, childSObject: sObjectType} = childRelationshipField;
+
     return {relationshipName, sObjectType, ssLinkedConnectionId} || emptyObj;
   }, shallowEqual);
 
@@ -50,10 +50,13 @@ export default function SalesforceSubListDialog() {
   const handleSave = useCallback(() => {
     const extractList = selectedValues.map(val => {
       const index = val.indexOf('.');
+
       return `${val.substring(0, index)}[*].${val.substring(index + 1)}`;
     });
+
     dispatch(actions.suiteScript.mapping.patchExtractList(extractList));
   }, [dispatch, selectedValues]);
+
   return (
     <ModalDialog show onClose={handleClose}>
       <div>Select sub fields</div>

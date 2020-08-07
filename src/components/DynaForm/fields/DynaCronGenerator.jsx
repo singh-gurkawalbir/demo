@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import CronBuilder from '../../CronBuilder';
 import DynaText from './DynaText';
 
-
 const useStyles = makeStyles(theme => ({
   wrapper: {
     flexDirection: 'row !important',

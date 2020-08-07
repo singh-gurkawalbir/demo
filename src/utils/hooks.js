@@ -36,7 +36,7 @@ export const hooksToFunctionNamesMap = {
   contentBasedFlowRouter: 'contentBasedFlowRouter',
   transform: 'transform',
   filter: 'filter',
-  handleRequest: 'handleRequest'
+  handleRequest: 'handleRequest',
 };
 
 export const getScriptHookStub = hook => scriptHookStubs[hook];
@@ -53,7 +53,7 @@ export const hooksLabelMap = {
   transform: 'Transform',
   filter: 'Filter',
   formInit: 'Form init',
-  handleRequest: 'Handle request'
+  handleRequest: 'Handle request',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];

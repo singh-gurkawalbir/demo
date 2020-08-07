@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
   signOutBtn: {
     fontFamily: 'Roboto400',
@@ -83,7 +83,7 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'source sans pro',
     padding: 0,
     paddingTop: 2,
-  }
+  },
 }));
 
 export default function ProfileMenuButton() {
@@ -134,7 +134,7 @@ export default function ProfileMenuButton() {
         classes={{
           popper: classes.profilePopper,
           paper: classes.profilePaper,
-          arrow: classes.profilePopperArrow
+          arrow: classes.profilePopperArrow,
         }}
         anchorEl={anchorEl}
         placement="bottom-end"
@@ -197,9 +197,9 @@ export default function ProfileMenuButton() {
             variant="text"
             color="primary"
             className={classes.bottomActionsBtn}
-            href="/classic"
+            href="/legacy"
             >
-            Switch to classic UI
+            Switch to legacy UI
           </IconTextButton>
         </div>
       </ArrowPopper>

@@ -68,6 +68,12 @@ export default function DynaMultiSelect(props) {
     processedValue = [processedValue];
   }
 
+  // When we submit value as empty array, react forms processor is returning
+  // value as array with empty string. Below block is for handling this case.
+  if (value?.length === 1 && !value[0]) {
+    processedValue = [];
+  }
+
   const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(

@@ -37,6 +37,7 @@ const getFormattedLookup = (lookup, formVal) => {
       lookupTmp.default = formVal.lookupSFSelect || null;
     }
   }
+
   return lookupTmp;
 };
 
@@ -113,5 +114,5 @@ export default {
       settings,
       lookup: updatedLookup,
     };
-  }
+  },
 };

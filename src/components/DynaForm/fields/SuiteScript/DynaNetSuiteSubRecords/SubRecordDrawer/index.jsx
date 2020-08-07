@@ -69,6 +69,7 @@ function SubRecordDrawer(props) {
         filterKey: 'suitescript-subrecord-referenceFields',
       }).data
   );
+
   useEffect(() => {
     if (!referenceFields || referenceFields.length === 0) {
       dispatch(actions.metadata.request(connectionId, `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`));
@@ -107,11 +108,13 @@ function SubRecordDrawer(props) {
   const handleSubmit = useCallback(
     formValues => {
       const updatedFormValues = { ...formValues };
+
       updatedFormValues.internalIdLookup = {
-        expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression)
+        expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression),
       };
       delete updatedFormValues.internalIdLookupExpression;
       const updatedSubrecords = flow?.import?.netsuite?.subRecordImports || [];
+
       if (referenceFieldId) {
         const srIndex = updatedSubrecords.findIndex(
           sr => sr.referenceFieldId === referenceFieldId

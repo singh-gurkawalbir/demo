@@ -91,10 +91,12 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const primaryActions = [];
   const secondaryActions = [];
+
   if (actions.length) {
     actions.forEach(action => {
       const Action = consolidatedActions[action.id];
       let actionProps = {};
+
       /**
       * Passes a global state for disable functionality for actions except 'cancel'
       * used to manage disable states across buttons
@@ -105,20 +107,23 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
       if (action.id !== 'cancel') {
         actionProps = {
           disableSaveOnClick,
-          setDisableSaveOnClick
+          setDisableSaveOnClick,
         };
       }
       // remove form disabled prop...
       // they dont necessary apply to action button
       const { disabled, ...rest } = formProps;
-      const actionContainer = <Action
-        key={action.id}
-        dataTest={action.id}
-        proceedOnChange={proceedOnChange}
-        {...rest}
-        {...action}
-        {...actionProps}
-      />;
+      const actionContainer = (
+        <Action
+          key={action.id}
+          dataTest={action.id}
+          proceedOnChange={proceedOnChange}
+          {...rest}
+          {...action}
+          {...actionProps}
+      />
+      );
+
       if (action.mode === 'secondary') {
         secondaryActions.push(actionContainer);
       } else {
@@ -128,6 +133,7 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   } else {
     return null;
   }
+
   return (
     <>
       <div> {primaryActions} </div>
@@ -148,6 +154,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     // if props has defined actions return it
     if (actions) return actions;
     let actionButtons;
+
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && !isNew) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
@@ -160,9 +167,10 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
     } else {
       actionButtons = ['saveandclose', 'cancel'];
     }
+
     return actionButtons.map(id => ({
       id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
     }));
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, secondaryActions]);
 
@@ -175,6 +183,7 @@ export function ActionsFactory({ variant = 'edit', ...props }) {
   if (variant === 'view') {
     return <DynaForm {...props} />;
   }
+
   return (
     <DynaForm proceedOnChange={proceedOnChange} {...props} autoFocus isResourceForm>
       {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}

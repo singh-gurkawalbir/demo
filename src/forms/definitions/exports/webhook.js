@@ -31,7 +31,6 @@ export default {
       };
     }
 
-
     return null;
   },
   preSave: (formValues, resource) => {

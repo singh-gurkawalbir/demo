@@ -29,7 +29,7 @@ export default function Transfers() {
   const classes = useStyles();
   let transfers = useSelector(
     state =>
-      selectors.transferListWithMetadata(state, { type: 'transfers' }).resources
+      selectors.transferListWithMetadata(state, { type: 'transfers' })
   );
 
   transfers = transfers.filter(t => !t.isInvited || t.status !== 'unapproved');
@@ -40,7 +40,7 @@ export default function Transfers() {
 
   return (
     <>
-      <LoadResources required resources="transfers,integrations">
+      <LoadResources resources="transfers,integrations">
         {!showInviteView && (
           <>
             <div className={classes.root}>

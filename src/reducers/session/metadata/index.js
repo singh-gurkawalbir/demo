@@ -158,7 +158,6 @@ export default (
   });
 };
 
-
 const optionsFromMetadataTransformFunct = (
   applicationResource,
   connectionId,
@@ -182,8 +181,9 @@ const optionsFromMetadataTransformFunct = (
     metaFilter(data, {
       applicationResource,
       connectionId,
-      commMetaPath
+      commMetaPath,
     });
+
   return {
     data: transformedData,
     status,
@@ -201,12 +201,12 @@ export const optionsFromMetadata = ({
   filterKey,
 }) => {
   const applicationResource = (state && state.application) || null;
+
   return optionsFromMetadataTransformFunct(applicationResource,
     connectionId,
     commMetaPath,
     filterKey);
 };
-
 
 export const makeOptionsFromMetadata = () => createSelector(
   state => state?.application,
@@ -216,7 +216,6 @@ export const makeOptionsFromMetadata = () => createSelector(
   optionsFromMetadataTransformFunct
 
 );
-
 
 export const optionsMapFromMetadata = (
   state,
@@ -258,7 +257,7 @@ export const optionsMapFromMetadata = (
     data: {
       optionsMap: [
         { ...optionsMap[0] },
-        { ...optionsMap[1], options: options.data || optionsMap[1].options || [], },
+        { ...optionsMap[1], options: options.data || optionsMap[1].options || [] },
       ],
     },
   };

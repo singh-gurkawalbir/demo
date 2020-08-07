@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function NameCell({
   ssLinkedConnectionId,
-  flow
+  flow,
 }) {
   const classes = useStyles();
   const integration = useSelector(state =>

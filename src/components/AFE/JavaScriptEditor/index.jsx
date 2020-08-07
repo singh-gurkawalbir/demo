@@ -63,7 +63,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluateDelay: 500,
         _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [
@@ -104,7 +104,8 @@ export default function JavaScriptEditor(props) {
             mode="json"
             readOnly={disabled}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />

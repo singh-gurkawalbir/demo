@@ -360,7 +360,7 @@ export default {
               'salesforce.distributed.skipExportFieldId',
               'dataURITemplate',
               'skipRetries',
-              'apiIdentifier'
+              'apiIdentifier',
             ],
           },
         ],

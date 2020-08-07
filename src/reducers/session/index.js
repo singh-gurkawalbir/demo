@@ -724,7 +724,6 @@ export function suiteScriptIAFormState(
   );
 }
 
-
 export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
   return fromSuiteScript.isFlowOnOffInProgress(
     state && state.suiteScript,

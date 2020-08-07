@@ -3,7 +3,6 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import EditIcon from '../../../icons/EditIcon';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
-
 export default {
   label: (rowData, actionProps) => {
     if (['accesstokens', 'apis', 'connectors'].includes(actionProps.resourceType)) {
@@ -12,6 +11,7 @@ export default {
     if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
       return 'Edit license';
     }
+
     return `Edit ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: EditIcon,
@@ -20,6 +20,7 @@ export default {
     let {resourceType} = props;
     const history = useHistory();
     const match = useRouteMatch();
+
     if (resourceType?.indexOf('/licenses') >= 0) {
       resourceType = 'connectorLicenses';
     }
@@ -27,10 +28,10 @@ export default {
     const handleClick = useCallback(() => {
       history.push(`${match.url}/edit/${resourceType}/${rowData._id}`);
     }, [history, match.url, rowData._id, resourceType]);
+
     useEffect(() => {
       handleClick();
     }, [handleClick]);
-
 
     return null;
   },

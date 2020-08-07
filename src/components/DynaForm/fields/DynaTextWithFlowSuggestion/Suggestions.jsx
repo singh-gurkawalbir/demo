@@ -244,7 +244,7 @@ export default function Suggestions(props) {
     [adaptorType, lookups, onFieldChange]
   );
   const handleLookupEditorShown = useCallback(
-    (val) => {
+    val => {
       showLookupModal(val);
     },
     [showLookupModal],

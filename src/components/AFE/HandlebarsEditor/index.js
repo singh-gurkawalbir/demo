@@ -16,7 +16,7 @@ export default function HandlebarsEditor(props) {
     disabled,
     enableAutocomplete,
     lookups = [],
-    rule
+    rule,
   } = props;
   const dispatch = useDispatch();
   const {

@@ -63,7 +63,6 @@ const RefreshTreeElement = props => {
   const { status } = useSelectorMemo(selectors.makeOptionsFromMetadata, ssLinkedConnectionId,
     `${metaBasePath}${selectedReferenceTo}`, 'salesforce-sObjects-referenceFields');
 
-
   return (
     <TreeItem
       key={label}
@@ -220,6 +219,7 @@ export default function RefreshableTreeComponent(props) {
   };
 
   const [hasCalled, setHasCalled] = useState(false);
+
   useEffect(() => {
     if (!hasCalled && statusSelector(selectedReferenceTo) !== 'received') {
       dispatch(

@@ -100,6 +100,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
 }));
+
 export default function DIY() {
   const classes = useStyles();
   const platformLicense = useSelector(state => selectors.platformLicense(state));

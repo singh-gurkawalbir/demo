@@ -76,7 +76,6 @@ export default function DynaSalesforceLookupFilters(props) {
 
   const filters = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'salesforce-recordType')?.data;
 
-
   useEffect(() => {
     if (!disableFetch && commMetaPath) {
       dispatch(actions.metadata.request(connectionId, commMetaPath));

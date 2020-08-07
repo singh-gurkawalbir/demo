@@ -34,7 +34,7 @@ export function* retrievingOrgDetails() {
     call(
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
-    )
+    ),
   ]);
 }
 
@@ -74,7 +74,7 @@ export function* retrievingAssistantDetails() {
     'slack',
     'stripe',
     'travis',
-    'surveymonkey'
+    'surveymonkey',
   ];
 
   if (
@@ -198,6 +198,7 @@ export function* auth({ email, password }) {
       yield put(actions.app.reload());
     }
     const {accessLevel} = yield select(selectors.resourcePermissions);
+
     if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
       yield put(actions.resource.requestCollection('transfers'));
     }
@@ -300,6 +301,7 @@ export function* linkWithGoogle({ returnTo }) {
 
 export function* fetchUIVersion() {
   let resp;
+
   try {
     resp = yield call(apiCallWithRetry, {
       path: '/ui/version?app=react',

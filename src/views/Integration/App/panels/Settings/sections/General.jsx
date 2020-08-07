@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
         },
       },
     },
-  }
+  },
 }));
 
 export default function GeneralPanel({ integrationId, storeId }) {

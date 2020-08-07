@@ -40,7 +40,7 @@ function GenerateUrl(props) {
     buttonLabel,
     formContext,
     flowId,
-    provider: webHookProvider
+    provider: webHookProvider,
   } = props;
   const { webHookToken } = options;
   const { value: formValues, fields: fieldStates } = formContext;
@@ -58,6 +58,7 @@ function GenerateUrl(props) {
       webookRequiredFields.forEach(fieldId => {
         onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
       });
+
       return;
     }
     dispatch(
@@ -77,6 +78,7 @@ function GenerateUrl(props) {
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
       const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+
       onFieldChange(id, whURL);
       setUrl(false);
     }

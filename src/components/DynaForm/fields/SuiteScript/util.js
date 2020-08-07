@@ -7,7 +7,6 @@ export function getParamValue(fieldId, values = {}) {
     } else {
       const keyParts = fieldId.split('.');
 
-
       paramValue = values[keyParts[0]];
 
       for (let i = 1; paramValue && i < keyParts.length; i += 1) {
@@ -23,9 +22,11 @@ export function convertToReactFormFields({apiMethodMetadata, value = {}}) {
   const { paramsDefaultValues = {} } = apiMethodMetadata;
   const fields = [];
   const fieldMap = {};
+
   apiMethodMetadata && apiMethodMetadata.params.forEach(p => {
     let inputType = 'text';
     let options = [];
+
     if (p?.selectOptions?.length > 0) {
       inputType = 'select';
     } else if (p.type === 'date') {
@@ -33,6 +34,7 @@ export function convertToReactFormFields({apiMethodMetadata, value = {}}) {
     }
     if (inputType === 'select') {
       const defaultOption = p.selectOptions.find(opt => !opt.id);
+
       if (defaultOption && !paramsDefaultValues[p.id]) {
         paramsDefaultValues[p.id] = defaultOption.label;
       }
@@ -54,6 +56,7 @@ export function convertToReactFormFields({apiMethodMetadata, value = {}}) {
       defaultValue: paramsDefaultValues[p.id],
       required: !!p.isRequired,
     };
+
     if (fieldDef.type === 'select') {
       fieldDef.options = options;
     } else if (fieldDef.type === 'date') {
@@ -63,6 +66,7 @@ export function convertToReactFormFields({apiMethodMetadata, value = {}}) {
     fields.push(fieldDef);
     fieldMap[fieldDef.id] = fieldDef;
   });
+
   return {
     fieldMap,
     layout: {

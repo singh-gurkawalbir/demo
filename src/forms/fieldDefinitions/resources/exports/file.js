@@ -5,7 +5,7 @@ export default {
   // something meaningful
   uploadFile: {
     type: 'uploadfile',
-    label: 'Sample file (that would be exported)',
+    label: 'Sample file (that would be parsed)',
     mode: r => r && r.file && r.file.type,
     required: r => isNewId(r && r._id),
     visibleWhenAll: [
@@ -199,7 +199,7 @@ export default {
       hasHeaderRow: false,
       keyColumns: [],
       rowsToSkip: 0,
-      trimSpaces: true
+      trimSpaces: true,
     },
     visibleWhenAll: [
       {

@@ -82,6 +82,7 @@ const isDirty = editor => {
   }
 
   const initKeys = Object.keys(editor).filter(key => key.indexOf('_init') !== -1);
+
   // If there are no initKeys , return undefined
   // as we return a boolean only incase of initKeys passed - refer @editorDialog disableSave property
   if (!initKeys.length) {
@@ -90,6 +91,7 @@ const isDirty = editor => {
   for (let i = 0; i < initKeys.length; i += 1) {
     const initKey = initKeys[i];
     const originalKey = initKey.replace('_init_', '');
+
     if (typeof editor[originalKey] === 'boolean' && !!editor[initKey] !== !!editor[originalKey]) {
       return true;
     }
@@ -102,6 +104,7 @@ const isDirty = editor => {
             editor[initKey] !== editor[originalKey]
     ) return true;
   }
+
   return false;
 };
 const init = processor => {

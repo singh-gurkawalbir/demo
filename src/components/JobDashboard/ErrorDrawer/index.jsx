@@ -9,7 +9,6 @@ import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-
 const useStyles = makeStyles(() => ({
   spinner: {
     left: 0,
@@ -104,6 +103,7 @@ export default function ErrorDrawer({
 
   const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
   let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
+
   if (job?.name) title += ` > ${job.name}`;
 
   return (

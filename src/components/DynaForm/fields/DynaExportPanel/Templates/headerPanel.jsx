@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
       },
       '&:hover': {
         background: theme.palette.background.paper2,
-      }
+      },
     },
   },
 }));

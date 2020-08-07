@@ -14,7 +14,6 @@ import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
 
-
 const useStyles = makeStyles({
   sqlContainer: {
     width: '100%',
@@ -27,7 +26,7 @@ const useStyles = makeStyles({
   },
   sqlLabelWrapper: {
     display: 'flex',
-  }
+  },
 });
 
 export default function DynaSQLQueryBuilder(props) {

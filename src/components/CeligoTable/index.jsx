@@ -169,16 +169,16 @@ export default function CeligoTable({
             {selectableRows && (
               <TableCell>
                 <Checkbox
-                  icon={
+                  icon={(
                     <span>
                       <CheckboxUnselectedIcon />
                     </span>
-                  }
-                  checkedIcon={
+                  )}
+                  checkedIcon={(
                     <span>
                       <CheckboxSelectedIcon />
                     </span>
-                  }
+                  )}
                   onChange={event => handleSelectAllChange(event)}
                   checked={isAllSelected}
                   color="primary"
@@ -238,16 +238,16 @@ export default function CeligoTable({
                       onChange={event => handleSelectChange(event, rowData._id)}
                       checked={!!selectedResources[rowData._id]}
                       color="primary"
-                      icon={
+                      icon={(
                         <span>
                           <CheckboxUnselectedIcon />
                         </span>
-                      }
-                      checkedIcon={
+                      )}
+                      checkedIcon={(
                         <span>
                           <CheckboxSelectedIcon />
                         </span>
-                      }
+                      )}
                     />
                   )}
                 </TableCell>

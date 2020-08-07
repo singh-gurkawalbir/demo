@@ -20,6 +20,7 @@ import UserDetail from './UserDetail';
 import CloseIcon from '../icons/CloseIcon';
 import Help from '../Help';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import TableHeadWithRefreshIcon from '../CeligoTable/TableHeadWithRefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,6 +32,9 @@ const useStyles = makeStyles(theme => ({
   helpIcon: {
     padding: 0,
     marginLeft: theme.spacing(1),
+  },
+  tableCellWithIcon: {
+    display: 'inline-flex',
   },
 }));
 
@@ -134,8 +138,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
                   className={classes.helpIcon}
                 />
               </TableCell>
-              <TableCell>
-                Status
+              <TableCell className={classes.tableCellWithIcon}>
+                <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
                 <Help
                   title="Status"
                   helpKey="users.status"

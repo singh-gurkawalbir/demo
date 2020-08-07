@@ -60,6 +60,7 @@ export default function FilterPanel({
       } else if (onFieldChange) {
         // convert value to suiteScript supported format
         const formattedVal = convertValueToSuiteScriptSupportedExpression(value);
+
         onFieldChange(id, formattedVal);
       }
     },

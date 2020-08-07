@@ -6,7 +6,6 @@ import actions from '../../../../actions';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
-
 function DynaSalesforceSelectOptionsGenerator(props) {
   const {
     filterKey,
@@ -29,6 +28,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     if (data && fieldName === 'onceExportBooleanFields') {
       options = data.filter(f => f.type === 'boolean' && f.updateable);
     }
+
     return options;
   }, [data, fieldName]);
 
