@@ -18,7 +18,7 @@ import TradingPartner from '../../actions/Connections/TradingPartner';
 
 export default {
   columns: (r, actionProps) => {
-    const columns = [
+    let columns = [
       {
         heading: 'Name',
         value: function ConnectionDrawerLink(resource) {
@@ -39,7 +39,7 @@ export default {
         },
       },
       {
-        heading: 'API2',
+        heading: 'API',
         value: r => {
           if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
 
@@ -61,6 +61,10 @@ export default {
         width: 120,
       },
     ];
+
+    if (actionProps.type === 'flowBuilder') {
+      columns = columns.filter(col => col.heading !== 'Last updated');
+    }
 
     return columns;
   },

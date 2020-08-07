@@ -112,7 +112,7 @@ export default function menuItems(
           href: getHelpUrl(integrations, marketplaceConnectors),
         },
         {
-          label: "What's new",
+          label: "What's New",
           Icon: WhatsNewIcon,
           component: 'a',
           href: WHATS_NEW_URL,
