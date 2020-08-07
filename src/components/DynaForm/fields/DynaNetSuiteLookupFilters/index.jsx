@@ -4,7 +4,7 @@ import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import FormLabel from '@material-ui/core/FormLabel';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import FilterPanel from './FilterPanel';
 import Spinner from '../../../Spinner';

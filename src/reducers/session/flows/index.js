@@ -24,18 +24,20 @@ export default (state = {}, action) => {
   });
 };
 
-export function getLastExportDateTime(state, flowId) {
+export const selectors = {};
+
+selectors.getLastExportDateTime = (state, flowId) => {
   if (!state || !state.lastExportDateTime) {
     return null;
   }
 
   return state.lastExportDateTime && state.lastExportDateTime[flowId];
-}
+};
 
-export function isOnOffInProgress(state, flowId) {
+selectors.isOnOffInProgress = (state, flowId) => {
   if (!(state && state[flowId])) {
     return { onOffInProgress: false };
   }
 
   return { onOffInProgress: state[flowId].onOffInProgress || false };
-}
+};

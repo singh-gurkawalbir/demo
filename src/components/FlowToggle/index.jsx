@@ -4,7 +4,7 @@ import { Tooltip } from '@material-ui/core';
 import actions from '../../actions';
 import SwitchOnOff from '../SwitchToggle';
 import useConfirmDialog from '../ConfirmDialog';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
 

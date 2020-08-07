@@ -13,7 +13,7 @@ import {
   getScheduleDetails,
   getCronExpression,
 } from './util';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 export default function FlowSchedule({ flow, onClose, className }) {
   const dispatch = useDispatch();

@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ActionMenu from './ActionMenu';
 import CheckboxUnselectedIcon from '../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../icons/CheckboxSelectedIcon';

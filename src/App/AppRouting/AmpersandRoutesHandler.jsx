@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import shortid from 'shortid';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';

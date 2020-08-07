@@ -11,7 +11,7 @@ import {
 } from './util';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import { resourceFormSaveProcessTerminated } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   actionButton: {
@@ -29,7 +29,7 @@ const SaveAndCloseFileDefinitionButton = props => {
   const [enquesnackbar] = useEnqueueSnackbar();
   const [isSaving, setIsSaving] = useState(false);
   const saveTerminated = useSelector(state =>
-    resourceFormSaveProcessTerminated(state, resourceType, resourceId)
+    selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
   const handleSubmitForm = useCallback(
     values => {

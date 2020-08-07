@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Snackbar, LinearProgress, Paper, Typography } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   snackbar: {

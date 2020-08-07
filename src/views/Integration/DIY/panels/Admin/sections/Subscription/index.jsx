@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Button, Grid, Divider, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';

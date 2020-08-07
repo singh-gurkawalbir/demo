@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import LoadResources from '../LoadResources';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import {

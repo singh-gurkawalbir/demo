@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { Button, makeStyles, Typography } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import SuiteScriptMapping from '..';
 
 const useStyles = makeStyles(theme => ({

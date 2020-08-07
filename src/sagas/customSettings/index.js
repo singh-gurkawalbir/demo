@@ -2,7 +2,7 @@ import produce from 'immer';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import inferErrorMessage from '../../utils/inferErrorMessage';
 

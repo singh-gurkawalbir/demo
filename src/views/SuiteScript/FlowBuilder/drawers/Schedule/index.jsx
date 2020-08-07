@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RightDrawer from '../../../../../components/drawer/Right';
 import FlowSchedule from '../../../../../components/SuiteScript/FlowSchedule';
 

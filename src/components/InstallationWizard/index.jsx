@@ -9,7 +9,7 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 import ArrowBackIcon from '../icons/ArrowLeftIcon';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import openExternalUrl from '../../utils/window';

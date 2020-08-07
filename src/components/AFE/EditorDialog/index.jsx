@@ -15,7 +15,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { preSaveValidate } from './util';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import FullScreenOpenIcon from '../../icons/FullScreenOpenIcon';
 import FullScreenCloseIcon from '../../icons/FullScreenCloseIcon';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';

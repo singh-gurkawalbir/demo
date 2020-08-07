@@ -10,7 +10,7 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
 import ApiTokensSection from './sections/ApiTokens';

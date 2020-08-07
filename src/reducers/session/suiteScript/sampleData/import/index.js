@@ -42,13 +42,15 @@ export default (state = {}, action) => {
   });
 };
 
-export function importSampleDataContext(
+export const selectors = {};
+
+selectors.suiteScriptImportSampleDataContext = (
   state,
   { ssLinkedConnectionId, integrationId, flowId }
-) {
+) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
   const flowData = state[id];
 
   return flowData || DEFAULT_VALUE;
-}
+};

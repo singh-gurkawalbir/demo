@@ -1,5 +1,5 @@
 import { select, call } from 'redux-saga/effects';
-import { resource, getResourceSampleDataWithStatus } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { saveSampleDataOnResource } from './utils';
 import { safeParse } from '../../../utils/string';
 
@@ -8,7 +8,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   // tempResourceId if passed used incase of newly created export
   // to fetch Sample data saved against temp id in state
   const resourceObj = yield select(
-    resource,
+    selectors.resource,
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
@@ -32,7 +32,7 @@ function* fetchRawDataForFileAdaptors({ resourceId, tempResourceId, type }) {
   }
 
   const { data: rawData } = yield select(
-    getResourceSampleDataWithStatus,
+    selectors.getResourceSampleDataWithStatus,
     tempResourceId || resourceId,
     stage
   );

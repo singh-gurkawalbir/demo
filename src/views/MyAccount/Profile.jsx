@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';

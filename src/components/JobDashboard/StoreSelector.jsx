@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
 
 const useStyles = makeStyles(() => ({

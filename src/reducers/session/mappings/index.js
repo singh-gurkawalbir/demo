@@ -387,7 +387,9 @@ const isMappingObjEqual = (mapping1, mapping2) => {
 };
 
 // #region PUBLIC SELECTORS
-export function mapping(state, id) {
+export const selectors = {};
+
+selectors.mapping = (state, id) => {
   if (!state) {
     return emptySet;
   }
@@ -397,10 +399,10 @@ export function mapping(state, id) {
   if (!mappings) return emptySet;
 
   return mappings;
-}
+};
 
 // #region PUBLIC SELECTORS
-export function mappingsChanged(state, id) {
+selectors.mappingsChanged = (state, id) => {
   if (!state || !state[id]) {
     return false;
   }
@@ -421,9 +423,9 @@ export function mappingsChanged(state, id) {
   }
 
   return isMappingsChanged;
-}
+};
 
-export function mappingsSaveStatus(state, id) {
+selectors.mappingsSaveStatus = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -435,4 +437,4 @@ export function mappingsSaveStatus(state, id) {
     saveCompleted: saveStatus === 'completed',
     saveInProgress: saveStatus === 'requested',
   };
-}
+};

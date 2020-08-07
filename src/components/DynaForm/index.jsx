@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import getRenderer from './renderer';
 import DynaFormGenerator from './DynaFormGenerator';
 import ButtonGroup from '../ButtonGroup';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { disableAllFieldsExceptClockedFields } from '../../forms/utils';
 
 const useStyles = makeStyles(theme => ({

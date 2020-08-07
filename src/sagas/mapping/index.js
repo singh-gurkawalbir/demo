@@ -3,7 +3,7 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';

@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
 import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';

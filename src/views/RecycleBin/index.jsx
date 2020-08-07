@@ -12,7 +12,7 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import LoadResources from '../../components/LoadResources';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
 import metadata from './metadata';

@@ -1,6 +1,6 @@
 import { call, select } from 'redux-saga/effects';
 import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
-import { getMetadataOptions } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 export default function* fetchMetadata({
   connectionId,
@@ -8,7 +8,7 @@ export default function* fetchMetadata({
   filterKey = 'raw',
   refresh = false,
 }) {
-  let metadata = yield select(getMetadataOptions, {
+  let metadata = yield select(selectors.getMetadataOptions, {
     connectionId,
     commMetaPath,
     filterKey,
@@ -21,7 +21,7 @@ export default function* fetchMetadata({
       commMetaPath,
       addInfo: { refreshCache: refresh},
     });
-    metadata = yield select(getMetadataOptions, {
+    metadata = yield select(selectors.getMetadataOptions, {
       connectionId,
       commMetaPath,
       filterKey,

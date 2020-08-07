@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import Icon from '../../../../components/icons/CalendarIcon';
 import ModalDialog from '../../../../components/ModalDialog';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import FlowSchedule from '../../../../components/FlowSchedule';
 
 function ScheduleDialog({

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { getTemplateUrlName } from '../../../../../utils/template';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RunFlowButton from '../../../../RunFlowButton';
 import RemoveMargin from '../RemoveMargin';
 import getRoutePath from '../../../../../utils/routePaths';

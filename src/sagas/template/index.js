@@ -2,7 +2,7 @@ import { call, takeEvery, put, select, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { getResource } from '../resources';
 

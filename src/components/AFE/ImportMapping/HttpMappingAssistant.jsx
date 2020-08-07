@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CodePanel from '../GenericEditor/CodePanel';
 
 // TODO: Azhar to review styling

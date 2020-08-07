@@ -4,7 +4,7 @@ import { Link, useRouteMatch} from 'react-router-dom';
 import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { JOB_STATUS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';

@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import ImportMapping from '../../AFE/ImportMapping';
 import mappingUtil from '../../../utils/mapping';
 import * as ResourceUtil from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 /*
 lookups and lookupId is passed in options

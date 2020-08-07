@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import MapDataIcon from '../../../../icons/MapDataIcon';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 

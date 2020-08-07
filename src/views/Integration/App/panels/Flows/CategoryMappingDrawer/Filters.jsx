@@ -13,7 +13,7 @@ import {
   RadioGroup,
 } from '@material-ui/core';
 import actions from '../../../../../../actions';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import ArrowPopper from '../../../../../../components/ArrowPopper';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';

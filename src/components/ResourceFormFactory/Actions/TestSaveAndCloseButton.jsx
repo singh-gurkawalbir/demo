@@ -3,7 +3,7 @@ import { deepClone } from 'fast-json-patch';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import useConfirmDialog from '../../ConfirmDialog';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
