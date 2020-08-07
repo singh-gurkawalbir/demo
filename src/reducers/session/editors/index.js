@@ -123,7 +123,9 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function editor(state, id) {
+export const selectors = {};
+
+selectors.editor = (state, id) => {
   if (!state) return emptyObj;
 
   const editor = state[id];
@@ -131,9 +133,9 @@ export function editor(state, id) {
   if (!editor) return emptyObj;
 
   return editor || emptyObj;
-}
+};
 
-export function editorViolations(state, id) {
+selectors.editorViolations = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -141,9 +143,9 @@ export function editorViolations(state, id) {
   if (!editor) return;
 
   return processorLogic.validate(editor);
-}
+};
 
-export function isEditorDirty(state, id) {
+selectors.isEditorDirty = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -151,9 +153,9 @@ export function isEditorDirty(state, id) {
   if (!editor) return;
 
   return processorLogic.isDirty(editor);
-}
+};
 
-export function editorPatchSet(state, id) {
+selectors.editorPatchSet = (state, id) => {
   if (!state) return;
 
   const editor = state[id];
@@ -161,9 +163,9 @@ export function editorPatchSet(state, id) {
   if (!editor) return;
 
   return processorPatchSet.getPatchSet(editor);
-}
+};
 
-export function editorPatchStatus(state, id) {
+selectors.editorPatchStatus = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -175,9 +177,9 @@ export function editorPatchStatus(state, id) {
     saveCompleted: saveStatus === 'completed',
     saveInProgress: saveStatus === 'requested',
   };
-}
+};
 
-export function processorRequestOptions(state, id) {
+selectors.processorRequestOptions = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -185,5 +187,5 @@ export function processorRequestOptions(state, id) {
   const editor = state[id];
 
   return processorLogic.requestOptions(editor);
-}
+};
 // #endregion

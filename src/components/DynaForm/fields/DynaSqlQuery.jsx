@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
 import clsx from 'clsx';
 import CodeEditor from '../../CodeEditor';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';

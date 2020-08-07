@@ -2,7 +2,7 @@ import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import responseMappingUtil from '../../utils/responseMapping';
 

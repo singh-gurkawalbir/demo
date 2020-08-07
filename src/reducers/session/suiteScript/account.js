@@ -15,10 +15,12 @@ export default (state = {}, action) => {
   });
 };
 
-export function hasIntegrations(state, account) {
+export const selectors = {};
+
+selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, account) => {
   if (!(state && state[account.toUpperCase()])) {
     return null;
   }
 
   return state[account].hasIntegrations;
-}
+};

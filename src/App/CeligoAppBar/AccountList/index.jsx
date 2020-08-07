@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';

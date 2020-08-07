@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import timeStamps from '../../../utils/timeStamps';
 import getJSONPaths from '../../../utils/jsonPaths';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';

@@ -18,7 +18,7 @@ import {
   SCOPES,
   newIAFrameWorkPayload,
 } from '../index';
-import * as selectors from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';

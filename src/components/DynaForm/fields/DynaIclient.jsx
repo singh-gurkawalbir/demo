@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DynaSelect from './DynaSelect';
 import DynaSelectResource from './DynaSelectResource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { isProduction } from '../../../forms/utils';
 

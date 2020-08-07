@@ -31,7 +31,9 @@ export default (state = defaultState, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function auditLogs(state, resourceType, resourceId, filters) {
+export const selectors = {};
+
+selectors.auditLogs = (state, resourceType, resourceId, filters) => {
   let logs = emptySet;
 
   if (!state) {
@@ -73,6 +75,6 @@ export function auditLogs(state, resourceType, resourceId, filters) {
   });
 
   return filteredLogs;
-}
+};
 
 // #endregion

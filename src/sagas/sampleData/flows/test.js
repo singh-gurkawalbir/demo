@@ -3,7 +3,7 @@
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { updateFlowDoc } from '../../resourceForm';
 import { updateFlowOnResourceUpdate } from './flowUpdates';
 

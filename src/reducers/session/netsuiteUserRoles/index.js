@@ -41,13 +41,15 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function netsuiteUserRoles(
+export const selectors = {};
+
+selectors.netsuiteUserRoles = (
   state,
   connectionId,
   netsuiteResourceType,
   env,
   acc
-) {
+) => {
   if (!state || !state[connectionId]) return {};
   const { userRoles } = state[connectionId];
 
@@ -93,5 +95,5 @@ export function netsuiteUserRoles(
   if (netsuiteResourceType === 'role') return { ...state[connectionId], optionsArr: roles };
 
   return { ...state[connectionId], optionsArr: null };
-}
+};
 // #endregion

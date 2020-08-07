@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, FormLabel, FormControl } from '@material-ui/core';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import Spinner from '../../Spinner';

@@ -341,15 +341,17 @@ const isMappingObjEqual = (mapping1, mapping2) => {
   return isEqual(formattedMapping1, formattedMapping2);
 };
 
-export function mappingState(state) {
+export const selectors = {};
+
+selectors.suiteScriptMappings = state => {
   if (!state || !state.mappings) {
     return emptyObj;
   }
 
   return state.mappings;
-}
+};
 
-export function mappingsChanged(state) {
+selectors.suiteScriptMappingsChanged = state => {
   if (!state || !state.mappings) {
     return false;
   }
@@ -371,8 +373,8 @@ export function mappingsChanged(state) {
   }
 
   return isMappingsChanged;
-}
-export function mappingsSaveStatus(state) {
+};
+selectors.suiteScriptMappingsSaveStatus = state => {
   if (!state || !state.mappings) {
     return emptyObj;
   }
@@ -384,4 +386,4 @@ export function mappingsSaveStatus(state) {
     saveCompleted: saveStatus === 'completed',
     saveInProgress: saveStatus === 'requested',
   };
-}
+};

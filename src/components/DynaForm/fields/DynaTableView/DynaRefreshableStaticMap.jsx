@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
 export default function DynaRefreshableStaticMap(props) {

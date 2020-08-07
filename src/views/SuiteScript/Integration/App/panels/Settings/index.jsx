@@ -15,7 +15,7 @@ import {
 import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import Spinner from '../../../../../../components/Spinner';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import inferErrorMessage from '../../../../../../utils/inferErrorMessage';
 import ConfigureSettings from './sections/ConfigureSettings';
 

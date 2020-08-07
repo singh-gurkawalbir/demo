@@ -4,7 +4,7 @@ import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
-import { fileDefinitionSampleData } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import {
@@ -88,7 +88,7 @@ function DynaFileDefinitionEditor(props) {
   const processor = resourceType === 'imports' ? FILE_GENERATOR : FILE_PARSER;
 
   // selector to fetch file definition sample data
-  const { sampleData, rule } = useSelector(state => fileDefinitionSampleData(state, {
+  const { sampleData, rule } = useSelector(state => selectors.fileDefinitionSampleData(state, {
     userDefinitionId,
     resourceType,
     options: { format, definitionId, resourcePath },

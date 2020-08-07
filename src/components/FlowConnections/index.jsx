@@ -5,7 +5,7 @@ import AuditLog from './Actions/AuditLog';
 import Debugger from './Actions/Debugger';
 import References from './Actions/References';
 import RightDrawer from '../drawer/Right';
-import { flowConnections } from '../../reducers';
+import { selectors } from '../../reducers';
 import ConnectionRow from './Components/ConnectionRow';
 
 const useStyles = makeStyles(() => ({
@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
 export default function FlowConnections({ flowId, integrationId }) {
   const classes = useStyles();
   const connections = useSelector(
-    state => flowConnections(state, flowId),
+    state => selectors.flowConnections(state, flowId),
     shallowEqual
   );
 

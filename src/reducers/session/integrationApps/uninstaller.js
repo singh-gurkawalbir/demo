@@ -72,19 +72,21 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function uninstallSteps(state, id) {
+export const selectors = {};
+
+selectors.uninstallSteps = (state, id) => {
   if (!state || !state[id]) {
     return emptyArray;
   }
 
   return state[id].steps;
-}
+};
 
-export function uninstallData(state, id) {
+selectors.uninstallData = (state, id) => {
   if (!state || !state[id]) {
     return emptyObject;
   }
 
   return state[id];
-}
+};
 // #endregion

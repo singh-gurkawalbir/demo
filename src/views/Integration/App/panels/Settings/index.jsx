@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { isEqual } from 'lodash';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';

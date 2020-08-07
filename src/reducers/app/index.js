@@ -44,25 +44,25 @@ export default function (state = defaultState, action) {
 // #endregion Reducers
 
 // #region Selectors
-export function bannerOpened(state) {
+export const selectors = {};
+
+selectors.bannerOpened = state => {
   if (!state) return true;
 
   return !!state.bannerOpened;
-}
+};
 
-export function reloadCount(state) {
+selectors.reloadCount = state => {
   if (!state) return 0;
 
   return state.count;
-}
+};
 
-export function appErrored(state) {
+selectors.appErrored = state => {
   if (!state) return null;
 
   return state.appErrored;
-}
+};
 
-export function isUiVersionDifferent(state) {
-  return state?.initVersion !== state?.version;
-}
+selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;
 // #endregion

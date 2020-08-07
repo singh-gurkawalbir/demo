@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import RunFlowButton from '../../../../../SuiteScript/RunFlowButton';
 import getRoutePath from '../../../../../../utils/routePaths';
 import RemoveMargin from '../RemoveMargin';

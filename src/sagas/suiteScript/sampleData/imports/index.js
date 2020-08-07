@@ -2,7 +2,7 @@
 import { put, select, takeLatest } from 'redux-saga/effects';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export function* requestSampleData({ ssLinkedConnectionId, integrationId, flowId, options = {} }) {
   const { refreshCache } = options;

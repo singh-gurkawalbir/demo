@@ -2,7 +2,7 @@ import { useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import EditIcon from '../../../../icons/EditIcon';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../utils/routePaths';
 

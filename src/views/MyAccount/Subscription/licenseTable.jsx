@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import agentsMetadata from './metadata/agents';
 import endpointsMetadata from './metadata/endpoints';

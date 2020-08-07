@@ -14,7 +14,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../../utils/routePaths';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 
 const useStyle = makeStyles({

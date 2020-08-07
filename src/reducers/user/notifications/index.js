@@ -39,7 +39,9 @@ export default (state = defaultState, action) => {
   });
 };
 
-export const userNotifications = createSelector(
+export const selectors = {};
+
+selectors.userNotifications = createSelector(
   state => state && state.accounts,
   state => state && state.stacks,
   state => state && state.transfers,

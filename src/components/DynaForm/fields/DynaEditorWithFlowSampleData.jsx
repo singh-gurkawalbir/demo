@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import HttpRequestBodyEditorDialog from '../../AFE/HttpRequestBodyEditor/Dialog';
 import UrlEditorDialog from '../../AFE/UrlEditor/Dialog';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {
   getXMLSampleTemplate,

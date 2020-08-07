@@ -28,7 +28,7 @@ import {
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   tileName: {

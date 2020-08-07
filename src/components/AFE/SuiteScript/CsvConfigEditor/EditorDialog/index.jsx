@@ -12,7 +12,7 @@ import {
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ViewColumnIcon from '../../../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../../../icons/LayoutLgLeftSmrightIcon';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';

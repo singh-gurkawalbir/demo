@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';

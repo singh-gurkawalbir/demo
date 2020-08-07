@@ -47,7 +47,7 @@ import { mappingSagas } from './mapping';
 import { responseMappingSagas } from './responseMapping';
 import { recycleBinSagas } from './recycleBin';
 import analyticsSagas from './analytics';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 import { transferSagas } from './transfer';
 import { suiteScriptSagas } from './suiteScript';

@@ -1,10 +1,10 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
-import actions from '../../../../actions';
+import reducer, { selectors } from '.';
+import actions from '../../../actions';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../../utils/constants';
+} from '../../../utils/constants';
 
 describe('users (ashares) reducers', () => {
   test('any other action return default state', () => {
@@ -120,7 +120,7 @@ describe('users (ashares) reducers', () => {
   test('list should return [] when the state undefined', () => {
     const newState = reducer(undefined, 'someaction');
 
-    expect(selectors.list(newState)).toEqual([]);
+    expect(selectors.usersList(newState)).toEqual([]);
   });
   test('list should return correct user details', () => {
     const newState = reducer(
@@ -140,7 +140,7 @@ describe('users (ashares) reducers', () => {
       'someaction'
     );
 
-    expect(selectors.list(newState)).toEqual([
+    expect(selectors.usersList(newState)).toEqual([
       { _id: 'one', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MANAGE },
       { _id: 'two', accessLevel: USER_ACCESS_LEVELS.ACCOUNT_MONITOR },
       {
@@ -159,7 +159,7 @@ describe('users (ashares) reducers', () => {
     test('should return [] when the state undefined', () => {
       const newState = reducer(undefined, 'someaction');
 
-      expect(selectors.integrationUsers(newState)).toEqual([]);
+      expect(selectors.integrationUsersForOwner(newState)).toEqual([]);
     });
     test('should return correct user details', () => {
       const newState = reducer(
@@ -183,7 +183,7 @@ describe('users (ashares) reducers', () => {
         'someaction'
       );
 
-      expect(selectors.integrationUsers(newState, 'i1')).toEqual([
+      expect(selectors.integrationUsersForOwner(newState, 'i1')).toEqual([
         { _id: 'one', accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE },
         { _id: 'two', accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR },
         {
@@ -192,7 +192,7 @@ describe('users (ashares) reducers', () => {
         },
       ]);
 
-      expect(selectors.integrationUsers(newState, 'i2')).toEqual([
+      expect(selectors.integrationUsersForOwner(newState, 'i2')).toEqual([
         { _id: 'one', accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE },
         { _id: 'two', accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR },
         {
@@ -201,7 +201,7 @@ describe('users (ashares) reducers', () => {
         },
       ]);
 
-      expect(selectors.integrationUsers(newState, 'something')).toEqual([
+      expect(selectors.integrationUsersForOwner(newState, 'something')).toEqual([
         { _id: 'one', accessLevel: INTEGRATION_ACCESS_LEVELS.MANAGE },
         { _id: 'two', accessLevel: INTEGRATION_ACCESS_LEVELS.MONITOR },
       ]);
