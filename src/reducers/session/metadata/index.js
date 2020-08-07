@@ -214,55 +214,7 @@ export const makeOptionsFromMetadata = () => createSelector(
   (_1, _2, commMetaPath) => commMetaPath,
   (_1, _2, _3, filterKey) => filterKey,
   optionsFromMetadataTransformFunct
-
 );
-
-
-export const optionsMapFromMetadata = (
-  state,
-  connectionId,
-  applicationType,
-  recordType,
-  selectField,
-  optionsMap
-) => {
-  let options;
-
-  if (applicationType === 'netsuite') {
-    options =
-      optionsFromMetadata(
-        state,
-        connectionId,
-        applicationType,
-        'recordTypes',
-        'suitescript',
-        recordType,
-        selectField
-      ) || {};
-  } else {
-    options =
-      optionsFromMetadata(
-        state,
-        connectionId,
-        applicationType,
-        'sObjectTypes',
-        null,
-        recordType,
-        selectField
-      ) || {};
-  }
-
-  return {
-    isLoading: options.status === 'requested',
-    shouldReset: options.status === 'received',
-    data: {
-      optionsMap: [
-        { ...optionsMap[0] },
-        { ...optionsMap[1], options: options.data || optionsMap[1].options || [], },
-      ],
-    },
-  };
-};
 
 export function assistantData(state, { adaptorType, assistant }) {
   if (
