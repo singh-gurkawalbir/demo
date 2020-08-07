@@ -167,11 +167,12 @@ export function* createFormValuesPatchSet({
       connection,
       isNew: formState.isNew,
     });
-
     if (typeof preSave === 'function') {
+      const iClients = yield select(selectors.resourceList, {
+        type: 'iClients',
+      });
       // stock preSave handler present...
-
-      finalValues = preSave(values, resource);
+      finalValues = preSave(values, resource, {iClients});
     }
   }
 
