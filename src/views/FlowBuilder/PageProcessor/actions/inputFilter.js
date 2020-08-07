@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/InputFilterIcon';
-import InputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
+import InputFilterToggleEditorDrawer from '../../../../components/AFE/FilterEditor/FilterToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function InputFilterDialog({
+function InputFilterDrawer({
   flowId,
   resource,
   resourceType,
@@ -70,7 +70,7 @@ function InputFilterDialog({
   );
 
   return (
-    <InputFilterToggleEditorDialog
+    <InputFilterToggleEditorDrawer
       title="Define input filter"
       helpTitle="Filter Rules"
       helpKey={helpKey}
@@ -88,6 +88,7 @@ function InputFilterDialog({
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
       isSampleDataLoading={sampleDataStatus === 'requested'}
+      path="inputFilter"
     />
   );
 }
@@ -95,7 +96,7 @@ function InputFilterDialog({
 function InputFilter(props) {
   const { open } = props;
 
-  return <>{open && <InputFilterDialog {...props} />}</>;
+  return <>{open && <InputFilterDrawer {...props} />}</>;
 }
 
 export default {

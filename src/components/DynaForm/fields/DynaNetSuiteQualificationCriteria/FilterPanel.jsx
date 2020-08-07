@@ -293,7 +293,7 @@ export default function FilterPanel({
   }, [filtersMetadata]);
 
   return (
-    <div className={classes.container} height="calc(100vh - 170px)" width="100%">
+    <div className={classes.container} height="calc(100vh - 200px)">
       <div className="netsuite-qualifier" ref={qbuilder} />
     </div>
   );

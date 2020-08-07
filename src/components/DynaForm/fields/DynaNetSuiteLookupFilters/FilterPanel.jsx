@@ -497,7 +497,7 @@ export default function FilterPanel({
   };
 
   return (
-    <div className={classes.container} height="calc(100vh - 170px)" width="100%">
+    <div className={classes.container} height="calc(100vh - 200px)">
       <div className="netsuite-lookup-filters" ref={qbuilder} />
       {showOperandSettingsFor && (
         <OperandSettingsDialog

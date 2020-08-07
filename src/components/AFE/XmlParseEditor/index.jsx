@@ -71,7 +71,7 @@ export default function XmlParseEditor(props) {
   }, [editorInit, handleInit]);
 
   return (
-    <PanelGrid key={editorId} className={classes.template} height="calc(100vh - 170px)" width="100%">
+    <PanelGrid key={editorId} className={classes.template} height="calc(100vh - 200px)">
       <PanelGridItem gridArea="rule">
         <PanelTitle title="XML parse options" />
         <XmlParsePanel disabled={disabled} editorId={editorId} />

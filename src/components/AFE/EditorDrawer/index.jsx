@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, cloneElement } from 'react';
+import React, { useState, useMemo, useCallback, cloneElement, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,7 +11,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import { preSaveValidate } from './util';
+import { preSaveValidate } from '../../../utils/editor';
 import * as selectors from '../../../reducers';
 import ViewColumnIcon from '../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../icons/LayoutLgLeftSmrightIcon';
@@ -19,11 +19,15 @@ import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import RightDrawer from '../../drawer/Right';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   toolbarContainer: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  helpTextButton: {
+    marginLeft: theme.spacing(1),
   },
   actionContainer: {
     margin: theme.spacing(0, 1),
@@ -35,6 +39,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+  editorToggleContainer: {
+    marginRight: theme.spacing(2),
   },
   actions: {
     display: 'flex',
@@ -60,6 +67,59 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const DrawerActions = props => {
+  const {
+    action,
+    toggleAction,
+    showLayoutOptions,
+    layout,
+    handleLayoutChange,
+    helpKey,
+    helpTitle,
+  } = props;
+
+  const classes = useStyles();
+
+  return (
+    <div className={classes.toolbarContainer}>
+      <div className={classes.actionContainer}>
+        {/* it expects field to be a component to render */}
+        {action}
+      </div>
+      <div className={classes.toggleContainer}>
+        <div className={classes.editorToggleContainer}>
+          {toggleAction}
+        </div>
+        {showLayoutOptions && (
+        <ToggleButtonGroup
+          value={layout}
+          exclusive
+          onChange={handleLayoutChange}>
+          <ToggleButton data-test="editorColumnLayout" value="column">
+            <ViewColumnIcon />
+          </ToggleButton>
+          <ToggleButton data-test="editorCompactLayout" value="compact">
+            <ViewCompactIcon />
+          </ToggleButton>
+          <ToggleButton data-test="editorRowLayout" value="row">
+            <ViewRowIcon />
+          </ToggleButton>
+        </ToggleButtonGroup>
+        )}
+      </div>
+      {helpKey && (
+      <Help
+        title={helpTitle}
+        className={classes.helpTextButton}
+        helpKey={helpKey}
+        fieldId={helpKey}
+          />
+      )}
+    </div>
+  );
+};
+
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
  */
@@ -80,37 +140,50 @@ export default function EditorDrawer(props) {
     toggleAction,
     flowId,
     path = id,
+    helpKey,
+    helpTitle,
+    activeEditorIndex,
   } = props;
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
+
   const [layout, setLayout] = useState(props.layout || 'compact');
-  const editor = useSelector(state => selectors.editor(state, id));
+  const activeEditorId = useMemo(() => activeEditorIndex ? `${id}-${activeEditorIndex}` : id, [
+    id,
+    activeEditorIndex,
+  ]);
+
+  const editor = useSelector(state => selectors.editor(state, activeEditorId));
   const saveInProgress = useSelector(
-    state => selectors.editorPatchStatus(state, id).saveInProgress
+    state => selectors.editorPatchStatus(state, activeEditorId).saveInProgress
   );
   const isEditorDirty = useSelector(state =>
-    selectors.isEditorDirty(state, id)
+    selectors.isEditorDirty(state, activeEditorId)
   );
+
+  // retain auto preview value across toggle editors
+  const autoEvaluate = useRef(false);
   const handleAutoPreviewToggle = useCallback(() => {
-    dispatch(actions.editor.patch(id, { autoEvaluate: !editor.autoEvaluate }));
-  }, [dispatch, editor.autoEvaluate, id]);
+    dispatch(actions.editor.patch(activeEditorId, { autoEvaluate: !editor.autoEvaluate }));
+    autoEvaluate.current = !editor.autoEvaluate;
+  }, [dispatch, editor.autoEvaluate, activeEditorId]);
   const editorViolations = useSelector(state =>
-    selectors.editorViolations(state, id)
+    selectors.editorViolations(state, activeEditorId)
   );
   const handlePreview = useCallback(
-    () => dispatch(actions.editor.evaluateRequest(id)),
-    [dispatch, id]
+    () => dispatch(actions.editor.evaluateRequest(activeEditorId)),
+    [dispatch, activeEditorId]
   );
 
   const saveEditor = useCallback(() => {
     if (onSave) {
       onSave(true, editor);
     }
-    dispatch(actions.editor.saveComplete(id));
-  }, [dispatch, editor, id, onSave]);
+    dispatch(actions.editor.saveComplete(activeEditorId));
+  }, [dispatch, editor, activeEditorId, onSave]);
 
   const handleSave = useCallback(
     () => {
@@ -137,14 +210,14 @@ export default function EditorDrawer(props) {
   }, [editor, enquesnackbar, saveEditor, handleClose]);
 
   const patchEditorLayoutChange = useCallback(() => {
-    dispatch(actions.editor.changeLayout(id));
-  }, [dispatch, id]);
+    dispatch(actions.editor.changeLayout(activeEditorId));
+  }, [dispatch, activeEditorId]);
   const handleLayoutChange = useCallback(
     (event, newLayout) => {
       patchEditorLayoutChange();
       newLayout && setLayout(newLayout);
     },
-    [patchEditorLayoutChange]
+    [patchEditorLayoutChange, setLayout]
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
@@ -182,33 +255,25 @@ export default function EditorDrawer(props) {
     return !!val;
   }, [disabled, editor, editorViolations, isEditorDirty]);
 
-  const drawerActions = (
-    <div className={classes.toolbarContainer}>
-      <div className={classes.actionContainer}>
-        {/* it expects field to be a component to render */}
-        {action}
-      </div>
-      <div className={classes.toggleContainer}>
-        {toggleAction}
-        {showLayoutOptions && (
-        <ToggleButtonGroup
-          value={layout}
-          exclusive
-          onChange={handleLayoutChange}>
-          <ToggleButton data-test="editorColumnLayout" value="column">
-            <ViewColumnIcon />
-          </ToggleButton>
-          <ToggleButton data-test="editorCompactLayout" value="compact">
-            <ViewCompactIcon />
-          </ToggleButton>
-          <ToggleButton data-test="editorRowLayout" value="row">
-            <ViewRowIcon />
-          </ToggleButton>
-        </ToggleButtonGroup>
-        )}
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    // patch current editor with autoEvaluate to maintain auto preview checkbox state
+    // across editors
+    if (editor.processor && activeEditorIndex !== undefined) {
+      dispatch(actions.editor.patch(activeEditorId, { autoEvaluate: autoEvaluate.current }));
+    }
+  }, [dispatch, activeEditorId, editor.processor, activeEditorIndex]);
+
+  const drawerActions = useMemo(() => (
+    <DrawerActions
+      action={action}
+      toggleAction={toggleAction}
+      showLayoutOptions={showLayoutOptions}
+      layout={layout}
+      handleLayoutChange={handleLayoutChange}
+      helpKey={helpKey}
+      helpTitle={helpTitle || title}
+      />
+  ), [action, handleLayoutChange, helpKey, helpTitle, layout, showLayoutOptions, title, toggleAction]);
 
   return (
     <RightDrawer
@@ -221,14 +286,17 @@ export default function EditorDrawer(props) {
       actions={drawerActions}
       onClose={handleClose} >
       {// Is there a better way to do this?
-        children && cloneElement(children, { layout })
+        cloneElement(children?.length ? children[activeEditorIndex] : children, {
+          layout,
+          editorId: activeEditorId})
 }
       <div className={classes.actions}>
         <div className={classes.wrapper}>
           {patchOnSave ? (
             <>
               <EditorSaveButton
-                id={id}
+                key={activeEditorId}
+                id={activeEditorId}
                 variant="outlined"
                 color="primary"
                 dataTest="saveEditor"
@@ -237,7 +305,8 @@ export default function EditorDrawer(props) {
                 flowId={flowId}
             />
               <EditorSaveButton
-                id={id}
+                key={`${activeEditorId}-close`}
+                id={activeEditorId}
                 variant="outlined"
                 color="secondary"
                 dataTest="saveAndCloseEditor"

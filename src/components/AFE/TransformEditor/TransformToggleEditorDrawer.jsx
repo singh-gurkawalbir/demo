@@ -1,17 +1,21 @@
-import React from 'react';
-import ToggleEditorDialog from '../EditorDrawer/toggleEditorDialog';
+import React, { useState, useMemo, useCallback } from 'react';
+import EditorDrawer from '../EditorDrawer';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
+import TextToggle from '../../TextToggle';
 
 const defaults = {
   width: '85vw',
   height: '60vh',
   layout: 'compact',
   open: true,
-  labels: ['Rules', 'JavaScript'],
 };
+const toggleEditorOptions = [
+  { label: 'Rules', value: 'expression' },
+  { label: 'JavaScript', value: 'script' },
+];
 
-export default function TransformToggleEditorDialog({
+export default function TransformToggleEditorDrawer({
   id,
   type,
   rule,
@@ -24,13 +28,32 @@ export default function TransformToggleEditorDialog({
   isSampleDataLoading,
   ...rest
 }) {
+  const [activeEditorIndex, setActiveEditorIndex] = useState('0');
+  const handleEditorToggle = useCallback(
+    value =>
+      setActiveEditorIndex(value === 'expression' ? '0' : '1'),
+    [setActiveEditorIndex]
+  );
+  const editorToggleAction = useMemo(() => (
+    <TextToggle
+      disabled={disabled}
+      value={activeEditorIndex === '0' ? 'expression' : 'script'}
+      onChange={handleEditorToggle}
+      exclusive
+      options={toggleEditorOptions}
+          />
+  ), [activeEditorIndex, disabled, handleEditorToggle]);
+
   return (
-    <ToggleEditorDialog
+    <EditorDrawer
       id={id}
       type={type}
       {...defaults}
       {...rest}
       disabled={disabled}
+      toggleAction={editorToggleAction}
+      activeEditorIndex={activeEditorIndex}
+      patchOnSave
       showLayoutOptions>
       <TransformEditor
         rule={rule}
@@ -48,6 +71,6 @@ export default function TransformToggleEditorDialog({
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </ToggleEditorDialog>
+    </EditorDrawer>
   );
 }

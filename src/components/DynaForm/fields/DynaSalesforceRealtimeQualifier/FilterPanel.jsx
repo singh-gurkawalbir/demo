@@ -205,7 +205,7 @@ export default function FilterPanel({
   }, [builderInitComplete, referencedFieldsResolved]);
 
   return (
-    <div className={classes.container} height="calc(100vh - 170px)" width="100%">
+    <div className={classes.container} height="calc(100vh - 200px)">
       <div className="salesforce-Qualifier" ref={qbuilder} />
     </div>
   );

@@ -161,6 +161,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const DRAWER_ACTIONS_LIST = ['exportFilter',
+  'transformation',
+  'exportTransformation',
+  'inputFilter',
+  'outputFilter',
+  'postResponseMapHook',
+  'responseTransformation',
+  'lookupTransformation'];
+
 function AppBlock({
   className,
   onDelete,
@@ -279,7 +288,7 @@ function AppBlock({
             [classes.isNotOverActions]: !expanded && !a.isUsed,
             [classes.actionIsNew]: expanded && !a.isUsed,
           })}
-          onClick={() => { setActiveAction(a.name); a.name === 'postResponseMapHook' && history.push(`${match.url}/postResponseMapHook`); }}
+          onClick={() => { setActiveAction(a.name); DRAWER_ACTIONS_LIST.includes(a.name) && history.push(`${match.url}/${a.name}`); }}
           data-test={a.name}>
           <a.Icon />
         </ActionIconButton>

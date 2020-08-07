@@ -29,7 +29,7 @@ export default function UrlEditorDrawer(props) {
       <UrlEditor
         lookups={lookups}
         disabled={disabled}
-        editorId={id}
+        // editorId={id}
         rule={rule}
         data={data}
         isSampleDataLoading={isSampleDataLoading}

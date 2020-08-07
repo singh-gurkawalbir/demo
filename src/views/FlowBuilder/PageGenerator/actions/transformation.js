@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
+import TransformToggleEditorDrawer from '../../../../components/AFE/TransformEditor/TransformToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
+function TransformationDrawer({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
@@ -52,7 +52,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
   );
 
   return (
-    <TransformToggleEditorDialog
+    <TransformToggleEditorDrawer
       title="Transform record"
       helpKey="export.transform.rules"
       helpTitle="Transform record"
@@ -68,6 +68,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
       isSampleDataLoading={sampleDataStatus === 'requested'}
+      path="exportTransformation"
     />
   );
 }
@@ -75,7 +76,7 @@ function TransformationDialog({ flowId, resource, onClose, isViewMode }) {
 function Transformation(props) {
   if (!props.open) return null;
 
-  return <TransformationDialog {...props} />;
+  return <TransformationDrawer {...props} />;
 }
 
 export default {

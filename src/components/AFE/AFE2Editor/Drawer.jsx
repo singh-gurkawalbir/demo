@@ -6,14 +6,11 @@ import actions from '../../../actions';
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
-const useStyles = makeStyles(theme => ({
-  editorToggleContainer: {
-    marginRight: theme.spacing(2),
-  },
+const useStyles = makeStyles({
   helpTextButton: {
     padding: 0,
   },
-}));
+});
 const toggleEditorOptions = [
   { label: 'AFE 1.0', value: 1 },
   { label: 'AFE 2.0', value: 2 },
@@ -22,7 +19,7 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.editorToggleContainer}>
+    <>
       <TextToggle
         disabled={disabled}
         value={editorVersion}
@@ -35,7 +32,7 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
         className={classes.helpTextButton}
         helpKey="afe.sampleDataSwitch"
       />
-    </div>
+    </>
   );
 };
 

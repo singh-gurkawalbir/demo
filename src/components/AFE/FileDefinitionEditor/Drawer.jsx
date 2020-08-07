@@ -2,6 +2,13 @@ import React from 'react';
 import EditorDrawer from '../EditorDrawer';
 import FileDefinitionEditor from './index';
 
+const defaults = {
+  width: '80vw',
+  layout: 'compact',
+  height: '50vh',
+  open: true,
+};
+
 function FileDefinitionEditorDrawer(props) {
   const {
     id,
@@ -11,12 +18,6 @@ function FileDefinitionEditorDrawer(props) {
     processor = 'structuredFileParser',
     ...rest
   } = props;
-  const defaults = {
-    width: '80vw',
-    layout: 'compact',
-    height: '50vh',
-    open: true,
-  };
 
   return (
     <EditorDrawer id={id} {...defaults} disabled={disabled} {...rest}>

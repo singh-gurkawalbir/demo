@@ -72,7 +72,7 @@ export default function CsvGenerateEditor(props) {
   }, [data, dispatch, editorId, editorInit, props.data]);
 
   return (
-    <PanelGrid className={classes.template} height="calc(100vh - 170px)" width="100%">
+    <PanelGrid className={classes.template} height="calc(100vh - 200px)">
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV generator options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />
