@@ -7,6 +7,8 @@ import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 import InvitationItem from './InvitationItem';
+import LoadResources from '../../../components/LoadResources';
+import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -36,6 +38,9 @@ export default function Notifications() {
   // added or removed (if rejected/accepted).
   const notifications = useSelector(state =>
     selectors.userNotifications(state)
+  );
+  const isAccountOwner = useSelector(state =>
+    selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
   );
   const handleClick = useCallback(
     event => {
@@ -68,16 +73,20 @@ export default function Notifications() {
 
   if (!notifications || notifications.length === 0) {
     return (
-      <Tooltip title="No notifications" placement="bottom">
-        <IconButton size="small" color="inherit">
-          <NotificationsIcon />
-        </IconButton>
-      </Tooltip>
+      <>
+        <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
+        <Tooltip title="No notifications" placement="bottom">
+          <IconButton size="small" color="inherit">
+            <NotificationsIcon />
+          </IconButton>
+        </Tooltip>
+      </>
     );
   }
 
   return (
     <>
+      <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
       <IconButton size="small" color="inherit" onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}

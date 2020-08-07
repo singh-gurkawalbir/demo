@@ -8,18 +8,18 @@ export default {
     const columns = [
       {
         heading: 'From user',
-        value: r => r && r.fromUser,
+        value: r => r && <><div>{r?.ownerUser?.name || 'Me'}</div><div>{r?.ownerUser?.email}</div></>,
         orderBy: 'name',
       },
       {
         heading: 'To user',
-        value: r => r && r.toUser,
+        value: r => r && <><div>{r?.transferToUser?.name || 'Me'}</div><div>{r?.transferToUser?.email}</div></>,
       },
       {
         heading: 'Integrations',
         value: r => r && r.integrations,
       },
-      { heading: 'Status', value: r => r && r.status },
+      { heading: 'Status', value: r => r && (r.dismissed ? 'dismissed' : r.status)},
       {
         heading: 'Transfer date',
         value: r => r && <DateTimeDisplay dateTime={r.transferredAt} />,
