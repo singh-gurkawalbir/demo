@@ -53,6 +53,7 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     responseTransform = {},
     http = {},
     netsuite = {},
+    netsuite_da = {}, // eslint-disable-line camelcase
   } = resource;
   const {
     responseMapping = {},
@@ -126,7 +127,9 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.hooks: {
-      return !!hooks || !!netsuite.restlet?.hooks || !!netsuite.distributed?.hooks;
+      // for NS exports hooks(suitescript) will be stored in netsuite -> restlet/distributed schema
+      // and for NS imports hooks is stored in netsuite_da schema
+      return !!hooks || !!netsuite.restlet?.hooks || !!netsuite.distributed?.hooks || !!netsuite_da.hooks;
     }
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
