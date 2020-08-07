@@ -11,7 +11,6 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../utils/string';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 export default function JobDashboard({
   integrationId,
@@ -32,7 +31,7 @@ export default function JobDashboard({
     selectors.isBulkRetryInProgress(state)
   );
   const filters = useSelector(state => selectors.filter(state, filterKey));
-  const jobs = useSelectorMemo(selectors.makeFlowJobs);
+  const jobs = useSelector(state => selectors.flowJobs(state));
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const [selectedJobs, setSelectedJobs] = useState({});
   const [numJobsSelected, setNumJobsSelected] = useState(0);
