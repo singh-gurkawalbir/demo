@@ -1341,7 +1341,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be generated)',
       helpKey: 'import.uploadFile',
       mode: r => r && r.file && r.file.type,
       visibleWhenAll: [
@@ -1400,7 +1400,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
             return 'How would you like the files transferred?';
           }
 

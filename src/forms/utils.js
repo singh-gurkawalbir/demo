@@ -312,9 +312,17 @@ export const sanitizePatchSet = ({
     return [...removePatches, ...valuePatches];
   }
 
+  let resourceAfterRemovePatches;
+  if (removePatches?.length) {
+    resourceAfterRemovePatches = jsonPatch.applyPatch(deepClone(resource), removePatches).newDocument;
+  } else {
+    resourceAfterRemovePatches = resource;
+  }
+
+  // we should generate missing patches against a resource with its remove patches applied to it
   const missingPatchSet = getMissingPatchSet(
     valuePatches.map(p => p.path),
-    resource
+    resourceAfterRemovePatches
   );
   // Though we are adding the missing patches, in some scenarios the path is getting replaced later
   // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
