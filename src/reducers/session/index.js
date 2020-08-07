@@ -216,23 +216,6 @@ export function optionsFromMetadata({
     filterKey,
   });
 }
-export function optionsMapFromMetadata(
-  state,
-  connectionId,
-  applicationType,
-  recordType,
-  selectField,
-  optionsMap
-) {
-  return fromMetadata.optionsMapFromMetadata(
-    state && state.metadata,
-    connectionId,
-    applicationType,
-    recordType,
-    selectField,
-    optionsMap
-  );
-}
 
 export function resourceFormState(state, resourceType, resourceId) {
   return fromResourceForm.resourceFormState(

@@ -3530,23 +3530,6 @@ export const makeOptionsFromMetadata = () => {
   );
 };
 
-export function optionsMapFromMetadata(
-  state,
-  connectionId,
-  applicationType,
-  recordType,
-  selectField,
-  optionsMap
-) {
-  return fromSession.optionsMapFromMetadata(
-    state && state.session,
-    connectionId,
-    applicationType,
-    recordType,
-    selectField,
-    optionsMap
-  );
-}
 
 export const preBuiltFileDefinitions = (state, format) =>
   fromData.preBuiltFileDefinitions(state && state.data, format);
