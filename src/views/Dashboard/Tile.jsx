@@ -169,6 +169,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
+        // https://celigo.atlassian.net/browse/IO-16798. Need to remove fix connection drawer changes.
         if (tile._connectorId) {
           history.push(
             getRoutePath(
