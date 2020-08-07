@@ -51,7 +51,7 @@ function ResourceReferences(props) {
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
           <Typography variant="h4">
-            This resource is not being used anywhere
+            This {resourceTypeLabel} is not being used anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">
             Close
@@ -63,7 +63,7 @@ function ResourceReferences(props) {
           <div>
             {title
               ? `Unable to delete ${resourceTypeLabel} as`
-              : 'Used by'}
+              : `${MODEL_PLURAL_TO_LABEL[resourceType]} references:`}
           </div>
           <div>
             <Typography className={classes.message}>
