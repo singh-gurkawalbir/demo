@@ -161,7 +161,7 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
   const parsedPreviewData =
     stage === 'raw' ? formatBodyForRawStage(previewData) : previewData;
   const bodyHeaderData = parsedPreviewData.data;
-  const { headers, ...rest } = (bodyHeaderData?.[0]) || {};
+  const { headers, ...rest } = bodyHeaderData?.[0] || {};
   const { body, url, ...others} = rest || {};
 
   return {

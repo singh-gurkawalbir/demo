@@ -40,11 +40,12 @@ export default function TabbedPanel(props) {
     setTabValue(newValue);
   }
 
-  const { body, headers, others } = getBodyHeaderFieldsForPreviewData(
-    previewStageDataList[panelType],
-    panelType
-  );
   const tabContent = useMemo(() => {
+    const { body, headers, others } = getBodyHeaderFieldsForPreviewData(
+      previewStageDataList[panelType],
+      panelType
+    );
+
     switch (tabValue) {
       case 'body':
         return body;
@@ -54,10 +55,9 @@ export default function TabbedPanel(props) {
         return others;
     }
   }, [
-    body,
-    headers,
-    others,
     tabValue,
+    panelType,
+    previewStageDataList,
   ]);
 
   return (
