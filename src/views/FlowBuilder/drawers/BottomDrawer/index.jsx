@@ -119,9 +119,6 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
-  // Hard coded to false as we need to show bottom drawer
-  // till the new drawers are fully functional
-  const isUserInErrMgtTwoDotZero = false;
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -202,40 +199,28 @@ export default function BottomDrawer({
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
-        {isUserInErrMgtTwoDotZero ? (
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example">
-            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-          </Tabs>
-        ) : (
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example">
-            <Tab
-              {...tabProps(0)}
-              icon={
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="scrollable auto tabs example">
+          <Tab {...tabProps(0)} icon={<RunIcon />} label="Run dashboard" />
+          <Tab
+            {...tabProps(1)}
+            icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
                 ) : (
                   <ConnectionsIcon />
                 )
               }
-              label="Connections"
+            label="Connections"
             />
-            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-            {connectionDebugLogs &&
+          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+          {connectionDebugLogs &&
               Object.keys(connectionDebugLogs).map(
                 (connectionId, cIndex) =>
                   connectionDebugLogs[connectionId] && (
@@ -258,8 +243,7 @@ export default function BottomDrawer({
                     />
                   )
               )}
-          </Tabs>
-        )}
+        </Tabs>
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
@@ -275,22 +259,17 @@ export default function BottomDrawer({
           </IconButton>
         </div>
       </div>
-      {isUserInErrMgtTwoDotZero ? (
+      <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           <RunDashboardPanel flow={flow} />
         </TabPanel>
-      ) : (
-        <>
-          <TabPanel value={tabValue} index={0} classes={classes}>
-            <ConnectionPanel flow={flow} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={1} classes={classes}>
-            <RunDashboardPanel flow={flow} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={2} classes={classes}>
-            <AuditPanel flow={flow} />
-          </TabPanel>
-          {connectionDebugLogs &&
+        <TabPanel value={tabValue} index={1} classes={classes}>
+          <ConnectionPanel flow={flow} />
+        </TabPanel>
+        <TabPanel value={tabValue} index={2} classes={classes}>
+          <AuditPanel flow={flow} />
+        </TabPanel>
+        {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (
@@ -318,8 +297,7 @@ export default function BottomDrawer({
                   </TabPanel>
                 )
             )}
-        </>
-      )}
+      </>
     </Drawer>
   );
 }
