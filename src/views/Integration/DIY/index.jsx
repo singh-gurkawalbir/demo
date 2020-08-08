@@ -239,7 +239,7 @@ export default function Integration(props) {
         templateId
       );
 
-      return getTemplateUrlName(template && template.applications);
+      return getTemplateUrlName(template?.applications);
     }
 
     return null;
@@ -431,8 +431,7 @@ export default function Integration(props) {
   }, [history, integrationId, templateName, templateUrlName]);
   useEffect(() => {
     if (
-      childIntegration &&
-      childIntegration.mode === 'install'
+      childIntegration?.mode === 'install'
     ) {
       history.push(
         getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`)
@@ -467,11 +466,11 @@ export default function Integration(props) {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
-  } else if (installSteps && installSteps.length && mode === 'install') {
+  } else if (installSteps?.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );
-  } else if (uninstallSteps && uninstallSteps.length && mode === 'uninstall') {
+  } else if (uninstallSteps?.length && mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
         childId ? `/${childId}` : ''
