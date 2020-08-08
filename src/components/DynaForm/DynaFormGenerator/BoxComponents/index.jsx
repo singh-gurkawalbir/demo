@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import FormGenerator from '..';
 // import ColorPalette from '../../../../styleguide/ColorPalette';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: '10px 16px 0px 16px',
     border: '1px solid',
@@ -21,9 +21,8 @@ export default function BoxComponents(props) {
   const classes = useStyles();
   const transformedContainers =
     containers &&
-    containers.map((container) => {
+    containers.map(container => {
       const {label, ...rest } = container;
-
 
       return (
         <Paper key={label} elevation={0} className={classes.root}>

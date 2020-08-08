@@ -36,7 +36,9 @@ export default function (state = {}, action) {
   });
 }
 
-export const exportData = (state, identifier) => {
+export const selectors = {};
+
+selectors.exportData = (state, identifier) => {
   const id = typeof identifier !== 'string' ? String(identifier) : identifier;
 
   return (state && state[id]) || EMPTY_OBJECT;

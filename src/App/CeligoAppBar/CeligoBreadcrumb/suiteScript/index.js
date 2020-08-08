@@ -38,5 +38,5 @@ export default [
     path: getRoutePath('/suitescript/:ssLinkedConnectionId/integrationapps/:integrationAppName/:integrationId'),
     breadcrumb: IntegrationCrumb,
     childRoutes: integrationRoutes,
-  }
+  },
 ];

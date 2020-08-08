@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
   statusWrapper: {
     display: 'flex',
@@ -235,7 +235,8 @@ function JobErrorTable({
                 className={classes.btnErrorTable}
                 onClick={handleDownloadAllErrorsClick}>
                 Download all errors
-              </Button>)}
+              </Button>
+            )}
           </ButtonsGroup>
 
           <>

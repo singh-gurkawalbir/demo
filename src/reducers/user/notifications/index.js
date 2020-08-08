@@ -39,7 +39,9 @@ export default (state = defaultState, action) => {
   });
 };
 
-export const userNotifications = createSelector(
+export const selectors = {};
+
+selectors.userNotifications = createSelector(
   state => state && state.accounts,
   state => state && state.stacks,
   state => state && state.transfers,
@@ -65,6 +67,7 @@ export const userNotifications = createSelector(
     transfers.forEach(t => {
       const interationsDoc = [];
       let name = '';
+
       if (t.toTransfer && t.toTransfer.integrations) {
         t.toTransfer.integrations.forEach(i => {
           name = ((i._id === 'none') ? 'Standalone Flows' : i.name) || i._id;
@@ -91,7 +94,7 @@ export const userNotifications = createSelector(
           nameOrCompany: s.ownerUser.name || s.ownerUser.company,
           email: s.ownerUser.email,
           stackName: s.stack.name || s.stack._id,
-          message: `${s.ownerUser.email} has shared the "${s.stack.name || s.stack._id}" stack with you.`
+          message: `${s.ownerUser.email} has shared the "${s.stack.name || s.stack._id}" stack with you.`,
           // secondaryMessage: `${s.ownerUser.email} is shared a stack "${s.stack
           //   .name || s.stack._id}" with you. Please accept or decline this.`,
         });

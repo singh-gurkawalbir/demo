@@ -13,7 +13,7 @@ import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 import menuItems from './menuItems';
 import getRoutePath from '../../utils/routePaths';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';
@@ -148,7 +148,7 @@ const useStyles = makeStyles(theme => ({
   innerListItems: {
     backgroundColor: theme.palette.background.drawer3,
     '&:hover': {
-      backgroundColor: theme.palette.background.drawer3, },
+      backgroundColor: theme.palette.background.drawer3 },
   },
   logoContainer: {
     alignItems: 'center',
@@ -189,7 +189,7 @@ function getHrefProps(href, path) {
   return {
     target: href && '_blank',
     href,
-    to: !href ? getRoutePath(path) : undefined
+    to: !href ? getRoutePath(path) : undefined,
   };
 }
 
@@ -310,12 +310,14 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {drawerOpened ? <Icon /> :
-                    <Tooltip placement="right-end" enterDelay={0} title={label}>
-                      <div>
-                        <Icon />
-                      </div>
-                    </Tooltip>}
+                    {drawerOpened ? <Icon />
+                      : (
+                        <Tooltip placement="right-end" enterDelay={0} title={label}>
+                          <div>
+                            <Icon />
+                          </div>
+                        </Tooltip>
+                      )}
 
                     {(!drawerOpened && children) &&
                     (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
@@ -360,12 +362,15 @@ export default function CeligoDrawer() {
                             button>
                             <ListItemIcon
                               classes={{ root: classes.itemIconRoot }}>
-                              {drawerOpened ? <Icon /> :
-                              <Tooltip placement="right-end" enterDelay={0} title={label}>
-                                <div>
-                                  <Icon />
-                                </div>
-                              </Tooltip>}
+                              {drawerOpened
+                                ? <Icon />
+                                : (
+                                  <Tooltip placement="right-end" enterDelay={0} title={label}>
+                                    <div>
+                                      <Icon />
+                                    </div>
+                                  </Tooltip>
+                                )}
                             </ListItemIcon>
                             <ListItemText
                               primary={label}

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import React, { useMemo, useEffect } from 'react';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../actions';
 import SharedUserRow from './SharedUserRow';

@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
@@ -9,7 +9,7 @@ const defaultState = {
       currentPage: 0,
       rowsPerPage: 10,
     },
-  }
+  },
 };
 
 const refreshlegacycontrolpanel = [
@@ -55,6 +55,7 @@ describe.skip('suiteScript reducer', () => {
 
       tiles.forEach(t => {
         const tile = {status: 'success', ...t, displayName: t.name, ssLinkedConnectionId: connectionId};
+
         expected.tiles.push(tile);
         const { _integrationId, ssLinkedConnectionId, status, ...otherIntegrationProps } = tile;
 
@@ -82,6 +83,7 @@ describe.skip('suiteScript reducer', () => {
 
       tiles.forEach(t => {
         const tile = {status: 'success', ...t, displayName: t.name, ssLinkedConnectionId: connectionId};
+
         expected[connectionId].tiles.push(tile);
         const { _integrationId, ssLinkedConnectionId, status, ...otherIntegrationProps } = tile;
 

@@ -7,7 +7,7 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
 import RightDrawer from '../../../../../components/drawer/Right';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(() => ({
   settingsContainer: {
@@ -28,7 +28,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const flow = useSelector((state) =>
+  const flow = useSelector(state =>
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',
       id: flowId,
@@ -36,7 +36,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
     })
   );
   const isIntegrationApp = useSelector(state => !!selectors.suiteScriptResource(state, {resourceType: 'integrations', id: integrationId, ssLinkedConnectionId})?._connectorId);
-  const nextDataFlows = useSelector((state) =>
+  const nextDataFlows = useSelector(state =>
     selectors.suiteScriptResourceList(state, {
       ssLinkedConnectionId,
       resourceType: 'nextFlows',
@@ -70,7 +70,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
             flow.scheduleDetails.nextDataFlowId.toString(),
           options: [
             {
-              items: nextDataFlows.map((f) => ({
+              items: nextDataFlows.map(f => ({
                 label: `${f.integrationName} - ${f.ioFlowName ||
                   f.name ||
                   f._id}`,
@@ -85,7 +85,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
   );
 
   const handleSubmit = useCallback(
-    (formVal) => {
+    formVal => {
       const patchSet = [
         {
           op: 'replace',
@@ -98,6 +98,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
           value: formVal.nextDataFlowId,
         },
       ];
+
       dispatch(
         actions.suiteScript.resource.patchStaged(
           ssLinkedConnectionId,
@@ -120,6 +121,7 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
     },
     [dispatch, flow._integrationId, flowId, history, ssLinkedConnectionId]
   );
+
   return (
     <RightDrawer path="settings" title="Settings" width="medium" className={classes.suiteScriptFlowSettingsDrawer}>
       <div className={classes.settingsContainer}>

@@ -7,7 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import options from '../../options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
@@ -64,6 +64,7 @@ export default function CsvGeneratePanel(props) {
       return false;
     }
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+
     return resource?.adaptorType === 'HTTPImport';
   });
   const patchEditor = (option, value) => {
@@ -109,19 +110,19 @@ export default function CsvGeneratePanel(props) {
         </FormControl>
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={includeHeader}
               data-test="includeHeader"
               onChange={() => patchEditor('includeHeader', !includeHeader)}
             />
-          }
+          )}
           label="Include header"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={truncateLastRowDelimiter}
@@ -133,12 +134,12 @@ export default function CsvGeneratePanel(props) {
                 );
               }}
             />
-          }
+          )}
           label="Truncate last row delimiter"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={wrapWithQuotes}
@@ -147,12 +148,12 @@ export default function CsvGeneratePanel(props) {
                 patchEditor('wrapWithQuotes', !wrapWithQuotes);
               }}
             />
-          }
+          )}
           label="Wrap with quotes"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={replaceTabWithSpace}
@@ -161,12 +162,12 @@ export default function CsvGeneratePanel(props) {
                 patchEditor('replaceTabWithSpace', !replaceTabWithSpace);
               }}
             />
-          }
+          )}
           label="Replace tab with space"
         />
         <FormControlLabel
           disabled={disabled}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={replaceNewlineWithSpace}
@@ -178,7 +179,7 @@ export default function CsvGeneratePanel(props) {
                 );
               }}
             />
-          }
+          )}
           label="Replace new line with space"
         />
         {customHeaderRowsSupported && (

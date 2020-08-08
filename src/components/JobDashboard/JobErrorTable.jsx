@@ -4,7 +4,7 @@ import { Link, useRouteMatch} from 'react-router-dom';
 import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { JOB_STATUS } from '../../utils/constants';
 import { generateNewId } from '../../utils/resource';
 import EditIcon from '../icons/EditIcon';
@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
 }));
 
@@ -564,8 +564,8 @@ function JobErrorTable({
                   {
                     heading: 'Resolved?',
                     align: 'center',
-                    value: r => r.resolved ?
-                      (<span className={classes.resolved}>Yes</span>)
+                    value: r => r.resolved
+                      ? (<span className={classes.resolved}>Yes</span>)
                       : (<span className={classes.error}>No</span>),
                   },
                   {
@@ -594,11 +594,13 @@ function JobErrorTable({
                   {
                     heading: 'Retry data',
                     align: 'center',
-                    value: r => <EditRetryCell
-                      retryId={r._retryId}
-                      isEditable={r.metadata?.isParent &&
+                    value: r => (
+                      <EditRetryCell
+                        retryId={r._retryId}
+                        isEditable={r.metadata?.isParent &&
                       r.retryObject?.isDataEditable}
-                      dateTime={r.createdAt} />,
+                        dateTime={r.createdAt} />
+                    ),
                   },
                 ]}
               />

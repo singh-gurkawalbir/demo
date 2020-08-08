@@ -31,16 +31,16 @@ export default function SelectError({
 
   return (
     <Checkbox
-      icon={
+      icon={(
         <span>
           <CheckboxUnselectedIcon />
         </span>
-      }
-      checkedIcon={
+      )}
+      checkedIcon={(
         <span>
           <CheckboxSelectedIcon />
         </span>
-      }
+      )}
       onChange={event => handleChange(event)}
       checked={error.selected || false}
       disabled={isDisabled}

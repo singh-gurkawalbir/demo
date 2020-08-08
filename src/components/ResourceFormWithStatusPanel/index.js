@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   notification: {
     margin: theme.spacing(2, 0),
-  }
+  },
 }));
 
 export default function ResourceFormWithStatusPanel({ isFlowBuilderView, className, showNotificationToaster, onCloseNotificationToaster, ...props }) {
@@ -38,6 +38,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height);
   }, []);
+
   return (
     <div
       className={clsx(className, {

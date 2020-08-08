@@ -12,7 +12,7 @@ import {
   resourceConflictDetermination,
 } from '.';
 import { apiCallWithRetry } from '..';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
 import { resourceConflictResolution } from '../utils';
@@ -108,6 +108,7 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
+
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
@@ -164,6 +165,7 @@ describe('commitStagedChanges saga', () => {
       );
 
       const updated = { _id: 1 };
+
       expect(saga.next(updated).value).toEqual(
         put(actions.resource.clearStaged(tempId))
       );
@@ -485,7 +487,7 @@ availableResources.forEach(type => {
       const path = `/${type}/${id}/dependencies`;
       const mockResourceReferences = {
         imports: [{ name: 'import1', id: 1 }, { name: 'import2', id: 2 }],
-        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }]
+        exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
       };
       const callEffect = saga.next().value;
 

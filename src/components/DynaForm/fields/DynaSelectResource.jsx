@@ -3,7 +3,7 @@ import sift from 'sift';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
 import LoadResources from '../../LoadResources';
@@ -283,7 +283,7 @@ function DynaSelectResource(props) {
         patchSet.push({
           op: 'add',
           path: '/statusExport',
-          value: true
+          value: true,
         });
       }
 

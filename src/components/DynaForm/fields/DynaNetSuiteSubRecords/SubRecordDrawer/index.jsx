@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import DynaForm from '../../..';
 import DynaSubmit from '../../../DynaSubmit';
@@ -53,8 +53,7 @@ function SubRecordDrawer(props) {
   const { resourceContext, flowId, connectionId, recordType } = props;
   const recordTypeObj = useSelector(state =>
     selectors
-      .metadataOptionsAndResources({
-        state,
+      .metadataOptionsAndResources(state, {
         connectionId,
         commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
         filterKey: 'suitescript-recordTypes',

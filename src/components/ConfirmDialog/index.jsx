@@ -7,7 +7,6 @@ import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
 import ButtonsGroup from '../ButtonGroup';
 
-
 const useStyles = makeStyles({
   message: {
     fontSize: 15,

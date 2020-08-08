@@ -14,7 +14,7 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import getRequestOptions from '../../../utils/requestOptions';
 import { apiCallWithRetry } from '../../index';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 export function* getJob({
   ssLinkedConnectionId,

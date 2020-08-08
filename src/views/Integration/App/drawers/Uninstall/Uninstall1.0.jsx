@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import actions from '../../../../../actions';
 import openExternalUrl from '../../../../../utils/window';
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
   noIntegrationMsg: {
     padding: theme.spacing(3),
-  }
+  },
 }));
 
 export default function Uninstaller1({ integration, integrationId, storeId }) {
@@ -185,7 +185,6 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
     }
   };
 
-
   return (
     <div>
       <CeligoPageBar
@@ -196,9 +195,9 @@ export default function Uninstaller1({ integration, integrationId, storeId }) {
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
-            {storeName ?
-              `Complete the below steps to uninstall your integration app child ${storeName}` :
-              'Complete the below steps to uninstall your integration app.'}
+            {storeName
+              ? `Complete the below steps to uninstall your integration app child ${storeName}`
+              : 'Complete the below steps to uninstall your integration app.'}
           </Typography>
 
           <div className={classes.installIntegrationSteps}>

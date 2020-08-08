@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEqual, difference } from 'lodash';
-import { userPreferences } from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { getTileId } from './util';
 import Tile from './Tile';
@@ -9,7 +9,7 @@ import SuiteScriptTile from './SuiteScriptTile';
 
 export default function DashboardCard({ sortedTiles }) {
   const dispatch = useDispatch();
-  const preferences = useSelector(state => userPreferences(state));
+  const preferences = useSelector(state => selectors.userPreferences(state));
   const tilesFromOtherEnvironment = useMemo(() => {
     const allSortedTileIds =
       (preferences.dashboard && preferences.dashboard.tilesOrder) || [];

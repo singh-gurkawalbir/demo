@@ -62,7 +62,6 @@ export default {
     }
     actionItems = [Edit, ...actionItems];
 
-
     return actionItems;
   },
 };

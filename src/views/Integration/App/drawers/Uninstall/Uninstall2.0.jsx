@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';
@@ -63,6 +63,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   const currentStep = useMemo(() => uninstallSteps && uninstallSteps.find(s => s.isCurrentStep), [
     uninstallSteps,
   ]);
+
   useEffect(() => {
     // we only want to do init, if mode is yet not uninstall
     if (mode && mode !== 'uninstall') {
@@ -92,7 +93,7 @@ export default function Uninstaller2({ integration, integrationId }) {
     }
   }, [dispatch, history, integrationId, isComplete]);
 
-  const handleStepClick = useCallback((step) => {
+  const handleStepClick = useCallback(step => {
     const { type, isTriggered, form } = step;
 
     if (!isTriggered) {

@@ -2,13 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-
 
 const useStyles = makeStyles(() => ({
   spinner: {
@@ -104,6 +103,7 @@ export default function ErrorDrawer({
 
   const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
   let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
+
   if (job?.name) title += ` > ${job.name}`;
 
   return (

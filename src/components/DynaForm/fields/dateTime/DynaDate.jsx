@@ -8,7 +8,7 @@ import {
 } from '@material-ui/pickers';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import CalendarIcon from '../../../icons/CalendarIcon';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 
 export default function DatePicker(props) {

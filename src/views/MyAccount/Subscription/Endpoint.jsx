@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import NotificationToaster from '../../../components/NotificationToaster';
@@ -17,7 +17,6 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -204,7 +203,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.light,
     paddingLeft: theme.spacing(1),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-  }
+  },
 }));
 
 export default function Endpoint() {
@@ -260,6 +259,7 @@ export default function Endpoint() {
         },
       ],
     });
+
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
 
@@ -277,6 +277,7 @@ export default function Endpoint() {
         },
       ],
     });
+
     return dispatch(actions.user.org.accounts.requestUpdate('upgrade'));
   }, [dispatch, confirmDialog]);
   const licenseEntitlementUsage = useSelector(state => selectors.getLicenseEntitlementUsage(state));
@@ -317,7 +318,6 @@ export default function Endpoint() {
       </SpinnerWrapper>
     );
   }
-
 
   return (
     <>
@@ -383,8 +383,9 @@ export default function Endpoint() {
             </Button>
           </Typography>
         </NotificationToaster>
-      </div>)}
-      {showExpireMessage &&
+      </div>
+      )}
+      {showExpireMessage && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="warning" size="large" onClose={onCloseExpireMessage}>
           <Typography component="div" variant="h5" className={classes.subscriptionMessage}>
@@ -400,7 +401,8 @@ export default function Endpoint() {
             and keep them all!
           </Typography>
         </NotificationToaster>
-      </div>}
+      </div>
+      )}
       <Typography variant="h4" className={classes.heading}>
         Subscription
       </Typography>
@@ -504,7 +506,8 @@ export default function Endpoint() {
                           Add more flows
                         </Button>
                       )}
-                  </div>)}
+                  </div>
+          )}
         </div>
       </div>
       <div className={classes.subscriptionBox}>
@@ -581,7 +584,8 @@ export default function Endpoint() {
                     />
           </div>
         </div>
-      </div>)}
+      </div>
+)}
       <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );

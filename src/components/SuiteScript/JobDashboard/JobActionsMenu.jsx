@@ -14,7 +14,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../../utils/routePaths';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 
 const useStyle = makeStyles({
@@ -156,7 +156,7 @@ export default function JobActionsMenu({
         downloadExportedFile: 'export',
         downloadImportedFile: 'import',
         downloadAllErrors: 'error',
-        downloadSuiteScriptLogs: 'suitescriptlogs'
+        downloadSuiteScriptLogs: 'suitescriptlogs',
       };
       let downloadUrl = `/api/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/jobs/${job._id}/download?jobType=${job.type}&fileType=${fileTypeMap[action]}`;
 

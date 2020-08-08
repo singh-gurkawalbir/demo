@@ -33,6 +33,7 @@ export default function IntegrationTabs({ tabs, className }) {
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
       const newTab = tabs[newTabIndex].path;
+
       history.push(
         generatePath(match.path, {
           ...match.params,

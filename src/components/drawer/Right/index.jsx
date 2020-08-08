@@ -10,7 +10,7 @@ import {
   matchPath,
 } from 'react-router-dom';
 import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
@@ -130,6 +130,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
 
   let fullPath;
+
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = `${match.url}/${path}`;
   } else if (Array.isArray(path)) {

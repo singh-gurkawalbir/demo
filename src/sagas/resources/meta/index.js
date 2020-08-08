@@ -2,7 +2,7 @@ import { call, put, race, select, take, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import { commStatusByKey } from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
@@ -104,12 +104,12 @@ export function* getNetsuiteOrSalesforceMeta({
   }
 }
 
-
 function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
   const {
     connectionId,
     commMetaPath,
   } = params;
+
   yield race({
     getMetadata: call(getNetsuiteOrSalesforceMeta, params),
     abortMetadata: take(
@@ -121,7 +121,6 @@ function* getNetsuiteOrSalesforceMetaTakeLatestPerAction(params) {
   });
 }
 
-
 export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
   const { path, opts } = getRequestOptions(
     actionTypes.METADATA.ASSISTANT_REQUEST,
@@ -131,7 +130,7 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
     }
   );
   const commStatus = yield select(
-    commStatusByKey,
+    selectors.commStatusByKey,
     commKeyGenerator(path, opts.method)
   );
 

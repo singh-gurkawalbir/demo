@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import getRoutePath from '../../../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function NameCell({
   ssLinkedConnectionId,
-  flow
+  flow,
 }) {
   const classes = useStyles();
   const integration = useSelector(state =>

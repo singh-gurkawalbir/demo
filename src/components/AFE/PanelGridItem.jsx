@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
@@ -33,7 +33,7 @@ export default function PanelGridItem(props) {
 
   return (
     <div
-      className={classNames(className, classes.gridItem)}
+      className={clsx(className, classes.gridItem)}
       style={{ gridArea }}>
       <div className={classes.flexContainer}>
         <div className={classes.title}>{children[0]}</div>

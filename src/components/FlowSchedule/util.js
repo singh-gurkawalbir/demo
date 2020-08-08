@@ -623,7 +623,7 @@ export const getMetadata = ({
             'daysToRunOn',
             'dayToRunOn',
             'schedule',
-          ]
+          ],
         },
       ],
     },

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager } from '../../../Flows';

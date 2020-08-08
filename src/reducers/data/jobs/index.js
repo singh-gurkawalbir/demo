@@ -589,8 +589,9 @@ export default (state = DEFAULT_STATE, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export const flowJobsPagingDetails = createSelector(
+selectors.flowJobsPagingDetails = createSelector(
   state => state && state.paging,
   state => state && state.flowJobs,
   (paging = DEFAULT_STATE.paging, flowJobs = DEFAULT_STATE.flowJobs) => ({
@@ -599,8 +600,9 @@ export const flowJobsPagingDetails = createSelector(
   })
 );
 
-export function flowJobs(state, options) {
+selectors.flowJobs = (state, options) => {
   const {paging, flowJobs, bulkRetryJobs} = state;
+
   if (!paging && !flowJobs && !bulkRetryJobs) {
     return DEFAULT_STATE.flowJobs;
   }
@@ -611,6 +613,7 @@ export function flowJobs(state, options) {
   );
 
   let allflowJobs = flowJobs;
+
   if (!options?.includeAll) {
     allflowJobs = flowJobs
       .slice(
@@ -618,6 +621,7 @@ export function flowJobs(state, options) {
         (paging.currentPage + 1) * paging.rowsPerPage
       );
   }
+
   return allflowJobs.map(job => {
     const additionalProps = {
       uiStatus: job.status,
@@ -699,9 +703,9 @@ export function flowJobs(state, options) {
 
     return { ...job, ...additionalProps };
   });
-}
+};
 
-export const inProgressJobIds = createSelector(
+selectors.inProgressJobIds = createSelector(
   state => state && state.paging,
   state => state && state.flowJobs,
   state => state && state.bulkRetryJobs,
@@ -812,7 +816,7 @@ export const inProgressJobIds = createSelector(
   }
 );
 
-export function job(state, { type, jobId, parentJobId }) {
+selectors.job = (state, { type, jobId, parentJobId }) => {
   if (!state) {
     return undefined;
   }
@@ -835,9 +839,9 @@ export function job(state, { type, jobId, parentJobId }) {
   }
 
   return parentJob.children.find(j => j._id === jobId);
-}
+};
 
-export const isBulkRetryInProgress = createSelector(
+selectors.isBulkRetryInProgress = createSelector(
   state => state && state.bulkRetryJobs,
   bulkRetryJobs => {
     if (!bulkRetryJobs) {
@@ -852,7 +856,7 @@ export const isBulkRetryInProgress = createSelector(
   }
 );
 
-export function jobErrors(state, jobId) {
+selectors.jobErrors = (state, jobId) => {
   if (!state || !state.errors) {
     return [];
   }
@@ -881,14 +885,14 @@ export function jobErrors(state, jobId) {
         },
       };
     });
-}
+};
 
-export function jobErrorRetryObject(state, retryId) {
+selectors.jobErrorRetryObject = (state, retryId) => {
   if (!state || !state.retryObjects || !state.retryObjects[retryId]) {
     return undefined;
   }
 
   return state.retryObjects[retryId];
-}
+};
 
 // #endregion

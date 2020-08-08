@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import sift from 'sift';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DynaSelect from '../DynaSelect';
 
 export default function DynaApiMethod(props) {

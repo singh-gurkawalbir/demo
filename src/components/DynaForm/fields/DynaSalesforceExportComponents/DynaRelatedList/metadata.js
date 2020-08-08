@@ -29,12 +29,12 @@ export default {
   columns: [
     {
       heading: 'Relationship',
-      value: (r) => r && r.relationshipName,
+      value: r => r && r.relationshipName,
     },
 
     {
       heading: 'Child SObject',
-      value: (r) => r && r.sObjectType,
+      value: r => r && r.sObjectType,
     },
     {
       heading: 'Referenced Fields',

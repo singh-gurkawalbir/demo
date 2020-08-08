@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
 
@@ -15,6 +15,7 @@ export default {
     if (actionProps?.resourceType?.indexOf('/licenses') >= 0) {
       return 'Delete license';
     }
+
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
@@ -37,6 +38,7 @@ export default {
     }, [dispatch, resourceId, resourceType]);
     const deleteResouce = useCallback(() => {
       let type;
+
       if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
         type = MODEL_PLURAL_TO_LABEL[resourceType];
       } else {

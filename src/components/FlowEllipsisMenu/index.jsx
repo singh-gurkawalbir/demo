@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import useConfirmDialog from '../ConfirmDialog';
 import AuditLogDialog from '../AuditLog/AuditLogDialog';
 import ReferencesDialog from '../ResourceReferences';

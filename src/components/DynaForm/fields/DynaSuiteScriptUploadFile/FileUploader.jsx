@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   defaultText: {
     margin: 0,
     marginLeft: theme.spacing(0.5),
-    color: '#b1c6d7'
+    color: '#b1c6d7',
   },
 }));
 
@@ -60,7 +60,7 @@ function FileUploader(props) {
     classProps = {},
     hideFileName = false,
     variant = 'outlined',
-    color = 'secondary'
+    color = 'secondary',
   } = props;
   const fileInput = useRef(null);
   const classes = useStyles();
@@ -68,6 +68,7 @@ function FileUploader(props) {
     fileInput.current.value = '';
     fileInput.current.click();
   }, []);
+
   return (
     <FormControl className={classProps.root}>
       <div className={classProps.actionContainer} >

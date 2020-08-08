@@ -49,7 +49,7 @@ export default {
     },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
-      fieldId: 'application'
+      fieldId: 'application',
     },
   },
   layout: {

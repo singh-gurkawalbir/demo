@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { Tooltip } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { convertUtcToTimezone } from '../../utils/date';
 
 const formatter = (value, unit, suffix, epochSeconds, nextFormatter) => {

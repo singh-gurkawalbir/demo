@@ -38,6 +38,7 @@ export default {
       if (queryTypeField) {
         queryTypeVal = queryTypeField && queryTypeField.value;
       }
+
       return {
         queryType: queryTypeVal,
         modelMetadataFieldId: modelMetadataField.fieldId,

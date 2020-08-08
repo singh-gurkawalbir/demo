@@ -6,7 +6,6 @@ import ResourceDrawerLink from '../../../ResourceDrawerLink';
 import Edit from '../../actions/Edit';
 import { ScriptName } from '..';
 
-
 export default {
   columns: [
     {
@@ -20,13 +19,13 @@ export default {
       heading: 'Function',
       value: function functionName(r) {
         return r.function;
-      }
+      },
     },
     {
       heading: 'Script',
       value: function scriptName(r) {
         return <ScriptName id={r._scriptId} />;
-      }
+      },
     },
     {
       heading: 'Last updated',

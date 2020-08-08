@@ -2,7 +2,7 @@ import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
@@ -25,6 +25,7 @@ export const SCOPES = {
   VALUE: 'value',
   SCRIPT: 'script',
 };
+
 Object.freeze(SCOPES);
 
 export function* patchFormField({
@@ -437,7 +438,6 @@ export function* submitFormValues({
   );
 }
 
-
 // this saga specifically creates new PG or PP updates to a flow document
 export function* getFlowUpdatePatchesForNewPGorPP(
   resourceType,
@@ -462,8 +462,8 @@ export function* getFlowUpdatePatchesForNewPGorPP(
     return [];
   }
 
-  const createdId = isNewId(tempResourceId) ?
-    yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
+  const createdId = isNewId(tempResourceId)
+    ? yield select(selectors.createdResourceId, tempResourceId) : tempResourceId;
   const createdResource = yield select(
     selectors.resource,
     resourceType,
@@ -479,6 +479,7 @@ export function* getFlowUpdatePatchesForNewPGorPP(
   // add a new one.
   const [, pendingIndex] = tempResourceId?.split('.');
   let pending = false;
+
   if (pendingIndex) {
     pending = true;
     addIndexPP = pendingIndex;
@@ -633,6 +634,7 @@ export function* touchFlow(flowId, resourceType, resourceId) {
   const out = [];
   const flow = yield select(selectors.resource, 'flows', flowId);
   const r = yield select(selectors.resource, resourceType, resourceId);
+
   if (flow?.lastModified && r?.lastModified && flow.lastModified < r.lastModified) {
     out.push({
       op: 'replace',
@@ -645,9 +647,11 @@ export function* touchFlow(flowId, resourceType, resourceId) {
     if (flow?.pageProcessors?.length) {
       for (let i = 0; i < flow.pageProcessors.length; i += 1) {
         const rm = flow.pageProcessors[i]?.responseMapping;
+
         if (rm) {
           const ks = Object.keys(rm);
           let empty = true;
+
           // null check is shallow
           for (let j = 0; j < ks.length; j += 1) {
             if (rm[ks[j]] != null && (!Array.isArray(rm[ks[j]]) || rm[ks[j]].length > 0)) {
@@ -665,6 +669,7 @@ export function* touchFlow(flowId, resourceType, resourceId) {
       }
     }
   }
+
   return out;
 }
 
@@ -679,6 +684,7 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     resourceId,
     flowId
   );
+
   // if flowPatches is already non-empty, the flow will be udpated and lastmodified will be changed as well
   // thus nothing to do for the lastmodified particularly
   // otherwise, check the stored flow and the changed resource to determine if the flow should be "touched"
@@ -824,6 +830,7 @@ export function* saveResourceWithDefinitionID({
   const { resourceId, resourceType, values } = formValues;
   const newValues = { ...values };
   const { definitionId, resourcePath } = fileDefinitionDetails;
+
   delete newValues['/file/filedefinition/rules'];
   newValues['/file/type'] = 'filedefinition';
   newValues['/file/fileDefinition/_fileDefinitionId'] = definitionId;

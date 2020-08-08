@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-
 
 function DynaSalesforceSelectOptionsGenerator(props) {
   const {
@@ -29,6 +28,7 @@ function DynaSalesforceSelectOptionsGenerator(props) {
     if (data && fieldName === 'onceExportBooleanFields') {
       options = data.filter(f => f.type === 'boolean' && f.updateable);
     }
+
     return options;
   }, [data, fieldName]);
 

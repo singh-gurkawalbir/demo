@@ -1,14 +1,12 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaSelect from '../DynaSelect';
-
 
 export default function DynaNetSuiteUpsertField(props) {
   const dispatch = useDispatch();
   const [flowSampleDataLoaded, setFlowSampleDataLoaded] = useState(false);
-
 
   const {ssLinkedConnectionId, resourceContext, ...rest} = props;
 
@@ -16,7 +14,7 @@ export default function DynaNetSuiteUpsertField(props) {
     selectors.suiteScriptResource(state, {
       resourceType: 'flows',
       id: resourceContext.resourceId,
-      ssLinkedConnectionId
+      ssLinkedConnectionId,
     })
   );
 
@@ -53,6 +51,7 @@ export default function DynaNetSuiteUpsertField(props) {
   }, [flowSampleData, flowSampleDataLoaded, requestFlowSampleData]);
 
   const items = [];
+
   flowSampleData?.forEach(field => {
     if (flow?.export?.netsuite?.restlet?.recordType) {
       items.push({value: field.id, label: field.name});
@@ -60,7 +59,6 @@ export default function DynaNetSuiteUpsertField(props) {
       items.push(field);
     }
   });
-
 
   return (
     <DynaSelect {...rest} options={[{ items }]} />

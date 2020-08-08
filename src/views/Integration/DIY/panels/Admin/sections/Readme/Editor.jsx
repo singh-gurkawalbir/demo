@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button, Typography } from '@material-ui/core';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import CodeEditor from '../../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../../components/RawHtml';
@@ -75,7 +75,7 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
           label: 'No, go back',
           color: 'secondary',
         },
-      ]
+      ],
     });
   }, [confirmDialog, isEditorDirty, onClose]);
 

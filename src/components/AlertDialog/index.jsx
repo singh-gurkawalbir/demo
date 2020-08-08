@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
@@ -92,12 +92,14 @@ export default function AlertDialog() {
 
   useEffect(() => {
     let versionPollingTimer;
+
     // stop polling when version is different
     if (isAuthenticated && !isUiVersionDifferent) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
       }, Number(process.env.UI_VERSION_PING));
     }
+
     return () => {
       clearTimeout(versionPollingTimer);
     };
@@ -125,17 +127,18 @@ export default function AlertDialog() {
     };
   }, [dispatch, sessionValidTimestamp]);
 
-
   return (
     <div>
-      {showSessionStatus ?
-        <Dialog disableEnforceFocus open style={contentWrapper}>
-          {showSessionStatus === 'warning' ? (
-            <WarningSessionContent />
-          ) : (
-            showSessionStatus === 'expired' && <ExpiredSessionContent />
-          )}
-        </Dialog>
+      {showSessionStatus
+        ? (
+          <Dialog disableEnforceFocus open style={contentWrapper}>
+            {showSessionStatus === 'warning' ? (
+              <WarningSessionContent />
+            ) : (
+              showSessionStatus === 'expired' && <ExpiredSessionContent />
+            )}
+          </Dialog>
+        )
         : isUiVersionDifferent && <StaleUIVersion />}
     </div>
   );

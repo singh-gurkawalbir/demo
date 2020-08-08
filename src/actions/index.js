@@ -79,7 +79,7 @@ const connection = {
       connectionId,
       integrationId,
     }),
-  updateTradingPartner: (connectionId) =>
+  updateTradingPartner: connectionId =>
     action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, {
       connectionId,
     }),
@@ -92,7 +92,7 @@ const connection = {
       deregisteredId,
       integrationId,
     }),
-  completeTradingPartner: (connectionIds) =>
+  completeTradingPartner: connectionIds =>
     action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE, {
       connectionIds,
     }),
@@ -384,7 +384,7 @@ const connectors = {
   clearStatus: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.STATUS_CLEAR, {
       fieldName,
-      _integrationId
+      _integrationId,
     }),
   receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
@@ -483,7 +483,7 @@ const fileDefinitions = {
           definitionRules,
           formValues,
           flowId,
-          skipClose
+          skipClose,
         }),
     },
   },
@@ -794,7 +794,7 @@ const integrationApp = {
   installer: {
     setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
-        connectionId, openOauthConnection, id
+        connectionId, openOauthConnection, id,
       }),
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
@@ -954,7 +954,7 @@ const integrationApp = {
         id,
         isCloned: !error,
         integrationId,
-        sandbox
+        sandbox,
       }),
     clearIntegrationClonedStatus: id =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
@@ -1243,7 +1243,7 @@ const flowData = {
     action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
-      stagesToReset
+      stagesToReset,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
   updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
@@ -1255,7 +1255,7 @@ const flowData = {
 };
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
-  updateUIVersion: (version) => action(actionTypes.UI_VERSION_UPDATE, {version}),
+  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
@@ -1337,7 +1337,7 @@ const mapping = {
   setNSAssistantFormLoaded: (id, value) =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { id, value }),
   refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
-  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key }),
 
 };
 

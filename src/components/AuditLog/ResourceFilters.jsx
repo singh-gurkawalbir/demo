@@ -36,7 +36,7 @@ export function ResourceTypeFilter(props) {
     'connections',
     'stacks',
     'scripts',
-    'apis'
+    'apis',
   ];
   const resource =
     resourceType &&

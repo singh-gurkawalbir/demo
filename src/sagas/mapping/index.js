@@ -3,7 +3,7 @@ import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
@@ -32,6 +32,7 @@ export function* saveMappings({ id, context }) {
     importSampleData,
     application
   );
+
   _mappings = mappingUtil.generateMappingsForApp({
     mappings: _mappings,
     generateFields,
@@ -40,7 +41,7 @@ export function* saveMappings({ id, context }) {
     resource,
     flowSampleData,
     netsuiteRecordType,
-    exportRes
+    exportRes,
   });
   const { _id: resourceId } = resource;
   const mappingPath = mappingUtil.getMappingPath(adaptorType);
@@ -102,7 +103,7 @@ export function* previewMappings({ id }) {
     flowSampleData,
     subRecordMappingId,
     netsuiteRecordType,
-    exportRes
+    exportRes,
   } = yield select(selectors.mapping, id);
   const generateFields = mappingUtil.getFormattedGenerateData(
     importSampleData,
@@ -123,7 +124,7 @@ export function* previewMappings({ id }) {
     resource,
     netsuiteRecordType,
     subRecordMappingId,
-    exportRes
+    exportRes,
   });
 
   const { _connectionId } = resourceCopy;
@@ -211,7 +212,8 @@ export function* refreshGenerates({ id, isInit = false }) {
     importSampleData,
     application
   );
-  const { _id: resourceId, } = resource;
+  const { _id: resourceId } = resource;
+
   if (application === adaptorTypeMap.SalesforceImport) {
     // salesforce Import could have sub objects as well
     const { _connectionId, salesforce } = resource;
@@ -225,11 +227,13 @@ export function* refreshGenerates({ id, isInit = false }) {
       });
     // during init, parent sObject metadata is already fetched.
     const sObjectList = isInit ? [] : [sObjectType];
+
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
       if (id.indexOf('[*].') !== -1) {
         const childObjectName = id.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName);
+
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
@@ -240,6 +244,7 @@ export function* refreshGenerates({ id, isInit = false }) {
       if (generate && generate.indexOf('[*].') !== -1) {
         const subListName = generate.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName);
+
         if (childRelationshipObject && sObjectList.indexOf(childRelationshipObject?.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
@@ -253,6 +258,7 @@ export function* refreshGenerates({ id, isInit = false }) {
     // in case of salesforce import, fetch all child sObject reference
   } else {
     const opts = {};
+
     if (application === adaptorTypeMap.NetSuiteImport && subRecordMappingId) {
       opts.recordType = netsuiteRecordType;
     }
@@ -265,11 +271,11 @@ export function* refreshGenerates({ id, isInit = false }) {
   }
 }
 
-
 export function* mappingInit({ id }) {
   const {
     application,
   } = yield select(selectors.mapping, id);
+
   if (application !== adaptorTypeMap.SalesforceImport) {
     return;
   }
@@ -287,6 +293,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
     mappings = [],
   } = yield select(selectors.mapping, id);
   const {_id: resourceId} = resource;
+
   if (application !== adaptorTypeMap.SalesforceImport || field !== 'generate') {
     return;
   }
@@ -299,6 +306,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
   const {key} = mappingObj;
   const childRelationshipField =
           generateFields && generateFields.find(field => field.id === value);
+
   if (childRelationshipField && childRelationshipField.childSObject) {
     const { childSObject, relationshipName } = childRelationshipField;
 

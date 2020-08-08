@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { uniq } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, Typography } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -73,6 +73,7 @@ export default function ApplicationsList({ filter }) {
     applications = applications.filter(
       a => {
         const {name} = connectorsMetadata?.find(c => c.id === a) || {};
+
         return a.toLowerCase().includes(lowerCaseFilter) ||
                name?.toLowerCase().includes(lowerCaseFilter);
       }

@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getResourceSubType, generateNewId } from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
@@ -226,7 +226,7 @@ const PageProcessor = ({
     resource,
     resourceId,
     resourceType,
-    index
+    index,
   ]);
   // #region Configure available processor actions
   // Add Help texts for actions common to lookups and imports manually

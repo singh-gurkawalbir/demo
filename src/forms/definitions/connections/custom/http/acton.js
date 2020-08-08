@@ -19,7 +19,7 @@ export default {
     name: { fieldId: 'name' },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
-      fieldId: 'application'
+      fieldId: 'application',
     },
   },
   layout: {

@@ -13,7 +13,6 @@ import { stringCompare } from '../utils/sort';
 // group: optional. If present used to group connectors together in the UI when
 //   listing them.
 
-
 const connectors = [
   // tech connectors
   {
@@ -808,7 +807,6 @@ export const groupApplications = (
   const assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
 
-
   if (assistants) {
     assistants.forEach(asst => {
       if (
@@ -913,13 +911,14 @@ export const applicationsList = () => {
       webhook: asst.webhook,
     });
   });
+
   return applications;
 };
-
 
 export const getApplicationConnectors = () => connectors.filter(c => !c.group && !c.marketPlaceOnly);
 export const getWebhookConnectors = () => {
   const applications = applicationsList();
+
   return applications.filter(c => !!c.webhook);
 };
 export const getDatabaseConnectors = () =>
@@ -933,6 +932,5 @@ export const getApp = (type, assistant) => {
 
   return applications.find(c => c.id === id) || {};
 };
-
 
 export default connectors;

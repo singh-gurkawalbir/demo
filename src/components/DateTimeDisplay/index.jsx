@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export default function DateTimeDisplay({ date, dateTime }) {
   const userOwnPreferences = useSelector(

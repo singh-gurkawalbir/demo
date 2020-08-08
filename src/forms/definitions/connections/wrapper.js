@@ -2,13 +2,13 @@ import { deepClone } from 'fast-json-patch';
 import { sortBy } from 'lodash';
 import { isNewId } from '../../../utils/resource';
 
-
 export default {
   init: (fieldMeta, resource = {}) => {
     const newfieldMeta = deepClone(fieldMeta);
 
     const unEncryptedText = resource?.wrapper?.unencrypted && Object.prototype.toString.apply(resource.wrapper.unencrypted) === '[object Object]' ? JSON.stringify(resource.wrapper.unencrypted) : resource?.wrapper?.unencrypted;
     let unEncryptedFields = [];
+
     if (resource && resource.wrapper && resource.wrapper.unencryptedFields && resource.wrapper.unencryptedFields.length > 0) {
       resource.wrapper.unencryptedFields.forEach(fld => {
         unEncryptedFields.push({
@@ -20,8 +20,8 @@ export default {
             fieldId: `wrapper.unencrypted.${fld.id}`,
             type: 'text',
             required: !!fld.required,
-            defaultValue: resource && resource.wrapper && resource.wrapper.unencrypted && resource.wrapper.unencrypted[fld.id]
-          }
+            defaultValue: resource && resource.wrapper && resource.wrapper.unencrypted && resource.wrapper.unencrypted[fld.id],
+          },
         });
       });
     } else {
@@ -34,13 +34,13 @@ export default {
           fieldId: 'wrapper.unencrypted',
           type: 'editor',
           required: true,
-          defaultValue: unEncryptedText || '{"field": "value"}'
-        }
+          defaultValue: unEncryptedText || '{"field": "value"}',
+        },
       });
     }
 
     if (resource && resource.wrapper && resource.wrapper.encryptedFields && resource.wrapper.encryptedFields.length > 0) {
-      resource.wrapper.encryptedFields.forEach((fld) => {
+      resource.wrapper.encryptedFields.forEach(fld => {
         unEncryptedFields.push({
           position: fld.position,
           field: {
@@ -51,7 +51,7 @@ export default {
             type: 'text',
             required: !!fld.required,
             inputType: 'password',
-          }
+          },
         });
       });
     } else {
@@ -65,7 +65,7 @@ export default {
           type: 'editor',
           required: true,
           defaultValue: (isNewId(resource && resource._id)) ? '{"field": "value"}' : '',
-        }
+        },
       });
     }
 

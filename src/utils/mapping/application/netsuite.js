@@ -76,6 +76,7 @@ export default {
         }
       });
     let index;
+
     if (resource && resource.netsuite_da?.operation === 'attach') {
       toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
 
@@ -85,12 +86,11 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjAttachToId',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
-
 
       index = toReturn.findIndex(
         mapping => mapping.generate === 'celigo_nlobjAttachedType'
@@ -98,12 +98,11 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjAttachedType',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
-
 
       index = toReturn.findIndex(
         mapping => mapping.generate === 'celigo_nlobjAttachedId'
@@ -111,7 +110,7 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjAttachedId',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
@@ -124,7 +123,7 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjDetachFromId',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
@@ -136,12 +135,11 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjDetachedType',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
-
 
       index = toReturn.findIndex(
         mapping => mapping.generate === 'celigo_nlobjDetachedId'
@@ -149,7 +147,7 @@ export default {
       if (index === -1) {
         toReturn.push({
           generate: 'celigo_nlobjDetachedId',
-          isRequired: true
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;

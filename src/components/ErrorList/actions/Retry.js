@@ -16,9 +16,11 @@ export default {
         })
       );
     }, [dispatch, flowId, isResolved, rowData.retryDataKey, resourceId]);
+
     useEffect(() => {
       handleClick();
     }, [handleClick]);
+
     return null;
   },
 };

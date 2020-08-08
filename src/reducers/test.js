@@ -2,7 +2,7 @@
 // import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
   ACCOUNT_IDS,

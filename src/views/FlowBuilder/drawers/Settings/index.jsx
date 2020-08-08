@@ -7,7 +7,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
@@ -45,7 +45,7 @@ export default function SettingsDrawer({
           helpKey: 'flow.name',
           label: 'Name',
           defaultValue: flow && flow.name,
-          required: true
+          required: true,
         },
         description: {
           id: 'description',
@@ -100,7 +100,7 @@ export default function SettingsDrawer({
             ],
           },
           {
-            fields: ['settings']
+            fields: ['settings'],
           },
         ],
       },

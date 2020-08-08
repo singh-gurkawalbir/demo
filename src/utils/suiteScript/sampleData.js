@@ -1,7 +1,6 @@
 import { each, isArray } from 'lodash';
 import moment from 'moment';
 
-
 import {
   getFormattedNSSalesOrderMetadataData,
   getFormattedNSCustomerSampleData,
@@ -95,6 +94,7 @@ export const getSampleValue = (type, id) => {
 };
 export function getFormattedNetsuiteMetadataData(nsMetaData, nsRecordType) {
   const formattedNSMetadata = [];
+
   each(nsMetaData, metadata => {
     const { sublist, type, id, ...rest } = metadata;
     let formattedID = id;

@@ -21,13 +21,14 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function integrationClonedDetails(state, id) {
+selectors.integrationAppClonedDetails = (state, id) => {
   if (!(state && state[id])) {
     return defaultObject;
   }
 
   return state[id];
-}
+};
 
 // #endregion
