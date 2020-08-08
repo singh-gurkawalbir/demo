@@ -38,6 +38,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integrationApps';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
+import ChipInput from '../../../components/ChipInput';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -47,6 +48,9 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       border: 'none',
     },
+  },
+  tag: {
+    marginLeft: theme.spacing(1),
   },
   editableTextInput: {
     width: `calc(60vw - ${52 + 24}px)`,
@@ -129,6 +133,7 @@ export default function Integration(props) {
     installSteps,
     uninstallSteps,
     mode,
+    tag,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -147,7 +152,8 @@ export default function Integration(props) {
         sandbox: integration.sandbox,
         installSteps: integration.installSteps,
         uninstallSteps: integration.uninstallSteps,
-        supportsChild: integration && integration.initChild && integration.initChild.function,
+        supportsChild: integration.initChild?.function,
+        tag: integration.tag,
       };
     }
 
@@ -351,6 +357,12 @@ export default function Integration(props) {
     },
     [patchIntegration]
   );
+  const handleTagChangeHandler = useCallback(
+    tag => {
+      patchIntegration('/tag', tag);
+    },
+    [patchIntegration]
+  );
 
   if (!hasIntegration && isDeleting) {
     ['integrations', 'tiles', 'scripts'].forEach(resource =>
@@ -497,6 +509,15 @@ export default function Integration(props) {
               'Standalone integrations'
             )
           }
+          titleTag={isIntegrationApp && (
+            <ChipInput
+              disabled={!canEdit}
+              value={tag || 'tag'}
+              className={classes.tag}
+              variant="outlined"
+              onChange={handleTagChangeHandler}
+          />
+          )}
           infoText={
             hasIntegration ? (
               <EditableText
