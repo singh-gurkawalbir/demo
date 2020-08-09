@@ -7,6 +7,7 @@ import metadata from './metadata';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import LatestJobActions from './actions/LatestJobActions';
 
+// TODO: should we move this to JobsDashboard component?
 export default function FlowRunDashboard({ flow }) {
   const { _id: flowId, _integrationId: integrationId = 'none'} = flow;
   const dispatch = useDispatch();

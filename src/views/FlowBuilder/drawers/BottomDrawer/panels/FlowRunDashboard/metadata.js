@@ -1,6 +1,7 @@
 import React from 'react';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import ErrorLink from './ErrorLink';
+import JobStatus from '../../../../../../components/JobDashboard/JobStatus';
 
 export default {
   columns: [
@@ -8,10 +9,9 @@ export default {
       heading: 'Step',
       value: r => r.name,
     },
-    { heading: 'Source', value: r => r.type },
     {
       heading: 'Status',
-      value: r => r.status,
+      value: r => <JobStatus job={r} />,
     },
     {
       heading: 'Success',
