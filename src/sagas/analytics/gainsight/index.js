@@ -1,6 +1,6 @@
 import { takeEvery, select } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import * as gainsight from '../../../utils/analytics/gainsight';
 import { ACCOUNT_IDS } from '../../../utils/constants';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';

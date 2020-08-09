@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { errorActionsContext } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(() => ({
   statusContainer: {
@@ -15,12 +15,12 @@ export default function ActionStatus(props) {
   const { flowId, resourceId } = props;
   const retryCount = useSelector(
     state =>
-      errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
         .count || 0
   );
   const resolveCount = useSelector(
     state =>
-      errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
         .count || 0
   );
 

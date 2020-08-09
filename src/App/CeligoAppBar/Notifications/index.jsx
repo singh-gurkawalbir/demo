@@ -5,7 +5,7 @@ import { Tooltip, IconButton, Badge, Divider } from '@material-ui/core';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 
 const useStyles = makeStyles(theme => ({

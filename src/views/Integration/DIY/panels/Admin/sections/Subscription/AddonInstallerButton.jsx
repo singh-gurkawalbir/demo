@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';

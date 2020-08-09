@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, Select, MenuItem } from '@material-ui/core';
 import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';

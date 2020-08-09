@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import trim from '../../../utils/trim';
 
 const styles = theme => ({

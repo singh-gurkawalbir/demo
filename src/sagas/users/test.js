@@ -4,7 +4,7 @@ import { call, put, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers/index';
+import { selectors } from '../../reducers';
 import {
   changePasswordParams,
   updatePreferencesParams,

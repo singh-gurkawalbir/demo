@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
 import CeligoTable from '../../CeligoTable';
-import { filter } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
@@ -36,7 +36,7 @@ export default function ErrorTable(props) {
     []
   );
   const dataFilter = useSelector(
-    state => filter(state, filterKey) || defaultFilter
+    state => selectors.filter(state, filterKey) || defaultFilter
   );
   const errorsInCurrentPage = useMemo(
     () => data.slice(page * rowsPerPage, (page + 1) * rowsPerPage),

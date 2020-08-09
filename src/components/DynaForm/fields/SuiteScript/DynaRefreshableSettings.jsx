@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { DynaGenericSelect } from '../DynaRefreshableSelect/RefreshGenericResource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {

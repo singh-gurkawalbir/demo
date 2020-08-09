@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import React, { useState, useCallback } from 'react';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 
 export default function DynaSkipRetries(props) {

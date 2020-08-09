@@ -2,7 +2,7 @@ import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,

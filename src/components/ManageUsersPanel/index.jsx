@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import IconTextButton from '../IconTextButton';
 import AddIcon from '../icons/AddIcon';

@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DynaAction from '../../../DynaForm/DynaAction';
 
 const useStyles = makeStyles(theme => ({

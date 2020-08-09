@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../actions';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 
 const useIASettingsStateWithHandleClose = (
   integrationId,

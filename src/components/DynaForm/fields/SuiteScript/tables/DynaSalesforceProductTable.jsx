@@ -4,7 +4,7 @@ import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import DynaSelect from '../../DynaSelect';
 import DynaTableView from '../../DynaTableView/DynaTable';

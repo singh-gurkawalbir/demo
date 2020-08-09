@@ -7,7 +7,7 @@ import {
   Route,
   useLocation,
 } from 'react-router-dom';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';

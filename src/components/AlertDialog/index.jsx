@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 

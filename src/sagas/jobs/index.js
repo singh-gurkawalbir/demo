@@ -14,7 +14,7 @@ import { map } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';

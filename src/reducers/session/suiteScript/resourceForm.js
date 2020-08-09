@@ -104,10 +104,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function resourceFormState(
-  state,
-  { ssLinkedConnectionId, resourceType, resourceId }
-) {
+export const selectors = {};
+
+selectors.suiteScriptResourceFormState = (state, { ssLinkedConnectionId, resourceType, resourceId }) => {
   if (!state) {
     return {};
   }
@@ -119,12 +118,9 @@ export function resourceFormState(
   });
 
   return state[key] || {};
-}
+};
 
-export function resourceFormSaveProcessTerminated(
-  state,
-  { ssLinkedConnectionId, resourceType, resourceId }
-) {
+selectors.suiteScriptResourceFormSaveProcessTerminated = (state, { ssLinkedConnectionId, resourceType, resourceId }) => {
   if (!state) return false;
   const key = suiteScriptResourceKey({
     ssLinkedConnectionId,
@@ -136,5 +132,5 @@ export function resourceFormSaveProcessTerminated(
   const { submitFailed, submitComplete, submitAborted } = state[key];
 
   return !!(submitFailed || submitComplete || submitAborted);
-}
+};
 // #endregion

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaText from './DynaText';
 import { extractSampleDataAtResourcePath } from '../../../utils/sampleData';
 

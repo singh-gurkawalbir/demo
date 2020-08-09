@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FormControl, makeStyles } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DynaMultiSelect from '../DynaMultiSelect';
 import actions from '../../../../actions';
 import Spinner from '../../../Spinner';

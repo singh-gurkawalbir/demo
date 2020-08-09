@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
@@ -376,10 +376,10 @@ describe('suiteScript selectors test cases', () => {
   describe('suiteScript installer selectors', () => {
     describe('installerData', () => {
       test('should return empty state when no match found.', () => {
-        expect(selectors.installerData(undefined, 'dummy')).toEqual(
+        expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, 'dummy')).toEqual(
           {}
         );
-        expect(selectors.installerData({}, 'dummy')).toEqual({});
+        expect(selectors.suiteScriptIntegrationAppInstallerData({}, 'dummy')).toEqual({});
       });
 
       test('should return correct state data when a match is found.', () => {
@@ -391,7 +391,7 @@ describe('suiteScript selectors test cases', () => {
         );
         const expectedData = {steps: SUITESCRIPT_CONNECTORS[0].installSteps};
 
-        expect(selectors.installerData(newState, 'suitescript-salesforce-netsuite')).toEqual(expectedData);
+        expect(selectors.suiteScriptIntegrationAppInstallerData(newState, 'suitescript-salesforce-netsuite')).toEqual(expectedData);
       });
     });
   });

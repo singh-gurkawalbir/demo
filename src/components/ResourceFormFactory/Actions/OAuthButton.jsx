@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import resourceConstants from '../../../forms/constants/connection';
 import { useLoadingSnackbarOnSave } from '.';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';

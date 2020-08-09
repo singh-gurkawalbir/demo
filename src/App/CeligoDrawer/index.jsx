@@ -13,7 +13,7 @@ import CeligoLogo from '../../components/CeligoLogo';
 import CeligoMarkIcon from '../../components/icons/CeligoMarkIcon';
 import menuItems from './menuItems';
 import getRoutePath from '../../utils/routePaths';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ArrowDownIcon from '../../components/icons/ArrowDownIcon';
 import ArrowUpIcon from '../../components/icons/ArrowUpIcon';

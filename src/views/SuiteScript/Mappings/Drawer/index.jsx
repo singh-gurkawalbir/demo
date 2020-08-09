@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import RightDrawer from '../../../../components/drawer/Right';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import MappingWrapper from './MappingWrapper';
 
 export default function SuiteScriptMappingDrawer(props) {

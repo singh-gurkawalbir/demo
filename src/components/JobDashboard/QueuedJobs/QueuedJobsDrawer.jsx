@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { Button, Drawer, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';

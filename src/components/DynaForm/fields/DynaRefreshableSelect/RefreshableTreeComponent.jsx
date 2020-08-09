@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import ArrowDownIcon from '../../../icons/ArrowDownIcon';
@@ -162,8 +162,7 @@ export default function RefreshableTreeComponent(props) {
   const [expanded, setExpanded] = useState([]);
   const dispatch = useDispatch();
   const statusSelector = useSelector(state => selectedReferenceTo =>
-    selectors.metadataOptionsAndResources({
-      state,
+    selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',

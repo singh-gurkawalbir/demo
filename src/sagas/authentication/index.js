@@ -16,7 +16,7 @@ import {
   getCSRFToken,
   removeCSRFToken,
 } from '../../utils/session';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';

@@ -13,7 +13,7 @@ import {
 // import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { getLabel } from '../../../../utils/flowMetrics';
 import actions from '../../../../actions';
 import Loader from '../../../../components/Loader';
