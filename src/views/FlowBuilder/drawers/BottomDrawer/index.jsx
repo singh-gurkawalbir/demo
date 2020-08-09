@@ -15,6 +15,7 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
+import FlowRunDashboard from './panels/FlowRunDashboard';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
@@ -119,6 +120,10 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
+
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -261,7 +266,9 @@ export default function BottomDrawer({
       </div>
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
-          <RunDashboardPanel flow={flow} />
+          { isUserInErrMgtTwoDotZero
+            ? <FlowRunDashboard flow={flow} />
+            : <RunDashboardPanel flow={flow} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>
           <ConnectionPanel flow={flow} />

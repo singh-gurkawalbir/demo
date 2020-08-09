@@ -321,7 +321,7 @@ function FlowBuilder() {
   );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    setTabValue(1);
+    setTabValue(0);
 
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);

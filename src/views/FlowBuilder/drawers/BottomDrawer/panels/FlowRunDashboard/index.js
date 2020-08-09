@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import metadata from './metadata';
@@ -28,10 +28,12 @@ export default function FlowRunDashboard({ flow }) {
     }
   }, [dispatch, integrationId, flowId, jobs.length]);
 
+  const latestJobs = jobs?.[0]?.children || [];
+
   return (
     <>
       <CeligoTable
-        data={jobs?.[0]?.children || []}
+        data={latestJobs}
         {...metadata} />
     </>
   );
