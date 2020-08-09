@@ -5,6 +5,7 @@ import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import metadata from './metadata';
 import CeligoTable from '../../../../../../components/CeligoTable';
+import LatestJobActions from './actions/LatestJobActions';
 
 export default function FlowRunDashboard({ flow }) {
   const { _id: flowId, _integrationId: integrationId = 'none'} = flow;
@@ -30,8 +31,14 @@ export default function FlowRunDashboard({ flow }) {
 
   const latestJobs = jobs?.[0]?.children || [];
 
+  if (!latestJobs.length) {
+    // TODO : Find out what to show while waiting / loading
+    return null;
+  }
+
   return (
     <>
+      <LatestJobActions flowId={flowId} jobs={latestJobs} />
       <CeligoTable
         data={latestJobs}
         {...metadata} />
