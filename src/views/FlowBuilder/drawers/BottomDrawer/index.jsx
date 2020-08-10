@@ -251,7 +251,8 @@ export default function BottomDrawer({
               )}
         </Tabs>
         {
-          tabValue === 0 && <RunDashboardActions flowId={flow._id} />
+         isUserInErrMgtTwoDotZero && tabValue === 0 &&
+         <RunDashboardActions flowId={flow._id} />
         }
         <div className={classes.actionsContainer}>
           <IconButton
