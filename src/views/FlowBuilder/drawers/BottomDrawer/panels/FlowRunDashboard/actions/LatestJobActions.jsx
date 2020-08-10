@@ -1,12 +1,14 @@
 import React, { useCallback} from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RefreshIcon from '../../../../../../../components/icons/RefreshIcon';
 import CancelIcon from '../../../../../../../components/icons/CancelIcon';
 import RunFlowButton from '../../../../../../../components/RunFlowButton';
 import IconTextButton from '../../../../../../../components/IconTextButton';
 import actions from '../../../../../../../actions';
+import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import { JOB_STATUS } from '../../../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -17,10 +19,18 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
 }));
-export default function LatestJobActions({ flowId, jobId }) {
+export default function LatestJobActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const cancellableJobIds = useSelector(state => {
+    const latestJobs = selectors.latestFlowJobs(state);
+    const jobIdsToCancel = latestJobs
+      .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status))
+      .map(job => job._id);
+
+    return jobIdsToCancel;
+  });
   const handleRefresh = useCallback(() => {
     dispatch(actions.job.clear());
   }, [dispatch]);
@@ -35,7 +45,8 @@ export default function LatestJobActions({ flowId, jobId }) {
           label: 'Yes, cancel',
           onClick: () => {
             // TODO: check for cases to handle
-            dispatch(actions.job.cancel({ jobId }));
+            cancellableJobIds
+              .forEach(jobId => dispatch(actions.job.cancel({ jobId })));
           },
         },
         {
@@ -44,7 +55,7 @@ export default function LatestJobActions({ flowId, jobId }) {
         },
       ],
     });
-  }, [jobId, dispatch, confirmDialog]);
+  }, [dispatch, confirmDialog, cancellableJobIds]);
 
   return (
     <div className={classes.rightActionContainer}>
@@ -53,7 +64,7 @@ export default function LatestJobActions({ flowId, jobId }) {
         <RefreshIcon /> Refresh
       </IconTextButton>
       {/* disable when not eligible to cancel */}
-      <IconTextButton onClick={handleCancel}>
+      <IconTextButton onClick={handleCancel} disabled={cancellableJobIds.length === 0}>
         <CancelIcon /> Cancel
       </IconTextButton>
     </div>

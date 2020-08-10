@@ -34,7 +34,7 @@ export default function FlowRunDashboard({ flow }) {
 
   return (
     <>
-      <LatestJobActions flowId={flowId} jobId={latestJobs?.[0]._flowJobId} />
+      <LatestJobActions flowId={flowId} />
       <CeligoTable
         data={latestJobs}
         {...metadata} />

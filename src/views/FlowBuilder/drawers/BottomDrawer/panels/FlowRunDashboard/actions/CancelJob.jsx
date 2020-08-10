@@ -2,12 +2,13 @@ import {useEffect, useCallback} from 'react';
 import { useDispatch } from 'react-redux';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
+import { JOB_STATUS } from '../../../../../../../utils/constants';
 
 export default {
   label: 'Cancel',
   component: function CancelJob({ rowData }) {
     const dispatch = useDispatch();
-    const jobId = rowData?._flowJobId;
+    const jobId = rowData.status === JOB_STATUS.QUEUED ? rowData._id : rowData?._flowJobId;
     const { confirmDialog } = useConfirmDialog();
     const handleCancel = useCallback(() => {
       confirmDialog({
