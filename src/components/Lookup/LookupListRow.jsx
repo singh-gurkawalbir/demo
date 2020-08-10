@@ -17,7 +17,7 @@ export default function LookupListRow(props) {
     onDelete(value);
   }, [onDelete, value]);
 
-  const handleMenuClick = (event) => {
+  const handleMenuClick = event => {
     setAnchorEl(event.currentTarget);
   };
 

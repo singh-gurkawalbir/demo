@@ -20,15 +20,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ClipBoardPanel(props) {
-  const { text } = props;
+export default function ClipBoardPanel({ content }) {
   const classes = useStyles();
-
+  const clipBoardText = typeof content !== 'string' ? JSON.stringify(content, null, 2) : content;
 
   return (
     <div className={classes.clipBoardContainer}>
       <CopyToClipboard
-        text={text}
+        text={clipBoardText}
         className={classes.clipBoard}>
         <IconTextButton
           data-test="copyToClipboard"

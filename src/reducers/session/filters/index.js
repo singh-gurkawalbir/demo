@@ -32,11 +32,13 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function filter(state, name) {
+export const selectors = {};
+
+selectors.filter = (state, name) => {
   if (!state) {
     return emptyObj;
   }
 
   return state[name] || emptyObj;
-}
+};
 // #endregion

@@ -107,23 +107,23 @@ export default {
     });
     const netsuiteBundleNeeded =
       some(exportDocs || [], exp => {
-        const conn = connections.find(c => c._id === exp._connectionId);
+        const conn = connections?.find(c => c._id === exp._connectionId);
 
         return (
-          ((exp.netsuite || {}).type === 'restlet' &&
-            exp.netsuite.restlet.recordType) ||
-          (exp.type === 'distributed' && conn.type === 'netsuite')
+          ((exp?.netsuite || {}).type === 'restlet' &&
+            exp?.netsuite?.restlet?.recordType) ||
+          (exp?.type === 'distributed' && conn?.type === 'netsuite')
         );
       }) ||
       some(importDocs || [], imp => {
-        const conn = connections.find(c => c._id === imp._connectionId);
+        const conn = connections?.find(c => c._id === imp._connectionId);
 
-        return imp.distributed && conn.type === 'netsuite';
+        return imp.distributed && conn?.type === 'netsuite';
       });
     const salesforceBundleNeeded = some(exportDocs || [], exp => {
-      const conn = connections.find(c => c._id === exp._connectionId);
+      const conn = connections?.find(c => c._id === exp._connectionId);
 
-      return exp.type === 'distributed' && conn.type === 'salesforce';
+      return exp?.type === 'distributed' && conn?.type === 'salesforce';
     });
 
     if (netsuiteBundleNeeded) {

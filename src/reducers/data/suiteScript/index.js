@@ -134,6 +134,7 @@ export default (
 
             if (resourceType.endsWith('/tiles')) {
               const tiles = parseTiles(collection);
+
               draft[ssLinkedConnectionId].tiles = tiles?.map(tile => ({
                 ...tile,
                 ssLinkedConnectionId,
@@ -224,6 +225,7 @@ export default (
       case actionTypes.SUITESCRIPT.RESOURCE.RECEIVED:
         {
           const { ssLinkedConnectionId, integrationId, resource } = action;
+
           if (['exports', 'imports'].includes(resourceType)) {
             resourceType = 'flows';
           }
@@ -235,6 +237,7 @@ export default (
 
             if (resourceType === 'flows') {
               const flowId = generateUniqueFlowId(resource._id, resource.type);
+
               index = draft[ssLinkedConnectionId].flows.findIndex(
                 r =>
                   r._id === flowId &&
@@ -249,6 +252,7 @@ export default (
               );
               if (index > -1) {
                 const existingIntegration = draft[ssLinkedConnectionId][resourceType][index];
+
                 if (!existingIntegration.isNotEditable) {
                   existingIntegration.displayName = resource.name;
                 }
@@ -386,12 +390,14 @@ export default (
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
+
 // TODO: Santosh, another example of where re-select could come in handy.
 // Notice how connectionId is the only variable controlling what is returned...
 // so we could cache the results and only discard the cache when the conn changes.
 // This selector logic is not heavy, but it is responsible for re-rendering a lot of browser DOM.
 // same logic holds for the subsequent selector as well.
-export function tiles(state, ssLinkedConnectionId) {
+selectors.suiteScriptTiles = (state, ssLinkedConnectionId) => {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -402,9 +408,9 @@ export function tiles(state, ssLinkedConnectionId) {
   }
 
   return state[ssLinkedConnectionId].tiles;
-}
+};
 
-export function integrations(state, ssLinkedConnectionId) {
+selectors.suiteScriptIntegrations = (state, ssLinkedConnectionId) => {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -415,9 +421,9 @@ export function integrations(state, ssLinkedConnectionId) {
   }
 
   return state[ssLinkedConnectionId].integrations;
-}
+};
 
-export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
+selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId }) => {
   if (
     !state ||
     !ssLinkedConnectionId ||
@@ -489,11 +495,10 @@ export function resource(state, { resourceType, id, ssLinkedConnectionId }) {
   //   ...match,
   //   ioMetadata,
   // };
-}
+};
 
-
-export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
-  const integration = resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
+selectors.suiteScriptIASettings = (state, id, ssLinkedConnectionId) => {
+  const integration = selectors.resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
 
   if (!integration) {
     return null;
@@ -504,9 +509,9 @@ export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
       draft.settings = emptyObject;
     }
     if (draft?.sections?.length) {
-      draft.sections.forEach((section) => {
+      draft.sections.forEach(section => {
         if (section?.sections?.length) {
-          section?.sections.forEach((sect) => {
+          section?.sections.forEach(sect => {
             // eslint-disable-next-line no-param-reassign
             sect.title = sect.title || 'Common';
           });
@@ -518,16 +523,16 @@ export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
       draft.settings.hasGeneralSettings = true;
     }
   });
-}
-export function jobsPagingDetails(state) {
+};
+selectors.suiteScriptJobsPagingDetails = state => {
   if (!state || !state.paging || !state.paging.jobs) {
     return emptyObject;
   }
 
   return state.paging.jobs;
-}
+};
 
-export function jobs(state, { ssLinkedConnectionId, integrationId }) {
+selectors.jobs = (state, { ssLinkedConnectionId, integrationId }) => {
   if (!state || !state.jobs) {
     return emptyList;
   }
@@ -540,7 +545,7 @@ export function jobs(state, { ssLinkedConnectionId, integrationId }) {
     (currentPage + 1) * rowsPerPage
   );
   // eslint-disable-next-line no-use-before-define
-  const flows = resourceList(state, {
+  const flows = selectors.suiteScriptResourceList(state, {
     resourceType: 'flows',
     ssLinkedConnectionId,
     integrationId,
@@ -557,14 +562,14 @@ export function jobs(state, { ssLinkedConnectionId, integrationId }) {
 
     return j;
   });
-}
+};
 
-export function resourceList(
+selectors.suiteScriptResourceList = (
   state,
   { resourceType, ssLinkedConnectionId, integrationId }
-) {
+) => {
   if (resourceType === 'jobs') {
-    return jobs(state, { ssLinkedConnectionId, integrationId });
+    return selectors.jobs(state, { ssLinkedConnectionId, integrationId });
   }
 
   if (
@@ -583,12 +588,12 @@ export function resourceList(
   }
 
   return state[ssLinkedConnectionId][resourceType];
-}
+};
 
-export function hasData(
+selectors.hasSuiteScriptData = (
   state,
   { resourceType, integrationId, ssLinkedConnectionId }
-) {
+) => {
   if (
     !state ||
     !state[ssLinkedConnectionId] ||
@@ -605,9 +610,9 @@ export function hasData(
   }
 
   return resources.length > 0;
-}
+};
 
-export function jobErrors(state, { jobId, jobType }) {
+selectors.suiteScriptJobErrors = (state, { jobId, jobType }) => {
   if (!state || !state.jobErrors) {
     return undefined;
   }
@@ -624,6 +629,6 @@ export function jobErrors(state, { jobId, jobType }) {
   }
 
   return emptyList;
-}
+};
 
 // #endregion

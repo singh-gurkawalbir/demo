@@ -5,10 +5,9 @@ import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { getDomain } from '../../utils/resource';
 import Spinner from '../Spinner';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -43,7 +42,6 @@ export default function NetSuiteMappingAssistant({
       return recordTypes.find(r => r.value === netSuiteRecordType);
     }
   }, [netSuiteRecordType, recordTypes]);
-
 
   useEffect(() => {
     if (!netSuiteRecordMetadata) {

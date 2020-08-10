@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import TextToggle from '../../../components/TextToggle';
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
 export default function ThemeToggle() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const themeName = useSelector(state => selectors.themeName(state));
+  const themeName = useSelector(state => selectors.appTheme(state));
 
   function handleChange() {
     dispatch(

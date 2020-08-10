@@ -6,13 +6,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { deepClone } from 'fast-json-patch';
 import actions from '../../../../actions';
-import {
-  getResourceSampleDataWithStatus,
-  getAvailableResourcePreviewStages,
-  isPageGenerator,
-  drawerOpened,
-  isExportPreviewDisabled,
-} from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import Panels from './Panels';
 
@@ -59,12 +53,12 @@ function DynaExportPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isPageGeneratorExport = useSelector(state =>
-    isPageGenerator(state, flowId, resourceId)
+    selectors.isPageGenerator(state, flowId, resourceId)
   );
   const isPreviewDisabled = useSelector(state =>
-    isExportPreviewDisabled(state, resourceId, resourceType));
+    selectors.isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
-    getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
+    selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
   shallowEqual
   );
   // Default panel is the panel shown by default when export panel is launched
@@ -74,6 +68,7 @@ function DynaExportPanel(props) {
     if (!availablePreviewStages.length) return;
     const defaultStage = availablePreviewStages.find(stage => stage.default === true);
     const lastStage = availablePreviewStages[availablePreviewStages.length - 1];
+
     return defaultStage ? defaultStage.value : lastStage.value;
   }, [availablePreviewStages]);
   // set the panel type with the default panel
@@ -85,7 +80,7 @@ function DynaExportPanel(props) {
     availablePreviewStages.length &&
       availablePreviewStages.forEach(({ value }) => {
         stageData[value] = deepClone(
-          getResourceSampleDataWithStatus(state, resourceId, value)
+          selectors.getResourceSampleDataWithStatus(state, resourceId, value)
         );
       });
 
@@ -95,7 +90,7 @@ function DynaExportPanel(props) {
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
   const resourceSampleData = useSelector(state =>
-    getResourceSampleDataWithStatus(state, resourceId, 'raw'),
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
   );
   const fetchExportPreviewData = useCallback(() => {
@@ -139,7 +134,7 @@ function DynaExportPanel(props) {
   const handlePanelViewChange = useCallback(panelType => {
     setPanelType(panelType);
   }, []);
-  const isDrawerOpened = useSelector(state => drawerOpened(state));
+  const isDrawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
     <div

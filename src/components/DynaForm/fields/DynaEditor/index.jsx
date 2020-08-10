@@ -132,7 +132,7 @@ export default function DynaEditor({
             mode: resultantMode,
             disabled,
             handleUpdate,
-            handleUpdateOnDrawerSave
+            handleUpdateOnDrawerSave,
           }}
         />
         <div className={classes.dynaEditorTextLabelWrapper}>

@@ -8,7 +8,7 @@ import PanelTitle from '../../PanelTitle';
 import PanelGridItem from '../../PanelGridItem';
 import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
 import PanelLoader from '../../../PanelLoader';
 
@@ -70,6 +70,7 @@ export default function CsvGenerateEditor(props) {
       );
     }
   }, [data, dispatch, editorId, editorInit, props.data]);
+
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">

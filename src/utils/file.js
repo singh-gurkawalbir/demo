@@ -155,8 +155,8 @@ const generateFields = (data, options = {}) => {
   // @BugFix: IO-14393
   each(fieldsList, (field, index) => {
     const column = includeHeader
-      ? // eslint-disable-next-line no-useless-escape
-      field.replace(/^\"(.*)\"$/, '$1').trim()
+      // eslint-disable-next-line no-useless-escape
+      ? field.replace(/^\"(.*)\"$/, '$1').trim()
       : `Column${index}`;
 
     if (column) {

@@ -5,7 +5,7 @@ import { Button, Card, CardActions, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { LICENSE_UPGRADE_REQUEST_RECEIVED } from '../../../../../utils/messageStore';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
 

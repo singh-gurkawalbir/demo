@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import responseMappingUtil from '../../../utils/responseMapping';
 import getJSONPaths from '../../../utils/jsonPaths';

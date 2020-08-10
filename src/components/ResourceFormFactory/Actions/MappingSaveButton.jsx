@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
@@ -54,7 +54,7 @@ const MappingSaveButton = props => {
     onSave,
     resourceType: 'mappings',
     disableSaveOnClick,
-    setDisableSaveOnClick
+    setDisableSaveOnClick,
   });
   const handleButtonClick = () => {
     if (validationErrMsg) {

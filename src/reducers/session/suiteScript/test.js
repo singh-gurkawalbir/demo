@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
@@ -16,7 +16,7 @@ describe('suiteScript reducers test cases', () => {
       account: {},
       mappings: {},
       flowSampleData: {},
-      importSampleData: {}
+      importSampleData: {},
     });
   });
   describe('suiteScript installer reducer', () => {
@@ -29,6 +29,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {dummy_connector_id: {}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should set the install steps if connector is found', () => {
@@ -39,6 +40,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {'suitescript-salesforce-netsuite': {steps: SUITESCRIPT_CONNECTORS[0].installSteps}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not affect any other connector state', () => {
@@ -50,6 +52,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}, 'suitescript-salesforce-netsuite': {steps: SUITESCRIPT_CONNECTORS[0].installSteps}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -64,6 +67,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {'suitescript-salesforce-netsuite': {error: 'some error msg'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not affect any other connector state', () => {
@@ -76,6 +80,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}, 'suitescript-salesforce-netsuite': {error: 'some error msg'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -89,6 +94,7 @@ describe('suiteScript reducers test cases', () => {
             'suitescript-salesforce-netsuite',
           )
         );
+
         expect(newState.installer).toEqual({});
       });
       test('should not affect any other connector state', () => {
@@ -100,6 +106,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -114,6 +121,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {'suitescript-salesforce-netsuite': {ssLinkedConnectionId: '123'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not affect any other connector state', () => {
@@ -126,6 +134,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}, 'suitescript-salesforce-netsuite': {steps: [], ssLinkedConnectionId: '123'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -140,6 +149,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {'suitescript-salesforce-netsuite': {ssIntegrationId: '123'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not affect any other connector state', () => {
@@ -152,6 +162,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}, 'suitescript-salesforce-netsuite': {steps: [], ssIntegrationId: '123'}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -167,6 +178,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {'suitescript-salesforce-netsuite': {connection_id: {type: 'netsuite'}}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not affect any other connector state', () => {
@@ -180,6 +192,7 @@ describe('suiteScript reducers test cases', () => {
           )
         );
         const expectedState = {some_other_id: {steps: [{id: 1}, {id: 2}]}, 'suitescript-salesforce-netsuite': {steps: [], ssLinkedConnectionId: '123', connection_id: {type: 'netsuite'}}};
+
         expect(newState.installer).toEqual(expectedState);
       });
     });
@@ -188,7 +201,7 @@ describe('suiteScript reducers test cases', () => {
       test('should do nothing if package step not found', () => {
         const state = {installer: {'suitescript-salesforce-netsuite': {steps: [{
           name: 'NetSuite Connection',
-          type: 'connection'
+          type: 'connection',
         }]}}};
 
         const newState = reducer(
@@ -199,6 +212,7 @@ describe('suiteScript reducers test cases', () => {
             'https://someurl'
           )
         );
+
         expect(newState.installer).toEqual(state.installer);
       });
       test('should update the package url in the step', () => {
@@ -210,7 +224,7 @@ describe('suiteScript reducers test cases', () => {
           description: 'Install integrator package in Salesforce.',
           imageURL: '/images/company-logos/salesforce.png',
           completed: false,
-          __index: 6
+          __index: 6,
         }]}}};
 
         const newState = reducer(
@@ -230,7 +244,7 @@ describe('suiteScript reducers test cases', () => {
           description: 'Install integrator package in Salesforce.',
           imageURL: '/images/company-logos/salesforce.png',
           completed: false,
-          __index: 6
+          __index: 6,
         }]}};
 
         expect(newState.installer).toEqual(expectedState);
@@ -245,7 +259,7 @@ describe('suiteScript reducers test cases', () => {
             description: 'Install integrator package in Salesforce.',
             imageURL: '/images/company-logos/salesforce.png',
             completed: false,
-            __index: 6
+            __index: 6,
           }],
           ssLinkedConnectionId: '123'}}};
 
@@ -266,7 +280,7 @@ describe('suiteScript reducers test cases', () => {
             description: 'Install integrator package in Salesforce.',
             imageURL: '/images/company-logos/salesforce.png',
             completed: false,
-            __index: 6
+            __index: 6,
           }],
           ssLinkedConnectionId: '123'}};
 
@@ -279,7 +293,7 @@ describe('suiteScript reducers test cases', () => {
         const state = {installer: {'suitescript-salesforce-netsuite': {steps: [{
           name: 'NetSuite Connection',
           type: 'connection',
-          completed: false
+          completed: false,
         }]}}};
 
         const newState = reducer(
@@ -295,19 +309,20 @@ describe('suiteScript reducers test cases', () => {
           type: 'connection',
           completed: false,
           isTriggered: true,
-          verifying: false
+          verifying: false,
         }]}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should not modify already completed steps', () => {
         const state = {installer: {'suitescript-salesforce-netsuite': {steps: [{
           name: 'NetSuite Connection',
           type: 'connection',
-          completed: true
+          completed: true,
         }, {
           name: 'Salesforce Connection',
           type: 'connection',
-          completed: false
+          completed: false,
         }]}}};
 
         const newState = reducer(
@@ -321,25 +336,26 @@ describe('suiteScript reducers test cases', () => {
         const expectedState = {'suitescript-salesforce-netsuite': {steps: [{
           name: 'NetSuite Connection',
           type: 'connection',
-          completed: true
+          completed: true,
         }, {
           name: 'Salesforce Connection',
           type: 'connection',
           completed: true,
           isTriggered: false,
-          verifying: false
+          verifying: false,
         }]}};
+
         expect(newState.installer).toEqual(expectedState);
       });
       test('should do nothing if all steps are completed', () => {
         const state = {installer: {'suitescript-salesforce-netsuite': {steps: [{
           name: 'NetSuite Connection',
           type: 'connection',
-          completed: true
+          completed: true,
         }, {
           name: 'Salesforce Connection',
           type: 'connection',
-          completed: true
+          completed: true,
         }]}}};
 
         const newState = reducer(
@@ -360,10 +376,10 @@ describe('suiteScript selectors test cases', () => {
   describe('suiteScript installer selectors', () => {
     describe('installerData', () => {
       test('should return empty state when no match found.', () => {
-        expect(selectors.installerData(undefined, 'dummy')).toEqual(
+        expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, 'dummy')).toEqual(
           {}
         );
-        expect(selectors.installerData({}, 'dummy')).toEqual({});
+        expect(selectors.suiteScriptIntegrationAppInstallerData({}, 'dummy')).toEqual({});
       });
 
       test('should return correct state data when a match is found.', () => {
@@ -374,7 +390,8 @@ describe('suiteScript selectors test cases', () => {
           )
         );
         const expectedData = {steps: SUITESCRIPT_CONNECTORS[0].installSteps};
-        expect(selectors.installerData(newState, 'suitescript-salesforce-netsuite')).toEqual(expectedData);
+
+        expect(selectors.suiteScriptIntegrationAppInstallerData(newState, 'suitescript-salesforce-netsuite')).toEqual(expectedData);
       });
     });
   });

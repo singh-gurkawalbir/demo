@@ -12,7 +12,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export function* generateToken({ id }) {
   const requestOptions = getRequestOptions(

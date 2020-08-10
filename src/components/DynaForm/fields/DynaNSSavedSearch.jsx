@@ -9,7 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import DynaNSSavedSearchInternalID from './DynaNSSavedSearchInternalID';
 import FieldHelp from '../FieldHelp';

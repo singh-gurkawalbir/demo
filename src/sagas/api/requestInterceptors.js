@@ -10,7 +10,7 @@ import {
   isCsrfExpired,
 } from './index';
 import { unauthenticateAndDeleteProfile } from '..';
-import { resourceStatus, accountShareHeader } from '../../reducers/index';
+import { selectors } from '../../reducers';
 import { isJsonString } from '../../utils/string';
 
 const tryCount = 3;
@@ -18,7 +18,7 @@ const tryCount = 3;
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
-  const { retryCount = 0 } = yield select(resourceStatus, path, method);
+  const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
   // check if you are retrying ...if you are not retrying make a brand new request
   if (retryCount === 0) {
@@ -27,7 +27,7 @@ export function* onRequestSaga(request) {
   }
 
   const { options, url } = normalizeUrlAndOptions(path, opts);
-  const additionalHeaders = yield select(accountShareHeader, path);
+  const additionalHeaders = yield select(selectors.accountShareHeader, path);
 
   options.headers = { ...options.headers, ...additionalHeaders };
 
@@ -129,7 +129,7 @@ export function* onErrorSaga(error, action) {
     return { error };
   }
 
-  const { retryCount = 0 } = yield select(resourceStatus, path, method);
+  const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
   if (retryCount < tryCount) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));

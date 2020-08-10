@@ -4,12 +4,13 @@ import Spinner from '../../../../../Spinner';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from './metadata';
 import DynaSelect from '../../../DynaSelect';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 // view only component
-const camelCase = (str) => str.charAt(0).toLowerCase() + str.slice(1);
+const camelCase = str => str.charAt(0).toLowerCase() + str.slice(1);
+
 export default function DynaSalesUser(props) {
   const {id, field: fieldId, _integrationId: integrationId, ssLinkedConnectionId, sectionId} = props;
   const dispatch = useDispatch();
@@ -34,17 +35,19 @@ export default function DynaSalesUser(props) {
   const [option, selectOption] = useState('');
 
   const filteredResults = useMemo(() => users && users?.filter(user => !option ? true : option === user?.profile), [option, users]);
-  if (status !== 'received') { return (<Spinner />); }
 
+  if (status !== 'received') { return (<Spinner />); }
 
   return (
     <>
-      {profiles && <DynaSelect
+      {profiles && (
+      <DynaSelect
         value={option}
         placeholder="--All--"
         onFieldChange={(id, value) => selectOption(value)}
         options={generatedSalesforceSubsidiaryFieldOptions}
-        label="Select Salesforce Profile" />}
+        label="Select Salesforce Profile" />
+      )}
       <CeligoTable
         data={filteredResults}
         {...metadata}

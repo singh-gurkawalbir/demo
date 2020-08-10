@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import AddOrSelect from './AddOrSelect';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import DrawerTitleBar from '../drawer/TitleBar';

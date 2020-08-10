@@ -11,14 +11,13 @@ import FlowsIcon from '../../../../components/icons/FlowsIcon';
 import ResourceDrawer from '../../../../components/SuiteScript/drawer/Resource';
 import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import SuiteScriptMappingDrawer from '../../Mappings/Drawer';
 import IntegrationTabs from '../common/Tabs';
 import ConnectionsPanel from '../DIY/panels/Connections';
 import DashboardPanel from '../DIY/panels/Dashboard';
 import FlowsPanel from './panels/Flows';
 import SettingsPanel from './panels/Settings';
-
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {

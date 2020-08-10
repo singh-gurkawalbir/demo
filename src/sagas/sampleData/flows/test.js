@@ -3,7 +3,7 @@
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { updateFlowDoc } from '../../resourceForm';
 import { updateFlowOnResourceUpdate } from './flowUpdates';
 
@@ -31,8 +31,8 @@ describe('sampleData flow saga', () => {
       resourceId: 123,
       patche: null,
       context: {
-        somethingElse: {}
-      }
+        somethingElse: {},
+      },
     })
       .put(actions.flowData.updateFlowsForResource(123, 'scripts'))
       .not.call.fn(updateFlowDoc)
@@ -41,16 +41,17 @@ describe('sampleData flow saga', () => {
       const resourceType = 'exports';
       const resourceId = '123';
       const flowId = '456';
+
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         patche: null,
         context: {
-          flowId
+          flowId,
         },
       })
         .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }]
+          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
         ])
         .call(updateFlowDoc, {
           flowId,
@@ -63,16 +64,17 @@ describe('sampleData flow saga', () => {
       const resourceType = 'imports';
       const resourceId = '123';
       const flowId = '456';
+
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         patche: null,
         context: {
-          flowId
+          flowId,
         },
       })
         .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }]
+          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
         ])
         .call(updateFlowDoc, {
           flowId,
@@ -85,16 +87,17 @@ describe('sampleData flow saga', () => {
       const resourceType = 'scripts';
       const resourceId = '123';
       const flowId = '456';
+
       return expectSaga(updateFlowOnResourceUpdate, {
         resourceType,
         resourceId,
         patche: null,
         context: {
-          flowId
+          flowId,
         },
       })
         .provide([
-          [select(selectors.resourceData, 'flows', flowId), { merged: {} }]
+          [select(selectors.resourceData, 'flows', flowId), { merged: {} }],
         ])
         .call(updateFlowDoc, {
           flowId,

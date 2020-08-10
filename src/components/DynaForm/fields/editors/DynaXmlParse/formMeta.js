@@ -31,9 +31,9 @@ export default function getForm(options) {
             items: [
               { value: 'false', label: 'Custom' },
               { value: 'true', label: 'Automatic' },
-            ]
-          }
-        ]
+            ],
+          },
+        ],
       },
       trimSpaces: {
         id: 'trimSpaces',
@@ -78,7 +78,7 @@ export default function getForm(options) {
         multiline: true,
         helpKey: 'parser.xml.listNodes',
         label: 'List nodes',
-        visibleWhen
+        visibleWhen,
       },
       includeNodes: {
         id: 'includeNodes',
@@ -89,7 +89,7 @@ export default function getForm(options) {
         multiline: true,
         helpKey: 'parser.xml.includeNodes',
         label: 'Include only these nodes',
-        visibleWhen
+        visibleWhen,
       },
       excludeNodes: {
         id: 'excludeNodes',
@@ -100,8 +100,8 @@ export default function getForm(options) {
         multiline: true,
         helpKey: 'parser.xml.excludeNodes',
         label: 'Exclude any of these nodes',
-        visibleWhen
+        visibleWhen,
       },
-    }
+    },
   };
 }

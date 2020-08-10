@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import DrawerTitleBar from '../../../../../drawer/TitleBar';
 import DynaForm from '../../../..';
 import DynaSubmit from '../../../../DynaSubmit';
@@ -52,8 +52,7 @@ function SubRecordDrawer(props) {
   const { resourceContext, flowId, connectionId, recordType } = props;
   const recordTypeObj = useSelector(state =>
     selectors
-      .metadataOptionsAndResources({
-        state,
+      .metadataOptionsAndResources(state, {
         connectionId,
         commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
         filterKey: 'suitescript-recordTypes',
@@ -62,13 +61,13 @@ function SubRecordDrawer(props) {
   );
   const referenceFields = useSelector(state =>
     selectors
-      .metadataOptionsAndResources({
-        state,
+      .metadataOptionsAndResources(state, {
         connectionId,
         commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`,
         filterKey: 'suitescript-subrecord-referenceFields',
       }).data
   );
+
   useEffect(() => {
     if (!referenceFields || referenceFields.length === 0) {
       dispatch(actions.metadata.request(connectionId, `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`));
@@ -107,11 +106,13 @@ function SubRecordDrawer(props) {
   const handleSubmit = useCallback(
     formValues => {
       const updatedFormValues = { ...formValues };
+
       updatedFormValues.internalIdLookup = {
-        expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression)
+        expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression),
       };
       delete updatedFormValues.internalIdLookupExpression;
       const updatedSubrecords = flow?.import?.netsuite?.subRecordImports || [];
+
       if (referenceFieldId) {
         const srIndex = updatedSubrecords.findIndex(
           sr => sr.referenceFieldId === referenceFieldId

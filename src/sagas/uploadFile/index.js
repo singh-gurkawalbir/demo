@@ -117,6 +117,7 @@ function* processFile({ fileId, file, fileType, fileProps = {} }) {
 
   if (['xlsx', 'json'].includes(fileType)) {
     let out;
+
     if (fileType === 'json') {
       out = getJSONContent(fileContent);
     } else {

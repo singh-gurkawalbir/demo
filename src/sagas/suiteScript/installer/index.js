@@ -11,6 +11,7 @@ function* makeRequest({ path, method = 'GET', message}) {
   } catch (error) {
     return {error};
   }
+
   return {response};
 }
 
@@ -46,6 +47,7 @@ export function* getPackageURLs({ ssLinkedConnectionId, connectorId }) {
 export function* isConnectionOnline({ ssLinkedConnectionId, ssConnId}) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/${ssConnId}/ping`;
   const { error, response } = yield makeRequest({ path });
+
   if (error || !response || response.code !== 200 || response.errors) {
     return false;
   }
@@ -56,6 +58,7 @@ export function* isConnectionOnline({ ssLinkedConnectionId, ssConnId}) {
 export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/connections`;
   const { error, response } = yield makeRequest({ path });
+
   if (error || !response) {
     return yield put(
       actions.suiteScript.installer.updateStep(
@@ -66,6 +69,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
   }
   let nsConnIdx;
   let sfConnIdx;
+
   if (Array.isArray(response)) {
     nsConnIdx = response.findIndex(c => c.type === 'netsuite' && c.id !== 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION');
     sfConnIdx = response.findIndex(c => c.type === 'salesforce');
@@ -90,6 +94,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
       )
     );
     const isNSOnline = yield call(isConnectionOnline, { ssLinkedConnectionId, connectorId, ssConnId: 'NETSUITE_CONNECTION'});
+
     if (isNSOnline) {
       yield put(
         actions.suiteScript.installer.updateStep(
@@ -104,9 +109,11 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
         'verify'
       ));
       const isSFOnline = yield call(isConnectionOnline, { ssLinkedConnectionId, connectorId, ssConnId: 'SALESFORCE_CONNECTION'});
+
       if (isSFOnline) {
         // get package urls once SF connection is verified
         yield call(getPackageURLs, { ssLinkedConnectionId, connectorId });
+
         return yield put(
           actions.suiteScript.installer.updateStep(
             connectorId,
@@ -127,6 +134,7 @@ export function* verifySSConnection({ ssLinkedConnectionId, connectorId }) {
 export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssName }) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/tiles`;
   const { error, response } = yield makeRequest({ path });
+
   if (error || !response) {
     return yield put(
       actions.suiteScript.installer.updateStep(
@@ -137,6 +145,7 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
   }
 
   let found = [];
+
   if (Array.isArray(response)) {
     found = response.filter(t => t.isConnector && t.name === ssName);
   }
@@ -158,8 +167,10 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
       'verify'
     ));
     yield call(verifySSConnection, { ssLinkedConnectionId, connectorId });
+
     return;
   }
+
   return yield put(
     actions.suiteScript.installer.updateStep(
       connectorId,
@@ -171,6 +182,7 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
 export function* checkNetSuiteDABundle({ ssLinkedConnectionId, connectorId, shouldContinue, ssName }) {
   const path = `/connections/${ssLinkedConnectionId}/distributed`;
   const { error, response } = yield makeRequest({ path });
+
   if (error || !response || !response.success) {
     return yield put(
       actions.suiteScript.installer.updateStep(
@@ -199,6 +211,7 @@ export function* checkNetSuiteDABundle({ ssLinkedConnectionId, connectorId, shou
 export function* verifyPackage({ssLinkedConnectionId, connectorId, installerFunction}) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/installer/${installerFunction}`;
   const { error, response } = yield makeRequest({ path });
+
   if (error || !response || !response.success) {
     yield put(
       actions.suiteScript.installer.updateStep(
@@ -206,6 +219,7 @@ export function* verifyPackage({ssLinkedConnectionId, connectorId, installerFunc
         'reset'
       )
     );
+
     return yield put(
       actions.suiteScript.installer.failed(
         connectorId,
@@ -224,6 +238,7 @@ export function* verifyPackage({ssLinkedConnectionId, connectorId, installerFunc
 export function* postInstallComplete({ssLinkedConnectionId, connectorId}) {
   const path = `/suitescript/connections/${ssLinkedConnectionId}/connectors/postInstall`;
   const { error, response } = yield makeRequest({ path, method: 'PUT' });
+
   if (error || !response || !response.success) {
     return yield put(
       actions.suiteScript.installer.failed(
@@ -245,5 +260,5 @@ export default [
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.SS_CONNECTION, verifySSConnection),
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.VERIFY.PACKAGE, verifyPackage),
   takeEvery(actionTypes.SUITESCRIPT.INSTALLER.REQUEST_PACKAGES, getPackageURLs),
-  takeEvery(actionTypes.SUITESCRIPT.INSTALLER.POST_INSTALL, postInstallComplete)
+  takeEvery(actionTypes.SUITESCRIPT.INSTALLER.POST_INSTALL, postInstallComplete),
 ];

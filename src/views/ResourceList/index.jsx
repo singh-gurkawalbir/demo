@@ -10,7 +10,7 @@ import { MODEL_PLURAL_TO_LABEL, generateNewId,
 } from '../../utils/resource';
 import infoText from './infoText';
 import IconTextButton from '../../components/IconTextButton';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
@@ -78,6 +78,7 @@ export default function ResourceList(props) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
   let createResourceLabel = '';
+
   if (resourceType) {
     if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;

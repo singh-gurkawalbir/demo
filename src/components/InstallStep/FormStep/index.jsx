@@ -45,6 +45,7 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       actions.integrationApp.installer.updateStep(integrationId, '', 'failed')
     );
   }, [dispatch, integrationId]);
+
   return (
   // TODO: @ashu, this needs to be reverted to use RightDrawer,
   // once the path issue (matching store path) is fixed

@@ -1,7 +1,9 @@
 /* global describe, test, expect */
 
-import reducer, { netsuiteUserRoles } from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
+
+const { netsuiteUserRoles } = selectors;
 
 describe('netsuiteUser roles reducer ', () => {
   const connectionId = '123';

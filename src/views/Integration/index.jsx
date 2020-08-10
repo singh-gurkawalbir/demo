@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import IntegrationApp from './App';
 import IntegrationDIY from './DIY';
 
@@ -14,7 +14,8 @@ export default function Integration() {
     return !!(integration && integration._connectorId);
   });
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
-  return isIntegrationApp && !isFrameWork2 ?
-    <IntegrationApp match={match} {...match.params} /> :
-    <IntegrationDIY match={match} {...match.params} childId={storeId} />;
+
+  return isIntegrationApp && !isFrameWork2
+    ? <IntegrationApp match={match} {...match.params} />
+    : <IntegrationDIY match={match} {...match.params} childId={storeId} />;
 }

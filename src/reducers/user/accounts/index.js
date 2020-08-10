@@ -1,13 +1,13 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
-import actionTypes from '../../../../actions/types';
+import actionTypes from '../../../actions/types';
 import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
-} from '../../../../utils/constants';
+} from '../../../utils/constants';
 
 const emptyList = [];
 
@@ -134,7 +134,9 @@ const remainingDays = date =>
   Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
 
 // #region PUBLIC SELECTORS
-export function platformLicense(state, accountId) {
+export const selectors = {};
+
+selectors.platformLicense = (state, accountId) => {
   if (!state) {
     return null;
   }
@@ -261,10 +263,10 @@ export function platformLicense(state, accountId) {
   }
 
   return ioLicense;
-}
+};
 // #endregion INTEGRATOR LICENSE
 
-export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
+selectors.licenses = (state, accountId = ACCOUNT_IDS.OWN) => {
   if (!state) {
     return emptyList;
   }
@@ -273,9 +275,9 @@ export function licenses(state, accountId = ACCOUNT_IDS.OWN) {
   const account = state.find(acc => acc._id === accountId);
 
   return account ? account.ownerUser.licenses : licenses;
-}
+};
 
-export const sharedAccounts = createSelector(
+selectors.sharedAccounts = createSelector(
   state => state,
   state => {
     if (!state) {
@@ -310,14 +312,14 @@ export const sharedAccounts = createSelector(
 );
 // TODO: Santosh platformLicense selector implementation should be lazily created
 // can remove this selector after implementation
-const ownLicense = createSelector(
+selectors.ownLicense = createSelector(
   state => state,
-  state => platformLicense(state, ACCOUNT_IDS.OWN)
+  state => selectors.platformLicense(state, ACCOUNT_IDS.OWN)
 );
 
-export const accountSummary = createSelector(
-  sharedAccounts,
-  ownLicense,
+selectors.accountSummary = createSelector(
+  selectors.sharedAccounts,
+  selectors.ownLicense,
   (shared, ownLicense) => {
     const accounts = [];
 
@@ -347,7 +349,7 @@ export const accountSummary = createSelector(
   }
 );
 
-export const notifications = createSelector(
+selectors.notifications = createSelector(
   state => state,
   state => {
     const accounts = [];
@@ -379,7 +381,7 @@ export const notifications = createSelector(
   }
 );
 
-export function accessLevel(state, accountId) {
+selectors.accessLevel = (state, accountId) => {
   if (!state) {
     return undefined;
   }
@@ -403,9 +405,9 @@ export function accessLevel(state, accountId) {
   }
 
   return account.accessLevel || USER_ACCESS_LEVELS.TILE;
-}
+};
 
-export function owner(state, accountId) {
+selectors.owner = (state, accountId) => {
   if (!state) {
     return undefined;
   }
@@ -417,13 +419,13 @@ export function owner(state, accountId) {
   }
 
   return account.ownerUser;
-}
+};
 
-export function permissions(
+selectors.permissions = (
   state,
   accountId,
   userPermissions = { allowedToPublish: false }
-) {
+) => {
   const allResourceTypes = [
     'accesstokens',
     'agents',
@@ -447,7 +449,7 @@ export function permissions(
   allResourceTypes.forEach(resourceType => {
     permissions[resourceType] = {};
   });
-  const userAccessLevel = accessLevel(state, accountId);
+  const userAccessLevel = selectors.accessLevel(state, accountId);
 
   if (!userAccessLevel) {
     return Object.freeze(permissions);
@@ -638,6 +640,6 @@ export function permissions(
   }
 
   return Object.freeze(permissions);
-}
+};
 
 // #endregion

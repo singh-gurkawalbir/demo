@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, withRouter } from 'react-router-dom';
 import { Typography, InputBase } from '@material-ui/core';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../../components/LoadResources';
 import SearchIcon from '../../components/icons/SearchIcon';

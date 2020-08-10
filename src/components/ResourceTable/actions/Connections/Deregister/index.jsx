@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';

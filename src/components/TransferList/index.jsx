@@ -9,7 +9,6 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { ListSubheader } from '@material-ui/core';
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'grid',
@@ -38,7 +37,6 @@ function intersection(a, b) {
   return a.filter(value => b.includes(value));
 }
 
-
 const SubHeader = ({subHeaderMap, scope, scopes, index}) => {
   if (subHeaderMap && subHeaderMap[scope] && subHeaderMap[scopes[index - 1]] !== subHeaderMap[scopes[index]]) {
     return (
@@ -47,10 +45,12 @@ const SubHeader = ({subHeaderMap, scope, scopes, index}) => {
 
     );
   }
+
   return null;
 };
 // this is necessary to preserve the order of scopes
-const sortPerOriginalScopesList = (scopesOrig) => (scopes) => scopesOrig?.filter(scope => scopes.includes(scope));
+const sortPerOriginalScopesList = scopesOrig => scopes => scopesOrig?.filter(scope => scopes.includes(scope));
+
 export default function TransferList(props) {
   const { left = [], setLeft, right = [], setRight, subHeaderMap, scopesOrig } = props;
 

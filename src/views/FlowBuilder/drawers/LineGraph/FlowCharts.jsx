@@ -13,8 +13,8 @@ import {
 // import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
-import * as selectors from '../../../../reducers';
 import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Spinner from '../../../../components/Spinner';
 import SpinnerWrapper from '../../../../components/SpinnerWrapper';

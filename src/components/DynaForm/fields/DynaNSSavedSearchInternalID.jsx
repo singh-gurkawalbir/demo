@@ -5,7 +5,7 @@ import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';

@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import Spinner from '../../../components/Spinner';
 
 export const useLoadingSnackbarOnSave = props => {
@@ -48,7 +48,7 @@ const MappingSaveButton = props => {
     selectors.suiteScriptMappings(state)
   );
   const mappingsChanged = useSelector(state =>
-    selectors.suitesciptMappingsChanged(state)
+    selectors.suiteScriptMappingsChanged(state)
   );
   const dispatch = useDispatch();
   const { saveTerminated, saveCompleted } = useSelector(state =>
@@ -75,6 +75,7 @@ const MappingSaveButton = props => {
 
     handleSubmitForm();
   };
+
   useEffect(() => {
     if (saveTrigerred && saveCompleted && onClose) {
       onClose();

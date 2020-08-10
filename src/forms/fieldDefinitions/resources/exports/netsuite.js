@@ -294,6 +294,9 @@ export default {
     refreshOptionsOnChangesTo: ['netsuite.webservices.recordType'],
     filterKey: 'webservices-searchFilters',
     connectionId: r => r && r._connectionId,
+    disabledWhen: [
+      { field: 'netsuite.webservices.recordType', is: [''] },
+    ],
     defaultValue: r =>
       (r &&
         r.netsuite &&

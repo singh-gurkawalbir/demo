@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import openExternalUrl from '../../../../../utils/window';
 import DownloadIcon from '../../../../icons/DownloadIcon';
 

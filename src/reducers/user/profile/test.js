@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 

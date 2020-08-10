@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { getStringifiedPreviewData } from '../../../../../utils/exportPanel';
+import { getFormattedPreviewData } from '../../../../../utils/exportPanel';
 import ClipBoardPanel from './clipBoardPanel';
+import JsonContent from '../../../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -31,6 +32,9 @@ const useStyles = makeStyles(theme => ({
 export default function DefaultPanel(props) {
   const { previewStageDataList, panelType } = props;
   const classes = useStyles();
+  const panelContent = useMemo(() => getFormattedPreviewData(
+    previewStageDataList[panelType]
+  ), [panelType, previewStageDataList]);
 
   return (
     <div
@@ -43,19 +47,9 @@ export default function DefaultPanel(props) {
           classes.sampleDataContainer,
           classes.sampleDataContainerAlign
         )}>
-        <pre>
-          {getStringifiedPreviewData(
-            previewStageDataList[panelType],
-            panelType
-          )}
-        </pre>
+        <JsonContent json={panelContent} />
       </div>
-      <ClipBoardPanel
-        text={getStringifiedPreviewData(
-          previewStageDataList[panelType],
-          panelType
-        )}
-      />
+      <ClipBoardPanel content={panelContent} />
     </div>
   );
 }

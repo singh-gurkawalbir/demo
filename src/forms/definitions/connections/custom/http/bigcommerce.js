@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource, options) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
@@ -19,6 +19,9 @@ export default {
         },
       ];
     } else if (retValues['/http/auth/type'] === 'oauth') {
+      const iClients = options?.iClients?.resources;
+      const iClientDoc = iClients?.find(iclient => iclient._id === retValues['/http/_iClientId']);
+
       retValues['/http/auth/oauth/authURI'] =
         'https://login.bigcommerce.com/oauth2/authorize';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -35,7 +38,7 @@ export default {
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
-          value: '{{{connection.oauth2.clientId}}}',
+          value: iClientDoc?.oauth2?.clientId,
         },
       ];
     } else {
@@ -166,7 +169,7 @@ export default {
         'store_channel_settings',
         'store_channel_listings',
         'store_storefront_api',
-        'store_storefront_api_customer_impersonation'
+        'store_storefront_api_customer_impersonation',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },

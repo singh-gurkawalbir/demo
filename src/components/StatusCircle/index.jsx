@@ -1,8 +1,7 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +38,7 @@ function StatusCircle({ variant, size = 'large' }) {
 
   return (
     <span
-      className={classNames(classes[size], classes[variant], classes.root)}
+      className={clsx(classes[size], classes[variant], classes.root)}
     />
   );
 }

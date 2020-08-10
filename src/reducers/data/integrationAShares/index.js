@@ -23,7 +23,7 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function integrationUsers(state, integrationId) {
-  return state ? state[integrationId] : undefined;
-}
+export const selectors = {};
+
+selectors.integrationUsers = (state, integrationId) => state ? state[integrationId] : undefined;
 // #endregion

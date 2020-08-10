@@ -24,6 +24,7 @@ export default function DynaApiIdentifier(props) {
   const classes = useStyles();
   const apiUrl = getApiUrl();
   const invokeUrl = `${apiUrl}/${value}`;
+
   return (
     <div className={classes.dynaAPIWrapper}>
       <DynaText
@@ -44,7 +45,6 @@ export default function DynaApiIdentifier(props) {
           </Button>
         </CopyToClipboard>
       </div>
-
 
     </div>
   );

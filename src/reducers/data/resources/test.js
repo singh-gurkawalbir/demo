@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions, { availableResources } from '../../../actions';
 
 describe('resources reducer', () => {

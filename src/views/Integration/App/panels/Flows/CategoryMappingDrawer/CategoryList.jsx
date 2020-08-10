@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Typography, Collapse } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import ArrowUpIcon from '../../../../../../components/icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../../components/icons/ArrowDownIcon';
 

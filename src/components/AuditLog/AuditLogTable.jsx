@@ -1,11 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import CeligoTable from '../CeligoTable';
 import metadata from './metadata';
 import ShowMoreDrawer from '../drawer/ShowMore';
-
 
 const useStyles = makeStyles({
   root: {
@@ -13,7 +12,7 @@ const useStyles = makeStyles({
     overflowX: 'auto',
   },
   tablePaginationRoot: {
-    float: 'right'
+    float: 'right',
   },
 });
 

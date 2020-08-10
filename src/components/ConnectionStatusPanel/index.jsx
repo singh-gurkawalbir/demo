@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
@@ -73,10 +73,13 @@ export default function ConnectionStatusPanel(props) {
     resourceType === 'connections' ? resourceId : resource._connectionId;
   const testStatus = useSelector(
     state => {
-      if (resource.type === 'netsuite') {
+      const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
+
+      if (resource.type === 'netsuite' && !commStatus) {
         return selectors.netsuiteUserRoles(state, connectionId)?.status;
       }
-      return selectors.testConnectionCommState(state, connectionId).commState;
+
+      return commStatus;
     }
   );
   const isIAIntegration = useSelector(state => {

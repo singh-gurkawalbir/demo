@@ -25,6 +25,7 @@ const useStyles = makeStyles({
     padding: 0,
   },
 });
+
 // TODO: Refactor this component
 export default function UserDetail(props) {
   const classes = useStyles();
@@ -149,7 +150,7 @@ export default function UserDetail(props) {
       if (commStatus.status === COMM_STATES.SUCCESS) {
         message = `An Account Ownership invitation has been sent to 
         ${user.sharedWithUser.name} (${user.sharedWithUser.email}).
-        <br/>Once accepted, your account will be converted to a regular user account with Manager access.`;
+        Once accepted, your account will be converted to a regular user account with Manager access.`;
       } else if (commStatus.status === COMM_STATES.ERROR) {
         message = `Request to make user ${user.sharedWithUser.name ||
           user.sharedWithUser
@@ -181,6 +182,7 @@ export default function UserDetail(props) {
   );
   const { user, integrationId, isAccountOwner } = props;
   let userAccessLevel = user.accessLevel;
+
   if (
     user.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR &&
     user.integrationAccessLevel &&

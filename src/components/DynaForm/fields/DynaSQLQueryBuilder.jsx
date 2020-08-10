@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
 import DynaLookupEditor from './DynaLookupEditor';
@@ -13,7 +13,6 @@ import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
-
 
 const useStyles = makeStyles({
   sqlContainer: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles({
   },
   sqlLabelWrapper: {
     display: 'flex',
-  }
+  },
 });
 
 export default function DynaSQLQueryBuilder(props) {
