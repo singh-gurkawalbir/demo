@@ -4,7 +4,7 @@ import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions from '../../utils/requestOptions';
@@ -75,11 +75,11 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
     return;
   }
   const userPreferences = yield select(selectors.userPreferences);
-  const isLinked =
-    userPreferences &&
+  const isLinked = userPreferences &&
     userPreferences.ssConnectionIds &&
     userPreferences.ssConnectionIds.includes(connectionId);
   const userAccessLevel = yield select(selectors.userAccessLevel);
+
   if (userAccessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
     if (link) {
       if (!isLinked) {
@@ -93,7 +93,7 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
       yield put(
         actions.user.preferences.update({
           ssConnectionIds: userPreferences.ssConnectionIds.filter(
-            (id) => id !== connectionId
+            id => id !== connectionId
           ),
         })
       );
@@ -404,7 +404,8 @@ export function* updateIntegrationSettings({
         sectionId,
       })
     );
-    // if flowId is present touch the flow to show changed lastmodified date
+
+    // if flowId is present touch the flow to show changed lastModified date
     // note this is somewhat a hack
     // it is believed that in time resource level settings will render this obsolete
     if (flowId && options.action !== 'flowEnableDisable') {
@@ -708,6 +709,7 @@ export function* updateTradingPartner({ connectionId }) {
       },
       message: 'Updating trading partner',
     });
+
     yield put(
       actions.connection.completeTradingPartner(response?._connectionIds || [])
     );

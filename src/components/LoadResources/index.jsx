@@ -2,8 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../reducers';
-
+import { selectors } from '../../reducers';
 
 export default function LoadResources({ children, resources, required }) {
   const dispatch = useDispatch();

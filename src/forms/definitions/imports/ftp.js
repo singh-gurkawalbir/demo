@@ -101,6 +101,7 @@ export default {
     if (fieldId === 'ftp.fileName') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileName = fileNameField.value;
+
       if (!fileName) { return; }
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
       const newExtension = [
@@ -122,6 +123,7 @@ export default {
       const inprogressFileNameField = fields.find(
         field => field.fieldId === fieldId
       );
+
       if (!inprogressFileNameField.value) { return; }
 
       const fileTypeField = fields.find(field => field.fieldId === 'file.type');
@@ -224,7 +226,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: ['file.type'],
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be generated)',
       helpKey: 'import.uploadFile',
     },
     'file.csv': { fieldId: 'file.csv' },
@@ -317,7 +319,7 @@ export default {
         type: 'indent',
         containers: [{fields: [
           'file.csv',
-        ]}]
+        ]}],
       },
       {
         collapsed: true,

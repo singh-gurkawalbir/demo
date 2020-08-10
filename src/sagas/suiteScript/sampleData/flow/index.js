@@ -3,7 +3,7 @@ import { put, select, takeLatest, call } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 import { getExtractPaths } from '../../../../utils/suiteScript/mapping';
@@ -15,7 +15,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const { export: exportConfig } = flow;
@@ -24,11 +24,13 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
     const {recordType} = exportConfig.netsuite.realtime;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
+
     yield put(
       actions.metadata.request(ssLinkedConnectionId, commMetaPath, { refreshCache })
     );
   } else if (exportType === 'salesforce') {
     const {sObjectType} = exportConfig.salesforce;
+
     yield put(actions.metadata.request(
       ssLinkedConnectionId,
       `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
@@ -36,24 +38,30 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
     ));
   } else if (['fileCabinet', 'ftp'].includes(exportType)) {
     const _exp = deepClone(exportConfig);
+
     _exp.file.type = 'csv';
     const previewData = yield call(requestFileAdaptorSampleData, {resource: _exp});
     const extractList = getExtractPaths(
       previewData,
     );
+
     yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData: extractList}));
     // ftp => export.sampleData
   } else if (['rakuten', 'sears', 'newegg'].includes(exportType)) {
     let method;
+
     if (exportType === 'sears') {
       const { sears } = exportConfig;
+
       method = sears.method;
     } else if (exportType === 'rakuten') {
       // for rakuten, method is inside export/file
       const { file } = exportConfig;
+
       method = file.method;
     } else if (exportType === 'newegg') {
       const { newegg } = exportConfig;
+
       method = newegg.method;
     }
     const connections = yield select(selectors.suiteScriptResourceList, {ssLinkedConnectionId, resourceType: 'connections'});
@@ -63,10 +71,12 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
       const methodObj = connection.apiMethods.find(m => m.id === method);
       const { fields } = methodObj;
       const previewData = fields.map(({label, id}) => ({id, name: label}));
+
       yield put(actions.suiteScript.sampleData.received({ ssLinkedConnectionId, integrationId, flowId, previewData}));
     }
   } else {
     const path = `/suitescript/connections/${ssLinkedConnectionId}/export/preview`;
+
     try {
       const body = exportConfig;
       const previewData = yield call(apiCallWithRetry, {
@@ -96,6 +106,7 @@ export function* requestFlowSampleData({ ssLinkedConnectionId, integrationId, fl
 export function* onResourceUpdate({ master, ssLinkedConnectionId, integrationId, resourceType }) {
   if (resourceType === 'exports') {
     const {_id: flowId} = master;
+
     return yield put(
       actions.suiteScript.sampleData.reset({ ssLinkedConnectionId, integrationId, flowId})
     );

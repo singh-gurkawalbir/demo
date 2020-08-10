@@ -2,7 +2,6 @@ export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
 
-
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/oauth/authURI'] = `https://${
@@ -19,7 +18,6 @@ export default {
       delete retValues['/http/auth/basic/password'];
 
       retValues['/http/auth/basic'] = undefined;
-
 
       if (
         resource &&
@@ -237,22 +235,23 @@ export default {
             'unauthenticated_read_content',
             'read_assigned_fulfillment_orders',
             'write_assigned_fulfillment_orders',
-          ]
+          ],
         },
         {
           subHeader: 'Shopify Plus scopes',
           scopes: [
             'read_users',
-            'write_users'
-          ]}
+            'write_users',
+          ]},
       ],
       visibleWhenAll: r => {
         if (r?.http?._iClientId) {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
             { field: 'http.auth.type', isNot: ['basic'] }];
         }
+
         return [{ field: 'http.auth.type', is: ['oauth'] }];
-      }
+      },
     },
     application: {
       fieldId: 'application',

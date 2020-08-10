@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoSwitch from '../../../../../CeligoSwitch';
 import Spinner from '../../../../../Spinner';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import RemoveMargin from '../RemoveMargin';

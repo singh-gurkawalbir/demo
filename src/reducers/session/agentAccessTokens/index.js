@@ -47,11 +47,12 @@ export default (state = [], action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function agentAccessToken(state, id) {
+selectors.agentAccessToken = (state, id) => {
   if (!state) return '*****';
 
   return state.find(t => t._id === id) || '*****';
-}
+};
 
 // #endregion

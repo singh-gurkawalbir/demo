@@ -68,8 +68,8 @@ const useStyles = makeStyles(theme => ({
     right: 0,
     marginTop: '0px !important',
     color: theme.palette.secondary.light,
-    pointerEvents: 'none'
-  }
+    pointerEvents: 'none',
+  },
 }));
 
 function renderInputComponent(inputProps) {

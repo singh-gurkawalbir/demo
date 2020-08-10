@@ -60,7 +60,6 @@ export default function (state = defaultState, action) {
       case actionTypes.AUTH_WARNING:
         draft.warning = true;
 
-
         break;
 
       default:
@@ -70,7 +69,9 @@ export default function (state = defaultState, action) {
 // #endregion
 
 // #region Selectors
-export function showSessionStatus(state) {
+export const selectors = {};
+
+selectors.showSessionStatus = state => {
   const { sessionExpired, warning } = state;
 
   // authenticated and session Expired are mutually exclusive
@@ -80,5 +81,5 @@ export function showSessionStatus(state) {
   if (sessionExpired) {
     return 'expired';
   }
-}
+};
 // #endregion Selectors

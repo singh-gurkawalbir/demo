@@ -4,7 +4,7 @@ import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl, InputLabel } from '@material-ui/core';
 import Select, { components } from 'react-select';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { applicationsList, groupApplications } from '../../../../constants/applications';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import AppPill from './AppPill';
@@ -250,6 +250,7 @@ export default function SelectApplication(props) {
     // we dispatch form submit as soon as the new value is vetted
     if (proceedOnChange && applications.find(a => a.id === newValue)) {
       const values = {};
+
       values[id] = newValue;
       dispatch(
         actions.resourceForm.submit(
@@ -264,7 +265,6 @@ export default function SelectApplication(props) {
       );
     }
   }, [isMulti, value, onFieldChange, proceedOnChange, applications, id, dispatch, resourceType, resourceId, match, flowId]);
-
 
   const handleFocus = useCallback(() => {
     const refState = ref?.current?.state;

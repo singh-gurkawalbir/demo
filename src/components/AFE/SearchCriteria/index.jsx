@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import TrashIcon from '../../icons/TrashIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import ActionButton from '../../ActionButton';
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     marginTop: theme.spacing(1),
-  }
+  },
 }));
 
 export default function SearchCriteriaEditor(props) {
@@ -94,16 +94,21 @@ export default function SearchCriteriaEditor(props) {
       onRefresh(true);
     }
   }, [onRefresh]);
-  const headers = ['Field', 'Operator', 'Search Value', 'Search Value 2'];
+  const headers = [
+    {name: 'Field', refreshable: !disabled},
+    {name: 'Operator'},
+    {name: 'Search Value'},
+    {name: 'Search Value 2'},
+  ];
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        {headers.map(headerText => (
-          <div className={classes.childHeader} key={headerText}>
-            <span>{headerText}</span>
-            {headerText === 'Field' && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
-            {headerText === 'Field' && status === 'requested' && <Spinner size={24} />}
+        {headers.map(header => (
+          <div className={classes.childHeader} key={header.name}>
+            <span>{header.name}</span>
+            {header.refreshable && status !== 'requested' && <RefreshIcon onClick={handleRefresh} />}
+            {header.refreshable && status === 'requested' && <Spinner size={24} />}
           </div>
         ))}
       </div>

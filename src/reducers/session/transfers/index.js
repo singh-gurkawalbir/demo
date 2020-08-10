@@ -48,7 +48,9 @@ function parsePreviewResponse(res) {
 
 let error;
 
-export const getPreviewData = createSelector(
+export const selectors = {};
+
+selectors.getTransferPreviewData = createSelector(
   state => state && state.transfer,
   transfer => {
     if (!transfer) {

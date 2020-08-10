@@ -7,7 +7,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import PanelLoader from '../../PanelLoader';
@@ -51,7 +51,7 @@ export default function TransformEditor(props) {
         _init_data: props.data,
         _init_rule: props.rule,
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [

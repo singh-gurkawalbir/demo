@@ -1,5 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData, flowReferencesForResource } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES, updateFlowDoc } from '../../resourceForm';
 import actions from '../../../actions';
 import {
@@ -10,7 +10,7 @@ import {
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
   const { merged: flow } = yield select(
-    resourceData,
+    selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
@@ -31,6 +31,7 @@ function* updateResponseMapping({ flowId, resourceIndex }) {
   const resourceToReset = pageProcessors[resourceIndex];
   const resourceType = resourceToReset.type === 'export' ? 'exports' : 'imports';
   const stagesToReset = ['responseMapping', ...getSubsequentStages('responseMapping', resourceType)];
+
   if (resourceToReset) {
     yield put(
       actions.flowData.resetStages(
@@ -67,6 +68,7 @@ export function* updateFlowOnResourceUpdate({
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
     const stagesToReset = [];
     const updatedStage = getResourceStageUpdatedFromPatch(patch);
+
     // If there is an updatedStage -> get list of all stages to update from that stage
     if (updatedStage) {
       stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));
@@ -90,7 +92,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType, stagesTo
    * flowRefs : [{flowId, resourceId}, ..] for all the flows ( PP / PG )
    */
   const flowRefs = yield select(
-    flowReferencesForResource,
+    selectors.flowReferencesForResource,
     resourceType,
     resourceId
   );
@@ -109,7 +111,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType, stagesTo
 export function* updateFlowData({ flowId }) {
   // Updates flow structure incase of Drag and change flow order
   const { merged: updatedFlow } = yield select(
-    resourceData,
+    selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE

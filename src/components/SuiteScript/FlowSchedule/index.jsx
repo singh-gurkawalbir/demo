@@ -13,8 +13,7 @@ import {
   getScheduleDetails,
   getCronExpression,
 } from './util';
-import * as selectors from '../../../reducers';
-
+import { selectors } from '../../../reducers';
 
 export default function FlowSchedule({ flow, onClose, className }) {
   const dispatch = useDispatch();
@@ -22,7 +21,7 @@ export default function FlowSchedule({ flow, onClose, className }) {
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, flow.ssLinkedConnectionId));
   const scheduleStartMinute = 0;
   const handleSubmit = useCallback(
-    (formValues) => {
+    formValues => {
       if (
         formValues.startTime &&
         formValues.endTime &&
@@ -38,6 +37,7 @@ export default function FlowSchedule({ flow, onClose, className }) {
 
       const { frequency, dayToRunOn } = formValues;
       let { startTime, endTime, daysToRunOn } = formValues;
+
       if (frequency === FREQUENCY.ONCE_WEEKLY.value) {
         daysToRunOn = [dayToRunOn];
       }
@@ -56,7 +56,8 @@ export default function FlowSchedule({ flow, onClose, className }) {
         endTime = '';
       }
       const scheduleDetails = { frequency, startTime, endTime };
-      Object.keys(WEEK_DAYS).forEach((d) => {
+
+      Object.keys(WEEK_DAYS).forEach(d => {
         if (daysToRunOn.includes(d)) {
           scheduleDetails[d.toLowerCase()] = d;
         }

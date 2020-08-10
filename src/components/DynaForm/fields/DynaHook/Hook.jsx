@@ -9,7 +9,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
@@ -87,7 +87,7 @@ export default function DynaHook(props) {
     editorResultMode,
     requestForPreHookData,
     isSampleDataLoading,
-    resourceType
+    resourceType,
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -135,6 +135,7 @@ export default function DynaHook(props) {
 
   const handleCreateScriptSave = useCallback(values => {
     const options = { dispatch, isNew: true };
+
     saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
   }, [dispatch, flowId, tempScriptId]);
 

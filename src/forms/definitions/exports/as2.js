@@ -7,6 +7,7 @@ export default {
     newValues['/type'] = 'webhook';
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
     }
@@ -174,15 +175,15 @@ export default {
             ],
             containers: [{fields: [
               'file.csv',
-            ]}]
+            ]}],
           },
           { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
         ],
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
 
   },
   actions: [

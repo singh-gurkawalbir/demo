@@ -6,10 +6,10 @@ import {
   NavLink,
   Redirect, Route,
   Switch,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import { isJavaFlow } from '../../../../../../utils/suiteScript';
 import GeneralSection from './sections/General';
 import LegacySection from './sections/Legacy';

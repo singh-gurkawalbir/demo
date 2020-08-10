@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { join, resolve } = require('path');
 const { sections } = require('./docs/sections');
 
@@ -8,7 +9,7 @@ require('@babel/register')({
 });
 const themeProvider = require('./src/theme/themeProvider').default;
 
-const theme = themeProvider()
+const theme = themeProvider();
 
 module.exports = {
   components: 'src/components/**/*.jsx',
@@ -22,8 +23,6 @@ module.exports = {
 
   theme: theme.styleguide,
   styles: {
-    // TODO: figure out what this prop was used for and if we still need it!
-    // StyleGuide: theme.styleguide.StyleGuide,
     Editor: {
       root: {
         backgroundColor: '#f1f1f1',
@@ -37,15 +36,6 @@ module.exports = {
   },
   styleguideComponents: {
     Wrapper: join(__dirname, 'src/styleguide/Wrapper.jsx'),
-    // TODO: Unable to simply wrap the styleguide. The base implementation somehow 
-    // constructs props that are not available in the wrapped version. This will
-    // take more time to investigate and the only current use of this wrapper was to 
-    // load the <FontStager> once. For now I moved this to the Wrapper, which just
-    // includes the <FontStager> on every example... overkill, but works.
-    //StyleGuideRenderer: join(
-    //  __dirname,
-    //  'src/styleguide/StyleGuide.jsx'
-    //),
   },
 
   // https://react-styleguidist.js.org/docs/configuration.html#sections
@@ -57,10 +47,12 @@ module.exports = {
   // require: [join(__dirname, 'src/styleguide/styles.css')],
 
   // https://react-styleguidist.js.org/docs/configuration.html#dangerouslyupdatewebpackconfig
+  // eslint-disable-next-line no-unused-vars
   dangerouslyUpdateWebpackConfig: (webpackConfig, env) => {
     webpackConfig.devtool = 'inline-source-map';
     webpackConfig.optimization = webpackConfig.optimization || {};
     webpackConfig.optimization.minimize = false;
+
     return webpackConfig;
   }
-}
+};

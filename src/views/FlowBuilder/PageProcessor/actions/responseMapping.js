@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from '../../../../components/icons/MapDataIcon';
 import ResponseMappingDialog from '../../../../components/AFE/ResponseMapping/Dialog';
 import { isIntegrationApp } from '../../../../utils/flows';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 function ResponseMapping(props) {

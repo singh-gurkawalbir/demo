@@ -683,12 +683,14 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function integrationAppSettingsFormState(
+export const selectors = {};
+
+selectors.integrationAppSettingsFormState = (
   state,
   integrationId,
   flowId,
   sectionId
-) {
+) => {
   if (!state) {
     return emptyObj;
   }
@@ -696,9 +698,9 @@ export function integrationAppSettingsFormState(
   const key = getStateKey(integrationId, flowId, sectionId);
 
   return state[key] || emptyObj;
-}
+};
 
-export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
+selectors.categoryMappingsCollapsedStatus = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state || !state[cKey]) {
@@ -706,9 +708,9 @@ export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
   }
 
   return state[cKey].collapseStatus || emptyObj;
-}
+};
 
-export function categoryMappingFilters(state, integrationId, flowId) {
+selectors.categoryMappingFilters = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state || !state[cKey]) {
@@ -716,9 +718,9 @@ export function categoryMappingFilters(state, integrationId, flowId) {
   }
 
   return state[cKey].filters;
-}
+};
 
-export function categoryMapping(state, integrationId, flowId) {
+selectors.categoryMapping = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state) {
@@ -726,9 +728,9 @@ export function categoryMapping(state, integrationId, flowId) {
   }
 
   return state[cKey];
-}
+};
 
-export function variationMappingData(state, integrationId, flowId) {
+selectors.variationMappingData = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state) return null;
@@ -749,9 +751,9 @@ export function variationMappingData(state, integrationId, flowId) {
   });
 
   return mappings;
-}
+};
 
-export function categoryMappingData(state, integrationId, flowId) {
+selectors.categoryMappingData = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state) {
@@ -778,9 +780,9 @@ export function categoryMappingData(state, integrationId, flowId) {
   });
 
   return mappings;
-}
+};
 
-export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
+selectors.categoryMappingGeneratesMetadata = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state) {
@@ -795,9 +797,9 @@ export function categoryMappingGeneratesMetadata(state, integrationId, flowId) {
   });
 
   return generates;
-}
+};
 
-export function categoryMappingsForSection(state, integrationId, flowId, id) {
+selectors.categoryMappingsForSection = (state, integrationId, flowId, id) => {
   const cKey = getCategoryKey(integrationId, flowId);
 
   if (!state || !state[cKey] || !state[cKey].mappings) {
@@ -805,10 +807,10 @@ export function categoryMappingsForSection(state, integrationId, flowId, id) {
   }
 
   return state[cKey].mappings[id] || emptySet;
-}
+};
 
 // #region PUBLIC SELECTORS
-export function categoryMappingsChanged(state, integrationId, flowId) {
+selectors.categoryMappingsChanged = (state, integrationId, flowId) => {
   const cKey = getCategoryKey(integrationId, flowId);
   const isMappingsEqual = false;
 
@@ -817,12 +819,12 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   }
 
   const { response, mappings, deleted } =
-    categoryMapping(state, integrationId, flowId) || {};
+    selectors.categoryMapping(state, integrationId, flowId) || {};
   const mappingData = response.find(op => op.operation === 'mappingData');
   const sessionMappedData =
     mappingData && mappingData.data && mappingData.data.mappingData;
   const clonedData = deepClone(sessionMappedData);
-  const categoryRelationshipData = categoryMappingGeneratesMetadata(
+  const categoryRelationshipData = selectors.categoryMappingGeneratesMetadata(
     state,
     integrationId,
     flowId
@@ -842,9 +844,9 @@ export function categoryMappingsChanged(state, integrationId, flowId) {
   }
 
   return !mappingUtil.isEqual(initData.data.mappingData, clonedData);
-}
+};
 
-export function categoryMappingSaveStatus(state, integrationId, flowId) {
+selectors.categoryMappingSaveStatus = (state, integrationId, flowId) => {
   const cKey = `${flowId}-${integrationId}`;
 
   if (!state || !state[cKey]) {
@@ -852,9 +854,9 @@ export function categoryMappingSaveStatus(state, integrationId, flowId) {
   }
 
   return state[cKey].saveStatus;
-}
+};
 
-export function integrationAppAddOnState(state, integrationId) {
+selectors.integrationAppAddOnState = (state, integrationId) => {
   if (!state) {
     return emptyObj;
   }
@@ -862,30 +864,30 @@ export function integrationAppAddOnState(state, integrationId) {
   const addOnKey = `${integrationId}-addOns`;
 
   return state[addOnKey] || emptyObj;
-}
+};
 
-export function integrationAppMappingMetadata(state, integrationId) {
+selectors.integrationAppMappingMetadata = (state, integrationId) => {
   if (!state) {
     return emptyObj;
   }
 
   return state[integrationId] || emptyObj;
-}
+};
 
-export function shouldRedirect(state, integrationId) {
+selectors.shouldRedirect = (state, integrationId) => {
   if (!state || !state[integrationId]) {
     return null;
   }
 
   return state[integrationId].redirectTo;
-}
+};
 
-export function checkUpgradeRequested(state, licenseId) {
+selectors.checkUpgradeRequested = (state, licenseId) => {
   if (!state) {
     return false;
   }
 
   return !!state[licenseId];
-}
+};
 
 // #endregion

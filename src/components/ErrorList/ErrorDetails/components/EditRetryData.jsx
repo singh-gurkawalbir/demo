@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
-import { retryDataContext } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function EditRetryData({
   retryId,
@@ -12,7 +12,7 @@ export default function EditRetryData({
 }) {
   const dispatch = useDispatch();
   const { status, data: retryData = {} } = useSelector(state =>
-    retryDataContext(state, retryId)
+    selectors.retryDataContext(state, retryId)
   );
 
   useEffect(() => {

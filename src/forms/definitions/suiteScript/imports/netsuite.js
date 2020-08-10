@@ -3,6 +3,7 @@ import { isJsonString } from '../../../../utils/string';
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
+
     if (isJsonString(newValues['/import/netsuite/internalIdLookup/expression'])) {
       newValues['/import/netsuite/internalIdLookup/expression'] = JSON.parse(newValues['/import/netsuite/internalIdLookup/expression']);
     }
@@ -14,6 +15,7 @@ export default {
       newValues['/import/netsuite/internalIdLookup'] = {};
       delete newValues['/import/netsuite/internalIdLookup/expression'];
     }
+
     return { ...newValues };
   },
   optionsHandler: (fieldId, fields) => {
@@ -75,7 +77,7 @@ export default {
               'import.netsuite.ignoreMissing',
               'import.netsuite.internalIdLookup.expression',
             ],
-          }
+          },
         ],
       },
     ],

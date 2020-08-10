@@ -27,6 +27,7 @@ export default {
         ],
       });
     }, [confirmDialog, cancelTransfer]);
+
     useEffect(() => {
       handleClick();
     }, [handleClick]);

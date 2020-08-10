@@ -63,6 +63,7 @@ export const templateList = [
   { label: 'Zendesk Support', value: 'zendesk' },
   { label: 'Zuora', value: 'zuora' },
 ];
+
 templateList.sort(stringCompare('label'));
 
 const getAssistants = () => {

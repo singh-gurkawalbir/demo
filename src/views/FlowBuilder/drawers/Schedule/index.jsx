@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import RightDrawer from '../../../../components/drawer/Right';
 import FlowSchedule from '../../../../components/FlowSchedule';
 
@@ -10,8 +10,10 @@ const useStyle = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      marginLeft: theme.spacing(-1),
+      paddingRight: 0,
+    },
   },
 }));
 

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import RunFlowButton from '../../../../../SuiteScript/RunFlowButton';
 import getRoutePath from '../../../../../../utils/routePaths';
 import RemoveMargin from '../RemoveMargin';
@@ -14,6 +14,7 @@ export default function RunCell({ ssLinkedConnectionId, flow, onRunStart }) {
       id: flow._integrationId,
       ssLinkedConnectionId,
     });
+
     return integration && integration.urlName;
   });
   const handleOnRunStart = useCallback(() => {

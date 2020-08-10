@@ -2,7 +2,7 @@ import { call, put, takeEvery, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { getFlowIdAndTypeFromUniqueId } from '../../../utils/suiteScript';
 import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../utils/constants';
 
@@ -116,7 +116,6 @@ export function* commitStagedChanges({
   );
 }
 
-
 export function* requestSuiteScriptMetadata({
   resourceType,
   ssLinkedConnectionId,
@@ -126,6 +125,7 @@ export function* requestSuiteScriptMetadata({
   const opts = {method: 'GET'};
 
   let resp;
+
   try {
     resp = yield call(apiCallWithRetry, {path, opts, hidden: resourceType === 'settings'});
   } catch (error) {
@@ -135,7 +135,6 @@ export function* requestSuiteScriptMetadata({
   }
 
   yield put(actions.suiteScript.resource.received(ssLinkedConnectionId, integrationId, resourceType, resp));
-
 
   return true;
 }
@@ -149,6 +148,7 @@ function* featureCheck({
   const opts = {method: 'GET'};
 
   let resp;
+
   try {
     resp = yield call(apiCallWithRetry, {path, opts});
     if (resp?.success) {
@@ -168,15 +168,18 @@ function* featureCheck({
 export function* resourcesReceived({ resourceType, collection = [] }) {
   if (resourceType.startsWith('suitescript/connections/')) {
     const [, , ssLinkedConnectionId] = resourceType.split('/');
+
     if (resourceType.endsWith('/tiles')) {
       /** Load V2 Salesforce - NetSuite connector settings is taking more time, so making the call in advance after loading tiles */
       const salesforceConnector = collection.find(t => t.isConnector && t.name === SUITESCRIPT_CONNECTORS.find(c => c._id === SUITESCRIPT_CONNECTOR_IDS.salesforce).ssName);
+
       if (salesforceConnector) {
         const settingsLoaded = yield select(selectors.hasSuiteScriptData, {
           ssLinkedConnectionId,
           integrationId: salesforceConnector._integrationId,
           resourceType: 'settings',
         });
+
         if (!settingsLoaded) {
           yield put(actions.suiteScript.resource.request('settings', ssLinkedConnectionId, salesforceConnector._integrationId));
         }
@@ -184,7 +187,6 @@ export function* resourcesReceived({ resourceType, collection = [] }) {
     }
   }
 }
-
 
 export const resourceSagas = [
   takeEvery(actionTypes.SUITESCRIPT.RESOURCE.REQUEST, requestSuiteScriptMetadata),

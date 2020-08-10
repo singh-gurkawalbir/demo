@@ -13,7 +13,7 @@ export default {
           {
             label: 'How would you like the records imported?',
             fields: ['import.newegg.method'],
-          }
+          },
         ],
       },
     ],

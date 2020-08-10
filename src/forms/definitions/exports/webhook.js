@@ -31,7 +31,6 @@ export default {
       };
     }
 
-
     return null;
   },
   preSave: (formValues, resource) => {
@@ -39,6 +38,10 @@ export default {
 
     if (retValues['/webhook/verify'] === 'token') {
       retValues['/webhook/token'] = retValues['/webhook/generateToken'];
+    }
+
+    if (retValues['/webhook/provider'] === 'integratorio') {
+      retValues['/webhook/provider'] = 'integrator-extension';
     }
 
     if (resource && resource.webhook && resource.webhook.provider === 'slack') {

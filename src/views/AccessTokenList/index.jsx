@@ -3,7 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ResourceTable from '../../components/ResourceTable';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const defaultFilter = {
-  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10
+  take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
 };
 
 export default function AccessTokenList(props) {

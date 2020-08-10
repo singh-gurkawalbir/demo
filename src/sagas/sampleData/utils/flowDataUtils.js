@@ -1,10 +1,6 @@
 import { put, select, call } from 'redux-saga/effects';
 import { isEmpty } from 'lodash';
-import {
-  resourceData,
-  isPageGenerator,
-  getSampleDataWrapper,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import {
@@ -29,14 +25,14 @@ import { isJsonString } from '../../../utils/string';
 export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
   // get flow on flowId base
   const { merged: flow = {} } = yield select(
-    resourceData,
+    selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
   );
   // check if resource is a pg/pp
   const isPageGeneratorExport = yield select(
-    isPageGenerator,
+    selectors.isPageGenerator,
     flowId,
     resourceId,
     resourceType
@@ -78,7 +74,7 @@ export function* fetchResourceDataForNewFlowResource({
   resourceType,
 }) {
   const { merged: newResource = {} } = yield select(
-    resourceData,
+    selectors.resourceData,
     resourceType,
     resourceId,
     'value'
@@ -107,7 +103,7 @@ export function* fetchFlowResources({ flow, type, eliminateDataProcessors, refre
       const resourceId =
         resourceInfo[resourceType === 'exports' ? '_exportId' : '_importId'];
       const { merged: resource } = yield select(
-        resourceData,
+        selectors.resourceData,
         resourceType,
         resourceId,
         SCOPES.VALUE
@@ -187,7 +183,7 @@ export function* requestSampleDataForImports({
 
     case 'sampleResponse': {
       const { merged: resource } = yield select(
-        resourceData,
+        selectors.resourceData,
         'imports',
         resourceId,
         SCOPES.VALUE
@@ -249,7 +245,7 @@ export function* requestSampleDataForExports({
 }) {
   const resourceType = 'exports';
   const isPageGeneratorExport = yield select(
-    isPageGenerator,
+    selectors.isPageGenerator,
     flowId,
     resourceId,
     resourceType
@@ -348,7 +344,7 @@ export function* handleFlowDataStageErrors({
 export function getPreProcessedResponseMappingData({
   resourceType,
   preProcessedData,
-  adaptorType
+  adaptorType,
 }) {
   const extractsObj = generateDefaultExtractsObject(resourceType, adaptorType);
 
@@ -372,7 +368,7 @@ export function* getFlowStageData({
   stage,
   isInitialized,
 }) {
-  let flowStageData = yield select(getSampleDataWrapper, {
+  let flowStageData = yield select(selectors.getSampleDataWrapper, {
     flowId,
     resourceId,
     resourceType,
@@ -389,7 +385,7 @@ export function* getFlowStageData({
       stage,
       isInitialized,
     });
-    flowStageData = yield select(getSampleDataWrapper, {
+    flowStageData = yield select(selectors.getSampleDataWrapper, {
       flowId,
       resourceId,
       resourceType,

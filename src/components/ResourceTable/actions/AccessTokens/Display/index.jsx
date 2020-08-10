@@ -3,9 +3,8 @@ import moment from 'moment';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ClipboardCopy from '../../../../ClipboardCopy';
-
 
 function isPurged(autoPurgeAt) {
   if (!autoPurgeAt) {
@@ -23,7 +22,6 @@ export default function Display({ accessToken }) {
   );
 
   const handleDisplayClick = useCallback(() => dispatch(actions.accessToken.displayToken(accessToken._id)), [accessToken._id, dispatch]);
-
 
   return (
     <>

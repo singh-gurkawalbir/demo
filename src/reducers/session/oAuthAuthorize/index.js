@@ -15,6 +15,6 @@ export default (state = {}, action) => {
   });
 };
 
-export function isAuthorized(state, connectionId) {
-  return !!((state || {})[connectionId] || {}).authorized;
-}
+export const selectors = {};
+
+selectors.isAuthorized = (state, connectionId) => !!((state || {})[connectionId] || {}).authorized;

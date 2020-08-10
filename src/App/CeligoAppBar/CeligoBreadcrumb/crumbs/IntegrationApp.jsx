@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 
 export const IntegrationAppCrumb = ({ integrationId }) => {
@@ -18,6 +18,7 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 export const StoreCrumb = ({ integrationId, storeId }) => {
   const store = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId, storeId);
+
     if (integration && integration.stores) {
       return integration.stores.find(s => s.value === storeId);
     }
@@ -28,6 +29,7 @@ export const StoreCrumb = ({ integrationId, storeId }) => {
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const childName = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', storeId);
+
     return integration && integration.name;
   });
 

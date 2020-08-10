@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles, Chip } from '@material-ui/core';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
 import getRoutePath from '../../../../../utils/routePaths';
 

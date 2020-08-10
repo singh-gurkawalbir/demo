@@ -34,6 +34,7 @@ export default (state = {}, action) => {
       if (newState[_integrationId][fieldName]) {
         newState[_integrationId][fieldName].isLoading = false;
       }
+
       return newState;
     default:
       return state;
@@ -41,7 +42,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function connectorMetadata(state, fieldName, id, _integrationId) {
+export const selectors = {};
+
+selectors.connectorMetadata = (state, fieldName, id, _integrationId) => {
   if (!state || !state[_integrationId]) {
     return { isLoading: false };
   }
@@ -60,5 +63,5 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
   }
 
   return { isLoading: false };
-}
+};
 // #endregion

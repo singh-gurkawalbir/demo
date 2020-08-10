@@ -10,9 +10,11 @@ export default {
     const handleClick = useCallback(() => {
       history.push(`${match.url}/details/${errorId}/edit`);
     }, [errorId, history, match.url]);
+
     useEffect(() => {
       handleClick();
     }, [handleClick]);
+
     return null;
   },
 };

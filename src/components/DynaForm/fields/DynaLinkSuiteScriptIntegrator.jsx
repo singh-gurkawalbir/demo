@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import { isBoolean } from 'lodash';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaCheckbox from './checkbox/DynaCheckbox';
 
@@ -15,6 +15,7 @@ export default function DynaLinkSuiteScriptIntegrator(props) {
 
   const isSuiteScriptLinkedConnection = useSelector(state => {
     const preferences = selectors.userPreferences(state);
+
     return preferences?.ssConnectionIds?.includes(resourceContext.resourceId);
   });
 

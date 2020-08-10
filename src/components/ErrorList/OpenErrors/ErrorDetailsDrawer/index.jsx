@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import RightDrawer from '../../../drawer/Right';
 import ErrorDetails from '../../ErrorDetails';
-import { resourceErrors } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const emptySet = [];
 
@@ -18,7 +18,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
   const history = useHistory();
   const allErrors = useSelector(
     state =>
-      resourceErrors(state, {
+      selectors.resourceErrors(state, {
         flowId,
         resourceId,
       }).errors || emptySet,

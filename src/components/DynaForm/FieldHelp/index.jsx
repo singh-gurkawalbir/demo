@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
@@ -24,7 +24,7 @@ export default function FieldHelp({
   helpText,
   helpKey,
   resourceContext,
-  noApi = false
+  noApi = false,
 }) {
   const classes = useStyles();
   const { developer } = useSelector(state => selectors.userProfile(state));

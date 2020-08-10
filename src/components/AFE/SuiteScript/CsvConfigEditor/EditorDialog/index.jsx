@@ -12,7 +12,7 @@ import {
 import ViewRowIcon from '@material-ui/icons/HorizontalSplit';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ViewColumnIcon from '../../../../icons/LayoutTriVerticalIcon';
 import ViewCompactIcon from '../../../../icons/LayoutLgLeftSmrightIcon';
 import FullScreenOpenIcon from '../../../../icons/FullScreenOpenIcon';
@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
       width: 1,
       position: 'absolute',
       right: -12,
-    }
+    },
   },
   previewCheckbox: {
     marginLeft: 8,
@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
   previewBtnContainer: {
     display: 'flex',
     minHeight: 29,
-  }
+  },
 }));
 /**
  * @param patchOnSave = false (default editor behaviour) or true (for resource patch on save)
@@ -160,7 +160,7 @@ export default function EditorDialog(props) {
           {
             label: 'No, go back',
             color: 'secondary',
-          }
+          },
         ],
       });
     } else {

@@ -120,7 +120,9 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function resourceFormState(state, resourceType, resourceId) {
+export const selectors = {};
+
+selectors.resourceFormState = (state, resourceType, resourceId) => {
   if (!state) {
     return emptyObj;
   }
@@ -128,13 +130,13 @@ export function resourceFormState(state, resourceType, resourceId) {
   const key = `${resourceType}-${resourceId}`;
 
   return state[key] || emptyObj;
-}
+};
 
-export function resourceFormSaveProcessTerminated(
+selectors.resourceFormSaveProcessTerminated = (
   state,
   resourceType,
   resourceId
-) {
+) => {
   if (!state) return false;
   const key = `${resourceType}-${resourceId}`;
 
@@ -142,5 +144,5 @@ export function resourceFormSaveProcessTerminated(
   const { submitFailed, submitComplete, submitAborted } = state[key];
 
   return !!(submitFailed || submitComplete || submitAborted);
-}
+};
 // #endregion

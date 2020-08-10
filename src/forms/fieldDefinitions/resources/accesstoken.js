@@ -98,7 +98,7 @@ export default {
         ],
       },
     ],
-    required: true
+    required: true,
   },
   _connectionIds: {
     type: 'selectresource',

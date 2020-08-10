@@ -3,7 +3,7 @@ import { deepClone } from 'fast-json-patch';
 import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers/index';
+import { selectors } from '../../../../reducers/index';
 import useConfirmDialog from '../../../ConfirmDialog';
 import DynaAction from '../../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../../reducers/comms/ping';
@@ -30,6 +30,7 @@ const ConfirmDialog = props => {
     commErrorMessage,
   } = props;
   const { confirmDialog } = useConfirmDialog();
+
   useEffect(() => {
     if (commErrorMessage) {
       confirmDialog({
@@ -55,7 +56,7 @@ const ConfirmDialog = props => {
         onDialogClose: () => {
           handleSaveCompleted();
           handleCloseAndClearForm();
-        }
+        },
       });
     } else confirmDialog(null);
   }, [
@@ -212,7 +213,7 @@ const TestAndSaveButton = props => {
     dispatchLocalAction({ type: 'saveCompleted' });
   }, []);
 
-  const handleTestAndSave = useCallback((values) => {
+  const handleTestAndSave = useCallback(values => {
     testClear();
     handleTestConnection(values);
     dispatchLocalAction({ type: 'setFormValues', formValues: values });

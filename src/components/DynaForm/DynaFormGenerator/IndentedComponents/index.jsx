@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import FormGenerator from '..';
 
-
 const useStyles = makeStyles(theme => ({
   indentFieldsTitle: {
     marginBottom: theme.spacing(2),
@@ -13,9 +12,9 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     '& > div': {
       '& > div:last-child': {
-        marginBottom: '0px !important'
+        marginBottom: '0px !important',
       },
-    }
+    },
   },
 }));
 
@@ -26,7 +25,6 @@ export default function IndentedComponents(props) {
     containers &&
     containers.map((container, index) => {
       const {label, ...rest } = container;
-
 
       return (
         // eslint-disable-next-line react/no-array-index-key

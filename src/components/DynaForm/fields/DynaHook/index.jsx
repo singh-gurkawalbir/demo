@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Hook from './Hook';
 import LoadResources from '../../../LoadResources';
 
 // TODO @Raghu: add logic for apis
 const emptyObj = {};
+
 export default function DynaHook(props) {
   const {
     flowId,
@@ -71,6 +72,7 @@ export default function DynaHook(props) {
     if (resourceType === 'apis') {
       return emptyObj;
     }
+
     return getSampleDataSelector({ state, flowId, resourceId });
   });
   const preHookDataStatus = useSelector(state => {
