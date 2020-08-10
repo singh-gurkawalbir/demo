@@ -1,4 +1,4 @@
-import { put, takeLatest, select } from 'redux-saga/effects';
+import { put, takeLatest, select, fork, take, call, delay, cancel } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -50,10 +50,25 @@ function* requestIntegrationErrors({ integrationId }) {
   }
 }
 
+function* pollForOpenErrors({ flowId }) {
+  yield put(actions.errorManager.openFlowErrors.request({ flowId }));
+  while (true) {
+    yield call(requestFlowOpenErrors, { flowId });
+    yield delay(2000);
+  }
+}
+
+function* startPollingForOpenErrors({ flowId }) {
+  const watcher = yield fork(pollForOpenErrors, { flowId });
+
+  yield take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL);
+  yield cancel(watcher);
+}
+
 export default [
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST,
-    requestFlowOpenErrors
+    actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST_FOR_POLL,
+    startPollingForOpenErrors
   ),
   takeLatest(
     actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST,

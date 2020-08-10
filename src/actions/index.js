@@ -1589,6 +1589,8 @@ const job = {
 };
 const errorManager = {
   openFlowErrors: {
+    requestPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST_FOR_POLL, { flowId }),
     request: ({ flowId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST, { flowId }),
     received: ({ flowId, openErrors }) =>
@@ -1596,6 +1598,8 @@ const errorManager = {
         flowId,
         openErrors,
       }),
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL),
   },
   integrationErrors: {
     request: ({ integrationId }) =>

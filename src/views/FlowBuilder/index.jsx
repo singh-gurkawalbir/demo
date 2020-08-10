@@ -185,7 +185,6 @@ function FlowBuilder() {
     selectors.isUserInErrMgtTwoDotZero(state)
   );
   const {
-    status: openFlowErrorsStatus,
     data: flowErrorsMap,
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, flowId));
@@ -389,16 +388,19 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
-    if (!openFlowErrorsStatus && !isNewFlow && isUserInErrMgtTwoDotZero) {
-      dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
+    if (!isNewFlow && isUserInErrMgtTwoDotZero) {
+      dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
     }
   }, [
     dispatch,
     flowId,
     isNewFlow,
     isUserInErrMgtTwoDotZero,
-    openFlowErrorsStatus,
   ]);
+  useEffect(() =>
+    () => dispatch(actions.errorManager.openFlowErrors.cancelPoll()),
+  [dispatch, flowId]);
+
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
