@@ -7,7 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import options from '../../options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';

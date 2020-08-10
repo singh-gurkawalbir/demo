@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import consolidatedActions from './Actions';

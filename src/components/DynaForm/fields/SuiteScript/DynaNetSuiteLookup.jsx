@@ -3,7 +3,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import NetSuiteLookupFilterEditorDrawer from '../../../AFE/NetSuiteLookupFilterEditor/Drawer';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';

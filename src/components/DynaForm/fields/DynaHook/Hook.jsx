@@ -10,7 +10,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import JavaScriptEditorDrawer from '../../../AFE/JavaScriptEditor/Drawer';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';

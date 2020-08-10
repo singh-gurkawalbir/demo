@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button';
 import LoadResources from '../../LoadResources';
 import CodePanel from '../GenericEditor/CodePanel';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import PanelLoader from '../../PanelLoader';
 import { hooksLabelMap, getScriptHookStub } from '../../../utils/hooks';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';

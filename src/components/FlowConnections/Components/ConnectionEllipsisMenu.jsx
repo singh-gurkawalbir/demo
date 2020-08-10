@@ -8,7 +8,7 @@ import AuditLogIcon from '../../icons/AuditLogIcon';
 import ViewReferencesIcon from '../../icons/ViewReferencesIcon';
 import TrashIcon from '../../icons/TrashIcon';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
-import { resource } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -63,7 +63,7 @@ export default function ConnectionEllipsisMenu({ connectionId }) {
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'row-actions' : undefined;
   const connection = useSelector(state =>
-    resource(state, 'connections', connectionId)
+    selectors.resource(state, 'connections', connectionId)
   );
   const availableActions = useMemo(() => {
     const actions = [];

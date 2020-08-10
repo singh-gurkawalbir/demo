@@ -2,7 +2,7 @@ import { put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
-import { userPreferences } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 function* requestFlowOpenErrors({ flowId }) {
   try {
@@ -25,7 +25,7 @@ function* requestFlowOpenErrors({ flowId }) {
 }
 
 function* requestIntegrationErrors({ integrationId }) {
-  const { environment } = yield select(userPreferences) || {};
+  const { environment } = yield select(selectors.userPreferences) || {};
   const isSandbox = environment === 'sandbox';
   const path = `/integrations/${integrationId}/errors${
     isSandbox ? '?sandbox=true' : ''

@@ -4,7 +4,7 @@ import Spinner from '../../../../../Spinner';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from './metadata';
 import DynaSelect from '../../../DynaSelect';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 

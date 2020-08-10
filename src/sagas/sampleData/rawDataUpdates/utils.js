@@ -1,7 +1,7 @@
 import { put, call, delay, select } from 'redux-saga/effects';
 import actions from '../../../actions';
 import { uploadRawData } from '../../uploadFile';
-import { userProfile, resource } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { EMPTY_RAW_DATA } from '../../../utils/constants';
 
 export function* saveSampleDataOnResource({
@@ -33,7 +33,7 @@ export function* saveRawDataOnResource({
   const runKey = yield call(uploadRawData, {
     file: rawData,
   });
-  const profile = yield select(userProfile);
+  const profile = yield select(selectors.userProfile);
   // rawData is stored in a S3 bucket whose key is the combination of userId and runkey
   const rawDataKey = profile._id + runKey;
   const patchSet = [
@@ -57,7 +57,7 @@ export function* removeRawDataOnResource({
   resourceId,
   resourceType = 'exports',
 }) {
-  const resourceObj = yield select(resource, resourceType, resourceId) || {};
+  const resourceObj = yield select(selectors.resource, resourceType, resourceId) || {};
 
   if (!resourceObj.rawData || resourceObj.rawData === EMPTY_RAW_DATA) {
     return;

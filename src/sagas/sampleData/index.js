@@ -3,11 +3,7 @@ import { deepClone, applyPatch } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import {
-  resourceData,
-  getResourceSampleDataWithStatus,
-  isRestCsvMediaTypeExport,
-} from '../../reducers';
+import { selectors } from '../../reducers';
 import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
@@ -48,7 +44,7 @@ export function* constructResourceFromFormValues({
     scope: SCOPES.VALUE,
   });
   const { merged } = yield select(
-    resourceData,
+    selectors.resourceData,
     resourceType,
     resourceId,
     SCOPES.VALUE
@@ -236,12 +232,12 @@ function* fetchExportPreviewData({
     resourceId,
     resourceType,
   });
-  const isRestCsvExport = yield select(isRestCsvMediaTypeExport, resourceId);
+  const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
   if (isFileAdaptor(body) || isAS2Resource(body) || isRestCsvExport) {
     // extract all details needed for a file sampledata
-    const { data: fileDetails } = yield select(getResourceSampleDataWithStatus, resourceId, 'rawFile');
+    const { data: fileDetails } = yield select(selectors.getResourceSampleDataWithStatus, resourceId, 'rawFile');
 
     if (!fileDetails) {
       // when no file uploaded , try fetching sampleData on resource

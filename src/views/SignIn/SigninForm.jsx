@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Typography, Button, Link} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { getDomain } from '../../utils/resource';
 import getRoutePath from '../../utils/routePaths';

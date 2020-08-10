@@ -80,16 +80,18 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function responseMappings(state, id) {
+export const selectors = {};
+
+selectors.responseMappings = (state, id) => {
   if (!state || !state[id]) {
     return emptySet;
   }
 
   return state[id];
-}
+};
 
 // #region PUBLIC SELECTORS
-export function responseMappingDirty(state, id) {
+selectors.responseMappingDirty = (state, id) => {
   if (!state || !state[id]) {
     return false;
   }
@@ -102,4 +104,4 @@ export function responseMappingDirty(state, id) {
   );
 
   return !isEqual(_mappings, _mappingsCopy);
-}
+};

@@ -14,7 +14,7 @@ import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
 import 'brace/ext/beautify';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
 export default function CodeEditor({

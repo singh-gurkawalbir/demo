@@ -4,7 +4,7 @@ import { Divider, makeStyles } from '@material-ui/core';
 import actions from '../../../../actions';
 import RadioGroup from '../radiogroup/DynaRadioGroup';
 import DynaSelect from '../DynaSelect';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DynaTableView from './DynaTable';
 
 const useStyles = makeStyles(theme => ({

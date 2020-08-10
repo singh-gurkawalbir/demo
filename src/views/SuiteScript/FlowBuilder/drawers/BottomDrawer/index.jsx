@@ -8,7 +8,7 @@ import ArrowDownIcon from '../../../../../components/icons/ArrowDownIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import WarningIcon from '../../../../../components/icons/WarningIcon';
 import RunIcon from '../../../../../components/icons/RunIcon';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 

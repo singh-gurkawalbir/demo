@@ -44,7 +44,7 @@ export function* preview({ data }) {
   const opts = { method: 'GET' };
 
   if (data) {
-    path += `?email=${data.email}`;
+    path += `?email=${encodeURIComponent(data.email)}`;
 
     if (data._integrationIds) {
       try {

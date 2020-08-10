@@ -47,11 +47,12 @@ export default (state = [], action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function stackSystemToken(state, id) {
+selectors.stackSystemToken = (state, id) => {
   if (!state) return '*****';
 
   return state.find(t => t._id === id) || '*****';
-}
+};
 
 // #endregion

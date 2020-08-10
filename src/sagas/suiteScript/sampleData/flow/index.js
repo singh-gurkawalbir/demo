@@ -3,7 +3,7 @@ import { put, select, takeLatest, call } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { apiCallWithRetry } from '../../..';
 import requestFileAdaptorSampleData from '../../../sampleData/sampleDataGenerator/fileAdaptorSampleData';
 import { getExtractPaths } from '../../../../utils/suiteScript/mapping';

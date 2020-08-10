@@ -9,7 +9,7 @@ import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import settingsUtil from './util';
 
 const useStyles = makeStyles(theme => ({

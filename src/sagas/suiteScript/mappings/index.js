@@ -3,7 +3,7 @@ import { takeEvery, put, select, call, takeLatest } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { commitStagedChanges } from '../resources';
 import generateFieldAndListMappings, { updateMappingConfigs } from '../../../utils/suiteScript/mapping';
 

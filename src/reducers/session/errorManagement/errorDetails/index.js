@@ -128,26 +128,24 @@ export default (state = {}, action) => {
   });
 };
 
-export function getErrors(state, { flowId, resourceId, errorType }) {
-  return (
-    (state &&
+export const selectors = {};
+
+selectors.getErrors = (state, { flowId, resourceId, errorType }) => (
+  (state &&
       state[flowId] &&
       state[flowId][resourceId] &&
       state[flowId][resourceId][errorType]) ||
     defaultObject
-  );
-}
+);
 
-export function errorActionsContext(
+selectors.errorActionsContext = (
   state,
   { flowId, resourceId, actionType = 'retry' }
-) {
-  return (
-    (state &&
+) => (
+  (state &&
       state[flowId] &&
       state[flowId][resourceId] &&
       state[flowId][resourceId].actions &&
       state[flowId][resourceId].actions[actionType]) ||
     defaultObject
-  );
-}
+);

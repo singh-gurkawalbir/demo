@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import DynaSelect from '../DynaSelect';
 import LoadResources from '../../../LoadResources';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const FileTypeSelect = props => {
   const { userDefinitionId, onFieldChange, id } = props;

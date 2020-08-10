@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
-import users, * as fromUsers from './org/users';
-import accounts, * as fromAccounts from './org/accounts';
-import preferences, * as fromPreferences from './preferences';
-import notifications, * as fromNotifications from './notifications';
-import profile, * as fromProfile from './profile';
-import debug, * as fromDebug from './debug';
+import users, { selectors as fromUsers } from './users';
+import accounts, { selectors as fromAccounts } from './accounts';
+import preferences, { selectors as fromPreferences } from './preferences';
+import notifications, { selectors as fromNotifications } from './notifications';
+import profile, { selectors as fromProfile } from './profile';
+import debug, { selectors as fromDebug } from './debug';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
 const emptyList = [];
@@ -25,31 +26,22 @@ export default combineReducers({
 });
 
 // #region PUBLIC USER SELECTORS
+export const selectors = {};
+const subSelectors = {
+  users: fromUsers,
+  accounts: fromAccounts,
+  preferences: fromPreferences,
+  notifications: fromNotifications,
+  profile: fromProfile,
+  debug: fromDebug,
+};
+
+genSelectors(selectors, subSelectors);
+
 // #region DEBUG SELECTORS
-export function debugOn(state) {
-  return fromDebug.debugOn(state && state.debug);
-}
-// #endregion DEBUG SELECTORS
-
-// #region LICENSE
-export function platformLicense(state, accountId) {
-  return fromAccounts.platformLicense(
-    state && state.org && state.org.accounts,
-    accountId
-  );
-}
-
-// #endregion LICENSE
-
-// #region NOTIFICATIONS
-export function userNotifications(state) {
-  return fromNotifications.userNotifications(state && state.notifications);
-}
-// #endregion NOTIFICATIONS
-
 // #region PREFERENCES
-export const userPreferences = createSelector(
-  state => fromPreferences.userPreferences(state && state.preferences),
+selectors.userPreferences = createSelector(
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
   state => state && state.org,
   (preferences, org) => {
     const { defaultAShareId, accounts = {} } = preferences;
@@ -84,12 +76,8 @@ export const userPreferences = createSelector(
   }
 );
 
-export function userOwnPreferences(state) {
-  return fromPreferences.userPreferences(state && state.preferences);
-}
-
-export const appTheme = createSelector(
-  userPreferences,
+selectors.appTheme = createSelector(
+  selectors.userPreferences,
   preferences => {
     const currentAccount = preferences.defaultAShareId;
 
@@ -106,21 +94,21 @@ export const appTheme = createSelector(
   }
 );
 
-export function drawerOpened(state) {
-  const preferences = userPreferences(state);
+selectors.drawerOpened = (state = null) => {
+  const preferences = selectors.userPreferences(state);
 
   return preferences && !!preferences.drawerOpened;
-}
+};
 
-export function expandSelected(state) {
-  const preferences = userPreferences(state);
+selectors.expandSelected = (state = null) => {
+  const preferences = selectors.userPreferences(state);
 
   return preferences && preferences.expand;
-}
+};
 
-export const editorTheme = createSelector(
+selectors.editorTheme = createSelector(
   state => state,
-  appTheme,
+  selectors.appTheme,
   (state, appTheme) => {
     if (!state) return DEFAULT_EDITOR_THEME;
 
@@ -133,25 +121,11 @@ export const editorTheme = createSelector(
     return themeMap[appTheme] || DEFAULT_EDITOR_THEME;
   }
 );
-
-export function accountShareHeader(state, path) {
-  return fromPreferences.accountShareHeader(state && state.preferences, path);
-}
 // #endregion PREFERENCES
 
-// #region PROFILE
-export function avatarUrl(state) {
-  return fromProfile.avatarUrl(state && state.profile);
-}
-
-export function isUserInErrMgtTwoDotZero(state) {
-  return fromProfile.isUserInErrMgtTwoDotZero(state && state.profile);
-}
-// #endregion PROFILE
-
 // #region ACCESS LEVEL
-export const accessLevel = createSelector(
-  userPreferences,
+selectors.userAccessLevel = createSelector(
+  selectors.userPreferences,
   state => state && state.org && state.org.accounts,
   (preferences, accounts) => {
     let accessLevel;
@@ -165,14 +139,13 @@ export const accessLevel = createSelector(
     return accessLevel;
   }
 );
-
 // #endregion ACCESS LEVEL
 // #region ACCOUNT
-export const accountSummary = createSelector(
-  accessLevel,
+selectors.accountSummary = createSelector(
+  selectors.userAccessLevel,
   state =>
     fromAccounts.accountSummary(state && state.org && state.org.accounts),
-  state => fromPreferences.userPreferences(state && state.preferences),
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
   (userAccessLevel, summary, prefs) => {
     if (!userAccessLevel) {
       return emptyList;
@@ -194,8 +167,8 @@ export const accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-export function permissions(state) {
-  const { defaultAShareId } = userPreferences(state);
+selectors.userPermissions = state => {
+  const { defaultAShareId } = selectors.userPreferences(state);
   const allowedToPublish =
     state && state.profile && state.profile.allowedToPublish;
   const permissions = fromAccounts.permissions(
@@ -205,22 +178,11 @@ export function permissions(state) {
   );
 
   return permissions;
-}
+};
 
-export function usersList(state) {
-  return fromUsers.list(state && state.org && state.org.users);
-}
-
-export function integrationUsers(state, integrationId) {
-  return fromUsers.integrationUsers(
-    state && state.org && state.org.users,
-    integrationId
-  );
-}
-
-export const accountOwner = createSelector(
-  accessLevel,
-  userPreferences,
+selectors.accountOwner = createSelector(
+  selectors.userAccessLevel,
+  selectors.userPreferences,
   state => state && state.profile,
   state => state && state.org && state.org.accounts,
   (userAccessLevel, preferences, profile, accounts) => {
@@ -242,8 +204,8 @@ export const accountOwner = createSelector(
   }
 );
 
-export const licenses = createSelector(
-  userPreferences,
+selectors.licenses = createSelector(
+  selectors.userPreferences,
   state => state && state.org && state.org.accounts,
   (preferences, accounts) => {
     const { defaultAShareId } = preferences;
@@ -251,5 +213,4 @@ export const licenses = createSelector(
     return fromAccounts.licenses(accounts, defaultAShareId);
   }
 );
-
 // #endregion PUBLIC USER SELECTORS

@@ -11,7 +11,7 @@ import ApplicationImg from '../../icons/ApplicationImg';
 import ResourceDrawer from '../../drawer/Resource';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
-import { resourcePermissions } from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   cardContent: {
@@ -62,7 +62,7 @@ export default function ConnectionRow({ connection }) {
     lastModified,
   } = connection;
   const hasEditAccess = useSelector(state =>
-    resourcePermissions(state, 'connections', _id)
+    selectors.resourcePermissions(state, 'connections', _id)
   );
   const api = useMemo(() => {
     if (type === 'rest') return rest.baseURI;

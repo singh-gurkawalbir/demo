@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import TransformEditorDrawer from '../../../AFE/TransformEditor/TransformToggleEditorDrawer';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 
 export default function DynaTransformEditor(props) {

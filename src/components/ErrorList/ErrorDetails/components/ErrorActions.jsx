@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
-import { resourceError } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function Actions({
   errorId,
@@ -14,7 +14,7 @@ export default function Actions({
   const dispatch = useDispatch();
   const retryId = useSelector(state => {
     const errorDoc =
-      resourceError(state, { flowId, resourceId, errorId }) || {};
+      selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
 
     return errorDoc.retryDataKey;
   });

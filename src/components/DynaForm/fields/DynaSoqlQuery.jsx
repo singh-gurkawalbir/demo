@@ -3,7 +3,7 @@ import { useDispatch} from 'react-redux';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';

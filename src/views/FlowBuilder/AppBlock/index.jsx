@@ -12,7 +12,7 @@ import { Typography, IconButton, Tooltip, Zoom } from '@material-ui/core';
 import clsx from 'clsx';
 // import LinesEllipsis from 'react-lines-ellipsis';
 import Truncate from 'react-truncate';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';

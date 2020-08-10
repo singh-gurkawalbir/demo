@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import TradingPartnerIcon from '../../../../icons/RevokeTokenIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 
 export default {
   label: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,

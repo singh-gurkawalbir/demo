@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { commStatusPerPath } from '../reducers';
+import { selectors } from '../reducers';
 
 export default function useSaveStatusIndicator(props) {
   const {
@@ -15,7 +15,7 @@ export default function useSaveStatusIndicator(props) {
   const [saveInProgress, setSaveInProgress] = useState(false);
   const [closeOnSuccess, setCloseOnSuccess] = useState(false);
   // Selector to watch for Comm status
-  const commStatus = useSelector(state => commStatusPerPath(state, path, method));
+  const commStatus = useSelector(state => selectors.commStatusPerPath(state, path, method));
   // Generates a submitHandler which updates states on saving
   const submitHandler = useCallback(
     closeOnSave => values => {

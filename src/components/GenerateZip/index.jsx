@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   selectIntegration: {

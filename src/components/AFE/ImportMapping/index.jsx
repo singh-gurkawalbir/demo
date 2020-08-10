@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import mappingUtil from '../../../utils/mapping';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import IconTextButton from '../../IconTextButton';
 import RefreshIcon from '../../icons/RefreshIcon';
 import Spinner from '../../Spinner';

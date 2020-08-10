@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { BaseTableViewComponent } from './DynaSalesforceProductTable';
 
 export default function DynaSuiteScriptTable(props) {

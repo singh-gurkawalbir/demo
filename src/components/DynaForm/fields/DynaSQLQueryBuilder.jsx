@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import DynaLookupEditor from './DynaLookupEditor';

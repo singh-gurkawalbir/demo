@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useEffect } from 'react';
 import actions from '../../actions';
 import SearchInput from '../SearchInput';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export default function KeywordSearch({ filterKey, defaultFilter }) {
   const dispatch = useDispatch();

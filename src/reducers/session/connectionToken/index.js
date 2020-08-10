@@ -40,16 +40,18 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function connectionTokens(state, resourceId) {
+export const selectors = {};
+
+selectors.connectionTokens = (state, resourceId) => {
   if (!state) return {};
 
   return state[resourceId];
-}
+};
 
-export function tokenRequestLoading(state, resourceId) {
+selectors.tokenRequestLoading = (state, resourceId) => {
   if (!state || !state[resourceId]) return false;
 
   return state[resourceId] && state[resourceId].status === 'loading';
-}
+};
 
 // #endregion

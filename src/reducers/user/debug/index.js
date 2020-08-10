@@ -9,7 +9,7 @@ export default (state = false, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function debugOn(state) {
-  return !!state;
-}
+export const selectors = {};
+
+selectors.debugOn = state => !!state;
 // #endregion PUBLIC SELECTORS

@@ -3,7 +3,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import XmlParseEditorDrawer from '../../../../AFE/XmlParseEditor/Drawer';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';

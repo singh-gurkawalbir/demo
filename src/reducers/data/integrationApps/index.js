@@ -37,8 +37,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function categoryRelationshipData(state, integrationId, flowId) {
+selectors.categoryRelationshipData = (state, integrationId, flowId) => {
   if (!state) return null;
   const { response = [] } = state[`${flowId}-${integrationId}`] || emptyObj;
   const generatesMetaData = response.find(
@@ -50,6 +51,6 @@ export function categoryRelationshipData(state, integrationId, flowId) {
     generatesMetaData.data &&
     generatesMetaData.data.categoryRelationshipData
   );
-}
+};
 
 // #endregion

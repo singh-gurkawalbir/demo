@@ -1,7 +1,7 @@
 import Frame from 'react-frame-component';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { generateLayoutColumns } from './util';
 import Section from './Section';
@@ -24,8 +24,7 @@ export default function SalesforceMappingAssistant({
   const layout = useSelector(
     state => {
       if (connectionId && sObjectType && layoutId) {
-        return selectors.metadataOptionsAndResources({
-          state,
+        return selectors.metadataOptionsAndResources(state, {
           connectionId,
           commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`,
           filterKey: 'salesforce-sObject-layout',

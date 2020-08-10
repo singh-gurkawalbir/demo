@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
 import CeligoTable from '../../../components/CeligoTable';
 import metadata from './metadata';

@@ -18,7 +18,7 @@ import JobFilesDownloadDialog from './JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../icons/EllipsisHorizontalIcon';
 import getRoutePath from '../../utils/routePaths';
 import RunFlowButton from '../RunFlowButton';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import EditIcon from '../icons/EditIcon';
 import RunIcon from '../icons/RunIcon';
 import RefreshIcon from '../icons/RefreshIcon';

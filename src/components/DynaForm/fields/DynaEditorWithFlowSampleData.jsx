@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import HttpRequestBodyEditorDrawer from '../../AFE/HttpRequestBodyEditor/Drawer';
 import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {
   getXMLSampleTemplate,
