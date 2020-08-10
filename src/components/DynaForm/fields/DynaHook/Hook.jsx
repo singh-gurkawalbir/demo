@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,6 +17,7 @@ import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -55,8 +55,7 @@ const scriptsFilterConfig = { type: 'scripts' };
 const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook(props) {
-  const history = useHistory();
-  const match = useRouteMatch();
+  const pushRightDrawer = usePushRightDrawer();
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const dispatch = useDispatch();
@@ -102,8 +101,8 @@ export default function DynaHook(props) {
       requestForPreHookData();
     }
 
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url, requestForPreHookData]);
+    pushRightDrawer(id);
+  }, [id, pushRightDrawer, requestForPreHookData]);
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;

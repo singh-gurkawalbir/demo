@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import DynaEditorWithFlowSampleData from '../../DynaEditorWithFlowSampleData';
 import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   csvContainer: {
@@ -57,11 +57,8 @@ export default function DynaCsvGenerate(props) {
     flowId,
   } = props;
   const [formKey, setFormKey] = useState(1);
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
+
   const isHttpImport = useSelector(state => {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
 
@@ -139,7 +136,7 @@ export default function DynaCsvGenerate(props) {
           variant="outlined"
           color="secondary"
           className={classes.csvBtn}
-          onClick={handleEditorClick}>
+          onClick={pushRightDrawer}>
           Launch
         </Button>
       </div>

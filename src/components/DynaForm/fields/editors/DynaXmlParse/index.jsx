@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
 import React, { useState, useCallback, useMemo } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
@@ -9,6 +8,7 @@ import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const getParserValue = ({
   resourcePath,
@@ -105,8 +105,7 @@ export default function DynaXmlParse({
 }) {
   const classes = useStyles();
   const [formKey, setFormKey] = useState(1);
-  const history = useHistory();
-  const match = useRouteMatch();
+  const pushRightDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -118,10 +117,6 @@ export default function DynaXmlParse({
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
-
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
 
   const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     // console.log(shouldCommit, editorValues);
@@ -210,7 +205,7 @@ export default function DynaXmlParse({
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={handleEditorClick}>
+          onClick={pushRightDrawer}>
           Launch
         </Button>
       </div>

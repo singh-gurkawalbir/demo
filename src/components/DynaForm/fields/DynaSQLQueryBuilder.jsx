@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
@@ -14,6 +13,7 @@ import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   sqlContainer: {
@@ -57,8 +57,7 @@ export default function DynaSQLQueryBuilder(props) {
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
   const dispatch = useDispatch();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const pushRightDrawer = usePushRightDrawer(id);
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
     extractFieldsLoaded: false,
@@ -200,9 +199,6 @@ export default function DynaSQLQueryBuilder(props) {
 
   // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -280,7 +276,7 @@ export default function DynaSQLQueryBuilder(props) {
           data-test={id}
           variant="outlined"
           color="secondary"
-          onClick={handleEditorClick}>
+          onClick={pushRightDrawer}>
           Launch
         </Button>
       </div>

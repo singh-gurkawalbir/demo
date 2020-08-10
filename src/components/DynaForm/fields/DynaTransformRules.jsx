@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +6,7 @@ import TransformEditorDrawer from '../../AFE/TransformEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   label: {
@@ -53,8 +53,7 @@ const getTransformRule = value => {
 export default function DynaTransformRules(props) {
   const classes = useStyles();
   const { id, resourceId, value, label, onFieldChange, disabled } = props;
-  const history = useHistory();
-  const match = useRouteMatch();
+  const pushRightDrawer = usePushRightDrawer(id);
   const rule = getTransformRule(value);
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -63,10 +62,6 @@ export default function DynaTransformRules(props) {
       onFieldChange(id, constructTransformData(rule || [], newRule));
     }
   }, [id, onFieldChange, rule]);
-
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
 
   return (
     <div>
@@ -89,7 +84,7 @@ export default function DynaTransformRules(props) {
           <ActionButton
             disabled={disabled}
             data-test="editTransformation"
-            onClick={handleEditorClick}>
+            onClick={pushRightDrawer}>
             <EditIcon />
           </ActionButton>
         </div>

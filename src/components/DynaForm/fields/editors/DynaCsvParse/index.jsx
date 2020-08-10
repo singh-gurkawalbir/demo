@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,6 +9,7 @@ import FieldHelp from '../../../FieldHelp';
 import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -95,11 +95,8 @@ export default function DynaCsvParse(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
+
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions(newOptions);
@@ -210,7 +207,7 @@ export default function DynaCsvParse(props) {
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={handleEditorClick}>
+          onClick={pushRightDrawer}>
           Launch
         </Button>
 

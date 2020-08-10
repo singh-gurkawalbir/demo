@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
 import clsx from 'clsx';
@@ -10,6 +9,7 @@ import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -54,11 +54,7 @@ export default function DynaSqlQuery(props) {
     isValid,
     errorMessages,
   } = props;
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
 
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
@@ -102,7 +98,7 @@ export default function DynaSqlQuery(props) {
     <>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={pushRightDrawer}
         className={classes.editorButton}>
         <ExitIcon />
       </ActionButton>

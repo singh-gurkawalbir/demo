@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
@@ -7,6 +6,7 @@ import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/FilterIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaslsforceFormControl: {
@@ -47,11 +47,7 @@ export default function DynaSalesforceQualifier(props) {
     label,
     options,
   } = props;
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -102,7 +98,7 @@ export default function DynaSalesforceQualifier(props) {
       </div>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={pushRightDrawer}
         className={classes.exitButtonsalsForceQualifier}>
         <ExitIcon />
       </ActionButton>

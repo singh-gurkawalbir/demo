@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +13,7 @@ import {
 } from '../../../AFE/FileDefinitionEditor/constants';
 import FieldHelp from '../../FieldHelp';
 import { safeParse } from '../../../../utils/string';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 /*
  * This editor is shown in case of :
@@ -78,11 +78,7 @@ function DynaFileDefinitionEditor(props) {
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
 
   // Default values
   const parserType =
@@ -192,7 +188,7 @@ function DynaFileDefinitionEditor(props) {
             variant="outlined"
             color="secondary"
             className={classes.fileDefinitionBtn}
-            onClick={handleEditorClick}>
+            onClick={pushRightDrawer}>
             Launch
           </Button>
           <FieldHelp {...props} />

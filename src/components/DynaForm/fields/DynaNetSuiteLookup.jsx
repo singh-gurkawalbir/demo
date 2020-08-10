@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
@@ -11,6 +10,7 @@ import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaNetsuiteLookupFormControl: {
@@ -47,11 +47,7 @@ export default function DynaNetSuiteLookup(props) {
     label,
     options,
   } = props;
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
 
   const dispatch = useDispatch();
   const handleSave = useCallback((shouldCommit, editorValues) => {
@@ -143,7 +139,7 @@ export default function DynaNetSuiteLookup(props) {
           <ActionButton
             disabled={options?.disableFetch}
             data-test={id}
-            onClick={handleEditorClick}
+            onClick={pushRightDrawer}
             className={classes.dynaNetsuiteLookupActionBtn}>
             <FilterIcon />
           </ActionButton>

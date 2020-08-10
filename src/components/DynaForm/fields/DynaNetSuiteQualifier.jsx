@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import OpenInNewIcon from '../../icons/FilterIcon';
@@ -7,6 +6,7 @@ import NetSuiteQualificationCriteriaEditorDrawer from '../../AFE/NetSuiteQualifi
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import ActionButton from '../../ActionButton';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -42,11 +42,7 @@ export default function DynaNetSuiteQualifier(props) {
     options,
   } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
-  const history = useHistory();
-  const match = useRouteMatch();
-  const handleEditorClick = useCallback(() => {
-    history.push(`${match.url}/${id}`);
-  }, [history, id, match.url]);
+  const pushRightDrawer = usePushRightDrawer(id);
 
   useEffect(() => {
     if (options.commMetaPath) {
@@ -127,7 +123,7 @@ export default function DynaNetSuiteQualifier(props) {
       </FormControl>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={pushRightDrawer}
         className={classes.editorButtonNetsuiteQ}>
         <OpenInNewIcon />
       </ActionButton>
