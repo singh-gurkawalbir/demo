@@ -56,10 +56,6 @@ export default function RunDashboardActions({ flowId }) {
     });
   }, [dispatch, confirmDialog, cancellableJobIds]);
 
-  if (!latestJobs.length) {
-    return null;
-  }
-
   return (
     <div className={classes.rightActionContainer}>
       <RunFlowButton variant="iconText" flowId={flowId} label="Run" />

@@ -3191,12 +3191,14 @@ selectors.latestFlowJobs = createSelector(
 
     // If there are no in progress / queued jobs, show the latest job
     // TODO : Discuss on this use case on what to show
-    return jobList[0] ? [jobList[0]] : [];
+    return jobList[0] ? [jobList[0]] : emptySet;
   });
 
 selectors.flowDashboardDetails = createSelector(
   state => selectors.latestFlowJobs(state),
   latestJobs => {
+    if (!latestJobs.length) return emptySet;
+
     const childJobDetails = [];
 
     latestJobs.forEach(job => {
