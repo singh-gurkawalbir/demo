@@ -1,4 +1,4 @@
-import { templateList } from '../../../views/TemplateList/util';
+import { applicationsList } from '../../../views/TemplateList/util';
 
 export default {
   name: {
@@ -34,7 +34,7 @@ export default {
     valueDelimiter: ',',
     options: [
       {
-        items: templateList,
+        items: applicationsList(),
       },
     ],
   },
