@@ -3178,11 +3178,18 @@ selectors.latestFlowJobs = createSelector(
     const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
     const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
 
+    // If there are any in progress jobs too, show them with queued jobs if exist
     if (inProgressJobs.length) {
       return [...queuedJobs, ...inProgressJobs];
     }
+    // show queued jobs if exist
+    if (queuedJobs.length) {
+      return queuedJobs;
+    }
 
-    return jobList[0] ? [...queuedJobs, jobList[0]] : queuedJobs;
+    // If there are no in progress / queued jobs, show the latest job
+    // TODO : Discuss on this use case on what to show
+    return jobList[0] ? [jobList[0]] : [];
   });
 
 selectors.flowDashboardDetails = createSelector(
