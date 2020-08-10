@@ -22,6 +22,7 @@ import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import RunDashboardActions from './panels/RunDashboardActions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -249,6 +250,9 @@ export default function BottomDrawer({
                   )
               )}
         </Tabs>
+        {
+          tabValue === 0 && <RunDashboardActions flowId={flow._id} />
+        }
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"

@@ -4,7 +4,6 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import metadata from './metadata';
 import CeligoTable from '../../../../../../components/CeligoTable';
-import LatestJobActions from './actions/LatestJobActions';
 // TODO: should we move this to JobsDashboard component?
 export default function FlowRunDashboard({ flow }) {
   const { _id: flowId, _integrationId: integrationId = 'none'} = flow;
@@ -34,7 +33,6 @@ export default function FlowRunDashboard({ flow }) {
 
   return (
     <>
-      <LatestJobActions flowId={flowId} />
       <CeligoTable
         data={latestJobs}
         {...metadata} />

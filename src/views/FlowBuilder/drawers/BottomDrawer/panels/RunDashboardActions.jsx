@@ -1,14 +1,14 @@
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import RefreshIcon from '../../../../../../../components/icons/RefreshIcon';
-import CancelIcon from '../../../../../../../components/icons/CancelIcon';
-import RunFlowButton from '../../../../../../../components/RunFlowButton';
-import IconTextButton from '../../../../../../../components/IconTextButton';
-import actions from '../../../../../../../actions';
-import { selectors } from '../../../../../../../reducers';
-import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
-import { JOB_STATUS } from '../../../../../../../utils/constants';
+import RefreshIcon from '../../../../../components/icons/RefreshIcon';
+import CancelIcon from '../../../../../components/icons/CancelIcon';
+import RunFlowButton from '../../../../../components/RunFlowButton';
+import IconTextButton from '../../../../../components/IconTextButton';
+import actions from '../../../../../actions';
+import { selectors } from '../../../../../reducers';
+import useConfirmDialog from '../../../../../components/ConfirmDialog';
+import { JOB_STATUS } from '../../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
 }));
-export default function LatestJobActions({ flowId }) {
+export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
