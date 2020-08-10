@@ -3175,7 +3175,7 @@ selectors.flowJobs = (state, options = {}) => {
 };
 
 selectors.latestFlowJobs = createSelector(
-  state => selectors.makeFlowJobs()(state),
+  state => selectors.flowJobs(state),
   jobList => {
     const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
     const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
