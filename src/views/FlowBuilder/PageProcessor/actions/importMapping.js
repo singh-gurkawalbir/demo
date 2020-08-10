@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';

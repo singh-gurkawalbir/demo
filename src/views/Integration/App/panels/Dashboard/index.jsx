@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import JobDashboard from '../../../../../components/JobDashboard';
 import PanelHeader from '../../../../../components/PanelHeader';

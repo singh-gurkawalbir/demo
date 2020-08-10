@@ -1,11 +1,6 @@
 import { put, takeLatest, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
-import {
-  resourceErrors,
-  filter,
-  selectedRetryIds,
-  selectedErrorIds,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 
@@ -21,7 +16,7 @@ function* requestErrorDetails({
     }`;
 
     if (loadMore) {
-      const { nextPageURL } = yield select(resourceErrors, {
+      const { nextPageURL } = yield select(selectors.resourceErrors, {
         flowId,
         resourceId,
         options: { isResolved },
@@ -58,8 +53,8 @@ function* requestErrorDetails({
 
 function* selectAllErrorDetails({ flowId, resourceId, checked, options }) {
   const { filterKey, defaultFilter, isResolved } = options || {};
-  const errorFilter = yield select(filter, filterKey) || defaultFilter;
-  const { errors = [] } = yield select(resourceErrors, {
+  const errorFilter = yield select(selectors.filter, filterKey) || defaultFilter;
+  const { errors = [] } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,
     options: { ...errorFilter, isResolved },
@@ -81,7 +76,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
   let retryDataKeys = retryIds;
 
   if (!retryIds.length) {
-    const retryIdList = yield select(selectedRetryIds, {
+    const retryIdList = yield select(selectors.selectedRetryIds, {
       flowId,
       resourceId,
       options: { isResolved },
@@ -90,7 +85,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
     retryDataKeys = retryIdList;
   }
 
-  const { errors } = yield select(resourceErrors, {
+  const { errors } = yield select(selectors.resourceErrors, {
     flowId,
     resourceId,
     options: { isResolved },
@@ -136,7 +131,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   let errors = errorIds;
 
   if (!errorIds.length) {
-    const errorIdList = yield select(selectedErrorIds, {
+    const errorIdList = yield select(selectors.selectedErrorIds, {
       flowId,
       resourceId,
     });

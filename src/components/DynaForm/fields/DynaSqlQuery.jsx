@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import classNames from 'classnames';
-import { makeStyles } from '@material-ui/core/styles';
-import FormLabel from '@material-ui/core/FormLabel';
+import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
+import clsx from 'clsx';
 import CodeEditor from '../../CodeEditor';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
 import ModalDialog from '../../ModalDialog';
 import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -28,6 +27,9 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     marginTop: theme.spacing(1),
     height: theme.spacing(10),
+  },
+  dynaSqlQueryWrapper: {
+    display: 'flex',
   },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
@@ -126,10 +128,12 @@ export default function DynaSqlQuery(props) {
       <div className={classes.container}>
         {showEditor && editorDialog}
 
-        <FormLabel className={classes.label}>{label}</FormLabel>
-
+        <div className={classes.dynaSqlQueryWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <div
-          className={classNames(
+          className={clsx(
             classes.inlineEditorContainer,
             editorClassName
           )}>

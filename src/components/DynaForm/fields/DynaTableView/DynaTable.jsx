@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState, useCallback, Fragment, } from 'react';
+import React, { useReducer, useEffect, useState, useCallback, Fragment } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -86,8 +86,8 @@ const useStyles = makeStyles(theme => ({
     },
   },
   refreshIcon: {
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 }));
 
 function reducer(state, action) {

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import IconTextButton from '../../../components/IconTextButton';
@@ -27,6 +27,7 @@ const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
 };
+
 export default function InstallBase(props) {
   const { match, history } = props;
   const { connectorId } = match.params;

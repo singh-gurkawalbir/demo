@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -100,6 +100,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
   },
 }));
+
 export default function DIY() {
   const classes = useStyles();
   const platformLicense = useSelector(state => selectors.platformLicense(state));

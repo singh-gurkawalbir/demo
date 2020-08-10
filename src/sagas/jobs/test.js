@@ -42,7 +42,7 @@ import {
   requestRetryData,
   updateRetryData,
 } from '.';
-import * as selectors from '../../reducers/index';
+import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
 import openExternalUrl from '../../utils/window';
 

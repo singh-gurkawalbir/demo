@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import SettingsIcon from '../../../../icons/SettingsIcon';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 

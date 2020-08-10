@@ -23,7 +23,7 @@ export default {
     containers: [
       {
         fields: ['name', 'description'],
-      }
+      },
     ],
   },
 };

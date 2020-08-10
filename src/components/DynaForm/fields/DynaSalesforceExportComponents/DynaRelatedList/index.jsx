@@ -10,7 +10,7 @@ import ModalDialog from '../../../../ModalDialog';
 import FieldHelp from '../../../FieldHelp';
 import DynaForm from '../../..';
 import DynaSubmit from '../../../DynaSubmit';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import AddIcon from '../../../../icons/AddIcon';
 import CeligoTable from '../../../../CeligoTable';
 import metadata from './metadata';
@@ -82,8 +82,7 @@ function EditListItemModal(props) {
     selectedElement,
   } = props;
   const options = useSelector(state => {
-    const { data } = selectors.optionsFromMetadata({
-      state,
+    const { data } = selectors.optionsFromMetadata(state, {
       connectionId,
       commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
       filterKey: 'salesforce-sObjects-childReferenceTo',
@@ -207,8 +206,7 @@ function RelatedListView(props) {
     if (length) setCount(count => count + 1);
   }, [length]);
   const { data: options } = useSelector(state =>
-    selectors.optionsFromMetadata({
-      state,
+    selectors.optionsFromMetadata(state, {
       connectionId,
       commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
       filterKey: 'salesforce-sObjects-childReferenceTo',
@@ -336,14 +334,12 @@ function FirstLevelModal(props) {
   );
 }
 
-
 export function useCallMetadataAndReturnStatus(props) {
   const { options: selectedSObject, connectionId } = props;
   const dispatch = useDispatch();
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`;
   const { options, status } = useSelector(state => {
-    const { data, status } = selectors.optionsFromMetadata({
-      state,
+    const { data, status } = selectors.optionsFromMetadata(state, {
       connectionId,
       commMetaPath,
       filterKey: 'salesforce-sObjects-childReferenceTo',

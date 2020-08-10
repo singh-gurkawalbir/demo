@@ -13,7 +13,6 @@ responseParser: This function is intended to map the
   The returned object should have fieldIds and the
   corresponding values those fields should take.
 
-
 */
 export default {
   pitneybowes: {
@@ -38,7 +37,9 @@ export default {
   concurexpense: {
     responseParser: resp => {
       const refreshTokenExpiresAt = new Date();
+
       refreshTokenExpiresAt.setMilliseconds(resp && resp.refresh_expires_in);
+
       return { 'http.auth.token.token': resp && resp.access_token,
         'http.auth.token.refreshToken': resp && resp.refresh_token,
         'http.baseURI': resp && resp.geolocation,
@@ -61,7 +62,7 @@ export default {
       clientId: form['/http/unencrypted/clientId'],
       clientSecret: form['/http/encrypted/clientSecret'],
       credtype: form['/http/unencrypted/credtype'],
-      subdomain: form['/http/subdomain']
+      subdomain: form['/http/subdomain'],
     }),
   },
   concur: {
@@ -76,7 +77,7 @@ export default {
 
       return {
         base64Crendentials,
-        consumerKey
+        consumerKey,
       };
     },
   },
@@ -242,7 +243,9 @@ export default {
   concurinvoice: {
     responseParser: resp => {
       const refreshTokenExpiresAt = new Date();
+
       refreshTokenExpiresAt.setMilliseconds(resp && resp.refresh_expires_in);
+
       return { 'http.auth.token.token': resp && resp.access_token,
         'http.auth.token.refreshToken': resp && resp.refresh_token,
         'http.baseURI': resp && resp.geolocation,
@@ -262,7 +265,8 @@ export default {
       const username = form['/http/unencrypted/username'];
       const password = form['/http/encrypted/password'];
       const base64EncodedToken = window.btoa(`${username}:${password}`);
+
       return { base64EncodedToken};
     },
-  }
+  },
 };

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
@@ -48,7 +48,7 @@ export default function DynaNSSearchCriteria(props) {
 
   const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
-  const onFetch = useCallback((shouldRefreshCache) => {
+  const onFetch = useCallback(shouldRefreshCache => {
     dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
   }, [commMetaPath, connectionId, dispatch]);
 

@@ -17,7 +17,7 @@ import { apiCallWithRetry } from '.';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
 
 // todo : should be moved to a seperate test file

@@ -36,5 +36,6 @@ export default function PingMessageSnackbar({ commStatus, onClose, onCancelTask 
         onClose={onClose}>
         <ErrorContent error={message[0]} />
       </NotificationToaster>
-    </Snackbar>);
+    </Snackbar>
+  );
 }

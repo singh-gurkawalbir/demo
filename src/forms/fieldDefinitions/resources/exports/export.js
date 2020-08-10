@@ -371,12 +371,6 @@ export default {
   parsers: {
     label: 'XML parser helper',
     type: 'xmlparse',
-    visibleWhen: [
-      {
-        field: 'file.type',
-        is: ['xml'],
-      },
-    ],
     required: true,
   },
   // #endregion common

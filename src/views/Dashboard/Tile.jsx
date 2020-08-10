@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Button, Zoom } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -169,6 +169,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
+        // https://celigo.atlassian.net/browse/IO-16798. Need to remove fix connection drawer changes.
         if (tile._connectorId) {
           history.push(
             getRoutePath(
@@ -216,7 +217,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       status.variant,
       tile._connectorId,
       tile._integrationId,
-      tile.offlineConnections,
       tile.status,
       isCloned,
     ]

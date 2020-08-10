@@ -8,7 +8,7 @@ import ActionButton from '../../../components/ActionButton';
 import MappingConnectorIcon from '../../../components/icons/MappingConnectorIcon';
 import GripperIcon from '../../../components/icons/GripperIcon';
 import Settings from './Settings/Button';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaTypeableSelect from '../../../components/DynaForm/fields/DynaTypeableSelect';
 
 const useStyles = makeStyles(theme => ({
@@ -79,6 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const emptySet = [];
+
 export default function MappingRow(props) {
   const {
     id,

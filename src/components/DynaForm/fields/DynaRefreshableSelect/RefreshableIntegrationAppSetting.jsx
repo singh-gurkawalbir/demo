@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DynaGenericSelect } from './RefreshGenericResource';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export default function RefreshableIntegrationAppSetting(props) {

@@ -94,6 +94,7 @@ describe('uninstaller2.0 saga', () => {
 
     test('should disptach failed action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
+
       return expectSaga(initUninstall, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
         .call.fn(apiCallWithRetry)
@@ -111,6 +112,7 @@ describe('uninstaller2.0 saga', () => {
   describe('uninstallStep generator', () => {
     test('should make API call and dispatch received steps action, if there is an API response', () => {
       const uninstallSteps = [{type: 'form', completed: true}, {type: 'url', completed: false}];
+
       return expectSaga(uninstallStep, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), uninstallSteps]])
         .call.fn(apiCallWithRetry)
@@ -146,6 +148,7 @@ describe('uninstaller2.0 saga', () => {
       .run());
     test('should disptach failed action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
+
       return expectSaga(uninstallStep, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
         .call.fn(apiCallWithRetry)
@@ -168,6 +171,7 @@ describe('uninstaller2.0 saga', () => {
   describe('requestSteps generator', () => {
     test('should make API call and dispatch received steps action', () => {
       const uninstallSteps = [{type: 'form', completed: true}, {type: 'url', completed: false}];
+
       return expectSaga(requestSteps, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), uninstallSteps]])
         .call.fn(apiCallWithRetry)
@@ -182,6 +186,7 @@ describe('uninstaller2.0 saga', () => {
     });
     test('should make API call and call uninstallStep function if all steps are completed', () => {
       const uninstallSteps = [{type: 'form', completed: true}, {type: 'url', completed: true}];
+
       return expectSaga(requestSteps, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), uninstallSteps]])
         .call.fn(apiCallWithRetry)
@@ -196,6 +201,7 @@ describe('uninstaller2.0 saga', () => {
     });
     test('should disptach failed action if API call throws error', () => {
       const error = { code: 404, message: 'integration not found' };
+
       return expectSaga(requestSteps, { id })
         .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
         .call.fn(apiCallWithRetry)

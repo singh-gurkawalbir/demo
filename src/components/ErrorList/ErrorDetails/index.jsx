@@ -6,7 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import EditRetryData from './components/EditRetryData';
 import ViewErrorDetails from './components/ViewErrorDetails';
-import { resourceError } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
 import ErrorActions from './components/ErrorActions';
 
@@ -48,7 +48,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const [recordMode, setRecordMode] = useState(mode);
   const retryId = useSelector(state => {
     const errorDoc =
-      resourceError(state, { flowId, resourceId, errorId }) || {};
+      selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
 
     return errorDoc.retryDataKey;
   });

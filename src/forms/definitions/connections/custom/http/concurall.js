@@ -1,5 +1,5 @@
 export default {
-  preSave: (formValues) => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'concurall',
@@ -42,6 +42,7 @@ export default {
               baseUri.indexOf('https://') + 8,
               baseUri.indexOf('.api.concursolutions.com')
             );
+
         return subdomain;
       },
     },

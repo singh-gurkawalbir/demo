@@ -2,7 +2,6 @@ import React, {useCallback} from 'react';
 import { makeStyles, IconButton, Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
 

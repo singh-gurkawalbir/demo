@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, generatePath, Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -210,6 +210,7 @@ export default function IntegrationApp(props) {
     supportsChild: !!(integration && integration.settings && integration.settings.supportsMultiStore),
     isMonitorLevelUser: accessLevel === 'monitor',
   }).length;
+
   if (!showAdminTab) {
     filterTabs.push('admin');
   }
@@ -303,7 +304,7 @@ export default function IntegrationApp(props) {
       <QueuedJobsDrawer />
       <CeligoPageBar
         title={integration.name}
-        titleTag={
+        titleTag={(
           <ChipInput
             disabled={!['owner', 'manage'].includes(accessLevel)}
             value={integration.tag || 'tag'}
@@ -311,7 +312,7 @@ export default function IntegrationApp(props) {
             variant="outlined"
             onChange={handleTagChangeHandler}
           />
-        }
+        )}
         infoText={integration.description}>
         {isCloningSupported && integration && !supportsMultiStore && (
           <IconTextButton

@@ -35,4 +35,6 @@ export default function (state = {}, action) {
   });
 }
 
-export const getJobErrorsPreview = (state, jobId) => state[jobId];
+export const selectors = {};
+
+selectors.getJobErrorsPreview = (state, jobId) => state[jobId];

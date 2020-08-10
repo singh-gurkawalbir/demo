@@ -4,7 +4,7 @@ import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import DynaSelect from '../../DynaSelect';
 import DynaTableView from '../../DynaTableView/DynaTable';
@@ -24,16 +24,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export const useGetSuiteScriptBaseCommPath = ({connectionId, integrationId}) => {
   const flows = useSelector(state => selectors.suiteScriptResourceList(state, {resourceType: 'flows', ssLinkedConnectionId: connectionId, integrationId}));
   const salesforceConnectionId = useMemo(() => flows.find(flow => flow?.import?.type === 'salesforce' && flow?.import?._connectionId)?.import?._connectionId, [flows]);
 
-
   return `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes`;
 };
 
-export const BaseTableViewComponent = (props) => {
+export const BaseTableViewComponent = props => {
   const classes = useStyles();
   const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
   const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
@@ -55,20 +53,20 @@ export const BaseTableViewComponent = (props) => {
     []
   );
 
-
-  return (<DynaTableView
-    {...props}
-    optionsMap={optionsMap}
-    metadata={{optionsMap}}
-    hideLabel
-    shouldReset={shouldReset}
-    className={classes.dynaStaticMapWidgetWrapper}
-    value={computedValue}
-    onFieldChange={handleMapChange}
-    disableDeleteRows={disabled}
-      />);
+  return (
+    <DynaTableView
+      {...props}
+      optionsMap={optionsMap}
+      metadata={{optionsMap}}
+      hideLabel
+      shouldReset={shouldReset}
+      className={classes.dynaStaticMapWidgetWrapper}
+      value={computedValue}
+      onFieldChange={handleMapChange}
+      disableDeleteRows={disabled}
+      />
+  );
 };
-
 
 const SalesforceProductOptions = ({value,
   onFieldChange,
@@ -77,7 +75,8 @@ const SalesforceProductOptions = ({value,
       value={value}
       onFieldChange={onFieldChange}
       options={options}
-      label="Salesforce item Field" />);
+      label="Salesforce item Field" />
+);
 
 function DynaSuiteScriptTable(props) {
   const {
@@ -114,7 +113,6 @@ function DynaSuiteScriptTable(props) {
     commMetaPath,
     'suiteScript-sObjects');
 
-
   const dispatch = useDispatch();
   const salesforceProductFieldId = `${id}_salesforceProductField`;
 
@@ -132,7 +130,9 @@ function DynaSuiteScriptTable(props) {
     const selectedOptionList = allFieldsOptions &&
   allFieldsOptions.length && allFieldsOptions.find(opt => opt.label === selectOptionLabel)?.options;
     const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
+
     setShouldReset(state => !state);
+
     return [
       {
         id: 'extracts',
@@ -165,18 +165,18 @@ function DynaSuiteScriptTable(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   if (salesforceProductFieldOptions && !allFieldsOptions) { return <Spinner />; }
-
 
   return (
     <>
-      {salesforceProductFieldOptions && <SalesforceProductOptions
+      {salesforceProductFieldOptions && (
+      <SalesforceProductOptions
         value={selectOption}
         onFieldChange={salesforceProductFieldChange}
         options={salesforceProductOptions}
         connectionId={connectionId}
-      />}
+      />
+      )}
       <BaseTableViewComponent
         {...props}
         optionsMap={optionsMap}
@@ -194,5 +194,6 @@ export default function DynaSuiteScriptTableWrapped(props) {
       {form => (
         <DynaSuiteScriptTable {...props} registerField={form.registerField} />
       )}
-    </FormContext.Consumer>);
+    </FormContext.Consumer>
+  );
 }

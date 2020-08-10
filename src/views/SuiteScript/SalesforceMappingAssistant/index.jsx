@@ -1,7 +1,7 @@
 import Frame from 'react-frame-component';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { generateLayoutColumns } from './util';
 import Section from './Section';
@@ -25,8 +25,7 @@ export default function SalesforceMappingAssistant({
   const layout = useSelector(
     state => {
       if (connectionId && sObjectType && layoutId) {
-        return selectors.metadataOptionsAndResources({
-          state,
+        return selectors.metadataOptionsAndResources(state, {
           connectionId,
           commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`,
           filterKey: 'suitescript-salesforce-sObject-layout',
@@ -44,6 +43,7 @@ export default function SalesforceMappingAssistant({
       return left.editLayoutSections.length === right.editLayoutSections.length;
     }
   );
+
   useEffect(() => {
     if (connectionId && sObjectType && layoutId) {
       dispatch(
@@ -83,7 +83,7 @@ export default function SalesforceMappingAssistant({
     <Frame
       data-test="salesforceMappingAssistant"
       style={style}
-      head={
+      head={(
         <>
           <link
             href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0-rc2/css/bootstrap.css"
@@ -96,7 +96,7 @@ export default function SalesforceMappingAssistant({
             type="text/css"
           />
         </>
-      }>
+      )}>
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">
           New {sObjectLabel || sObjectType} --- Click in a field below to select

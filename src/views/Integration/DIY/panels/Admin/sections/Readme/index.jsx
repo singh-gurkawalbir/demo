@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import { Button } from '@material-ui/core';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
 import Editor from './Editor';

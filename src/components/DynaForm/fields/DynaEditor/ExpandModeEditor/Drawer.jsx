@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { isNewId } from '../../../../../utils/resource';
 
@@ -142,6 +142,7 @@ export default function EditorDrawer(props) {
     handleUpdate(content);
     handleClose();
   }, [handleUpdate, handleClose, content]);
+
   // useEffect
   useEffect(() => {
     if (resourceCommStatus === 'success') {
@@ -156,6 +157,7 @@ export default function EditorDrawer(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceCommStatus]);
+
   return (
     <Drawer
       anchor="right"
@@ -186,9 +188,9 @@ export default function EditorDrawer(props) {
           handleClose={handleClose}
           isLoading={resourceCommStatus === 'loading'}
           closeOnSave={closeOnSave}
-          disabled={isNewResource ?
-            !isContentChanged :
-            !isContentChanged || disableSave}
+          disabled={isNewResource
+            ? !isContentChanged
+            : !isContentChanged || disableSave}
           />
       </div>
     </Drawer>

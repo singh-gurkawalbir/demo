@@ -16,5 +16,6 @@ export default function GenericAdaptorNotification({className, onClose}) {
         </a>
         {' '}to prioritize this too!
       </Typography>
-    </NotificationToaster>);
+    </NotificationToaster>
+  );
 }

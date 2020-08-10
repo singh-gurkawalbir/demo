@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { generateNewId,
   isTradingPartnerSupported,
 } from '../../../../../utils/resource';
@@ -61,7 +61,6 @@ export default function ConnectionsPanel({ integrationId, childId }) {
     state => selectors.userPreferences(state).environment
   );
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
-
 
   useEffect(() => {
     if (newResourceId) {
@@ -130,7 +129,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner
+          actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner,
           }}
         />
       </LoadResources>

@@ -2,13 +2,14 @@
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { touchFlow } from '.';
 
 describe('resourceForm saga', () => {
   describe('touchFlow saga', () => {
     test('should return empty array if no flow', () => {
       const exp = { _id: 2, name: 'exp', lastModified: new Date().toISOString() };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), undefined],
@@ -19,6 +20,7 @@ describe('resourceForm saga', () => {
     });
     test('should return empty array if no changed resource', () => {
       const flow = { _id: 1, name: 'flow', lastModified: new Date().toISOString() };
+
       expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -31,6 +33,7 @@ describe('resourceForm saga', () => {
       const d2 = new Date().toISOString();
       const flow = { _id: 1, name: 'flow' };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -43,6 +46,7 @@ describe('resourceForm saga', () => {
       const d1 = new Date().toISOString();
       const flow = { _id: 1, name: 'flow', lastModified: d1 };
       const exp = { _id: 2, name: 'exp' };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -57,6 +61,7 @@ describe('resourceForm saga', () => {
       const d2 = new Date(t + 1).toISOString();
       const flow = { _id: 1, name: 'flow', lastModified: d2 };
       const exp = { _id: 2, name: 'exp', lastModified: d1 };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -71,6 +76,7 @@ describe('resourceForm saga', () => {
       const d2 = new Date(t + 1).toISOString();
       const flow = { _id: 1, name: 'flow', lastModified: d1 };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -104,24 +110,25 @@ describe('resourceForm saga', () => {
             somethingElse: {},
             fields: [],
             lists: [],
-          }
+          },
         }, {
           type: 'import',
           responseMapping: {
             nothing: null,
             fields: [{}],
             lists: [],
-          }
+          },
         }, {
           type: 'import',
           responseMapping: {
             nothing: null,
             fields: [],
             lists: [],
-          }
+          },
         }],
       };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
@@ -151,24 +158,25 @@ describe('resourceForm saga', () => {
             somethingElse: {},
             fields: [],
             lists: [],
-          }
+          },
         }, {
           type: 'import',
           responseMapping: {
             nothing: null,
             fields: [{}],
             lists: [],
-          }
+          },
         }, {
           type: 'import',
           responseMapping: {
             nothing: null,
             fields: [],
             lists: [],
-          }
+          },
         }],
       };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
+
       return expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],

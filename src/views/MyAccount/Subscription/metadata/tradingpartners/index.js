@@ -2,7 +2,6 @@ import React from 'react';
 import References from '../../actions/references';
 import ConnectionResourceDrawerLink from '../../../../../components/ResourceDrawerLink/connection';
 
-
 export default {
   columns: () => {
     const columns = [
@@ -22,7 +21,7 @@ export default {
         value: function Type(r) {
           return <References resourceType="connections" rowData={r} isSubscriptionPage />;
         },
-      }
+      },
     ];
 
     return columns;

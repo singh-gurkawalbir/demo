@@ -3,7 +3,6 @@ import React from 'react';
 import CheckmarkIcon from '../../../../../icons/CheckmarkIcon';
 import CancelIcon from '../../../../../icons/CancelIcon';
 
-
 export default {
   columns: [
     {

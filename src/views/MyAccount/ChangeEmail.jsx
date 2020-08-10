@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../../components/ModalDialog';
 import NotificationToaster from '../../components/NotificationToaster';
@@ -91,7 +91,7 @@ export default function ChangeEmail({ show, onClose }) {
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
       )}
-      {!success &&
+      {!success && (
         <div className={classes.container}>
           <DynaForm fieldMeta={changeEmailFieldMeta}>
             <DynaSubmit
@@ -101,7 +101,8 @@ export default function ChangeEmail({ show, onClose }) {
               Change email
             </DynaSubmit>
           </DynaForm>
-        </div>}
+        </div>
+      )}
     </ModalDialog>
   );
 }

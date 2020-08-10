@@ -17,7 +17,7 @@ import {
   ExpansionPanelSummary,
   Button,
 } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import LoadResources from '../../../../../../components/LoadResources';
 import Loader from '../../../../../../components/Loader';

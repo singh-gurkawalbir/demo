@@ -10,7 +10,7 @@ const styles = {
   content: {
     display: 'inline',
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   tabPanel: {
     height: '100%',
@@ -18,8 +18,8 @@ const styles = {
   dataWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100%'
-  }
+    height: '100%',
+  },
 };
 const SqlDataTabPanel = props => {
   const {

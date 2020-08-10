@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import NetSuiteLookupFilterEditorDialog from '../../../AFE/NetSuiteLookupFilterEditor';
 import actions from '../../../../actions';
 import ActionButton from '../../../ActionButton';

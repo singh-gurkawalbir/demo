@@ -1,10 +1,6 @@
 /* global describe, expect */
 import each from 'jest-each';
-import reducer, {
-  suiteScriptIntegrations,
-  suiteScriptLinkedConnections,
-  suiteScriptTiles,
-} from '.';
+import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
   ACCOUNT_IDS,
@@ -203,7 +199,7 @@ describe.skip('suiteScriptLinkedConnections selector', () => {
     user.preferences = { ...user.preferences, ...preferences };
     const newState = reducer({ user, data }, 'some action');
 
-    expect(suiteScriptLinkedConnections(newState)).toEqual(expected);
+    expect(selectors.suiteScriptLinkedConnections(newState)).toEqual(expected);
   });
 });
 
@@ -296,7 +292,7 @@ describe.skip('suiteScriptIntegrations selector', () => {
   const newState2 = reducer(newState, tilesReceivedAction2);
 
   each(testCases).test('%s', (name, connection, expected) => {
-    expect(suiteScriptIntegrations(newState2, connection)).toEqual(expected);
+    expect(selectors.suiteScriptIntegrations(newState2, connection)).toEqual(expected);
   });
 });
 
@@ -431,6 +427,6 @@ describe.skip('suiteScriptTiles selector', () => {
   const state = reducer({ data }, 'some action');
 
   each(testCases).test('%s', (name, connection, expected) => {
-    expect(suiteScriptTiles(state, connection)).toEqual(expected);
+    expect(selectors.suiteScriptTiles(state, connection)).toEqual(expected);
   });
 });

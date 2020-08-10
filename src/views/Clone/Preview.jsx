@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, useState, useCallback } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
@@ -97,7 +98,7 @@ export default function ClonePreview(props) {
     });
   }, []);
   const isIAIntegration =
-    resourceType === 'integrations' && resource._connectorId;
+    !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
@@ -251,6 +252,18 @@ export default function ClonePreview(props) {
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
+      name: {
+        id: 'name',
+        name: 'name',
+        type: 'text',
+        required: !isIAIntegration,
+        label: 'Name',
+        helpKey: `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.name`,
+        defaultValue: isIAIntegration
+          ? resource && resource.name
+          : `Clone - ${resource ? resource.name : ''}`,
+        visible: !isIAIntegration,
+      },
       tag: {
         id: 'tag',
         name: 'tag',
@@ -258,17 +271,6 @@ export default function ClonePreview(props) {
         label: 'Tag',
         defaultValue: `Clone - ${resource ? resource.name : ''}`,
         visible: isIAIntegration,
-      },
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        required: !isIAIntegration,
-        label: 'Name',
-        defaultValue: isIAIntegration
-          ? resource && resource.name
-          : `Clone - ${resource ? resource.name : ''}`,
-        visible: !isIAIntegration,
       },
       environment: {
         id: 'environment',
@@ -343,8 +345,8 @@ export default function ClonePreview(props) {
             'components',
           ]
           : [
-            'tag',
             'name',
+            'tag',
             'environment',
             'description',
             'message',

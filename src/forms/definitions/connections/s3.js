@@ -23,7 +23,7 @@ export default {
         collapsed: true,
         label: 'Application details',
         fields: [
-          's3.accessKeyId', 's3.secretAccessKey', 's3.pingBucket'
+          's3.accessKeyId', 's3.secretAccessKey', 's3.pingBucket',
         ],
       },
     ],

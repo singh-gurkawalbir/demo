@@ -6,8 +6,9 @@ const requestBody = editor => {
     hasHeaderRow: editor.hasHeaderRow,
     trimSpaces: editor.trimSpaces,
     rowsToSkip: Number.isInteger(editor.rowsToSkip) ? editor.rowsToSkip : 0,
-    keyColumns: editor.keyColumns
+    keyColumns: editor.keyColumns,
   };
+
   return {
     rules,
     data: editor.data,
@@ -25,9 +26,11 @@ const init = editor => {
 
   rule.multipleRowsPerRecord = !!(rule.keyColumns && rule.keyColumns.length);
   const initRules = {};
+
   Object.keys(rule).forEach(key => {
     initRules[`_init_${key}`] = rule[key];
   });
+
   return {
     ...others,
     ...rule,

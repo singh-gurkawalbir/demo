@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core';
 import SwitchOffIcon from '../icons/Switch/Off';
 import SwitchOnIcon from '../icons/Switch/On';
 
-
 const useStyles = makeStyles(theme => ({
   customSwitch: {
     '& > .react-toggle-track': {
@@ -39,7 +38,6 @@ const useStyles = makeStyles(theme => ({
       top: 2,
     },
 
-
     '&.react-toggle:hover:not(.react-toggle--disabled)': {
       '& > .react-toggle-track': {
         backgroundColor: theme.palette.text.hint,
@@ -61,7 +59,7 @@ const useStyles = makeStyles(theme => ({
       left: '30px !important',
       border: 'none  !important',
     },
-  }
+  },
 
 }));
 

@@ -31,11 +31,11 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function marketPlaceState(state) {
-  return state;
-}
+export const selectors = {};
 
-export function connectors(state, application, sandbox, licenses) {
+selectors.marketPlaceState = state => state;
+
+selectors.connectors = (state, application, sandbox, licenses) => {
   if (!state) {
     return emptySet;
   }
@@ -44,6 +44,7 @@ export function connectors(state, application, sandbox, licenses) {
 
   connectors = connectors.map(c => {
     const conn = c;
+
     if (conn._id === SUITESCRIPT_CONNECTOR_IDS.salesforce) {
       return conn;
     }
@@ -73,15 +74,15 @@ export function connectors(state, application, sandbox, licenses) {
   }
 
   return connectors;
-}
+};
 
-export function integrationAppList(state) {
+selectors.integrationAppList = state => {
   if (!state) return emptySet;
 
   return state.connectors || emptySet;
-}
+};
 
-export function templates(state, application) {
+selectors.marketplaceTemplatesByApp = (state, application) => {
   if (!state) {
     return emptySet;
   }
@@ -95,11 +96,11 @@ export function templates(state, application) {
   }
 
   return templates;
-}
+};
 
-export function template(state, templateId) {
+selectors.marketplaceTemplateById = (state, templateId) => {
   if (!state || !state.templates) return;
 
   return state.templates.find(t => t._id === templateId);
-}
+};
 // #endregion

@@ -1,6 +1,6 @@
 import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
-import { resourceData } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
 import {
@@ -23,7 +23,7 @@ export function* pageProcessorPreview({
   refresh = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const { merged } = yield select(resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const flow = yield call(filterPendingResources, { flow: deepClone(merged) });
 
   // Incase of no pgs, preview call is stopped here
@@ -111,7 +111,7 @@ export function* exportPreview({
   throwOnError = false,
 }) {
   const { merged: resource } = yield select(
-    resourceData,
+    selectors.resourceData,
     'exports',
     resourceId
   );

@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CeligoTable from '../../../components/CeligoTable';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ShowMoreDrawer from '../../../components/drawer/ShowMore';

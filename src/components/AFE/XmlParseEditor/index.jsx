@@ -10,7 +10,7 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles({
   template: {
@@ -33,6 +33,7 @@ export default function XmlParseEditor(props) {
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
+
   useEffect(() => {
     // trigger data change when editor is initialized and sample data changes while uploading new file
     if (data !== undefined && props.data !== data) {

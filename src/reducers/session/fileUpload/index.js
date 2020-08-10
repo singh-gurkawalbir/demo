@@ -35,4 +35,6 @@ export default function (state = {}, action) {
   });
 }
 
-export const getUploadedFile = (state, fileId) => state[fileId];
+export const selectors = {};
+
+selectors.getUploadedFile = (state, fileId) => state[fileId];

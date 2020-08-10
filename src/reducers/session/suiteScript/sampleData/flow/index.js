@@ -6,6 +6,7 @@ const DEFAULT_VALUE = {};
 export default (state = {}, action) => {
   const { ssLinkedConnectionId, integrationId, flowId, type } = action;
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.SAMPLEDATA.REQUEST: {
@@ -20,12 +21,14 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED: {
         const {previewData} = action;
+
         draft[id].status = 'received';
         draft[id].data = previewData;
         break;
       }
       case actionTypes.SUITESCRIPT.SAMPLEDATA.RECEIVED_ERROR: {
         const {error} = action;
+
         draft[id].status = 'error';
         draft[id].data = error;
         break;
@@ -40,12 +43,15 @@ export default (state = {}, action) => {
   });
 };
 
-export function flowSampleDataContext(
+export const selectors = {};
+
+selectors.suiteScriptFlowSampleDataContext = (
   state,
   { ssLinkedConnectionId, integrationId, flowId }
-) {
+) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
   const flowData = state[id];
+
   return flowData || DEFAULT_VALUE;
-}
+};

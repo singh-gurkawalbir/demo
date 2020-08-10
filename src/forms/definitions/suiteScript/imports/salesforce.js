@@ -1,6 +1,7 @@
 export default {
   preSave: formValues => {
     const newValues = formValues;
+
     if (newValues['/import/salesforce/operation'] === 'insert') {
       delete newValues['/import/salesforce/upsert/jsField'];
       delete newValues['/import/salesforce/upsert/externalField'];
@@ -20,7 +21,6 @@ export default {
     const salesforceIdField = fields.find(
       field => field.fieldId === 'import.salesforce.salesforceIdField'
     );
-
 
     if (fieldId === 'import.salesforce.salesforceIdField') {
       return {
@@ -55,7 +55,7 @@ export default {
     },
     'import.salesforce.salesforceIdField': {
       fieldId: 'import.salesforce.salesforceIdField',
-    }
+    },
   },
   layout: {
     type: 'column',
@@ -79,7 +79,7 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
-              'import.salesforce.salesforceIdField'
+              'import.salesforce.salesforceIdField',
             ],
           },
         ],
