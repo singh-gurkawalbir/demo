@@ -213,7 +213,7 @@ export default function BottomDrawer({
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example">
-          <Tab {...tabProps(0)} icon={<RunIcon />} label="Run dashboard" />
+          <Tab {...tabProps(0)} icon={<RunIcon />} label="Dashboard" />
           <Tab
             {...tabProps(1)}
             icon={
