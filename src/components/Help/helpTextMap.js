@@ -786,6 +786,8 @@ export default {
     'Snowflake database that you want to connect.',
   'snowflake.connection.rdbms.user': 'Username to connect to Snowflake.',
   'snowflake.connection.rdbms.password': 'Password to connect to Snowflake.',
+  'connection.rdbms.options':
+  'Define additional configurations for the database connection that is available according to the database documentation. For example, you can configure the connection timeout if the SQL server you are trying to connect to is slow (default connection timeout for MS SQL server is 15000ms).',
   'connection.rdbms.concurrencyLevel':
     'The number of adapters to be executed concurrently.',
   'connection.rdbms.ssl.ca':

@@ -1141,8 +1141,8 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
   sharedNotifications: {
-    acceptInvite: (resourceType, id) =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
+    acceptInvite: (resourceType, id, isAccountTransfer) =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
     acceptedInvite: id =>
       action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
     rejectInvite: (resourceType, id) =>
@@ -1259,6 +1259,7 @@ const app = {
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
+  userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
 };
 const postFeedback = (resourceType, fieldId, helpful, feedback) =>
   action(actionTypes.POST_FEEDBACK, {
@@ -1883,8 +1884,8 @@ const editorSampleData = {
       sampleData,
       templateVersion,
     }),
-  receivedError: ({ flowId, resourceId, fieldType }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR, {
+  failed: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
       resourceId,
       flowId,
       fieldType,

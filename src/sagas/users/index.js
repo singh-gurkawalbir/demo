@@ -10,7 +10,7 @@ import {
 } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import { ACCOUNT_IDS } from '../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../utils/constants';
 
 export function* changePassword({ updatedPassword }) {
   try {
@@ -368,7 +368,7 @@ export function* requestSharedStackNotifications() {
   }
 }
 
-export function* acceptSharedInvite({ resourceType, id }) {
+export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
   const sharedResourceTypeMap = {
     account: 'ashares',
     stack: 'sshares',
@@ -399,8 +399,12 @@ export function* acceptSharedInvite({ resourceType, id }) {
     yield put(actions.auth.clearStore());
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {
-    yield put(actions.resource.requestCollection('integrations'));
-    yield put(actions.resource.requestCollection('transfers'));
+    if (isAccountTransfer) {
+      yield put(actions.app.userAcceptedAccountTransfer());
+    } else {
+      yield put(actions.resource.requestCollection('integrations'));
+      yield put(actions.resource.requestCollection('transfers'));
+    }
   } else {
     yield put(
       actions.resource.requestCollection(
@@ -438,7 +442,13 @@ export function* rejectSharedInvite({ resourceType, id }) {
     );
   }
   if (resourceType === 'transfer') {
-    yield put(actions.resource.requestCollection('transfers'));
+    const { accessLevel } = yield select(selectors.resourcePermissions);
+
+    if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+      yield put(actions.resource.requestCollection('transfers'));
+    } else {
+      yield put(actions.resource.requestCollection('transfers/invited'));
+    }
   } else {
     yield put(
       actions.resource.requestCollection(

@@ -144,7 +144,7 @@ export default {
     delete newValues['/http/oauth/customAuthScheme'];
     delete newValues['/http/auth/wsse/headerName'];
     delete newValues['/http/custom/encrypted'];
-    delete newValues['/http/cutom/unencrypted'];
+    delete newValues['/http/custom/unencrypted'];
 
     return newValues;
   },
@@ -368,7 +368,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],
     },
     'http.custom.unencrypted': {
-      id: 'http.oauth.unencrypted',
+      id: 'http.custom.unencrypted',
       type: 'editor',
       mode: 'json',
       required: true,

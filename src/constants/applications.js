@@ -88,13 +88,6 @@ const connectors = [
     webhookOnly: true,
   },
   {
-    id: 'integrator-extension',
-    type: 'webhook',
-    name: 'integrator.io extension',
-    icon: 'integratorio',
-    webhookOnly: true,
-  },
-  {
     id: 'as2',
     name: 'AS2',
     type: 'as2',
@@ -426,6 +419,7 @@ const connectors = [
     name: 'integrator.io',
     type: 'rest',
     assistant: 'integratorio',
+    webhook: true,
   },
   {
     id: 'intercom',

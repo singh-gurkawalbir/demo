@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -8,6 +8,7 @@ import actions from '../../actions';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
 import templateUtil from '../../utils/template';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
@@ -88,8 +89,16 @@ export default function ClonePreview(props) {
   const resource =
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+  const showCustomFormValidations = useCallback(() => {
+    setFormState({
+      showFormValidationsBeforeTouch: true,
+    });
+  }, []);
   const isIAIntegration =
-    resourceType === 'integrations' && resource._connectorId;
+    !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
     useSelector(state =>
       selectors.cloneData(state, resourceType, resourceId)
@@ -243,6 +252,18 @@ export default function ClonePreview(props) {
   const { objects = [] } = components;
   const fieldMeta = {
     fieldMap: {
+      name: {
+        id: 'name',
+        name: 'name',
+        type: 'text',
+        label: 'Name',
+        helpKey: `${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}.name`,
+        required: !isIAIntegration,
+        defaultValue: isIAIntegration
+          ? resource && resource.name
+          : `Clone - ${resource ? resource.name : ''}`,
+        visible: !isIAIntegration,
+      },
       tag: {
         id: 'tag',
         name: 'tag',
@@ -250,16 +271,6 @@ export default function ClonePreview(props) {
         label: 'Tag',
         defaultValue: `Clone - ${resource ? resource.name : ''}`,
         visible: isIAIntegration,
-      },
-      name: {
-        id: 'name',
-        name: 'name',
-        type: 'text',
-        label: 'Name',
-        defaultValue: isIAIntegration
-          ? resource && resource.name
-          : `Clone - ${resource ? resource.name : ''}`,
-        visible: !isIAIntegration,
       },
       environment: {
         id: 'environment',
@@ -283,6 +294,7 @@ export default function ClonePreview(props) {
         name: 'integration',
         type: 'select',
         label: 'Integration',
+        required: true,
         refreshOptionsOnChangesTo: ['environment'],
         options: [
           {
@@ -301,14 +313,14 @@ export default function ClonePreview(props) {
         type: 'labeltitle',
         disablePopover: true,
         label: resource && resource.description,
-        visible: !isIAIntegration,
+        visible: (!isIAIntegration && !!(resource?.description)),
       },
       message: {
         id: 'message',
         name: 'message',
         disablePopover: true,
         type: 'labeltitle',
-        label: `The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType]}.`,
+        label: `The following components will get cloned with this ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}.`,
       },
       components: {
         id: 'components',
@@ -333,8 +345,8 @@ export default function ClonePreview(props) {
             'components',
           ]
           : [
-            'tag',
             'name',
+            'tag',
             'environment',
             'description',
             'message',
@@ -424,19 +436,21 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
-      <CeligoPageBar title="Cloning" infoText={cloningDescription} />
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={cloningDescription} />
       <>
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
+              formState={formState}
               fieldMeta={fieldMeta}
               optionsHandler={fieldMeta.optionsHandler}>
               <DynaSubmit
-                skipDisableButtonForFormTouched
+                ignoreFormTouchedCheck
+                showCustomFormValidations={showCustomFormValidations}
                 disabled={cloneRequested}
                 data-test="clone"
                 onClick={clone}>
-                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType]}`}
+                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
               </DynaSubmit>
             </DynaForm>
           </Grid>

@@ -2837,24 +2837,29 @@ selectors.makeResourceDataSelector = () => {
 selectors.resourceData = selectors.makeResourceDataSelector();
 
 selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
-  const { merged: resource = {} } = selectors.resourceData(
+  const { merged: res = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId
   );
 
+  // AFE 2.0 not supported for Native REST Adaptor
+  if (['RESTImport', 'RESTExport'].includes(res.adaptorType)) {
+    const restConnection = selectors.resource(state, 'connections', res._connectionId);
+
+    return !!restConnection.isHTTP;
+  }
+
   return [
     'HTTPImport',
     'HTTPExport',
-    'RESTImport',
-    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(resource.adaptorType);
+  ].includes(res.adaptorType);
 };
 
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
@@ -3127,50 +3132,47 @@ selectors.accessTokenList = (
   return tokensList;
 };
 
-selectors.makeFlowJobs = () => createSelector(
-  state => state?.data,
-  (_1, options) => options,
-  (data, options) => {
-    const jobs = fromData.flowJobs(data, options);
-    const resourceMap = fromData.resourceDetailsMap(data);
+selectors.flowJobs = (state, options = {}) => {
+  const jobs = fromData.flowJobs(state?.data, options);
+  const resourceMap = fromData.resourceDetailsMap(state?.data);
 
-    return jobs.map(job => {
-      if (job.children && job.children.length > 0) {
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-        job.children = job.children.map(cJob => {
-          const additionalChildProps = {
-            name: cJob._exportId
-              ? resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports[cJob._importId]?.name,
-          };
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          name: cJob._exportId
+            ? resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports[cJob._importId]?.name,
+        };
 
-          return { ...cJob, ...additionalChildProps };
-        });
-      }
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
 
-      const additionalProps = {
-        name:
+    const additionalProps = {
+      name:
         resourceMap.flows &&
         resourceMap.flows[job._flowId] &&
         resourceMap.flows[job._flowId].name,
-      };
+    };
 
-      if (job.doneExporting && job.numPagesGenerated > 0) {
-        additionalProps.percentComplete = Math.floor(
-          (job.numPagesProcessed * 100) /
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
             ((resourceMap.flows &&
               resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
-        );
-      } else {
-        additionalProps.percentComplete = 0;
-      }
+      );
+    } else {
+      additionalProps.percentComplete = 0;
+    }
 
-      return { ...job, ...additionalProps };
-    });
+    return { ...job, ...additionalProps };
   });
+};
 
 selectors.latestFlowJobs = createSelector(
   state => selectors.makeFlowJobs()(state),
@@ -3208,13 +3210,10 @@ selectors.flowDashboardDetails = createSelector(
     return childJobDetails;
   });
 
-selectors.makeFlowJob = () => {
-  const cachedFlowJobsSelector = selectors.makeFlowJobs();
+selectors.flowJob = (state, ops = {}) => {
+  const jobList = selectors.flowJobs(state, ops);
 
-  return createSelector((state, ops) => cachedFlowJobsSelector(
-    state, ops),
-  (_1, ops) => ops,
-  (jobList, ops) => jobList.find(j => j._id === ops?.jobId));
+  return jobList.find(j => j._id === ops?.jobId);
 };
 
 selectors.job = (state, { type, jobId, parentJobId }) => {
@@ -3443,50 +3442,14 @@ selectors.transferListWithMetadata = state => {
     selectors.resourceList(state, {
       type: 'transfers',
     }).resources || [];
-  const preferences = selectors.userProfilePreferencesProps(state);
 
-  transfers.forEach((transfer, i) => {
-    let fromUser = '';
-    let toUser = '';
+  const updatedTransfers = [...transfers];
+
+  updatedTransfers.forEach((transfer, i) => {
     let integrations = [];
 
-    if (transfer.transferToUser && transfer.transferToUser._id) {
-      transfers[i].ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-    } else if (transfer.ownerUser && transfer.ownerUser._id) {
-      transfers[i].transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfers[i].isInvited = true;
-    }
-
-    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
-      fromUser = transfers[i].ownerUser.name;
-    }
-
-    if (
-      transfers[i].isInvited &&
-      transfers[i].ownerUser &&
-      transfers[i].ownerUser.email
-    ) {
-      fromUser = transfers[i].ownerUser.email;
-    }
-
-    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
-      toUser = transfers[i].transferToUser.name;
-    }
-
-    if (
-      !transfers[i].isInvited &&
-      transfers[i].transferToUser &&
-      transfers[i].transferToUser.email
-    ) {
-      toUser = transfers[i].transferToUser.email;
+    if (transfer.ownerUser && transfer.ownerUser._id) {
+      updatedTransfers[i].isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -3508,12 +3471,10 @@ selectors.transferListWithMetadata = state => {
     }
 
     integrations = integrations.join('\n');
-    transfers[i].fromUser = fromUser;
-    transfers[i].toUser = toUser;
-    transfers[i].integrations = integrations;
+    updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: transfers };
+  return { resources: updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved') };
 };
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
