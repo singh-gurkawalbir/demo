@@ -3559,7 +3559,7 @@ selectors.getAvailableResourcePreviewStages = (
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 };
 
-selectors.isPostUrlAvailableForPreviewPanel = (state, resourceId, resourceType) => {
+selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceType) => {
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
