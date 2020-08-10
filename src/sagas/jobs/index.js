@@ -651,7 +651,7 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
 
 function* getLatestJob({ integrationId, flowId}) {
   yield call(requestJobCollection, { integrationId, flowId });
-  const latestJobs = yield select(selectors.makeLatestFlowJobs());
+  const latestJobs = yield select(selectors.latestFlowJobs);
 
   yield all(latestJobs.map(job => put(actions.job.requestFamily({ jobId: job._id}))));
 }

@@ -3172,11 +3172,8 @@ selectors.makeFlowJobs = () => createSelector(
     });
   });
 
-selectors.makeLatestFlowJobs = () => {
-  const cachedFlowJobsSelector = selectors.makeFlowJobs();
-
-  return createSelector(state => cachedFlowJobsSelector(
-    state),
+selectors.latestFlowJobs = createSelector(
+  state => selectors.makeFlowJobs()(state),
   jobList => {
     const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
     const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
@@ -3187,7 +3184,22 @@ selectors.makeLatestFlowJobs = () => {
 
     return jobList[0] ? [...queuedJobs, jobList[0]] : queuedJobs;
   });
-};
+
+selectors.flowDashboardDetails = createSelector(
+  state => selectors.latestFlowJobs(state),
+  latestJobs => {
+    const childJobDetails = [];
+
+    latestJobs.forEach(job => {
+      if (job.status === JOB_STATUS.QUEUED) {
+        childJobDetails.push(job);
+      } else if (job?.children?.length) {
+        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+      }
+    });
+
+    return childJobDetails;
+  });
 
 selectors.makeFlowJob = () => {
   const cachedFlowJobsSelector = selectors.makeFlowJobs();
