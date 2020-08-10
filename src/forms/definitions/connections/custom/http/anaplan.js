@@ -1,6 +1,7 @@
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
+
     if (retValues['/http/auth/type'] === 'token') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'Authorization';
@@ -32,6 +33,7 @@ export default {
       retValues['/http/auth/token/token'] = undefined;
       delete ['/http/auth/token/token'];
     }
+
     return {
       ...retValues,
       '/type': 'http',
