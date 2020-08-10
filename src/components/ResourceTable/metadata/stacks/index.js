@@ -34,13 +34,13 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
+      heading: 'Access key Id',
+      value: r => r.lambda && r.lambda.accessKeyId,
+    },
+    {
       heading: 'Last updated',
       value: r => formatLastModified(r.lastModified),
       orderBy: 'lastModified',
-    },
-    {
-      heading: 'Access key Id',
-      value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
       heading: 'System token',
