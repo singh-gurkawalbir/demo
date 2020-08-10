@@ -4,11 +4,14 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import metadata from './metadata';
 import CeligoTable from '../../../../../../components/CeligoTable';
+import PanelLoader from '../../../../../../components/PanelLoader';
+
 // TODO: should we move this to JobsDashboard component?
 export default function FlowRunDashboard({ flow }) {
   const { _id: flowId, _integrationId: integrationId = 'none'} = flow;
   const dispatch = useDispatch();
   const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
+  const areFlowJobsLoading = useSelector(state => selectors.areFlowJobsLoading(state, { integrationId, flowId }));
 
   useEffect(
     () => () => {
@@ -27,11 +30,13 @@ export default function FlowRunDashboard({ flow }) {
     }
   }, [dispatch, integrationId, flowId, latestJobs.length]);
 
+  if (areFlowJobsLoading) {
+    return <PanelLoader />;
+  }
+
   return (
     <>
-      <CeligoTable
-        data={latestJobs}
-        {...metadata} />
+      <CeligoTable data={latestJobs} {...metadata} />
     </>
   );
 }

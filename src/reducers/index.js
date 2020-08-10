@@ -70,6 +70,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3211,6 +3212,16 @@ selectors.flowDashboardDetails = createSelector(
 
     return childJobDetails;
   });
+
+selectors.areFlowJobsLoading = (state, filters = {}) => {
+  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters,
+  }) || {};
+
+  const commKey = commKeyGen(path, opts.method);
+
+  return fromComms.isLoading(state.comms, commKey);
+};
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);

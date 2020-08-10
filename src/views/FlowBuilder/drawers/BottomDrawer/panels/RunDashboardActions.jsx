@@ -22,6 +22,11 @@ export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const areFlowJobsLoading = useSelector(state => {
+    const {merged: flow = {}} = selectors.resourceData(state, 'flows', flowId);
+
+    return selectors.areFlowJobsLoading(state, { integrationId: flow._integrationId, flowId });
+  });
   const latestJobs = useSelector(state => selectors.latestFlowJobs(state));
   const cancellableJobIds = useMemo(() => {
     const jobIdsToCancel = latestJobs
@@ -59,7 +64,7 @@ export default function RunDashboardActions({ flowId }) {
   return (
     <div className={classes.rightActionContainer}>
       <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
-      <IconTextButton onClick={handleRefresh}>
+      <IconTextButton onClick={handleRefresh} disabled={areFlowJobsLoading}>
         <RefreshIcon /> Refresh
       </IconTextButton>
       <IconTextButton onClick={handleCancel} disabled={cancellableJobIds.length === 0}>
