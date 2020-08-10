@@ -40,6 +40,7 @@ export default {
   'server.hostURI': {
     type: 'text',
     label: 'Host',
+    required: true,
     visibleWhen: [
       {
         field: 'type',
