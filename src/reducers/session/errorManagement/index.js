@@ -33,10 +33,10 @@ selectors.resourceErrors = (state, { flowId, resourceId, options = {} }) => {
   };
 };
 
-export function isAllErrorsSelected(
+selectors.isAllErrorsSelected = (
   state,
   { flowId, resourceId, isResolved, errorIds }
-) {
+) => {
   const errorDetailsState = state && state.errorDetails;
   const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
     flowId,
@@ -49,4 +49,4 @@ export function isAllErrorsSelected(
   return !errors.some(
     error => errorIds.includes(error.errorId) && !error.selected
   );
-}
+};
