@@ -33,10 +33,7 @@ selectors.resourceErrors = (state, { flowId, resourceId, options = {} }) => {
   };
 };
 
-selectors.isAllErrorsSelected = (
-  state,
-  { flowId, resourceId, isResolved, errorIds }
-) => {
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds }) => {
   const errorDetailsState = state && state.errorDetails;
   const { errors = [] } = fromErrorDetails.getErrors(errorDetailsState, {
     flowId,
