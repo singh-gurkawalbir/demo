@@ -169,7 +169,7 @@ export const updateMappingConfigs = ({importType, mappings = [], exportConfig, o
           const childRelationship = childRelationships.find(rel => rel.value === list.generate);
           if (childRelationship) {
             list.salesforce = {
-              relationshipField: childRelationship.value,
+              relationshipField: childRelationship.field,
               sObjectType: childRelationship.childSObject
             };
           }
