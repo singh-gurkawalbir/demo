@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
-const usePushRightDrawer = path => {
+const usePushRightDrawer = pathProp => {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const pushRightDrawer = useCallback(_path => {
-    const pathToPush = path || _path;
+  const pushRightDrawer = useCallback(path => {
+    const pathToPush = pathProp || path;
 
     if (!pathToPush) { return; }
     history.push(`${match.url}/${pathToPush}`);
-  }, [path, history, match.url]);
+  }, [pathProp, history, match.url]);
 
   return pushRightDrawer;
 };
