@@ -87,7 +87,7 @@ export function* startPollingForInProgressJobs() {
   yield cancel(watcher);
 }
 
-export function* requestJobCollection({ integrationId, flowId, filters = {}, fetchLatest = false }) {
+export function* requestJobCollection({ integrationId, flowId, filters = {} }) {
   const jobFilters = { ...filters, integrationId };
 
   if (flowId) {
@@ -154,10 +154,6 @@ export function* requestJobCollection({ integrationId, flowId, filters = {}, fet
     });
   } catch (error) {
     return true;
-  }
-  // Used to get latest job for a flow.
-  if (fetchLatest && collection?.[0]) {
-    collection = [collection[0]];
   }
 
   yield put(actions.job.receivedCollection({ collection }));
@@ -654,12 +650,10 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
 }
 
 function* getLatestJob({ integrationId, flowId}) {
-  yield call(requestJobCollection, { integrationId, flowId, fetchLatest: true });
-  const jobs = yield select(selectors.makeFlowJobs());
+  yield call(requestJobCollection, { integrationId, flowId });
+  const latestJobs = yield select(selectors.makeLatestFlowJobs());
 
-  if (jobs?.[0]?._id) {
-    yield call(getJobFamily, { jobId: jobs[0]._id });
-  }
+  yield all(latestJobs.map(job => put(actions.job.requestFamily({ jobId: job._id}))));
 }
 
 export const jobSagas = [

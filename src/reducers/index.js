@@ -40,6 +40,7 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -3170,6 +3171,23 @@ selectors.makeFlowJobs = () => createSelector(
       return { ...job, ...additionalProps };
     });
   });
+
+selectors.makeLatestFlowJobs = () => {
+  const cachedFlowJobsSelector = selectors.makeFlowJobs();
+
+  return createSelector(state => cachedFlowJobsSelector(
+    state),
+  jobList => {
+    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
+    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+
+    if (inProgressJobs.length) {
+      return [...queuedJobs, ...inProgressJobs];
+    }
+
+    return jobList[0] ? [...queuedJobs, jobList[0]] : queuedJobs;
+  });
+};
 
 selectors.makeFlowJob = () => {
   const cachedFlowJobsSelector = selectors.makeFlowJobs();
