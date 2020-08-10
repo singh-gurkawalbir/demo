@@ -3,27 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import DynaMultiSelect from './MultiSelect';
 import FlowCharts from './FlowCharts';
 
-
 const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    width: '1300px',
-    // marginTop: theme.appBarHeight + theme.pageBarHeight,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  form: {
-    maxHeight: 'calc(100vh - 180px)',
-    padding: theme.spacing(2, 3),
-  },
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
@@ -99,15 +86,6 @@ export default function LineGraphDrawer({ flowId }) {
       variant="permanent"
       onClose={handleClose}
       path="charts">
-      {/* <DrawerTitleBar
-        title="Dashboard"
-        flowId={flowId}
-        onResourcesChange={handleResourceChange}
-        selectedResources={selectedResources}
-        onDateRangeChange={handleDateRangeChange}
-        onClose={handleClose}
-        backToParent
-      /> */}
       <FlowCharts
         flowId={flowId}
         selectedResources={selectedResources}

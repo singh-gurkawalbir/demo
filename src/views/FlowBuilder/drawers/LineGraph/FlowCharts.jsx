@@ -58,7 +58,7 @@ const getLegend = index => {
 };
 
 const Chart = ({ id, flowId, selectedResources }) => {
-  const { data: flowData } =
+  const { data = [{time: new Date().toISOString()}] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
@@ -83,7 +83,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={flowData}
+          data={data}
           margin={{
             top: 5,
             right: 30,
