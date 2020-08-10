@@ -215,7 +215,6 @@ selectors.makeOptionsFromMetadata = () => createSelector(
   (_1, _2, commMetaPath) => commMetaPath,
   (_1, _2, _3, filterKey) => filterKey,
   optionsFromMetadataTransformFunct
-
 );
 
 selectors.assistantData = (state, { adaptorType, assistant }) => {

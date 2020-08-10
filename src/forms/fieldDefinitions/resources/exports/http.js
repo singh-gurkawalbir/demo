@@ -31,10 +31,14 @@ export default {
         ],
       },
     ],
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'outputMode',
         is: ['records'],
+      },
+      {
+        field: 'http.method',
+        isNot: ['GET', ''],
       },
     ],
   },

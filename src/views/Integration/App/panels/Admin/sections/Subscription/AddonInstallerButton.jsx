@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
@@ -7,8 +7,21 @@ import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader';
 
+const useStyles = makeStyles(theme => ({
+  button: {
+    margin: theme.spacing(1, 0),
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    '&:hover': {
+      borderColor: theme.palette.error.main,
+      color: theme.palette.error.light,
+    },
+  },
+}));
+
 export default function AddonInstallerButton({ resource }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const [isInProgress, setIsInProgressStatus] = useState(false);
   const { installInprogress } = useSelector(
     state => selectors.isAddOnInstallInProgress(state, resource.id),
@@ -124,6 +137,9 @@ export default function AddonInstallerButton({ resource }) {
     <Button
       data-test="addOnInstall"
       size="small"
+      variant="outlined"
+      color="secondary"
+      className={classes.button}
       onClick={() => onClick(resource)}>
       {getLabel()}
     </Button>

@@ -18,6 +18,7 @@ function FormButton({
   showCustomFormValidations,
   skipDisableButtonForFormTouched = false,
   resourceId,
+  ignoreFormTouchedCheck,
 }) {
   const handleClick = useCallback(() => onClick(trim(value)), [onClick, value]);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
@@ -26,6 +27,7 @@ function FormButton({
     formIsValid: isValid,
     resourceId,
     resourceType,
+    ignoreFormTouchedCheck,
     showCustomFormValidations,
   });
   const buttonDisabled = useMemo(
