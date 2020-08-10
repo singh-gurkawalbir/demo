@@ -1301,6 +1301,14 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
+  initV2: ({ flowId,
+    resourceId,
+    subRecordMappingId }) =>
+    action(actionTypes.MAPPING.INITV2, {
+      flowId,
+      resourceId,
+      subRecordMappingId,
+    }),
   init: ({ id, options }) =>
     action(actionTypes.MAPPING.INIT, {
       id,
@@ -1339,6 +1347,50 @@ const mapping = {
   refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
   updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key }),
 
+};
+
+const mappingV2 = {
+  init: ({ flowId,
+    resourceId,
+    subRecordMappingId,
+  }) =>
+    action(actionTypes.MAPPINGV2.INIT, {flowId,
+      resourceId,
+      subRecordMappingId}),
+  initComplete: (options = {}) =>
+    action(actionTypes.MAPPINGV2.INIT_COMPLETE, {...options}),
+  patchField: (field, key, value) =>
+    action(actionTypes.MAPPINGV2.PATCH_FIELD, { field, key, value }),
+  updateLookup: lookups =>
+    action(actionTypes.MAPPINGV2.UPDATE_LOOKUP, { lookups }),
+  patchSettings: (key, value) =>
+    action(actionTypes.MAPPINGV2.PATCH_SETTINGS, { key, value }),
+  setVisibility: value =>
+    action(actionTypes.MAPPINGV2.SET_VISIBILITY, { value }),
+  patchIncompleteGenerates: (key, value) =>
+    action(actionTypes.MAPPINGV2.PATCH_INCOMPLETE_GENERATES, {
+      key,
+      value,
+    }),
+  delete: key => action(actionTypes.MAPPINGV2.DELETE, { key }),
+  save: context => action(actionTypes.MAPPINGV2.SAVE, { context }),
+  saveFailed: () => action(actionTypes.MAPPINGV2.SAVE_FAILED, { }),
+  saveComplete: () => action(actionTypes.MAPPINGV2.SAVE_COMPLETE, { }),
+  requestPreview: () => action(actionTypes.MAPPINGV2.PREVIEW_REQUESTED, { }),
+  previewReceived: value =>
+    action(actionTypes.MAPPINGV2.PREVIEW_RECEIVED, {value }),
+  previewFailed: () => action(actionTypes.MAPPINGV2.PREVIEW_FAILED, { }),
+  changeOrder: value =>
+    action(actionTypes.MAPPINGV2.CHANGE_ORDER, { value }),
+  setNSAssistantFormLoaded: value =>
+    action(actionTypes.MAPPINGV2.SET_NS_ASSISTANT_FORM_LOADED, { value }),
+  refreshGenerates: () => action(actionTypes.MAPPINGV2.REFRESH_GENERATES, { }),
+  updateLastFieldTouched: key => action(actionTypes.MAPPINGV2.UPDATE_LAST_TOUCHED_FIELD, { key }),
+  updateMappings: mappings => action(actionTypes.MAPPINGV2.UPDATE_MAPPINGS, {
+    mappings,
+  }),
+  checkForSFSublistExtractPatch: (key, value) => action(actionTypes.MAPPINGV2.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
+  clear: () => action(actionTypes.MAPPINGV2.CLEAR, {}),
 };
 
 const searchCriteria = {
@@ -1934,4 +1986,5 @@ export default {
   customSettings,
   exportData,
   editorSampleData,
+  mappingV2,
 };

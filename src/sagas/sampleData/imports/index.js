@@ -163,7 +163,7 @@ function* fetchIAMetaData({
   }
 }
 
-function* requestSampleData({ resourceId, options = {}, refreshCache }) {
+export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     'imports',

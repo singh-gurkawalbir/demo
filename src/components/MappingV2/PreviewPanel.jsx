@@ -1,0 +1,146 @@
+import React, { useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import actions from '../../actions';
+import {selectors} from '../../reducers';
+import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
+import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
+import HttpMappingAssistant from '../AFE/ImportMapping/HttpMappingAssistant';
+
+const useStyles = makeStyles(theme => ({
+  assistantContainer: {
+    flex: '1 1 0',
+    width: '0px',
+    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+  },
+}));
+export default function PreviewPanel(props) {
+  const {resourceId, disabled} = props;
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const previewData = useSelector(state => {
+    const {preview} = selectors.mappingV2(state);
+
+    return preview && preview.data;
+  });
+  const importRes = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const {_connectionId: connectionId} = importRes;
+
+  const salesforcelayoutId = useSelector(state => {
+    if (importRes.adaptorType === 'SalesforceImport') {
+      const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+
+      if (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) {
+        const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
+
+        if (searchLayoutable) {
+          return recordTypeId;
+        }
+      }
+    }
+  });
+  const mappingPreviewType = useSelector(state =>
+    selectors.mappingPreviewType(state, resourceId)
+  );
+  const httpAssistantPreviewObj = useSelector(state =>
+    selectors.mappingV2HttpAssistantPreviewData(state, resourceId)
+  );
+  const {lastModifiedRowKey } = useSelector(state => selectors.mappingV2(state));
+  const salesforceNetsuitePreviewData = useMemo(() => {
+    if (mappingPreviewType === 'salesforce') {
+      if (previewData && Array.isArray(previewData) && previewData.length) {
+        const [_val] = previewData;
+
+        return _val;
+      }
+
+      return previewData;
+    }
+  }, [mappingPreviewType, previewData]);
+
+  const options = useMemo(() => {
+    if (importRes.adaptorType === 'SalesforceImport') {
+      const {salesforce} = importRes;
+      const {sObjectType} = salesforce;
+
+      return {
+        sObjectType,
+        sObjectLabel: sObjectType,
+      };
+    }
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
+      return {
+        // todo
+        // netSuiteRecordType: recordType
+      };
+    }
+  }, [importRes]);
+  const handleSFNSAssistantFieldClick = useCallback(
+    meta => {
+      if (disabled) {
+        return;
+      }
+      let value;
+
+      if (importRes.adaptorType === 'SalesforceImport') {
+        value = meta.id;
+      } else if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
+        value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
+      }
+      if (lastModifiedRowKey && value) {
+        dispatch(
+          actions.mappingV2.patchField(
+            'generate',
+            lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
+            value
+          )
+        );
+      }
+    },
+    [disabled, importRes.adaptorType, lastModifiedRowKey, dispatch]
+  );
+
+  return (
+    <>
+      {mappingPreviewType && (
+      <div className={classes.assistantContainer}>
+        {mappingPreviewType === 'salesforce' && (
+        <SalesforceMappingAssistant
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          connectionId={connectionId}
+          layoutId={salesforcelayoutId}
+          onFieldClick={handleSFNSAssistantFieldClick}
+          data={salesforceNetsuitePreviewData}
+          {...options}
+             />
+        )}
+        {mappingPreviewType === 'netsuite' && (
+        <NetSuiteMappingAssistant
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          netSuiteConnectionId={connectionId}
+          onFieldClick={handleSFNSAssistantFieldClick}
+          data={salesforceNetsuitePreviewData}
+          {...options}
+             />
+        )}
+        {mappingPreviewType === 'http' && (
+        <HttpMappingAssistant
+          editorId="httpPreview"
+          rule={httpAssistantPreviewObj.rule}
+          data={httpAssistantPreviewObj.data}
+             />
+        )}
+      </div>
+      )}
+    </>
+  );
+}

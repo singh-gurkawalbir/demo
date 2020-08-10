@@ -33,6 +33,7 @@ import exportDataReducer, { selectors as fromExportData } from './exportData';
 import customSettings, { selectors as fromCustomSettings } from './customSettings';
 import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import { genSelectors } from '../util';
+import mappingV2 from './mappingV2';
 
 export default combineReducers({
   recycleBin,
@@ -68,6 +69,7 @@ export default combineReducers({
   customSettings,
   exportData: exportDataReducer,
   editorSampleData,
+  mappingV2,
 });
 
 // #region PUBLIC SELECTORS

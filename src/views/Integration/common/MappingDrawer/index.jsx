@@ -7,7 +7,7 @@ import { Drawer } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../components/LoadResources';
-import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
+import Mapping from '../../../../components/MappingV2';
 import SelectImport from './SelectImport';
 
 const useStyles = makeStyles(theme => ({
@@ -69,7 +69,7 @@ function MappingDrawer({integrationId}) {
           resources="imports, exports, connections">
           {importId ? (
             <>
-              <StandaloneMapping
+              <Mapping
                 id={mappingEditorId}
                 // eslint-disable-next-line react/jsx-handler-names
                 onClose={history.goBack}

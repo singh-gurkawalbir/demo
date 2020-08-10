@@ -985,56 +985,31 @@ export default {
       default:
     }
   },
-  generateMappingsForApp: ({
+  generateFieldsAndListMappingForApp: ({
     mappings,
     generateFields,
-    appType,
     isGroupedSampleData,
     resource,
-    flowSampleData,
     netsuiteRecordType,
     exportRes,
   }) => {
-    switch (appType) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        return netsuiteMappingUtil.generateMappingFieldsAndList({
-          mappings,
-          isGroupedSampleData,
-          generateFields,
-          flowSampleData,
-          recordType: netsuiteRecordType,
-          exportRes,
-        });
-      case adaptorTypeMap.FTPImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.RESTImport:
-      case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.S3Import:
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.DynamodbImport:
-      case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.RDBMSImport:
-        return mappingUtil.generateMappingFieldsAndList({
-          mappings,
-          isGroupedSampleData,
-          useFirstRowSupported: true,
-          resource,
-          flowSampleData,
-          exportRes,
-        });
-      case adaptorTypeMap.SalesforceImport:
-        return mappingUtil.generateMappingFieldsAndList({
-          mappings,
-          isGroupedSampleData,
-          useFirstRowSupported: false,
-          resource,
-          flowSampleData,
-          exportRes,
-        });
-
-      default:
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {
+      return netsuiteMappingUtil.generateMappingFieldsAndList({
+        mappings,
+        isGroupedSampleData,
+        generateFields,
+        recordType: netsuiteRecordType,
+        exportRes,
+      });
     }
+
+    return mappingUtil.generateMappingFieldsAndList({
+      mappings,
+      isGroupedSampleData,
+      useFirstRowSupported: resource.adaptorType === 'SalesforceImport',
+      resource,
+      exportRes,
+    });
   },
   getFieldsAndListMappings: ({
     mappings = {},
