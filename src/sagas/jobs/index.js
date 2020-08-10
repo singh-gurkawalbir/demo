@@ -649,7 +649,7 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   }
 }
 
-function* getLatestJob({ integrationId, flowId}) {
+function* getLatestJobs({ integrationId, flowId}) {
   yield call(requestJobCollection, { integrationId, flowId });
   const latestJobs = yield select(selectors.latestFlowJobs);
 
@@ -658,7 +658,7 @@ function* getLatestJob({ integrationId, flowId}) {
 
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
-  takeEvery(actionTypes.JOB.REQUEST_LATEST, getLatestJob),
+  takeEvery(actionTypes.JOB.REQUEST_LATEST, getLatestJobs),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,

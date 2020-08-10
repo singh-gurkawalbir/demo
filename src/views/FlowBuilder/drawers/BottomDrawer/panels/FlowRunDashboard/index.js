@@ -22,7 +22,7 @@ export default function FlowRunDashboard({ flow }) {
   useEffect(() => {
     if (latestJobs.length === 0) {
       dispatch(
-        actions.job.requestLatestJob({
+        actions.job.requestLatestJobs({
           integrationId,
           flowId,
         })

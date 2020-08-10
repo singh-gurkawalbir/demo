@@ -1469,7 +1469,7 @@ const job = {
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
     }),
-  requestLatestJob: ({ integrationId, flowId, filters }) =>
+  requestLatestJobs: ({ integrationId, flowId, filters }) =>
     action(actionTypes.JOB.REQUEST_LATEST, {
       integrationId,
       flowId,
