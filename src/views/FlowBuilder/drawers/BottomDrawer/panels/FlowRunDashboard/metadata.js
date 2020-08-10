@@ -1,7 +1,9 @@
 import React from 'react';
 import DownloadDiagnostics from './actions/DownloadDiagnostics';
+import CancelJob from './actions/CancelJob';
 import ErrorLink from './ErrorLink';
 import JobStatus from '../../../../../../components/JobDashboard/JobStatus';
+import {JOB_STATUS} from '../../../../../../utils/constants';
 
 export default {
   columns: [
@@ -35,5 +37,16 @@ export default {
       value: r => r.endedAt,
     },
   ],
-  rowActions: () => [DownloadDiagnostics],
+  rowActions: r => {
+    const actions = [];
+
+    if (r?._flowJobId && r.status !== JOB_STATUS.QUEUED) {
+      actions.push(DownloadDiagnostics);
+      if (r.status === JOB_STATUS.RUNNING) {
+        actions.push(CancelJob);
+      }
+    }
+
+    return actions;
+  },
 };

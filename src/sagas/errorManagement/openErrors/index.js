@@ -54,7 +54,7 @@ function* pollForOpenErrors({ flowId }) {
   yield put(actions.errorManager.openFlowErrors.request({ flowId }));
   while (true) {
     yield call(requestFlowOpenErrors, { flowId });
-    yield delay(2000);
+    yield delay(5 * 1000);
   }
 }
 
