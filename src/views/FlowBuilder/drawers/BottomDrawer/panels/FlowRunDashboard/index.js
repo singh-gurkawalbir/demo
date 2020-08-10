@@ -27,10 +27,6 @@ export default function FlowRunDashboard({ flow }) {
     }
   }, [dispatch, integrationId, flowId, latestJobs.length]);
 
-  if (!latestJobs.length) {
-    return null;
-  }
-
   return (
     <>
       <CeligoTable

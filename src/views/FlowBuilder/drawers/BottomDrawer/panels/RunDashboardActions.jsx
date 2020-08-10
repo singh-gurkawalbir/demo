@@ -1,4 +1,4 @@
-import React, { useCallback} from 'react';
+import React, { useCallback, useMemo} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RefreshIcon from '../../../../../components/icons/RefreshIcon';
@@ -15,7 +15,6 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
-    alignContent: 'center',
     margin: theme.spacing(1),
   },
 }));
@@ -23,14 +22,14 @@ export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const cancellableJobIds = useSelector(state => {
-    const latestJobs = selectors.latestFlowJobs(state);
+  const latestJobs = useSelector(state => selectors.latestFlowJobs(state));
+  const cancellableJobIds = useMemo(() => {
     const jobIdsToCancel = latestJobs
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status))
       .map(job => job._id);
 
     return jobIdsToCancel;
-  });
+  }, [latestJobs]);
   const handleRefresh = useCallback(() => {
     dispatch(actions.job.clear());
   }, [dispatch]);
@@ -56,6 +55,10 @@ export default function RunDashboardActions({ flowId }) {
       ],
     });
   }, [dispatch, confirmDialog, cancellableJobIds]);
+
+  if (!latestJobs.length) {
+    return null;
+  }
 
   return (
     <div className={classes.rightActionContainer}>
