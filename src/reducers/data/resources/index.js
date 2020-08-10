@@ -524,7 +524,7 @@ selectors.integrationAppSettings = (state, id) => {
       draft.stores = draft.settings.sections.map(s => ({
         label: s.title,
         hidden: !!s.hidden,
-        mode: s.mode,
+        mode: s.mode || 'settings',
         value: s.id,
       }));
     }

@@ -35,7 +35,9 @@ export default function (state = defaultState, action) {
         }
         draft.version = version;
         break;
-
+      case actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER:
+        draft.userAcceptedAccountTransfer = true;
+        break;
       default:
         break;
     }
@@ -65,4 +67,5 @@ selectors.appErrored = state => {
 };
 
 selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;
+selectors.isUserAcceptedAccountTransfer = state => !!state?.userAcceptedAccountTransfer;
 // #endregion
