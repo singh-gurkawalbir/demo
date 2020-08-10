@@ -99,7 +99,7 @@ export const applicationsList = () => {
     ) {
       applications.push({
         value: asst.id,
-        label: asst.name
+        label: asst.name,
       });
     }
   });
