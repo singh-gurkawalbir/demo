@@ -62,7 +62,6 @@ export default function RunDashboardActions({ flowId }) {
       <IconTextButton onClick={handleRefresh}>
         <RefreshIcon /> Refresh
       </IconTextButton>
-      {/* disable when not eligible to cancel */}
       <IconTextButton onClick={handleCancel} disabled={cancellableJobIds.length === 0}>
         <CancelIcon /> Cancel
       </IconTextButton>
