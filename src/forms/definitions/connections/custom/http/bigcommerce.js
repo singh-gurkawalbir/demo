@@ -46,6 +46,12 @@ export default {
           value: iClientDoc?.oauth2?.clientId,
         },
       ];
+      retValues['/http/auth/token/refreshHeaders'] = [
+        {
+          name: 'X-Auth-Client',
+          value: iClientDoc?.oauth2?.clientId,
+        },
+      ];
     } else {
       retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
