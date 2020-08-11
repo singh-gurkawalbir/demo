@@ -65,6 +65,9 @@ export default function reducer(state = {}, action) {
         if (!draft[templateId]) {
           draft[templateId] = {};
         }
+        if (!draft[templateId].status) {
+          draft[templateId].status = {};
+        }
         draft[templateId].preview.status = 'failure';
         break;
 
