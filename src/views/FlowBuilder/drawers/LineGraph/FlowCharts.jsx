@@ -58,7 +58,7 @@ const getLegend = index => {
 };
 
 const Chart = ({ id, flowId, selectedResources }) => {
-  const { data = [{time: new Date().toISOString()}] } =
+  const { data = [{}] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
@@ -94,7 +94,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             dataKey="time"
             name="Time"
             type="category"
-            tickFormatter={unixTime => moment(unixTime).format('DD/MMM HH:mm  ')}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format('DD/MMM HH:mm  ') : ''}
           />
           <YAxis
             yAxisId={id}
