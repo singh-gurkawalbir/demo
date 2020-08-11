@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ResourceTable from '../CeligoTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
 

@@ -7,7 +7,7 @@ import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../../actions';
 import RightDrawer from '../../../../../../components/drawer/Right';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import ResourceSetupDrawer from '../../../../../../components/ResourceSetup';
 import {
   generateNewId,

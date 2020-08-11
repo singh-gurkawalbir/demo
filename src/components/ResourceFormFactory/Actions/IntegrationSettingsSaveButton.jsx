@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
 

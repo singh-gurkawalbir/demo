@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import NotificationToaster from '../../../components/NotificationToaster';

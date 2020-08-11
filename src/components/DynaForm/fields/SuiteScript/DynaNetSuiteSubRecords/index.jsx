@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../../actions';
 import { SCOPES } from '../../../../../sagas/resourceForm';
@@ -75,8 +75,7 @@ export default function DynaNetSuiteSubRecords(props) {
   const dispatch = useDispatch();
   const referenceFields = useSelector(state =>
     selectors
-      .metadataOptionsAndResources({
-        state,
+      .metadataOptionsAndResources(state, {
         connectionId,
         commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`,
         filterKey: 'suitescript-subrecord-referenceFields',

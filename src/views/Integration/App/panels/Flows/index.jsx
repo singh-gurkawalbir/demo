@@ -7,7 +7,7 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import CeligoTable from '../../../../../components/CeligoTable';

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 import { preSaveValidate } from '../../AFE/EditorDialog/util';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';

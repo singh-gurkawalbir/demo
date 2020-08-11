@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 

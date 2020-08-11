@@ -46,20 +46,22 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function integrationAppsInstaller(state, id) {
+export const selectors = {};
+
+selectors.integrationAppsInstaller = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
 
   return state[id];
-}
+};
 
-export function canOpenOauthConnection(state, id) {
+selectors.canOpenOauthConnection = (state, id) => {
   if (!state || !state[id]) {
     return { openOauthConnection: false };
   }
 
   return { openOauthConnection: state[id].openOauthConnection || false, connectionId: state[id].connectionId};
-}
+};
 
 // #endregion

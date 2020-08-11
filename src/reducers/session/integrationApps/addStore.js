@@ -70,12 +70,13 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function addNewStoreSteps(state, id) {
+selectors.addNewStoreSteps = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
 
   return state[id];
-}
+};
 // #endregion

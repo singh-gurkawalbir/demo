@@ -1,5 +1,5 @@
 import { put, select, call } from 'redux-saga/effects';
-import { resourceData, flowReferencesForResource } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES, updateFlowDoc } from '../../resourceForm';
 import actions from '../../../actions';
 import {
@@ -10,7 +10,7 @@ import {
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
   const { merged: flow } = yield select(
-    resourceData,
+    selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE
@@ -92,7 +92,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType, stagesTo
    * flowRefs : [{flowId, resourceId}, ..] for all the flows ( PP / PG )
    */
   const flowRefs = yield select(
-    flowReferencesForResource,
+    selectors.flowReferencesForResource,
     resourceType,
     resourceId
   );
@@ -111,7 +111,7 @@ export function* updateFlowsDataForResource({ resourceId, resourceType, stagesTo
 export function* updateFlowData({ flowId }) {
   // Updates flow structure incase of Drag and change flow order
   const { merged: updatedFlow } = yield select(
-    resourceData,
+    selectors.resourceData,
     'flows',
     flowId,
     SCOPES.VALUE

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import TrashIcon from '../../../../icons/TrashIcon';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import getRoutePath from '../../../../../utils/routePaths';

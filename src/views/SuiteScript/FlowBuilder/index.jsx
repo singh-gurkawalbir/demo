@@ -6,7 +6,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import EditableText from '../../../components/EditableText';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
 import PageGenerator from './PageGenerator';
 import PageProcessor from './PageProcessor';

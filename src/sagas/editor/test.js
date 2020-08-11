@@ -5,7 +5,7 @@ import { call, put, select, delay } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import {
   autoEvaluateProcessor,
   invokeProcessor,

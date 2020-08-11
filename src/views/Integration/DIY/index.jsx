@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, Select, MenuItem } from '@material-ui/core';
 import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
 import TrashIcon from '../../../components/icons/TrashIcon';
@@ -38,6 +38,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integrationApps';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
+import ChipInput from '../../../components/ChipInput';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -47,6 +48,9 @@ const useStyles = makeStyles(theme => ({
       padding: 0,
       border: 'none',
     },
+  },
+  tag: {
+    marginLeft: theme.spacing(1),
   },
   editableTextInput: {
     width: `calc(60vw - ${52 + 24}px)`,
@@ -129,6 +133,7 @@ export default function Integration(props) {
     installSteps,
     uninstallSteps,
     mode,
+    tag,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -147,7 +152,8 @@ export default function Integration(props) {
         sandbox: integration.sandbox,
         installSteps: integration.installSteps,
         uninstallSteps: integration.uninstallSteps,
-        supportsChild: integration && integration.initChild && integration.initChild.function,
+        supportsChild: integration.initChild?.function,
+        tag: integration.tag,
       };
     }
 
@@ -233,7 +239,7 @@ export default function Integration(props) {
         templateId
       );
 
-      return getTemplateUrlName(template && template.applications);
+      return getTemplateUrlName(template?.applications);
     }
 
     return null;
@@ -351,6 +357,12 @@ export default function Integration(props) {
     },
     [patchIntegration]
   );
+  const handleTagChangeHandler = useCallback(
+    tag => {
+      patchIntegration('/tag', tag);
+    },
+    [patchIntegration]
+  );
 
   if (!hasIntegration && isDeleting) {
     ['integrations', 'tiles', 'scripts'].forEach(resource =>
@@ -419,8 +431,7 @@ export default function Integration(props) {
   }, [history, integrationId, templateName, templateUrlName]);
   useEffect(() => {
     if (
-      childIntegration &&
-      childIntegration.mode === 'install'
+      childIntegration?.mode === 'install'
     ) {
       history.push(
         getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegration._id}/setup`)
@@ -455,11 +466,11 @@ export default function Integration(props) {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`
     );
-  } else if (installSteps && installSteps.length && mode === 'install') {
+  } else if (installSteps?.length && mode === 'install') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/setup`
     );
-  } else if (uninstallSteps && uninstallSteps.length && mode === 'uninstall') {
+  } else if (uninstallSteps?.length && mode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall${
         childId ? `/${childId}` : ''
@@ -497,6 +508,15 @@ export default function Integration(props) {
               'Standalone integrations'
             )
           }
+          titleTag={isIntegrationApp && (
+            <ChipInput
+              disabled={!canEdit}
+              value={tag || 'tag'}
+              className={classes.tag}
+              variant="outlined"
+              onChange={handleTagChangeHandler}
+          />
+          )}
           infoText={
             hasIntegration ? (
               <EditableText

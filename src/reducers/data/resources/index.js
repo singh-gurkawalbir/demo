@@ -357,7 +357,9 @@ export default (state = {}, action) => {
   }
 };
 
-export function resourceIdState(state, resourceType, id) {
+export const selectors = {};
+
+selectors.resourceIdState = (state, resourceType, id) => {
   if (!state || !id || !resourceType) {
     return null;
   }
@@ -367,14 +369,14 @@ export function resourceIdState(state, resourceType, id) {
   if (!resources) return null;
 
   return resources.find(r => r._id === id);
-}
+};
 
 // #region PUBLIC SELECTORS
 // TODO:Deprecate this selector and use makeResourceSelector
-export function resource(state, resourceType, id) {
+selectors.resource = (state, resourceType, id) => {
   // console.log('fetch', resourceType, id);
 
-  const match = resourceIdState(state, resourceType, id);
+  const match = selectors.resourceIdState(state, resourceType, id);
 
   if (!match) return null;
 
@@ -393,7 +395,7 @@ export function resource(state, resourceType, id) {
   }
 
   return match;
-}
+};
 
 // transformed from above selector
 function resourceTransformed(resourceIdState, resourceType) {
@@ -414,15 +416,15 @@ function resourceTransformed(resourceIdState, resourceType) {
   return resourceIdState;
 }
 
-export const makeResourceSelector = () =>
+selectors.makeResourceSelector = () =>
   createSelector(
-    (state, resourceType, id) => resourceIdState(state, resourceType, id),
+    (state, resourceType, id) => selectors.resourceIdState(state, resourceType, id),
     (_, resourceType) => resourceType,
     (resourceIdState, resourceType) =>
       resourceTransformed(resourceIdState, resourceType)
   );
 
-export function exportNeedsRouting(state, id) {
+selectors.exportNeedsRouting = (state, id) => {
   if (!state) return false;
 
   const allExports = state.exports;
@@ -443,12 +445,12 @@ export function exportNeedsRouting(state, id) {
 
   // only AS2 exports that share their connection with another export need routing.
   return siblingExports.length >= 2;
-}
+};
 
-export function connectionHasAs2Routing(state, id) {
+selectors.connectionHasAs2Routing = (state, id) => {
   if (!state) return false;
 
-  const connection = resource(state, 'connections', id);
+  const connection = selectors.resource(state, 'connections', id);
 
   if (!connection) return false;
 
@@ -457,10 +459,10 @@ export function connectionHasAs2Routing(state, id) {
     connection.as2.contentBasedFlowRouter &&
     connection.as2.contentBasedFlowRouter._scriptId
   );
-}
+};
 
-export function integrationInstallSteps(state, id) {
-  const integration = resource(state, 'integrations', id);
+selectors.integrationInstallSteps = (state, id) => {
+  const integration = selectors.resource(state, 'integrations', id);
 
   if (
     !integration ||
@@ -491,7 +493,7 @@ export function integrationInstallSteps(state, id) {
       draft.find(step => !step.completed).isCurrentStep = true;
     }
   });
-}
+};
 
 // TODO: Santosh, All this selector does is transform the integration settings.
 // Its probably best if the component uses the resource selector directly
@@ -501,8 +503,9 @@ export function integrationInstallSteps(state, id) {
 // and the component developer ALMOST has the same experience, wherein the just
 // need to pass the integration resource to the new util method for the transformation to take
 // effect.
-export function integrationAppSettings(state, id) {
-  const integration = resource(state, 'integrations', id);
+selectors.integrationAppSettings = (state, id) => {
+  if (!state) return null;
+  const integration = selectors.resource(state, 'integrations', id);
 
   if (!integration || !integration._connectorId) {
     return null;
@@ -526,10 +529,10 @@ export function integrationAppSettings(state, id) {
       }));
     }
   });
-}
+};
 
-export function defaultStoreId(state, id, store) {
-  const settings = integrationAppSettings(state, id);
+selectors.defaultStoreId = (state, id, store) => {
+  const settings = selectors.integrationAppSettings(state, id);
 
   if (settings && settings.stores && settings.stores.length) {
     if (settings.stores.find(s => s.value === store)) {
@@ -546,12 +549,12 @@ export function defaultStoreId(state, id, store) {
   }
 
   return undefined;
-}
+};
 
-export function resourceList(
+selectors.resourceList = (
   state,
   { type, take, keyword, sort, sandbox, filter, searchBy }
-) {
+) => {
   const result = {
     resources: [],
     type,
@@ -632,17 +635,13 @@ export function resourceList(
     resources: slice,
     count: slice.length,
   };
-}
+};
 
-export function resourceState(state) {
-  return state;
-}
+selectors.resourceState = state => state;
 
-export function hasData(state, resourceType) {
-  return !!(state && state[resourceType]);
-}
+selectors.hasData = (state, resourceType) => !!(state && state[resourceType]);
 
-export const resourceDetailsMap = createSelector(
+selectors.resourceDetailsMap = createSelector(
   state => state,
   state => {
     const allResources = {};
@@ -687,10 +686,10 @@ export const resourceDetailsMap = createSelector(
   }
 );
 
-export function hasSettingsForm(state, resourceType, resourceId) {
-  const res = resource(state, resourceType, resourceId);
+selectors.hasSettingsForm = (state, resourceType, resourceId) => {
+  const res = selectors.resource(state, resourceType, resourceId);
   const settingsForm = res && res.settingsForm;
 
   return !!(settingsForm && (settingsForm.form || settingsForm.init));
-}
+};
 // #endregion

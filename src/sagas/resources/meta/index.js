@@ -2,7 +2,7 @@ import { call, put, race, select, take, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import { commStatusByKey } from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
@@ -130,7 +130,7 @@ export function* requestAssistantMetadata({ adaptorType = 'rest', assistant }) {
     }
   );
   const commStatus = yield select(
-    commStatusByKey,
+    selectors.commStatusByKey,
     commKeyGenerator(path, opts.method)
   );
 

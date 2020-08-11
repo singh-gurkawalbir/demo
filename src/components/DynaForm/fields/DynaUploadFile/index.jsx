@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
-import { getUploadedFile } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
@@ -41,7 +41,7 @@ function DynaUploadFile(props) {
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
-    state => getUploadedFile(state, fileId),
+    state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
 

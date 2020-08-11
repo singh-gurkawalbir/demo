@@ -59,7 +59,9 @@ export default (state = {}, action) => {
   });
 };
 
-export const errorMap = (state, resourceId) => {
+export const selectors = {};
+
+selectors.errorMap = (state, resourceId) => {
   if (!state || !resourceId || !state[resourceId]) return defaultObject;
 
   return state[resourceId];

@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import JsonContent from '../../components/JsonContent';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import CeligoPageBar from '../../components/CeligoPageBar';
 
 const useStyles = makeStyles(theme => ({

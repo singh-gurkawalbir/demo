@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 export default function DynaNSWSSavedSearch(props) {
   const [savedSearchUrl, setSavedSearchUrl] = useState();

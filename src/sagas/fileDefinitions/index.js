@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChanges } from '../resources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 /*
  * Fetches all Supported File Definitions

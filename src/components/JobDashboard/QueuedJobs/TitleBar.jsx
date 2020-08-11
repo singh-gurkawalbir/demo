@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import CloseIcon from '../../icons/CloseIcon';
 import LoadResources from '../../LoadResources';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 

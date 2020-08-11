@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
 import FlowsIcon from '../../../../components/icons/FlowsIcon';

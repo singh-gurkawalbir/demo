@@ -2,7 +2,7 @@ import { makeStyles, Typography, Button } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CeligoTable from '../CeligoTable';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import { MODEL_PLURAL_TO_LABEL } from '../../utils/resource';
@@ -50,7 +50,7 @@ export default function ResourceReferences(onClose, resourceType, resourceId, ti
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
           <Typography variant="h4">
-            This {resourceTypeLabel} is not being used anywhere
+            This resource is not being used anywhere
           </Typography>
           <Button onClick={onClose} variant="outlined" color="primary">
             Close
@@ -62,7 +62,7 @@ export default function ResourceReferences(onClose, resourceType, resourceId, ti
           <div>
             {title
               ? `Unable to delete ${resourceTypeLabel} as`
-              : `${MODEL_PLURAL_TO_LABEL[resourceType]} references:`}
+              : 'Used by'}
           </div>
           <div>
             <Typography className={classes.message}>

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { generateNewId,
   isTradingPartnerSupported,
 } from '../../../../../utils/resource';

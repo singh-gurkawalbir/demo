@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';

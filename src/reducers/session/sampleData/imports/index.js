@@ -27,6 +27,6 @@ export default function (state = {}, action) {
   });
 }
 
-export function integrationAppImportMetadata(state, _importId) {
-  return state[_importId] || DEFAULT_VALUE;
-}
+export const selectors = {};
+
+selectors.integrationAppImportMetadata = (state, _importId) => state[_importId] || DEFAULT_VALUE;

@@ -41,7 +41,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function flowMetricsData(state, flowId, measurement) {
+export const selectors = {};
+
+selectors.flowMetricsData = (state, flowId, measurement) => {
   if (!state || !state[flowId]) {
     return null;
   }
@@ -52,6 +54,6 @@ export function flowMetricsData(state, flowId, measurement) {
     ...metrics,
     data: getFlowMetrics(metrics, measurement),
   };
-}
+};
 
 // #endregion

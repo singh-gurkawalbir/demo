@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem, ListItemText, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import options from '../../options';

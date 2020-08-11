@@ -10,12 +10,7 @@ import {
 } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import { keys } from 'lodash';
-import {
-  resourceData,
-  getSampleData,
-  getScriptContext,
-  getFlowDataState,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -60,7 +55,7 @@ import {
 import { isIntegrationApp } from '../../../utils/flows';
 
 function* initFlowData({ flowId, resourceId, resourceType, refresh }) {
-  const { merged: flow } = yield select(resourceData, 'flows', flowId);
+  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId);
   const clonedFlow = deepClone(flow);
 
   if (isNewId(flowId)) {
@@ -70,7 +65,7 @@ function* initFlowData({ flowId, resourceId, resourceType, refresh }) {
   if (isNewId(resourceId)) {
     // For a new export/lookup/import initiating flow with this new temp id
     const { merged: resource } = yield select(
-      resourceData,
+      selectors.resourceData,
       resourceType,
       resourceId,
       'value'
@@ -177,7 +172,7 @@ export function* fetchPageProcessorPreview({
   resourceType = 'exports',
 }) {
   if (!flowId || !_pageProcessorId) return;
-  const flowDataState = yield select(getFlowDataState, flowId) || {};
+  const flowDataState = yield select(selectors.getFlowDataState, flowId) || {};
   let previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
@@ -188,7 +183,7 @@ export function* fetchPageProcessorPreview({
     refresh: refresh || flowDataState.refresh,
   });
   const { merged: resource = {} } = yield select(
-    resourceData,
+    selectors.resourceData,
     resourceType,
     _pageProcessorId,
     'value'
@@ -211,16 +206,16 @@ export function* fetchPageProcessorPreview({
 export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
   if (!flowId || !_pageGeneratorId) return;
   const { merged: resource = {} } = yield select(
-    resourceData,
+    selectors.resourceData,
     'exports',
     _pageGeneratorId
   );
   const { merged: connection } = yield select(
-    resourceData,
+    selectors.resourceData,
     'connections',
     resource._connectionId
   );
-  const { merged: flow = {} } = yield select(resourceData, 'flows', flowId);
+  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId);
 
   let previewData;
 
@@ -334,7 +329,7 @@ export function* requestProcessorData({
   const stage = processorStage || processor;
   let hasNoRulesToProcess = false;
   const { merged: resource } = yield select(
-    resourceData,
+    selectors.resourceData,
     resourceType,
     resourceId,
     SCOPES.VALUE
@@ -350,7 +345,7 @@ export function* requestProcessorData({
     isInitialized: true,
   });
   // The below data is plain raw sample data stored in state
-  const preProcessedSampleData = yield select(getSampleData, {
+  const preProcessedSampleData = yield select(selectors.getSampleData, {
     flowId,
     resourceId,
     resourceType,
@@ -414,7 +409,7 @@ export function* requestProcessorData({
         resourceType: 'scripts',
         id: scriptId,
       });
-      const context = yield select(getScriptContext, {
+      const context = yield select(selectors.getScriptContext, {
         flowId,
         contextType: 'hook',
       });

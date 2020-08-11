@@ -2,7 +2,7 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { requestSampleData } from '../sampleData/flows';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
 import { isNewId, isFileAdaptor, isAS2Resource } from '../../utils/resource';

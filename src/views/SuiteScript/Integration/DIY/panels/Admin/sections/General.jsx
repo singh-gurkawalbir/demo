@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import ResourceForm from '../../../../../../../components/SuiteScript/ResourceFormFactory';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   formContainer: {

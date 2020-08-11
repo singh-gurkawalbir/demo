@@ -49,13 +49,15 @@ export default (state = {}, action) => {
 };
 const emptyObj = {};
 
-export function suiteScriptIAFeatureCheckState(
+export const selectors = {};
+
+selectors.suiteScriptIAFeatureCheckState = (
   state,
   { ssLinkedConnectionId, integrationId, featureName}
-) {
+) => {
   const key = keyGen(ssLinkedConnectionId, integrationId, featureName);
 
   if (!state || !state[key]) return emptyObj;
 
   return state[key];
-}
+};

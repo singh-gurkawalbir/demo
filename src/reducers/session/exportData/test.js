@@ -1,6 +1,8 @@
 /* global describe, test, expect */
-import reducer, { exportData } from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
+
+const { exportData } = selectors;
 
 describe('exportData reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {

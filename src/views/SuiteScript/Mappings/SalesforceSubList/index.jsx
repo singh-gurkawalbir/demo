@@ -2,7 +2,7 @@ import Button from '@material-ui/core/Button';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, ButtonGroup } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 
 import RefreshableTreeComponent from './RefreshableTreeComponent';

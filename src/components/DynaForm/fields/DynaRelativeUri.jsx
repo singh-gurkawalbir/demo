@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaURI from './DynaURI';
 
 export default function DynaRelativeUri({ value, arrayIndex, ...props }) {

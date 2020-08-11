@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import InstallWizard from '../../components/InstallationWizard';
 import getRoutePath from '../../utils/routePaths';
