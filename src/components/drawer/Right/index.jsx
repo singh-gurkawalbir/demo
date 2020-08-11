@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   contentContainer: {
     margin: theme.spacing(3),
     position: 'relative',
-    height: '100%',
+    // height: '100%',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -90,6 +90,10 @@ const useStyles = makeStyles(theme => ({
   },
   helpTextButton: {
     padding: 0,
+    marginLeft: theme.spacing(1),
+    '& svg': {
+      fontSize: 20,
+    },
   },
 }));
 
