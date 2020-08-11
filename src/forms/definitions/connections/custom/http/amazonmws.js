@@ -126,6 +126,10 @@ export default {
               value: 'A33AVAJ2PDY3EV',
               label: 'A33AVAJ2PDY3EV (TR)',
             },
+            {
+              value: 'A17E79C6D8DWNP',
+              label: 'A17E79C6D8DWNP (SA)',
+            },
           ],
         },
       ],
