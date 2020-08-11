@@ -1,6 +1,5 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import JobDashboard from '../../../../../components/JobDashboard';
 
 const useStyles = makeStyles(theme => ({
