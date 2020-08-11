@@ -58,14 +58,16 @@ export default (state = {}, action) => {
   });
 };
 
-export const testConnectionStatus = (state, resourceId) => {
+export const selectors = {};
+
+selectors.testConnectionStatus = (state, resourceId) => {
   if (!state || !state[resourceId]) return null;
   const { status } = state[resourceId];
 
   return status;
 };
 
-export const testConnectionMessage = (state, resourceId) => {
+selectors.testConnectionMessage = (state, resourceId) => {
   if (!state || !state[resourceId]) return null;
   const { message } = state[resourceId];
 

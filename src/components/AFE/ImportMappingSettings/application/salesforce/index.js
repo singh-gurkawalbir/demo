@@ -551,6 +551,7 @@ export default {
           ],
         },
       ];
+
       fieldMeta.fieldMap.default.options = options;
       fieldMeta.fieldMap.hardcodedDefault.options = options;
       fieldMeta.fieldMap.lookupDefault.options = options;
@@ -564,6 +565,7 @@ export default {
           items: selectedGenerateObj && selectedGenerateObj.options,
         },
       ];
+
       fieldMeta.fieldMap.default.options = options;
       fieldMeta.fieldMap.hardcodedDefault.options = options;
       fieldMeta.fieldMap.lookupDefault.options = options;
@@ -577,6 +579,7 @@ export default {
     }
 
     fieldMeta.layout.fields = fields;
+
     return fieldMeta;
   },
 };

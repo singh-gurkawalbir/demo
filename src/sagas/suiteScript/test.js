@@ -24,7 +24,7 @@ describe('suiteScript sagas', () => {
         const expectedOut = {
           success: true,
           data: {
-            integratorPackageURL: 'http://someurl'
+            integratorPackageURL: 'http://someurl',
           },
         };
 

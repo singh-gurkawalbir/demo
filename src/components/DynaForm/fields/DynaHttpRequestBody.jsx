@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, Fragment } from 'react';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaLookupEditor from './DynaLookupEditor';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import lookupUtil from '../../../utils/lookup';

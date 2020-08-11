@@ -8,7 +8,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import { isJsonString } from '../../../utils/string';
@@ -41,7 +41,7 @@ export default function FilterEditor(props) {
         rule: props.rule,
         _init_rule: deepClone(props.rule),
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [dispatch, editorId, optionalSaveParams, props.data, props.rule, props.isSampleDataLoading]);
@@ -97,7 +97,8 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={overrides}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

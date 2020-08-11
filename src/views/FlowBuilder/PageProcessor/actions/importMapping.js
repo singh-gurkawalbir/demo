@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
@@ -57,10 +57,11 @@ function ImportMapping({
 
     return !!mappingPreviewType;
   });
-  const handleClose = (...args) => {
-    setSelectedMapping(null);
-    onClose(...args);
-  };
+  const handleClose = useCallback((...args) => {
+    if (selectedMapping) {
+      setSelectedMapping(null);
+    } else onClose(...args);
+  }, [onClose, selectedMapping]);
 
   const subrecords = useSelector(
     state => {

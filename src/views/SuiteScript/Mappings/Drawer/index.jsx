@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import RightDrawer from '../../../../components/drawer/Right';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import MappingWrapper from './MappingWrapper';
 
 export default function SuiteScriptMappingDrawer(props) {
@@ -16,6 +16,7 @@ export default function SuiteScriptMappingDrawer(props) {
   const isMappingLoaded = useSelector(
     state => {
       const {mappings} = selectors.suiteScriptMappings(state);
+
       return !!mappings;
     }
   );
@@ -23,6 +24,7 @@ export default function SuiteScriptMappingDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+
   return (
     <RightDrawer
       path={['mapping', ':flowId/mapping']}

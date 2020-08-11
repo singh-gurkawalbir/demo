@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import * as completers from '../editorSetup/completers';
 import Editor from '../GenericEditor';
 
@@ -16,7 +16,7 @@ export default function HandlebarsEditor(props) {
     disabled,
     enableAutocomplete,
     lookups = [],
-    rule
+    rule,
   } = props;
   const dispatch = useDispatch();
   const {

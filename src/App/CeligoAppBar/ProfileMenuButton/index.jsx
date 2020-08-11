@@ -8,7 +8,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';
@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
-    }
+    },
   },
   signOutBtn: {
     fontFamily: 'Roboto400',
@@ -83,7 +83,7 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'source sans pro',
     padding: 0,
     paddingTop: 2,
-  }
+  },
 }));
 
 export default function ProfileMenuButton() {
@@ -134,7 +134,7 @@ export default function ProfileMenuButton() {
         classes={{
           popper: classes.profilePopper,
           paper: classes.profilePaper,
-          arrow: classes.profilePopperArrow
+          arrow: classes.profilePopperArrow,
         }}
         anchorEl={anchorEl}
         placement="bottom-end"

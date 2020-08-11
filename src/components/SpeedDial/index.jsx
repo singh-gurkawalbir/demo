@@ -13,10 +13,10 @@ const useStyles = makeStyles(theme => ({
     right: theme.spacing(3),
   },
 }));
+
 export default function SpeedDial({children}) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-
 
   const handleClick = useCallback(() => {
     setOpen(state => !state);
@@ -29,7 +29,6 @@ export default function SpeedDial({children}) {
   const handleOpen = useCallback(() => {
     setOpen(true);
   }, []);
-
 
   return (
     <MuiSpeedDial

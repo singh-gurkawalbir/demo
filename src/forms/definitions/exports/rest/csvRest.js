@@ -1,6 +1,7 @@
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
+
     retValues['/file/type'] = 'csv';
     retValues['/rest/method'] = 'GET';
 
@@ -83,7 +84,7 @@ export default {
         hasHeaderRow: false,
         keyColumns: [],
         rowsToSkip: 0,
-        trimSpaces: false
+        trimSpaces: false,
       },
       visibleWhen: [
         {
@@ -129,20 +130,20 @@ export default {
                   'rest.relativeURI',
                   'rest.headers',
                   'uploadFile',
-                ]
+                ],
               },
               {
                 type: 'indent',
                 containers: [
                   {fields: [
                     'file.csv',
-                  ]}
-                ]
+                  ]},
+                ],
               },
               {
                 fields: [
                   'rest.blobFormat',
-                ]
+                ],
               },
             ],
           },
@@ -156,7 +157,7 @@ export default {
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
   },
 };

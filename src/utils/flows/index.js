@@ -53,6 +53,7 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     responseTransform = {},
     http = {},
     netsuite = {},
+    netsuite_da = {}, // eslint-disable-line camelcase
   } = resource;
   const {
     responseMapping = {},
@@ -126,7 +127,9 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.hooks: {
-      return !!hooks || !!netsuite.restlet?.hooks || !!netsuite.distributed?.hooks;
+      // for NS exports hooks(suitescript) will be stored in netsuite -> restlet/distributed schema
+      // and for NS imports hooks is stored in netsuite_da schema
+      return !!hooks || !!netsuite.restlet?.hooks || !!netsuite.distributed?.hooks || !!netsuite_da.hooks;
     }
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
@@ -187,6 +190,7 @@ export const isImportMappingAvailable = importResource => {
 
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
+
   // For File Adaptor XML Imports, no support for import mapping
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
@@ -674,10 +678,9 @@ export function convertOldFlowSchemaToNewOne(flow) {
   return updatedFlow;
 }
 
-
 export const isFlowUpdatedWithPgOrPP = (flow, resourceId) => flow && (
-  (flow.pageGenerators
-     && flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
+  (flow.pageGenerators &&
+     flow.pageGenerators.some(({_exportId}) => _exportId === resourceId)) ||
     (
       flow.pageProcessors &&
     flow.pageProcessors.some(({_exportId, _importId}) => _exportId === resourceId || _importId === resourceId)));

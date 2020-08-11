@@ -6,12 +6,13 @@ const DEFAULT_VALUE = {};
 export default (state = {}, action) => {
   const { ssLinkedConnectionId, integrationId, flowId, type } = action;
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
+
   return produce(state, draft => {
     switch (type) {
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.REQUEST: {
         if (!draft[id]) {
           draft[id] = {
-            status: 'requested'
+            status: 'requested',
           };
         } else {
           draft[id].status = 'requested';
@@ -20,6 +21,7 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED: {
         const {data} = action;
+
         if (!draft[id]) {
           draft[id] = {};
         }
@@ -29,6 +31,7 @@ export default (state = {}, action) => {
       }
       case actionTypes.SUITESCRIPT.IMPORT_SAMPLEDATA.RECEIVED_ERROR: {
         const {error} = action;
+
         draft[id].status = 'error';
         draft[id].data = error;
         break;
@@ -39,12 +42,15 @@ export default (state = {}, action) => {
   });
 };
 
-export function importSampleDataContext(
+export const selectors = {};
+
+selectors.suiteScriptImportSampleDataContext = (
   state,
   { ssLinkedConnectionId, integrationId, flowId }
-) {
+) => {
   // returns input data for that stage to populate
   const id = `${ssLinkedConnectionId}-${integrationId}-${flowId}`;
   const flowData = state[id];
+
   return flowData || DEFAULT_VALUE;
-}
+};

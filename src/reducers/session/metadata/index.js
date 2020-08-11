@@ -158,7 +158,6 @@ export default (
   });
 };
 
-
 const optionsFromMetadataTransformFunct = (
   applicationResource,
   connectionId,
@@ -182,8 +181,9 @@ const optionsFromMetadataTransformFunct = (
     metaFilter(data, {
       applicationResource,
       connectionId,
-      commMetaPath
+      commMetaPath,
     });
+
   return {
     data: transformedData,
     status,
@@ -194,21 +194,22 @@ const optionsFromMetadataTransformFunct = (
 };
 
 // TODO: deprecate this function and use the makeOptionsFromMetadata
-export const optionsFromMetadata = ({
-  state,
+export const selectors = {};
+
+selectors.optionsFromMetadata = (state, {
   connectionId,
   commMetaPath,
   filterKey,
 }) => {
   const applicationResource = (state && state.application) || null;
+
   return optionsFromMetadataTransformFunct(applicationResource,
     connectionId,
     commMetaPath,
     filterKey);
 };
 
-
-export const makeOptionsFromMetadata = () => createSelector(
+selectors.makeOptionsFromMetadata = () => createSelector(
   state => state?.application,
   (_1, connectionId) => connectionId,
   (_1, _2, commMetaPath) => commMetaPath,
@@ -216,7 +217,7 @@ export const makeOptionsFromMetadata = () => createSelector(
   optionsFromMetadataTransformFunct
 );
 
-export function assistantData(state, { adaptorType, assistant }) {
+selectors.assistantData = (state, { adaptorType, assistant }) => {
   if (
     !state ||
     !state.assistants ||
@@ -227,12 +228,12 @@ export function assistantData(state, { adaptorType, assistant }) {
   }
 
   return { ...state.assistants[adaptorType][assistant] };
-}
+};
 
-export function assistantPreviewData(state, resourceId) {
+selectors.assistantPreviewData = (state, resourceId) => {
   if (!state || !state.preview) {
     return null;
   }
 
   return state.preview[resourceId];
-}
+};

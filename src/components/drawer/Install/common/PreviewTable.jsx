@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CeligoTable from '../../../CeligoTable';
 import InfoIconButton from '../../../InfoIconButton';
 import Spinner from '../../../Spinner';
@@ -37,7 +37,6 @@ export default function PreviewTable({ templateId }) {
     }));
   }, [components]);
 
-
   if (status === 'failure') {
     return null;
   }
@@ -49,7 +48,6 @@ export default function PreviewTable({ templateId }) {
 
     );
   }
-
 
   return <CeligoTable data={data} columns={columns} />;
 }

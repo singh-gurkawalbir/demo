@@ -5,7 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
@@ -40,7 +40,7 @@ function GenerateUrl(props) {
     buttonLabel,
     formContext,
     flowId,
-    provider: webHookProvider
+    provider: webHookProvider,
   } = props;
   const { webHookToken } = options;
   const { value: formValues, fields: fieldStates } = formContext;
@@ -52,12 +52,13 @@ function GenerateUrl(props) {
     resourceId;
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Your URL has been copied to your clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
     if (inValidFields(webookRequiredFields, fieldStates)) {
       webookRequiredFields.forEach(fieldId => {
         onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
       });
+
       return;
     }
     dispatch(
@@ -77,6 +78,7 @@ function GenerateUrl(props) {
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
       const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+
       onFieldChange(id, whURL);
       setUrl(false);
     }

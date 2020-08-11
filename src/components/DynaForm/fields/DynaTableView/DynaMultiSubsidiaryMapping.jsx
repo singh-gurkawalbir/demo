@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useMemo } from 'react';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
-
 
 export default function DynaMultiSubsidiaryMapping(props) {
   const { optionsMap, _integrationId, id } = props;
@@ -39,7 +38,6 @@ export default function DynaMultiSubsidiaryMapping(props) {
   if (metadata && metadata.optionsMap && Array.isArray(metadata.optionsMap)) {
     metadata.optionsMap = metadata.optionsMap.map(addSupportsRefreshToOptions);
   }
-
 
   const isLoadingMap = useMemo(() => ({[fieldType]: isLoading}), [fieldType, isLoading]);
 

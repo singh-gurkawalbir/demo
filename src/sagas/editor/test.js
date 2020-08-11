@@ -5,7 +5,7 @@ import { call, put, select, delay } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import {
   autoEvaluateProcessor,
   invokeProcessor,
@@ -221,8 +221,9 @@ describe('refreshHelperFunctions saga', () => {
   process.env.HELPER_FUNCTIONS_INTERVAL_UPDATE = 1;
   const localStorage = {
     setItem: jest.fn(),
-    getItem: jest.fn()
+    getItem: jest.fn(),
   };
+
   Object.defineProperty(window, 'localStorage', { value: localStorage });
 
   test('should create a new helperFunction instance when there isn\'t any in the local storage ', () => {

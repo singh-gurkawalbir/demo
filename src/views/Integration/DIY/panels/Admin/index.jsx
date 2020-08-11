@@ -10,7 +10,7 @@ import {
 import { makeStyles } from '@material-ui/styles';
 import { List, ListItem } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import ReadmeSection from './sections/Readme';
 import GeneralSection from './sections/General';
 import ApiTokensSection from './sections/ApiTokens';
@@ -18,7 +18,6 @@ import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
 import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
 // import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,7 +88,7 @@ const allSections = [
     label: 'Uninstall',
     Section: UninstallSection,
     id: 'uninstall',
-  }
+  },
 ];
 const emptyObj = {};
 
@@ -111,7 +110,7 @@ export default function AdminPanel({ integrationId, childId }) {
     if (integration) {
       return {
         isIntegrationApp: !!integration._connectorId,
-        supportsChild: !!(integration && integration.initChild && integration.initChild.function)
+        supportsChild: !!(integration && integration.initChild && integration.initChild.function),
       };
     }
 
@@ -127,7 +126,7 @@ export default function AdminPanel({ integrationId, childId }) {
     isIntegrationApp,
     isParent,
     supportsChild,
-    isMonitorLevelUser
+    isMonitorLevelUser,
   });
 
   const availableSections = allSections.filter(

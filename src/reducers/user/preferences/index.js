@@ -68,13 +68,15 @@ export default (state = { environment: 'production' }, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function userPreferences(state) {
+export const selectors = {};
+
+selectors.userOwnPreferences = state => {
   if (!state) return emptyObj;
 
   return state;
-}
+};
 
-export function accountShareHeader(preferences, path) {
+selectors.accountShareHeader = (preferences, path) => {
   const headers = {};
 
   if (
@@ -96,5 +98,5 @@ export function accountShareHeader(preferences, path) {
   headers['integrator-ashareid'] = preferences.defaultAShareId;
 
   return headers;
-}
+};
 // #endregion PUBLIC SELECTORS

@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import DynaAction from '../../../DynaForm/DynaAction';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 
 const styles = theme => ({
@@ -59,6 +59,7 @@ const SaveButton = props => {
     disableSaveOnClick,
     setDisableSaveOnClick,
   });
+
   // TODO: @Surya Do we need to pass all props to DynaAction?
   // Please revisit after form refactor
   return (

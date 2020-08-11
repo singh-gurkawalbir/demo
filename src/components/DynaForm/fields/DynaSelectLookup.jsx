@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaSelect from './DynaSelect';
 import lookupUtil from '../../../utils/lookup';
 

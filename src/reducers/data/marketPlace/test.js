@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import moment from 'moment';
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
 describe('marketplace reducers', () => {
@@ -112,8 +112,8 @@ describe('marketplace selectors', () => {
     ];
 
     test('should return empty array on empty/undefined state', () => {
-      expect(selectors.templates(undefined)).toEqual([]);
-      expect(selectors.templates({})).toEqual([]);
+      expect(selectors.marketplaceTemplatesByApp(undefined)).toEqual([]);
+      expect(selectors.marketplaceTemplatesByApp({})).toEqual([]);
     });
     test('should return templates on valid state', () => {
       const state = reducer(
@@ -121,7 +121,7 @@ describe('marketplace selectors', () => {
         actions.marketplace.receivedTemplates({ templates: testTemplates })
       );
 
-      expect(selectors.templates(state, 'some application')).toEqual([
+      expect(selectors.marketplaceTemplatesByApp(state, 'some application')).toEqual([
         state.templates[1],
       ]);
     });

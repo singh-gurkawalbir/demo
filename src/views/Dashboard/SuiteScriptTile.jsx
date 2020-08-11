@@ -23,12 +23,12 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '
 import {
   tileStatus,
   dragTileConfig,
-  dropTileConfig
+  dropTileConfig,
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   tileName: {

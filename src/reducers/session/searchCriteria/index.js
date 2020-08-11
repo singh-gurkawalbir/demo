@@ -100,7 +100,9 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function getSearchCriteria(state, id) {
+export const selectors = {};
+
+selectors.searchCriteria = (state, id) => {
   if (!state) {
     return emptySet;
   }
@@ -110,4 +112,4 @@ export function getSearchCriteria(state, id) {
   if (!searchCriteria) return emptySet;
 
   return searchCriteria;
-}
+};

@@ -9,7 +9,7 @@ import {
 import jsonpatch from 'fast-json-patch';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
-import * as selectors from '../../../../reducers/index';
+import { selectors } from '../../../../reducers/index';
 import { apiCallWithRetry } from '../../../index';
 // import { pingConnectionParams } from '../../../api/apiPaths';
 import {

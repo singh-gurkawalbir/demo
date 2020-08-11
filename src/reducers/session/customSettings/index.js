@@ -63,11 +63,13 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function customSettingsForm(state, resourceId) {
+export const selectors = {};
+
+selectors.customSettingsForm = (state, resourceId) => {
   if (!state) {
     return undefined;
   }
 
   return state[resourceId];
-}
+};
 // #endregion

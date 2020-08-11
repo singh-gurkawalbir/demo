@@ -1,10 +1,9 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
 
+const isEveryNUnit = val => val?.includes('*') || val?.includes('/');
 
-const isEveryNUnit = (val) => val?.includes('*') || val?.includes('/');
-
-const isEveryUnit = (val) => val?.includes('*') && !(val?.includes('/'));
+const isEveryUnit = val => val?.includes('*') && !(val?.includes('/'));
 
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;

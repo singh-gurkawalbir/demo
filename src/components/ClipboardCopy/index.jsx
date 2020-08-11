@@ -2,7 +2,6 @@ import React, {useCallback} from 'react';
 import { makeStyles, IconButton, Typography, Button } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-
 import CopyIcon from '../icons/CopyIcon';
 import AccessToken from '../MaskToken';
 
@@ -28,7 +27,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Your token has been copied to your clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'Token copied to clipboard' }), [enquesnackbar]);
 
   return (
     <div className={classes.root}>

@@ -17,7 +17,7 @@ import {
   isRestCsvMediaTypeExport,
   isRealTimeOrDistributedResource,
 } from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { isIntegrationApp } from '../../../utils/flows';
 
 function* getUIDataForResource({ resource, connection, flow, refresh }) {

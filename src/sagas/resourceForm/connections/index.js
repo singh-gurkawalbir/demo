@@ -18,7 +18,7 @@ import {
   SCOPES,
   newIAFrameWorkPayload,
 } from '../index';
-import * as selectors from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import { commitStagedChanges } from '../../resources';
 import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 import { isNewId } from '../../../utils/resource';
@@ -473,12 +473,12 @@ export function* pingAndUpdateConnection({ connectionId }) {
   try {
     yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}/ping`,
-      hidden: true
+      hidden: true,
     });
 
     const connectionResource = yield call(apiCallWithRetry, {
       path: `/connections/${connectionId}`,
-      hidden: true
+      hidden: true,
     });
 
     yield put(actions.resource.received('connections', connectionResource));

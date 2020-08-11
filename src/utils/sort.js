@@ -6,8 +6,10 @@ const isNumber = el => {
   if (typeof el === 'string') {
     return !/\D/.test(el);
   }
+
   return false;
 };
+
 export const stringCompare = (sortProperty, isDescending) => (a, b) => {
   const firstEl = sortProperty && isObject(a) ? get(a, sortProperty) || '' : a;
   const secondEl = sortProperty && isObject(b) ? get(b, sortProperty) || '' : b;

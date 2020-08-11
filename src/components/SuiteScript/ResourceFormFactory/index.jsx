@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
 import DynaForm from '../../DynaForm';
 import consolidatedActions from './Actions';
@@ -85,10 +85,12 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const primaryActions = [];
   const secondaryActions = [];
+
   if (actions.length) {
     actions.forEach(action => {
       const Action = consolidatedActions[action.id];
       let actionProps = {};
+
       /**
       * Passes a global state for disable functionality for actions except 'cancel'
       * used to manage disable states across buttons
@@ -99,20 +101,23 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
       if (action.id !== 'cancel') {
         actionProps = {
           disableSaveOnClick,
-          setDisableSaveOnClick
+          setDisableSaveOnClick,
         };
       }
       // remove form disabled prop...
       // they dont necessary apply to action button
       const { disabled, ...rest } = formProps;
-      const actionContainer = <Action
-        key={action.id}
-        dataTest={action.id}
-        proceedOnChange={proceedOnChange}
-        {...rest}
-        {...action}
-        {...actionProps}
-      />;
+      const actionContainer = (
+        <Action
+          key={action.id}
+          dataTest={action.id}
+          proceedOnChange={proceedOnChange}
+          {...rest}
+          {...action}
+          {...actionProps}
+      />
+      );
+
       if (action.mode === 'secondary') {
         secondaryActions.push(actionContainer);
       } else {
@@ -122,6 +127,7 @@ const ActionButtons = ({actions, formProps, proceedOnChange}) => {
   } else {
     return null;
   }
+
   return (
     <>
       <div> {primaryActions} </div>
@@ -140,6 +146,7 @@ export function ActionsFactory({ variant = 'edit', isGeneralSettings, ...props }
 
     if (actions) return actions;
     let actionButtons;
+
     // eslint-disable-next-line brace-style
     if (isGeneralSettings) { actionButtons = ['save', 'cancel']; }
     else actionButtons = ['save', 'saveandclose', 'cancel'];
@@ -147,9 +154,10 @@ export function ActionsFactory({ variant = 'edit', isGeneralSettings, ...props }
     if (resourceType === 'connections' && resource?.type !== 'other') {
       actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
     }
+
     return actionButtons.map(id => ({
       id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
     }));
   }, [actions, isGeneralSettings, resource?.type, resourceType, secondaryActions]);
 

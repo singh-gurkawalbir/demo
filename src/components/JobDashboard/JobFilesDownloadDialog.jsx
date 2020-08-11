@@ -7,7 +7,6 @@ import CeligoTable from '../CeligoTable';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
-
 export default function JobFilesDownloadDialog({
   job,
   onCloseClick,

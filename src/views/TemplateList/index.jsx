@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import CeligoTable from '../../components/CeligoTable';
 import ResourceDrawer from '../../components/drawer/Resource';

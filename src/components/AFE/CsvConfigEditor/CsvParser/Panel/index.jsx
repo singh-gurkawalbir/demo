@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import { Input, Chip, MenuItem, ListItemText, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import CeligoSelect from '../../../../CeligoSelect';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import options from '../../options';
@@ -147,20 +147,20 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           disabled={disabled}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={trimSpaces}
               data-test="trimSpaces"
               onChange={() => patchEditor('trimSpaces', !trimSpaces)}
             />
-          }
+          )}
           label="Trim spaces"
         />
         <FormControlLabel
           disabled={disabled}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={hasHeaderRow}
@@ -171,7 +171,7 @@ export default function CsvParsePanel(props) {
                 patchEditor('hasHeaderRow', !hasHeaderRow, true);
               }}
             />
-          }
+          )}
           label="File has header"
         />
         <FormControl disabled={disabled} className={classes.formControl}>
@@ -191,7 +191,7 @@ export default function CsvParsePanel(props) {
         <FormControlLabel
           disabled={disabled || !result}
           className={classes.checkboxOffset}
-          control={
+          control={(
             <Checkbox
               color="primary"
               checked={multipleRowsPerRecord}
@@ -201,7 +201,7 @@ export default function CsvParsePanel(props) {
                 patchEditor('keyColumns', []);
               }}
             />
-          }
+          )}
           label="Multiple rows per record"
         />
         {multipleRowsPerRecord && allColumns && (

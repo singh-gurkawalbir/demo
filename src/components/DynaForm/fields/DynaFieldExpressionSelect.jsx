@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Select from './DynaSelect';
 

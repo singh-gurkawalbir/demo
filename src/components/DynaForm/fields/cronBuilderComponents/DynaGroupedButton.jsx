@@ -32,7 +32,6 @@ function GroupedButton(props) {
         res = [...finalValues, item.value];
       }
 
-
       onFieldChange(id, !res.length ? '*' : res.sort().join(','));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import React, { useMemo, useEffect } from 'react';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../actions';
 import SharedUserRow from './SharedUserRow';
@@ -55,7 +55,7 @@ export default function SharedUserList() {
             <TableCell>Email</TableCell>
             <TableCell>Name</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Enable user</TableCell>
+            <TableCell>Off/On</TableCell>
             <TableCell>Action</TableCell>
           </TableRow>
         </TableHead>

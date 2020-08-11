@@ -78,9 +78,9 @@ export function getFormFieldMetadata(
         visibleWhen: [
           {
             field: 'operation',
-            is: ['add']
-          }
-        ]
+            is: ['add'],
+          },
+        ],
       },
       ignoreMissing: {
         id: 'ignoreMissing',
@@ -91,9 +91,9 @@ export function getFormFieldMetadata(
         visibleWhen: [
           {
             field: 'operation',
-            is: ['update']
-          }
-        ]
+            is: ['update'],
+          },
+        ],
       },
       internalIdLookupExpression: {
         id: 'internalIdLookupExpression',
@@ -148,5 +148,6 @@ export function getFormFieldMetadata(
 
 export const getNetSuiteSubrecordLabel = (referenceFieldId, referenceFields) => {
   const field = referenceFields.find(f => f.value === referenceFieldId);
+
   return field?.label ?? referenceFieldId;
 };

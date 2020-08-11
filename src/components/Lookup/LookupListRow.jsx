@@ -1,10 +1,14 @@
-import React, { useCallback } from 'react';
-import { IconButton, TableCell, TableRow } from '@material-ui/core';
+import React, { useCallback, useState } from 'react';
+import { IconButton, TableCell, TableRow, Menu, MenuItem } from '@material-ui/core';
 import EditIcon from '../icons/EditIcon';
 import DeleteOutlinedIcon from '../icons/TrashIcon';
+import EllipsisIcon from '../icons/EllipsisHorizontalIcon';
 
 export default function LookupListRow(props) {
   const { value, onEdit, onDelete, classes } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const actionsPopoverId = open ? 'row-actions' : undefined;
   const { name } = value;
   const handleEdit = useCallback(() => {
     onEdit(value);
@@ -12,6 +16,12 @@ export default function LookupListRow(props) {
   const handleDelete = useCallback(() => {
     onDelete(value);
   }, [onDelete, value]);
+
+  const handleMenuClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = useCallback(() => setAnchorEl(null), []);
 
   return (
     <TableRow
@@ -21,22 +31,25 @@ export default function LookupListRow(props) {
       <TableCell className={classes.columnName}>{name}</TableCell>
       <TableCell className={classes.columnAction}>
         <IconButton
-          key="Edit"
-          aria-label="Edit"
-          data-test="edit"
-          color="inherit"
-          onClick={handleEdit}>
-          <EditIcon />
+          data-test="openActionsMenu"
+          aria-label="more"
+          aria-controls={actionsPopoverId}
+          aria-haspopup="true"
+          size="small"
+          onClick={handleMenuClick}>
+          <EllipsisIcon />
         </IconButton>
 
-        <IconButton
-          data-test="delete"
-          key="Delete"
-          aria-label="Delete"
-          color="inherit"
-          onClick={handleDelete}>
-          <DeleteOutlinedIcon />
-        </IconButton>
+        <Menu
+          elevation={2}
+          variant="menu"
+          id={actionsPopoverId}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}>
+          <MenuItem key="Edit" onClick={handleEdit}><EditIcon />Edit lookup</MenuItem>
+          <MenuItem key="Delete" onClick={handleDelete}><DeleteOutlinedIcon />Delete lookup</MenuItem>
+        </Menu>
       </TableCell>
     </TableRow>
   );

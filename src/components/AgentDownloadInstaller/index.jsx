@@ -6,12 +6,12 @@ import { Button, MenuItem } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import actions from '../../actions';
 
-
 const useStyles = makeStyles({
   donwloadInstallerBtn: {
     padding: 0,
-  }
+  },
 });
+
 export default function AgentDownloadInstaller({ agentId }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);

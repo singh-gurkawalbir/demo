@@ -1400,7 +1400,7 @@ export default {
       {
         collapsed: true,
         label: r => {
-          if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+          if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
             return 'How would you like the files transferred?';
           }
 
@@ -1425,9 +1425,9 @@ export default {
                 fields:
                 [
                   'file.csv',
-                ]
-              }
-            ]
+                ],
+              },
+            ],
           },
           {type: 'collapse',
             containers: [
@@ -1462,7 +1462,7 @@ export default {
                 ],
               },
             ],
-          }
+          },
         ],
       },
       {

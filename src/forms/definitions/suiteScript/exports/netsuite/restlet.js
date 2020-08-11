@@ -128,7 +128,7 @@ export default {
               'export.valueDelta.exportedField',
               'export.valueDelta.pendingField',
             ],
-          }
+          },
         ],
       },
     ],

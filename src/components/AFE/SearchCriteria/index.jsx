@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import TrashIcon from '../../icons/TrashIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import ActionButton from '../../ActionButton';
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
   deleteButton: {
     marginTop: theme.spacing(1),
-  }
+  },
 }));
 
 export default function SearchCriteriaEditor(props) {
@@ -98,7 +98,7 @@ export default function SearchCriteriaEditor(props) {
     {name: 'Field', refreshable: !disabled},
     {name: 'Operator'},
     {name: 'Search Value'},
-    {name: 'Search Value 2'}
+    {name: 'Search Value 2'},
   ];
 
   return (

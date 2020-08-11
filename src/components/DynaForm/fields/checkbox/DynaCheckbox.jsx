@@ -39,7 +39,7 @@ export default function DynaCheckbox(props) {
       disabled={disabled}
       className={classes.dynaLabelWrapper}>
       <FormControlLabel
-        control={
+        control={(
           <Checkbox
             key={id}
             name={name}
@@ -54,13 +54,13 @@ export default function DynaCheckbox(props) {
                 inverse ? !evt.target.checked : evt.target.checked
               )}
           />
-        }
+        )}
         className={classes.dynaCheckControlLabel}
-        label={
+        label={(
           <Typography variant="subtitle2" component="span">
             {label}
           </Typography>
-        }
+        )}
       />
       <FieldHelp {...props} />
       <ErroredMessageComponent {...props} />

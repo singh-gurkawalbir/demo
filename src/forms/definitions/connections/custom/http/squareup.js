@@ -62,15 +62,16 @@ export default {
         'TIMECARDS_SETTINGS_WRITE',
         'CASH_DRAWER_READ',
         'MERCHANT_PROFILE_WRITE',
-        'MERCHANT_PROFILE_READ'
+        'MERCHANT_PROFILE_READ',
       ],
       visibleWhenAll: r => {
         if (r?.http?._iClientId) {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
             { field: 'http.auth.type', isNot: ['basic'] }];
         }
+
         return [{ field: 'http.auth.type', is: ['oauth'] }];
-      }
+      },
     },
     application: {
       fieldId: 'application',

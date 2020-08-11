@@ -9,7 +9,6 @@ import ModalDialog from '../../../ModalDialog';
 import ActionButton from '../../../ActionButton';
 import ButtonGroup from '../../../ButtonGroup';
 
-
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
     flexDirection: 'row !important',

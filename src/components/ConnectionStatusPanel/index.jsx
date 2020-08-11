@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
@@ -74,9 +74,11 @@ export default function ConnectionStatusPanel(props) {
   const testStatus = useSelector(
     state => {
       const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
+
       if (resource.type === 'netsuite' && !commStatus) {
         return selectors.netsuiteUserRoles(state, connectionId)?.status;
       }
+
       return commStatus;
     }
   );

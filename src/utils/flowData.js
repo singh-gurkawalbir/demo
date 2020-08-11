@@ -11,10 +11,7 @@ import {
   isRestCsvMediaTypeExport,
   adaptorTypeMap,
 } from './resource';
-import {
-  LOOKUP_RESPONSE_MAPPING_EXTRACTS,
-  IMPORT_RESPONSE_MAPPING_EXTRACTS,
-} from './responseMapping';
+import responseMappingUtil from './responseMapping';
 import arrayUtils from './array';
 import jsonUtils from './json';
 import { isIntegrationApp } from './flows';
@@ -146,9 +143,11 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
     const stageData = stages.find(
       stage => stage.name === 'raw' || stage.name === 'parse'
     );
+
     if (stageData?.name === 'raw') {
       return stageData.data?.[0];
     }
+
     return stageData && stageData.data;
   }
 
@@ -191,6 +190,7 @@ export const resetStagesForFlowResource = (flow, index, stages = [], isPageGener
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
   const resourceIds = keys(flow[resourceMap]);
+
   if (resourceIds.includes(resourceId)) {
     stages.forEach(stage => {
       if (flow[resourceMap][resourceId][stage]) {
@@ -311,12 +311,9 @@ export const isPostDataNeededInResource = resource => {
  * Ex: For Lookups: [ 'data','errors','ignored','statusCode']
  * This fn returns { data:'', errors: '', ignored: '', statusCode: ''}
  */
-export const generateDefaultExtractsObject = resourceType => {
+export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
   // TODO: @Raghu Confirm the below format to generate default objects
-  const defaultExtractsList =
-    resourceType === 'imports'
-      ? IMPORT_RESPONSE_MAPPING_EXTRACTS
-      : LOOKUP_RESPONSE_MAPPING_EXTRACTS;
+  const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
     // eslint-disable-next-line no-param-reassign
@@ -374,7 +371,7 @@ export const getFormattedResourceForPreview = (
       }
     } else {
       // If there is no sampleResponseData, add default fields for lookups/imports
-      resource.sampleResponseData = generateDefaultExtractsObject(resourceType);
+      resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
     }
   }
 
@@ -390,6 +387,7 @@ export const getFormattedResourceForPreview = (
  */
 export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
+
   if (patchSetPath === '/transform') return 'transform';
   if (patchSetPath === '/filter') return 'outputFilter';
   if (patchSetPath === '/inputFilter') return 'inputFilter';
@@ -414,14 +412,17 @@ export const getSubsequentStages = (stage, resourceType) => {
   const stageMap = sampleDataStage[resourceType];
   const nextStages = [];
   const keys = jsonUtils.getObjectKeysFromValue(stageMap, stage);
+
   if (!keys.length) {
     return [];
   }
   nextStages.push(...keys);
   for (let i = 0; i < keys.length; i += 1) {
     const currStage = keys[i];
+
     nextStages.push(...(getSubsequentStages(currStage, resourceType)));
   }
+
   return nextStages;
 };
 

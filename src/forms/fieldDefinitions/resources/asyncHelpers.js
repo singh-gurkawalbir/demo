@@ -73,7 +73,7 @@ export default {
   'http.submit.sameAsStatus': {
     type: 'checkbox',
     label: 'Same as check status',
-    defaultValue: true
+    defaultValue: true,
   },
   'http.submit.transform': {
     type: 'transformrules',

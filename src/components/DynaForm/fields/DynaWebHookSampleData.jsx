@@ -6,7 +6,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../CodeEditor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import ErroredMessageComponent from './ErroredMessageComponent';
 

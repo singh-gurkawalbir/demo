@@ -9,5 +9,5 @@ export default {
   TabbedPanel,
   HeaderPanel,
   ErrorPanel,
-  RequestUrlPanel
+  RequestUrlPanel,
 };

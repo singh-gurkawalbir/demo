@@ -16,6 +16,7 @@ export default {
     const newValues = { ...formValues };
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
     }
@@ -147,7 +148,7 @@ export default {
 
       return {
         hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value
+        fileType: fileType.value,
       };
     }
 
@@ -230,7 +231,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
-      ], },
+      ] },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
@@ -246,6 +247,16 @@ export default {
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
@@ -329,7 +340,7 @@ export default {
     },
     'file.batchSize': {
       fieldId: 'file.batchSize',
-    }
+    },
   },
   layout: {
     type: 'column',
@@ -360,7 +371,7 @@ export default {
             containers: [{fields: [
               'parsers',
               'file.csv',
-            ]}]
+            ]}],
           },
           {
             collapsed: true,
@@ -375,10 +386,10 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
-              'fileMetadata',
               'file.decompressFiles',
               'file.compressionFormat',
               'file.skipDelete',
+              'fileMetadata',
               'ftp.backupDirectoryPath',
               'file.encoding',
               'pageSize',
@@ -391,8 +402,8 @@ export default {
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
   },
   actions: [
     {
