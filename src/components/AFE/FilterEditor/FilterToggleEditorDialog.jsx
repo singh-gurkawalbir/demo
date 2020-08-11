@@ -3,6 +3,14 @@ import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
 
+const defaults = {
+  width: '85vw',
+  height: '60vh',
+  layout: 'compact',
+  open: true,
+  labels: ['Rules', 'JavaScript'],
+};
+
 export default function FilterToggleEditorDialog(props) {
   const {
     id,
@@ -19,13 +27,6 @@ export default function FilterToggleEditorDialog(props) {
     enableFilterForIA,
     ...rest
   } = props;
-  const defaults = {
-    width: '85vw',
-    height: '60vh',
-    layout: 'compact',
-    open: true,
-    labels: ['Rules', 'JavaScript'],
-  };
 
   return (
     <ToggleEditorDialog
