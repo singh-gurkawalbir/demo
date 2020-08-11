@@ -2,12 +2,12 @@ import React from 'react';
 import {
   AUDIT_LOG_SOURCE_LABELS,
   AUDIT_LOG_EVENT_LABELS,
-  getOldValue,
-  getNewValue,
-  getResourceLink,
-} from './util';
-import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../constants/resource';
-import DateTimeDisplay from '../DateTimeDisplay';
+} from '../../../constants/auditLog';
+import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../../constants/resource';
+import DateTimeDisplay from '../../DateTimeDisplay';
+import OldValue from './cells/OldValue';
+import NewValue from './cells/NewValue';
+import NameCell from './cells/Name';
 
 export default {
   columns: [
@@ -34,7 +34,7 @@ export default {
     },
     {
       heading: 'Name/ID',
-      value: (al, actionProps) => getResourceLink(al, actionProps),
+      value: (al, actionProps) => <NameCell al={al} actionProps={actionProps} />,
       width: '10%',
     },
     {
@@ -49,12 +49,23 @@ export default {
     },
     {
       heading: 'Old value',
-      value: al => getOldValue(al),
+      value: al => (
+        <OldValue
+          oldValue={al.fieldChange.oldValue}
+          newValue={al.fieldChange.newValue}
+        />
+      ),
       width: '13%',
     },
     {
       heading: 'New value',
-      value: al => getNewValue(al),
+      value: al => (
+        <NewValue
+          auditLog={al}
+          oldValue={al.fieldChange.oldValue}
+          newValue={al.fieldChange.newValue}
+        />
+      ),
       width: '13%',
     },
   ],

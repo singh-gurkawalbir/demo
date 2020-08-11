@@ -1,10 +1,10 @@
 /* global describe, expect */
 import each from 'jest-each';
 import {
-  showViewDiffLink,
+  hasLongLength,
   MINIMUM_STRING_LENGTH_TO_SHOW_DIFF_LINK,
   MINIMUM_STRINGIFIED_OBJECT_LENGTH_TO_SHOW_DIFF_LINK,
-} from './util';
+} from './utils';
 
 function getSampleObject(length) {
   if (length <= 6) {
@@ -18,7 +18,7 @@ function getSampleObject(length) {
   return { a: 'x'.repeat(length - 8) };
 }
 
-describe('showViewDiffLink util method', () => {
+describe.only('hasLongLength util method', () => {
   const testCases = [
     [
       'should return false, if oldValue & newValue are undefined',
@@ -119,6 +119,7 @@ describe('showViewDiffLink util method', () => {
   ];
 
   each(testCases).test('%s', (testName, oldValue, newValue, expected) => {
-    expect(showViewDiffLink(oldValue, newValue)).toBe(expected);
+    console.log(oldValue, newValue);
+    expect(hasLongLength(oldValue, newValue)).toBe(expected);
   });
 });

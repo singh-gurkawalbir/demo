@@ -2,8 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import * as selectors from '../../reducers';
-import CeligoTable from '../CeligoTable';
-import metadata from './metadata';
+import ResourceTable from '../CeligoTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
 
 const useStyles = makeStyles({
@@ -11,16 +10,12 @@ const useStyles = makeStyles({
     width: '100%',
     overflowX: 'auto',
   },
-  tablePaginationRoot: {
-    float: 'right',
-  },
 });
 
 export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
-  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state));
   const {logs: auditLogs, count, totalCount} = useSelector(state =>
     selectors.auditLogs(
       state,
@@ -31,21 +26,19 @@ export default function AuditLogTable({ resourceType, resourceId, filters, optio
     ));
 
   return (
-    <>
-      <div className={classes.root}>
+    <div className={classes.root}>
+      <ResourceTable
+        resources={auditLogs}
+        resourceType="auditLogs"
+        filterKey={filterKey}
+        actionProps={{ resourceDetails }}
+      />
 
-        <CeligoTable
-          data={auditLogs}
-          filterKey={filterKey}
-          {...metadata}
-          actionProps={{ resourceType, resourceId, filters, options, preferences, resourceDetails }}
-          />
-        <ShowMoreDrawer
-          filterKey={filterKey}
-          count={count}
-          maxCount={totalCount}
-        />
-      </div>
-    </>
+      <ShowMoreDrawer
+        filterKey={filterKey}
+        count={count}
+        maxCount={totalCount}
+      />
+    </div>
   );
 }
