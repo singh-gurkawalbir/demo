@@ -9,16 +9,11 @@ import PanelLoader from '../../PanelLoader';
 export default function FlowRunDashboard({ flowId, integrationId }) {
   const dispatch = useDispatch();
   const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
+  const flowJobs = useSelector(state => selectors.flowJobs(state));
   const areFlowJobsLoading = useSelector(state => selectors.areFlowJobsLoading(state, { integrationId, flowId }));
 
-  useEffect(
-    () => () => {
-      dispatch(actions.job.clear());
-    },
-    [dispatch]
-  );
   useEffect(() => {
-    if (latestJobs.length === 0) {
+    if (flowJobs.length === 0 && flowId) {
       dispatch(
         actions.job.requestLatestJobs({
           integrationId,
@@ -26,7 +21,7 @@ export default function FlowRunDashboard({ flowId, integrationId }) {
         })
       );
     }
-  }, [dispatch, integrationId, flowId, latestJobs.length]);
+  }, [dispatch, integrationId, flowId, flowJobs.length]);
 
   if (areFlowJobsLoading) {
     return <PanelLoader />;

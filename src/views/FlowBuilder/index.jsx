@@ -38,6 +38,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
+import LastRun from './LastRun';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -149,6 +150,9 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     marginLeft: -100,
+  },
+  subtitle: {
+    display: 'flex',
   },
 }));
 
@@ -398,8 +402,14 @@ function FlowBuilder() {
     isUserInErrMgtTwoDotZero,
   ]);
   useEffect(() =>
-    () => dispatch(actions.errorManager.openFlowErrors.cancelPoll()),
-  [dispatch, flowId]);
+    () => {
+      if (isUserInErrMgtTwoDotZero) {
+        dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+        dispatch(actions.job.clear());
+      }
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
@@ -485,14 +495,15 @@ function FlowBuilder() {
           />
         )}
         subtitle={(
-          <>
+          <div className={classes.subtitle}>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
               <CeligoTimeAgo date={flow.lastModified} />
             )}
-          </>
+            <LastRun flowId={flow._id} />
+          </div>
         )}
         infoText={flow.description}>
         {totalErrors ? (
