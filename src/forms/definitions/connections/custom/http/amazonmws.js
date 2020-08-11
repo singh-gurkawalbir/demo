@@ -20,9 +20,7 @@ export default {
 
     // backend not accepting empty string for iclientId. So in case iclientId is
     // not selected, sending null instead of empty string.
-    if (!formValues['/http/_iClientId']) {
-      formValues['/http/_iClientId'] = null; // eslint-disable-line no-param-reassign
-    }
+    const iClientId = formValues['/http/_iClientId'] || null;
 
     return {
       ...formValues,
@@ -31,6 +29,7 @@ export default {
       '/http/auth/type': 'custom',
       '/http/mediaType': 'xml',
       '/http/baseURI': baseURI,
+      '/http/_iClientId': iClientId,
       '/http/ping/relativeURI':
         '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
       '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
@@ -126,10 +125,6 @@ export default {
             {
               value: 'A33AVAJ2PDY3EV',
               label: 'A33AVAJ2PDY3EV (TR)',
-            },
-            {
-              value: 'A17E79C6D8DWNP',
-              label: 'A17E79C6D8DWNP (SA)',
             },
           ],
         },
