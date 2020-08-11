@@ -6,15 +6,11 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import * as selectors from '../../../reducers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   inTrial: {
-    marginBottom: theme.spacing(0.5),
-    marginTop: theme.spacing(0.5),
+    marginTop: -2,
   },
-  expiresSoon: {
-    backgroundColor: theme.palette.primary.main,
-  },
-}));
+});
 
 export default function LicenseAction() {
   const classes = useStyles();
@@ -67,7 +63,7 @@ export default function LicenseAction() {
     <Button
       data-test={licenseActionDetails.label}
       className={
-        licenseActionDetails.expiresSoon ? classes.expiresSoon : classes.inTrial
+        classes.inTrial
       }
       variant="contained"
       color="secondary"
