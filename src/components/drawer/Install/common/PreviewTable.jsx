@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import * as selectors from '../../../../reducers';
 import CeligoTable from '../../../CeligoTable';
-import Spinner from '../../../Spinner';
 import InfoIconButton from '../../../InfoIconButton';
+import Spinner from '../../../Spinner';
+import SpinnerWrapper from '../../../SpinnerWrapper';
 
 const columns = [
   {
@@ -23,11 +23,11 @@ const columns = [
 ];
 
 export default function PreviewTable({ templateId }) {
-  const components = useSelector(state =>
+  const {components, status} = useSelector(state =>
     selectors.previewTemplate(state, templateId)
-  );
+  ) || {};
   const data = useMemo(() => {
-    const { objects } = components;
+    const { objects } = components || {};
 
     if (!objects || !objects.length) return [];
 
@@ -37,14 +37,19 @@ export default function PreviewTable({ templateId }) {
     }));
   }, [components]);
 
-  if (!data.length) {
+
+  if (status === 'failure') {
+    return null;
+  }
+  if (status === 'requested') {
     return (
-      <div>
-        <Typography variant="h4">Loading</Typography>
+      <SpinnerWrapper>
         <Spinner />
-      </div>
+      </SpinnerWrapper>
+
     );
   }
+
 
   return <CeligoTable data={data} columns={columns} />;
 }

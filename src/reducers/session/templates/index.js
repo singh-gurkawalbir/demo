@@ -33,12 +33,26 @@ export default function reducer(state = {}, action) {
   return produce(state, draft => {
     // eslint-disable-next-line default-case
     switch (type) {
+      case actionTypes.TEMPLATE.PREVIEW_REQUEST:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+        if (!draft[templateId].preview) {
+          draft[templateId].preview = {};
+        }
+        draft[templateId].preview.status = 'requested';
+
+        break;
       case actionTypes.TEMPLATE.RECEIVED_PREVIEW:
         if (!draft[templateId]) {
           draft[templateId] = {};
         }
+        if (!draft[templateId].preview) {
+          draft[templateId].preview = {};
+        }
 
-        draft[templateId].preview = components;
+        draft[templateId].preview.components = components;
+        draft[templateId].preview.status = 'success';
 
         if (isInstallIntegration) {
           draft[templateId].runKey = templateId;
@@ -46,6 +60,14 @@ export default function reducer(state = {}, action) {
 
         draft[templateId].isInstallIntegration = isInstallIntegration;
         break;
+
+      case actionTypes.TEMPLATE.FAILURE:
+        if (!draft[templateId]) {
+          draft[templateId] = {};
+        }
+        draft[templateId].preview.status = 'failure';
+        break;
+
       case actionTypes.TEMPLATE.CLEAR_TEMPLATE:
         delete draft[templateId];
         break;

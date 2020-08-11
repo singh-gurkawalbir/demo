@@ -28,7 +28,7 @@ export default function IntegrationPreview() {
   const { templateId } = match.params;
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const components = useSelector(state =>
+  const {components} = useSelector(state =>
     selectors.previewTemplate(state, templateId)
   );
   const installTemplate = () => {
