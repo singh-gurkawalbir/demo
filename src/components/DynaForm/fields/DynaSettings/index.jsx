@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   summaryLabel: {
     flexGrow: 1,
     alignSelf: 'center',
+    color: theme.palette.secondary.main,
   },
 }));
 
