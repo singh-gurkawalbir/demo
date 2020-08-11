@@ -1,8 +1,7 @@
 import React from 'react';
-import moment from 'moment';
-import { Typography } from '@material-ui/core';
 import Delete from '../../../components/ResourceTable/commonActions/Delete';
 import Edit from '../../../components/ResourceTable/commonActions/Edit';
+import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 
@@ -10,11 +9,7 @@ export default {
   columns: [
     {
       heading: 'Email',
-      value: function ConnectorLicensesDrawerLink(r) {
-        return (
-          <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />
-        );
-      },
+      value: r => <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />,
       orderBy: 'email',
     },
     {
@@ -28,15 +23,7 @@ export default {
     },
     {
       heading: 'Expires on',
-      value: r => {
-        if (!r.expires) return '';
-
-        return (
-          <Typography color="error">
-            {moment(r.expires).format('MMM D, YYYY')} (<CeligoTimeAgo date={r.expires} />)
-          </Typography>
-        );
-      },
+      value: r => <ExpiresOn date={r.expires} />,
       orderBy: 'expires',
     },
     {

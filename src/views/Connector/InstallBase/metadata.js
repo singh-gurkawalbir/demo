@@ -1,7 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import moment from 'moment';
-import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
+import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 
 export default {
   columns: [
@@ -22,15 +20,7 @@ export default {
     },
     {
       heading: 'Expires on',
-      value: r => {
-        if (!r.expires) return '';
-
-        return (
-          <Typography color="error">
-            {moment(r.expires).format('MMM D, YYYY')} (<CeligoTimeAgo date={r.expires} />)
-          </Typography>
-        );
-      },
+      value: r => <ExpiresOn date={r.expires} />,
       orderBy: 'license.expires',
     },
     {
