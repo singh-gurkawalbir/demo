@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import { FormLabel } from '@material-ui/core';
@@ -56,6 +56,7 @@ export default function DynaMultiSelect(props) {
     valueDelimiter,
     isValid,
     required,
+    removeInvalidValues = false
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -103,6 +104,30 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
+  const optionItems = options.reduce(
+    (itemsSoFar, option) =>
+      itemsSoFar.concat(
+        option.items.map(item => {
+          if (typeof item === 'string') {
+            return item;
+          }
+
+          return item.value;
+        })
+      ),
+    []
+  );
+  useEffect(() => {
+    if (removeInvalidValues) {
+      if (Array.isArray(processedValue) &&
+       processedValue.length &&
+        processedValue.filter(val => optionItems.includes(val))?.length !== processedValue.length) {
+        onFieldChange(id, processedValue.filter(val => optionItems.includes(val)));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, optionItems, processedValue, removeInvalidValues]);
+
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 
