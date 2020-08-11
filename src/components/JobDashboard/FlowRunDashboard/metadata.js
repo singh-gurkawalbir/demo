@@ -6,6 +6,7 @@ import ErrorLink from './ErrorLink';
 import JobStatus from '../JobStatus';
 import FlowStepName from './FlowStepName';
 import { JOB_STATUS } from '../../../utils/constants';
+import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
   columns: [
@@ -36,7 +37,7 @@ export default {
     },
     {
       heading: 'Completed',
-      value: r => r.endedAt,
+      value: r => <DateTimeDisplay dateTime={r?.endedAt} />,
     },
   ],
   rowActions: job => {
