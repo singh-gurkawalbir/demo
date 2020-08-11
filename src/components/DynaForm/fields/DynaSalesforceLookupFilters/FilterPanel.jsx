@@ -30,6 +30,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
+    height: 'calc(100vh - 200px)',
   },
 }));
 const defaultData = {};
@@ -410,7 +411,7 @@ export default function FilterPanel({
   };
 
   return (
-    <div className={classes.container} height="calc(100vh - 200px)">
+    <div className={classes.container}>
       <div className="netsuite-lookup-filters" ref={qbuilder} />
       {showOperandSettingsFor && (
         <OperandSettingsDialog

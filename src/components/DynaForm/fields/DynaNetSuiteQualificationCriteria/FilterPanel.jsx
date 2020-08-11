@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
+    height: 'calc(100vh - 200px)',
   },
 }));
 const defaultFilters = [];
@@ -293,7 +294,7 @@ export default function FilterPanel({
   }, [filtersMetadata]);
 
   return (
-    <div className={classes.container} height="calc(100vh - 200px)">
+    <div className={classes.container}>
       <div className="netsuite-qualifier" ref={qbuilder} />
     </div>
   );

@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 
@@ -64,7 +65,7 @@ export default function CsvParseEditor(props) {
   }, [props.data]);
 
   return (
-    <PanelGrid className={classes.template} height="calc(100vh - 200px)">
+    <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV parser options" />
         <CsvParsePanel disabled={disabled} editorId={editorId} />

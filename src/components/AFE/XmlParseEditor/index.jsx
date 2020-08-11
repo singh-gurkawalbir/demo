@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 
@@ -71,7 +72,7 @@ export default function XmlParseEditor(props) {
   }, [editorInit, handleInit]);
 
   return (
-    <PanelGrid key={editorId} className={classes.template} height="calc(100vh - 200px)">
+    <PanelGrid key={editorId} className={classes.template}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="XML parse options" />
         <XmlParsePanel disabled={disabled} editorId={editorId} />
