@@ -598,7 +598,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'How to test connection?',
+        label: 'How to test this connection?',
         fields: [
           'http.ping.relativeURI',
           'http.ping.method',
