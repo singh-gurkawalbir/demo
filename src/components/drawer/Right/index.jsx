@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
   contentContainer: {
     margin: theme.spacing(3),
     position: 'relative',
-    // height: '100%',
+    height: '100%',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
