@@ -59,7 +59,7 @@ export default function TemplatePreview() {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const template = useSelector(state =>
-    selectors.marketplaceTemplate(state, templateId)
+    selectors.marketplaceTemplateById(state, templateId)
   );
   const { objects: components, stackRequired } =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
