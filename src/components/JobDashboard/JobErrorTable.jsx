@@ -81,6 +81,11 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.light,
     },
   },
+  celigoTableWrapper: {
+    overflowX: 'auto',
+    width: '100%',
+    marginBottom: theme.spacing(5),
+  },
 }));
 
 function JobErrorTable({
@@ -536,6 +541,7 @@ function JobErrorTable({
               />
 
               <CeligoTable
+                className={classes.celigoTableWrapper}
                 data={jobErrorsData}
                 selectableRows={
                   !isJobInProgress && hasUnresolvedErrorsInCurrentPage

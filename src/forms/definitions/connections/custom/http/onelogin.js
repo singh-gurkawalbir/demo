@@ -21,6 +21,7 @@ export default {
     '/http/ping/method': 'GET',
   }),
   fieldMap: {
+    name: { fieldId: 'name' },
     'http.oneloginRegion': {
       id: 'http.oneloginRegion',
       type: 'text',

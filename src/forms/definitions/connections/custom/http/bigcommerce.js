@@ -12,6 +12,9 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
       retValues['/http/auth/oauth/scope'] = undefined;
+      retValues['/http/ping/relativeURI'] = '/v2/store';
+      retValues['/http/ping/method'] = 'GET';
+      retValues['/http/ping/successPath'] = 'id';
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -31,11 +34,18 @@ export default {
       retValues['/http/auth/oauth/scopeDelimiter'] = '+';
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
-      retValues['/http/auth/token/scheme'] = undefined;
-      retValues['/http/auth/token/token'] = undefined;
+      retValues['/http/auth/token/scheme'] = ' ';
+      retValues['/http/ping/relativeURI'] = '/v3/catalog/products';
+      retValues['/http/ping/method'] = 'GET';
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/headers'] = [
+        {
+          name: 'X-Auth-Client',
+          value: iClientDoc?.oauth2?.clientId,
+        },
+      ];
+      retValues['/http/auth/token/refreshHeaders'] = [
         {
           name: 'X-Auth-Client',
           value: iClientDoc?.oauth2?.clientId,
@@ -67,9 +77,6 @@ export default {
         formValues['/storeHash']
       }`,
       '/http/mediaType': 'json',
-      '/http/ping/relativeURI': '/v2/store',
-      '/http/ping/method': 'GET',
-      '/http/ping/successPath': 'id',
     };
   },
 
