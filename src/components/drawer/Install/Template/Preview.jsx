@@ -63,6 +63,7 @@ export default function TemplatePreview() {
   const { components: origComponents, status} =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
   const { objects: components, stackRequired } = origComponents || {};
+
   useEffect(() => {
     if (!template) {
       dispatch(actions.marketplace.requestTemplates());

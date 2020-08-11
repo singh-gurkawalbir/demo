@@ -11,7 +11,6 @@ const defaults = {
 export default function FilterEditorDialog(props) {
   const { id, rule, data, disabled, ...rest } = props;
 
-
   return (
     <EditorDialog
       id={id}
