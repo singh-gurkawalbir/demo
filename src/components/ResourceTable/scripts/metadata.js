@@ -1,10 +1,10 @@
 import React from 'react';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import { formatLastModified } from '../../CeligoTable/util';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import AuditLogs from '../commonActions/AuditLogs';
 import Edit from '../commonActions/Edit';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: [
@@ -17,7 +17,7 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
   ],

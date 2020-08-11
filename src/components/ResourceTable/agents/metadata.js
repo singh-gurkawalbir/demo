@@ -3,10 +3,11 @@ import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
-import { formatLastModified, onlineStatus } from '../../CeligoTable/util';
+import { onlineStatus } from '../../CeligoTable/util';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import GenerateToken from '../commonActions/GenerateToken';
 import Edit from '../commonActions/Edit';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 const getAgentDownloadInstaller = agent => (
   <AgentDownloadInstaller agentId={agent._id} />
@@ -26,7 +27,7 @@ export default {
     {
       heading: 'Last updated',
       width: '150px', // minimum width to prevent heading to wrap.
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 

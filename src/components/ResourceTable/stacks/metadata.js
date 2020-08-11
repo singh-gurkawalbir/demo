@@ -1,13 +1,13 @@
 import React from 'react';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
 import StackSystemToken from '../../StackSystemToken';
-import { formatLastModified } from '../../CeligoTable/util';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
 import AuditLogs from '../commonActions/AuditLogs';
 import GenerateToken from '../commonActions/GenerateToken';
 import Edit from '../commonActions/Edit';
 import StackShares from './actions/StackShares';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 const getSystemToken = stack => <StackSystemToken stackId={stack._id} />;
 
@@ -34,13 +34,13 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
-      orderBy: 'lastModified',
+      heading: 'Access key ID',
+      value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
-      heading: 'Access key Id',
-      value: r => r.lambda && r.lambda.accessKeyId,
+      heading: 'Last updated',
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
+      orderBy: 'lastModified',
     },
     {
       heading: 'System token',

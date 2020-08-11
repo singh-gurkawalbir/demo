@@ -29,8 +29,10 @@ export default {
     {
       heading: 'Expires on',
       value(r) {
-        return (r.expires ? (
-          <Typography color="error"> {moment(r.expires).format('MMM D, YYYY')} ({formatLastModified(r.expires)})</Typography>) : ''
+        return (r.expires
+          ? (
+            <Typography color="error"> {moment(r.expires).format('MMM D, YYYY')} ({formatLastModified(r.expires)})</Typography>)
+          : ''
         );
       },
       orderBy: 'expires',

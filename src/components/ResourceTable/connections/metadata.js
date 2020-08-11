@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { ConnectorNameComp } from '../metadata';
-import { formatLastModified, onlineStatus } from '../../CeligoTable/util';
+import { onlineStatus } from '../../CeligoTable/util';
 import ConnectionResourceDrawerLink from '../../ResourceDrawerLink/connection';
 import AuditLogs from '../commonActions/AuditLogs';
 import Delete from '../commonActions/Delete';
@@ -14,6 +14,7 @@ import DownloadDebugLogs from './actions/DownloadDebugLogs';
 import RefreshMetadata from './actions/RefreshMetadata';
 import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: (r, actionProps) => {
@@ -49,7 +50,7 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => formatLastModified(r.lastModified),
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
         width: 160,
       },

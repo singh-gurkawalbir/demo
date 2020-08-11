@@ -5,8 +5,8 @@ import UploadZipFile from './actions/UploadZipFile';
 import Download from '../commonActions/Download';
 import TogglePublish from '../commonActions/TogglePublish';
 import Edit from '../commonActions/Edit';
-import { formatLastModified } from '../../CeligoTable/util';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: [
@@ -19,7 +19,7 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

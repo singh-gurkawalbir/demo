@@ -121,7 +121,7 @@ export default function MarketplaceList() {
     sandbox
   );
   const templates = useSelector(state =>
-    selectors.marketplaceTemplates(state, application)
+    selectors.marketplaceTemplatesByApp(state, application)
   );
   const applications = applicationsList();
   const connector = applications.find(c => c.id === application);

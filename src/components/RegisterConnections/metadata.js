@@ -1,7 +1,8 @@
 import React from 'react';
-import { formatLastModified, onlineStatus } from '../CeligoTable/util';
+import { onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import { ConnectorNameComp } from '../ResourceTable/metadata';
+import CeligoTimeAgo from '../CeligoTimeAgo';
 
 export default {
   columns: (r, { onClose }) => [
@@ -21,23 +22,21 @@ export default {
     { heading: 'Status', value: r => onlineStatus(r) },
     {
       heading: 'Connector',
-      value: function ConnectorName(r) {
-        return <ConnectorNameComp r={r} />;
-      },
+      value: <ConnectorNameComp r={r} />,
     },
     {
       heading: 'API',
       value: r => {
-        if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
+        if (r.type === 'rest') return r?.rest?.baseURI;
 
-        if (r.type === 'http') return r && r.http && r.http.baseURI;
+        if (r.type === 'http') return r?.http?.baseURI;
 
         return null;
       },
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

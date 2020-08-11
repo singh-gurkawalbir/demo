@@ -1,13 +1,13 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import { formatLastModified } from '../../CeligoTable/util';
 import getImageUrl from '../../../utils/image';
 import Delete from '../commonActions/Delete';
 import TogglePublish from '../commonActions/TogglePublish';
 import Edit from '../commonActions/Edit';
 import InstallBase from './actions/InstallBase';
 import Licenses from './actions/Licenses';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: [
@@ -20,7 +20,7 @@ export default {
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {
