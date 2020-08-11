@@ -55,10 +55,12 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function suiteScriptIAFormState(
+export const selectors = {};
+
+selectors.suiteScriptIAFormState = (
   state,
   { ssLinkedConnectionId, integrationId }
-) {
+) => {
   if (!state) {
     return {};
   }
@@ -66,15 +68,15 @@ export function suiteScriptIAFormState(
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
   return state[key] || {};
-}
+};
 
-export function suiteScriptIAFormSaving(
+selectors.suiteScriptIAFormSaving = (
   state,
   { ssLinkedConnectionId, integrationId }
-) {
+) => {
   if (!state) return false;
   const key = iaFormKey(ssLinkedConnectionId, integrationId);
 
   return !!(state?.[key]?.status === 'saving');
-}
+};
 // #endregion

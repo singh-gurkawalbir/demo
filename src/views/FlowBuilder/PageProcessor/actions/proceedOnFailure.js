@@ -8,7 +8,7 @@ import Icon from '../../../../components/icons/AgentsIcon';
 import ModalDialog from '../../../../components/ModalDialog';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const emptyObject = {};
 

@@ -7,7 +7,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
@@ -62,7 +62,7 @@ export default function SettingsDrawer({
           type: 'multiselect',
           placeholder: 'Please select flow',
           helpKey: 'flow._runNextFlowIds',
-          label: 'Next data flow:',
+          label: 'Next integration flow:',
           displayEmpty: true,
           defaultValue: (flow && flow._runNextFlowIds) || [],
           options: [

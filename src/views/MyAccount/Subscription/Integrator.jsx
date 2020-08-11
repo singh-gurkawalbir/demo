@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';

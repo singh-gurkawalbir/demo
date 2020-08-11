@@ -77,18 +77,18 @@ export default function (state = {}, action) {
   });
 }
 
-export function getResourceSampleData(state, resourceId, stage) {
+export const selectors = {};
+
+selectors.getResourceSampleData = (state, resourceId, stage) => {
   const resourceData = state[resourceId]?.data;
 
   if (!resourceData) return DEFAULT_VALUE;
 
   return resourceData[stage] || DEFAULT_VALUE;
-}
+};
 
-export function getResourceSampleDataWithStatus(state, resourceId, stage) {
-  return {
-    data: getResourceSampleData(state, resourceId, stage),
-    status: state[resourceId]?.status,
-    error: state[resourceId]?.error,
-  };
-}
+selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => ({
+  data: selectors.getResourceSampleData(state, resourceId, stage),
+  status: state[resourceId]?.status,
+  error: state[resourceId]?.error,
+});

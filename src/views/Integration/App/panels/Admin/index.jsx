@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
 import ApiTokensSection from './sections/ApiTokens';

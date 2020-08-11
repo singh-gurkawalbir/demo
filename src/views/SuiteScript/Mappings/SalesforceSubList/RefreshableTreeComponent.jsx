@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaCheckbox from '../../../../components/DynaForm/fields/checkbox/DynaCheckbox';
 import Spinner from '../../../../components/Spinner';
@@ -98,14 +98,12 @@ function TreeViewComponent(props) {
     const {
       data: referenceFields,
       ...rest
-    } = selectors.metadataOptionsAndResources({
-      state,
+    } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',
     });
-    const { data: nonReferenceFields } = selectors.metadataOptionsAndResources({
-      state,
+    const { data: nonReferenceFields } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-nonReferenceFields',
@@ -187,8 +185,7 @@ export default function RefreshableTreeComponent(props) {
   const [expanded, setExpanded] = useState([]);
   const dispatch = useDispatch();
   const statusSelector = useSelector(state => selectedReferenceTo =>
-    selectors.metadataOptionsAndResources({
-      state,
+    selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath: `${metaBasePath}${selectedReferenceTo}`,
       filterKey: 'salesforce-sObjects-referenceFields',

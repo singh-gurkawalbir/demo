@@ -2,7 +2,7 @@
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { touchFlow } from '.';
 
 describe('resourceForm saga', () => {

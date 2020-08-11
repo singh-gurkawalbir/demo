@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRequestOptions from '../../utils/requestOptions';
 import { COMM_STATES } from '../../reducers/comms/networkComms';

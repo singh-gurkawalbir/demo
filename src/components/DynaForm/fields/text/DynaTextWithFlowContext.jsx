@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import DynaText from '../DynaText';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function DynaTextWithFlowContext(props) {
   const { flowId } = props;

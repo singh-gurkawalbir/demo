@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { getCustomResourceLabel } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 
 /*
@@ -12,7 +12,7 @@ export default function EditResourceTypeCrumb({
   flowId,
 }) {
   const resourceLabel = useSelector(state =>
-    getCustomResourceLabel(state, {
+    selectors.getCustomResourceLabel(state, {
       resourceType,
       resourceId,
       flowId,

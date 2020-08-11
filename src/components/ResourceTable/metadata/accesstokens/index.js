@@ -8,6 +8,7 @@ import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
 import AutoPurgeAt from '../../actions/AccessTokens/AutoPurgeAt';
 import Edit from '../../actions/Edit';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
@@ -20,11 +21,6 @@ export default {
         return <ResourceDrawerLink resourceType="accesstokens" resource={r} />;
       },
       orderBy: 'name',
-    },
-    {
-      // TODO add permission checks
-      heading: 'Token',
-      value: r => getDisplayToken(r),
     },
     {
       heading: 'Status',
@@ -45,6 +41,16 @@ export default {
     {
       heading: 'Auto purge',
       value: r => getAutoPurgeAt(r),
+    },
+    {
+      heading: 'Last updated',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
+    },
+    {
+      // TODO add permission checks
+      heading: 'Token',
+      value: r => getDisplayToken(r),
     },
   ],
   rowActions: r => {

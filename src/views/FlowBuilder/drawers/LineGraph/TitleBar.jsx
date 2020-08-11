@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { Typography, IconButton, Divider, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DynaMultiSelect from './MultiSelect';

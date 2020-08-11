@@ -19,13 +19,14 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function isAddOnInstallInProgress(state, id) {
+selectors.isAddOnInstallInProgress = (state, id) => {
   if (!(state && state[id])) {
     return { installInprogress: false };
   }
 
   return { installInprogress: state[id].installInprogress || false };
-}
+};
 
 // #endregion

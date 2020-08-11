@@ -106,12 +106,14 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function installerData(state, id) {
+export const selectors = {};
+
+selectors.suiteScriptIntegrationAppInstallerData = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
 
   return state[id];
-}
+};
 
 // #endregion

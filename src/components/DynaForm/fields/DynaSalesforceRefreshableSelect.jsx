@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 import { salesforceExportSelectOptions } from '../../../utils/resource';

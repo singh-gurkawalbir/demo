@@ -149,16 +149,18 @@ export default (state = {}, action) => {
   });
 };
 
-export function stagedIdState(state, id) {
+export const selectors = {};
+
+selectors.stagedIdState = (state, id) => {
   if (!state || !id || !state[id]) {
     return null;
   }
 
   return state[id];
-}
+};
 
 // #region PUBLIC SELECTORS
-export function stagedResource(state, id, scope) {
+selectors.stagedResource = (state, id, scope) => {
   if (!state || !id || !state[id]) {
     return emptyObj;
   }
@@ -173,9 +175,9 @@ export function stagedResource(state, id, scope) {
   } else updatedPatches = state[id] && state[id].patch;
 
   return { ...state[id], patch: updatedPatches };
-}
+};
 
-function transformStagedResource(stagedIdState, scope) {
+selectors.transformStagedResource = (stagedIdState, scope) => {
   if (!stagedIdState) return null;
 
   let updatedPatches;
@@ -188,16 +190,16 @@ function transformStagedResource(stagedIdState, scope) {
   } else updatedPatches = stagedIdState && stagedIdState.patch;
 
   return { ...stagedIdState, patch: updatedPatches };
-}
+};
 
-export const makeTransformStagedResource = () =>
+selectors.makeTransformStagedResource = () =>
   createSelector(
-    stagedIdState,
+    selectors.stagedIdState,
     (_1, _2, scope) => scope,
-    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
+    (stagedIdState, scope) => selectors.transformStagedResource(stagedIdState, scope)
   );
 
-export const getAllResourceConflicts = createSelector(
+selectors.getAllResourceConflicts = createSelector(
   state => state,
   state => {
     if (!state) {

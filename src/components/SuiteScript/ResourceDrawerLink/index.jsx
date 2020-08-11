@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 export default function ResourceDrawerLink({
   ssLinkedConnectionId,

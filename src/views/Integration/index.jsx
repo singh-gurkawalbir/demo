@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import IntegrationApp from './App';
 import IntegrationDIY from './DIY';
 

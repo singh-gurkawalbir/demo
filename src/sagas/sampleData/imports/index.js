@@ -1,6 +1,6 @@
 import { takeLatest, select, call, put } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
-import { resourceData, assistantData } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { convertFromImport, convertToExport } from '../../../utils/assistant';
 import { requestAssistantMetadata } from '../../resources/meta';
@@ -15,7 +15,7 @@ function* fetchAssistantSampleData({ resource }) {
   const previewPath = '/exports/preview';
 
   yield put(actions.metadata.requestAssistantImportPreview(resource._id));
-  assistantMetadata = yield select(assistantData, {
+  assistantMetadata = yield select(selectors.assistantData, {
     adaptorType: resource.adaptorType === 'HTTPImport' ? 'http' : 'rest',
     assistant: resource.assistant,
   });
@@ -165,7 +165,7 @@ function* fetchIAMetaData({
 
 function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const { merged: resource } = yield select(
-    resourceData,
+    selectors.resourceData,
     'imports',
     resourceId,
     SCOPES.VALUE

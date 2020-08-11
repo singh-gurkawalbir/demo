@@ -6,7 +6,7 @@ import { Typography, Paper, Grid, IconButton } from '@material-ui/core';
 import ElevateOnScroll from '../ElevateOnScroll';
 import SlideOnScroll from '../SlideOnScroll';
 import ArrowLeftIcon from '../icons/ArrowLeftIcon';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({

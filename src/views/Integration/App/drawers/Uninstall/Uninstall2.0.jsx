@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';

@@ -12,7 +12,7 @@ import FontStager from '../components/FontStager';
 import AlertDialog from '../components/AlertDialog';
 import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 import actions from '../actions';
 import Signin from '../views/SignIn';
 import * as gainsight from '../utils/analytics/gainsight';

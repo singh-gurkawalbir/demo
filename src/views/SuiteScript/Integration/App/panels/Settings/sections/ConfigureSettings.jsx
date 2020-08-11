@@ -7,7 +7,7 @@ import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
 import { ActionsFactory } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
 

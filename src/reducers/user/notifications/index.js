@@ -14,7 +14,7 @@ export default (state = defaultState, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
-        if (!['shared/ashares', 'shared/sshares', 'transfers'].includes(resourceType)) {
+        if (!['shared/ashares', 'shared/sshares', 'transfers', 'transfers/invited'].includes(resourceType)) {
           break;
         }
 
@@ -26,7 +26,7 @@ export default (state = defaultState, action) => {
           draft.accounts = pendingShares;
         } else if (resourceType === 'shared/sshares') {
           draft.stacks = pendingShares;
-        } else if (resourceType === 'transfers') {
+        } else if (resourceType === 'transfers' || resourceType === 'transfers/invited') {
           draft.transfers = pendingShares;
         }
 
@@ -39,7 +39,9 @@ export default (state = defaultState, action) => {
   });
 };
 
-export const userNotifications = createSelector(
+export const selectors = {};
+
+selectors.userNotifications = createSelector(
   state => state && state.accounts,
   state => state && state.stacks,
   state => state && state.transfers,
@@ -66,22 +68,33 @@ export const userNotifications = createSelector(
       const interationsDoc = [];
       let name = '';
 
-      if (t.toTransfer && t.toTransfer.integrations) {
-        t.toTransfer.integrations.forEach(i => {
-          name = ((i._id === 'none') ? 'Standalone Flows' : i.name) || i._id;
-          if (i.tag) {
-            name += ` (${i.tag})`;
-          }
-          interationsDoc.push(name);
+      if (t.account) {
+        notifications.push({
+          id: t._id,
+          type: 'transfer',
+          nameOrCompany: t.ownerUser.name || t.ownerUser.company,
+          email: t.ownerUser.email,
+          message: 'has invited you to become the owner of their account.',
+          account: true,
+        });
+      } else {
+        if (t.toTransfer && t.toTransfer.integrations) {
+          t.toTransfer.integrations.forEach(i => {
+            name = ((i._id === 'none') ? 'Standalone Flows' : i.name) || i._id;
+            if (i.tag) {
+              name += ` (${i.tag})`;
+            }
+            interationsDoc.push(name);
+          });
+        }
+        notifications.push({
+          id: t._id,
+          type: 'transfer',
+          nameOrCompany: t.ownerUser.name || t.ownerUser.company,
+          email: t.ownerUser.email,
+          message: `wants to transfer integration(s) ${interationsDoc.join(',')} to you.`,
         });
       }
-      notifications.push({
-        id: t._id,
-        type: 'transfer',
-        nameOrCompany: t.ownerUser.name || t.ownerUser.company,
-        email: t.ownerUser.email,
-        message: `wants to transfer integration(s) ${interationsDoc.join(',')} to you.`,
-      });
     });
 
     stacks &&

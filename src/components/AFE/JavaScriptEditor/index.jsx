@@ -8,7 +8,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
 import PanelLoader from '../../PanelLoader';

@@ -11,7 +11,7 @@ import {
 import { makeStyles, Typography, IconButton } from '@material-ui/core';
 import LoadResources from '../../LoadResources';
 import { isNewId, multiStepSaveResourceTypes } from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import Close from '../../icons/CloseIcon';
 import Back from '../../icons/BackArrowIcon';

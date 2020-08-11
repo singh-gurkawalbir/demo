@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
 import { integrationSettingsToDynaFormMetadata } from '../../../forms/utils';
 
@@ -52,18 +52,19 @@ export default function IntegrationSettingsSaveButton(props) {
       } else {
         values = formValues;
       }
+      if (flowId && flowSettingsMemo?.fieldMap) {
+        values = Object.values(flowSettingsMemo?.fieldMap)?.filter(f => f.type === 'xmlMapper').reduce((updatedValues, f) => {
+          if (values[f.name] && Array.isArray(values[f.name])) {
+            // eslint-disable-next-line no-param-reassign
+            updatedValues[f.name] = {
+              value: values[f.name],
+              path: f.properties?.path,
+            };
+          }
 
-      values = Object.values(flowSettingsMemo?.fieldMap)?.filter(f => f.type === 'xmlMapper').reduce((updatedValues, f) => {
-        if (values[f.name] && Array.isArray(values[f.name])) {
-          // eslint-disable-next-line no-param-reassign
-          updatedValues[f.name] = {
-            value: values[f.name],
-            path: f.properties?.path,
-          };
-        }
-
-        return updatedValues;
-      }, values);
+          return updatedValues;
+        }, values);
+      }
 
       const fileField = Object.keys(values).find(key => values[key]?.file && values[key]?.type === 'file');
 

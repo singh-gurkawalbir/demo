@@ -1,9 +1,9 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
-import { resourceData } from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 
 export default function PreviewBody(props) {
   const {
@@ -17,12 +17,9 @@ export default function PreviewBody(props) {
     resourceType,
   } = props;
   const resource = useSelector(state =>
-    resourceData(state, resourceType, resourceId).merged, shallowEqual
+    selectors.resourceData(state, resourceType, resourceId).merged, shallowEqual
   );
-  const previewBodyTemplate = useMemo(
-    () => getPreviewBodyTemplateType(resource, panelType),
-    [panelType, resource]
-  );
+  const previewBodyTemplate = getPreviewBodyTemplateType(resource, panelType);
 
   // Always default to defaultPanel whenever sample data is refreshed
   useEffect(() => {

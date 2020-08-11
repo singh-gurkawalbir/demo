@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import SignInForm from '../../views/SignIn/SigninForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 
@@ -21,6 +21,23 @@ const StaleUIVersion = () => (
     <Typography>
       It looks like your browser has cached an older version of our app.
       Click &apos;Reload&apos; to refresh the page.
+    </Typography>
+    <Button
+      data-test="ok"
+      onClick={() => {
+        window.location.reload();
+      }}
+      variant="outlined"
+      color="primary">
+      Reload
+    </Button>
+  </ModalDialog>
+);
+const UserAcceptedAccountTransfer = () => (
+  <ModalDialog show>
+    <Typography variant="h3">Success!</Typography>
+    <Typography>
+      You are now the owner of this account. Go to <em>My account &gt; Users</em> to invite and manage permissions for other users in this account.
     </Typography>
     <Button
       data-test="ok"
@@ -90,11 +107,15 @@ export default function AlertDialog() {
     selectors.isUiVersionDifferent(state)
   );
 
+  const isUserAcceptedAccountTransfer = useSelector(state =>
+    selectors.isUserAcceptedAccountTransfer(state)
+  );
+
   useEffect(() => {
     let versionPollingTimer;
 
     // stop polling when version is different
-    if (isAuthenticated && !isUiVersionDifferent) {
+    if (isAuthenticated && !isUiVersionDifferent && !isUserAcceptedAccountTransfer) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
       }, Number(process.env.UI_VERSION_PING));
@@ -103,7 +124,7 @@ export default function AlertDialog() {
     return () => {
       clearTimeout(versionPollingTimer);
     };
-  }, [dispatch, isAuthenticated, isUiVersionDifferent]);
+  }, [dispatch, isAuthenticated, isUiVersionDifferent, isUserAcceptedAccountTransfer]);
 
   useEffect(() => {
     let warningSessionTimer;
@@ -129,17 +150,17 @@ export default function AlertDialog() {
 
   return (
     <div>
-      {showSessionStatus
-        ? (
-          <Dialog disableEnforceFocus open style={contentWrapper}>
-            {showSessionStatus === 'warning' ? (
-              <WarningSessionContent />
-            ) : (
-              showSessionStatus === 'expired' && <ExpiredSessionContent />
-            )}
-          </Dialog>
-        )
-        : isUiVersionDifferent && <StaleUIVersion />}
+      {showSessionStatus && (
+        <Dialog disableEnforceFocus open style={contentWrapper}>
+          {showSessionStatus === 'warning' ? (
+            <WarningSessionContent />
+          ) : (
+            showSessionStatus === 'expired' && <ExpiredSessionContent />
+          )}
+        </Dialog>
+      )}
+      {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
+      {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
     </div>
   );
 }

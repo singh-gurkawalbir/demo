@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import actions from '../../../actions';
-import {
-  resourceErrors,
-  filter,
-  isAnyErrorActionInProgress,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
@@ -35,7 +31,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
   const classes = useStyles();
   const filterKey = `resolvedErrors-${flowId}-${resourceId}`;
   const errorFilter = useSelector(
-    state => filter(state, filterKey) || defaultFilter
+    state => selectors.filter(state, filterKey) || defaultFilter
   );
   const {
     status,
@@ -43,14 +39,14 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
     nextPageURL,
     outdated,
   } = useSelector(state =>
-    resourceErrors(state, {
+    selectors.resourceErrors(state, {
       flowId,
       resourceId,
       options: { ...errorFilter, isResolved: true },
     })
   );
   const isAnyActionInProgress = useSelector(state =>
-    isAnyErrorActionInProgress(state, {
+    selectors.isAnyErrorActionInProgress(state, {
       flowId,
       resourceId,
     })

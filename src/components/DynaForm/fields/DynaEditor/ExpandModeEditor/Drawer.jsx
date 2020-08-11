@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import CodeEditor from '../../../../CodeEditor';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { isNewId } from '../../../../../utils/resource';
 

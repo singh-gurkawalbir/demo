@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import { Chip } from '@material-ui/core';
 import CalendarIcon from '../../../../icons/CalendarIcon';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
