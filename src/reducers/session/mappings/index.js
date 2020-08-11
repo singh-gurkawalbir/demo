@@ -67,7 +67,7 @@ export default function reducer(state = {}, action) {
 
           // key would be unique property associated with each mapping.
           const tmp = {
-            mappings: formattedMappings.map(m => ({
+            mappings: (formattedMappings || []).map(m => ({
               ...m,
               rowIdentifier: 0,
               key: shortid.generate(),
