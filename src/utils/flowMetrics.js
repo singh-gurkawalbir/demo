@@ -11,6 +11,9 @@ export const getDurationLabel = (ranges = []) => {
   const distanceInHours = formatDistanceStrict(startDate, endDate, {
     unit: 'hour',
   });
+  const distanceInMonths = formatDistanceStrict(startDate, endDate, {
+    unit: 'month',
+  });
   const startOfToday = startOfDay(new Date());
   const startOfYesterday = startOfDay(addDays(new Date(), -1));
 
@@ -32,6 +35,12 @@ export const getDurationLabel = (ranges = []) => {
 
       return 'Custom';
     default:
+      if (!['0 months', '1 month'].includes(distanceInMonths) && isSameDay(new Date(), endDate)) {
+        return `Last ${distanceInMonths}`;
+      } if (isSameDay(new Date(), endDate)) {
+        return `Last ${distance}`;
+      }
+
       return 'Custom';
   }
 };
