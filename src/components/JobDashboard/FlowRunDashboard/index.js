@@ -23,6 +23,10 @@ export default function FlowRunDashboard({ flowId, integrationId }) {
     }
   }, [dispatch, integrationId, flowId, flowJobs.length]);
 
+  useEffect(() =>
+    () => dispatch(actions.job.clear()),
+  [dispatch]);
+
   if (areFlowJobsLoading) {
     return <PanelLoader />;
   }

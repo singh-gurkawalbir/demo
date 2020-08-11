@@ -405,11 +405,10 @@ function FlowBuilder() {
     () => {
       if (isUserInErrMgtTwoDotZero) {
         dispatch(actions.errorManager.openFlowErrors.cancelPoll());
-        dispatch(actions.job.clear());
       }
     },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+  [dispatch]);
 
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
