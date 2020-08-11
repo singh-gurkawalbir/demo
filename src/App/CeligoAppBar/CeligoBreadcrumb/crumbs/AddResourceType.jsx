@@ -18,7 +18,7 @@ export default function AddResourceTypeCrumb({
     })
   );
 
-  if (['accesstokens', 'connectors', 'apis'].indexOf(resourceType) > -1) {
+  if (['accesstokens', 'connectors', 'apis'].includes(resourceType)) {
     return `Create ${resourceLabel}`;
   }
 
