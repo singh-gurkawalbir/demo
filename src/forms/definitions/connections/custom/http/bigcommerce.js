@@ -36,8 +36,6 @@ export default {
       retValues['/http/auth/token/scheme'] = ' ';
       retValues['/http/ping/relativeURI'] = '/v3/catalog/products';
       retValues['/http/ping/method'] = 'GET';
-      retValues['/http/auth/token/scheme'] = undefined;
-      retValues['/http/auth/token/token'] = undefined;
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/headers'] = [
