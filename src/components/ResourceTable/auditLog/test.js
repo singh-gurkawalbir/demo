@@ -119,7 +119,6 @@ describe.only('hasLongLength util method', () => {
   ];
 
   each(testCases).test('%s', (testName, oldValue, newValue, expected) => {
-    console.log(oldValue, newValue);
     expect(hasLongLength(oldValue, newValue)).toBe(expected);
   });
 });
