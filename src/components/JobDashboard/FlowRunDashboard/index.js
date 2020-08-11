@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectors } from '../../../../../../reducers';
-import actions from '../../../../../../actions';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
 import metadata from './metadata';
-import CeligoTable from '../../../../../../components/CeligoTable';
-import PanelLoader from '../../../../../../components/PanelLoader';
+import CeligoTable from '../../CeligoTable';
+import PanelLoader from '../../PanelLoader';
 
-// TODO: should we move this to JobsDashboard component?
-export default function FlowRunDashboard({ flow }) {
-  const { _id: flowId, _integrationId: integrationId = 'none'} = flow;
+export default function FlowRunDashboard({ flowId, integrationId }) {
   const dispatch = useDispatch();
   const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
   const areFlowJobsLoading = useSelector(state => selectors.areFlowJobsLoading(state, { integrationId, flowId }));

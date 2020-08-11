@@ -3,9 +3,9 @@ import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import DownloadFile from './actions/DownloadFile';
 import DownloadFiles from './actions/DownloadFiles';
 import ErrorLink from './ErrorLink';
-import JobStatus from '../../../../../../components/JobDashboard/JobStatus';
+import JobStatus from '../JobStatus';
 import FlowStepName from './FlowStepName';
-import { JOB_STATUS } from '../../../../../../utils/constants';
+import { JOB_STATUS } from '../../../utils/constants';
 
 export default {
   columns: [

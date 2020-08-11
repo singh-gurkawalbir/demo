@@ -15,7 +15,7 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
-import FlowRunDashboard from './panels/FlowRunDashboard';
+import FlowRunDashboardPanel from './panels/FlowRunDashboardPanel';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
@@ -191,6 +191,8 @@ export default function BottomDrawer({
     []
   );
 
+  // TODO @Raghu: For all the components used below , cant we just pass flowId rather than the whole flow object
+  // Go through each and update the components
   return (
     <Drawer
       open
@@ -272,7 +274,7 @@ export default function BottomDrawer({
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
-            ? <FlowRunDashboard flow={flow} />
+            ? <FlowRunDashboardPanel flow={flow} />
             : <RunDashboardPanel flow={flow} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>

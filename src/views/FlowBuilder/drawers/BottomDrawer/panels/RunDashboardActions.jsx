@@ -25,8 +25,9 @@ export default function RunDashboardActions({ flowId }) {
   const areFlowJobsLoading = useSelector(state => {
     const {merged: flow = {}} = selectors.resourceData(state, 'flows', flowId);
 
-    return selectors.areFlowJobsLoading(state, { integrationId: flow._integrationId, flowId });
+    return selectors.areFlowJobsLoading(state, { integrationId: flow._integrationId || 'none', flowId });
   });
+
   const latestJobs = useSelector(state => selectors.latestFlowJobs(state));
   const cancellableJobIds = useMemo(() => {
     const jobIdsToCancel = latestJobs

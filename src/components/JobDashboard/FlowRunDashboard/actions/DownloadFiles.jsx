@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import JobFilesDownloadDialog from '../../../../../../../components/JobDashboard/JobFilesDownloadDialog';
+import JobFilesDownloadDialog from '../../JobFilesDownloadDialog';
 
 export default {
   label: 'Download files',

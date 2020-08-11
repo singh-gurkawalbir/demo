@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import actions from '../../../../../../../actions';
+import actions from '../../../../actions';
 
 export default {
   label: 'Download file',
