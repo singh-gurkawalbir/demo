@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
@@ -53,10 +52,6 @@ export const useGetScriptName = id => {
   return (script && script.name) || id;
 };
 
-export const formatLastModified = lastModified => (
-  <CeligoTimeAgo date={lastModified} />
-);
-
 export const onlineStatus = r => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     <StatusCircle size="small" variant={r.offline ? 'error' : 'success'} />
@@ -65,7 +60,6 @@ export const onlineStatus = r => (
 );
 
 export default {
-  formatLastModified,
   useGetConnectorName,
   getResourceLink,
   onlineStatus,
