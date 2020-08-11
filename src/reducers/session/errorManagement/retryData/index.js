@@ -29,5 +29,7 @@ export default (
   });
 };
 
-export const retryDataContext = (state, retryId) =>
+export const selectors = {};
+
+selectors.retryDataContext = (state, retryId) =>
   (state && state.retryObjects && state.retryObjects[retryId]) || defaultObject;

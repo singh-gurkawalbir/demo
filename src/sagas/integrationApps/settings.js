@@ -1,7 +1,7 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 
 export function* requestUpgrade({ integrationId, options }) {

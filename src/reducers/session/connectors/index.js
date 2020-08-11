@@ -42,7 +42,9 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function connectorMetadata(state, fieldName, id, _integrationId) {
+export const selectors = {};
+
+selectors.connectorMetadata = (state, fieldName, id, _integrationId) => {
   if (!state || !state[_integrationId]) {
     return { isLoading: false };
   }
@@ -61,5 +63,5 @@ export function connectorMetadata(state, fieldName, id, _integrationId) {
   }
 
   return { isLoading: false };
-}
+};
 // #endregion

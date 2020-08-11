@@ -4,7 +4,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
-import { debugLogs } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CodePanel from '../../../AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import IconTextButton from '../../../IconTextButton';
@@ -29,7 +29,7 @@ export default function Debugger() {
   const classes = useStyles();
   const { connectionId } = match.params;
   const connectionDebugLogs = useSelector(state => {
-    const connectionLogs = debugLogs(state) || {};
+    const connectionLogs = selectors.debugLogs(state) || {};
 
     return connectionLogs[connectionId];
   });

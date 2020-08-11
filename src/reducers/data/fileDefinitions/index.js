@@ -131,7 +131,9 @@ export default (
   });
 };
 
-export const preBuiltFileDefinitions = (state, format) => ({
+export const selectors = {};
+
+selectors.preBuiltFileDefinitions = (state, format) => ({
   data:
     (state &&
       state.preBuiltFileDefinitions &&
@@ -144,7 +146,7 @@ export const preBuiltFileDefinitions = (state, format) => ({
     state.preBuiltFileDefinitions.status,
 });
 
-export const fileDefinition = (state, definitionId, options) => {
+selectors.fileDefinition = (state, definitionId, options) => {
   const { format, resourceType } = options;
 
   if (!format || !definitionId || !resourceType) return undefined;

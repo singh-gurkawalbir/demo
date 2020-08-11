@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
 import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';

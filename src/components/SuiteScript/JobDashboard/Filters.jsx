@@ -8,7 +8,7 @@ import {
   FormControlLabel,
   IconButton,
 } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';

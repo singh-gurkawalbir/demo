@@ -9,7 +9,7 @@ import {
   IconButton,
   makeStyles,
 } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import {
   USER_ACCESS_LEVELS,
@@ -51,7 +51,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
       if (integrationId) {
         _users = selectors.integrationUsersForOwner(state, integrationId);
       } else {
-        _users = selectors.orgUsers(state);
+        _users = selectors.usersList(state);
       }
     } else if (integrationId) {
       _users = selectors.integrationUsers(state, integrationId);

@@ -4,7 +4,7 @@ import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import { authParams, logoutParams } from '../api/apiPaths';
 import { getResource, getResourceCollection } from '../resources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import {
   auth,
   initializeApp,
@@ -372,9 +372,7 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
-    const resourcePermissions = saga.next().value;
-
-    expect(resourcePermissions).toEqual(select(selectors.resourcePermissions));
+    expect(saga.next().done).toEqual(true);
   });
 });
 

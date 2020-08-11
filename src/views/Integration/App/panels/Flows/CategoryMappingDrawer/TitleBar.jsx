@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import clsx from 'clsx';
 import { Typography, IconButton, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import CloseIcon from '../../../../../../components/icons/CloseIcon';
 import AddIcon from '../../../../../../components/icons/AddIcon';
 import LoadResources from '../../../../../../components/LoadResources';

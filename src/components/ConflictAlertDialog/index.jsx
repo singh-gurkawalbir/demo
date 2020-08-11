@@ -12,7 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   table: {

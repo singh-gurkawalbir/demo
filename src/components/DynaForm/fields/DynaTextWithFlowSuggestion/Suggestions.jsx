@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import clsx from 'clsx';
 import getJSONPaths, { pickFirstObject } from '../../../../utils/jsonPaths';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import lookupUtil from '../../../../utils/lookup';
 import LookupActionItem from './LookupActionItem';
 import getValueAfterInsert from './util';

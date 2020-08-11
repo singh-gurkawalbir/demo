@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useConfirmDialog from '../../../ConfirmDialog';
 import TrashIcon from '../../../icons/TrashIcon';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import ResourceReferences from '../../../ResourceReferences';
 

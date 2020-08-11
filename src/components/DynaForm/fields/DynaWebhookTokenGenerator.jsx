@@ -8,7 +8,7 @@ import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
@@ -54,7 +54,7 @@ function DynaWebhookTokenGenerator(props) {
   );
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Your token has been copied to your clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'Token copied to clipboard' }), [enquesnackbar]);
   const handleGenerateClick = useCallback(() => {
     const tokenValue = v4().replace(/-/g, '');
 

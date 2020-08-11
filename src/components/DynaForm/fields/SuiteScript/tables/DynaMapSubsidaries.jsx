@@ -5,7 +5,7 @@ import {BaseTableViewComponent, useGetSuiteScriptBaseCommPath} from './DynaSales
 import DynaRadio from '../../radiogroup/DynaRadioGroup';
 import DynaSelect from '../../DynaSelect';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import Spinner from '../../../../Spinner';
 

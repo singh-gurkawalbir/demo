@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import Uninstaller1 from './Uninstall1.0';
 import Uninstaller2 from './Uninstall2.0';
 

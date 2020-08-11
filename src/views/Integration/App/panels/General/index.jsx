@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { IAFormStateManager } from '../Flows';

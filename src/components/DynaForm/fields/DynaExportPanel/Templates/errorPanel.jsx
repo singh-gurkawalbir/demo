@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import JsonContent from '../../../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -26,7 +27,7 @@ export default function ErrorPanel(props) {
   return (
     <div className={classes.sampleDataWrapper}>
       <div className={classes.sampleDataContainer}>
-        <pre>{JSON.stringify(resourceSampleData.error, null, 2)}</pre>
+        <JsonContent json={resourceSampleData.error} />
       </div>
     </div>
   );

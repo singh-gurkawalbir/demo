@@ -12,7 +12,7 @@ import actions from '../../actions';
 import {
   CONTACT_SALES_MESSAGE,
 } from '../../utils/messageStore';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
 import InstallTemplateDrawer from '../../components/drawer/Install/Template';
 import LoadResources from '../../components/LoadResources';

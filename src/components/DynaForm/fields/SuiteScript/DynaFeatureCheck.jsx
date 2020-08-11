@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { COMM_STATES } from '../../../../reducers/comms/networkComms';
 import { LoadingMask } from '../../../../views/RecycleBin';
 import useConfirmDialog from '../../../ConfirmDialog';

@@ -141,21 +141,23 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function template(state, templateId) {
+export const selectors = {};
+
+selectors.template = (state, templateId) => {
   if (!state || !state[templateId]) {
     return emptyObject;
   }
 
   return state[templateId];
-}
+};
 
-export function previewTemplate(state, templateId) {
+selectors.previewTemplate = (state, templateId) => {
   if (!state || !state[templateId]) return emptyObject;
 
   return state[templateId].preview || emptyObject;
-}
+};
 
-export const isFileUploaded = createSelector(
+selectors.isFileUploaded = createSelector(
   state => state,
   state => {
     if (!state) {
@@ -176,19 +178,19 @@ export const isFileUploaded = createSelector(
   }
 );
 
-export function templateInstallSteps(state, templateId) {
+selectors.templateInstallSteps = (state, templateId) => {
   if (!state || !state[templateId]) {
     return defaultSteps;
   }
 
   return state[templateId].installSteps || defaultSteps;
-}
+};
 
-export function connectionMap(state, templateId) {
+selectors.connectionMap = (state, templateId) => {
   if (!state || !state[templateId] || !state[templateId].connectionMap) {
     return emptyObject;
   }
 
   return state[templateId].connectionMap;
-}
+};
 // #endregion

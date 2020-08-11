@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Suggestions from './Suggestions';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 

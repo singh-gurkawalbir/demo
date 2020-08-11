@@ -12,7 +12,7 @@ import {
   resourceConflictDetermination,
 } from '.';
 import { apiCallWithRetry } from '..';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { SCOPES } from '../resourceForm';
 import { APIException } from '../api';
 import { resourceConflictResolution } from '../utils';

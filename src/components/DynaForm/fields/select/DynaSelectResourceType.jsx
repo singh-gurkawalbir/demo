@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DynaSelect from '../DynaSelect';
 import { sourceOptions, destinationOptions } from '../../../../forms/utils';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const webhookOnlyOptions = [
   {

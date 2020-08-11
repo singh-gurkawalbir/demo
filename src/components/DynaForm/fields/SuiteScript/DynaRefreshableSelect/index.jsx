@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import RawHtml from '../../../../RawHtml';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { DynaGenericSelect } from './RefreshGenericResource';
@@ -71,7 +71,7 @@ export default function DynaSelectOptionsGenerator(props) {
         opts
       )
     );
-  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, dispatch, ignoreCache, options.commMetaPath]);
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, disableOptionsLoad, dispatch, ignoreCache, options.commMetaPath]);
 
   return (
     <>

@@ -20,20 +20,18 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaFTPFileNameWithEditor(props) {
   const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
+  const classes = useStyles();
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = useCallback(() => {
     setShowEditor(!showEditor);
   }, [showEditor]);
-  const handleClose = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-
-    handleEditorClick();
-  };
-  const classes = useStyles();
+  }, [id, onFieldChange]);
 
   return (
     <>
@@ -42,7 +40,8 @@ export default function DynaFTPFileNameWithEditor(props) {
         <DynaEditorWithFlowSampleData
           title={editorTitle}
           fieldId={id}
-          onClose={handleClose}
+          onSave={handleSave}
+          onClose={handleEditorClick}
           editorType="uri"
           flowId={flowId}
           resourceId={resourceId}

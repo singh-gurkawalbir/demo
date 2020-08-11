@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import EditDrawer from '../AFE/SettingsFormEditor/Drawer';
 

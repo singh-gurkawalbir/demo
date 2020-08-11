@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CsvConfigEditorDialog from '../../../../AFE/CsvConfigEditor/Dialog';
 import FieldHelp from '../../../FieldHelp';

@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { isIntegrationApp } from '../utils/flows';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 
 // returns integrationId of the resource
 const useIntegration = (resourceType, resourceId) => {

@@ -1,22 +1,15 @@
 import { combineReducers } from 'redux';
-import ping, * as fromPing from './ping';
+import ping, { selectors as fromPing } from './ping';
+import { genSelectors } from '../../util';
 
 export default combineReducers({
   ping,
 });
 
-export function testConnectionStatus(state, resourceId, ssLinkedConnectionId) {
-  return fromPing.testConnectionStatus(
-    state && state.ping,
-    resourceId,
-    ssLinkedConnectionId
-  );
-}
+// auto generated selectors
+export const selectors = {};
+const subSelectors = {
+  ping: fromPing,
+};
 
-export function testConnectionMessage(state, resourceId, ssLinkedConnectionId) {
-  return fromPing.testConnectionMessage(
-    state && state.ping,
-    resourceId,
-    ssLinkedConnectionId
-  );
-}
+genSelectors(selectors, subSelectors);

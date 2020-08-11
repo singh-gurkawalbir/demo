@@ -2,7 +2,7 @@ import { call, put, select, takeEvery, take, race } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import {
   sanitizePatchSet,
   defaultPatchSetConverter,
@@ -170,9 +170,12 @@ export function* createFormValuesPatchSet({
     });
 
     if (typeof preSave === 'function') {
-      // stock preSave handler present...
+      const iClients = yield select(selectors.resourceList, {
+        type: 'iClients',
+      });
 
-      finalValues = preSave(values, resource);
+      // stock preSave handler present...
+      finalValues = preSave(values, resource, {iClients});
     }
   }
 

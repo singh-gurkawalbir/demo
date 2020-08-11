@@ -6,7 +6,7 @@ import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <>

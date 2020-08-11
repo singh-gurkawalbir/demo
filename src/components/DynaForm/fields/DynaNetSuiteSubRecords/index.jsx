@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../actions';
 import { SCOPES } from '../../../../sagas/resourceForm';
@@ -77,8 +77,7 @@ export default function DynaNetSuiteSubRecords(props) {
   const { resourceId } = resourceContext;
   const { recordType } = options;
   const hasSubrecord = useSelector(state => {
-    const recordTypes = selectors.metadataOptionsAndResources({
-      state,
+    const recordTypes = selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
       filterKey: 'suitescript-recordTypes',

@@ -258,4 +258,15 @@ export default {
       password: form['/http/auth/oauth/password'],
     }),
   },
+  anaplan: {
+    responseParser: resp => (
+      { 'http.auth.token.token': resp?.tokenInfo?.tokenValue}),
+    payloadTransformer: form => {
+      const username = form['/http/unencrypted/username'];
+      const password = form['/http/encrypted/password'];
+      const base64EncodedToken = window.btoa(`${username}:${password}`);
+
+      return { base64EncodedToken};
+    },
+  },
 };

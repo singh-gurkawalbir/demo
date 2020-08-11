@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import EditorField from './DynaEditor';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { isNewId } from '../../../utils/resource';
 import scriptHookStubs from '../../../utils/scriptHookStubs';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';

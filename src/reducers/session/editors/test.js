@@ -1,6 +1,6 @@
 /* global describe, test, expect, fail */
 import deepFreeze from 'deep-freeze';
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
 describe('editor reducers', () => {
