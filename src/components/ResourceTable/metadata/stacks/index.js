@@ -34,7 +34,7 @@ export default {
       value: r => r.lambda && r.lambda.functionName,
     },
     {
-      heading: 'Access key Id',
+      heading: 'Access key ID',
       value: r => r.lambda && r.lambda.accessKeyId,
     },
     {
