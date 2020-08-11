@@ -80,7 +80,7 @@ export default function ChangePassword({ show, onClose }) {
 
   return (
     <ModalDialog show={show} onClose={onClose}>
-      <span>Change Password</span>
+      <span>Change password</span>
       {error && (
         <NotificationToaster variant="error" size="large">
           <Typography variant="h6">{message}</Typography>
