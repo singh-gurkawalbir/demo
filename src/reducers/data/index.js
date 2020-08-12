@@ -60,7 +60,7 @@ selectors.auditLogs = (state, resourceType, resourceId, filters) => {
 
     if (resourceDetails && resourceDetails._connectorId) {
       if (
-        ['integrations', 'flows', 'connections', 'imports', 'exports'].includes(
+        ['integrations', 'flows', 'connections', 'imports', 'exports', 'accesstokens'].includes(
           resourceTypePlural
         )
       ) {

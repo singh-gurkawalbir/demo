@@ -32,9 +32,9 @@ export default {
         r.fullAccess ||
         (r._connectorId &&
           r.autoPurgeAt &&
-          !r._connectionIds.length &&
-          !r._exportIds.length &&
-          !r._importIds.length)
+          !r._connectionIds?.length &&
+          !r._exportIds?.length &&
+          !r._importIds?.length)
           ? 'Full Access'
           : 'Custom',
     },
