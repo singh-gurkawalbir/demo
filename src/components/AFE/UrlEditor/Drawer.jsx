@@ -1,8 +1,8 @@
 import React from 'react';
 import UrlEditor from '.';
-import AFE2EditorDialog from '../AFE2EditorDialog';
+import AFE2EditorDrawer from '../AFE2Editor/Drawer';
 
-export default function UrlEditorDialog(props) {
+export default function UrlEditorDrawer(props) {
   const {
     id,
     isSampleDataLoading,
@@ -12,28 +12,21 @@ export default function UrlEditorDialog(props) {
     disabled,
     ...rest
   } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
 
   return (
-    <AFE2EditorDialog
+    <AFE2EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       showFullScreen>
       <UrlEditor
         lookups={lookups}
         disabled={disabled}
-        editorId={id}
+        // editorId={id}
         rule={rule}
         data={data}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </AFE2EditorDialog>
+    </AFE2EditorDrawer>
   );
 }

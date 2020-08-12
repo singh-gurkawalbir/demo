@@ -1,4 +1,4 @@
-import arrayUtil from '../../../../utils/array';
+import arrayUtil from '../array';
 
 export const preSaveValidate = ({ editor = {}, enquesnackbar }) => {
   if (editor.processor === 'transform') {

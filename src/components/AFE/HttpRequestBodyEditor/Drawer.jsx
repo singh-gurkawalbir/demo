@@ -1,8 +1,8 @@
 import React from 'react';
 import HttpRequestBodyEditor from '.';
-import AFE2EditorDialog from '../AFE2EditorDialog';
+import AFE2EditorDrawer from '../AFE2Editor/Drawer';
 
-export default function HttpRequestBodyDialog(props) {
+export default function HttpRequestBodyDrawer(props) {
   const {
     id,
     rule,
@@ -14,29 +14,22 @@ export default function HttpRequestBodyDialog(props) {
     editorVersion,
     ...rest
   } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '80vw',
-    height: '50vh',
-    open: true,
-  };
 
   return (
-    <AFE2EditorDialog
+    <AFE2EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       editorVersion={editorVersion}>
       <HttpRequestBodyEditor
         contentType={contentType}
-        editorId={id}
+        // editorId={id}
         lookups={lookups}
         rule={rule}
         data={data}
         isSampleDataLoading={isSampleDataLoading}
         disabled={disabled}
       />
-    </AFE2EditorDialog>
+    </AFE2EditorDrawer>
   );
 }

@@ -1,27 +1,17 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import TransformEditor from '.';
 
-const defaults = {
-  width: '85vw',
-  height: '60vh',
-  layout: 'compact',
-  open: true,
-};
-
-export default function TransformEditorDialog({
+export default function TransformEditorDrawer({
   id,
   rule,
   data,
   disabled,
   ...rest
 }) {
-  // console.log('render <TransformEditorDialog>');
-
   return (
-    <EditorDialog
+    <EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       showLayoutOptions={false}>
@@ -31,6 +21,6 @@ export default function TransformEditorDialog({
         data={data}
         disabled={disabled}
       />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }
