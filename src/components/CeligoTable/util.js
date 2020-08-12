@@ -1,11 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import StatusCircle from '../StatusCircle';
-import { getApp } from '../../constants/applications';
-import { getResourceSubType } from '../../utils/resource';
-import { selectors } from '../../reducers';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <>
@@ -23,35 +19,6 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
   </>
 );
 
-export const useGetConnectorName = resource => {
-  const { type, assistant, resourceType } = getResourceSubType(resource);
-  const { _connectionId } = resource;
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', _connectionId)
-  );
-
-  if (type !== 'rdbms') {
-    return getApp(type, assistant).name;
-  }
-
-  if (resourceType === 'exports' || resourceType === 'imports') {
-    return getApp(connection && connection.rdbms && connection.rdbms.type).name;
-  }
-  if (resource && resource.rdbms && resource.rdbms.type) {
-    return getApp(resource.rdbms.type).name;
-  }
-
-  return 'RDBMS';
-};
-
-export const useGetScriptName = id => {
-  const script = useSelector(state =>
-    selectors.resource(state, 'scripts', id)
-  );
-
-  return (script && script.name) || id;
-};
-
 export const onlineStatus = r => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
     <StatusCircle size="small" variant={r.offline ? 'error' : 'success'} />
@@ -60,8 +27,6 @@ export const onlineStatus = r => (
 );
 
 export default {
-  useGetConnectorName,
   getResourceLink,
   onlineStatus,
-  useGetScriptName,
 };

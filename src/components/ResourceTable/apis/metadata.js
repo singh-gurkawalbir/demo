@@ -1,6 +1,6 @@
 import React from 'react';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import { ScriptName } from '../metadata';
+import ResourceName from '../commonCells/ResourceName';
 import Delete from '../commonActions/Delete';
 import AuditLogs from '../commonActions/AuditLogs';
 import Edit from '../commonActions/Edit';
@@ -23,9 +23,7 @@ export default {
     },
     {
       heading: 'Script',
-      value: function scriptName(r) {
-        return <ScriptName id={r._scriptId} />;
-      },
+      value: r => <ResourceName resourceType="scripts" id={r._scriptId} />,
     },
     {
       heading: 'Last updated',

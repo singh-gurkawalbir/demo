@@ -1,28 +1,26 @@
 import React from 'react';
 import { onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
-import { ConnectorNameComp } from '../ResourceTable/metadata';
+import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
 import CeligoTimeAgo from '../CeligoTimeAgo';
 
 export default {
   columns: (r, { onClose }) => [
     {
       heading: 'Name',
-      value: function RegisterConnectionsDrawerLink(r) {
-        return (
-          <ResourceDrawerLink
-            resourceType="connections"
-            resource={r}
-            onClick={onClose}
+      value: r => (
+        <ResourceDrawerLink
+          resourceType="connections"
+          resource={r}
+          onClick={onClose}
           />
-        );
-      },
+      ),
       orderBy: 'name',
     },
     { heading: 'Status', value: r => onlineStatus(r) },
     {
       heading: 'Connector',
-      value: <ConnectorNameComp r={r} />,
+      value: r => <ConnectorName r={r} />,
     },
     {
       heading: 'API',

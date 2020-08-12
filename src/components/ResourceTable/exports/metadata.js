@@ -1,7 +1,7 @@
 import React from 'react';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import { ConnectorNameComp } from '../metadata';
+import ConnectorName from '../commonCells/ConnectorName';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Delete from '../commonActions/Delete';
@@ -12,16 +12,12 @@ export default {
   columns: [
     {
       heading: 'Name',
-      value: function ExportDrawerLink(r) {
-        return <ResourceDrawerLink resourceType="exports" resource={r} />;
-      },
+      value: r => <ResourceDrawerLink resourceType="exports" resource={r} />,
       orderBy: 'name',
     },
     {
       heading: 'Application',
-      value: function ConnectorName(r) {
-        return <ConnectorNameComp r={r} />;
-      },
+      value: r => <ConnectorName r={r} />,
     },
     {
       heading: 'Last updated',

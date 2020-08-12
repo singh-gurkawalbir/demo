@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Typography } from '@material-ui/core';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 
-export default function ({date}) {
+export default function ExpiredOn({date}) {
   if (!date) return '';
 
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { ConnectorNameComp } from '../metadata';
+import ConnectorName from '../commonCells/ConnectorName';
 import { onlineStatus } from '../../CeligoTable/util';
 import ConnectionResourceDrawerLink from '../../ResourceDrawerLink/connection';
 import AuditLogs from '../commonActions/AuditLogs';
@@ -34,9 +34,7 @@ export default {
       { heading: 'Status', value: r => onlineStatus(r) },
       {
         heading: 'Type',
-        value: function ConnectorName(r) {
-          return <ConnectorNameComp r={r} />;
-        },
+        value: r => <ConnectorName r={r} />,
       },
       {
         heading: 'API',
