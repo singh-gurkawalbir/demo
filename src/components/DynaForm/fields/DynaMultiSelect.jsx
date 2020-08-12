@@ -103,7 +103,6 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
-
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
 
