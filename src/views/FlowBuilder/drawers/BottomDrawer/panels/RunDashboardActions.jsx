@@ -40,9 +40,11 @@ export default function RunDashboardActions({ flowId }) {
   }, [latestJobs]);
 
   const validDashboardActions = useMemo(() => {
-    // return set of actions [cancel, downloadDiagnostics]
+    // return set of actions [cancel, downloadDiagnostics, downloadFiles]
+    // TODO @Raghu: Check for downloadFiles action - as it is not feasible to apply on multiple jobs
     const actions = [];
 
+    // If there are no jobs at all, disable all actions
     if (!latestJobs.length) return actions;
     const jobsInProgress = latestJobs
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status));
@@ -81,7 +83,6 @@ export default function RunDashboardActions({ flowId }) {
         {
           label: 'Cancel run',
           onClick: () => {
-            // TODO: check for cases to handle
             cancellableJobIds
               .forEach(jobId => dispatch(actions.job.cancel({ jobId })));
           },

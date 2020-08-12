@@ -168,7 +168,6 @@ function FlowBuilder() {
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
-  //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const newFlowId = useSelector(state =>
