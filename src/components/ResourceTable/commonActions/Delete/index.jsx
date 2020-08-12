@@ -36,7 +36,7 @@ export default {
       dispatch(actions.resource.delete(resourceType, resourceId));
       setShowRef(true);
     }, [dispatch, resourceId, resourceType]);
-    const deleteResouce = useCallback(() => {
+    const handleDelete = useCallback(() => {
       let type;
 
       if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
@@ -68,8 +68,8 @@ export default {
     }, []);
 
     useEffect(() => {
-      deleteResouce();
-    }, [deleteResouce]);
+      handleDelete();
+    }, [handleDelete]);
 
     return (
       <>

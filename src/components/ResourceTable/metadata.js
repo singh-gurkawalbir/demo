@@ -10,6 +10,7 @@ import stacks from './stacks/metadata';
 import apis from './apis/metadata';
 import recycleBinTTL from './recycleBinTTL/metadata';
 import templates from './templates/metadata';
+import transfers from './transfers/metadata';
 
 const metadata = {
   agents,
@@ -23,6 +24,7 @@ const metadata = {
   apis,
   recycleBinTTL,
   templates,
+  transfers,
 };
 
 export default function (resourceType) {

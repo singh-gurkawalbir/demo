@@ -2,10 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
-import actions from '../../actions';
-import RefreshIcon from '../icons/RefreshIcon';
-import Spinner from '../Spinner';
-import * as selectors from '../../reducers';
+import actions from '../../../../actions';
+import RefreshIcon from '../../../icons/RefreshIcon';
+import Spinner from '../../../Spinner';
+import * as selectors from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   status: {
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
+export default function RefreshableHeading({label, resourceType}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isResourceCollectionLoading = useSelector(state => selectors.isResourceCollectionLoading(state, resourceType));
@@ -34,7 +34,7 @@ export default function TableHeadWithRefreshIcon({headerName, resourceType}) {
 
   return (
     <span className={classes.status}>
-      {headerName}
+      {label}
       {(refreshRequested && isResourceCollectionLoading)
         ? <Spinner className={classes.statusSpinner} size={24} color="primary" />
         : (

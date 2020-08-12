@@ -1,8 +1,8 @@
 import React from 'react';
-import Delete from './Actions/Delete';
-import Cancel from './Actions/Cancel';
-import TableHeadWithRefreshIcon from '../../../components/CeligoTable/TableHeadWithRefreshIcon';
-import DateTimeDisplay from '../../../components/DateTimeDisplay';
+import Delete from './actions/Delete';
+import Cancel from './actions/Cancel';
+import TableHeadWithRefreshIcon from '../commonCells/RefreshableHeading';
+import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
   columns: () => {
@@ -20,7 +20,7 @@ export default {
         heading: 'Integrations',
         value: r => r && r.integrations,
       },
-      { heading: <TableHeadWithRefreshIcon headerName="Status" resourceType="transfers" />,
+      { heading: <TableHeadWithRefreshIcon label="Status" resourceType="transfers" />,
         value: r => {
           if (!r) {
             return '';

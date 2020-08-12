@@ -1,32 +1,34 @@
 import { useDispatch } from 'react-redux';
 import { useCallback, useEffect } from 'react';
 import actions from '../../../../../actions';
-import useConfirmDialog from '../../../../../components/ConfirmDialog';
+import useConfirmDialog from '../../../../ConfirmDialog';
 
 export default {
-  label: 'Cancel transfer',
-  component: function Cancel({ rowData: transfer }) {
+  label: 'Delete transfer',
+  component: function Delete({ rowData: transfer }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
-    const cancelTransfer = useCallback(() => {
-      dispatch(actions.transfer.cancel(transfer._id));
+    const deleteTransfer = useCallback(() => {
+      dispatch(actions.resource.delete('transfers', transfer._id));
     }, [dispatch, transfer._id]);
     const handleClick = useCallback(() => {
       confirmDialog({
-        title: 'Confirm cancel',
-        message: 'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed.',
+        title: 'Confirm delete',
+        message: 'Are you sure you want to delete this transfer?',
         buttons: [
           {
-            label: 'Yes, cancel',
-            onClick: cancelTransfer,
+            label: 'Delete',
+            onClick: () => {
+              deleteTransfer();
+            },
           },
           {
-            label: 'No, go back',
+            label: 'Cancel',
             color: 'secondary',
           },
         ],
       });
-    }, [confirmDialog, cancelTransfer]);
+    }, [confirmDialog, deleteTransfer]);
 
     useEffect(() => {
       handleClick();
