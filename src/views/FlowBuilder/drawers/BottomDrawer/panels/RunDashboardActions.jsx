@@ -42,6 +42,8 @@ export default function RunDashboardActions({ flowId }) {
   const validDashboardActions = useMemo(() => {
     // return set of actions [cancel, downloadDiagnostics]
     const actions = [];
+
+    if (!latestJobs.length) return actions;
     const jobsInProgress = latestJobs
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status));
 
