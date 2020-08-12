@@ -95,7 +95,7 @@ export default function DynaCsvParse(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
@@ -207,7 +207,7 @@ export default function DynaCsvParse(props) {
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={pushRightDrawer}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
 

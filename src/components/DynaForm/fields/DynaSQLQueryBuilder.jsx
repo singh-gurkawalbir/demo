@@ -57,7 +57,7 @@ export default function DynaSQLQueryBuilder(props) {
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
   const dispatch = useDispatch();
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
     extractFieldsLoaded: false,
@@ -276,7 +276,7 @@ export default function DynaSQLQueryBuilder(props) {
           data-test={id}
           variant="outlined"
           color="secondary"
-          onClick={pushRightDrawer}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

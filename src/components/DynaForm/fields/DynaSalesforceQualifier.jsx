@@ -47,7 +47,7 @@ export default function DynaSalesforceQualifier(props) {
     label,
     options,
   } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -98,7 +98,7 @@ export default function DynaSalesforceQualifier(props) {
       </div>
       <ActionButton
         data-test={id}
-        onClick={pushRightDrawer}
+        onClick={handleOpenDrawer}
         className={classes.exitButtonsalsForceQualifier}>
         <ExitIcon />
       </ActionButton>

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 export default function FormBuilderButton({resourceId, resourceType, integrationId}) {
   const classes = useStyles();
   const history = useHistory();
-  const pushRightDrawer = usePushRightDrawer();
+  const handleOpenDrawer = usePushRightDrawer();
   const [drawerKey, setDrawerKey] = useState(0);
   const settingsForm = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
@@ -33,9 +33,9 @@ export default function FormBuilderButton({resourceId, resourceType, integration
     e => {
       e.stopPropagation();
       setDrawerKey(drawerKey => drawerKey + 1);
-      pushRightDrawer('editSettings');
+      handleOpenDrawer('editSettings');
     },
-    [pushRightDrawer]
+    [handleOpenDrawer]
   );
 
   if (!allowFormEdit) return null;

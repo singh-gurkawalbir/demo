@@ -42,7 +42,7 @@ export default function DynaNetSuiteQualifier(props) {
     options,
   } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   useEffect(() => {
     if (options.commMetaPath) {
@@ -123,7 +123,7 @@ export default function DynaNetSuiteQualifier(props) {
       </FormControl>
       <ActionButton
         data-test={id}
-        onClick={pushRightDrawer}
+        onClick={handleOpenDrawer}
         className={classes.editorButtonNetsuiteQ}>
         <OpenInNewIcon />
       </ActionButton>

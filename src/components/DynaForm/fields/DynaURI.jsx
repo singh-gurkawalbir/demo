@@ -32,7 +32,7 @@ export default function DynaURI(props) {
     disableEditorV2 = false,
   } = props;
   const classes = useStyles();
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -69,7 +69,7 @@ export default function DynaURI(props) {
         />
         <ActionButton
           data-test={id}
-          onClick={pushRightDrawer}
+          onClick={handleOpenDrawer}
           className={classes.dynaURIActionButton}>
           <ScriptsIcon />
         </ActionButton>

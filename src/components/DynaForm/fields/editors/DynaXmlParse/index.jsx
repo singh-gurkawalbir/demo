@@ -105,7 +105,7 @@ export default function DynaXmlParse({
 }) {
   const classes = useStyles();
   const [formKey, setFormKey] = useState(1);
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -205,7 +205,7 @@ export default function DynaXmlParse({
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={pushRightDrawer}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

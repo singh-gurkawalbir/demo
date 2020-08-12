@@ -57,7 +57,7 @@ export default function DynaCsvGenerate(props) {
     flowId,
   } = props;
   const [formKey, setFormKey] = useState(1);
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const isHttpImport = useSelector(state => {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
@@ -136,7 +136,7 @@ export default function DynaCsvGenerate(props) {
           variant="outlined"
           color="secondary"
           className={classes.csvBtn}
-          onClick={pushRightDrawer}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

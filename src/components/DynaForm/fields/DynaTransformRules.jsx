@@ -53,7 +53,7 @@ const getTransformRule = value => {
 export default function DynaTransformRules(props) {
   const classes = useStyles();
   const { id, resourceId, value, label, onFieldChange, disabled } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const rule = getTransformRule(value);
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -84,7 +84,7 @@ export default function DynaTransformRules(props) {
           <ActionButton
             disabled={disabled}
             data-test="editTransformation"
-            onClick={pushRightDrawer}>
+            onClick={handleOpenDrawer}>
             <EditIcon />
           </ActionButton>
         </div>

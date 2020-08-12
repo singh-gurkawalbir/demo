@@ -78,7 +78,7 @@ function DynaFileDefinitionEditor(props) {
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   // Default values
   const parserType =
@@ -188,7 +188,7 @@ function DynaFileDefinitionEditor(props) {
             variant="outlined"
             color="secondary"
             className={classes.fileDefinitionBtn}
-            onClick={pushRightDrawer}>
+            onClick={handleOpenDrawer}>
             Launch
           </Button>
           <FieldHelp {...props} />

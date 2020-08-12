@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 export default function DynaFTPFileNameWithEditor(props) {
   const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
   const classes = useStyles();
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
@@ -53,7 +53,7 @@ export default function DynaFTPFileNameWithEditor(props) {
     />
         <ActionButton
           data-test={id}
-          onClick={pushRightDrawer}
+          onClick={handleOpenDrawer}
           className={classes.dynaActionButton}>
           <ScriptsIcon />
         </ActionButton>

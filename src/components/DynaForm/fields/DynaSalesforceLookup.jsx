@@ -43,7 +43,7 @@ export default function DynaSalesforceLookup(props) {
     multiline,
     options,
   } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const dispatch = useDispatch();
   const handleSave = (shouldCommit, editorValues) => {
@@ -132,7 +132,7 @@ export default function DynaSalesforceLookup(props) {
           </div>
           <ActionButton
             data-test={id}
-            onClick={pushRightDrawer}
+            onClick={handleOpenDrawer}
             className={classes.exitButton}>
             <FilterIcon />
           </ActionButton>

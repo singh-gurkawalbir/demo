@@ -54,7 +54,7 @@ export default function DynaSqlQuery(props) {
     isValid,
     errorMessages,
   } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
@@ -98,7 +98,7 @@ export default function DynaSqlQuery(props) {
     <>
       <ActionButton
         data-test={id}
-        onClick={pushRightDrawer}
+        onClick={handleOpenDrawer}
         className={classes.editorButton}>
         <ExitIcon />
       </ActionButton>

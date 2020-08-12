@@ -203,7 +203,7 @@ export default function EditorDrawer(props) {
       variant="temporary"
       actions={drawerActions}
       onClose={handleClose} >
-      {// Is there a better way to do this?
+      {
         cloneElement(children?.length ? children[activeEditorIndex] : children, {
           layout,
           editorId: activeEditorId})

@@ -47,7 +47,7 @@ export default function DynaNetSuiteLookup(props) {
     label,
     options,
   } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const dispatch = useDispatch();
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -141,7 +141,7 @@ export default function DynaNetSuiteLookup(props) {
           </div>
           <ActionButton
             data-test={id}
-            onClick={pushRightDrawer}
+            onClick={handleOpenDrawer}
             className={classes.dynaNetsuiteLookupActionBtn}>
             <FilterIcon />
           </ActionButton>

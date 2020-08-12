@@ -11,7 +11,7 @@ const defaultQueryValue = 'select * from locations where id={{data.id}}';
 
 export default function DynaQuery(props) {
   const { id, onFieldChange, sampleData = {}, disabled, value, label } = props;
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -39,7 +39,7 @@ export default function DynaQuery(props) {
         data-test={id}
         variant="outlined"
         color="secondary"
-        onClick={pushRightDrawer}>
+        onClick={handleOpenDrawer}>
         Define {label}
       </Button>
     </>

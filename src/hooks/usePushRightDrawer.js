@@ -5,14 +5,18 @@ const usePushRightDrawer = pathProp => {
   const history = useHistory();
   const match = useRouteMatch();
 
-  const pushRightDrawer = useCallback(path => {
-    const pathToPush = pathProp || path;
+  const pushRelativePath = useCallback(path => {
+    let pathToPush = pathProp;
+
+    if (path && (typeof path === 'string' || typeof path === 'number')) {
+      pathToPush = path;
+    }
 
     if (!pathToPush) { return; }
     history.push(`${match.url}/${pathToPush}`);
   }, [pathProp, history, match.url]);
 
-  return pushRightDrawer;
+  return pushRelativePath;
 };
 
 export default usePushRightDrawer;

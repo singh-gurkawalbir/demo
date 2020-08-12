@@ -66,7 +66,7 @@ const DynaHttpRequestBody = props => {
     disableEditorV2 = false,
   } = props;
   const classes = useStyles();
-  const pushRightDrawer = usePushRightDrawer(id);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const contentType = options.contentType || props.contentType;
   const { merged: resourceData = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
@@ -163,7 +163,7 @@ const DynaHttpRequestBody = props => {
           variant="outlined"
           color="secondary"
           className={classes.dynaReqBodyBtn}
-          onClick={pushRightDrawer}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

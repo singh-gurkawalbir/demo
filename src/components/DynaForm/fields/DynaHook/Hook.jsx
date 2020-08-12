@@ -55,7 +55,7 @@ const scriptsFilterConfig = { type: 'scripts' };
 const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook(props) {
-  const pushRightDrawer = usePushRightDrawer();
+  const handleOpenDrawer = usePushRightDrawer();
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const dispatch = useDispatch();
@@ -101,8 +101,8 @@ export default function DynaHook(props) {
       requestForPreHookData();
     }
 
-    pushRightDrawer(id);
-  }, [id, pushRightDrawer, requestForPreHookData]);
+    handleOpenDrawer(id);
+  }, [id, handleOpenDrawer, requestForPreHookData]);
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
