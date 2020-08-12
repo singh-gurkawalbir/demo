@@ -10,6 +10,8 @@ import {
   Line,
   ResponsiveContainer,
 } from 'recharts';
+import * as d3 from 'd3';
+import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
@@ -56,12 +58,14 @@ const getLegend = index => {
   return legendTypes[index % 10];
 };
 
-const Chart = ({ id, flowId, selectedResources }) => {
-  const { data = [{}] } =
+const Chart = ({ id, flowId, range, selectedResources }) => {
+  const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
   );
+  const { startDate, endDate } = range;
+
   let dateTimeFormat;
   const userOwnPreferences = useSelector(
     state => selectors.userOwnPreferences(state),
@@ -77,6 +81,30 @@ const Chart = ({ id, flowId, selectedResources }) => {
   } else {
     dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
   }
+
+  const days = moment(endDate).diff(moment(startDate), 'days');
+
+  const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
+  let ticks;
+
+  if (days < 7) {
+    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+  } else if (days < 180) {
+    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+  } else {
+    ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
+  }
+
+  // Add Zero data for ticks
+  ticks.forEach(tick => {
+    if (!data.find(d => d.timeInMills === tick)) {
+      selectedResources.forEach(r => {
+        data.push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
+      });
+    }
+  });
+
+  const flowData = sortBy(data, ['timeInMills']);
 
   const getResourceName = name => {
     const resourceId = name.replace(/-value/, '');
@@ -109,7 +137,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data}
+          data={flowData}
           margin={{
             top: 5,
             right: 30,
@@ -117,9 +145,14 @@ const Chart = ({ id, flowId, selectedResources }) => {
             bottom: 5,
           }}>
           <XAxis
-            dataKey="time"
-            name="Time"
-            type="category"
+            dataKey="timeInMills"
+            domain={domainRange}
+            scale="time"
+            type="number"
+            ticks={ticks}
+            // tickFormatter={timeFormatter}
+            // name="Time"
+            // type="category"
             tickFormatter={unixTime => unixTime ? moment(unixTime).format('MM/DD hh:mm') : ''}
           />
           <YAxis
@@ -141,6 +174,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
               key={r}
               dataKey={`${r}-value`}
               yAxisId={id}
+              strokeWidth="2"
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
             />
@@ -183,6 +217,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
         <Chart
           key={m}
           id={m}
+          range={range}
           flowId={flowId}
           selectedResources={selectedResources}
         />

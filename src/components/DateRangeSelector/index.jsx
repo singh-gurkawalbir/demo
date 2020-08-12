@@ -43,7 +43,7 @@ const rangeList = [
     label: 'Today',
     range: () => ({
       startDate: defineds.startOfToday,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
