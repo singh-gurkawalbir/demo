@@ -6,7 +6,6 @@ import {selectors} from '../../reducers';
 import actions from '../../actions';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
-// import MappingRow from './MappingRow';
 import TopPanel from './TopPanel';
 import MappingRow from './MappingRow';
 import ButtonPanel from './ButtonPanel';
@@ -25,10 +24,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     maxWidth: '100%',
     flex: '1 1 0',
-  },
-  mapCont: {
-    width: '0px',
-    flex: '1.1 1 0',
   },
   assistantContainer: {
     flex: '1 1 0',
@@ -77,7 +72,6 @@ const useStyles = makeStyles(theme => ({
   topHeading: {
     fontFamily: 'Roboto500',
   },
-
 }));
 const Mapping = props => {
   const {flowId, resourceId, subRecordMappingId, disabled, onClose} = props;
@@ -99,7 +93,7 @@ const Mapping = props => {
         const obj = { ...value };
 
         obj.index = index;
-
+        // hardcoded value are represented as "value" when show in mapping list
         if (obj.hardCodedValue) {
           obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
         }
@@ -143,15 +137,12 @@ const Mapping = props => {
   return (
     <div className={classes.root}>
       <div
-        className={clsx(classes.mappingContainer, {
-          // [classes.mapCont]: mappingPreviewType,
-        })}>
+        className={clsx(classes.mappingContainer)}>
         <TopPanel
           flowId={flowId}
           resourceId={resourceId}
           disabled={disabled}
         />
-
         <div className={classes.mappingsBody}>
           {tableData.map((mapping, index) => (
             <MappingRow
@@ -204,6 +195,7 @@ export default function MappingWrapper(props) {
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, resourceId, subRecordMappingId).status);
 
   useEffect(() => {
+    /** initiate a mapping init each time user opens mapping. Sample data is loaded */
     dispatch(actions.mapping.init({
       flowId,
       resourceId,
@@ -211,6 +203,7 @@ export default function MappingWrapper(props) {
     }));
 
     return () => {
+      // clear the mapping list when component unloads.
       dispatch(actions.mapping.clear());
     };
   }, [dispatch, flowId, resourceId, subRecordMappingId]);

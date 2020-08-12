@@ -69,7 +69,6 @@ const useStyles = makeStyles(theme => ({
     top: 6,
     color: theme.palette.text.hint,
   },
-
   deleteBtn: {
     border: 'none',
     width: 0,
@@ -207,12 +206,6 @@ export default function MappingRow(props) {
   const handleBlur = useCallback(
     field => (id, value) => {
       // check if value changes or user entered something in new row
-      if (field === 'extract' && value.indexOf('_child_') > -1) {
-        dispatch(actions.mapping.checkForSFSublistExtractPatch(key, value));
-
-        return;
-      }
-
       if ((!key && value) || (key && mapping[field] !== value)) {
         if (key && value === '') {
           if (
@@ -317,7 +310,6 @@ export default function MappingRow(props) {
           className={clsx({
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
-          {/* TODO refactor MappingSettings pending */}
           <MappingSettings
             id={`fieldMappingSettings-${index}`}
             onSave={handleSettingsSave}

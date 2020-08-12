@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     width: '0px',
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
+    position: 'relative',
   },
 }));
 export default function PreviewPanel(props) {
@@ -33,7 +34,7 @@ export default function PreviewPanel(props) {
     if (importRes.adaptorType === 'SalesforceImport') {
       const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
 
-      if (salesforceMasterRecordTypeInfo && salesforceMasterRecordTypeInfo.data) {
+      if (salesforceMasterRecordTypeInfo?.data) {
         const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
 
         if (searchLayoutable) {

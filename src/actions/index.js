@@ -1341,7 +1341,6 @@ const mapping = {
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_MAPPINGS, {
     mappings,
   }),
-  checkForSFSublistExtractPatch: (key, value) => action(actionTypes.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, {key, value}),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
 };
 

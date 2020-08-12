@@ -10,11 +10,7 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
     padding: '12px 0px',
-    '& > button': {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
-    '& > button': {
+    '& > div > button': {
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
     },
@@ -47,7 +43,7 @@ export default function ButtonPanel(props) {
     <>
       <ButtonGroup
         className={classes.importMappingButtonGroup}>
-        <>
+        <div>
           <MappingSaveButton
             disabled={!!(disabled || saveInProgress)}
             color="primary"
@@ -71,7 +67,7 @@ export default function ButtonPanel(props) {
             onClick={handleClose}>
             Cancel
           </Button>
-        </>
+        </div>
 
         {showPreviewButton && (
         <Button

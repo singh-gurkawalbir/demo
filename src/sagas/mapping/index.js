@@ -16,14 +16,13 @@ import {requestSampleData as requestImportSampleData} from '../sampleData/import
 import {requestAssistantMetadata} from '../resources/meta';
 import {getMappingMetadata as getIAMappingMetadata} from '../integrationApps/settings';
 
-export function* loadRequiredData({
+export function* fetchRequiredMappingData({
   flowId,
   resourceId,
   subRecordMappingId,
 }) {
   const importRes = yield select(selectors.resource, 'imports', resourceId);
 
-  /**  request for flow sample data */
   yield call(requestFlowSampleData, {
     flowId,
     resourceId,
@@ -31,7 +30,6 @@ export function* loadRequiredData({
     stage: 'importMappingExtract',
   });
 
-  // see for its refactor
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importRes, subRecordMappingId) : {};
 
@@ -67,8 +65,8 @@ export function* mappingInit({
   resourceId,
   subRecordMappingId,
 }) {
-  /** fetch sample data */
-  yield call(loadRequiredData, {
+  /** Flow Preview data & metadata needs to be loaded before generating mapping list */
+  yield call(fetchRequiredMappingData, {
     flowId,
     resourceId,
     subRecordMappingId,
@@ -85,7 +83,6 @@ export function* mappingInit({
   const isGroupedSampleData = !!(flowSampleData && Array.isArray(flowSampleData));
   let formattedMappings = [];
   let lookups = [];
-
   const options = {};
 
   if (importRes.netsuite_da) {
@@ -163,9 +160,6 @@ export function* mappingInit({
       isCsvOrXlsxResource: mappingUtil.isCsvOrXlsxResource(importRes),
     })
   );
-
-  // TODO
-  // yield call(refreshGenerates, {id, isInit: true });
 }
 
 export function* saveMappings({context }) {
@@ -337,17 +331,11 @@ export function* previewMappings() {
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importRes.adaptorType)) {
       if (
-        preview &&
-        preview.data &&
-        preview.data.returnedObjects &&
-        preview.data.returnedObjects.mappingErrors &&
-        preview.data.returnedObjects.mappingErrors[0] &&
-        preview.data.returnedObjects.mappingErrors[0].error
+        preview?.data?.returnedObjects?.mappingErrors[0]?.error
       ) {
         return yield put(actions.mapping.previewFailed());
       }
     }
-
     yield put(actions.mapping.previewReceived(preview));
   } catch (e) {
     yield put(actions.mapping.previewFailed());
@@ -399,12 +387,27 @@ export function* refreshGenerates({ isInit = false }) {
         }
       }
     });
+    // fetch all child sObject used in mapping
     yield put(actions.importSampleData.request(
       resourceId,
       {sObjects: sObjectList},
       !isInit
     ));
-    // in case of salesforce import, fetch all child sObject reference
+
+    /** fetup SF mapping assistant metadata begins */
+    const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, resourceId);
+
+    if (salesforceMasterRecordTypeInfo?.data) {
+      const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
+
+      if (searchLayoutable) {
+        yield put(actions.metadata.request(_connectionId,
+          `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${recordTypeId}`,
+          {refreshCache: !isInit}
+        ));
+      }
+    }
+    /** fetup SF mapping assistant metadata ends */
   } else {
     const opts = {};
 
@@ -457,7 +460,6 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
   }
 }
 export function* updateImportSampleData() {
-  // identify sample data change
   const {
     incompleteGenerates = [],
     mappings = [],

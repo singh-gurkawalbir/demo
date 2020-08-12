@@ -8,6 +8,7 @@ import Spinner from '../Spinner';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
@@ -180,21 +181,18 @@ export default function NetSuiteMappingAssistant({
 
   if (!netSuiteRecordMetadata) {
     return (
-      <Typography>
-        Loading
-        <Spinner />
-      </Typography>
+      <SpinnerWrapper>
+        <Spinner color="primary" />
+      </SpinnerWrapper>
     );
   }
 
   return (
     <>
       {netSuiteFormIsLoading && (
-        <Typography>
-          Loading
-          {/** TODO Azhar to fix the Spinner to show as an overlay/mask. */}
-          <Spinner />
-        </Typography>
+        <SpinnerWrapper>
+          <Spinner color="primary" />
+        </SpinnerWrapper>
       )}
       {suiteletUrl && (
         <Iframe

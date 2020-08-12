@@ -292,24 +292,6 @@ export default (state = {}, action) => {
         draft.mapping.mappings = mappings;
         break;
       }
-      case actionTypes.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {
-        const { value } = action;
-
-        draft.mapping.sfSubListExtractFieldName = value;
-
-        if (!value) {
-          const key = draft.mapping.lastModifiedRowKey;
-
-          if (key) {
-            const index = draft.mapping.mappings.findIndex(m => m.key === key);
-
-            draft.mapping.mappings[index].rowIdentifier += 1;
-          } else {
-            draft.mapping.changeIdentifier += 1;
-          }
-        }
-        break;
-      }
       case actionTypes.MAPPING.CLEAR: {
         // delete draft.mapping;
         break;
