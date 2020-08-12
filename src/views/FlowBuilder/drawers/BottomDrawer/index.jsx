@@ -10,7 +10,7 @@ import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
-import RunIcon from '../../../../components/icons/RunIcon';
+import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
@@ -215,7 +215,7 @@ export default function BottomDrawer({
           variant="scrollable"
           scrollButtons="auto"
           aria-label="scrollable auto tabs example">
-          <Tab {...tabProps(0)} icon={<RunIcon />} label="Dashboard" />
+          <Tab {...tabProps(0)} icon={<DashboardIcon />} label="Dashboard" />
           <Tab
             {...tabProps(1)}
             icon={
