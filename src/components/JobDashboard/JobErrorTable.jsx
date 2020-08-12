@@ -84,6 +84,7 @@ const useStyles = makeStyles(theme => ({
   celigoTableWrapper: {
     overflowX: 'auto',
     width: '100%',
+    marginBottom: theme.spacing(5),
   },
 }));
 
