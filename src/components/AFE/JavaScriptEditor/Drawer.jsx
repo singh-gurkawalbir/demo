@@ -17,16 +17,10 @@ export default function JavaScriptEditorDrawer(props) {
     isSampleDataLoading,
     ...rest
   } = props;
-  const defaults = {
-    width: '80vw',
-    height: '50vh',
-    open: true,
-  };
 
   return (
     <EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       showLayoutOptions={false}
       disabled={disabled}>

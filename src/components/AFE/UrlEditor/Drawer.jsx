@@ -12,17 +12,10 @@ export default function UrlEditorDrawer(props) {
     disabled,
     ...rest
   } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
 
   return (
     <AFE2EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       showFullScreen>

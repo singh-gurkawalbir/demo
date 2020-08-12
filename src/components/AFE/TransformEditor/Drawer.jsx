@@ -2,13 +2,6 @@ import React from 'react';
 import EditorDrawer from '../EditorDrawer';
 import TransformEditor from '.';
 
-const defaults = {
-  width: '85vw',
-  height: '60vh',
-  layout: 'compact',
-  open: true,
-};
-
 export default function TransformEditorDrawer({
   id,
   rule,
@@ -19,7 +12,6 @@ export default function TransformEditorDrawer({
   return (
     <EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       showLayoutOptions={false}>

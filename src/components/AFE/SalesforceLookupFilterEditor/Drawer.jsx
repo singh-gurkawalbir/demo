@@ -4,16 +4,9 @@ import DynaSalesforceLookupFilters from '../../DynaForm/fields/DynaSalesforceLoo
 
 export default function SalesforceLookupFilterEditorDrawer(props) {
   const { id } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
 
   return (
     <EditorDrawer
-      {...defaults}
       {...props}
       showFullScreen
       showLayoutOptions={false}

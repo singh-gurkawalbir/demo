@@ -4,12 +4,6 @@ import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
 import TextToggle from '../../TextToggle';
 
-const defaults = {
-  width: '85vw',
-  height: '60vh',
-  layout: 'compact',
-  open: true,
-};
 const toggleEditorOptions = [
   { label: 'Rules', value: 'expression' },
   { label: 'JavaScript', value: 'script' },
@@ -48,7 +42,6 @@ export default function TransformToggleEditorDrawer({
     <EditorDrawer
       id={id}
       type={type}
-      {...defaults}
       {...rest}
       disabled={disabled}
       toggleAction={editorToggleAction}

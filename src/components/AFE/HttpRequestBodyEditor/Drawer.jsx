@@ -14,17 +14,10 @@ export default function HttpRequestBodyDrawer(props) {
     editorVersion,
     ...rest
   } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '80vw',
-    height: '50vh',
-    open: true,
-  };
 
   return (
     <AFE2EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}
       editorVersion={editorVersion}>

@@ -3,12 +3,6 @@ import CsvParseEditor from './CsvParser';
 import CsvGenerateEditor from './CsvGenerator';
 import AFE2EditorDrawer from '../AFE2Editor/Drawer';
 
-const defaults = {
-  width: '80vw',
-  height: '70vh',
-  open: true,
-};
-
 export default function CsvConfigEditorDrawer(props) {
   // csvEditorType: ['parse', 'generate']
   const {
@@ -25,7 +19,6 @@ export default function CsvConfigEditorDrawer(props) {
   return (
     <AFE2EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       showLayoutOptions={false}
       disabled={disabled}

@@ -4,16 +4,9 @@ import DynaNetSuiteQualificationCriteria from '../../DynaForm/fields/DynaNetSuit
 
 export default function NetSuiteQualificationCriteriaEditorDrawer(props) {
   const { id } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
 
   return (
     <EditorDrawer
-      {...defaults}
       {...props}
       showFullScreen
       showLayoutOptions={false}

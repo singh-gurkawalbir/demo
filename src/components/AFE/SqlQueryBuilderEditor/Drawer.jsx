@@ -3,11 +3,6 @@ import EditorDrawer from '../EditorDrawer';
 import SQLQueryBuilderEditor from './index';
 
 export default function SqlQueryBuilderEditorDrawer(props) {
-  const defaults = {
-    width: '80vw',
-    height: '70vh',
-    open: true,
-  };
   const {
     id,
     rule,
@@ -25,7 +20,6 @@ export default function SqlQueryBuilderEditorDrawer(props) {
     <EditorDrawer
       dataTest={dataTest}
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}>
       <SQLQueryBuilderEditor
