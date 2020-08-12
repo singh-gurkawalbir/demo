@@ -1,10 +1,10 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../actions';
-import {selectors} from '../../reducers';
-import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
-import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
+import actions from '../../../actions';
+import {selectors} from '../../../reducers';
+import SalesforceMappingAssistant from '../../SalesforceMappingAssistant';
+import NetSuiteMappingAssistant from '../../NetSuiteMappingAssistant';
 import HttpMappingAssistant from './HttpMappingAssistant';
 
 const useStyles = makeStyles(theme => ({
@@ -109,10 +109,6 @@ export default function PreviewPanel(props) {
       <div className={classes.assistantContainer}>
         {mappingPreviewType === 'salesforce' && (
         <SalesforceMappingAssistant
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
           connectionId={connectionId}
           layoutId={salesforcelayoutId}
           onFieldClick={handleSFNSAssistantFieldClick}

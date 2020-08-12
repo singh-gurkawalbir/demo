@@ -3,13 +3,17 @@ import { ButtonGroup, makeStyles, Button } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-import MappingSaveButton from './MappingSaveButton';
+import MappingSaveButton from './SaveButton';
 
 const useStyles = makeStyles(theme => ({
   importMappingButtonGroup: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
-    padding: '16px 0px',
+    padding: '12px 0px',
+    '& > button': {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
     '& > button': {
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),
@@ -43,33 +47,31 @@ export default function ButtonPanel(props) {
     <>
       <ButtonGroup
         className={classes.importMappingButtonGroup}>
-        <div>
-          <>
-            <MappingSaveButton
-              disabled={!!(disabled || saveInProgress)}
-              color="primary"
-              dataTest="saveImportMapping"
-              submitButtonLabel="Save"
-              flowId={flowId}
+        <>
+          <MappingSaveButton
+            disabled={!!(disabled || saveInProgress)}
+            color="primary"
+            dataTest="saveImportMapping"
+            submitButtonLabel="Save"
+            flowId={flowId}
           />
-            <MappingSaveButton
-              variant="outlined"
-              color="secondary"
-              dataTest="saveAndCloseImportMapping"
-              onClose={handleClose}
-              disabled={!!(disabled || saveInProgress)}
-              submitButtonLabel="Save & close"
-              flowId={flowId}
+          <MappingSaveButton
+            variant="outlined"
+            color="secondary"
+            dataTest="saveAndCloseImportMapping"
+            onClose={handleClose}
+            disabled={!!(disabled || saveInProgress)}
+            submitButtonLabel="Save & close"
+            flowId={flowId}
           />
-            <Button
-              variant="text"
-              data-test="saveImportMapping"
-              disabled={!!saveInProgress}
-              onClick={handleClose}>
-              Cancel
-            </Button>
-          </>
-        </div>
+          <Button
+            variant="text"
+            data-test="saveImportMapping"
+            disabled={!!saveInProgress}
+            onClick={handleClose}>
+            Cancel
+          </Button>
+        </>
 
         {showPreviewButton && (
         <Button

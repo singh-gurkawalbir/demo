@@ -17,8 +17,6 @@ const useStyles = makeStyles({
 
 export default function NetSuiteMappingAssistant({
   mappingId,
-  width = '100%',
-  height = '100%',
   netSuiteConnectionId,
   netSuiteRecordType,
   data,
@@ -202,8 +200,8 @@ export default function NetSuiteMappingAssistant({
         <Iframe
           title="NetSuite Mapping Assistant"
           id="netsuiteFormFrame"
-          width={width}
-          height={height}
+          width="100%"
+          height="100%"
           url={suiteletUrl}
           onLoad={handleSuiteletFrameLoad}
           display={isNSAssistantFormLoaded ? 'block' : 'none'}

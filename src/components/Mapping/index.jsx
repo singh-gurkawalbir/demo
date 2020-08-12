@@ -10,7 +10,7 @@ import SpinnerWrapper from '../SpinnerWrapper';
 import TopPanel from './TopPanel';
 import MappingRow from './MappingRow';
 import ButtonPanel from './ButtonPanel';
-import PreviewPanel from './PreviewPanel';
+import PreviewPanel from './Preview/Panel';
 
 const emptyObj = {};
 const useStyles = makeStyles(theme => ({
@@ -60,7 +60,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mappingsBody: {
-    height: 'calc(100% - 32px)',
+    height: 'calc(100% - 54px)',
     overflow: 'auto',
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
@@ -169,7 +169,7 @@ const Mapping = props => {
               />
           ))}
           <MappingRow
-            key="newMappingRow"
+            key={`newMappingRow-${emptyRowIndex}`}
             index={emptyRowIndex}
             mapping={emptyObj}
             disabled={disabled}

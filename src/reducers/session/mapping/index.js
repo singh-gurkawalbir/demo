@@ -342,7 +342,7 @@ const isMappingObjEqual = (mapping1, mapping2) => {
 export const selectors = {};
 
 // #region PUBLIC SELECTORS
-selectors.MAPPING = state => {
+selectors.mapping = state => {
   if (!state || !state.mapping) {
     return emptySet;
   }

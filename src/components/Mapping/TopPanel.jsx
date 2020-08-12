@@ -1,12 +1,9 @@
 import React, {useCallback} from 'react';
-import { Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles, IconButton } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-
 import clsx from 'clsx';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
-
-import IconTextButton from '../IconTextButton';
 import RefreshIcon from '../icons/RefreshIcon';
 import Spinner from '../Spinner';
 
@@ -14,31 +11,47 @@ const useStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     width: '100%',
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(1.5),
     alignItems: 'center',
     padding: theme.spacing(0, 0, 0, 1),
+    paddingLeft: theme.spacing(3.25),
+    '& > div': {
+      width: '46%',
+      display: 'flex',
+    },
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
+    padding: 0,
   },
   topHeading: {
     fontFamily: 'Roboto500',
   },
   spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
+    marginLeft: theme.spacing(1),
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
   childHeader: {
-    textAlign: 'center',
-    width: '46%',
+    // width: '46%',
+    paddingLeft: theme.spacing(1),
     '& > div': {
       width: '100%',
     },
   },
 }));
 
+const RefreshButton = ({className, ...props}) => (
+  <IconButton
+    variant="contained"
+    color="secondary"
+    className={className}
+    {...props}
+      >
+    <RefreshIcon />
+  </IconButton>
+);
 const SpinnerLoader = ({className}) => (
   <span className={className}>
     <Spinner size={24} color="primary" />
@@ -67,7 +80,7 @@ export default function TopPanel(props) {
   });
   const isGeneratesLoading = useSelector(state => {
     // todo : subrecord
-    const generateStatus = selectors.getImportSampleData(state, resourceId, {});
+    const generateStatus = selectors.getImportSampleData(state, resourceId, {}).status;
 
     return generateStatus === 'requested';
   });
@@ -98,53 +111,47 @@ export default function TopPanel(props) {
     [dispatch],
   );
 
-  function RefreshButton(props) {
-    return (
-      <IconTextButton
-        variant="contained"
-        color="secondary"
-        className={classes.refreshButton}
-        {...props}>
-        Refresh <RefreshIcon />
-      </IconTextButton>
-    );
-  }
-
   return (
     <div className={classes.header}>
-      <Typography
-        variant="h5"
-        className={clsx(classes.childHeader, classes.topHeading, {
+      <div>
+        <Typography
+          variant="h5"
+          className={clsx(classes.childHeader, classes.topHeading, {
           // [classes.topHeadingCustomWidth]: mappingPreviewType,
-        })}>
-        {extractLabel}
+          })}>
+          {extractLabel}
+        </Typography>
         { !isExtractsLoading && (
-          <RefreshButton
-            disabled={disabled}
-            onClick={handleRefreshFlowDataClick}
-            data-test="refreshExtracts"
+        <RefreshButton
+          disabled={disabled}
+          onClick={handleRefreshFlowDataClick}
+          className={classes.refreshButton}
+          data-test="refreshExtracts"
       />
         )}
         {isExtractsLoading && (
-          <SpinnerLoader className={classes.spinner} />
+        <SpinnerLoader className={classes.spinner} />
         )}
-      </Typography>
+      </div>
+      <div>
 
-      <Typography
-        variant="h5"
-        className={clsx(classes.childHeader, classes.topHeading)}>
-        {generateLabel}
+        <Typography
+          variant="h5"
+          className={clsx(classes.childHeader, classes.topHeading)}>
+          {generateLabel}
+        </Typography>
         {isGenerateRefreshSupported && !isGeneratesLoading && (
-          <RefreshButton
-            disabled={disabled}
-            onClick={handleRefreshGenerateDataClick}
-            data-test="refreshGenerates"
+        <RefreshButton
+          disabled={disabled}
+          onClick={handleRefreshGenerateDataClick}
+          className={classes.refreshButton}
+          data-test="refreshGenerates"
       />
         )}
         {isGeneratesLoading && (
         <SpinnerLoader className={classes.spinner} />
         )}
-      </Typography>
+      </div>
     </div>
   );
 }
