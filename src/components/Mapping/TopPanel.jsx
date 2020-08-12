@@ -80,8 +80,8 @@ export default function TopPanel(props) {
     return extractStatus === 'requested';
   });
   const isGeneratesLoading = useSelector(state => {
-    const opts = selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId);
-    const generateStatus = selectors.getImportSampleData(state, resourceId, {}).status;
+    const subRecordObj = selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId);
+    const generateStatus = selectors.getImportSampleData(state, resourceId, subRecordObj).status;
 
     return generateStatus === 'requested';
   });
