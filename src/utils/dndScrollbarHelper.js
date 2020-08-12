@@ -69,6 +69,7 @@ export const addEventListenerForSidebar = (element, height) => {
   PX_DIFF = Math.round(scrollHeightSidebar / height);
   OFFSET = Math.round(height / 2 - height / 8);
   const clientRect = sidebarElement.getBoundingClientRect();
+
   clientRectTop = clientRect.top;
   clientRectBottom = clientRect.bottom;
   isScrolling = false;

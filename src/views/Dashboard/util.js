@@ -71,6 +71,7 @@ export const dragTileConfig = (index, onDrop, elementReference) => ({
   begin: monitor => {
     // for scrollbar element, need to go three levels up and send element as argument
     addEventListenerForSidebar(elementReference.current?.parentElement?.parentElement?.parentElement, elementReference.current?.offsetHeight);
+
     return monitor.getItem();
   },
   end: dropResult => {
