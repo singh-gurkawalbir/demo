@@ -143,6 +143,9 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
 
 export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
   const { layout, fieldMap } = meta;
+  // if fieldMap is not provided just return metadata untranslated
+  // They DynaForm will probably return null in this case
+  if (!fieldMap) { return meta; }
   const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
