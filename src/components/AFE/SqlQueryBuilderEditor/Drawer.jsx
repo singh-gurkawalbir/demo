@@ -1,13 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import SQLQueryBuilderEditor from './index';
 
-function SqlQueryBuilderEditorDialog(props) {
-  const defaults = {
-    width: '80vw',
-    height: '70vh',
-    open: true,
-  };
+export default function SqlQueryBuilderEditorDrawer(props) {
   const {
     id,
     rule,
@@ -22,10 +17,9 @@ function SqlQueryBuilderEditorDialog(props) {
   } = props;
 
   return (
-    <EditorDialog
+    <EditorDrawer
       dataTest={dataTest}
       id={id}
-      {...defaults}
       {...rest}
       disabled={disabled}>
       <SQLQueryBuilderEditor
@@ -38,8 +32,6 @@ function SqlQueryBuilderEditorDialog(props) {
         editorId={id}
         showDefaultData={showDefaultData}
       />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }
-
-export default SqlQueryBuilderEditorDialog;

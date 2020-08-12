@@ -84,7 +84,7 @@ export default function JavaScriptEditor(props) {
   const logs = result && !error && !violations && result.logs;
 
   return (
-    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]} height="calc(100vh - 200px)">
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}

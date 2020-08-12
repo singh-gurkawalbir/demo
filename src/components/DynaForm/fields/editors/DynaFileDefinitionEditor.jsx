@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormContext } from 'react-forms-processor/dist';
-import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
+import FileDefinitionEditorDrawer from '../../../AFE/FileDefinitionEditor/Drawer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
@@ -13,6 +13,7 @@ import {
 } from '../../../AFE/FileDefinitionEditor/constants';
 import FieldHelp from '../../FieldHelp';
 import { safeParse } from '../../../../utils/string';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 /*
  * This editor is shown in case of :
@@ -76,9 +77,8 @@ function DynaFileDefinitionEditor(props) {
   } = props;
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
-  // Local states
-  const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   // Default values
   const parserType =
@@ -94,10 +94,6 @@ function DynaFileDefinitionEditor(props) {
     options: { format, definitionId, resourcePath },
   }), shallowEqual);
 
-  // click handlers
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
@@ -124,10 +120,6 @@ function DynaFileDefinitionEditor(props) {
       }
     }
   }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
-
-  const handleClose = useCallback(() => {
-    setShowEditor(false);
-  }, [setShowEditor]);
 
   // Effects to update values and sample data
   useEffect(() => {
@@ -173,23 +165,22 @@ function DynaFileDefinitionEditor(props) {
     <>
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
-          {showEditor && (
-            <FileDefinitionEditorDialog
-              title={label || 'File definition editor'}
-              id={id + resourceId}
-              processor={processor}
-              data={
+          <FileDefinitionEditorDrawer
+            title={label || 'File definition editor'}
+            id={id + resourceId}
+            processor={processor}
+            data={
                 sampleData ||
                 (resourceType === 'exports'
                   ? props.sampleData
                   : JSON.stringify(props.sampleData, null, 2))
               }
-              rule={value}
-              onSave={handleSave}
-              onClose={handleClose}
-              disabled={disabled}
+            rule={value}
+            onSave={handleSave}
+            disabled={disabled}
+            path={id}
             />
-          )}
+
           <FormLabel className={classes.fileDefinitionLabel}>
             {label}:
           </FormLabel>
@@ -197,7 +188,7 @@ function DynaFileDefinitionEditor(props) {
             variant="outlined"
             color="secondary"
             className={classes.fileDefinitionBtn}
-            onClick={handleEditorClick}>
+            onClick={handleOpenDrawer}>
             Launch
           </Button>
           <FieldHelp {...props} />

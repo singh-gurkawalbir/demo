@@ -1,9 +1,15 @@
-import React from 'react';
-import ToggleEditorDialog from '../EditorDialog/toggleEditorDialog';
+import React, { useState, useCallback, useMemo} from 'react';
+import EditorDrawer from '../EditorDrawer';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
+import TextToggle from '../../TextToggle';
 
-export default function FilterToggleEditorDialog(props) {
+const toggleEditorOptions = [
+  { label: 'Rules', value: 'expression' },
+  { label: 'JavaScript', value: 'script' },
+];
+
+export default function FilterToggleEditorDrawer(props) {
   const {
     id,
     rule,
@@ -19,21 +25,32 @@ export default function FilterToggleEditorDialog(props) {
     enableFilterForIA,
     ...rest
   } = props;
-  const defaults = {
-    width: '85vw',
-    height: '60vh',
-    layout: 'compact',
-    open: true,
-    labels: ['Rules', 'JavaScript'],
-  };
+
+  const [activeEditorIndex, setActiveEditorIndex] = useState('0');
+  const handleEditorToggle = useCallback(
+    value =>
+      setActiveEditorIndex(value === 'expression' ? '0' : '1'),
+    [setActiveEditorIndex]
+  );
+  const editorToggleAction = useMemo(() => (
+    <TextToggle
+      disabled={disabled}
+      value={activeEditorIndex === '0' ? 'expression' : 'script'}
+      onChange={handleEditorToggle}
+      exclusive
+      options={toggleEditorOptions}
+          />
+  ), [activeEditorIndex, disabled, handleEditorToggle]);
 
   return (
-    <ToggleEditorDialog
+    <EditorDrawer
       id={id}
       type={type}
-      {...defaults}
       {...rest}
       disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
+      toggleAction={editorToggleAction}
+      activeEditorIndex={activeEditorIndex}
+      patchOnSave
       showLayoutOptions>
       <FilterEditor
         disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
@@ -51,6 +68,6 @@ export default function FilterToggleEditorDialog(props) {
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
       />
-    </ToggleEditorDialog>
+    </EditorDrawer>
   );
 }

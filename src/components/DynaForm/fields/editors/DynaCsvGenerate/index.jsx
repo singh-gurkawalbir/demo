@@ -7,6 +7,7 @@ import DynaEditorWithFlowSampleData from '../../DynaEditorWithFlowSampleData';
 import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   csvContainer: {
@@ -56,6 +57,8 @@ export default function DynaCsvGenerate(props) {
     flowId,
   } = props;
   const [formKey, setFormKey] = useState(1);
+  const handleOpenDrawer = usePushRightDrawer(id);
+
   const isHttpImport = useSelector(state => {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
 
@@ -77,7 +80,6 @@ export default function DynaCsvGenerate(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, customHeaderRowsSupported: isHttpImport}));
-  const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, resourceId, resourceType });
@@ -93,9 +95,6 @@ export default function DynaCsvGenerate(props) {
     },
     [id, onFieldChange, resourceId, resourceType]
   );
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
@@ -111,24 +110,23 @@ export default function DynaCsvGenerate(props) {
   return (
     <>
       <div className={classes.csvContainer}>
-        {showEditor && (
-          <DynaEditorWithFlowSampleData
-            title="CSV generator helper"
-            id={`csvGenerate-${id}-${resourceId}`}
-            mode="csv"
-            csvEditorType="generate"
+        <DynaEditorWithFlowSampleData
+          title="CSV generator helper"
+          id={`csvGenerate-${id}-${resourceId}`}
+          mode="csv"
+          csvEditorType="generate"
           /** rule to be passed as json */
-            rule={currentOptions}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            disabled={disabled}
-            flowId={flowId}
-            editorType="csvGenerate"
-            resourceId={resourceId}
-            resourceType={resourceType}
-            fieldId="file.csv"
+          rule={currentOptions}
+          onSave={handleSave}
+          disabled={disabled}
+          flowId={flowId}
+          editorType="csvGenerate"
+          resourceId={resourceId}
+          resourceType={resourceType}
+          fieldId="file.csv"
+          path={id}
         />
-        )}
+
         <div className={classes.csvLabelWrapper}>
           <FormLabel className={classes.csvLabel}>{label}</FormLabel>
           <FieldHelp {...props} />
@@ -138,7 +136,7 @@ export default function DynaCsvGenerate(props) {
           variant="outlined"
           color="secondary"
           className={classes.csvBtn}
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

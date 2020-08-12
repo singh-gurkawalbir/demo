@@ -4,11 +4,12 @@ import { Button, FormLabel } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import CsvConfigEditorDialog from '../../../../AFE/CsvConfigEditor/Dialog';
+import CsvConfigEditorDrawer from '../../../../AFE/CsvConfigEditor/Drawer';
 import FieldHelp from '../../../FieldHelp';
 import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -94,7 +95,8 @@ export default function DynaCsvParse(props) {
   const initOptions = useMemo(() => getInitOptions(value), [getInitOptions, value]);
   const [currentOptions, setCurrentOptions] = useState(initOptions);
   const [form, setForm] = useState(getFormMetadata({...initOptions, resourceId, resourceType}));
-  const [showEditor, setShowEditor] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer(id);
+
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions(newOptions);
@@ -111,9 +113,6 @@ export default function DynaCsvParse(props) {
     },
     [id, onFieldChange]
   );
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
 
   const dispatch = useDispatch();
   /*
@@ -183,23 +182,22 @@ export default function DynaCsvParse(props) {
   return (
     <>
       <div className={classes.container}>
-        {showEditor && (
-          <CsvConfigEditorDialog
-            title="CSV parser helper"
-            id={`csvParser-${id}-${resourceId}`}
-            mode="csv"
-            data={csvData}
-            resourceType={resourceType}
-            csvEditorType="parse"
+        <CsvConfigEditorDrawer
+          title="CSV parser helper"
+          id={`csvParser-${id}-${resourceId}`}
+          mode="csv"
+          data={csvData}
+          resourceType={resourceType}
+          csvEditorType="parse"
             // /** rule to be passed as json */
             // rule={rule}
-            rule={currentOptions}
-            editorDataTitle={editorDataTitle}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            disabled={disabled}
+          rule={currentOptions}
+          editorDataTitle={editorDataTitle}
+          onSave={handleSave}
+          disabled={disabled}
+          path={id}
           />
-        )}
+
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp {...props} />
@@ -209,7 +207,7 @@ export default function DynaCsvParse(props) {
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
 

@@ -1,24 +1,17 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import DynaSalesforceLookupFilters from '../../DynaForm/fields/DynaSalesforceLookupFilters';
 
-export default function SalesforceLookupFilterEditorDialog(props) {
+export default function SalesforceLookupFilterEditorDrawer(props) {
   const { id } = props;
-  const defaults = {
-    layout: 'compact',
-    width: '70vw',
-    height: '55vh',
-    open: true,
-  };
 
   return (
-    <EditorDialog
-      {...defaults}
+    <EditorDrawer
       {...props}
       showFullScreen
       showLayoutOptions={false}
       hidePreviewAction>
       <DynaSalesforceLookupFilters editorId={id} {...props} />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

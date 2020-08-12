@@ -1,19 +1,13 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import XmlParseEditor from '.';
 
-export default function XmlParseEditorDialog(props) {
+export default function XmlParseEditorDrawer(props) {
   const { id, rule, data, editorDataTitle, disabled, ...rest } = props;
-  const defaults = {
-    width: '80vw',
-    height: '70vh',
-    open: true,
-  };
 
   return (
-    <EditorDialog
+    <EditorDrawer
       id={id}
-      {...defaults}
       {...rest}
       showLayoutOptions={false}
       disabled={disabled}
@@ -25,6 +19,6 @@ export default function XmlParseEditorDialog(props) {
         data={data}
         editorDataTitle={editorDataTitle}
       />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }

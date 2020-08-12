@@ -1,8 +1,8 @@
 import React from 'react';
-import EditorDialog from '../EditorDialog';
+import EditorDrawer from '../EditorDrawer';
 import FileDefinitionEditor from './index';
 
-function FileDefinitionEditorDialog(props) {
+function FileDefinitionEditorDrawer(props) {
   const {
     id,
     rule,
@@ -11,15 +11,9 @@ function FileDefinitionEditorDialog(props) {
     processor = 'structuredFileParser',
     ...rest
   } = props;
-  const defaults = {
-    width: '80vw',
-    layout: 'compact',
-    height: '50vh',
-    open: true,
-  };
 
   return (
-    <EditorDialog id={id} {...defaults} disabled={disabled} {...rest}>
+    <EditorDrawer id={id} disabled={disabled} {...rest}>
       <FileDefinitionEditor
         editorId={id}
         rule={rule}
@@ -27,8 +21,8 @@ function FileDefinitionEditorDialog(props) {
         processor={processor}
         disabled={disabled}
       />
-    </EditorDialog>
+    </EditorDrawer>
   );
 }
 
-export default FileDefinitionEditorDialog;
+export default FileDefinitionEditorDrawer;

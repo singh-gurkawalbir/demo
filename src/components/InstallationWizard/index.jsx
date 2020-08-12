@@ -27,6 +27,7 @@ import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
+import { getApplicationName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -160,6 +161,7 @@ export default function InstallationWizard(props) {
       }
 
       delete connObj._id;
+      connObj.application = getApplicationName(connObj);
       dispatch(
         actions.resource.patchStaged(
           newId,
