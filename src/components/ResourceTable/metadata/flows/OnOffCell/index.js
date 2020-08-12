@@ -78,7 +78,7 @@ export default function OnOffCell({
   const handleDisableClick = useCallback(() => {
     confirmDialog({
       title: `Confirm ${disabled ? 'enable' : 'disable'}`,
-      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow?`,
+      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow? This will not stop a flow that is already running, but no future scheduled flows will be run.`,
       buttons: [
         {
           label: `${disabled ? 'Enable' : 'Disable'}`,
