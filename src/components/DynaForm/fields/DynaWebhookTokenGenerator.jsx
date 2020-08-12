@@ -54,7 +54,7 @@ function DynaWebhookTokenGenerator(props) {
   );
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Your token has been copied to your clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'Token copied to clipboard' }), [enquesnackbar]);
   const handleGenerateClick = useCallback(() => {
     const tokenValue = v4().replace(/-/g, '');
 

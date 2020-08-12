@@ -70,7 +70,7 @@ export default {
       id: 'apiType',
       type: 'labeltitle',
       label: r => {
-        if (r.resourceType === 'transferFiles' || r.blobKeyPath) {
+        if (r?.resourceType === 'transferFiles' || r?.blobKeyPath) {
           return 'Where would you like to transfer the files?';
         }
 

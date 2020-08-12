@@ -40,6 +40,10 @@ export default {
       retValues['/webhook/token'] = retValues['/webhook/generateToken'];
     }
 
+    if (retValues['/webhook/provider'] === 'integratorio') {
+      retValues['/webhook/provider'] = 'integrator-extension';
+    }
+
     if (resource && resource.webhook && resource.webhook.provider === 'slack') {
       retValues['/webhook/key'] = retValues['/webhook/slackKey'];
     }

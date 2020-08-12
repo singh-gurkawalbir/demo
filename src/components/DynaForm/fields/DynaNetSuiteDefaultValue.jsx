@@ -7,11 +7,13 @@ import DynaTypeableSelect from './DynaTypeableSelect';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
 import Spinner from '../../Spinner';
 import FieldHelp from '../FieldHelp';
+import RefreshIcon from '../../icons/RefreshIcon';
+import ActionButton from '../../ActionButton';
 
 const useStyles = makeStyles(() => ({
   formControl: {
     display: 'flex',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
     '& > div:first-child': { width: '100%' },
   },
   labelWrapper: {
@@ -68,6 +70,18 @@ export default function DynaNetSuiteDefaultValue(props) {
     }
   }, [commMetaPath, connectionId, dispatch, options.commMetaPath, status]);
 
+  const onRefresh = useCallback(() => {
+    dispatch(
+      actions.metadata.refresh(
+        connectionId,
+        options.commMetaPath || commMetaPath,
+        {
+          refreshCache: true,
+        }
+      )
+    );
+  }, [commMetaPath, connectionId, dispatch, options.commMetaPath]);
+
   if (!status || status === 'requested') {
     return <Spinner />;
   }
@@ -97,7 +111,18 @@ export default function DynaNetSuiteDefaultValue(props) {
             disabled={disabled}
             onBlur={handleBlur}
     />
+          {status === 'refreshed' ? <Spinner size={24} />
+
+            : (
+              <ActionButton
+                onClick={onRefresh}
+                data-test="refreshResource">
+                <RefreshIcon />
+              </ActionButton>
+            )}
+
         </FormControl>
+
       </div>
     );
 }

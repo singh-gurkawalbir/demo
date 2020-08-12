@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
 import {makeStyles, TablePagination, Button, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
@@ -18,7 +18,7 @@ import useConfirmDialog from '../ConfirmDialog';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 import JobErrorMessage from './JobErrorMessage';
 import { UNDO_TIME } from './util';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -81,6 +81,11 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.light,
     },
   },
+  celigoTableWrapper: {
+    overflowX: 'auto',
+    width: '100%',
+    marginBottom: theme.spacing(5),
+  },
 }));
 
 function JobErrorTable({
@@ -140,15 +145,15 @@ function JobErrorTable({
     state => selectors.getJobErrorsPreview(state, job._id),
     shallowEqual
   );
-  const jobFilter = useMemo(() => ({ jobId: job._flowJobId }), [job._flowJobId]);
-  const flowJob = useSelectorMemo(selectors.makeFlowJob, jobFilter);
+
   // Extract errorFile Id from the target Job i.e., one of the children of parent job ( job._flowJobId )
-  const existingErrorFileId = useMemo(() => {
-    const { children = [] } = flowJob || {};
+  const existingErrorFileId = useSelector(state => {
+    const { children = [] } =
+      selectors.flowJob(state, { jobId: job._flowJobId }) || {};
     const childJob = children.find(cJob => cJob._id === job._id) || {};
 
     return childJob.errorFile && childJob.errorFile.id;
-  }, [flowJob, job._id]);
+  });
 
   const jobErrorsData = [];
 
@@ -449,9 +454,9 @@ function JobErrorTable({
         </li>
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
-        <div className={classes.spinner}>
-          <Spinner size={20} /> <span>Loading</span>
-        </div>
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
       ) : (
         <>
           <ButtonsGroup className={classes.btnsWrappper}>
@@ -488,7 +493,7 @@ function JobErrorTable({
               className={classes.btnErrorTable}
               onClick={handleDownloadAllErrorsClick}
               disabled={isJobInProgress}>
-              Download all errors1
+              Download all errors
             </Button>
             <Button
               data-test="uploadProcessedErrors"
@@ -536,6 +541,7 @@ function JobErrorTable({
               />
 
               <CeligoTable
+                className={classes.celigoTableWrapper}
                 data={jobErrorsData}
                 selectableRows={
                   !isJobInProgress && hasUnresolvedErrorsInCurrentPage
