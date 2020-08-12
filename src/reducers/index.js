@@ -2836,15 +2836,15 @@ selectors.makeResourceDataSelector = () => {
 selectors.resourceData = selectors.makeResourceDataSelector();
 
 selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
-  const { merged: res = {} } = selectors.resourceData(
+  const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId
   );
 
   // AFE 2.0 not supported for Native REST Adaptor
-  if (['RESTImport', 'RESTExport'].includes(res.adaptorType)) {
-    const restConnection = selectors.resource(state, 'connections', res._connectionId);
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    const restConnection = selectors.resource(state, 'connections', resource._connectionId);
 
     return !!restConnection.isHTTP;
   }
@@ -2858,7 +2858,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(res.adaptorType);
+  ].includes(resource.adaptorType);
 };
 
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
@@ -4563,7 +4563,6 @@ selectors.suiteScriptGenerates = createSelector(
 
       return flow?.import?.type;
     },
-
   ],
   ({ data, status }, importType) => {
     if (!data) {
@@ -4848,8 +4847,8 @@ selectors.mapping = state => fromSession.mapping(state && state.session);
 
 selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
   const importRes = selectors.resource(state, 'imports', importId);
-  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
-  if (subRecordMappingId ) {  
+
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
     return mappingUtil.getSubRecordRecordTypeAndJsonPath(importRes, subRecordMappingId);
   }
 
@@ -4874,7 +4873,6 @@ selectors.mappingExtracts = createSelector([
   (state, resourceId, flowId, subRecordMappingId) => selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId),
 ], (flowData, subRecordObj) => {
   if (flowData) {
-    
     const extractPaths = mappingUtil.getExtractPaths(
       flowData,
       subRecordObj

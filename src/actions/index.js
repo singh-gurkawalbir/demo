@@ -1338,7 +1338,7 @@ const mapping = {
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
   refreshGenerates: () => action(actionTypes.MAPPING.REFRESH_GENERATES, { }),
   updateLastFieldTouched: key => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
-  updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_MAPPINGS, { mappings }),
+  updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
 };
 

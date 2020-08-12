@@ -233,12 +233,6 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPING.SET_VISIBILITY: {
-        const {value} = action;
-
-        if (draft.mapping) draft.mapping.visible = value;
-        break;
-      }
       case actionTypes.MAPPING.SAVE:
         draft.mapping.saveStatus = 'requested';
         break;
@@ -285,7 +279,7 @@ export default (state = {}, action) => {
         draft.mapping.isNSAssistantFormLoaded = value;
         break;
       }
-      case actionTypes.MAPPING.UPDATE_MAPPINGS: {
+      case actionTypes.MAPPING.UPDATE_LIST: {
         const { mappings } = action;
 
         draft.mapping.changeIdentifier += 1;

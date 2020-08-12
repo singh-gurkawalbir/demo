@@ -11,7 +11,7 @@ export default {
   }) => {
     const {lookupName } = value;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
-    const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
+    const isGroupedSampleData = Array.isArray(extractFields);
 
     const fieldMeta = {
       fieldMap: {

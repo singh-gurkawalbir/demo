@@ -20,7 +20,7 @@ export default {
     const {lookupName, generate} = value;
     const {_connectionId: connectionId, _id: resourceId } = importRes;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
-    const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
+    const isGroupedSampleData = Array.isArray(extractFields);
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
     let picklistOptions = [];

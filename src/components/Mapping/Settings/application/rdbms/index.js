@@ -8,7 +8,7 @@ export default {
     extractFields,
   }) => {
     const {generate} = value;
-    const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
+    const isGroupedSampleData = Array.isArray(extractFields);
     const fieldMeta = {
       fieldMap: {
         dataType: {

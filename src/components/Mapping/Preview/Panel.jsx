@@ -53,7 +53,7 @@ export default function PreviewPanel(props) {
   const {lastModifiedRowKey } = useSelector(state => selectors.mapping(state));
   const salesforceNetsuitePreviewData = useMemo(() => {
     if (mappingPreviewType === 'salesforce') {
-      if (previewData && Array.isArray(previewData) && previewData.length) {
+      if (Array.isArray(previewData) && previewData.length) {
         const [_val] = previewData;
 
         return _val;

@@ -62,6 +62,7 @@ export default function TopPanel(props) {
     flowId,
     resourceId,
     disabled,
+    subRecordMappingId,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -79,7 +80,7 @@ export default function TopPanel(props) {
     return extractStatus === 'requested';
   });
   const isGeneratesLoading = useSelector(state => {
-    // todo : subrecord
+    const opts = selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId);
     const generateStatus = selectors.getImportSampleData(state, resourceId, {}).status;
 
     return generateStatus === 'requested';
