@@ -207,7 +207,7 @@ export default function MappingRow(props) {
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
-            id={`fieldMappingExtract-${mappingKey}`}
+            id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
             value={extract || hardCodedValueTmp}
@@ -230,7 +230,7 @@ export default function MappingRow(props) {
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
-            id={`fieldMappingGenerate-${mappingKey}`}
+            id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"
             valueName="id"
@@ -258,7 +258,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
           <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${mappingKey}`}
+            dataTest={`fieldMappingSettings-${index}`}
             mappingKey={mappingKey}
             disabled={disabled}
             subRecordMappingId={subRecordMappingId}
@@ -272,7 +272,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
           <ActionButton
-            data-test={`fieldMappingRemove-${mappingKey}`}
+            data-test={`fieldMappingRemove-${index}`}
             aria-label="delete"
             disabled={isRequired || isNotEditable || disabled}
             onClick={handleDeleteClick}
