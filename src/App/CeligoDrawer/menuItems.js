@@ -156,7 +156,7 @@ export default function menuItems(
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
       );
     }
 
