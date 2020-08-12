@@ -1,6 +1,7 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
+import { emptyObject } from '../../../../../utils/constants';
 
 export default {
   getMetaData: ({
@@ -9,7 +10,7 @@ export default {
     lookups,
   }) => {
     const {lookupName } = value;
-    const lookup = lookupName && lookups.find(lookup => lookup.name === lookupName);
+    const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
 
     const fieldMeta = {

@@ -6,6 +6,7 @@ import {
   conditionalLookupOptionsforSalesforce,
   conditionalLookupOptionsforSalesforceProduction,
 } from '../../../../../forms/utils';
+import { emptyObject } from '../../../../../utils/constants';
 
 export default {
   getMetaData: ({
@@ -18,7 +19,7 @@ export default {
   }) => {
     const {lookupName, generate} = value;
     const {_connectionId: connectionId, _id: resourceId } = importRes;
-    const lookup = lookupName && lookups.find(lookup => lookup.name === lookupName);
+    const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);

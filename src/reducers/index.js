@@ -4846,14 +4846,23 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
 
 selectors.mapping = state => fromSession.mapping(state && state.session);
 
-selectors.mappingGenerates = createSelector([
-  (state, resourceId) => selectors.resource(state, 'imports', resourceId),
-  (state, resourceId) => selectors.getImportSampleData(state, resourceId, {}).data,
-], (importRes, importSampleData) => {
-  const appType = adaptorTypeMap[importRes.adaptorType];
+selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
+  const importRes = selectors.resource(state, 'imports', importId);
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
+  if (subRecordMappingId ) {  
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importRes, subRecordMappingId);
+  }
 
-  return mappingUtil.getFormattedGenerateData(importSampleData, appType);
-});
+  return emptyObject;
+};
+selectors.mappingGenerates = createSelector([
+  (state, importId) => selectors.resource(state, 'imports', importId).adaptorType,
+  (state, importId, subRecordMappingId) => {
+    const opts = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
+
+    return selectors.getImportSampleData(state, importId, opts).data;
+  },
+], (adaptorType, importSampleData) => mappingUtil.getFormattedGenerateData(importSampleData, adaptorTypeMap[adaptorType]));
 
 selectors.mappingExtracts = createSelector([
   (state, resourceId, flowId) => selectors.getSampleDataContext(state, {
@@ -4862,13 +4871,13 @@ selectors.mappingExtracts = createSelector([
     stage: 'importMappingExtract',
     resourceType: 'imports',
   }).data,
-], flowData => {
+  (state, resourceId, flowId, subRecordMappingId) => selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId),
+], (flowData, subRecordObj) => {
   if (flowData) {
-    // todo: subRecordMappingObj
+    
     const extractPaths = mappingUtil.getExtractPaths(
       flowData,
-      {}
-      // subRecordMappingObj
+      subRecordObj
     );
 
     return (extractPaths &&

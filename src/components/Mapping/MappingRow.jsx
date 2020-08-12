@@ -106,13 +106,12 @@ export default function MappingRow(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const ref = useRef(null);
-  // todo subrecord
   const generateFields = useSelector(state =>
-    selectors.mappingGenerates(state, importId)
+    selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
 
   const extractFields = useSelector(state =>
-    selectors.mappingExtracts(state, importId, flowId)
+    selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
   const {lastModifiedRowKey} = useSelector(state => selectors.mapping(state));
 

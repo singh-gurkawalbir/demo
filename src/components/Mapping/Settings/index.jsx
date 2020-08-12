@@ -60,10 +60,10 @@ export default function MappingSettings(props) {
     return {value, lookups};
   }, shallowEqual);
   const generateFields = useSelector(state =>
-    selectors.mappingGenerates(state, importId)
+    selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
   const extractFields = useSelector(state =>
-    selectors.mappingExtracts(state, importId, flowId)
+    selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
   const nsRecordType = useSelector(state =>
     selectors.mappingNSRecordType(state, importId, subRecordMappingId)

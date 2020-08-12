@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function PreviewPanel(props) {
-  const {resourceId, disabled} = props;
+  const {resourceId, subRecordMappingId, disabled} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const previewData = useSelector(state => {
@@ -25,6 +25,7 @@ export default function PreviewPanel(props) {
 
     return preview && preview.data;
   });
+  const recordType = useSelector(state => selectors.mappingNSRecordType(state, resourceId, subRecordMappingId));
   const importRes = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
@@ -74,8 +75,7 @@ export default function PreviewPanel(props) {
     }
     if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
       return {
-        // todo
-        // netSuiteRecordType: recordType
+        netSuiteRecordType: recordType,
       };
     }
   }, [importRes]);
@@ -119,10 +119,6 @@ export default function PreviewPanel(props) {
         )}
         {mappingPreviewType === 'netsuite' && (
         <NetSuiteMappingAssistant
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
           netSuiteConnectionId={connectionId}
           onFieldClick={handleSFNSAssistantFieldClick}
           data={salesforceNetsuitePreviewData}

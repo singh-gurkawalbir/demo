@@ -6,6 +6,7 @@ import {
   conditionalLookupOptionsforNetsuite,
   conditionalLookupOptionsforNetsuiteProduction,
 } from '../../../../../forms/utils';
+import { emptyObject } from '../../../../../utils/constants';
 
 const getNetsuiteSelectFieldValueUrl = ({
   fieldMetadata,
@@ -34,7 +35,7 @@ export default {
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importRes;
     const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importRes.netsuite_da?.operation === 'addupdate');
     const isGroupedSampleData = !!(extractFields && Array.isArray(extractFields));
-    const lookup = lookupName && lookups.find(lookup => lookup.name === lookupName);
+    const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
     const fieldId =
       generate && generate.indexOf('[*].') !== -1

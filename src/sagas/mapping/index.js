@@ -172,7 +172,7 @@ export function* saveMappings({context }) {
     recordType,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
   const importRes = yield select(selectors.resource, 'imports', resourceId);
   const exportRes = yield select(selectors.flowPageGenerator, flowId);
   let _mappings = mappings.map(
@@ -251,7 +251,7 @@ export function* previewMappings() {
     subRecordMappingId,
     recordType,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
   const _importRes = yield select(selectors.resource, 'imports', resourceId);
   let importRes = deepClone(_importRes);
   const exportRes = yield select(selectors.flowPageGenerator, flowId);
@@ -348,7 +348,7 @@ export function* refreshGenerates({ isInit = false }) {
     netsuiteRecordType,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
   const importRes = yield select(selectors.resource, 'imports', resourceId);
 
   if (importRes.adaptorType === 'SalesforceImport') {
@@ -430,13 +430,14 @@ export function* checkForIncompleteSFGenerateWhilePatch({ id, field, value = '' 
   const {
     mappings,
     resourceId,
+    subRecordMappingId,
   } = yield select(selectors.mapping);
   const importRes = yield select(selectors.resource, 'imports', resourceId);
 
   if (importRes.adaptorType !== 'SalesforceImport' || field !== 'generate') {
     return;
   }
-  const generateFields = yield select(selectors.mappingGenerates, resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
 
   const mappingObj = mappings.find(_mapping => _mapping.generate === value);
   // while adding new row in mapping, key is generated in MAPPING.PATCH_FIELD reducer
@@ -464,11 +465,12 @@ export function* updateImportSampleData() {
     incompleteGenerates = [],
     mappings = [],
     resourceId,
+    subRecordMappingId,
   } = yield select(selectors.mapping);
 
   if (!incompleteGenerates.length) return;
 
-  const generateFields = yield select(selectors.mappingGenerates, resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
   const modifiedMappings = deepClone(mappings);
 
   incompleteGenerates.forEach(generateObj => {

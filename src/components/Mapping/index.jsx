@@ -154,7 +154,7 @@ const Mapping = props => {
               onMove={handleMove}
               onDrop={handleDrop}
               isDraggable={!disabled}
-              resourceId={resourceId}
+              importId={resourceId}
               flowId={flowId}
               subRecordMappingId={subRecordMappingId}
               />
@@ -165,7 +165,7 @@ const Mapping = props => {
             mapping={emptyObj}
             disabled={disabled}
             isDraggable={false}
-            resourceId={resourceId}
+            importId={resourceId}
             flowId={flowId}
             subRecordMappingId={subRecordMappingId}
           />
@@ -180,6 +180,7 @@ const Mapping = props => {
       <PreviewPanel
         resourceId={resourceId}
         disabled={disabled}
+        subRecordMappingId={subRecordMappingId}
       />
     </div>
   );

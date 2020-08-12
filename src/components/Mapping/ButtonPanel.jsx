@@ -23,7 +23,6 @@ export default function ButtonPanel(props) {
   const saveInProgress = useSelector(
     state => selectors.mappingSaveStatus(state).saveInProgress
   );
-  // todo
   const {isNSAssistantFormLoaded} = useSelector(state => selectors.mapping(state));
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)

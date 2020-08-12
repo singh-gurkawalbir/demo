@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import MappingSettings from '.';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
+import {selectors} from '../../../reducers';
+import { emptyObject } from '../../../utils/constants';
 
 /**
  *
@@ -10,10 +13,16 @@ import ActionButton from '../../ActionButton';
 export default function MappingSettingsButton(props) {
   const {
     dataTest,
-    value,
+    mappingKey,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
-  const isDisabled = !('generate' in value);
+  const isDisabled = useSelector(state => {
+    const { mappings} = selectors.mapping(state);
+
+    const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
+
+    return !('generate' in value);
+  });
   const handleBtnClick = useCallback(() => {
     if (!isDisabled) setShowSettings(!showSettings);
   }, [isDisabled, showSettings]);
