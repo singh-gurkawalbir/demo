@@ -10,7 +10,6 @@ import {
   Line,
   ResponsiveContainer,
 } from 'recharts';
-// import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
 import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
@@ -63,6 +62,22 @@ const Chart = ({ id, flowId, selectedResources }) => {
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
   );
+  let dateTimeFormat;
+  const userOwnPreferences = useSelector(
+    state => selectors.userOwnPreferences(state),
+    (left, right) =>
+      left &&
+      right &&
+      left.dateFormat === right.dateFormat &&
+      left.timeFormat === right.timeFormat
+  );
+
+  if (!userOwnPreferences) {
+    dateTimeFormat = 'MM/DD hh:mm';
+  } else {
+    dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
+  }
+
   const getResourceName = name => {
     const resourceId = name.replace(/-value/, '');
     let modifiedName = resourceId;
@@ -75,7 +90,18 @@ const Chart = ({ id, flowId, selectedResources }) => {
     return modifiedName;
   };
 
-  const parseValue = (value, name) => [value, getResourceName(name)];
+  function CustomTooltip({ payload, label, active }) {
+    if (active) {
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
+          <p> {payload[0]?.value} </p>
+        </div>
+      );
+    }
+
+    return null;
+  }
   const renderColorfulLegendText = (value, { color }) => <span style={{ color }}>{getResourceName(value)}</span>;
 
   return (
@@ -94,7 +120,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             dataKey="time"
             name="Time"
             type="category"
-            tickFormatter={unixTime => unixTime ? moment(unixTime).format('DD/MMM HH:mm  ') : ''}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format('MM/DD hh:mm') : ''}
           />
           <YAxis
             yAxisId={id}
@@ -108,7 +134,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip formatter={(value, name) => parseValue(value, name)} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend formatter={renderColorfulLegendText} />
           {selectedResources.map((r, i) => (
             <Line
