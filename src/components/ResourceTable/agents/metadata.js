@@ -1,12 +1,12 @@
 import React from 'react';
 import Delete from '../commonActions/Delete';
+import GenerateToken from '../commonActions/GenerateToken';
 import References from '../commonActions/References';
+import Edit from '../commonActions/Edit';
+import OnlineStatus from '../commonCells/OnlineStatus';
 import AgentDownloadInstaller from '../../AgentDownloadInstaller';
 import AgentToken from '../../AgentToken';
-import { onlineStatus } from '../../CeligoTable/util';
 import ResourceDrawerLink from '../../ResourceDrawerLink';
-import GenerateToken from '../commonActions/GenerateToken';
-import Edit from '../commonActions/Edit';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 const getAgentDownloadInstaller = agent => (
@@ -23,7 +23,10 @@ export default {
       },
       orderBy: 'name',
     },
-    { heading: 'Status', value: r => onlineStatus(r) },
+    {
+      heading: 'Status',
+      value: r => <OnlineStatus offline={r.offline} />,
+    },
     {
       heading: 'Last updated',
       width: '150px', // minimum width to prevent heading to wrap.

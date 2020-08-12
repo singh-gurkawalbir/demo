@@ -1,8 +1,9 @@
 import React from 'react';
 import moment from 'moment';
-import ConnectorName from '../commonCells/ConnectorName';
-import { onlineStatus } from '../../CeligoTable/util';
 import ConnectionResourceDrawerLink from '../../ResourceDrawerLink/connection';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
+import ConnectorName from '../commonCells/ConnectorName';
+import OnlineStatus from '../commonCells/OnlineStatus';
 import AuditLogs from '../commonActions/AuditLogs';
 import Delete from '../commonActions/Delete';
 import References from '../commonActions/References';
@@ -14,24 +15,24 @@ import DownloadDebugLogs from './actions/DownloadDebugLogs';
 import RefreshMetadata from './actions/RefreshMetadata';
 import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: (r, actionProps) => {
     const columns = [
       {
         heading: 'Name',
-        value: function ConnectionDrawerLink(resource) {
-          return (
-            <ConnectionResourceDrawerLink
-              resource={resource}
-              integrationId={actionProps.integrationId}
+        value: r => (
+          <ConnectionResourceDrawerLink
+            resource={r}
+            integrationId={actionProps.integrationId}
             />
-          );
-        },
+        ),
         orderBy: 'name',
       },
-      { heading: 'Status', value: r => onlineStatus(r) },
+      {
+        heading: 'Status',
+        value: r => <OnlineStatus offline={r.offline} />,
+      },
       {
         heading: 'Type',
         value: r => <ConnectorName r={r} />,

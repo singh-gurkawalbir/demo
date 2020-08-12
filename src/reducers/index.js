@@ -109,17 +109,6 @@ genSelectors(selectors, subSelectors);
 
 // additional user defined selectors
 selectors.userState = state => state && state.user;
-// TODO: Do we really need to proxy all selectors here?
-// Instead, we could only have the selectors that cross
-// state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintain for the
-// sole purpose of abstracting the state "shape" completely.
-// It may be just fine to directly reference the primary state
-// subdivisions (data, session, comms) in order to simplify the code further...
-
-// -------------------
-// Following this pattern:
-// https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region PUBLIC COMMS SELECTORS
 // Use shallowEquality operator to prevent re-renders.

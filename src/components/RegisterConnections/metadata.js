@@ -1,7 +1,7 @@
 import React from 'react';
-import { onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
 import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
+import OnlineStatus from '../ResourceTable/commonCells/OnlineStatus';
 import CeligoTimeAgo from '../CeligoTimeAgo';
 
 export default {
@@ -17,7 +17,9 @@ export default {
       ),
       orderBy: 'name',
     },
-    { heading: 'Status', value: r => onlineStatus(r) },
+    { heading: 'Status',
+      value: r => <OnlineStatus offline={r.offline} />,
+    },
     {
       heading: 'Connector',
       value: r => <ConnectorName r={r} />,
