@@ -1,11 +1,9 @@
 import React from 'react';
-import DownloadDiagnostics from './actions/DownloadDiagnostics';
 import DownloadFile from './actions/DownloadFile';
 import DownloadFiles from './actions/DownloadFiles';
 import ErrorLink from './ErrorLink';
 import JobStatus from '../JobStatus';
 import FlowStepName from './FlowStepName';
-import { JOB_STATUS } from '../../../utils/constants';
 import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
@@ -43,9 +41,6 @@ export default {
   rowActions: job => {
     const actions = [];
 
-    if (job?._flowJobId && job.status !== JOB_STATUS.QUEUED) {
-      actions.push(DownloadDiagnostics);
-    }
     if (job?.files?.length) {
       actions.push(job.files.length === 1 ? DownloadFile : DownloadFiles);
     }
