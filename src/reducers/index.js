@@ -4983,9 +4983,7 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
 selectors.flowPageGenerator = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
 
-  if (flow &&
-  flow.pageGenerators &&
-  flow.pageGenerators.length) {
+  if (flow?.pageGenerators?.length) {
     const exportId = flow.pageGenerators[0]._exportId;
 
     return selectors.resource(state, 'exports', exportId);
