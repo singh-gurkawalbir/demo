@@ -34,6 +34,7 @@ export const getApplicationName = conn => {
 
           return a.id === conn.type;
         }) || {};
+
   return app.name;
 };
 
