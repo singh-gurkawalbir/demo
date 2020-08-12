@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
   tableCellWithIcon: {
-    display: 'inline-flex',
+    display: 'flex',
   },
 }));
 
