@@ -14,15 +14,15 @@ import RunIcon from '../../../../components/icons/RunIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
-import RunDashboardPanel from './panels/RunDashboard';
-import FlowRunDashboardPanel from './panels/FlowRunDashboardPanel';
+import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
+import EM2dotODashboardPanel from './panels/Dashboard/EM2dotODashboardPanel';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import RunDashboardActions from './panels/RunDashboardActions';
+import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -274,7 +274,7 @@ export default function BottomDrawer({
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
-            ? <FlowRunDashboardPanel flow={flow} />
+            ? <EM2dotODashboardPanel flow={flow} />
             : <RunDashboardPanel flow={flow} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>

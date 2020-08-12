@@ -8,11 +8,9 @@ export default function ErrorLink({ job }) {
   const { flowId } = match?.params || {};
   const path = `${flowId}/errors/${resourceId}`;
 
-  return (
-    <>
-      {
-        numError ? <Link to={path}> {numError} </Link> : <span> { numError} </span>
-      }
-    </>
-  );
+  if (numError > 0) {
+    return <Link to={path}> {numError} </Link>;
+  }
+
+  return <span> { numError} </span>;
 }

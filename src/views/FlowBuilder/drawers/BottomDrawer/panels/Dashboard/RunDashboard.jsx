@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import JobDashboard from '../../../../../components/JobDashboard';
+import JobDashboard from '../../../../../../components/JobDashboard';
 
 const useStyles = makeStyles(theme => ({
   root: {

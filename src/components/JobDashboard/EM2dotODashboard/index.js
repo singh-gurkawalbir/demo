@@ -6,7 +6,7 @@ import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 import PanelLoader from '../../PanelLoader';
 
-export default function FlowRunDashboard({ flowId, integrationId }) {
+export default function EM2dotODashboard({ flowId, integrationId }) {
   const dispatch = useDispatch();
   const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
   const flowJobs = useSelector(state => selectors.flowJobs(state));
