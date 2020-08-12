@@ -1,11 +1,9 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../utils/constants';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DateTimeDisplay from '../../../components/DateTimeDisplay';
-import actions from '../../../actions';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -24,65 +22,62 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
 }));
-export default function LastRun({ flowId }) {
-  const dispatch = useDispatch();
+
+const FLOW_RUNNING_STATUS = 'In progress';
+const FLOW_IN_QUEUE_STATUS = 'Waiting in queue';
+
+export default function LastRun() {
   const classes = useStyles();
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged || {};
+  const [lastRunStatus, setLastRunStatus] = useState();
+
   const flowJobStatus = useSelector(state => {
     const latestJobs = selectors.latestFlowJobs(state);
 
     const isInProgress = latestJobs.some(job => job.status === JOB_STATUS.RUNNING);
 
-    if (isInProgress) return 'running';
+    if (isInProgress) return FLOW_RUNNING_STATUS;
 
     const isWaitingInQueue = latestJobs.some(job => job.status === JOB_STATUS.QUEUED);
 
-    if (isWaitingInQueue) return 'queued';
+    if (isWaitingInQueue) return FLOW_IN_QUEUE_STATUS;
   });
 
   const lastExecutedJob = useSelector(state => {
     const jobs = selectors.flowJobs(state);
 
     return jobs.find(job => !!job.lastExecutedAt);
-  });
+  }, shallowEqual);
 
-  if (!(flowJobStatus || lastExecutedJob || flow.lastRunAt || flow.lastExecutedAt)) {
-    return null;
-  }
+  useEffect(() => {
+    if (flowJobStatus) {
+      setLastRunStatus(flowJobStatus);
+    } else if (lastExecutedJob?.lastExecutedAt && lastExecutedJob.lastExecutedAt !== lastRunStatus) {
+      setLastRunStatus(lastExecutedJob.lastExecutedAt);
+    }
+  }, [flowJobStatus, lastExecutedJob, lastRunStatus]);
 
-  if (flowJobStatus) {
+  const lastRunStatusLabel = useMemo(() => {
+    if ([FLOW_RUNNING_STATUS, FLOW_IN_QUEUE_STATUS].includes(lastRunStatus)) {
+      return lastRunStatus;
+    }
+
     return (
       <>
-        <div className={classes.divider} />
-        <span className={classes.flexContainer}> <RefreshIcon className={classes.icon} /> {flowJobStatus === 'running' ? 'running' : 'waiting in queue' }</span>
+        <span>
+          Last run: <DateTimeDisplay dateTime={lastRunStatus} />
+        </span>
       </>
     );
-  }
-  // Updates job's last executed at on the flow with a temporary prop 'lastRunAt' to update flow's lastExecutedAt
-  // If any changes occur on a flow, it fetches latest flow's lastExecutedAt which is same as this
-  if (lastExecutedJob?.lastExecutedAt && lastExecutedJob.lastExecutedAt !== flow.lastRunAt) {
-    const patchSet = [
-      {
-        op: flow.lastRunAt ? 'replace' : 'add',
-        path: '/lastRunAt',
-        value: lastExecutedJob.lastExecutedAt,
-      },
-    ];
+  }, [lastRunStatus]);
 
-    dispatch(actions.resource.patchStaged(flowId, patchSet, 'value'));
-  }
-  // At any time if the jobs are not loaded/ flow's lastRunAt has not been updated yet
-  // we can fall back to lastExecutedAt property
-  if (flow.lastRunAt || flow.lastExecutedAt) {
-    return (
-      <>
-        <div className={classes.divider} />
-        <span className={classes.flexContainer}> <RefreshIcon className={classes.icon} /> Last run: <DateTimeDisplay dateTime={flow.lastRunAt || flow.lastExecutedAt} /> </span>
-      </>
-    );
-  }
+  if (!lastRunStatus) return null;
+
+  return (
+    <>
+      <div className={classes.divider} />
+      <span className={classes.flexContainer}>
+        <RefreshIcon className={classes.icon} /> {lastRunStatusLabel}
+      </span>
+    </>
+  );
 }

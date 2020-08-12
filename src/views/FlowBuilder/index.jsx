@@ -501,7 +501,7 @@ function FlowBuilder() {
             ) : (
               <CeligoTimeAgo date={flow.lastModified} />
             )}
-            <LastRun flowId={flow._id} />
+            <LastRun />
           </div>
         )}
         infoText={flow.description}>
