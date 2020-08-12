@@ -31,9 +31,5 @@ export default function EM2dotODashboard({ flowId, integrationId }) {
     return <PanelLoader />;
   }
 
-  return (
-    <>
-      <CeligoTable data={latestJobs} {...metadata} />
-    </>
-  );
+  return (<CeligoTable data={latestJobs} {...metadata} />);
 }
