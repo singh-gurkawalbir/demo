@@ -9,7 +9,7 @@ import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 // import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
 import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
-import Mapping from '../../../../components/MappingV2';
+import Mapping from '../../../../components/Mapping';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

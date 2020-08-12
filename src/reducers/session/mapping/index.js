@@ -14,7 +14,7 @@ export default (state = {}, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.MAPPINGV2.INIT:
+      case actionTypes.MAPPING.INIT:
       {
         if (!draft.mapping) {
           draft.mapping = {
@@ -26,7 +26,7 @@ export default (state = {}, action) => {
 
         break;
       }
-      case actionTypes.MAPPINGV2.INIT_COMPLETE: {
+      case actionTypes.MAPPING.INIT_COMPLETE: {
         const {mappings, lookups, flowId, resourceId, subRecordMappingId} = action;
 
         draft.mapping = {
@@ -42,19 +42,19 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.CHANGE_ORDER: {
+      case actionTypes.MAPPING.CHANGE_ORDER: {
         const {value} = action;
 
         draft.mapping.mappings = value;
         break;
       }
-      case actionTypes.MAPPINGV2.UPDATE_LAST_TOUCHED_FIELD: {
+      case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
         const {key} = action;
 
         draft.mapping.lastModifiedRowKey = key;
         break;
       }
-      case actionTypes.MAPPINGV2.DELETE: {
+      case actionTypes.MAPPING.DELETE: {
         const {key} = action;
 
         draft.mapping.changeIdentifier += 1;
@@ -74,7 +74,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.PATCH_FIELD: {
+      case actionTypes.MAPPING.PATCH_FIELD: {
         const {field, key, value} = action;
 
         draft.mapping.changeIdentifier += 1;
@@ -146,7 +146,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.PATCH_INCOMPLETE_GENERATES: {
+      case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const { key, value} = action;
 
         draft.mapping.changeIdentifier += 1;
@@ -163,7 +163,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.PATCH_SETTINGS: {
+      case actionTypes.MAPPING.PATCH_SETTINGS: {
         const { key, value} = action;
 
         draft.mapping.changeIdentifier += 1;
@@ -220,7 +220,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.UPDATE_LOOKUP: {
+      case actionTypes.MAPPING.UPDATE_LOOKUP: {
         const {lookups} = action;
 
         draft.mapping.lookups = lookups;
@@ -233,28 +233,28 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.SET_VISIBILITY: {
+      case actionTypes.MAPPING.SET_VISIBILITY: {
         const {value} = action;
 
         if (draft.mapping) draft.mapping.visible = value;
         break;
       }
-      case actionTypes.MAPPINGV2.SAVE:
+      case actionTypes.MAPPING.SAVE:
         draft.mapping.saveStatus = 'requested';
         break;
-      case actionTypes.MAPPINGV2.SAVE_COMPLETE:
+      case actionTypes.MAPPING.SAVE_COMPLETE:
         draft.mapping.saveStatus = 'completed';
         draft.mapping.validationErrMsg = undefined;
         draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
         draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
 
         break;
-      case actionTypes.MAPPINGV2.SAVE_FAILED:
+      case actionTypes.MAPPING.SAVE_FAILED:
         draft.mapping.saveStatus = 'failed';
         draft.mapping.validationErrMsg = undefined;
 
         break;
-      case actionTypes.MAPPINGV2.PREVIEW_REQUESTED:
+      case actionTypes.MAPPING.PREVIEW_REQUESTED:
         if (draft.mapping.preview) {
           draft.mapping.preview.status = 'requested';
         } else {
@@ -262,7 +262,7 @@ export default (state = {}, action) => {
         }
 
         break;
-      case actionTypes.MAPPINGV2.PREVIEW_RECEIVED: {
+      case actionTypes.MAPPING.PREVIEW_RECEIVED: {
         const {value} = action;
         const { preview } = draft.mapping;
 
@@ -271,7 +271,7 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.PREVIEW_FAILED: {
+      case actionTypes.MAPPING.PREVIEW_FAILED: {
         const { preview } = draft.mapping;
 
         delete preview.data;
@@ -279,20 +279,20 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPINGV2.SET_NS_ASSISTANT_FORM_LOADED: {
+      case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED: {
         const { value} = action;
 
         draft.mapping.isNSAssistantFormLoaded = value;
         break;
       }
-      case actionTypes.MAPPINGV2.UPDATE_MAPPINGS: {
+      case actionTypes.MAPPING.UPDATE_MAPPINGS: {
         const { mappings } = action;
 
         draft.mapping.changeIdentifier += 1;
         draft.mapping.mappings = mappings;
         break;
       }
-      case actionTypes.MAPPINGV2.SET_SF_SUBLIST_FIELD_NAME: {
+      case actionTypes.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {
         const { value } = action;
 
         draft.mapping.sfSubListExtractFieldName = value;
@@ -310,7 +310,7 @@ export default (state = {}, action) => {
         }
         break;
       }
-      case actionTypes.MAPPINGV2.CLEAR: {
+      case actionTypes.MAPPING.CLEAR: {
         // delete draft.mapping;
         break;
       }
@@ -342,7 +342,7 @@ const isMappingObjEqual = (mapping1, mapping2) => {
 export const selectors = {};
 
 // #region PUBLIC SELECTORS
-selectors.mappingV2 = state => {
+selectors.MAPPING = state => {
   if (!state || !state.mapping) {
     return emptySet;
   }
@@ -351,7 +351,7 @@ selectors.mappingV2 = state => {
 };
 
 // #region PUBLIC SELECTORS
-selectors.mappingV2Changed = state => {
+selectors.mappingChanged = state => {
   if (!state || !state.mapping) {
     return false;
   }
@@ -374,7 +374,7 @@ selectors.mappingV2Changed = state => {
   return isMappingsChanged;
 };
 
-selectors.mappingV2SaveStatus = state => {
+selectors.mappingSaveStatus = state => {
   if (!state || !state.mapping) {
     return emptyObj;
   }

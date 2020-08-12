@@ -1,15 +1,19 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useMemo } from 'react';
 import { Tooltip } from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
-import TrashIcon from '../../icons/TrashIcon';
-import ActionButton from '../../ActionButton';
-import LockIcon from '../../icons/LockIcon';
-import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
-import GripperIcon from '../../icons/GripperIcon';
+import {selectors} from '../../reducers';
+import actions from '../../actions';
+import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
+import GripperIcon from '../icons/GripperIcon';
+import LockIcon from '../icons/LockIcon';
+import MappingConnectorIcon from '../icons/MappingConnectorIcon';
+import ActionButton from '../ActionButton';
+import TrashIcon from '../icons/TrashIcon';
+import MappingSettings from '../AFE/ImportMappingSettings/MappingSettingsField';
+import { adaptorTypeMap } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   child: {
@@ -83,19 +87,13 @@ export default function MappingRow(props) {
   const {
     id,
     mapping,
-    extractFields,
-    onFieldUpdate,
-    generateFields,
     disabled,
-    updateLookupHandler,
-    patchSettings,
-    application,
-    options,
-    lookups,
-    onDelete,
     onMove,
     onDrop,
     index,
+    resourceId,
+    flowId,
+    subRecordMappingId,
     isDraggable = false,
   } = props;
   const {
@@ -107,8 +105,64 @@ export default function MappingRow(props) {
     generate,
     hardCodedValueTmp,
   } = mapping || {};
+  const dispatch = useDispatch();
   const classes = useStyles();
   const ref = useRef(null);
+  const importRes = useSelector(state =>
+    selectors.resource(state, 'imports', resourceId)
+  );
+  const {adaptorType} = importRes;
+  // todo: remove after mapping settings refactor
+  const application = adaptorTypeMap[adaptorType];
+  // todo subrecord
+  const generateFields = useSelector(state =>
+    selectors.mappingGenerates(state, resourceId)
+  );
+  const nsRecordType = useSelector(state =>
+    selectors.mappingNSRecordType(state, resourceId, subRecordMappingId)
+  );
+
+  const extractFields = useSelector(state =>
+    selectors.mappingExtracts(state, resourceId, flowId)
+  );
+  const {lookups, lastModifiedRowKey} = useSelector(state => selectors.mapping(state));
+  const updateLookupHandler = (lookupOps = []) => {
+    let lookupsTmp = [...lookups];
+    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
+
+    lookupOps.forEach(({ isDelete, obj }) => {
+      if (isDelete) {
+        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
+      } else {
+        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+
+        if (index !== -1) {
+          lookupsTmp[index] = obj;
+        } else {
+          lookupsTmp.push(obj);
+        }
+      }
+    });
+
+    dispatch(actions.mapping.updateLookup(lookupsTmp));
+  };
+
+  // TODO: refact
+  const options = useMemo(() => {
+    const {_connectionId: connectionId, name: resourceName} = importRes;
+
+    return {
+      flowId,
+      connectionId,
+      resourceId,
+      resourceName,
+      isGroupedSampleData: !!(extractFields && Array.isArray(extractFields)),
+      // eslint-disable-next-line camelcase
+      isComposite: adaptorType === 'NetSuiteDistributedImport' === adaptorType && importRes?.netsuite_da?.operation === 'addupdate',
+      sObjectType: adaptorType === 'SalesforceImport' && importRes?.salesforce?.sObjectType,
+      recordType: nsRecordType,
+    };
+  }, [adaptorType, extractFields, flowId, importRes, nsRecordType, resourceId]);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -151,20 +205,49 @@ export default function MappingRow(props) {
   drag(drop(ref));
 
   const handleBlur = useCallback(
-    type => (id, value) => {
-      onFieldUpdate(mapping, type, value);
+    field => (id, value) => {
+      // check if value changes or user entered something in new row
+      if (field === 'extract' && value.indexOf('_child_') > -1) {
+        dispatch(actions.mapping.checkForSFSublistExtractPatch(key, value));
+
+        return;
+      }
+
+      if ((!key && value) || (key && mapping[field] !== value)) {
+        if (key && value === '') {
+          if (
+            (field === 'extract' && generate === '') ||
+            (field === 'generate' &&
+              extract === '' &&
+              !('hardCodedValue' in mapping))
+          ) {
+            dispatch(actions.mapping.delete(key));
+
+            return;
+          }
+        }
+        dispatch(actions.mapping.patchField(field, key, value));
+
+        return;
+      }
+
+      if (lastModifiedRowKey !== key) {
+        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+
+        dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
+      }
     },
-    [mapping, onFieldUpdate]
+    [dispatch, extract, generate, key, lastModifiedRowKey, mapping]
   );
 
   const handleDeleteClick = useCallback(() => {
-    onDelete(key);
-  }, [onDelete, key]);
+    dispatch(actions.mapping.delete(key));
+  }, [dispatch, key]);
   const handleSettingsSave = useCallback(
-    (id, evt) => {
-      patchSettings(key, evt);
+    (id, value) => {
+      dispatch(actions.mapping.patchSettings(key, value));
     },
-    [patchSettings, key]
+    [dispatch, key]
   );
 
   // generateFields and extractFields are passed as an array of field names
@@ -234,6 +317,7 @@ export default function MappingRow(props) {
           className={clsx({
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
+          {/* TODO refactor MappingSettings pending */}
           <MappingSettings
             id={`fieldMappingSettings-${index}`}
             onSave={handleSettingsSave}

@@ -5,7 +5,7 @@ import actions from '../../actions';
 import {selectors} from '../../reducers';
 import SalesforceMappingAssistant from '../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../NetSuiteMappingAssistant';
-import HttpMappingAssistant from '../AFE/ImportMapping/HttpMappingAssistant';
+import HttpMappingAssistant from './HttpMappingAssistant';
 
 const useStyles = makeStyles(theme => ({
   assistantContainer: {
@@ -20,7 +20,7 @@ export default function PreviewPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const previewData = useSelector(state => {
-    const {preview} = selectors.mappingV2(state);
+    const {preview} = selectors.mapping(state);
 
     return preview && preview.data;
   });
@@ -46,9 +46,9 @@ export default function PreviewPanel(props) {
     selectors.mappingPreviewType(state, resourceId)
   );
   const httpAssistantPreviewObj = useSelector(state =>
-    selectors.mappingV2HttpAssistantPreviewData(state, resourceId)
+    selectors.mappingHttpAssistantPreviewData(state, resourceId)
   );
-  const {lastModifiedRowKey } = useSelector(state => selectors.mappingV2(state));
+  const {lastModifiedRowKey } = useSelector(state => selectors.mapping(state));
   const salesforceNetsuitePreviewData = useMemo(() => {
     if (mappingPreviewType === 'salesforce') {
       if (previewData && Array.isArray(previewData) && previewData.length) {
@@ -92,7 +92,7 @@ export default function PreviewPanel(props) {
       }
       if (lastModifiedRowKey && value) {
         dispatch(
-          actions.mappingV2.patchField(
+          actions.mapping.patchField(
             'generate',
             lastModifiedRowKey === 'new' ? undefined : lastModifiedRowKey,
             value

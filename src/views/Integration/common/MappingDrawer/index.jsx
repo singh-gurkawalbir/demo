@@ -7,7 +7,7 @@ import { Drawer } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../components/LoadResources';
-import Mapping from '../../../../components/MappingV2';
+import Mapping from '../../../../components/Mapping';
 import SelectImport from './SelectImport';
 
 const useStyles = makeStyles(theme => ({

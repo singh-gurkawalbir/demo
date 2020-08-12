@@ -57,7 +57,6 @@ import errorDetailsSagas from './errorManagement/errorDetails';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
-import { mappingV2Sagas } from './mappingV2';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
@@ -163,6 +162,5 @@ export default function* rootSaga() {
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
-    ...mappingV2Sagas,
   ]);
 }

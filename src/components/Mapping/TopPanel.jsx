@@ -52,8 +52,8 @@ export default function TopPanel(props) {
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-  const generateLabel = useSelector(state => selectors.mappingV2ExtractGenerateLabel(state, flowId, resourceId, 'generate'));
-  const extractLabel = useSelector(state => selectors.mappingV2ExtractGenerateLabel(state, flowId, resourceId, 'extract'));
+  const generateLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, resourceId, 'generate'));
+  const extractLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, resourceId, 'extract'));
 
   const isExtractsLoading = useSelector(state => {
     const extractStatus = selectors.getSampleDataContext(state, {
@@ -92,7 +92,7 @@ export default function TopPanel(props) {
   const handleRefreshGenerateDataClick = useCallback(
     () => {
       dispatch(
-        actions.mappingV2.refreshGenerates()
+        actions.mapping.refreshGenerates()
       );
     },
     [dispatch],

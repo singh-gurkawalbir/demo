@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-const MappingV2 = props => {
+const Mapping = props => {
   const {flowId, resourceId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -91,7 +91,7 @@ const MappingV2 = props => {
   const {
     mappings,
     changeIdentifier,
-  } = useSelector(state => selectors.mappingV2(state));
+  } = useSelector(state => selectors.mapping(state));
 
   const tableData = useMemo(
     () =>
@@ -124,7 +124,7 @@ const MappingV2 = props => {
     [localMappings, state]
   );
   const handleDrop = useCallback(() => {
-    dispatch(actions.mappingV2.changeOrder(localMappings));
+    dispatch(actions.mapping.changeOrder(localMappings));
   }, [dispatch, localMappings]);
 
   useEffect(() => {
@@ -194,24 +194,24 @@ const MappingV2 = props => {
   );
 };
 
-export default function MappingV2Wrapper(props) {
+export default function MappingWrapper(props) {
   const {
     flowId,
     resourceId,
     subRecordMappingId,
   } = props;
   const dispatch = useDispatch();
-  const mappingStatus = useSelector(state => selectors.mappingV2(state, flowId, resourceId, subRecordMappingId).status);
+  const mappingStatus = useSelector(state => selectors.mapping(state, flowId, resourceId, subRecordMappingId).status);
 
   useEffect(() => {
-    dispatch(actions.mappingV2.init({
+    dispatch(actions.mapping.init({
       flowId,
       resourceId,
       subRecordMappingId,
     }));
 
     return () => {
-      dispatch(actions.mappingV2.clear());
+      dispatch(actions.mapping.clear());
     };
   }, [dispatch, flowId, resourceId, subRecordMappingId]);
 
@@ -224,6 +224,6 @@ export default function MappingV2Wrapper(props) {
   }
 
   return (
-    <MappingV2 {...props} />
+    <Mapping {...props} />
   );
 }

@@ -4883,9 +4883,9 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
   return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
 };
 
-selectors.mappingV2 = state => fromSession.mappingV2State(state && state.session);
+selectors.mapping = state => fromSession.mappingState(state && state.session);
 
-selectors.mappingV2Generates = createSelector([
+selectors.mappingGenerates = createSelector([
   (state, resourceId) => selectors.resource(state, 'imports', resourceId),
   (state, resourceId) => selectors.getImportSampleData(state, resourceId, {}).data,
 ], (importRes, importSampleData) => {
@@ -4894,7 +4894,7 @@ selectors.mappingV2Generates = createSelector([
   return mappingUtil.getFormattedGenerateData(importSampleData, appType);
 });
 
-selectors.mappingV2Extracts = createSelector([
+selectors.mappingExtracts = createSelector([
   (state, resourceId, flowId) => selectors.getSampleDataContext(state, {
     flowId,
     resourceId,
@@ -4918,7 +4918,7 @@ selectors.mappingV2Extracts = createSelector([
   return emptySet;
 });
 
-selectors.mappingV2ExtractGenerateLabel = (state, flowId, resourceId, type) => {
+selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
   if (type === 'generate') {
     /** generating generate Label */
     const importRes = selectors.resource(state, 'imports', resourceId);
@@ -4947,9 +4947,9 @@ selectors.mappingV2ExtractGenerateLabel = (state, flowId, resourceId, type) => {
     return 'Source Record Field';
   }
 };
-selectors.mappingV2HttpAssistantPreviewData = createSelector([
+selectors.mappingHttpAssistantPreviewData = createSelector([
   state => {
-    const mappingPreview = selectors.mappingV2(state).preview;
+    const mappingPreview = selectors.mapping(state).preview;
 
     return mappingPreview && mappingPreview.data;
   },
@@ -4988,11 +4988,11 @@ selectors.mappingV2HttpAssistantPreviewData = createSelector([
   };
 });
 
-selectors.mappingV2Changed = state => fromSession.mappingV2Changed(state && state.session);
+selectors.mappingChanged = state => fromSession.mappingChanged(state && state.session);
 
-selectors.mappingV2SaveStatus = state => fromSession.mappingV2SaveStatus(state && state.session);
+selectors.mappingSaveStatus = state => fromSession.mappingSaveStatus(state && state.session);
 
-selectors.mappingV2NSRecordType = (state, importId, subRecordMappingId) => {
+selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
   const importRes = selectors.resource(state, 'imports', importId);
   const {adaptorType} = importRes;
 

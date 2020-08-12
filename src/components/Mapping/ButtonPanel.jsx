@@ -21,10 +21,10 @@ export default function ButtonPanel(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const saveInProgress = useSelector(
-    state => selectors.mappingV2SaveStatus(state).saveInProgress
+    state => selectors.mappingSaveStatus(state).saveInProgress
   );
   // todo
-  const {isNSAssistantFormLoaded} = useSelector(state => selectors.mappingV2(state));
+  const {isNSAssistantFormLoaded} = useSelector(state => selectors.mapping(state));
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
   );
@@ -33,7 +33,7 @@ export default function ButtonPanel(props) {
     onClose();
   }, [onClose]);
   const handlePreviewClick = useCallback(() => {
-    dispatch(actions.mappingV2.requestPreview());
+    dispatch(actions.mapping.requestPreview());
   }, [dispatch]);
   const showPreviewButton = !!(mappingPreviewType === 'netsuite'
     ? isNSAssistantFormLoaded
