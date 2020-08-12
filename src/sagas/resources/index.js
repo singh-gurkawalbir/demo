@@ -222,6 +222,11 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+
+    if (options && options.action === 'flowEnableDisable') {
+      yield put(actions.flow.isOnOffActionInprogress(false, id));
+    }
+
     return { error };
   }
 
