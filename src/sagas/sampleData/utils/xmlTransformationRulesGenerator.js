@@ -1,9 +1,5 @@
 import { call, select, put } from 'redux-saga/effects';
-import {
-  resourceData,
-  resourceFormState,
-  getResourceSampleDataWithStatus,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { isFileAdaptor, adaptorTypeMap } from '../../../utils/resource';
 import actions from '../../../actions';
 import { generateTransformationRulesOnXMLData } from '../../../utils/sampleData';
@@ -17,7 +13,7 @@ import { getPreviewStageData } from '../../../utils/flowData';
  */
 function* getXmlFileAdaptorSampleData({ resource, newResourceId }) {
   const { data: sampleData } = yield select(
-    getResourceSampleDataWithStatus,
+    selectors.getResourceSampleDataWithStatus,
     newResourceId,
     'raw'
   );
@@ -39,7 +35,7 @@ function* getXmlHttpAdaptorSampleData({ resource, newResourceId }) {
   if (resource.isLookup) {
     // Make a pageProcessorPreview call incase of a lookup
     const { flowId } = yield select(
-      resourceFormState,
+      selectors.resourceFormState,
       'exports',
       newResourceId
     );
@@ -71,7 +67,7 @@ export default function* saveTransformationRulesForNewXMLExport({
   tempResourceId,
 }) {
   const { merged: resource = {} } = yield select(
-    resourceData,
+    selectors.resourceData,
     'exports',
     resourceId,
     'value'

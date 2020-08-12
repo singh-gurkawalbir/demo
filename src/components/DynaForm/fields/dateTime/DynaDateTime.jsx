@@ -8,7 +8,7 @@ import {
 } from '@material-ui/pickers';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import CalendarIcon from '../../../icons/CalendarIcon';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 
 export default function DateTimePicker(props) {
@@ -30,6 +30,7 @@ export default function DateTimePicker(props) {
   }, shallowEqual);
 
   let userFormat;
+
   if (dateFormat) {
     if (timeFormat) {
       userFormat = `${dateFormat} ${timeFormat}`;

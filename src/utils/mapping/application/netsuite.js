@@ -76,104 +76,102 @@ export default {
         }
       });
     let index;
+
     if (resource && resource.netsuite_da?.operation === 'attach') {
-      toReturn = toReturn.filter(m => (!['detachToInternalId', 'detachedRecordType', 'detachedRecordInternalId'].includes(m.generate)));
+      toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
 
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'attachToInternalId'
+        mapping => mapping.generate === 'celigo_nlobjAttachToId'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'attachToInternalId',
-          isRequired: true
+          generate: 'celigo_nlobjAttachToId',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
 
-
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'attachedRecordType'
+        mapping => mapping.generate === 'celigo_nlobjAttachedType'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'attachedRecordType',
-          isRequired: true
+          generate: 'celigo_nlobjAttachedType',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
 
-
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'attachedRecordInternalId'
+        mapping => mapping.generate === 'celigo_nlobjAttachedId'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'attachedRecordInternalId',
-          isRequired: true
+          generate: 'celigo_nlobjAttachedId',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
     } else if (resource && resource.netsuite_da?.operation === 'detach') {
-      toReturn = toReturn.filter(m => (!['attachToInternalId', 'attachedRecordType', 'attachedRecordInternalId'].includes(m.generate)));
+      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjAttachedType', 'celigo_nlobjAttachedId'].includes(m.generate)));
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'detachToInternalId'
+        mapping => mapping.generate === 'celigo_nlobjDetachFromId'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'detachToInternalId',
-          isRequired: true
+          generate: 'celigo_nlobjDetachFromId',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
 
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'detachedRecordType'
+        mapping => mapping.generate === 'celigo_nlobjDetachedType'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'detachedRecordType',
-          isRequired: true
+          generate: 'celigo_nlobjDetachedType',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
 
-
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'detachedRecordInternalId'
+        mapping => mapping.generate === 'celigo_nlobjDetachedId'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'detachedRecordInternalId',
-          isRequired: true
+          generate: 'celigo_nlobjDetachedId',
+          isRequired: true,
         });
       } else {
         toReturn[index].isRequired = true;
       }
     } else {
-      toReturn = toReturn.filter(m => (!['attachToInternalId', 'detachToInternalId', 'attachedRecordType', 'detachedRecordType', 'attachedRecordInternalId', 'detachedRecordInternalId'].includes(m.generate)));
+      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjDetachFromId', 'celigo_nlobjAttachedType', 'celigo_nlobjDetachedType', 'celigo_nlobjAttachedId', 'celigo_nlobjDetachedId'].includes(m.generate)));
     }
 
     if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation)) {
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'attributesRole'
+        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesRole'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'attributesRole',
+          generate: 'celigo_nlobjAttachDetachAttributesRole',
         });
       }
 
       index = toReturn.findIndex(
-        mapping => mapping.generate === 'attributedField'
+        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesField'
       );
       if (index === -1) {
         toReturn.push({
-          generate: 'attributedField',
+          generate: 'celigo_nlobjAttachDetachAttributesField',
         });
       }
     }

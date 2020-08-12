@@ -15,10 +15,12 @@ export default (state = {}, action) => {
   });
 };
 
-export function isOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
+export const selectors = {};
+
+selectors.isSuiteScriptFlowOnOffInProgress = (state, { ssLinkedConnectionId, _id }) => {
   if (!(state && state[`${ssLinkedConnectionId}-${_id}`])) {
     return { onOffInProgress: false };
   }
 
   return { onOffInProgress: state[`${ssLinkedConnectionId}-${_id}`].onOffInProgress || false };
-}
+};

@@ -28,7 +28,7 @@ export function convertNetSuiteQualifierExpressionToQueryBuilderRules(
     const toReturn = {};
     let i = 0;
 
-    if (!exp.length) {
+    if (!exp || !exp.length) {
       return toReturn;
     }
 

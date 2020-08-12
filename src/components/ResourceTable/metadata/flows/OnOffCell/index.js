@@ -2,14 +2,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Spinner from '../../../../Spinner';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import RemoveMargin from '../RemoveMargin';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
     marginTop: theme.spacing(1),
   },
@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 12,
   },
 }));
+
 // TODO: The amount of business logic in this component is unmanageable and
 // not testable. A proper implementation with tests should be elevated to the data-layer
 // with a saga controlling the async parts, and a simple status selector created
@@ -77,7 +78,7 @@ export default function OnOffCell({
   const handleDisableClick = useCallback(() => {
     confirmDialog({
       title: `Confirm ${disabled ? 'enable' : 'disable'}`,
-      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow?`,
+      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this flow? ${!disabled ? 'This will not stop a flow that is already running, but no future scheduled flows will be run.' : ''}`,
       buttons: [
         {
           label: `${disabled ? 'Enable' : 'Disable'}`,
@@ -113,12 +114,12 @@ export default function OnOffCell({
 
               patchFlow('/disabled', !disabled);
             }
-          }
+          },
         },
         {
           label: 'Cancel',
           color: 'secondary',
-        }]
+        }],
     });
   }, [
     confirmDialog,

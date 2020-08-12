@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Typography, Slider } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   titleSlider: {
     paddingTop: theme.spacing(1),
     marginLeft: theme.spacing(-1),
@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 2),
   },
 }));
+
 function DynaSlider(props) {
   const classes = useStyles();
   const {
@@ -25,7 +26,6 @@ function DynaSlider(props) {
     step,
     max,
     min,
-    setReset,
   } = props;
   const handleChange = useCallback(
     (evt, slidervalue) => {
@@ -51,7 +51,6 @@ function DynaSlider(props) {
       <Slider
         value={parseInt(sliderVal, 10)}
         onChange={(evt, value) => {
-          setReset && setReset(false);
           handleChange(evt, value);
         }}
         step={step}

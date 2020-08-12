@@ -3,7 +3,6 @@ import React, { useState, useCallback } from 'react';
 import ViewReferencesIcon from '../../../../../components/icons/ViewReferencesIcon';
 import ResourceReferences from '../../../../../components/ResourceReferences';
 
-
 export default function References({ resourceType, rowData = {} }) {
   const { _id: resourceId } = rowData;
   const [show, setShow] = useState(false);

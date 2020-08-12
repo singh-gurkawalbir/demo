@@ -7,17 +7,19 @@ function isFileOrNetSuiteBatchExport(res) {
   if (((res.ftp && res.ftp.directoryPath) || res.type === 'simple' || (res.s3 && res.s3.bucket)) && res.file && res.file.type === 'csv') {
     return true;
   }
+
   return false;
 }
-
 
 export default function generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData}) {
   const isNetsuiteImport = importType === 'netsuite';
   const {fields = [], lists = []} = mapping || {};
   const toReturn = [];
+
   fields.forEach(fm => {
     if (!fm.mappingId) { // not a reference record mapping
       const tempFm = {...fm};
+
       if (fm.internalId) {
         if (isNetsuiteImport) {
           tempFm.generate += '.internalid';
@@ -70,6 +72,7 @@ export default function generateFieldAndListMappings({importType, mapping, expor
       }
     });
   });
+
   return toReturn;
 }
 
@@ -145,9 +148,9 @@ export const updateMappingConfigs = ({importType, mappings = [], exportConfig, o
   const fields = [];
   let generateListPath;
 
-
   mappings.forEach(mappingTmp => {
     const mapping = { ...mappingTmp };
+
     if (!mapping.generate) {
       return true;
     }
@@ -167,10 +170,11 @@ export const updateMappingConfigs = ({importType, mappings = [], exportConfig, o
         };
         if (importType === 'salesforce') {
           const childRelationship = childRelationships.find(rel => rel.value === list.generate);
+
           if (childRelationship) {
             list.salesforce = {
-              relationshipField: childRelationship.value,
-              sObjectType: childRelationship.childSObject
+              relationshipField: childRelationship.field,
+              sObjectType: childRelationship.childSObject,
             };
           }
         }
@@ -179,6 +183,7 @@ export const updateMappingConfigs = ({importType, mappings = [], exportConfig, o
     }
     if (isNetsuiteImport) {
       let isItemSubtypeRecord = false;
+
       isItemSubtypeRecord = (['noninventoryitem', 'otherchargeitem', 'serviceitem'].indexOf(recordType) > -1);
       generateParts = mapping.generate.split('.');
       const generate = generateParts[0];

@@ -1,7 +1,7 @@
 import { select, call, put, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
-import { resource, resourceFormState, resourceData } from '../../../reducers';
+import { selectors } from '../../../reducers';
 import {
   getAddedLookupInFlow,
   getPreviewStageData,
@@ -21,12 +21,12 @@ import saveTransformationRulesForNewXMLExport from '../utils/xmlTransformationRu
 
 function* fetchAndSaveRawDataForResource({ type, resourceId, tempResourceId }) {
   const resourceObj = yield select(
-    resource,
+    selectors.resource,
     type === 'imports' ? 'imports' : 'exports',
     resourceId
   );
   const connectionObj = yield select(
-    resource,
+    selectors.resource,
     'connections',
     resourceObj && resourceObj._connectionId
   );
@@ -107,7 +107,7 @@ function* onResourceCreate({ id, resourceType, tempId }) {
       resourceId: id,
       tempResourceId: tempId,
     });
-    const resourceObj = yield select(resource, resourceType, id);
+    const resourceObj = yield select(selectors.resource, resourceType, id);
 
     if (!resourceObj.isLookup) {
       // If export, get raw data calling preview and call save raw data with a patch on this id
@@ -136,7 +136,7 @@ function* onResourceUpdate({
 }) {
   if (resourceType === 'exports' && shouldUpdateResourceSampleData(patch)) {
     const { flowId } = yield select(
-      resourceFormState,
+      selectors.resourceFormState,
       resourceType,
       resourceId
     );
@@ -144,7 +144,7 @@ function* onResourceUpdate({
 
     // Double check for lookup or export , as old lookups does not have isLookup property
     if (flowId && !isLookup) {
-      const flow = yield select(resource, 'flows', flowId);
+      const flow = yield select(selectors.resource, 'flows', flowId);
       const { pageProcessors = [] } = flow || {};
 
       isLookup = !!pageProcessors.find(pp => pp._exportId === resourceId);
@@ -178,7 +178,7 @@ function* onResourceUpdate({
 
   if (resourceType === 'imports' && shouldUpdateResourceSampleData(patch)) {
     const { merged: importResource = {} } = yield select(
-      resourceData,
+      selectors.resourceData,
       'imports',
       resourceId
     );

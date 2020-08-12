@@ -188,6 +188,7 @@ export default function (state = {}, action) {
 
       case actionTypes.FLOW_DATA.RESET_STAGES: {
         const flow = draft[flowId];
+
         if (!flow) break;
         // Fetch first occurence of resourceId usage in flow
         const pageGeneratorIndexToReset = flow.pageGenerators.findIndex(
@@ -266,7 +267,9 @@ export default function (state = {}, action) {
 
 const DEFAULT_VALUE = {};
 
-export function getFlowDataState(state, flowId, resourceId) {
+export const selectors = {};
+
+selectors.getFlowDataState = (state, flowId, resourceId) => {
   if (!state || !flowId) return;
   const flow = state[flowId];
 
@@ -278,12 +281,12 @@ export function getFlowDataState(state, flowId, resourceId) {
     : flow.pageProcessorsMap;
 
   return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
-}
+};
 
-export function getSampleData(
+selectors.getSampleData = (
   state,
   { flowId, resourceId, resourceType, stage }
-) {
+) => {
   // returns input data for that stage to populate
   const flow = state[flowId];
   const sampleDataStage = getSampleDataStage(stage, resourceType);
@@ -299,12 +302,12 @@ export function getSampleData(
     resourceMap[resourceId][sampleDataStage] &&
     resourceMap[resourceId][sampleDataStage].data
   );
-}
+};
 
-export function getSampleDataContext(
+selectors.getSampleDataContext = (
   state,
   { flowId, resourceId, resourceType, stage }
-) {
+) => {
   // returns input data for that stage to populate
   const flow = state[flowId];
   const sampleDataStage = getSampleDataStage(stage, resourceType);
@@ -319,4 +322,4 @@ export function getSampleDataContext(
     resourceMap[resourceId][sampleDataStage];
 
   return flowStageContext || DEFAULT_VALUE;
-}
+};

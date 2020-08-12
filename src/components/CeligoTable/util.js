@@ -6,8 +6,7 @@ import CeligoTimeAgo from '../CeligoTimeAgo';
 import StatusCircle from '../StatusCircle';
 import { getApp } from '../../constants/applications';
 import { getResourceSubType } from '../../utils/resource';
-import * as selectors from '../../reducers';
-import LoadResources from '../LoadResources';
+import { selectors } from '../../reducers';
 
 export const getResourceLink = (resourceType, resource, location = {}) => (
   <>
@@ -24,19 +23,6 @@ export const getResourceLink = (resourceType, resource, location = {}) => (
     {resource.shared && <Typography>Shared</Typography>}
   </>
 );
-
-export const GetResourceReferenceLink = ({ r }) => {
-  const { name, id, resourceType } = r;
-  const routePath = useSelector(state =>
-    selectors.getResourceEditUrl(state, resourceType, id)
-  );
-
-  return (
-    <LoadResources resources={[resourceType]}>
-      <Link to={routePath}>{name || id}</Link>
-    </LoadResources>
-  );
-};
 
 export const useGetConnectorName = resource => {
   const { type, assistant, resourceType } = getResourceSubType(resource);
@@ -58,10 +44,12 @@ export const useGetConnectorName = resource => {
 
   return 'RDBMS';
 };
+
 export const useGetScriptName = id => {
   const script = useSelector(state =>
     selectors.resource(state, 'scripts', id)
   );
+
   return (script && script.name) || id;
 };
 

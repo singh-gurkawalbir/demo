@@ -9,7 +9,7 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
 import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
 

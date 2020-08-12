@@ -29,8 +29,7 @@ export default function getFormMetadata(options) {
         label: 'Trim spaces',
         type: 'checkbox',
         helpKey: 'export.file.csv.trimSpaces',
-        defaultValue: options?.trimSpaces,
-        required: true,
+        defaultValue: !!options?.trimSpaces,
       },
       rowsToSkip: {
         id: 'rowsToSkip',
@@ -50,8 +49,7 @@ export default function getFormMetadata(options) {
         fieldToReset: 'keyColumns',
         fieldResetValue: [],
         helpKey: 'export.file.csv.hasHeaderRow',
-        defaultValue: options?.hasHeaderRow,
-        required: true,
+        defaultValue: !!options?.hasHeaderRow,
       },
       rowsPerRecord: {
         id: 'rowsPerRecord',
@@ -83,8 +81,8 @@ export default function getFormMetadata(options) {
             field: 'rowsPerRecord',
             is: [true],
           },
-        ]
-      }
+        ],
+      },
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'keyColumns') {
@@ -103,6 +101,7 @@ export default function getFormMetadata(options) {
         const hasHeaderRowField = fields.find(
           field => field.id === 'hasHeaderRow'
         );
+
         return {
           columnDelimiter: columnDelimiterField?.value,
           rowDelimiter: rowDelimiterField?.value,
@@ -114,7 +113,8 @@ export default function getFormMetadata(options) {
       }
 
       return null;
-    }
+    },
   };
+
   return fieldMeta;
 }

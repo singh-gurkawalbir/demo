@@ -6,7 +6,7 @@ import { apiCallWithRetry } from '../index';
 import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
 import { isNewId, generateNewId } from '../../utils/resource';
 import { commitStagedChanges } from '../resources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 /*
  * Fetches all Supported File Definitions
@@ -81,14 +81,15 @@ function* saveUserFileDefinition({ definitionRules, formValues, flowId, skipClos
 
   const fileDefinitionDetails = {
     definitionId,
-    resourcePath
+    resourcePath,
   };
+
   // Once definition is saved, save the resource with the id
   yield call(saveResourceWithDefinitionID, {
     formValues,
     fileDefinitionDetails,
     flowId,
-    skipClose
+    skipClose,
   });
 }
 

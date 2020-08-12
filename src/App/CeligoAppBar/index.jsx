@@ -9,7 +9,7 @@ import ElevateOnScroll from '../../components/ElevateOnScroll';
 import SlideOnScroll from '../../components/SlideOnScroll';
 // import DebugOnly from '../../components/DebugOnly';
 import ProfileMenuButton from './ProfileMenuButton';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import Notifications from './Notifications';
 import LicenseAction from './LicenseAction';
 import AccountList from './AccountList';

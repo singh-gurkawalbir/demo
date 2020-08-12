@@ -9,7 +9,7 @@ import {
   IconButton,
   makeStyles,
 } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import {
   USER_ACCESS_LEVELS,
@@ -20,6 +20,7 @@ import UserDetail from './UserDetail';
 import CloseIcon from '../icons/CloseIcon';
 import Help from '../Help';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import TableHeadWithRefreshIcon from '../CeligoTable/TableHeadWithRefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,6 +32,9 @@ const useStyles = makeStyles(theme => ({
   helpIcon: {
     padding: 0,
     marginLeft: theme.spacing(1),
+  },
+  tableCellWithIcon: {
+    display: 'flex',
   },
 }));
 
@@ -47,7 +51,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
       if (integrationId) {
         _users = selectors.integrationUsersForOwner(state, integrationId);
       } else {
-        _users = selectors.orgUsers(state);
+        _users = selectors.usersList(state);
       }
     } else if (integrationId) {
       _users = selectors.integrationUsers(state, integrationId);
@@ -134,8 +138,8 @@ export default function UserList({ integrationId, onEditUserClick }) {
                   className={classes.helpIcon}
                 />
               </TableCell>
-              <TableCell>
-                Status
+              <TableCell className={classes.tableCellWithIcon}>
+                <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
                 <Help
                   title="Status"
                   helpKey="users.status"

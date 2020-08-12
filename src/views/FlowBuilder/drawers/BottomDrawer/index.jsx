@@ -12,7 +12,7 @@ import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import RunIcon from '../../../../components/icons/RunIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/RunDashboard';
 import AuditPanel from './panels/Audit';
@@ -245,7 +245,7 @@ export default function BottomDrawer({
                       icon={<DebugIcon />}
                       key={connectionId}
                       component="div"
-                      label={
+                      label={(
                         <div className={classes.customTabContainer}>
                           {connectionIdNameMap[connectionId]} - DEBUG
                           <IconButton
@@ -254,7 +254,7 @@ export default function BottomDrawer({
                             <CloseIcon />
                           </IconButton>
                         </div>
-                      }
+                      )}
                     />
                   )
               )}

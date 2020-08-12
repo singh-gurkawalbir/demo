@@ -1,14 +1,15 @@
 import { combineReducers } from 'redux';
 import { uniq } from 'lodash';
-import resources, * as fromResources from './resources';
-import integrationAShares, * as fromIntegrationAShares from './integrationAShares';
-import integrationApps, * as fromIntegrationApps from './integrationApps';
-import audit, * as fromAudit from './audit';
-import jobs, * as fromJobs from './jobs';
+import resources, { selectors as fromResources } from './resources';
+import integrationAShares, { selectors as fromIntegrationAShares } from './integrationAShares';
+import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
+import audit, { selectors as fromAudit } from './audit';
+import jobs, { selectors as fromJobs } from './jobs';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../constants/resource';
-import suiteScript, * as fromSuiteScript from './suiteScript';
-import marketplace, * as fromMarketplace from './marketPlace';
-import fileDefinitions, * as fromFileDefinitions from './fileDefinitions';
+import suiteScript, { selectors as fromSuiteScript } from './suiteScript';
+import marketplace, { selectors as fromMarketplace } from './marketPlace';
+import fileDefinitions, { selectors as fromFileDefinitions } from './fileDefinitions';
+import { genSelectors } from '../util';
 
 export default combineReducers({
   resources,
@@ -21,87 +22,21 @@ export default combineReducers({
   fileDefinitions,
 });
 
-// #region resource selectors
-export function resource(state, resourceType, id) {
-  return fromResources.resource(state && state.resources, resourceType, id);
-}
+export const selectors = {};
+const subSelectors = {
+  resources: fromResources,
+  integrationApps: fromIntegrationApps,
+  suiteScript: fromSuiteScript,
+  marketplace: fromMarketplace,
+  integrationAShares: fromIntegrationAShares,
+  audit: fromAudit,
+  jobs: fromJobs,
+  fileDefinitions: fromFileDefinitions,
+};
 
-export function resourceIdState(state, resourceType, id) {
-  return fromResources.resourceIdState(
-    state && state.resources,
-    resourceType,
-    id
-  );
-}
+genSelectors(selectors, subSelectors);
 
-export function makeResourceSelector() {
-  return fromResources.makeResourceSelector();
-}
-
-export function resourceList(state, options) {
-  return fromResources.resourceList(state && state.resources, options);
-}
-
-export function resourceDetailsMap(state, options) {
-  return fromResources.resourceDetailsMap(state && state.resources, options);
-}
-
-// #region integration resource selectors
-export function integrationInstallSteps(state, id) {
-  return fromResources.integrationInstallSteps(state && state.resources, id);
-}
-
-export function integrationAppSettings(state, id) {
-  return fromResources.integrationAppSettings(state && state.resources, id);
-}
-
-export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
-  return fromSuiteScript.suiteScriptIASettings(state && state.suiteScript, id, ssLinkedConnectionId);
-}
-
-export function defaultStoreId(state, id, store) {
-  return fromResources.defaultStoreId(state && state.resources, id, store);
-}
-
-// #region integration Apps
-export function categoryRelationshipData(state, integrationId, flowId) {
-  return fromIntegrationApps.categoryRelationshipData(
-    state && state.integrationApps,
-    integrationId,
-    flowId
-  );
-}
-// #endregion
-
-export function resourceState(state) {
-  return fromResources.resourceState(state && state.resources);
-}
-
-export function marketPlaceState(state) {
-  return fromMarketplace.marketPlaceState(state && state.marketplace);
-}
-
-export function hasData(state, resourceType) {
-  return fromResources.hasData(state && state.resources, resourceType);
-}
-
-export function exportNeedsRouting(state, id) {
-  return fromResources.exportNeedsRouting(state && state.resources, id);
-}
-
-export function connectionHasAs2Routing(state, id) {
-  return fromResources.connectionHasAs2Routing(state && state.resources, id);
-}
-// #endregion
-
-export function integrationUsers(state, integrationId) {
-  return fromIntegrationAShares.integrationUsers(
-    state && state.integrationAShares,
-    integrationId
-  );
-}
-
-export function auditLogs(state, resourceType, resourceId, filters) {
+selectors.auditLogs = (state, resourceType, resourceId, filters) => {
   const allResources = fromResources.resourceDetailsMap(state.resources);
   const logs = fromAudit.auditLogs(
     state.audit,
@@ -125,7 +60,7 @@ export function auditLogs(state, resourceType, resourceId, filters) {
 
     if (resourceDetails && resourceDetails._connectorId) {
       if (
-        ['integrations', 'flows', 'connections', 'imports', 'exports'].includes(
+        ['integrations', 'flows', 'connections', 'imports', 'exports', 'accesstokens'].includes(
           resourceTypePlural
         )
       ) {
@@ -167,14 +102,14 @@ export function auditLogs(state, resourceType, resourceId, filters) {
   });
 
   return expandedLogs;
-}
+};
 
-export function affectedResourcesAndUsersFromAuditLogs(
+selectors.affectedResourcesAndUsersFromAuditLogs = (
   state,
   resourceType,
   resourceId
-) {
-  const logs = auditLogs(state, resourceType, resourceId);
+) => {
+  const logs = selectors.auditLogs(state, resourceType, resourceId);
   const affectedResources = {};
 
   logs.forEach(a => {
@@ -199,119 +134,4 @@ export function affectedResourcesAndUsersFromAuditLogs(
     affectedResources,
     users: Object.keys(users).map(id => users[id]),
   };
-}
-
-export function suiteScriptTiles(state, connectionId) {
-  return fromSuiteScript.tiles(state.suiteScript, connectionId);
-}
-
-export function suiteScriptIntegrations(state, connectionId) {
-  return fromSuiteScript.integrations(state.suiteScript, connectionId);
-}
-
-export function integrationAppList(state) {
-  return fromMarketplace.integrationAppList(state && state.marketplace);
-}
-
-export function marketplaceTemplates(state, application) {
-  return fromMarketplace.templates(state && state.marketplace, application);
-}
-
-export function template(state, templateId) {
-  return fromMarketplace.template(state && state.marketplace, templateId);
-}
-
-export function flowJobsPagingDetails(state) {
-  return fromJobs.flowJobsPagingDetails(state.jobs);
-}
-
-export function flowJobs(state, options) {
-  return fromJobs.flowJobs(state.jobs, options);
-}
-
-export function inProgressJobIds(state) {
-  return fromJobs.inProgressJobIds(state.jobs);
-}
-
-export function job(state, { type, jobId, parentJobId }) {
-  return fromJobs.job(state.jobs, {
-    type,
-    jobId,
-    parentJobId,
-  });
-}
-
-export function isBulkRetryInProgress(state) {
-  return fromJobs.isBulkRetryInProgress(state.jobs);
-}
-
-export function jobErrors(state, jobId) {
-  return fromJobs.jobErrors(state.jobs, jobId);
-}
-
-export function jobErrorRetryObject(state, retryId) {
-  return fromJobs.jobErrorRetryObject(state.jobs, retryId);
-}
-
-export const preBuiltFileDefinitions = (state, format) =>
-  fromFileDefinitions.preBuiltFileDefinitions(
-    state && state.fileDefinitions,
-    format
-  );
-
-export const fileDefinition = (state, definitionId, options) =>
-  fromFileDefinitions.fileDefinition(
-    state && state.fileDefinitions,
-    definitionId,
-    options
-  );
-
-export const hasSuiteScriptData = (
-  state,
-  { ssLinkedConnectionId, integrationId, resourceType }
-) =>
-  fromSuiteScript.hasData(state && state.suiteScript, {
-    ssLinkedConnectionId,
-    integrationId,
-    resourceType,
-  });
-
-export const suiteScriptResource = (
-  state,
-  { resourceType, id, ssLinkedConnectionId, integrationId }
-) =>
-  fromSuiteScript.resource(state && state.suiteScript, {
-    resourceType,
-    id,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-
-export const suiteScriptResourceList = (
-  state,
-  { resourceType, ssLinkedConnectionId, integrationId }
-) =>
-  fromSuiteScript.resourceList(state && state.suiteScript, {
-    resourceType,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-
-export function suiteScriptJobsPagingDetails(state) {
-  return fromSuiteScript.jobsPagingDetails(state && state.suiteScript);
-}
-
-export function suiteScriptJobErrors(state, { jobId, jobType }) {
-  return fromSuiteScript.jobErrors(state && state.suiteScript, {
-    jobId,
-    jobType,
-  });
-}
-
-export function hasSettingsForm(state, resourceType, resourceId) {
-  return fromResources.hasSettingsForm(
-    state && state.resources,
-    resourceType,
-    resourceId
-  );
-}
+};

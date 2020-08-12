@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import itemTypes from '../itemTypes';
 import AppBlock from '../AppBlock';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import {applicationsList} from '../../../constants/applications';
 import {
@@ -89,9 +89,10 @@ const PageGenerator = ({
       type: 'exports',
       filter: {
         adaptorType: 'AS2Export',
-        _connectionId: resource?._connectionId
+        _connectionId: resource?._connectionId,
       },
     });
+
     return allAS2ExportsMatchingConnId.filtered > 1;
   });
   const connectionHasAs2Routing = useSelector(state => {
@@ -229,7 +230,7 @@ const PageGenerator = ({
     pg.webhookOnly,
     rdbmsAppType,
     resource,
-    index
+    index,
   ]);
   const getApplication = useCallback(() => {
     if (isDataLoader) {
@@ -327,11 +328,12 @@ const PageGenerator = ({
         },
         // We don't support preSavePage hook incase of Data loader
         ...(
-          isDataLoader ? [] :
-            [{ ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] }]
-        )
+          isDataLoader ? []
+            : [{ ...exportHooksAction, isUsed: usedActions[actionsMap.hooks] }]
+        ),
       ];
     }
+
     return generatorActions;
   }, [
     blockType,
@@ -339,7 +341,8 @@ const PageGenerator = ({
     exportNeedsRouting,
     pending,
     usedActions,
-    multipleAs2ExportsOfSameConnectionId
+    multipleAs2ExportsOfSameConnectionId,
+    isDataLoader,
   ]);
   // #endregion
   // console.log('render: <PageGenerator>');

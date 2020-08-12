@@ -8,7 +8,7 @@ import {
   FormControlLabel,
   IconButton,
 } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
@@ -161,7 +161,7 @@ export default function Filters({
           data-test="hideEmptyJobsFilter"
           label="Hide empty jobs"
           classes={{ label: classes.hideEmptyLabel }}
-          control={
+          control={(
             <Checkbox
               // indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={hideEmpty}
@@ -169,7 +169,7 @@ export default function Filters({
               color="primary"
               onChange={e => patchFilter('hideEmpty', e.target.checked)}
             />
-          }
+          )}
         />
       </div>
 

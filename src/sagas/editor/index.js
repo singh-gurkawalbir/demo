@@ -8,7 +8,7 @@ import {
 } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/editors/processorLogic';
@@ -77,6 +77,7 @@ export function* evaluateExternalProcessor({ processorData }) {
   }
 
   const { violations, processor, body } = reqOpts;
+
   // console.log('reqOpts', reqOpts);
   if (violations) {
     return { violations };

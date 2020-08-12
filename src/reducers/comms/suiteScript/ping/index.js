@@ -69,7 +69,9 @@ export default (state = {}, action) => {
   });
 };
 
-export const testConnectionStatus = (
+export const selectors = {};
+
+selectors.suiteScriptTestConnectionStatus = (
   state,
   resourceId,
   ssLinkedConnectionId
@@ -86,7 +88,7 @@ export const testConnectionStatus = (
   return status;
 };
 
-export const testConnectionMessage = (
+selectors.suiteScriptTestConnectionMessage = (
   state,
   resourceId,
   ssLinkedConnectionId

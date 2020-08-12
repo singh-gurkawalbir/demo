@@ -1,9 +1,7 @@
 import React from 'react';
-import classNames from 'classnames';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import clsx from 'clsx';
+import { makeStyles, CircularProgress } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles({
   center: {
@@ -26,7 +24,7 @@ function Spinner(props) {
   );
 
   return loading ? (
-    <div className={classNames(classes.center, className)}>{progress}</div>
+    <div className={clsx(classes.center, className)}>{progress}</div>
   ) : (
     progress
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -59,7 +59,7 @@ export default function TemplatePreview() {
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const template = useSelector(state =>
-    selectors.marketplaceTemplate(state, templateId)
+    selectors.marketplaceTemplateById(state, templateId)
   );
   const { objects: components, stackRequired } =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};

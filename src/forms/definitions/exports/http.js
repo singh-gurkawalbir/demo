@@ -14,7 +14,6 @@ export default {
   preSave: formValues => {
     const retValues = { ...formValues };
 
-
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
     } else if (
@@ -354,7 +353,7 @@ export default {
         hasHeaderRow: false,
         keyColumns: [],
         rowsToSkip: 0,
-        trimSpaces: false
+        trimSpaces: true,
       },
       visibleWhenAll: [
         {
@@ -410,6 +409,7 @@ export default {
               'http.method',
               'http.blobMethod',
               'http.headers',
+              'http.requestMediaType',
               'http.relativeURI',
               'http.body',
               'http.response.blobFormat',
@@ -462,22 +462,21 @@ export default {
                   'http.response.failPath',
                   'http.response.failValues',
                   'http.successMediaType',
-                ]
+                ],
               },
               {
                 type: 'indent',
                 containers: [
                   {fields: [
                     'file.csv',
-                  ]}
-                ]
+                  ]},
+                ],
               },
               {
                 fields: [
                   'http.errorMediaType',
-                  'http.requestMediaType',
-                ]
-              }
+                ],
+              },
             ],
           },
           {

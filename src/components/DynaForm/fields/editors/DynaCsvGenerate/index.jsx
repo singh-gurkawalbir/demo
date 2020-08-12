@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import DynaEditorWithFlowSampleData from '../../DynaEditorWithFlowSampleData';
 import FieldHelp from '../../../FieldHelp';
 import getFormMetadata from './metadata';
@@ -40,7 +40,7 @@ const getParserValue = ({
   replaceTabWithSpace,
   truncateLastRowDelimiter,
   wrapWithQuotes,
-  customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== '')
+  customHeaderRows: customHeaderRows?.split('\n').filter(val => val !== ''),
 });
 
 export default function DynaCsvGenerate(props) {
@@ -58,15 +58,18 @@ export default function DynaCsvGenerate(props) {
   const [formKey, setFormKey] = useState(1);
   const isHttpImport = useSelector(state => {
     const {merged: resource = {}} = selectors.resourceData(state, resourceType, resourceId);
+
     return resource?.adaptorType === 'HTTPImport';
   });
   const getInitOptions = useCallback(
-    (val) => {
+    val => {
       const {customHeaderRows = [], ...others} = val;
       const opts = {...others, resourceId, resourceType};
+
       if (isHttpImport) {
         opts.customHeaderRows = customHeaderRows?.join('\n');
       }
+
       return opts;
     },
     [isHttpImport, resourceId, resourceType],
@@ -79,6 +82,7 @@ export default function DynaCsvGenerate(props) {
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, resourceId, resourceType });
       const parsersValue = getParserValue(newOptions);
+
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -96,6 +100,7 @@ export default function DynaCsvGenerate(props) {
   const handleSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       const parsedVal = getParserValue(editorValues);
+
       setCurrentOptions(getInitOptions(parsedVal));
       setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
       setFormKey(formKey + 1);

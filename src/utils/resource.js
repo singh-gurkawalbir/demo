@@ -158,11 +158,13 @@ export function getResourceSubType(resource) {
   // Note that "simple" (data-loader) exports may or may not have an adaptorType,
   // but DO have a type prop with value "simple".
   let resourceType;
+
   if (type === 'simple') {
     resourceType = type;
   } else {
     resourceType = adaptorTypeMap[adaptorType] || type;
   }
+
   return {
     type: resourceType,
     assistant,
@@ -483,9 +485,9 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   let integrationId;
 
   if (href.indexOf('/integrationapps') > 0) {
-    [, , , integrationId] = newurl;
-  } else if (href.indexOf('/integrations') > 0) {
     [, , integrationId] = newurl;
+  } else if (href.indexOf('/integrations') > 0) {
+    [, integrationId] = newurl;
   }
 
   if (integrationId && integrations.find(i => i._id === integrationId)) {
@@ -754,6 +756,7 @@ export function getConnectionType(resource) {
 export function isTradingPartnerSupported({environment, licenseActionDetails, accessLevel}) {
   const isSandbox = environment === 'sandbox';
   let enabled = false;
+
   if (
     [
       USER_ACCESS_LEVELS.ACCOUNT_OWNER,

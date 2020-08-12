@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
 import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
@@ -11,7 +11,7 @@ function ResponseTransformationDialog(props) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { responseTransform } = resource;
-  const { status, data: sampleResponseData } = useSelector((state) => selectors.getSampleDataWrapper(state, {
+  const { status, data: sampleResponseData } = useSelector(state => selectors.getSampleDataWrapper(state, {
     flowId,
     resourceId,
     resourceType: 'imports',

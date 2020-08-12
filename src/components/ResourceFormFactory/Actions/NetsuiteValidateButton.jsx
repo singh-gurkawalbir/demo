@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import trim from '../../../utils/trim';
 
 const styles = theme => ({
@@ -30,6 +30,8 @@ const NetsuiteValidateButton = props => {
     onFieldChange,
   } = props;
   const handleValidate = values => {
+    // clear the ping comm status first as validity will be determined by netsuite user roles
+    dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(
       actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
     );

@@ -5,7 +5,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import * as selectors from '../../reducers/index';
+import { selectors } from '../../reducers/index';
 import { JOB_TYPES, JOB_STATUS } from '../../utils/constants';
 import { run } from '.';
 

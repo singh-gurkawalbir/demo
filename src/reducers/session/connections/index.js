@@ -58,26 +58,28 @@ export default (state = {}, action) => {
   });
 };
 
-export function debugLogs(state) {
+export const selectors = {};
+
+selectors.debugLogs = state => {
   if (!state || !state.debugLogs) {
     return null;
   }
 
   return state.debugLogs;
-}
+};
 
-export function iClients(state, connectionId) {
+selectors.iClients = (state, connectionId) => {
   if (!state || !state.iClients || !connectionId) {
     return emptySet;
   }
 
   return state.iClients[connectionId] || emptySet;
-}
+};
 
-export function queuedJobs(state, connectionId) {
+selectors.queuedJobs = (state, connectionId) => {
   if (!state || !state.queuedJobs || !connectionId) {
     return emptySet;
   }
 
   return state.queuedJobs[connectionId] || emptySet;
-}
+};

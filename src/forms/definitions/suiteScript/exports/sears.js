@@ -16,7 +16,7 @@ export default {
           {
             label: 'What would you like to export?',
             fields: ['export.sears.method', 'export.sears.methodConfig'],
-          }
+          },
         ],
       },
     ],

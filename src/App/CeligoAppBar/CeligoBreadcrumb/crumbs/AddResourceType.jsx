@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { getCustomResourceLabel } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 /*
  * Deals with labelling different resource types
@@ -11,13 +11,14 @@ export default function AddResourceTypeCrumb({
   flowId,
 }) {
   const resourceLabel = useSelector(state =>
-    getCustomResourceLabel(state, {
+    selectors.getCustomResourceLabel(state, {
       resourceType,
       resourceId,
       flowId,
     })
   );
-  if (resourceType === 'accesstokens' || resourceType === 'connectors') {
+
+  if (['accesstokens', 'connectors', 'apis'].includes(resourceType)) {
     return `Create ${resourceLabel}`;
   }
 

@@ -16,7 +16,7 @@ import {
 import * as apiConsts from './apiPaths';
 import { unauthenticateAndDeleteProfile } from '..';
 import actions from '../../actions';
-import { resourceStatus, accountShareHeader } from '../../reducers';
+import { selectors } from '../../reducers';
 
 const status401 = new APIException({
   status: 401,
@@ -76,11 +76,12 @@ describe('request interceptors...testing the various stages of an api request on
 
   describe('onRequestSaga', () => {
     const csrf = 'some value';
+
     Object.defineProperty(window, 'sessionStorage', {
       value: {
-        getItem: jest.fn().mockImplementation(() => csrf)
+        getItem: jest.fn().mockImplementation(() => csrf),
       },
-      writable: true
+      writable: true,
     });
 
     test('default behavior: should make the api comm activity show up and the message of the comm activity being the path and request to "GET" if not defined', () => {
@@ -90,7 +91,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+      expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, method));
       // defaults to a api request action with
       // message defaulting to the path
       // and comm activity not hidden
@@ -107,12 +108,12 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+      expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, method));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'GET', path, false))
       );
-      expect(saga.next().value).toEqual(select(accountShareHeader, path));
+      expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
 
@@ -123,10 +124,10 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+      expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, method));
 
       expect(saga.next({ retryCount: 1 }).value).toEqual(
-        select(accountShareHeader, path)
+        select(selectors.accountShareHeader, path)
       );
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
     });
@@ -138,12 +139,12 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(select(resourceStatus, path, 'POST'));
+      expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
-      expect(saga.next().value).toEqual(select(accountShareHeader, path));
+      expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
       expect(saga.next().value).toEqual(call(introduceNetworkLatency));
 
       // All request types are text
@@ -179,12 +180,12 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(select(resourceStatus, path, 'POST'));
+      expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
         put(actions.api.request(path, 'POST', path, false))
       );
-      expect(saga.next().value).toEqual(select(accountShareHeader, path));
+      expect(saga.next().value).toEqual(select(selectors.accountShareHeader, path));
       const additionalHeaders = {
         'integrator-ashareid': 'some-ashare-id',
         'integrator-something': 'something else',
@@ -467,7 +468,7 @@ describe('request interceptors...testing the various stages of an api request on
           some500ResponseCreatingRequest
         );
 
-        expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+        expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, method));
 
         expect(saga.next({ retryCount: undefined }).value).toEqual(
           delay(retryInterval)
@@ -496,7 +497,7 @@ describe('request interceptors...testing the various stages of an api request on
           actionWithMetaProxiedFromRequestAction
         );
 
-        expect(saga.next().value).toEqual(select(resourceStatus, path, method));
+        expect(saga.next().value).toEqual(select(selectors.resourceStatus, path, method));
 
         expect(saga.next({ retryCount: 3 }).value).toEqual(
           put(actions.api.failure(path, method, some500Response.data))

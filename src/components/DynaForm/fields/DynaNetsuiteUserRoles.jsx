@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import MaterialUiSelect from './DynaSelect';
-import * as selectors from '../../../reducers/index';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(() => ({
   root: {

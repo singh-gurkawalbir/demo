@@ -1,6 +1,6 @@
 /* global describe, test, expect */
 import each from 'jest-each';
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import {
   ACCOUNT_IDS,
@@ -150,7 +150,7 @@ describe('user reducers', () => {
       );
       const state = reducer(undefined, receivedPreferencesAction);
 
-      expect(selectors.userPreferences(state)).toEqual({
+      expect(selectors.userOwnPreferences(state)).toEqual({
         environment: 'production',
       });
     });
@@ -166,7 +166,7 @@ describe('user reducers', () => {
       );
       const state = reducer(undefined, receivedPreferencesAction);
 
-      expect(selectors.userPreferences(state)).toEqual({
+      expect(selectors.userOwnPreferences(state)).toEqual({
         environment: 'production',
         themeName: 'fancy',
         timeFormat: 'something',
@@ -186,7 +186,7 @@ describe('user reducers', () => {
       );
       const state = reducer(undefined, receivedPreferences);
 
-      expect(selectors.userPreferences(state)).toEqual({
+      expect(selectors.userOwnPreferences(state)).toEqual({
         environment: 'production',
         themeName: 'fancy',
         defaultAShareId: ACCOUNT_IDS.OWN,
@@ -211,7 +211,7 @@ describe('user reducers', () => {
       );
       const state = reducer(undefined, receivedPreferences);
 
-      expect(selectors.userPreferences(state)).toEqual({
+      expect(selectors.userOwnPreferences(state)).toEqual({
         ...invitedUserAccountPreferences,
         dateFormat: defaultDateFormat,
         environment: 'production',

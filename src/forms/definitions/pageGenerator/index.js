@@ -36,7 +36,7 @@ export default {
 
       if (application === 'webhook') {
         newValues['/webhook/provider'] = 'custom';
-      } else newValues['/webhook/provider'] = application;
+      } else newValues['/webhook/provider'] = (application === 'integratorio' ? 'integrator-extension' : application);
       delete newValues['/_connectionId'];
     } else {
       newValues['/resourceType'] = type;

@@ -321,7 +321,6 @@ export const filterSubListProperties = eFields => {
   return filteredSubLists;
 };
 
-
 /*
  * "referencedFields": [
       "CreatedBy.Username",

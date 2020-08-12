@@ -10,7 +10,7 @@ import {
   matchPath,
 } from 'react-router-dom';
 import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import CloseIcon from '../../icons/CloseIcon';
 import BackArrowIcon from '../../icons/BackArrowIcon';
 import InfoIconButton from '../../InfoIconButton';
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
   },
   contentContainer: {
-    margin: theme.spacing(1, 2),
+    margin: theme.spacing(3),
     position: 'relative',
     height: '100%',
   },
@@ -90,6 +90,10 @@ const useStyles = makeStyles(theme => ({
   },
   helpTextButton: {
     padding: 0,
+    marginLeft: theme.spacing(1),
+    '& svg': {
+      fontSize: 20,
+    },
   },
 }));
 
@@ -130,6 +134,7 @@ export default function RightDrawer({
   }, [handleBack, onClose]);
 
   let fullPath;
+
   if (typeof path === 'string' || typeof path === 'number') {
     fullPath = `${match.url}/${path}`;
   } else if (Array.isArray(path)) {

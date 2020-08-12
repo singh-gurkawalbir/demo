@@ -8,7 +8,7 @@ import {
   defaultPatchSetConverter,
   sanitizePatchSet,
 } from '../../../forms/utils';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
@@ -17,6 +17,7 @@ import { emptyObject } from '../../../utils/constants';
 
 const emptyObj = {};
 const isParent = true;
+
 export function FormView(props) {
   const { resourceType, flowId, resourceId, formContext, value } = props;
   const dispatch = useDispatch();

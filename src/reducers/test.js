@@ -2,7 +2,7 @@
 // import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
-import reducer, * as selectors from '.';
+import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
   ACCOUNT_IDS,
@@ -2082,7 +2082,7 @@ describe('integrationAppSettings reducer', () => {
         supportsMultiStore: true,
       },
       stores: [
-        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
 
@@ -2100,7 +2100,7 @@ describe('integrationAppSettings reducer', () => {
         supportsMultiStore: true,
       },
       stores: [
-        { hidden: false, label: undefined, mode: undefined, value: 'store1' },
+        { hidden: false, label: undefined, mode: 'settings', value: 'store1' },
       ],
     });
   });

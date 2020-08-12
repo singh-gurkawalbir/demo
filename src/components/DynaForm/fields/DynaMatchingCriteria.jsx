@@ -4,23 +4,24 @@ import DynaMultiSelect from './DynaMultiSelect';
 // import { deepClone } from 'fast-json-patch/lib/core';
 import DynaSelect from './DynaSelect';
 
-
 const labelKeyAr = [
   {label: 'Matched', key: 'matched'},
   {label: 'Partially Matched', key: 'partiallyMatched'},
   {label: 'Potentially Matched', key: 'potentiallyMatched'},
 ];
-const generateOptionsFormLabelValueAr = (ar) => ar.map(([label, value]) => ({label, value}));
-const withItemsWrapper = (ar) => ([{items: ar}]);
+const generateOptionsFormLabelValueAr = ar => ar.map(([label, value]) => ({label, value}));
+const withItemsWrapper = ar => ([{items: ar}]);
 const stateTiedToAccountType = (state, selectedAccountType) => state?.find(ele => ele?.accountType === selectedAccountType);
 
 const allOptionKeys = (values, key) => values?.[key] && Object.keys(values?.[key]);
-export const DynaMatchingCriteria = (props) => {
+
+export const DynaMatchingCriteria = props => {
   const { allValues, accountTypeOptions, setAllValues, required, disabled, id, onFieldChange} = props;
 
   const accountTypeSelectOptions = useMemo(
     () => withItemsWrapper(generateOptionsFormLabelValueAr(accountTypeOptions)), [accountTypeOptions]);
   const [selectedAccountType, setSelectedAccountType] = useState(generateOptionsFormLabelValueAr(accountTypeOptions)?.[0]?.value);
+
   return (
     <>
       <DynaSelect
@@ -38,6 +39,7 @@ export const DynaMatchingCriteria = (props) => {
         const allSelectedValues = allOptionKeys(values, key)?.filter(key1 => values?.[key]?.[key1]).map(key => key);
 
         const allOptions = allOptionKeys(values, key)?.map(key => ({label: key, value: key}));
+
         return (
 
           <DynaMultiSelect
@@ -51,6 +53,7 @@ export const DynaMatchingCriteria = (props) => {
             onFieldChange={(id, values) => {
               setAllValues(origState => produce(origState, state => {
                 const selectedAccount = stateTiedToAccountType(state, selectedAccountType);
+
                 allOptionKeys(selectedAccount, key)?.forEach(accountKey => {
                   selectedAccount[key][accountKey] = !!values?.includes(accountKey);
                 });
@@ -68,6 +71,7 @@ export default function DynaMatchingCriteriaWithModal(props) {
   const [allValues, setAllValues] = useState(value || content);
 
   const [componentMounted, setComponentMounted] = useState(false);
+
   useEffect(() => {
     onFieldChange(id, allValues, !componentMounted);
     setComponentMounted(true);

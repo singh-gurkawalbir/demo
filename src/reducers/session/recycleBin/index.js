@@ -25,8 +25,10 @@ export default (state = {}, action) => {
   });
 };
 
-export function recycleBinState(state) {
+export const selectors = {};
+
+selectors.recycleBinState = state => {
   if (!state) return emptyObj;
 
   return state;
-}
+};

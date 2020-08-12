@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { IAFormStateManager } from '../../Flows';
@@ -9,6 +9,7 @@ import { IAFormStateManager } from '../../Flows';
 const useStyles = makeStyles(theme => ({
   configureform: {
     padding: theme.spacing(2, 3),
+    minHeight: 250,
     '& + div': {
       padding: theme.spacing(2, 0),
       margin: theme.spacing(0, 3),
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
         },
       },
     },
-  }
+  },
 }));
 
 export default function GeneralPanel({ integrationId, storeId }) {

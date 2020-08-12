@@ -1,5 +1,5 @@
 export default {
-  preSave: formValues => {
+  preSave: (formValues, resource, options) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
@@ -12,6 +12,9 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
       retValues['/http/auth/oauth/scope'] = undefined;
+      retValues['/http/ping/relativeURI'] = '/v2/store';
+      retValues['/http/ping/method'] = 'GET';
+      retValues['/http/ping/successPath'] = 'id';
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
@@ -19,6 +22,9 @@ export default {
         },
       ];
     } else if (retValues['/http/auth/type'] === 'oauth') {
+      const iClients = options?.iClients?.resources;
+      const iClientDoc = iClients?.find(iclient => iclient._id === retValues['/http/_iClientId']);
+
       retValues['/http/auth/oauth/authURI'] =
         'https://login.bigcommerce.com/oauth2/authorize';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -28,14 +34,21 @@ export default {
       retValues['/http/auth/oauth/scopeDelimiter'] = '+';
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
-      retValues['/http/auth/token/scheme'] = undefined;
-      retValues['/http/auth/token/token'] = undefined;
+      retValues['/http/auth/token/scheme'] = ' ';
+      retValues['/http/ping/relativeURI'] = '/v3/catalog/products';
+      retValues['/http/ping/method'] = 'GET';
       retValues['/http/auth/basic/username'] = undefined;
       retValues['/http/auth/basic/password'] = undefined;
       retValues['/http/headers'] = [
         {
           name: 'X-Auth-Client',
-          value: '{{{connection.oauth2.clientId}}}',
+          value: iClientDoc?.oauth2?.clientId,
+        },
+      ];
+      retValues['/http/auth/token/refreshHeaders'] = [
+        {
+          name: 'X-Auth-Client',
+          value: iClientDoc?.oauth2?.clientId,
         },
       ];
     } else {
@@ -64,9 +77,6 @@ export default {
         formValues['/storeHash']
       }`,
       '/http/mediaType': 'json',
-      '/http/ping/relativeURI': '/v2/store',
-      '/http/ping/method': 'GET',
-      '/http/ping/successPath': 'id',
     };
   },
 
@@ -166,7 +176,7 @@ export default {
         'store_channel_settings',
         'store_channel_listings',
         'store_storefront_api',
-        'store_storefront_api_customer_impersonation'
+        'store_storefront_api_customer_impersonation',
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },

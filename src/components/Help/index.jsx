@@ -8,6 +8,7 @@ import HelpIcon from '../icons/HelpIcon';
 import RawHtml from '../RawHtml';
 
 let _helpTextMap = {};
+
 export function getHelpTextMap() {
   return _helpTextMap;
 }

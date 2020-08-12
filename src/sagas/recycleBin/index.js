@@ -7,7 +7,7 @@ import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
 } from '../../constants/resource';
 import { getResourceCollection } from '../resources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export function* restore({ resourceType, resourceId }) {
   const path = `/recycleBinTTL/${resourceType}/${resourceId}/doCascadeRestore`;

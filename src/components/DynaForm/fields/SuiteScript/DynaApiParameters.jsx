@@ -11,8 +11,7 @@ import {
 } from './util';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import FieldHelp from '../../FieldHelp';
-import * as selectors from '../../../../reducers';
-
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles({
   dynaAssSearchParamsWrapper: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles({
   dynaAssistantFormLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
-  }
+  },
 });
 const ApiParametersModal = props => {
   const {
@@ -81,7 +80,6 @@ export default function DynaApiParameters(props) {
 
     return connection?.apiMethods?.find(m => m.id === apiMethod);
   }, shallowEqual);
-
 
   return (
     <>

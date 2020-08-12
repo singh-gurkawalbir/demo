@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import PingMessageSnackbar from '../../PingMessageSnackbar';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers/index';
+import { selectors } from '../../../reducers/index';
 import DynaAction from '../../DynaForm/DynaAction';
 import { PING_STATES } from '../../../reducers/comms/ping';
 
@@ -64,6 +64,7 @@ const TestButton = props => {
       setIsTesting(false);
     }
   }, [testConnectionCommState, isTesting, pingLoading]);
+
   return (
     <>
       <PingMessage resourceId={resourceId} />

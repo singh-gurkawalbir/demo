@@ -8,6 +8,7 @@ import Regenerate from '../../actions/AccessTokens/Regenerate';
 import Display from '../../actions/AccessTokens/Display';
 import AutoPurgeAt from '../../actions/AccessTokens/AutoPurgeAt';
 import Edit from '../../actions/Edit';
+import { formatLastModified } from '../../../CeligoTable/util';
 
 const getDisplayToken = accessToken => <Display accessToken={accessToken} />;
 const getAutoPurgeAt = accessToken => <AutoPurgeAt accessToken={accessToken} />;
@@ -22,11 +23,6 @@ export default {
       orderBy: 'name',
     },
     {
-      // TODO add permission checks
-      heading: 'Token',
-      value: r => getDisplayToken(r),
-    },
-    {
       heading: 'Status',
       value: r => (r.revoked ? 'Revoked' : 'Active'),
     },
@@ -36,15 +32,25 @@ export default {
         r.fullAccess ||
         (r._connectorId &&
           r.autoPurgeAt &&
-          !r._connectionIds.length &&
-          !r._exportIds.length &&
-          !r._importIds.length)
+          !r._connectionIds?.length &&
+          !r._exportIds?.length &&
+          !r._importIds?.length)
           ? 'Full Access'
           : 'Custom',
     },
     {
       heading: 'Auto purge',
       value: r => getAutoPurgeAt(r),
+    },
+    {
+      heading: 'Last updated',
+      value: r => formatLastModified(r.lastModified),
+      orderBy: 'lastModified',
+    },
+    {
+      // TODO add permission checks
+      heading: 'Token',
+      value: r => getDisplayToken(r),
     },
   ],
   rowActions: r => {
@@ -61,7 +67,6 @@ export default {
       actionItems.push(Delete);
     }
     actionItems = [Edit, ...actionItems];
-
 
     return actionItems;
   },

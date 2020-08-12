@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { getNetSuiteSubrecordImports } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: theme.spacing(2),
-    width: '100%'
+    width: '100%',
   },
   button: {
     // color: theme.palette.primary.main,
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: theme.spacing(1, 0),
-  }
+  },
 }));
 
 export default function SelectImport({ flowId }) {
@@ -77,6 +77,7 @@ export default function SelectImport({ flowId }) {
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
     const i2index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i2._id);
+
     return i1index - i2index;
   });
   const flowName = flow.name || flow._id;

@@ -5,7 +5,7 @@ import { apiCallWithRetry } from '../index';
 import { restore, purge } from '.';
 import { recycleBinDependencies } from '../../constants/resource';
 import { getResourceCollection } from '../resources';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 
 describe('restore saga', () => {

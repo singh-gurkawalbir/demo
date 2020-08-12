@@ -12,9 +12,11 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'row !important',
   },
 }));
+
 export default function AS2url() {
   const [as2Url, setas2Url] = useState('https');
   const classes = useStyles();
+
   return (
     <>
       <DynaRadio
@@ -29,8 +31,8 @@ export default function AS2url() {
           {
             items: [{ label: 'AS2 via HTTP', value: 'http' },
               { label: 'AS2 via HTTPS', value: 'https' },
-            ]
-          }
+            ],
+          },
         ]} />
       <div className={classes.inlineElements}>
         <DynaLabelValueElement
