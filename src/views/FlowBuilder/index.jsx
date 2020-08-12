@@ -394,20 +394,18 @@ function FlowBuilder() {
     if (!isNewFlow && isUserInErrMgtTwoDotZero) {
       dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
     }
+
+    return () => {
+      if (isUserInErrMgtTwoDotZero) {
+        dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+      }
+    };
   }, [
     dispatch,
     flowId,
     isNewFlow,
     isUserInErrMgtTwoDotZero,
   ]);
-  useEffect(() =>
-    () => {
-      if (isUserInErrMgtTwoDotZero) {
-        dispatch(actions.errorManager.openFlowErrors.cancelPoll());
-      }
-    },
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [dispatch]);
 
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION

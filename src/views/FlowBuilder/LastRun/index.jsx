@@ -62,9 +62,9 @@ export default function LastRun() {
     }
 
     return (
-      <span>
+      <>
         Last run: <DateTimeDisplay dateTime={lastRunStatus} />
-      </span>
+      </>
     );
   }, [lastRunStatus]);
 
