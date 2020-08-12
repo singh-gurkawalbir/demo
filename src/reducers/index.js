@@ -129,14 +129,12 @@ selectors.commsErrors = state => {
   const commsState = state?.comms?.networkComms;
 
   if (!commsState) return;
-  // console.log(commsState);
-  let errors;
+  const errors = {};
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
 
     if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
     }
   });
