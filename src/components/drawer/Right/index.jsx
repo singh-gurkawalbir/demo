@@ -90,6 +90,10 @@ const useStyles = makeStyles(theme => ({
   },
   helpTextButton: {
     padding: 0,
+    marginLeft: theme.spacing(1),
+    '& svg': {
+      fontSize: 20,
+    },
   },
 }));
 

@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 export default function TemplateCrumb({ templateId }) {
   const dispatch = useDispatch();
   const template = useSelector(state =>
-    selectors.marketplaceTemplate(state, templateId)
+    selectors.marketplaceTemplateById(state, templateId)
   );
 
   useEffect(() => {

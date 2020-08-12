@@ -60,7 +60,7 @@ export default function ApplicationsList({ filter }) {
     sandbox
   );
   const connectorsMetadata = applicationsList();
-  const templates = useSelector(state => selectors.marketplaceTemplates(state));
+  const templates = useSelector(state => selectors.marketplaceTemplatesByApp(state));
   let applications = [];
   const lowerCaseFilter = filter?.keyword?.toLowerCase();
 
