@@ -1,7 +1,7 @@
 import throttle from 'lodash/throttle';
 
-const OFFSET = 250; // This is the top/bottom offset you use to start scrolling in the div.
-const PX_DIFF = 20;
+let OFFSET = 100; // This is the top/bottom offset you use to start scrolling in the div.
+let PX_DIFF = 10;
 
 let scrollIncrement = 0;
 let isScrolling = false;
@@ -63,9 +63,11 @@ const onDragOver = event => {
 // The "throttle" method prevents executing the same function SO MANY times.
 const throttleOnDragOver = throttle(onDragOver, 150);
 
-export const addEventListenerForSidebar = element => {
+export const addEventListenerForSidebar = (element, height) => {
   sidebarElement = element;
   scrollHeightSidebar = sidebarElement.scrollHeight;
+  PX_DIFF = Math.round(scrollHeightSidebar / height);
+  OFFSET = Math.round(height / 2 - height / 8);
   const clientRect = sidebarElement.getBoundingClientRect();
   clientRectTop = clientRect.top;
   clientRectBottom = clientRect.bottom;

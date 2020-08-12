@@ -63,14 +63,14 @@ export function tileStatus(tile) {
  * It supplies required config to support drag and drop functionality among tiles
  */
 
-export const dragTileConfig = (index, onDrop, containerRef) => ({
+export const dragTileConfig = (index, onDrop, elementReference) => ({
   item: { type: 'TILE', index },
   collect: monitor => ({
     isDragging: monitor.isDragging(),
   }),
   begin: monitor => {
     // for scrollbar element, need to go three levels up and send element as argument
-    addEventListenerForSidebar(containerRef.current?.parentElement?.parentElement?.parentElement);
+    addEventListenerForSidebar(elementReference.current?.parentElement?.parentElement?.parentElement, elementReference.current?.offsetHeight);
     return monitor.getItem();
   },
   end: dropResult => {

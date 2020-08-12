@@ -136,7 +136,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
   // need to show different styling for selected card
   const isCardSelected = !!isDragging;
 
