@@ -12,6 +12,7 @@ import {
   TableSortLabel,
 } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ActionMenu from './ActionMenu';
@@ -70,6 +71,7 @@ export default function CeligoTable({
   selectableRows,
   isSelectableRow,
   filterKey,
+  className,
   actionProps = {},
 }) {
   const history = useHistory();
@@ -161,7 +163,7 @@ export default function CeligoTable({
   }, []);
 
   return (
-    <div>
+    <div className={clsx(className)}>
       {selectedAction}
       <Table className={classes.table}>
         <TableHead>
