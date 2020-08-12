@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ImportMappingSettings from '.';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
@@ -11,46 +11,30 @@ export default function MappingSettingsField(props) {
   const {
     id,
     onSave,
-    extractFields,
-    generateFields,
-    application,
-    updateLookup,
-    options,
     value,
-    disabled,
-    isCategoryMapping,
-    lookups,
   } = props;
   const [showSettings, setShowSettings] = useState(false);
   const isDisabled = !('generate' in value);
-  const handleBtnClick = () => {
+  const handleBtnClick = useCallback(() => {
     if (!isDisabled) setShowSettings(!showSettings);
-  };
+  }, [isDisabled, showSettings]);
 
-  const handleClose = (shouldCommit, settings) => {
-    if (shouldCommit) {
+  const handleSave = useCallback(
+    settings => {
       onSave(id, settings);
-    }
-
-    handleBtnClick();
-  };
+    },
+    [id, onSave],
+  );
 
   return (
     <>
       {showSettings && (
         <ImportMappingSettings
-          application={application}
           open={showSettings}
-          updateLookup={updateLookup}
           title="Settings"
-          value={value}
-          isCategoryMapping={isCategoryMapping}
-          onClose={handleClose}
-          options={options}
-          extractFields={extractFields}
-          generateFields={generateFields}
-          disabled={disabled}
-          lookups={lookups}
+          onClose={handleBtnClick}
+          onSave={handleSave}
+          {...props}
         />
       )}
 

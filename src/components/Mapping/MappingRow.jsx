@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useMemo } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,8 +12,7 @@ import LockIcon from '../icons/LockIcon';
 import MappingConnectorIcon from '../icons/MappingConnectorIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
-import MappingSettings from '../AFE/ImportMappingSettings/MappingSettingsField';
-import { adaptorTypeMap } from '../../utils/resource';
+import MappingSettingsButton from './Settings/SettingsButton';
 
 const useStyles = makeStyles(theme => ({
   child: {
@@ -90,13 +89,13 @@ export default function MappingRow(props) {
     onMove,
     onDrop,
     index,
-    resourceId,
+    importId,
     flowId,
     subRecordMappingId,
     isDraggable = false,
   } = props;
   const {
-    key,
+    key: mappingKey,
     isSubRecordMapping,
     isRequired,
     isNotEditable,
@@ -107,61 +106,16 @@ export default function MappingRow(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const ref = useRef(null);
-  const importRes = useSelector(state =>
-    selectors.resource(state, 'imports', resourceId)
-  );
-  const {adaptorType} = importRes;
-  // todo: remove after mapping settings refactor
-  const application = adaptorTypeMap[adaptorType];
   // todo subrecord
   const generateFields = useSelector(state =>
-    selectors.mappingGenerates(state, resourceId)
-  );
-  const nsRecordType = useSelector(state =>
-    selectors.mappingNSRecordType(state, resourceId, subRecordMappingId)
+    selectors.mappingGenerates(state, importId)
   );
 
   const extractFields = useSelector(state =>
-    selectors.mappingExtracts(state, resourceId, flowId)
+    selectors.mappingExtracts(state, importId, flowId)
   );
-  const {lookups, lastModifiedRowKey} = useSelector(state => selectors.mapping(state));
-  const updateLookupHandler = (lookupOps = []) => {
-    let lookupsTmp = [...lookups];
-    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
+  const {lastModifiedRowKey} = useSelector(state => selectors.mapping(state));
 
-    lookupOps.forEach(({ isDelete, obj }) => {
-      if (isDelete) {
-        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-      } else {
-        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-        if (index !== -1) {
-          lookupsTmp[index] = obj;
-        } else {
-          lookupsTmp.push(obj);
-        }
-      }
-    });
-
-    dispatch(actions.mapping.updateLookup(lookupsTmp));
-  };
-
-  // TODO: refact
-  const options = useMemo(() => {
-    const {_connectionId: connectionId, name: resourceName} = importRes;
-
-    return {
-      flowId,
-      connectionId,
-      resourceId,
-      resourceName,
-      isGroupedSampleData: !!(extractFields && Array.isArray(extractFields)),
-      // eslint-disable-next-line camelcase
-      isComposite: adaptorType === 'NetSuiteDistributedImport' === adaptorType && importRes?.netsuite_da?.operation === 'addupdate',
-      sObjectType: adaptorType === 'SalesforceImport' && importRes?.salesforce?.sObjectType,
-      recordType: nsRecordType,
-    };
-  }, [adaptorType, extractFields, flowId, importRes, nsRecordType, resourceId]);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -206,44 +160,37 @@ export default function MappingRow(props) {
   const handleBlur = useCallback(
     field => (id, value) => {
       // check if value changes or user entered something in new row
-      if ((!key && value) || (key && mapping[field] !== value)) {
-        if (key && value === '') {
+      if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
+        if (mappingKey && value === '') {
           if (
             (field === 'extract' && generate === '') ||
             (field === 'generate' &&
               extract === '' &&
               !('hardCodedValue' in mapping))
           ) {
-            dispatch(actions.mapping.delete(key));
+            dispatch(actions.mapping.delete(mappingKey));
 
             return;
           }
         }
-        dispatch(actions.mapping.patchField(field, key, value));
+        dispatch(actions.mapping.patchField(field, mappingKey, value));
 
         return;
       }
 
-      if (lastModifiedRowKey !== key) {
-        const _lastModifiedRowKey = key === undefined ? 'new' : key;
+      if (lastModifiedRowKey !== mappingKey) {
+        const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
 
         dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
       }
     },
-    [dispatch, extract, generate, key, lastModifiedRowKey, mapping]
+    [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
   );
 
   const handleDeleteClick = useCallback(() => {
-    dispatch(actions.mapping.delete(key));
-  }, [dispatch, key]);
-  const handleSettingsSave = useCallback(
-    (id, value) => {
-      dispatch(actions.mapping.patchSettings(key, value));
-    },
-    [dispatch, key]
-  );
+    dispatch(actions.mapping.delete(mappingKey));
+  }, [dispatch, mappingKey]);
 
-  // generateFields and extractFields are passed as an array of field names
   return (
     <div
       ref={ref}
@@ -260,7 +207,7 @@ export default function MappingRow(props) {
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
-            id={`fieldMappingExtract-${index}`}
+            id={`fieldMappingExtract-${mappingKey}`}
             labelName="name"
             valueName="id"
             value={extract || hardCodedValueTmp}
@@ -283,7 +230,7 @@ export default function MappingRow(props) {
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
-            id={`fieldMappingGenerate-${index}`}
+            id={`fieldMappingGenerate-${mappingKey}`}
             value={generate}
             labelName="name"
             valueName="id"
@@ -310,18 +257,13 @@ export default function MappingRow(props) {
           className={clsx({
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
-          <MappingSettings
-            id={`fieldMappingSettings-${index}`}
-            onSave={handleSettingsSave}
-            value={mapping}
-            options={options}
-            generate={generate}
-            application={application}
-            updateLookup={updateLookupHandler}
+          <MappingSettingsButton
+            dataTest={`fieldMappingSettings-${mappingKey}`}
+            mappingKey={mappingKey}
             disabled={disabled}
-            lookups={lookups}
-            extractFields={extractFields}
-            generateFields={generateFields}
+            subRecordMappingId={subRecordMappingId}
+            importId={importId}
+            flowId={flowId}
           />
         </div>
         <div
@@ -330,7 +272,7 @@ export default function MappingRow(props) {
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
           <ActionButton
-            data-test={`fieldMappingRemove-${index}`}
+            data-test={`fieldMappingRemove-${mappingKey}`}
             aria-label="delete"
             disabled={isRequired || isNotEditable || disabled}
             onClick={handleDeleteClick}
