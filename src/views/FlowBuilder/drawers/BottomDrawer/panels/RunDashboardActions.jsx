@@ -102,12 +102,12 @@ export default function RunDashboardActions({ flowId }) {
 
   const handleAction = useCallback(action => {
     switch (action) {
-      case 'cancel': handleCancel();
+      case 'cancel':
+        handleCancel();
         break;
-      case 'downloadDiagnostics': {
+      case 'downloadDiagnostics':
         handleDownloadDiagnostics();
         break;
-      }
       default:
     }
   }, [handleCancel, handleDownloadDiagnostics]);
