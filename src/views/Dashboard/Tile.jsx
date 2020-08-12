@@ -158,6 +158,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '581cebf290a63a26daea6081', // Jet - NetSuite
       '57dbed962eca42c50e6e22be', // Walmart - NetSuite
       '592e8679c95560380ff1325c', // Salesforce - Subscription Billing
+      '58f772ed3c25f31c8041d5fe', // Vendor Payment Manager
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
