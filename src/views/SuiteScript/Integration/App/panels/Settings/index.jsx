@@ -41,8 +41,8 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   }, []);
 
   if (!hasSettingsMetadata) { return <Spinner />; }
-
-  if (resource?.errors) {
+  // if settings is of type string...quiet likely its an error
+  if (typeof resource === 'string' || resource?.errors) {
     return <Typography color="error">{inferErrorMessage(resource)[0]}</Typography>;
   }
 
