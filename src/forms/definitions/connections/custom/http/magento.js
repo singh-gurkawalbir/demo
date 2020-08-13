@@ -1,32 +1,59 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'magento',
-    '/http/auth/type': 'token',
-    '/http/mediaType': 'json',
-    '/http/baseURI': `${formValues['/http/baseURI']}`,
-    '/http/auth/token/location': 'header',
-    '/http/auth/token/scheme': 'Bearer',
-    '/http/auth/token/headerName': 'Authorization',
-    '/http/ping/method': 'GET',
-    '/http/ping/relativeURI': '/V1/modules',
-    '/http/auth/token/refreshRelativeURI': `${
-      formValues['/http/baseURI']
-    }/V1/integration/admin/token`,
-    '/http/auth/token/refreshBody':
+  preSave: formValues => {
+    const newValues = {...formValues,
+      '/type': 'http',
+      '/assistant': 'magento',
+      '/http/auth/type': 'token',
+      '/http/mediaType': 'json',
+      '/http/baseURI': `${formValues['/http/baseURI']}`,
+      '/http/auth/token/location': 'header',
+      '/http/auth/token/scheme': 'Bearer',
+      '/http/auth/token/headerName': 'Authorization',
+      '/http/ping/method': 'GET',
+      '/http/ping/relativeURI': '/V1/modules',
+      '/http/auth/token/refreshRelativeURI': `${
+        formValues['/http/baseURI']
+      }/V1/integration/admin/token`,
+      '/http/auth/token/refreshBody':
       '{"username":"{{{connection.http.auth.basic.username}}}", "password":"{{{connection.http.auth.basic.password}}}"}',
-    '/http/auth/token/refreshMethod': 'POST',
-    '/http/auth/token/refreshMediaType': 'json',
-    '/http/auth/token/refreshHeaders': [
-      {
-        name: 'Content-Type',
-        value: 'application/json',
-      },
-    ],
-  }),
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'json',
+      '/http/auth/token/refreshHeaders': [
+        {
+          name: 'Content-Type',
+          value: 'application/json',
+        },
+      ],
+    };
+
+    if (newValues['/mode'] === 'cloud') {
+      newValues['/_agentId'] = undefined;
+    }
+    delete newValues['/mode'];
+
+    return newValues;
+  },
   fieldMap: {
     name: { fieldId: 'name' },
+    mode: {
+      id: 'mode',
+      type: 'radiogroup',
+      label: 'Mode',
+      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
+      options: [
+        {
+          items: [
+            { label: 'Cloud', value: 'cloud' },
+            { label: 'On-premise', value: 'onpremise' },
+          ],
+        },
+      ],
+      visible: r => !(r?._connectorId)
+    },
+    _agentId: {
+      fieldId: '_agentId',
+      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+    },
     'http.baseURI': {
       fieldId: 'http.baseURI',
       helpKey: 'magento.connection.http.baseURI',
@@ -73,7 +100,7 @@ export default {
   layout: {
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
       { collapsed: true,
         label: 'Application details',
         fields: ['http.baseURI',

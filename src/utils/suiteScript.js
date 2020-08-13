@@ -88,7 +88,7 @@ export const flowAllowsScheduling = flow => {
 };
 
 export const isFlowRunnable = flow => {
-  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export.type !== 'MY_COMPUTER') {
+  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export?.type !== 'MY_COMPUTER') {
     if (flow.version && flow.hasConfiguration) {
       return true;
     }

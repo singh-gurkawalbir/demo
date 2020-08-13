@@ -3130,8 +3130,8 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports[cJob._importId]?.name,
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
         };
 
         return { ...cJob, ...additionalChildProps };
