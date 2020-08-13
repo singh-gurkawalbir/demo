@@ -152,7 +152,7 @@ export function* onErrorSaga(error, action) {
     const errorMessage =
       typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
 
-    yield put(actions.api.failure(path, method, errorMessage));
+    yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
     // the parent saga may need to know if there was an error for
     // its own "Data story"...
     yield call(throwExceptionUsingTheResponse, error);
