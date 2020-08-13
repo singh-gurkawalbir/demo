@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
-import users, { selectors as fromUsers } from './users';
-import accounts, { selectors as fromAccounts } from './accounts';
+import { selectors as fromOrg } from './org';
+import users from './org/users';
+import accounts, { selectors as fromAccounts } from './org/accounts';
 import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
@@ -28,8 +29,7 @@ export default combineReducers({
 // #region PUBLIC USER SELECTORS
 export const selectors = {};
 const subSelectors = {
-  users: fromUsers,
-  accounts: fromAccounts,
+  org: fromOrg,
   preferences: fromPreferences,
   notifications: fromNotifications,
   profile: fromProfile,

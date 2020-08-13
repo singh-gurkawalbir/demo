@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
-import { preSaveValidate } from '../../AFE/EditorDialog/util';
+import { preSaveValidate } from '../../../utils/editor';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 export default function EditorSaveButton(props) {

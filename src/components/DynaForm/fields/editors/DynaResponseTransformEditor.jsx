@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
-import TransformToggleEditorDialog from '../../../AFE/TransformEditor/TransformToggleEditorDialog';
+import TransformToggleEditorDrawer from '../../../AFE/TransformEditor/TransformToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
 export default function DynaResponseTransformEditor(props) {
@@ -93,7 +93,7 @@ export default function DynaResponseTransformEditor(props) {
   return (
     <>
       {showEditor && (
-        <TransformToggleEditorDialog
+        <TransformToggleEditorDrawer
           title="Transform Record"
           id={id + resourceId}
           disabled={disabled}
