@@ -1,6 +1,4 @@
 import React from 'react';
-import DownloadFile from './actions/DownloadFile';
-import DownloadFiles from './actions/DownloadFiles';
 import ErrorLink from './ErrorLink';
 import JobStatus from '../JobStatus';
 import FlowStepName from './FlowStepName';
@@ -38,13 +36,4 @@ export default {
       value: r => <DateTimeDisplay dateTime={r.endedAt} />,
     },
   ],
-  rowActions: job => {
-    const actions = [];
-
-    if (job?.files?.length) {
-      actions.push(job.files.length === 1 ? DownloadFile : DownloadFiles);
-    }
-
-    return actions;
-  },
 };

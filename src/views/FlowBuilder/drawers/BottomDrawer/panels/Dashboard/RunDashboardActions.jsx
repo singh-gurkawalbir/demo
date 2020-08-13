@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo} from 'react';
+import React, { useCallback, useMemo, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
@@ -11,6 +11,7 @@ import { selectors } from '../../../../../../reducers';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { JOB_STATUS } from '../../../../../../utils/constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
+import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -24,6 +25,7 @@ export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const [showDownloadFilesDialog, setShowDownloadFilesDialog] = useState(false);
   const areFlowJobsLoading = useSelector(state => {
     const {merged: flow = {}} = selectors.resourceData(state, 'flows', flowId);
 
@@ -50,7 +52,14 @@ export default function RunDashboardActions({ flowId }) {
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status));
 
     if (jobsInProgress.length) actions.push('cancel');
-    if (!jobsInProgress.length) actions.push('downloadDiagnostics');
+    if (!jobsInProgress.length) {
+      actions.push('downloadDiagnostics');
+      // Handles only for first job to downloadFile incase of Single PG flow
+      // TODO @Raghu: Need to revisit once we handle multiple PG's case
+      if (latestJobs[0]?.file?.length) {
+        actions.push('downloadFiles');
+      }
+    }
 
     return actions;
   }, [latestJobs]);
@@ -67,6 +76,12 @@ export default function RunDashboardActions({ flowId }) {
       action: 'downloadDiagnostics',
       label: 'Download diagnostics',
       disabled: !validDashboardActions.includes('downloadDiagnostics'),
+    },
+    {
+      Icon: DownloadIntegrationIcon,
+      action: 'downloadFiles',
+      label: 'Download files',
+      disabled: !validDashboardActions.includes('downloadFiles'),
     },
   ], [validDashboardActions]);
 
@@ -101,6 +116,22 @@ export default function RunDashboardActions({ flowId }) {
       .map(job => dispatch(actions.job.downloadFiles({ jobId: job._id, fileType: 'diagnostics' })));
   }, [latestJobs, dispatch]);
 
+  const handleDownloadFiles = useCallback(() => {
+    // A defensive checking for id - it should always be there
+    const latestJobId = latestJobs[0]?._id;
+
+    // what to do incase of multiple jobs?
+    if (latestJobId) {
+      if (latestJobs[0].files.length === 0) {
+        dispatch(actions.job.downloadFiles({ jobId: latestJobs[0]._id }));
+      } else {
+        setShowDownloadFilesDialog(true);
+      }
+    }
+  }, [dispatch, latestJobs]);
+
+  const handleCloseDownloadFilesDialog = useCallback(() => setShowDownloadFilesDialog(false), []);
+
   const handleAction = useCallback(action => {
     switch (action) {
       case 'cancel':
@@ -109,9 +140,12 @@ export default function RunDashboardActions({ flowId }) {
       case 'downloadDiagnostics':
         handleDownloadDiagnostics();
         break;
+      case 'downloadFiles':
+        handleDownloadFiles();
+        break;
       default:
     }
-  }, [handleCancel, handleDownloadDiagnostics]);
+  }, [handleCancel, handleDownloadDiagnostics, handleDownloadFiles]);
 
   return (
     <div className={classes.rightActionContainer}>
@@ -120,6 +154,9 @@ export default function RunDashboardActions({ flowId }) {
         <RefreshIcon /> Refresh
       </IconTextButton>
       <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} />
+      {
+        showDownloadFilesDialog && <JobFilesDownloadDialog job={latestJobs[0]} onCloseClick={handleCloseDownloadFilesDialog} />
+      }
     </div>
   );
 }
