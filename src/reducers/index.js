@@ -3700,13 +3700,6 @@ selectors.isPreviewPanelAvailableForResource = (
   if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
     return true;
   }
-  // Preview panel is not shown for lookups
-  if (
-    resourceObj.isLookup ||
-    selectors.isLookUpExport(state, { resourceId, flowId, resourceType })
-  ) {
-    return false;
-  }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
