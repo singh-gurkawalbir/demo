@@ -5,10 +5,14 @@ import { selectors } from '../../../../reducers';
 
 export default function ConnectorName({resource}) {
   const { type, assistant, resourceType } = getResourceSubType(resource);
-  const { _connectionId } = resource;
+  const { _connectionId } = resource || {};
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', _connectionId)
   );
+
+  if (!resource) {
+    return null;
+  }
 
   if (type !== 'rdbms') {
     return getApp(type, assistant).name;

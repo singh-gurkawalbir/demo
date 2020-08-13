@@ -14,7 +14,7 @@ import * as d3 from 'd3';
 import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
-import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
+import { getLabel, getAxisLabel, getXAxisFormat, getTicks } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Spinner from '../../../../components/Spinner';
@@ -82,18 +82,8 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
   }
 
-  const days = moment(endDate).diff(moment(startDate), 'days');
-
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
-  let ticks;
-
-  if (days < 7) {
-    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
-  } else if (days < 180) {
-    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
-  } else {
-    ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
-  }
+  const ticks = getTicks(domainRange, range);
 
   // Add Zero data for ticks
   ticks.forEach(tick => {
@@ -150,10 +140,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             scale="time"
             type="number"
             ticks={ticks}
-            // tickFormatter={timeFormatter}
-            // name="Time"
-            // type="category"
-            tickFormatter={unixTime => unixTime ? moment(unixTime).format('MM/DD hh:mm') : ''}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
             yAxisId={id}

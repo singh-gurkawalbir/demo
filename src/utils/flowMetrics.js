@@ -2,8 +2,39 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
 import isSameDay from 'date-fns/isSameDay';
+import moment from 'moment';
+import * as d3 from 'd3';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
+
+export const getTicks = (domainRange, range) => {
+  let ticks;
+  const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+
+  if (days < 7) {
+    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+  } else if (days < 180) {
+    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+  } else {
+    ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
+  }
+
+  return ticks;
+};
+export const getXAxisFormat = range => {
+  const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+  let xAxisFormat;
+
+  if (days < 2) {
+    xAxisFormat = 'HH:mm:ss';
+  } else if (days < 90) {
+    xAxisFormat = 'MM/DD/YY';
+  } else {
+    xAxisFormat = 'MMM';
+  }
+
+  return xAxisFormat;
+};
 
 export const getDurationLabel = (ranges = []) => {
   const { startDate, endDate } = ranges[0] || {};
@@ -62,7 +93,10 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     end = range.endDate;
   }
 
-  return `from(bucket: "flowEvents") 
+  const days = moment(end).diff(moment(start), 'days');
+  const bucket = days > 7 ? 'flowEvents_1hr' : 'flowEvents';
+
+  return `from(bucket: "${bucket}") 
             |> range(start: ${start}, stop: ${end}) 
             |> filter(fn: (r) => r.u == "${userId}") 
             |> filter(fn: (r) => r.f == "${flowId}")
