@@ -48,9 +48,10 @@ const metadata = {
       label: 'Cancel',
       component: function CancelQueuedJobAction({ resource }) {
         const dispatch = useDispatch();
+        const resourceId = resource?._id;
         const handleCancelJob = useCallback(() => {
-          dispatch(actions.connection.cancelQueuedJob(resource._id));
-        }, [dispatch, resource._id]);
+          dispatch(actions.connection.cancelQueuedJob(resourceId));
+        }, [dispatch, resourceId]);
 
         return (
           <Button onClick={handleCancelJob}>
