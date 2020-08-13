@@ -310,7 +310,7 @@ describe('netsuiteUserRoles selector ', () => {
 
     expect(optionsArr).toEqual([
       {
-        value: 122,
+        value: '122',
         label: 'Celigo Integration Admin',
       },
     ]);
