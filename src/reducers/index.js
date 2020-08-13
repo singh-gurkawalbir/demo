@@ -3650,13 +3650,6 @@ selectors.isPreviewPanelAvailableForResource = (
   if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
     return true;
   }
-  // Preview panel is not shown for lookups
-  if (
-    resourceObj.isLookup ||
-    selectors.isLookUpExport(state, { resourceId, flowId, resourceType })
-  ) {
-    return false;
-  }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
@@ -4217,7 +4210,7 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
+  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 
