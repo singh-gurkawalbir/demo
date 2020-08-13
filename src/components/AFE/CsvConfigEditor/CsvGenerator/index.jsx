@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 
@@ -72,7 +73,7 @@ export default function CsvGenerateEditor(props) {
   }, [data, dispatch, editorId, editorInit, props.data]);
 
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid className={classes.template} >
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV generator options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />

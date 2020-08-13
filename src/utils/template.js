@@ -20,6 +20,24 @@ export const getTemplateUrlName = applications => {
   return applications.map(appName).join('-').replace(/\./g, '');
 };
 
+export const getApplicationName = conn => {
+  const applications = applicationsList();
+  const app =
+        applications.find(a => {
+          if (conn.assistant) {
+            return a.id === conn.assistant;
+          }
+
+          if (conn.type === 'rdbms' && conn.rdbms) {
+            return a.id === conn.rdbms.type;
+          }
+
+          return a.id === conn.type;
+        }) || {};
+
+  return app.name;
+};
+
 export default {
   getDependentResources: components =>
     components.map(component => ({
@@ -79,20 +97,7 @@ export default {
       if (conn.type === 'salesforce') {
         salesforceConnFound = true;
       }
-      const applications = applicationsList();
-      const app =
-        applications.find(a => {
-          if (conn.assistant) {
-            return a.id === conn.assistant;
-          }
-
-          if (conn.type === 'rdbms' && conn.rdbms) {
-            return a.id === conn.rdbms.type;
-          }
-
-          return a.id === conn.type;
-        }) || {};
-      const connectionType = app.name;
+      const connectionType = getApplicationName(conn);
 
       installSteps.push({
         name: conn.name,

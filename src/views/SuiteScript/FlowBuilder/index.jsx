@@ -20,9 +20,9 @@ import SettingsDrawer from './drawers/Settings';
 import LoadResources from '../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../components/SuiteScript/LoadResources';
 import { flowAllowsScheduling } from '../../../utils/suiteScript';
-import OnOffCell from '../../../components/ResourceTable/metadata/suiteScript/flows/OnOffCell';
-import RunCell from '../../../components/ResourceTable/metadata/suiteScript/flows/RunCell';
-import DeleteCell from '../../../components/ResourceTable/metadata/suiteScript/flows/DeleteCell';
+import OnOffCell from '../../../components/ResourceTable/suiteScript/flows/OnOffCell';
+import RunCell from '../../../components/ResourceTable/suiteScript/flows/RunCell';
+import DeleteCell from '../../../components/ResourceTable/suiteScript/flows/DeleteCell';
 import actions from '../../../actions';
 import SuiteScriptMappingDrawer from '../Mappings/Drawer';
 

@@ -20,7 +20,7 @@ import UserDetail from './UserDetail';
 import CloseIcon from '../icons/CloseIcon';
 import Help from '../Help';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import TableHeadWithRefreshIcon from '../CeligoTable/TableHeadWithRefreshIcon';
+import RefreshableHeading from '../ResourceTable/commonCells/RefreshableHeading';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -139,7 +139,7 @@ export default function UserList({ integrationId, onEditUserClick }) {
                 />
               </TableCell>
               <TableCell className={classes.tableCellWithIcon}>
-                <TableHeadWithRefreshIcon headerName="Status" resourceType="ashares" />
+                <RefreshableHeading label="Status" resourceType="ashares" />
                 <Help
                   title="Status"
                   helpKey="users.status"

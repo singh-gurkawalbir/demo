@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import OpenInNewIcon from '../../icons/FilterIcon';
-import NetSuiteQualificationCriteriaEditor from '../../AFE/NetSuiteQualificationCriteriaEditor';
+import NetSuiteQualificationCriteriaEditorDrawer from '../../AFE/NetSuiteQualificationCriteriaEditor/Drawer';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import ActionButton from '../../ActionButton';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   textField: {
@@ -25,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaNetSuiteQualifier(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -42,6 +42,7 @@ export default function DynaNetSuiteQualifier(props) {
     options,
   } = props;
   const [isDefaultValueChanged, setIsDefaultValueChanged] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   useEffect(() => {
     if (options.commMetaPath) {
@@ -66,17 +67,14 @@ export default function DynaNetSuiteQualifier(props) {
     onFieldChange,
     options.resetValue,
   ]);
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, Array.isArray(rule) ? JSON.stringify(rule) : rule);
     }
-  };
+  }, [id, onFieldChange]);
 
   let rule = [];
 
@@ -97,17 +95,13 @@ export default function DynaNetSuiteQualifier(props) {
           </FormLabel>
           <FieldHelp {...props} />
         </div>
-        {showEditor && (
-          <NetSuiteQualificationCriteriaEditor
-            title="Field specific qualification criteria"
-            id={id}
-            value={rule}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            // disabled={disabled}
-            options={options}
+        <NetSuiteQualificationCriteriaEditorDrawer
+          title="Field specific qualification criteria"
+          id={id}
+          value={rule}
+          onSave={handleSave}
+          options={options}
           />
-        )}
 
         <TextField
           key={id}
@@ -129,7 +123,7 @@ export default function DynaNetSuiteQualifier(props) {
       </FormControl>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={handleOpenDrawer}
         className={classes.editorButtonNetsuiteQ}>
         <OpenInNewIcon />
       </ActionButton>
