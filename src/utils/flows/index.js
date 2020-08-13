@@ -129,7 +129,7 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     case actionsMap.hooks: {
       // for NS exports hooks(suitescript) will be stored in netsuite -> restlet/distributed schema
       // and for NS imports hooks is stored in netsuite_da schema
-      return !!hooks || !!netsuite.restlet?.hooks?.preSend || !!netsuite.distributed?.hooks || !!netsuite_da.hooks;
+      return !!hooks || !!netsuite.restlet?.hooks?.preSend || !!netsuite.distributed?.hooks?.preSend?.function || !!netsuite_da.hooks;
     }
     case actionsMap.responseMapping: {
       const { fields = [], lists = [] } = responseMapping;
