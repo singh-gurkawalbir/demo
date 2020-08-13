@@ -11,11 +11,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function OldValue({ auditLog, oldValue, newValue }) {
+export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
   const classes = useStyles();
-  const [showDialog, setShowDialog] = useState({
-    showDiffDialog: false,
-  });
+  const [showDialog, setShowDialog] = useState(false);
 
   if (!hasLongLength(oldValue, newValue)) {
     return typeof oldValue === 'string' ? oldValue : JSON.stringify(oldValue);
