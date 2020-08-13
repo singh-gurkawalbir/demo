@@ -3,8 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import LoadResources from '../../../components/LoadResources';
-import CeligoTable from '../../../components/CeligoTable';
-import metadata from './metadata';
+import ResourceTable from '../../../components/ResourceTable';
 import Invite from './Invite';
 import IconTextButton from '../../../components/IconTextButton';
 import AddIcon from '../../../components/icons/AddIcon';
@@ -27,12 +26,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function Transfers() {
   const classes = useStyles();
-  let transfers = useSelector(
+  const transfers = useSelector(
     state =>
       selectors.transferListWithMetadata(state, { type: 'transfers' })
   );
 
-  transfers = transfers.filter(t => !t.isInvited || t.status !== 'unapproved');
   const [showInviteView, setShowInviteView] = useState(false);
   const handleNewTransferClick = () => {
     setShowInviteView(true);
@@ -71,10 +69,9 @@ export default function Transfers() {
             </div> */
             }
 
-            <CeligoTable
+            <ResourceTable
               resourceType="transfers"
-              data={transfers}
-              {...metadata}
+              resources={transfers}
             />
           </>
         )}

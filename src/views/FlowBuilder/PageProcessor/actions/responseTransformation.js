@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import TransformToggleEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
+import TransformToggleEditorDrawer from '../../../../components/AFE/TransformEditor/TransformToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function ResponseTransformationDialog(props) {
+function ResponseTransformationDrawer(props) {
   const { onClose, resource, isViewMode, flowId } = props;
   const dispatch = useDispatch();
   const resourceId = resource._id;
@@ -52,7 +52,7 @@ function ResponseTransformationDialog(props) {
   }, [dispatch, flowId, resourceId, status]);
 
   return (
-    <TransformToggleEditorDialog
+    <TransformToggleEditorDrawer
       title="Transform response"
       id={resourceId}
       disabled={isViewMode}
@@ -64,6 +64,7 @@ function ResponseTransformationDialog(props) {
       insertStubKey="transform"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      path="responseTransformation"
     />
   );
 }
@@ -72,7 +73,7 @@ function ResponseTransformation(props) {
   const { open } = props;
 
   return (
-    <>{open && <ResponseTransformationDialog {...props} />}</>
+    <>{open && <ResponseTransformationDrawer {...props} />}</>
   );
 }
 

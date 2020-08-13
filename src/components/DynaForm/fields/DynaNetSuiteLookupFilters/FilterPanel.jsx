@@ -29,8 +29,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
-    height: '100%',
     overflowY: 'auto',
+    height: 'calc(100vh - 200px)',
   },
 }));
 const defaultData = {};

@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import ActionButton from '../../ActionButton';
 import ScriptsIcon from '../../icons/ScriptsIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -30,37 +31,34 @@ export default function DynaURI(props) {
     description,
     disableEditorV2 = false,
   } = props;
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleOpenDrawer = usePushRightDrawer(id);
+
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template } = editorValues;
 
       onFieldChange(id, template);
     }
-  };
+  }, [id, onFieldChange]);
 
   return (
     <>
-      {showEditor && (
-        <div>
-          <DynaEditorWithFlowSampleData
-            title={editorTitle}
-            fieldId={id}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            editorType="uri"
-            flowId={flowId}
-            resourceId={resourceId}
-            resourceType={resourceType}
-            disableEditorV2={disableEditorV2}
-            rule={value}
+      <div>
+        <DynaEditorWithFlowSampleData
+          title={editorTitle}
+          fieldId={id}
+          onSave={handleSave}
+          editorType="uri"
+          flowId={flowId}
+          resourceId={resourceId}
+          resourceType={resourceType}
+          disableEditorV2={disableEditorV2}
+          rule={value}
+          path={id}
           />
-        </div>
-      )}
+      </div>
+
       <div className={classes.dynaURIWrapper}>
         <DynaTextWithFlowSuggestion
           description={description}
@@ -71,7 +69,7 @@ export default function DynaURI(props) {
         />
         <ActionButton
           data-test={id}
-          onClick={handleEditorClick}
+          onClick={handleOpenDrawer}
           className={classes.dynaURIActionButton}>
           <ScriptsIcon />
         </ActionButton>
