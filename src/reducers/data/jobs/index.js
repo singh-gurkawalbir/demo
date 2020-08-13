@@ -36,8 +36,8 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
   };
 }
 
-function parseJobErrors(collection = []) {
-  const errors = collection.map(je => ({
+function parseJobErrors(collection) {
+  const errors = (collection || []).map(je => ({
     _id: shortid.generate(),
     ...je,
   }));
