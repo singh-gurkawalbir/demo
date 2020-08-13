@@ -391,14 +391,12 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
-    if (!isNewFlow && isUserInErrMgtTwoDotZero) {
-      dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
-    }
+    if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
+
+    dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
 
     return () => {
-      if (isUserInErrMgtTwoDotZero) {
-        dispatch(actions.errorManager.openFlowErrors.cancelPoll());
-      }
+      dispatch(actions.errorManager.openFlowErrors.cancelPoll());
     };
   }, [
     dispatch,
