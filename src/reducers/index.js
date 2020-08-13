@@ -3424,7 +3424,7 @@ selectors.transferListWithMetadata = state => {
     updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved') };
+  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
 };
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {

@@ -35,7 +35,9 @@ export default {
             return 'Accepted';
           }
 
-          return r.status === 'unapproved' ? 'Pending acceptance' : r.status.charAt(0).toUpperCase() + r.status.slice(1);
+          return r.status === 'unapproved'
+            ? 'Pending acceptance'
+            : r.status.charAt(0).toUpperCase() + r.status.slice(1);
         },
       },
       { heading: 'Status', value: r => r && (r.dismissed ? 'dismissed' : r.status)},
