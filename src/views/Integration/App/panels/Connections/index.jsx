@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
-import metadata from '../../../../../components/ResourceTable/metadata/connections';
+import metadata from '../../../../../components/ResourceTable/connections/metadata';
 import { selectors } from '../../../../../reducers';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';

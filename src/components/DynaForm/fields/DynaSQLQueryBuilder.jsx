@@ -6,13 +6,14 @@ import { Button, FormLabel } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import DynaLookupEditor from './DynaLookupEditor';
 import { getDefaultData } from '../../../utils/sampleData';
 import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
 import sqlUtil from '../../../utils/sql';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   sqlContainer: {
@@ -55,8 +56,8 @@ export default function DynaSQLQueryBuilder(props) {
   } = options;
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
-  const [showEditor, setShowEditor] = useState(false);
   const dispatch = useDispatch();
+  const handleOpenDrawer = usePushRightDrawer(id);
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
     extractFieldsLoaded: false,
@@ -198,9 +199,6 @@ export default function DynaSQLQueryBuilder(props) {
 
   // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -252,24 +250,23 @@ export default function DynaSQLQueryBuilder(props) {
   return (
     <>
       <div className={classes.sqlContainer}>
-        {showEditor && (
-          <SqlQueryBuilderEditorDialog
-            key={changeIdentifier}
-            title={title}
-            id={`${resourceId}-${id}`}
-            rule={parsedRule}
-            lookups={lookups}
-            sampleData={formattedSampleData}
-            defaultData={formattedDefaultData}
-            onFieldChange={onFieldChange}
-            onSave={handleSave}
-            onClose={handleEditorClick}
-            action={lookupField}
-            disabled={disabled}
-            showDefaultData={!hideDefaultData}
-            ruleTitle={ruleTitle}
+        <SqlQueryBuilderEditorDrawer
+          key={changeIdentifier}
+          title={title}
+          id={`${resourceId}-${id}`}
+          rule={parsedRule}
+          lookups={lookups}
+          sampleData={formattedSampleData}
+          defaultData={formattedDefaultData}
+          onFieldChange={onFieldChange}
+          onSave={handleSave}
+          action={lookupField}
+          disabled={disabled}
+          showDefaultData={!hideDefaultData}
+          ruleTitle={ruleTitle}
+          path={id}
           />
-        )}
+
         <div className={classes.sqlLabelWrapper}>
           <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
           <FieldHelp {...props} />
@@ -279,7 +276,7 @@ export default function DynaSQLQueryBuilder(props) {
           data-test={id}
           variant="outlined"
           color="secondary"
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

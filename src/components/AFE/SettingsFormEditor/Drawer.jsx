@@ -88,6 +88,7 @@ export default function EditorDrawer({
   resourceType,
   disabled,
   hideSaveAction = false,
+  path = 'editSettings',
 }) {
   const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
@@ -206,7 +207,7 @@ export default function EditorDrawer({
 
   return (
     <RightDrawer
-      path="editSettings"
+      path={path}
       height="tall"
       width="xl"
       // type="paper"
