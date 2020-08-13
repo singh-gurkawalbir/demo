@@ -117,13 +117,12 @@ export default function RunDashboardActions({ flowId }) {
   }, [latestJobs, dispatch]);
 
   const handleDownloadFiles = useCallback(() => {
-    // A defensive checking for id - it should always be there
-    const latestJobId = latestJobs[0]?._id;
+    const latestJob = latestJobs[0];
 
     // what to do incase of multiple jobs?
-    if (latestJobId) {
-      if (latestJobs[0].files.length === 1) {
-        dispatch(actions.job.downloadFiles({ jobId: latestJobs[0]._id }));
+    if (latestJob._id) {
+      if (latestJob.files.length === 1) {
+        dispatch(actions.job.downloadFiles({ jobId: latestJob._id }));
       } else {
         // Incase of multiple files , show a dialog to download
         setShowDownloadFilesDialog(true);
