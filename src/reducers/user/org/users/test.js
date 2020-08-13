@@ -1,10 +1,10 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
-import actions from '../../../actions';
+import actions from '../../../../actions';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../utils/constants';
+} from '../../../../utils/constants';
 
 describe('users (ashares) reducers', () => {
   test('any other action return default state', () => {
