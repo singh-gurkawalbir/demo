@@ -1185,6 +1185,7 @@ selectors.integrationAppResourceList = (
     flows,
     exports,
     imports,
+    flowIds,
   };
 };
 
@@ -2957,13 +2958,13 @@ selectors.auditLogs = (
     const {
       exports = [],
       imports = [],
-      flows = [],
+      flowIds = [],
       connections = [],
     } = selectors.integrationAppResourceList(state, resourceId, options.storeId);
     const resourceIds = [
       ...exports,
       ...imports,
-      ...flows,
+      ...flowIds,
       ...map(connections, '_id'),
     ];
 
