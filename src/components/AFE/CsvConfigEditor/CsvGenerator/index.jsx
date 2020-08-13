@@ -69,8 +69,8 @@ export default function CsvGenerateEditor(props) {
         })
       );
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   // do not add `data` dependency. In that case, this use effect will re-run in case user changes data
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorId, editorInit, props.data]);
   return (
     <PanelGrid className={classes.template}>
