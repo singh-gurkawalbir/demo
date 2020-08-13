@@ -1,12 +1,12 @@
 /* global describe, test, expect */
 import moment from 'moment';
 import reducer, { selectors } from '.';
-import actions from '../../../actions';
+import actions from '../../../../actions';
 import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../utils/constants';
+} from '../../../../utils/constants';
 
 // this could be moved into some common place... just testing this now.
 expect.extend({

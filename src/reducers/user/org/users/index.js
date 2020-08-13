@@ -1,8 +1,8 @@
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../utils/constants';
+} from '../../../../utils/constants';
 
 export default (state = [], action) => {
   const { type, resourceType, collection, user, _id } = action;

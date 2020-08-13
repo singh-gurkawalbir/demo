@@ -1,13 +1,13 @@
 import moment from 'moment';
 import { createSelector } from 'reselect';
-import actionTypes from '../../../actions/types';
+import actionTypes from '../../../../actions/types';
 import {
   ACCOUNT_IDS,
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
-} from '../../../utils/constants';
+} from '../../../../utils/constants';
 
 const emptyList = [];
 
