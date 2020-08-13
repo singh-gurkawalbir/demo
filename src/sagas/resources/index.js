@@ -388,6 +388,10 @@ export function* updateIntegrationSettings({
     });
     // eslint-disable-next-line no-empty
   } catch (e) {
+    if (options.action === 'flowEnableDisable') {
+      yield put(actions.flow.isOnOffActionInprogress(false, flowId));
+    }
+
     return yield put(
       actions.integrationApp.settings.submitFailed({
         storeId,
