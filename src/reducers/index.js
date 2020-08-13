@@ -4217,7 +4217,7 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
+  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 
