@@ -25,7 +25,7 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
   let childJobIndex = -1;
 
   if (parentJobIndex > -1 && jobId) {
-    childJobIndex = jobs[parentJobIndex].children.findIndex(
+    childJobIndex = jobs[parentJobIndex]?.children?.findIndex(
       cj => cj._id === jobId
     );
   }
