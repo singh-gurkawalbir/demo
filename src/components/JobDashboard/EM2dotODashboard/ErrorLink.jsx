@@ -12,5 +12,5 @@ export default function ErrorLink({ job }) {
     return <Link to={path}> {numError} </Link>;
   }
 
-  return <span> { numError} </span>;
+  return <span> {numError} </span>;
 }

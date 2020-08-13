@@ -11,6 +11,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const ActionLabel = (({ label, Icon }) => {
+  if (Icon) {
+    return (<><Icon /> {label}</>);
+  }
+
+  return label;
+});
+
 export default function EllipsisActionMenu({ actionsMenu, onAction }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -20,13 +28,7 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'more-row-actions' : undefined;
-  const renderActionLabel = useCallback(({ label, Icon }) => {
-    if (Icon) {
-      return (<><Icon /> {label}</>);
-    }
 
-    return label;
-  }, []);
   const handleAction = useCallback(action => () => {
     handleMenuClose();
     onAction(action);
@@ -58,7 +60,7 @@ export default function EllipsisActionMenu({ actionsMenu, onAction }) {
             data-test={`${action}`}
             disabled={disabled}
             onClick={handleAction(action)}>
-            {renderActionLabel({ label, Icon })}
+            <ActionLabel label={label} Icon={Icon} />
           </MenuItem>
         ))}
       </Menu>

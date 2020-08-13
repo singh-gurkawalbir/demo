@@ -35,7 +35,7 @@ export default {
     },
     {
       heading: 'Completed',
-      value: r => <DateTimeDisplay dateTime={r?.endedAt} />,
+      value: r => <DateTimeDisplay dateTime={r.endedAt} />,
     },
   ],
   rowActions: job => {

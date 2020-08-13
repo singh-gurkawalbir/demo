@@ -2,9 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import JobDashboard from '../../../../../../components/JobDashboard';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
-    padding: theme.spacing(0),
+    padding: 0,
   },
 }));
 

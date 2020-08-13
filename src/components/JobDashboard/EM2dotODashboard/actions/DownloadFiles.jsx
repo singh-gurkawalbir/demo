@@ -11,12 +11,10 @@ export default {
       setShowDialog(true);
     }, []);
 
-    return (
-      <>
-        {showDialog && (
-          <JobFilesDownloadDialog job={job} onCloseClick={handleClose} />
-        )}
-      </>
-    );
+    if (!showDialog) {
+      return null;
+    }
+
+    return <JobFilesDownloadDialog job={job} onCloseClick={handleClose} />;
   },
 };

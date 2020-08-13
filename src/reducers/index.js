@@ -3192,7 +3192,7 @@ selectors.flowDashboardDetails = createSelector(
     latestJobs.forEach(job => {
       if (job.status === JOB_STATUS.QUEUED) {
         childJobDetails.push(job);
-      } else if (job?.children?.length) {
+      } else if (job.children?.length) {
         job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
       }
     });

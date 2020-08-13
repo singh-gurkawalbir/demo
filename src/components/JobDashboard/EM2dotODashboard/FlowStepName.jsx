@@ -4,7 +4,7 @@ import { selectors } from '../../../reducers';
 
 export default function FlowStepName({ job }) {
   const exportName = useSelector(state => {
-    const { merged: exportObj } = selectors.resourceData(state, 'exports', job._exportId);
+    const exportObj = selectors.resource(state, 'exports', job._exportId);
 
     return exportObj?.name;
   });
