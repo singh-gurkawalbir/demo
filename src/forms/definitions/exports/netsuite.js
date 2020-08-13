@@ -75,6 +75,10 @@ export default {
       delete newValues['/restlet/delta/lagOffset'];
       delete newValues['/restlet/delta/dateField'];
       delete newValues['/restlet/once/booleanField'];
+      newValues['/netsuite/distributed'] = undefined;
+      delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/forceReload'];
+      delete newValues['/netsuite/distributed/executionType'];
 
       if (newValues['/type'] === 'all') {
         newValues['/test'] = undefined;
