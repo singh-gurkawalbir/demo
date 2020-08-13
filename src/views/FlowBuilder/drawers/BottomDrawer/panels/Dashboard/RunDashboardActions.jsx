@@ -125,6 +125,7 @@ export default function RunDashboardActions({ flowId }) {
       if (latestJobs[0].files.length === 1) {
         dispatch(actions.job.downloadFiles({ jobId: latestJobs[0]._id }));
       } else {
+        // Incase of multiple files , show a dialog to download
         setShowDownloadFilesDialog(true);
       }
     }
