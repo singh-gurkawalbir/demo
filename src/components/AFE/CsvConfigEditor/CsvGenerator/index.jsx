@@ -71,7 +71,7 @@ export default function CsvGenerateEditor(props) {
     }
   // do not add `data` dependency. In that case, this use effect will re-run in case user changes data
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorId, editorInit, props.data]);
+  }, [dispatch, editorId, editorInit, props.data]);
   return (
     <PanelGrid className={classes.template}>
       <PanelGridItem gridArea="rule">
