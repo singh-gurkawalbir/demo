@@ -15,7 +15,7 @@ import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
-import EM2dotODashboardPanel from './panels/Dashboard/EM2dotODashboardPanel';
+import RunDashboardV2Panel from './panels/Dashboard/RunDashboardV2Panel';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
@@ -274,7 +274,7 @@ export default function BottomDrawer({
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
-            ? <EM2dotODashboardPanel flow={flow} />
+            ? <RunDashboardV2Panel flow={flow} />
             : <RunDashboardPanel flow={flow} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>
