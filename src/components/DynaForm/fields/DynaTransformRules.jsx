@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import TransformEditorDialog from '../../AFE/TransformEditor/Dialog';
+import TransformEditorDrawer from '../../AFE/TransformEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import EditIcon from '../../icons/EditIcon';
 import CodeEditor from '../../CodeEditor';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles({
   label: {
@@ -52,8 +53,8 @@ const getTransformRule = value => {
 export default function DynaTransformRules(props) {
   const classes = useStyles();
   const { id, resourceId, value, label, onFieldChange, disabled } = props;
+  const handleOpenDrawer = usePushRightDrawer(id);
   const rule = getTransformRule(value);
-  const [showEditor, setShowEditor] = useState(false);
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule: newRule } = editorValues;
@@ -62,27 +63,18 @@ export default function DynaTransformRules(props) {
     }
   }, [id, onFieldChange, rule]);
 
-  const handleClose = useCallback(() => {
-    setShowEditor(false);
-  }, []);
-
-  const toggleEditor = () => {
-    setShowEditor(!showEditor);
-  };
-
   return (
     <div>
-      {showEditor && (
-        <TransformEditorDialog
-          title="Transform Mapping"
-          id={id + resourceId}
-          data=""
-          rule={rule && rule[0]}
-          onSave={handleSave}
-          onClose={handleClose}
-          disabled={disabled}
+      <TransformEditorDrawer
+        title="Transform Mapping"
+        id={id + resourceId}
+        data=""
+        rule={rule && rule[0]}
+        onSave={handleSave}
+        disabled={disabled}
+        path={id}
         />
-      )}
+
       <Typography className={classes.label}>{label}</Typography>
       <div className={classes.root}>
         <div className={classes.editorContainer}>
@@ -92,7 +84,7 @@ export default function DynaTransformRules(props) {
           <ActionButton
             disabled={disabled}
             data-test="editTransformation"
-            onClick={toggleEditor}>
+            onClick={handleOpenDrawer}>
             <EditIcon />
           </ActionButton>
         </div>

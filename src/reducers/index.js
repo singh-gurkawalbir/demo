@@ -111,17 +111,6 @@ genSelectors(selectors, subSelectors);
 
 // additional user defined selectors
 selectors.userState = state => state && state.user;
-// TODO: Do we really need to proxy all selectors here?
-// Instead, we could only have the selectors that cross
-// state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintain for the
-// sole purpose of abstracting the state "shape" completely.
-// It may be just fine to directly reference the primary state
-// subdivisions (data, session, comms) in order to simplify the code further...
-
-// -------------------
-// Following this pattern:
-// https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region PUBLIC COMMS SELECTORS
 // Use shallowEquality operator to prevent re-renders.
@@ -131,14 +120,12 @@ selectors.commsErrors = state => {
   const commsState = state?.comms?.networkComms;
 
   if (!commsState) return;
-  // console.log(commsState);
-  let errors;
+  const errors = {};
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
 
     if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
     }
   });
@@ -3487,7 +3474,7 @@ selectors.transferListWithMetadata = state => {
     updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved') };
+  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
 };
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {

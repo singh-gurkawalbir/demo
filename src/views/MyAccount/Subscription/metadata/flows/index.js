@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import getRoutePath from '../../../../../utils/routePaths';
-import NameCell from '../../../../../components/ResourceTable/metadata/flows/NameCell';
+import NameCell from '../../../../../components/ResourceTable/flows/cells/NameCell';
 
 export default {
   columns: () => {

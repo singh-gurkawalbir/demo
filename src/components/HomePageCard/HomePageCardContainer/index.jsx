@@ -1,6 +1,8 @@
 import React from 'react';
+import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
+import GripperIcon from '../../icons/GripperIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -29,17 +31,38 @@ const useStyles = makeStyles(theme => ({
   center: {
     textAlign: 'center',
   },
+  wrapperPlaceholder: {
+    background: theme.palette.secondary.lightest,
+    borderStyle: 'dashed',
+    borderColor: theme.palette.primary.main,
+  },
+  gripper: {
+    color: theme.palette.primary.main,
+  },
 }));
 
-export default function HomePageCardContainer({ children, onClick }) {
+export default function HomePageCardContainer({ children, onClick, isCardSelected = false }) {
   const classes = useStyles();
 
   return (
-    <Paper
-      className={classes.wrapper}
-      elevation={0}
-      onClick={onClick}>
-      <div>{children}</div>
-    </Paper>
+    <>
+      {!isCardSelected
+        ? (
+          <Paper
+            className={classes.wrapper}
+            elevation={0}
+            onClick={onClick}>
+            <div>{children}</div>
+          </Paper>
+        )
+        : (
+          <Paper
+            className={clsx(classes.wrapper, classes.wrapperPlaceholder)}
+            elevation={0}
+            onClick={onClick}>
+            <GripperIcon className={classes.gripper} />
+          </Paper>
+        )}
+    </>
   );
 }

@@ -1,20 +1,15 @@
 import React from 'react';
-import moment from 'moment';
-import { Typography } from '@material-ui/core';
-import Delete from '../../../components/ResourceTable/actions/Delete';
-import Edit from '../../../components/ResourceTable/actions/Edit';
+import Delete from '../../../components/ResourceTable/commonActions/Delete';
+import Edit from '../../../components/ResourceTable/commonActions/Edit';
+import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
-import { formatLastModified } from '../../../components/CeligoTable/util';
+import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 
 export default {
   columns: [
     {
       heading: 'Email',
-      value: function ConnectorLicensesDrawerLink(r) {
-        return (
-          <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />
-        );
-      },
+      value: r => <ResourceDrawerLink resourceType="connectorLicenses" resource={r} />,
       orderBy: 'email',
     },
     {
@@ -23,16 +18,12 @@ export default {
     },
     {
       heading: 'Created on',
-      value: r => r.created ? moment(r.created).format('MMM D, YYYY') : '',
+      value: r => <CeligoTimeAgo date={r.created} />,
       orderBy: 'created',
     },
     {
       heading: 'Expires on',
-      value(r) {
-        return (r.expires ? (
-          <Typography color="error"> {moment(r.expires).format('MMM D, YYYY')} ({formatLastModified(r.expires)})</Typography>) : ''
-        );
-      },
+      value: r => <ExpiresOn date={r.expires} />,
       orderBy: 'expires',
     },
     {
