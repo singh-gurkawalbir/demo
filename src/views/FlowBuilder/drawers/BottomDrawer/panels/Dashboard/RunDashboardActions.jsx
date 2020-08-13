@@ -56,7 +56,7 @@ export default function RunDashboardActions({ flowId }) {
       actions.push('downloadDiagnostics');
       // Handles only for first job to downloadFile incase of Single PG flow
       // TODO @Raghu: Need to revisit once we handle multiple PG's case
-      if (latestJobs[0]?.file?.length) {
+      if (latestJobs[0]?.files?.length) {
         actions.push('downloadFiles');
       }
     }
@@ -122,7 +122,7 @@ export default function RunDashboardActions({ flowId }) {
 
     // what to do incase of multiple jobs?
     if (latestJobId) {
-      if (latestJobs[0].files.length === 0) {
+      if (latestJobs[0].files.length === 1) {
         dispatch(actions.job.downloadFiles({ jobId: latestJobs[0]._id }));
       } else {
         setShowDownloadFilesDialog(true);
