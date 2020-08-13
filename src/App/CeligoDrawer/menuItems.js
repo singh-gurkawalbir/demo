@@ -156,13 +156,13 @@ export default function menuItems(
 
     if (!canPublish) {
       resourceItems.children = resourceItems.children.filter(
-        i => !(i.label === 'Templates' || i.label === 'Integration apps')
+        i => !(i.label === 'Templates' || i.label === 'Integration Apps')
       );
     }
 
     if (accessLevel !== 'owner') {
       resourceItems.children = resourceItems.children.filter(
-        i => i.label !== 'API tokens'
+        i => !(i.label === 'API tokens' || i.label === 'My APIs')
       );
     }
   }
