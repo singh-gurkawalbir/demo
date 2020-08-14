@@ -38,18 +38,17 @@ const useStyles = makeStyles(theme => ({
  * disabled property set to true in case of monitor level access
  */
 
-export default function MappingSettings(props) {
+export default function MappingSettings({
+  onClose,
+  mappingKey,
+  open,
+  disabled,
+  importId,
+  flowId,
+  subRecordMappingId,
+  isCategoryMapping,
+}) {
   const classes = useStyles();
-  const {
-    onClose,
-    mappingKey,
-    open,
-    disabled,
-    importId,
-    flowId,
-    subRecordMappingId,
-    isCategoryMapping,
-  } = props;
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const {value, lookups} = useSelector(state => {
@@ -71,7 +70,7 @@ export default function MappingSettings(props) {
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
   });
-  const importRes = useSelector(state =>
+  const importResource = useSelector(state =>
     selectors.resource(state, 'imports', importId)
   );
 
@@ -86,12 +85,12 @@ export default function MappingSettings(props) {
         lookups,
         isCategoryMapping,
         recordType: nsRecordType,
-        importRes,
+        importResource,
       };
 
       return ApplicationMappingSettings.getMetaData(opts);
     },
-    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importRes]
+    [value, flowId, extractFields, generateFields, lookups, isCategoryMapping, nsRecordType, importResource]
   );
   const disableSave = useMemo(() => {
     // Disable all fields except useAsAnInitializeValue in case mapping is not editable
@@ -178,7 +177,7 @@ export default function MappingSettings(props) {
       classes={{
         paper: classes.drawerPaper,
       }}>
-      <DrawerTitleBar onClose={() => onClose(false)} title="Settings" />
+      <DrawerTitleBar onClose={onClose} title="Settings" />
       <div className={classes.content}>
         <DynaForm
           disabled={disabled}

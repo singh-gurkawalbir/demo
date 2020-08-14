@@ -4314,8 +4314,8 @@ selectors.redirectUrlToResourceListingPage = (
 };
 
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
-  const { _integrationId, _connectionId, http } = importRes;
+  const importResource = selectors.resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importResource;
 
   if (_integrationId && http) {
     const connection = selectors.resource(state, 'connections', _connectionId);
@@ -4327,10 +4327,10 @@ selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
 };
 
 selectors.mappingPreviewType = (state, importId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
+  const importResource = selectors.resource(state, 'imports', importId);
 
-  if (!importRes) return;
-  const { adaptorType } = importRes;
+  if (!importResource) return;
+  const { adaptorType } = importResource;
 
   if (adaptorType === 'NetSuiteDistributedImport') {
     return 'netsuite';
@@ -4347,7 +4347,7 @@ selectors.mappingPreviewType = (state, importId) => {
         return 'salesforce';
       }
     }
-  } else if (importRes.http) {
+  } else if (importResource.http) {
     const showHttpAssistant = selectors.httpAssistantSupportsMappingPreview(
       state,
       importId
@@ -4835,10 +4835,10 @@ selectors.tradingPartnerConnections = (
 };
 
 selectors.mappingImportSampleDataSupported = (state, importId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importRes;
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
   const isAssistant =
-  !!importRes.assistant && importRes.assistant !== 'financialforce';
+  !!importResource.assistant && importResource.assistant !== 'financialforce';
 
   return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
 };
@@ -4846,10 +4846,10 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
 selectors.mapping = state => fromSession.mapping(state && state.session);
 
 selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
+  const importResource = selectors.resource(state, 'imports', importId);
 
-  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
-    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importRes, subRecordMappingId);
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
   }
 
   return emptyObject;
@@ -4889,11 +4889,11 @@ selectors.mappingExtracts = createSelector([
 selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
   if (type === 'generate') {
     /** generating generate Label */
-    const importRes = selectors.resource(state, 'imports', resourceId);
-    const importConn = selectors.resource(state, 'connections', importRes._connectionId);
+    const importResource = selectors.resource(state, 'imports', resourceId);
+    const importConn = selectors.resource(state, 'connections', importResource._connectionId);
 
     return `Import field (${mappingUtil.getApplicationName(
-      importRes,
+      importResource,
       importConn
     )})`;
   }
@@ -4903,16 +4903,16 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
 
     if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
       const {_exportId} = flow.pageGenerators[0];
-      const exportRes = selectors.resource(state, 'exports', _exportId);
-      const exportConn = selectors.resource(state, 'connections', exportRes._connectionId);
+      const exportResource = selectors.resource(state, 'exports', _exportId);
+      const exportConn = selectors.resource(state, 'connections', exportResource._connectionId);
 
       return `Export field (${mappingUtil.getApplicationName(
-        exportRes,
+        exportResource,
         exportConn
       )})`;
     }
 
-    return 'Source Record Field';
+    return 'Source record field';
   }
 };
 selectors.mappingHttpAssistantPreviewData = createSelector([
@@ -4928,12 +4928,12 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   },
   (state, importId) => selectors.resource(state, 'imports', importId),
   (state, importId) => {
-    const importRes = selectors.resource(state, 'imports', importId);
+    const importResource = selectors.resource(state, 'imports', importId);
 
-    return selectors.resource(state, 'connections', importRes._connectionId);
+    return selectors.resource(state, 'connections', importResource._connectionId);
   },
   (state, importId) => selectors.getImportSampleData(state, importId, {}).data,
-], (previewData, isHttpPreview, importRes, importConn, importSampleData) => {
+], (previewData, isHttpPreview, importResource, importConn, importSampleData) => {
   if (!isHttpPreview) {
     return;
   }
@@ -4951,7 +4951,7 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   }
 
   return {
-    rule: importRes.http && importRes.http.body && importRes.http.body[0],
+    rule: importResource?.http?.body[0],
     data: JSON.stringify(model),
   };
 });
@@ -4961,26 +4961,26 @@ selectors.mappingChanged = state => fromSession.mappingChanged(state && state.se
 selectors.mappingSaveStatus = state => fromSession.mappingSaveStatus(state && state.session);
 
 selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
-  const {adaptorType} = importRes;
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
 
   if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
     return;
   }
   if (subRecordMappingId) {
     const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
-      importRes,
+      importResource,
       subRecordMappingId
     );
 
     return recordType;
   }
 
-  return importRes.netsuite_da.recordType;
+  return importResource.netsuite_da.recordType;
 };
 
 /** returns 1st Page generator for a flow */
-selectors.flowPageGenerator = (state, flowId) => {
+selectors.firstFlowPageGenerator = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
 
   if (flow?.pageGenerators?.length) {

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import {selectors} from '../../reducers';
 import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
@@ -80,29 +81,33 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
   },
 }));
+const emptyObject = {};
+export default function MappingRow({
+  id,
+  disabled,
+  onMove,
+  index,
+  importId,
+  flowId,
+  mappingKey,
+  subRecordMappingId,
+  isDraggable = false,
+}) {
+  const mapping = useSelector(state => {
+    const {mappings} = selectors.mapping(state);
+    const mapping = mappings.find(({key}) => key === mappingKey);
 
-export default function MappingRow(props) {
+    return mapping || emptyObject;
+  }, shallowEqual);
+  // not destructuring above due to condition check below "'hardCodedValue' in mapping".hardCodedValue can be undefined/null
   const {
-    id,
-    mapping,
-    disabled,
-    onMove,
-    onDrop,
-    index,
-    importId,
-    flowId,
-    subRecordMappingId,
-    isDraggable = false,
-  } = props;
-  const {
-    key: mappingKey,
     isSubRecordMapping,
     isRequired,
     isNotEditable,
     extract,
     generate,
-    hardCodedValueTmp,
-  } = mapping || {};
+    hardCodedValue,
+  } = mapping;
   const dispatch = useDispatch();
   const classes = useStyles();
   const ref = useRef(null);
@@ -113,9 +118,8 @@ export default function MappingRow(props) {
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-  const {lastModifiedRowKey} = useSelector(state => selectors.mapping(state));
+  const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
 
-  // isOver is set to true when hover happens over component
   const [, drop] = useDrop({
     accept: 'MAPPING',
     hover(item) {
@@ -135,20 +139,12 @@ export default function MappingRow(props) {
       // eslint-disable-next-line no-param-reassign
       item.index = hoverIndex;
     },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-    }),
   });
   const [{ isDragging }, drag] = useDrag({
-    item: { type: 'MAPPING', index },
+    item: { type: 'MAPPING', index, key: mappingKey },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-    end: dropResult => {
-      if (dropResult) {
-        onDrop();
-      }
-    },
 
     canDrag: isDraggable,
   });
@@ -190,6 +186,8 @@ export default function MappingRow(props) {
     dispatch(actions.mapping.delete(mappingKey));
   }, [dispatch, mappingKey]);
 
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+
   return (
     <div
       ref={ref}
@@ -206,10 +204,11 @@ export default function MappingRow(props) {
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
+            key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
-            value={extract || hardCodedValueTmp}
+            value={extractValue}
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
             onBlur={handleBlur('extract')}
@@ -229,6 +228,7 @@ export default function MappingRow(props) {
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
+            key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"

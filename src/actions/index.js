@@ -1332,14 +1332,15 @@ const mapping = {
   previewReceived: value =>
     action(actionTypes.MAPPING.PREVIEW_RECEIVED, {value }),
   previewFailed: () => action(actionTypes.MAPPING.PREVIEW_FAILED, { }),
-  changeOrder: value =>
-    action(actionTypes.MAPPING.CHANGE_ORDER, { value }),
   setNSAssistantFormLoaded: value =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
   refreshGenerates: () => action(actionTypes.MAPPING.REFRESH_GENERATES, { }),
   updateLastFieldTouched: key => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
+  shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, {
+    key, shiftIndex,
+  }),
 };
 
 const searchCriteria = {

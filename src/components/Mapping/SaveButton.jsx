@@ -14,16 +14,15 @@ const styles = theme => ({
     marginLeft: theme.spacing.double,
   },
 });
-const MappingSaveButton = props => {
-  const {
-    submitButtonLabel = 'Save',
-    variant = 'outlined',
-    color = 'secondary',
-    disabled = false,
-    dataTest,
-    showOnlyOnChanges,
-    onClose,
-  } = props;
+const MappingSaveButton = ({
+  submitButtonLabel = 'Save',
+  variant = 'outlined',
+  color = 'secondary',
+  disabled = false,
+  dataTest,
+  showOnlyOnChanges,
+  onClose,
+}) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();

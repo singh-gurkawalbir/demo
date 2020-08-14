@@ -57,13 +57,12 @@ const SpinnerLoader = ({className}) => (
     <Spinner size={24} color="primary" />
   </span>
 );
-export default function TopPanel(props) {
-  const {
-    flowId,
-    resourceId,
-    disabled,
-    subRecordMappingId,
-  } = props;
+export default function TopPanel({
+  flowId,
+  resourceId,
+  disabled,
+  subRecordMappingId,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const generateLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, resourceId, 'generate'));

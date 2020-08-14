@@ -16,23 +16,18 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
 }));
-export default function PreviewPanel(props) {
-  const {resourceId, subRecordMappingId, disabled} = props;
+export default function PreviewPanel({resourceId, subRecordMappingId, disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const previewData = useSelector(state => {
-    const {preview} = selectors.mapping(state);
-
-    return preview && preview.data;
-  });
+  const previewData = useSelector(state => selectors.mapping(state).preview?.data);
   const recordType = useSelector(state => selectors.mappingNSRecordType(state, resourceId, subRecordMappingId));
-  const importRes = useSelector(state =>
+  const importResource = useSelector(state =>
     selectors.resource(state, 'imports', resourceId)
   );
-  const {_connectionId: connectionId} = importRes;
+  const {_connectionId: connectionId} = importResource;
 
   const salesforcelayoutId = useSelector(state => {
-    if (importRes.adaptorType === 'SalesforceImport') {
+    if (importResource.adaptorType === 'SalesforceImport') {
       const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
 
       if (salesforceMasterRecordTypeInfo?.data) {
@@ -64,21 +59,20 @@ export default function PreviewPanel(props) {
   }, [mappingPreviewType, previewData]);
 
   const options = useMemo(() => {
-    if (importRes.adaptorType === 'SalesforceImport') {
-      const {salesforce} = importRes;
-      const {sObjectType} = salesforce;
+    if (importResource.adaptorType === 'SalesforceImport') {
+      const {sObjectType} = importResource.salesforce;
 
       return {
         sObjectType,
         sObjectLabel: sObjectType,
       };
     }
-    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
       return {
         netSuiteRecordType: recordType,
       };
     }
-  }, [importRes]);
+  }, [importResource.adaptorType, importResource.salesforce, recordType]);
   const handleSFNSAssistantFieldClick = useCallback(
     meta => {
       if (disabled) {
@@ -86,9 +80,9 @@ export default function PreviewPanel(props) {
       }
       let value;
 
-      if (importRes.adaptorType === 'SalesforceImport') {
+      if (importResource.adaptorType === 'SalesforceImport') {
         value = meta.id;
-      } else if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importRes.adaptorType)) {
+      } else if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
         value = meta.sublistName ? `${meta.sublistName}[*].${meta.id}` : meta.id;
       }
       if (lastModifiedRowKey && value) {
@@ -101,12 +95,13 @@ export default function PreviewPanel(props) {
         );
       }
     },
-    [disabled, importRes.adaptorType, lastModifiedRowKey, dispatch]
+    [disabled, importResource.adaptorType, lastModifiedRowKey, dispatch]
   );
+
+  if (!mappingPreviewType) return null;
 
   return (
     <>
-      {mappingPreviewType && (
       <div className={classes.assistantContainer}>
         {mappingPreviewType === 'salesforce' && (
         <SalesforceMappingAssistant
@@ -133,7 +128,6 @@ export default function PreviewPanel(props) {
              />
         )}
       </div>
-      )}
     </>
   );
 }

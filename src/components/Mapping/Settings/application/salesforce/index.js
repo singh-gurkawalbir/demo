@@ -15,10 +15,10 @@ export default {
     extractFields,
     generateFields,
     lookups,
-    importRes,
+    importResource,
   }) => {
     const {lookupName, generate} = value;
-    const {_connectionId: connectionId, _id: resourceId } = importRes;
+    const {_connectionId: connectionId, _id: resourceId } = importResource;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
     const isGroupedSampleData = Array.isArray(extractFields);
     const selectedGenerateObj =

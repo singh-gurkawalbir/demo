@@ -1,5 +1,6 @@
 import deepClone from 'lodash/cloneDeep';
 import { uniqBy } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { adaptorTypeMap, isNetSuiteBatchExport } from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
@@ -40,7 +41,34 @@ const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
     getJSONPathArrayWithSpecialCharactersWrapped(sampleData).indexOf(str) > -1
   );
 };
+const isMappingObjEqual = (_mappingObj1, _mappingObj2) => {
+  const {
+    rowIdentifier: r1,
+    key: key1,
+    isNotEditable: e1,
+    isRequired: req1,
+    ...mappingObj1
+  } = _mappingObj1;
+  const {
+    rowIdentifier: r2,
+    key: key2,
+    isNotEditable: e2,
+    isRequired: req2,
+    ...mappingObj2
+  } = _mappingObj2;
 
+  return isEqual(mappingObj1, mappingObj2);
+};
+export const isMappingEqual = (mapping1, mapping2) => {
+  let isMappingsChanged = mapping1.length !== mapping2.length;
+
+  // change of order of mappings is treated as Mapping change
+  for (let i = 0; i < mapping1.length && !isMappingsChanged; i += 1) {
+    isMappingsChanged = !isMappingObjEqual(mapping1[i], mapping2[i]);
+  }
+
+  return !isMappingsChanged;
+};
 const setMappingData = (
   flowId,
   recordMappings,
@@ -724,25 +752,6 @@ export default {
       }
     }
   },
-  getMappingPath: application => {
-    switch (application) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        return '/netsuite_da/mapping';
-      case adaptorTypeMap.RESTImport:
-      case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.S3Import:
-      case adaptorTypeMap.FTPImport:
-      case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.SalesforceImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.RDBMSImport:
-        return '/mapping';
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.DynamodbImport:
-      default:
-    }
-  },
   getApplicationName: (resource = {}, conn) => {
     if (resource.assistant || conn?.assistant) {
       const connectors = applicationsList();
@@ -860,7 +869,7 @@ export default {
     isGroupedSampleData,
     netsuiteRecordType,
     options = {},
-    exportRes
+    exportResource
   ) => {
     if (!resourceObj) {
       return;
@@ -914,7 +923,7 @@ export default {
       isGroupedSampleData,
       resource: resourceObj,
       netsuiteRecordType,
-      exportRes,
+      exportResource,
       options,
     });
   },
@@ -923,7 +932,7 @@ export default {
     resource = {},
     isGroupedSampleData,
     netsuiteRecordType,
-    exportRes,
+    exportResource,
     options = {},
   }) => {
     let _mappings = mappings;
@@ -955,7 +964,7 @@ export default {
           mappings: _mappings,
           recordType: netsuiteRecordType,
           isGroupedSampleData,
-          exportRes,
+          exportResource,
           resource,
         });
       case adaptorTypeMap.FTPImport:
@@ -972,13 +981,13 @@ export default {
           mappings: _mappings,
           isGroupedSampleData,
           useFirstRowSupported: true,
-          exportRes,
+          exportResource,
           resource,
         });
       case adaptorTypeMap.SalesforceImport:
         return mappingUtil.getFieldsAndListMappings({
           mappings: _mappings,
-          exportRes,
+          exportResource,
           useFirstRowSupported: false,
           resource,
         });
@@ -989,26 +998,26 @@ export default {
     mappings,
     generateFields,
     isGroupedSampleData,
-    resource,
+    importResource,
     netsuiteRecordType,
-    exportRes,
+    exportResource,
   }) => {
-    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
       return netsuiteMappingUtil.generateMappingFieldsAndList({
         mappings,
         isGroupedSampleData,
         generateFields,
         recordType: netsuiteRecordType,
-        exportRes,
+        exportResource,
       });
     }
 
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
-      useFirstRowSupported: resource.adaptorType === 'SalesforceImport',
-      resource,
-      exportRes,
+      useFirstRowSupported: importResource.adaptorType === 'SalesforceImport',
+      importResource,
+      exportResource,
     });
   },
   getFieldsAndListMappings: ({
@@ -1016,7 +1025,7 @@ export default {
     isGroupedSampleData,
     useFirstRowSupported = false,
     resource = {},
-    exportRes,
+    exportResource,
   }) => {
     let tempFm;
     const toReturn = [];
@@ -1025,7 +1034,7 @@ export default {
       mappings.fields.forEach(fm => {
         const _fm = { ...fm };
 
-        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportRes)) _fm.useFirstRow = true;
+        if (isGroupedSampleData && isCsvOrXlsxResource(resource) && isNetSuiteBatchExport(exportResource)) _fm.useFirstRow = true;
         _fm.extract = unwrapTextForSpecialChars(_fm.extract);
         toReturn.push(_fm);
       });
@@ -1058,8 +1067,8 @@ export default {
     mappings = [],
     isGroupedSampleData,
     useFirstRowSupported = false,
-    resource = {},
-    exportRes,
+    importResource = {},
+    exportResource = {},
   }) => {
     let generateParts;
     const lists = [];
@@ -1102,7 +1111,7 @@ export default {
         }
 
         delete mapping.useFirstRow;
-      } else if (isCsvOrXlsxResource(resource) && isGroupedSampleData && isNetSuiteBatchExport(exportRes)) {
+      } else if (isCsvOrXlsxResource(importResource) && isGroupedSampleData && isNetSuiteBatchExport(exportResource)) {
         if (
           !mapping.useFirstRow &&
           mapping.extract &&

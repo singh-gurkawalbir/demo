@@ -16,21 +16,17 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-export default function ButtonPanel(props) {
-  const {flowId, importId, disabled, onClose} = props;
+export default function ButtonPanel({flowId, importId, disabled, onClose}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const saveInProgress = useSelector(
     state => selectors.mappingSaveStatus(state).saveInProgress
   );
-  const {isNSAssistantFormLoaded} = useSelector(state => selectors.mapping(state));
+  const isNSAssistantFormLoaded = useSelector(state => selectors.mapping(state).isNSAssistantFormLoaded);
   const mappingPreviewType = useSelector(state =>
     selectors.mappingPreviewType(state, importId)
   );
 
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
   const handlePreviewClick = useCallback(() => {
     dispatch(actions.mapping.requestPreview());
   }, [dispatch]);
@@ -54,7 +50,7 @@ export default function ButtonPanel(props) {
             variant="outlined"
             color="secondary"
             dataTest="saveAndCloseImportMapping"
-            onClose={handleClose}
+            onClose={onClose}
             disabled={!!(disabled || saveInProgress)}
             submitButtonLabel="Save & close"
             flowId={flowId}
@@ -63,7 +59,7 @@ export default function ButtonPanel(props) {
             variant="text"
             data-test="saveImportMapping"
             disabled={!!saveInProgress}
-            onClick={handleClose}>
+            onClick={onClose}>
             Cancel
           </Button>
         </div>

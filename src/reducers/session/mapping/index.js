@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import produce from 'immer';
 import { differenceWith, isEqual } from 'lodash';
 import actionTypes from '../../../actions/types';
-import mappingUtil from '../../../utils/mapping';
+import mappingUtil, {isMappingEqual} from '../../../utils/mapping';
 
 const { deepClone } = require('fast-json-patch');
 
@@ -15,7 +15,6 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.MAPPING.INIT:
-      {
         if (!draft.mapping) {
           draft.mapping = {
             status: 'requested',
@@ -23,9 +22,7 @@ export default (state = {}, action) => {
         } else {
           draft.mapping.status = 'requested';
         }
-
         break;
-      }
       case actionTypes.MAPPING.INIT_COMPLETE: {
         const {mappings, lookups, flowId, resourceId, subRecordMappingId} = action;
 
@@ -42,12 +39,6 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPING.CHANGE_ORDER: {
-        const {value} = action;
-
-        draft.mapping.mappings = value;
-        break;
-      }
       case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
         const {key} = action;
 
@@ -57,7 +48,6 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.DELETE: {
         const {key} = action;
 
-        draft.mapping.changeIdentifier += 1;
         const filteredMapping = draft.mapping.mappings.filter(m => m.key !== key);
 
         draft.mapping.mappings = filteredMapping;
@@ -77,7 +67,6 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.PATCH_FIELD: {
         const {field, key, value} = action;
 
-        draft.mapping.changeIdentifier += 1;
         const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
         if (draft.mapping.mappings[index]) {
@@ -149,7 +138,6 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
         const { key, value} = action;
 
-        draft.mapping.changeIdentifier += 1;
         const incompleteGeneObj = draft.mapping.incompleteGenerates.find(
           gen => gen.key === key
         );
@@ -166,7 +154,6 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.PATCH_SETTINGS: {
         const { key, value} = action;
 
-        draft.mapping.changeIdentifier += 1;
         const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
         if (draft.mapping.mappings[index]) {
@@ -282,37 +269,25 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.UPDATE_LIST: {
         const { mappings } = action;
 
-        draft.mapping.changeIdentifier += 1;
         draft.mapping.mappings = mappings;
         break;
       }
       case actionTypes.MAPPING.CLEAR: {
-        // delete draft.mapping;
+        delete draft.mapping;
+        break;
+      }
+      case actionTypes.MAPPING.SHIFT_ORDER: {
+        const {key: shiftKey, shiftIndex} = action;
+        const itemIndex = draft.mapping.mappings.findIndex(m => m.key === shiftKey);
+        const [removed] = draft.mapping.mappings.splice(itemIndex, 1);
+
+        draft.mapping.mappings.splice(shiftIndex, 0, removed);
         break;
       }
 
       default:
     }
   });
-};
-
-const isMappingObjEqual = (mapping1, mapping2) => {
-  const {
-    rowIdentifier: r1,
-    key: key1,
-    isNotEditable: e1,
-    isRequired: req1,
-    ...formattedMapping1
-  } = mapping1;
-  const {
-    rowIdentifier: r2,
-    key: key2,
-    isNotEditable: e2,
-    isRequired: req2,
-    ...formattedMapping2
-  } = mapping2;
-
-  return isEqual(formattedMapping1, formattedMapping2);
 };
 
 export const selectors = {};
@@ -333,12 +308,7 @@ selectors.mappingChanged = state => {
   }
 
   const { mappings, mappingsCopy, lookups, lookupsCopy } = state.mapping;
-  let isMappingsChanged = mappings.length !== mappingsCopy.length;
-
-  // change of order of mappings is treated as Mapping change
-  for (let i = 0; i < mappings.length && !isMappingsChanged; i += 1) {
-    isMappingsChanged = !isMappingObjEqual(mappings[i], mappingsCopy[i]);
-  }
+  let isMappingsChanged = !isMappingEqual(mappings, mappingsCopy);
 
   if (!isMappingsChanged) {
     const lookupsDiff = differenceWith(lookupsCopy, lookups, isEqual);

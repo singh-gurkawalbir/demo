@@ -14,11 +14,11 @@ export default {
     flowId,
     extractFields,
     lookups,
-    importRes = {},
+    importResource = {},
   }) => {
     const {generate, lookupName} = value;
-    const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importRes;
-    const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importRes.netsuite_da?.operation === 'addupdate');
+    const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
+    const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importResource.netsuite_da?.operation === 'addupdate');
     const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 

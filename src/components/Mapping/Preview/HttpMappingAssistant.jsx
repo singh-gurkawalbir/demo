@@ -20,8 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HttpMappingAssistant(props) {
-  const { editorId, data: dataInput, rule } = props;
+export default function HttpMappingAssistant({ editorId, data: dataInput, rule }) {
   const [initTriggered, setInitTriggered] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();

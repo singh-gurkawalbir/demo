@@ -1,8 +1,8 @@
 import shortid from 'shortid';
-import RestMappingSettings from './rest';
-import NetsuiteMappingSettings from './netsuite';
-import SalesforceMappingSettings from './salesforce';
-import FTPMappingSettings from './ftp';
+import restMappingSettings from './rest';
+import netsuiteMappingSettings from './netsuite';
+import salesforceMappingSettings from './salesforce';
+import ftpMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
 import rdbmsMappingSettings from './rdbms';
 // TODO (Aditya) test cases to be added for save functionality
@@ -65,27 +65,27 @@ export default {
   getMetaData: params => {
     const {
       value,
-      importRes,
+      importResource,
     } = params;
-    const {adaptorType} = importRes;
+    const {adaptorType} = importResource;
     let fieldMeta = {};
 
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
-        fieldMeta = RestMappingSettings.getMetaData(params);
+        fieldMeta = restMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
-        fieldMeta = NetsuiteMappingSettings.getMetaData(params);
+        fieldMeta = netsuiteMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.SalesforceImport:
-        fieldMeta = SalesforceMappingSettings.getMetaData(params);
+        fieldMeta = salesforceMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.FTPImport:
-        fieldMeta = FTPMappingSettings.getMetaData(params);
+        fieldMeta = ftpMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.RDBMSImport: {
         fieldMeta = rdbmsMappingSettings.getMetaData(params);

@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import {selectors} from '../../reducers';
-import actions from '../../actions';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 import TopPanel from './TopPanel';
-import MappingRow from './MappingRow';
 import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
+import DragContainer from './DragContainer';
+import actions from '../../actions';
 
-const emptyObj = {};
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100%',
@@ -76,63 +75,8 @@ const useStyles = makeStyles(theme => ({
 const Mapping = props => {
   const {flowId, resourceId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const [state, setState] = useState({
-    localMappings: [],
-    localChangeIdentifier: -1,
-  });
-  const { localMappings, localChangeIdentifier } = state;
-  const {
-    mappings,
-    changeIdentifier,
-  } = useSelector(state => selectors.mapping(state));
 
-  const tableData = useMemo(
-    () =>
-      (localMappings || []).map((value, index) => {
-        const obj = { ...value };
-
-        obj.index = index;
-        // hardcoded value are represented as "value" when show in mapping list
-        if (obj.hardCodedValue) {
-          obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-        }
-
-        return obj;
-      }),
-    [localMappings]
-  );
-  const handleMove = useCallback(
-    (dragIndex, hoverIndex) => {
-      const mappingsCopy = [...localMappings];
-      const dragItem = mappingsCopy[dragIndex];
-
-      mappingsCopy.splice(dragIndex, 1);
-      mappingsCopy.splice(hoverIndex, 0, dragItem);
-
-      setState({
-        ...state,
-        localMappings: mappingsCopy,
-      });
-    },
-    [localMappings, state]
-  );
-  const handleDrop = useCallback(() => {
-    dispatch(actions.mapping.changeOrder(localMappings));
-  }, [dispatch, localMappings]);
-
-  useEffect(() => {
-    // update local mapping state when mappings in data layer changes
-    if (localChangeIdentifier !== changeIdentifier) {
-      setState({
-        localMappings: mappings,
-        localChangeIdentifier: changeIdentifier,
-      });
-    }
-  }, [changeIdentifier, localChangeIdentifier, localMappings, mappings]);
-  const emptyRowIndex = useMemo(() => localMappings.length, [
-    localMappings.length,
-  ]);
+  const mappings = useSelector(state => selectors.mapping(state).mappings);
 
   return (
     <div className={classes.root}>
@@ -144,27 +88,9 @@ const Mapping = props => {
           disabled={disabled}
         />
         <div className={classes.mappingsBody}>
-          {tableData.map((mapping, index) => (
-            <MappingRow
-              index={index}
-              id={`${mapping.key}-${mapping.rowIdentifier}`}
-              key={`${mapping.key}-${mapping.rowIdentifier}`}
-              mapping={mapping}
-              disabled={disabled}
-              onMove={handleMove}
-              onDrop={handleDrop}
-              isDraggable={!disabled}
-              importId={resourceId}
-              flowId={flowId}
-              subRecordMappingId={subRecordMappingId}
-              />
-          ))}
-          <MappingRow
-            key={`newMappingRow-${emptyRowIndex}`}
-            index={emptyRowIndex}
-            mapping={emptyObj}
+          <DragContainer
+            mappings={mappings}
             disabled={disabled}
-            isDraggable={false}
             importId={resourceId}
             flowId={flowId}
             subRecordMappingId={subRecordMappingId}
