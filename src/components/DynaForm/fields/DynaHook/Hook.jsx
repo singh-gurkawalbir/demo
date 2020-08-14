@@ -9,6 +9,7 @@ import { generateNewId } from '../../../../utils/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
+import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import JavaScriptEditorDrawer from '../../../AFE/JavaScriptEditor/Drawer';
 import EditIcon from '../../../icons/EditIcon';
@@ -22,11 +23,6 @@ import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
-  },
-  label: {
-    minWidth: 100,
-    marginTop: 10,
-    marginBottom: 10,
   },
   field: {
     width: '50%',
@@ -46,6 +42,14 @@ const useStyles = makeStyles(theme => ({
   },
   hookActionBtnEdit: {
     marginLeft: theme.spacing(1),
+  },
+  labelWithHelpTextWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-start',
+    minWidth: 100,
+    marginTop: 10,
+    marginBottom: 10,
   },
 }));
 /*
@@ -223,7 +227,10 @@ export default function DynaHook(props) {
       )}
 
       <div className={classes.inputContainer}>
-        <InputLabel className={classes.label}>{label}</InputLabel>
+        <div className={classes.labelWithHelpTextWrapper}>
+          <InputLabel>{label}</InputLabel>
+          <FieldHelp label={props.label} helpKey={props.helpKey} />
+        </div>
         <div className={classes.wrapper}>
           <div className={classes.field}>
             <DynaText
