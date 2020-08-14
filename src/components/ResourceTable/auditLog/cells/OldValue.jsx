@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { hasLongLength } from '../utils';
@@ -15,16 +15,18 @@ export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
 
+  const handleClose = useCallback(() => setShowDialog(false), []);
+
   if (!hasLongLength(oldValue, newValue)) {
     return typeof oldValue === 'string' ? oldValue : JSON.stringify(oldValue);
   }
 
   return (
     <>
-      {showDialog.showDiffDialog && (
+      {showDialog && (
         <DiffDialog
           auditLog={auditLog}
-          onCancelClick={() => setShowDialog(false)}
+          onClose={handleClose}
         />
       )}
 
