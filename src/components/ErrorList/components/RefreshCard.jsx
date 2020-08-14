@@ -6,7 +6,7 @@ import Icon from '../../icons/RefreshIcon';
 const useStyles = makeStyles(theme => ({
   card: {
     position: 'absolute',
-    top: 0,
+    top: -71,
     textAlign: 'center',
     left: 500,
     width: 300,
