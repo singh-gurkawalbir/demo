@@ -59,7 +59,7 @@ function Help(props) {
         </IconButton>
       </ClickAwayListener>
       <ArrowPopper
-        placement="left"
+        placement="right"
         id="helpBubble"
         open={open}
         disablePortal
