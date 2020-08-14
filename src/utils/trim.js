@@ -17,6 +17,9 @@ export default function trimObj(obj) {
           '/export/file/csv/columnDelimiter',
           '/import/file/csv/rowDelimiter',
           '/import/file/csv/columnDelimiter',
+          '/http/auth/oauth/scheme',
+          '/http/auth/token/scheme',
+          '/rest/authScheme',
         ].includes(key)
       ) {
         acc[key] = typeof obj[key] === 'string' ? obj[key] : trimObj(obj[key]);
