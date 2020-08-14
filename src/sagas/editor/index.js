@@ -53,7 +53,7 @@ export function* evaluateProcessor({ id }) {
 
         // Below code is for in case if error object is in canonical format
         // Example: {errors: [{message: 'request entity too large!'}]}
-        const errorMessage = Array.isArray(errJSON?.errors) ? errJSON.errors[0]?.message : errJSON.message;
+        const errorMessage = errJSON.message || errJSON.errors?.[0]?.message;
 
         return yield put(actions.editor.evaluateFailure(id, errorMessage));
       }
