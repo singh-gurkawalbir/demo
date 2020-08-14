@@ -51,7 +51,11 @@ export function* evaluateProcessor({ id }) {
       if (e.status >= 400 && e.status < 500) {
         const errJSON = JSON.parse(e.message);
 
-        return yield put(actions.editor.evaluateFailure(id, errJSON.message));
+        // Below code is for in case if error object is in canonical format
+        // Example: {errors: [{message: 'request entity too large!'}]}
+        const errorMessage = Array.isArray(errJSON?.errors) ? errJSON.errors[0]?.message : errJSON.message;
+
+        return yield put(actions.editor.evaluateFailure(id, errorMessage));
       }
     }
   }
