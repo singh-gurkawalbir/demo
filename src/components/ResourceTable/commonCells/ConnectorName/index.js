@@ -13,7 +13,6 @@ export default function ConnectorName({resource}) {
   if (!resource) {
     return null;
   }
-
   if (type !== 'rdbms') {
     return getApp(type, assistant).name;
   }

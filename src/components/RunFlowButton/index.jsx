@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
   const classes = useStyles();
 
   if (isRequested) return <Spinner size={20} />;
@@ -70,7 +70,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
         variant="text"
         data-test="runFlow"
         onClick={onRunClick}>
-        <RunIcon /> Run now
+        <RunIcon /> {label}
       </IconTextButton>
     );
   }
@@ -86,6 +86,7 @@ export default function RunFlowButton({
   flowId,
   onRunStart,
   variant = 'icon',
+  label = 'Run now',
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -241,6 +242,7 @@ export default function RunFlowButton({
         onRunClick={handleClick}
         variant={variant}
         disabled={disabled}
+        label={label}
       />
 
       {isDataLoaderFlow && !hasRunKey && (
