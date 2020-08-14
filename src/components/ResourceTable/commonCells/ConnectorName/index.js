@@ -6,27 +6,24 @@ import { selectors } from '../../../../reducers';
 export default function ConnectorName({resource}) {
   const { type, assistant, resourceType } = getResourceSubType(resource);
   const { _connectionId } = resource || {};
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', _connectionId)
+  const rdbmsConnType = useSelector(state =>
+    selectors.resource(state, 'connections', _connectionId)?.rdbms?.type
   );
 
-  let name;
+  if (type === 'simple') return 'Data Loader';
 
-  if (type === 'simple') {
-    name = 'Data Loader';
-  } else if (type !== 'rdbms') {
-    name = getApp(type, assistant).name;
-  } else if (resourceType === 'exports' || resourceType === 'imports') {
-    name = getApp(connection?.rdbms?.type).name;
-  } else if (resource?.rdbms?.type) {
-    name = getApp(resource.rdbms.type).name;
-  } else {
-    name = 'RDBMS';
+  if (type !== 'rdbms') {
+    return getApp(type, assistant).name || null;
   }
 
-  if (!name) {
-    console.log(type, assistant);
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    return getApp(rdbmsConnType).name;
   }
 
-  return name || 'NA';
+  // must be a connection
+  if (resource?.rdbms?.type) {
+    return getApp(resource.rdbms.type).name;
+  }
+
+  return 'RDBMS';
 }
