@@ -50,7 +50,7 @@ export default {
           ],
         },
       ],
-      visible: r => !(r?._connectorId)
+      visible: r => !(r?._connectorId),
     },
     _agentId: {
       fieldId: '_agentId',
