@@ -173,5 +173,6 @@ module.exports = {
     // they are turned off so that we can transition into the new toolchain more easily
     'consistent-return': 'off',
     'import/no-cycle': 'off',
+    'import/prefer-default-export': 'off',
   },
 };
