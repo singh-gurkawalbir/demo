@@ -1,9 +1,17 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 
+const useStyles = makeStyles(theme => ({
+  action: {
+    '& button': {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 export default function Actions({
   errorId,
   retryData,
@@ -12,6 +20,7 @@ export default function Actions({
   onClose,
 }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const retryId = useSelector(state => {
     const errorDoc =
       selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
@@ -54,24 +63,23 @@ export default function Actions({
   }, [dispatch, flowId, onClose, resourceId, retryId]);
 
   return (
-    <>
+    <div className={classes.action}>
       {retryId && (
-        <Button variant="outlined" onClick={retry}>
+        <Button variant="outlined" color="primary" onClick={retry}>
           Retry
         </Button>
       )}
-      <Button variant="outlined" onClick={resolve}>
-        Resolve
+      <Button variant="outlined" color="secondary" onClick={resolve}>
+        Mark resolved
       </Button>
-      {retryId ? (
-        <Button variant="outlined" disabled={!retryData} onClick={updateRetry}>
+      {retryId && (
+        <Button variant="outlined" color="secondary" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
-      ) : (
-        <Button variant="outlined" onClick={onClose}>
-          Close
-        </Button>
       )}
-    </>
+      <Button variant="text" color="primary" onClick={onClose}>
+        Cancel
+      </Button>
+    </div>
   );
 }

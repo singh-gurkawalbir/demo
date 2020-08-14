@@ -51,22 +51,21 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
     history.goBack();
   }, [history]);
 
+  if (!showDrawer) {
+    return null;
+  }
+
   return (
-    <>
-      {showDrawer ? (
-        <RightDrawer
-          path="details/:errorId/:mode"
-          width="full"
-          title="Error Record"
-          variant="temporary"
-          hideBackButton>
-          <ErrorDetails
-            flowId={flowId}
-            resourceId={resourceId}
-            onClose={handleClose}
+    <RightDrawer
+      path="details/:errorId/:mode"
+      title="Edit record"
+      variant="temporary"
+      hideBackButton>
+      <ErrorDetails
+        flowId={flowId}
+        resourceId={resourceId}
+        onClose={handleClose}
           />
-        </RightDrawer>
-      ) : null}
-    </>
+    </RightDrawer>
   );
 }

@@ -11,32 +11,32 @@ import { safeParse } from '../../../utils/string';
 import ErrorActions from './components/ErrorActions';
 
 const useStyles = makeStyles(theme => ({
-  wrapper: {
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
-    background: theme.palette.background.paper,
-    padding: theme.spacing(1),
-    height: 500,
-  },
   detailsContainer: {
-    minHeight: theme.spacing(20),
-    position: 'relative',
-    bottom: 36,
+    height: `calc(100% - ${50}px)`,
     backgroundColor: 'white',
     overflow: 'auto',
     color: theme.palette.text.hint,
   },
   tabContent: {
-    height: 464,
+    height: '100%',
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    borderTop: 'none',
+    borderBottom: 'none',
   },
-  actionButtonsContainer: {
-    position: 'relative',
-    bottom: 50,
-    left: 800,
-    '& > button': {
-      marginLeft: theme.spacing(1),
-    },
-    width: 400,
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    height: '100%',
+  },
+  actions: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(2, 0, 1, 0),
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  tabHeader: {
+    border: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -63,35 +63,27 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   );
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.actionButtonsContainer}>
-        <ErrorActions
-          retryData={retryData}
-          flowId={flowId}
-          resourceId={resourceId}
-          errorId={errorId}
-          onClose={onClose}
-        />
-      </div>
+    <div className={classes.root}>
       <div className={classes.detailsContainer}>
         <Tabs
+          className={classes.tabHeader}
           value={recordMode}
           onChange={handleModeChange}
           textColor="primary"
           indicatorColor="primary">
           <Tab
-            label="Edit retry data"
-            value="edit"
+            label="View error details"
+            value="view"
             id="tab-1"
             aria-controls="tab-1"
-          />
+            />
           {retryId && (
             <Tab
-              label="View error details"
-              value="view"
+              label="Edit retry data"
+              value="edit"
               id="tab-2"
               aria-controls="tab-2"
-            />
+          />
           )}
         </Tabs>
         <div className={classes.tabContent}>
@@ -119,6 +111,15 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
               />
             ))}
         </div>
+      </div>
+      <div className={classes.actions}>
+        <ErrorActions
+          retryData={retryData}
+          flowId={flowId}
+          resourceId={resourceId}
+          errorId={errorId}
+          onClose={onClose}
+        />
       </div>
     </div>
   );
