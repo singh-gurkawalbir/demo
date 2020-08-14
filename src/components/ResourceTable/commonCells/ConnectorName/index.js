@@ -10,19 +10,23 @@ export default function ConnectorName({resource}) {
     selectors.resource(state, 'connections', _connectionId)
   );
 
-  if (!resource) {
-    return null;
-  }
-  if (type !== 'rdbms') {
-    return getApp(type, assistant).name;
+  let name;
+
+  if (type === 'simple') {
+    name = 'Data Loader';
+  } else if (type !== 'rdbms') {
+    name = getApp(type, assistant).name;
+  } else if (resourceType === 'exports' || resourceType === 'imports') {
+    name = getApp(connection?.rdbms?.type).name;
+  } else if (resource?.rdbms?.type) {
+    name = getApp(resource.rdbms.type).name;
+  } else {
+    name = 'RDBMS';
   }
 
-  if (resourceType === 'exports' || resourceType === 'imports') {
-    return getApp(connection?.rdbms?.type).name;
-  }
-  if (resource?.rdbms?.type) {
-    return getApp(resource.rdbms.type).name;
+  if (!name) {
+    console.log(type, assistant);
   }
 
-  return 'RDBMS';
+  return name || 'NA';
 }
