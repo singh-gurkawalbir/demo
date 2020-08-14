@@ -37,8 +37,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   helpTextButton: {
-    float: 'right',
-    padding: 1,
+    float: 'left',
+
+    padding: 0,
+    top: 3,
+    left: theme.spacing(1),
+    alignSelf: 'flex-start',
   },
   childHeader: {
     '& > div': {
