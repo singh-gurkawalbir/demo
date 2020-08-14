@@ -1,7 +1,14 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import {makeStyles} from '@material-ui/core/styles';
 import openExternalUrl from '../../utils/window';
 import RawHtml from '../RawHtml';
+
+const useStyles = makeStyles({
+  jobErrorMessage: {
+    wordBreak: 'break-word',
+  },
+});
 
 function isValidURL(url) {
   return url.indexOf('http://') === 0 || url.indexOf('https://') === 0;
@@ -16,6 +23,7 @@ export default function JobErrorMessage({
   let exportRecordText;
   let importRecordLink;
   let importRecordText;
+  const classes = useStyles();
 
   // console.log(message);
   if (exportDataURI) {
@@ -40,7 +48,7 @@ export default function JobErrorMessage({
 
   return (
     <>
-      <RawHtml html={message} options={{ allowedTags: ['a'] }} />
+      <RawHtml className={classes.jobErrorMessage} html={message} options={{ allowedTags: ['a'] }} />
       <div>
         {exportRecordLink && (
           <Button
@@ -49,7 +57,7 @@ export default function JobErrorMessage({
             onClick={() => {
               handleRecordLinkClick(exportRecordLink);
             }}>
-            View Export Record
+            View export record
           </Button>
         )}
         {exportRecordText}
@@ -60,7 +68,7 @@ export default function JobErrorMessage({
             onClick={() => {
               handleRecordLinkClick(importRecordLink);
             }}>
-            View Import Record
+            View import record
           </Button>
         )}
         {importRecordText}

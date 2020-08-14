@@ -17,20 +17,19 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: theme.palette.secondary.main,
+    wordBreak: 'break-word',
   },
   helpTextButton: {
-    float: 'right',
+    float: 'left',
     padding: 0,
     position: 'relative',
-    marginRight: theme.spacing(2),
-    '&:after': {
-      content: '""',
-      borderRight: `1px solid ${theme.palette.secondary.lightest}`,
-      height: '100%',
-      width: 1,
-      position: 'absolute',
-      right: theme.spacing(-1),
-    },
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+    top: 3,
+  },
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
   closeButtonTitleBar: {
     position: 'absolute',
@@ -72,17 +71,19 @@ export default function DrawerTitleBar({
           <BackArrowIcon />
         </IconButton>
       )}
-      <Typography variant="h3" className={classes.title}>
-        {title}
-      </Typography>
-      {helpKey && (
+      <div className={classes.titleWrapper}>
+        <Typography variant="h3" className={classes.title}>
+          {title}
+        </Typography>
+        {helpKey && (
         <Help
           title={helpTitle || title}
           className={classes.helpTextButton}
           helpKey={helpKey}
           fieldId={helpKey}
         />
-      )}
+        )}
+      </div>
       <IconButton
         data-test="closeFlowSchedule"
         aria-label="Close"
