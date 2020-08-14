@@ -95,11 +95,17 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const bucket = days > 7 ? 'flowEvents_1hr' : 'flowEvents';
+  let aggregrate = '';
+
+  if (days > 180) {
+    aggregrate = '|> aggregateWindow(every: 1d, fn: sum)';
+  }
 
   return `from(bucket: "${bucket}") 
             |> range(start: ${start}, stop: ${end}) 
             |> filter(fn: (r) => r.u == "${userId}") 
             |> filter(fn: (r) => r.f == "${flowId}")
+            ${aggregrate}
             |> drop(columns: ["_start", "_stop"])`;
 };
 

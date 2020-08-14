@@ -109,7 +109,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   };
 
   function CustomTooltip({ payload, label, active }) {
-    if (active) {
+    if (active && payload[0]?.value) {
       return (
         <div className="custom-tooltip">
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
