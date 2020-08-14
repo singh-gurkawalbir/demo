@@ -80,7 +80,8 @@ export default function DynaStaticMapWidget(props) {
       name: extractFieldHeader,
       required: true,
       type: extracts.length ? 'autosuggest' : 'input',
-      options: extracts,
+      // extracts can be a string we have safely type cast it to an array
+      options: Array.isArray(extracts) ? extracts : [],
       supportsRefresh: supportsExtractsRefresh,
     },
     {
@@ -88,7 +89,7 @@ export default function DynaStaticMapWidget(props) {
       label: generateFieldHeader,
       name: generateFieldHeader,
       required: true,
-      options: generates,
+      options: Array.isArray(generates) ? generates : [],
       type: generates.length ? 'autosuggest' : 'input',
       supportsRefresh: supportsGeneratesRefresh,
     },
@@ -97,10 +98,11 @@ export default function DynaStaticMapWidget(props) {
     state =>
       selectors.connectorMetadata(state, id, null, _integrationId, optionsMap)
   );
-  let defaultOptions = generates.filter(Boolean).map(val => ({
+  let defaultOptions = Array.isArray(generates) ? generates.filter(Boolean).map(val => ({
     value: val.id,
     label: val.text,
-  }));
+  })) : [];
+  // TODO: useMemo for the below code
 
   if (metadata) {
     metadata.optionsMap = [...optionsMap];

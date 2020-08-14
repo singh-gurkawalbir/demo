@@ -40,6 +40,7 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -69,6 +70,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3129,8 +3131,8 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports[cJob._importId]?.name,
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3159,6 +3161,54 @@ selectors.flowJobs = (state, options = {}) => {
 
     return { ...job, ...additionalProps };
   });
+};
+
+selectors.latestFlowJobs = createSelector(
+  state => selectors.flowJobs(state),
+  jobList => {
+    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
+    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+
+    // If there are any in progress jobs too, show them with queued jobs if exist
+    if (inProgressJobs.length) {
+      return [...queuedJobs, ...inProgressJobs];
+    }
+    // show queued jobs if exist
+    if (queuedJobs.length) {
+      return queuedJobs;
+    }
+
+    // If there are no in progress / queued jobs, show the latest job
+    // TODO : Discuss on this use case on what to show
+    return jobList[0] ? [jobList[0]] : emptySet;
+  });
+
+selectors.flowDashboardDetails = createSelector(
+  state => selectors.latestFlowJobs(state),
+  latestJobs => {
+    if (!latestJobs.length) return emptySet;
+
+    const childJobDetails = [];
+
+    latestJobs.forEach(job => {
+      if (job.status === JOB_STATUS.QUEUED) {
+        childJobDetails.push(job);
+      } else if (job.children?.length) {
+        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+      }
+    });
+
+    return childJobDetails;
+  });
+
+selectors.areFlowJobsLoading = (state, filters = {}) => {
+  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters,
+  }) || {};
+
+  const commKey = commKeyGen(path, opts.method);
+
+  return fromComms.isLoading(state.comms, commKey);
 };
 
 selectors.flowJob = (state, ops = {}) => {

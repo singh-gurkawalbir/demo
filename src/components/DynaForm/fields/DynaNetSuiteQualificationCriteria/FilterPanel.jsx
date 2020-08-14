@@ -73,6 +73,12 @@ export default function FilterPanel({
             } else {
               filterData.id = `text:${filter.value}`;
             }
+          } else if (filter.type === 'multiselect') {
+            if (filter.value.includes('.internalid')) {
+              filterData.id = `vals:${filter.value.replace('.internalid', '')}`;
+            } else {
+              filterData.id = `texts:${filter.value}`;
+            }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
               { id: 'T', text: 'Yes' },
