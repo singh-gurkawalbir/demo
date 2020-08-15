@@ -1,8 +1,8 @@
 import dateTimezones from '../../../../../utils/dateTimezones';
 import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
-import { emptyObject } from '../../../../../utils/constants';
 
+const emptyObject = {};
 export default {
   getMetaData: ({
     value,

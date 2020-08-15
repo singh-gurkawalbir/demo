@@ -6,8 +6,8 @@ import {
   conditionalLookupOptionsforSalesforce,
   conditionalLookupOptionsforSalesforceProduction,
 } from '../../../../../forms/utils';
-import { emptyObject } from '../../../../../utils/constants';
 
+const emptyObject = {};
 export default {
   getMetaData: ({
     value,

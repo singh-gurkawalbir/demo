@@ -152,35 +152,40 @@ export default function MappingRow({
 
   drag(drop(ref));
 
-  const handleBlur = useCallback(
-    field => (id, value) => {
-      // check if value changes or user entered something in new row
-      if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
-        if (mappingKey && value === '') {
-          if (
-            (field === 'extract' && generate === '') ||
+  const handleBlur = useCallback((field, value) => {
+    // check if value changes or user entered something in new row
+    if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
+      if (mappingKey && value === '') {
+        if (
+          (field === 'extract' && generate === '') ||
             (field === 'generate' &&
               extract === '' &&
               !('hardCodedValue' in mapping))
-          ) {
-            dispatch(actions.mapping.delete(mappingKey));
+        ) {
+          dispatch(actions.mapping.delete(mappingKey));
 
-            return;
-          }
+          return;
         }
-        dispatch(actions.mapping.patchField(field, mappingKey, value));
-
-        return;
       }
+      dispatch(actions.mapping.patchField(field, mappingKey, value));
 
-      if (lastModifiedRowKey !== mappingKey) {
-        const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
+      return;
+    }
 
-        dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
-      }
-    },
-    [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
+    if (lastModifiedRowKey !== mappingKey) {
+      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
+
+      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
+    }
+  },
+  [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
   );
+  const handleExtractBlur = useCallback((_id, value) => {
+    handleBlur('extract', value);
+  }, [handleBlur]);
+  const handleGenerateBlur = useCallback((_id, value) => {
+    handleBlur('generate', value);
+  }, [handleBlur]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.mapping.delete(mappingKey));
@@ -211,7 +216,7 @@ export default function MappingRow({
             value={extractValue}
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
-            onBlur={handleBlur('extract')}
+            onBlur={handleExtractBlur}
             triggerBlurOnTouch
           />
 
@@ -235,7 +240,7 @@ export default function MappingRow({
             valueName="id"
             options={generateFields}
             disabled={isSubRecordMapping || isRequired || disabled}
-            onBlur={handleBlur('generate')}
+            onBlur={handleGenerateBlur}
             triggerBlurOnTouch
           />
           {(isSubRecordMapping || isRequired) && (

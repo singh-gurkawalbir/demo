@@ -75,45 +75,45 @@ export default (state = {}, action) => {
             return;
           }
 
-          const objCopy = { ...draft.mapping.mappings[index] };
+          const mapping = draft.mapping.mappings[index];
 
-          objCopy.rowIdentifier += 1;
+          mapping.rowIdentifier += 1;
 
           let inputValue = value;
 
           if (field === 'extract') {
             if (inputValue.indexOf('"') === 0) {
               if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
-              delete objCopy.extract;
-              objCopy.hardCodedValue = inputValue.substr(
+              delete mapping.extract;
+              mapping.hardCodedValue = inputValue.substr(
                 1,
                 inputValue.length - 2
               );
-              objCopy.hardCodedValueTmp = inputValue;
+              mapping.hardCodedValueTmp = inputValue;
             } else {
-              delete objCopy.hardCodedValue;
-              delete objCopy.hardCodedValueTmp;
-              objCopy.extract = inputValue;
+              delete mapping.hardCodedValue;
+              delete mapping.hardCodedValueTmp;
+              mapping.extract = inputValue;
             }
           } else {
-            objCopy[field] = inputValue;
+            mapping[field] = inputValue;
 
             if (
               !draft.mapping.isCsvOrXlsxResource &&
               inputValue.indexOf('[*].') === -1
             ) {
-              if ('isKey' in objCopy) {
-                delete objCopy.isKey;
+              if ('isKey' in mapping) {
+                delete mapping.isKey;
               }
 
-              if ('useFirstRow' in objCopy) {
-                delete objCopy.useFirstRow;
+              if ('useFirstRow' in mapping) {
+                delete mapping.useFirstRow;
               }
             }
           }
 
-          draft.mapping.mappings[index] = objCopy;
-          draft.mapping.lastModifiedRowKey = objCopy.key;
+          draft.mapping.mappings[index] = mapping;
+          draft.mapping.lastModifiedRowKey = mapping.key;
         } else if (value) {
           const newKey = shortid.generate();
 
@@ -157,40 +157,21 @@ export default (state = {}, action) => {
         const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
         if (draft.mapping.mappings[index]) {
-          const {
-            generate,
-            extract,
-            isNotEditable,
-            isRequired,
-            rowIdentifier,
-            key,
-          } = draft.mapping.mappings[index];
-          const valueTmp = {
-            generate,
-            extract,
-            isNotEditable,
-            isRequired,
-            rowIdentifier,
-            key,
-          };
+          const mapping = draft.mapping.mappings[index];
 
-          Object.assign(valueTmp, value);
+          Object.assign(mapping, value);
 
           // removing lookups
           if (!value.lookupName) {
-            delete valueTmp.lookupName;
+            delete mapping.lookupName;
           }
 
-          valueTmp.rowIdentifier += 1;
+          mapping.rowIdentifier += 1;
 
-          if ('hardCodedValue' in valueTmp) {
-            // wrap anything expect '' and null ,
-
-            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length) valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
-            delete valueTmp.extract;
+          if ('hardCodedValue' in value) {
+            delete mapping.extract;
           }
-
-          draft.mapping.mappings[index] = { ...valueTmp };
+          draft.mapping.mappings[index] = mapping;
           draft.mapping.lastModifiedRowKey = key;
 
           const {
@@ -253,7 +234,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.PREVIEW_FAILED: {
-        const { preview } = draft.mapping;
+        const {preview} = draft.mapping;
 
         delete preview.data;
         preview.status = 'error';
@@ -320,6 +301,7 @@ selectors.mappingChanged = state => {
   return isMappingsChanged;
 };
 
+// #region PUBLIC SELECTORS
 selectors.mappingSaveStatus = state => {
   if (!state || !state.mapping) {
     return emptyObj;

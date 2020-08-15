@@ -48,13 +48,9 @@ export default function PreviewPanel({resourceId, subRecordMappingId, disabled})
   const {lastModifiedRowKey } = useSelector(state => selectors.mapping(state));
   const salesforceNetsuitePreviewData = useMemo(() => {
     if (mappingPreviewType === 'salesforce') {
-      if (Array.isArray(previewData) && previewData.length) {
-        const [_val] = previewData;
-
-        return _val;
-      }
-
-      return previewData;
+      return Array.isArray(previewData)
+        ? previewData[0]
+        : previewData;
     }
   }, [mappingPreviewType, previewData]);
 

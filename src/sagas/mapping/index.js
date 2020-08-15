@@ -198,17 +198,18 @@ export function* saveMappings({context }) {
   });
   let mappingPath = '/mapping';
 
-  // in case of subRecord mapping, modify the subrecord and return the root mapping object
   if (
-    ['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) &&
-    subRecordMappingId
+    ['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)
   ) {
-    _mappings = mappingUtil.appendModifiedSubRecordToMapping({
-      resource: importResource,
-      subRecordMappingId,
-      subRecordMapping: _mappings,
-      subRecordLookups: lookups,
-    });
+    // in case of subRecord mapping, modify the subrecord and return the root mapping object
+    if (subRecordMappingId) {
+      _mappings = mappingUtil.appendModifiedSubRecordToMapping({
+        resource: importResource,
+        subRecordMappingId,
+        subRecordMapping: _mappings,
+        subRecordLookups: lookups,
+      });
+    }
     mappingPath = '/netsuite_da/mapping';
   }
 

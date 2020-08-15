@@ -6,8 +6,8 @@ import {
   conditionalLookupOptionsforRest,
   conditionalLookupOptionsforRestProduction,
 } from '../../../../../forms/utils';
-import { emptyObject } from '../../../../../utils/constants';
 
+const emptyObject = {};
 export default {
   getMetaData: ({
     value = {},
