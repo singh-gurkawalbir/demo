@@ -170,6 +170,8 @@ export default (state = {}, action) => {
 
           if ('hardCodedValue' in value) {
             delete mapping.extract;
+          } else {
+            delete mapping.hardCodedValue;
           }
           draft.mapping.mappings[index] = mapping;
           draft.mapping.lastModifiedRowKey = key;

@@ -113,15 +113,15 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
       flowId,
     }
   );
-  const {export: exportResource, import: importRes} = flow;
+  const {export: exportRes, import: importRes} = flow;
   const {type: importType} = importRes;
 
   let exportType;
 
-  if (exportResource.netsuite && ['restlet', 'batch', 'realtime'].includes(exportResource.netsuite.type)) {
+  if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
     exportType = 'netsuite';
   } else {
-    exportType = exportResource.type;
+    exportType = exportRes.type;
   }
   const options = {
     importType,
@@ -151,7 +151,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
   }
   const subRecordFields = mapping?.fields?.filter(f => f.mappingId);
   // const {type: importType, mapping} = importRes;
-  const generatedMappings = generateFieldAndListMappings({importType, mapping, exportResource, isGroupedSampleData: false});
+  const generatedMappings = generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
 
   yield put(actions.suiteScript.mapping.initComplete(
     {
