@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import SalesforceEditorDialog from '../../AFE/SalesforceQualificationCriteriaEditor';
+import SalesforceEditorDrawer from '../../AFE/SalesforceQualificationCriteriaEditor/Drawer';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/FilterIcon';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaslsforceFormControl: {
@@ -30,7 +31,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaSalesforceQualifier(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -47,9 +47,7 @@ export default function DynaSalesforceQualifier(props) {
     label,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -61,19 +59,17 @@ export default function DynaSalesforceQualifier(props) {
 
   return (
     <div className={classes.dynaSalesforceQualifierWrapper}>
-      {showEditor && (
-        <SalesforceEditorDialog
-          title="Field specific qualification criteria"
-          id={id}
-          value={value}
-          resourceId={resourceId}
-          flowId={flowId}
-          onSave={handleSave}
-          onClose={handleEditorClick}
+      <SalesforceEditorDrawer
+        title="Field specific qualification criteria"
+        id={id}
+        value={value}
+        resourceId={resourceId}
+        flowId={flowId}
+        onSave={handleSave}
           // disabled={disabled}
-          options={options}
+        options={options}
         />
-      )}
+
       <div className={classes.textField}>
         <div className={classes.dynaSalesforceQualifierlabelWrapper}>
           <FormLabel htmlFor={id} required={required} error={!isValid}>
@@ -102,7 +98,7 @@ export default function DynaSalesforceQualifier(props) {
       </div>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={handleOpenDrawer}
         className={classes.exitButtonsalsForceQualifier}>
         <ExitIcon />
       </ActionButton>

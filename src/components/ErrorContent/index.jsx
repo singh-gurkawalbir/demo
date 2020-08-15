@@ -31,8 +31,8 @@ export default function ErrorContent({error}) {
   const classes = useStyles();
 
   return (
-    <div className={classes.errorText}>
+    <span className={classes.errorText}>
       <FormatError error={error} />
-    </div>
+    </span>
   );
 }

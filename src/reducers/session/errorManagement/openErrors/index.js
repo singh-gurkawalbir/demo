@@ -15,9 +15,10 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST:
-        draft[flowId] = {
-          status: 'requested',
-        };
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        draft[flowId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED: {
         const flowErrors = (openErrors && openErrors.flowErrors) || [];

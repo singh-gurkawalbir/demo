@@ -9,7 +9,7 @@ import { getResourceSubType } from '../../../utils/resource';
 export function* identifyUser() {
   const { _id, name, email, company, createdAt } = yield select(
     selectors.userProfile
-  );
+  ) || {};
   const { defaultAShareId } = yield select(selectors.userPreferences);
   const [firstName, ...lastName] = (name || '').split(' ');
   const accountInfo = {

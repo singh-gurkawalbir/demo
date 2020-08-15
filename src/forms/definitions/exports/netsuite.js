@@ -1,16 +1,6 @@
 import { isNewId } from '../../../utils/resource';
-import { isLookupResource } from '../../../utils/flows';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-    if (isLookupResource(flow, resource)) {
-      exportPanelField.visible = false;
-    }
-
-    return fieldMeta;
-  },
   preSave: ({ executionType, apiType, ...rest }) => {
     const newValues = rest;
     const netsuiteType =
@@ -85,6 +75,10 @@ export default {
       delete newValues['/restlet/delta/lagOffset'];
       delete newValues['/restlet/delta/dateField'];
       delete newValues['/restlet/once/booleanField'];
+      newValues['/netsuite/distributed'] = undefined;
+      delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/forceReload'];
+      delete newValues['/netsuite/distributed/executionType'];
 
       if (newValues['/type'] === 'all') {
         newValues['/test'] = undefined;

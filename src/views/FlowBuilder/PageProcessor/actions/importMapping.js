@@ -66,18 +66,15 @@ function ImportMapping({
 
   const subrecords = useSelector(
     state => {
-      const mapping = selectors.mapping(state, mappingEditorId);
+      const resource = selectors.resource(state, 'imports', resourceId);
 
       if (
-        mapping &&
-        mapping.resource &&
-        mapping.resource.netsuite_da &&
-        mapping.resource.netsuite_da.mapping
+        resource && resource.netsuite_da?.mapping
       ) {
-        const subrecords = getNetSuiteSubrecordImports(mapping.resource).map(
+        const subrecords = getNetSuiteSubrecordImports(resource).map(
           sr => ({
             ...sr,
-            name: `${mapping.resource.name || mapping.resource._id} - ${
+            name: `${resource.name || resource._id} - ${
               sr.name
             } (Subrecord)`,
           })
@@ -87,7 +84,7 @@ function ImportMapping({
           return [
             {
               fieldId: '__parent',
-              name: mapping.resource.name || mapping.resource._id,
+              name: resource.name || resource._id,
             },
             ...subrecords,
           ];

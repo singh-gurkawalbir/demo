@@ -272,8 +272,8 @@ const getSubRecordMapping = (parentMapping, subRecordMappingId) => {
     const list = lists.find(l => l.generate === listName);
 
     if (list) {
-      const subList = list.fields.find(l => l.generate === subListGenerateName);
-      const { subRecordMapping } = subList;
+      const subList = list.fields.find(l => l.generate === subListGenerateName) || {};
+      const { subRecordMapping = {} } = subList;
 
       if (!subRecordMapping.mapping) {
         subRecordMapping.mapping = {

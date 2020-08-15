@@ -3,11 +3,12 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
+import XmlParseEditorDrawer from '../../../../AFE/XmlParseEditor/Drawer';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const getParserValue = ({
   resourcePath,
@@ -103,8 +104,8 @@ export default function DynaXmlParse({
   uploadSampleDataFieldName,
 }) {
   const classes = useStyles();
-  const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
@@ -116,10 +117,6 @@ export default function DynaXmlParse({
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
-
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
 
   const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     // console.log(shouldCommit, editorValues);
@@ -135,9 +132,6 @@ export default function DynaXmlParse({
     }
   }, [formKey, getInitOptions, id, onFieldChange]);
 
-  const handleEditorClose = useCallback(() => {
-    setShowEditor(false);
-  }, []);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
@@ -190,19 +184,18 @@ export default function DynaXmlParse({
   return (
     <>
       <div className={classes.container}>
-        {showEditor && (
-          <XmlParseEditorDialog
-            title="XML parser helper"
-            id={id + resourceId}
-            data={data}
-            resourceType={resourceType}
-            rule={currentOptions}
-            onSave={handleEditorSave}
-            onClose={handleEditorClose}
-            disabled={disabled}
-            editorDataTitle={editorDataTitle}
+        <XmlParseEditorDrawer
+          title="XML parser helper"
+          id={id + resourceId}
+          data={data}
+          resourceType={resourceType}
+          rule={currentOptions}
+          onSave={handleEditorSave}
+          disabled={disabled}
+          editorDataTitle={editorDataTitle}
+          path={id}
         />
-        )}
+
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>XML parser helper</FormLabel>
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
@@ -212,7 +205,7 @@ export default function DynaXmlParse({
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

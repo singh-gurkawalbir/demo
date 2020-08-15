@@ -8,10 +8,12 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
-import { AUDIT_LOG_SOURCE_LABELS, OPTION_ALL } from './util';
+import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
+
+const OPTION_ALL = { id: 'all', label: 'All' };
 
 const mapStateToProps = (state, { resourceType, resourceId }) => {
   const {
@@ -39,9 +41,6 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
     minWidth: 150,
     maxWidth: theme.spacing(30),
     height: 36,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
   },
   filterWrapper: {
     padding: 0,

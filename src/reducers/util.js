@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export const genSelectors = (selectors, subSelectors) => {
   const selectorNameSet = new Set();
 

@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import OutputFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
+import OutputFilterToggleEditorDrawer from '../../../../components/AFE/FilterEditor/FilterToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function OutputFilterDialog({
+function OutputFilterDrawer({
   flowId,
   resource,
   isViewMode,
@@ -66,7 +66,7 @@ function OutputFilterDialog({
   );
 
   return (
-    <OutputFilterToggleEditorDialog
+    <OutputFilterToggleEditorDrawer
       title="Define output filter"
       helpKey="lookup.output.filter"
       helpTitle="Filter Rules"
@@ -84,6 +84,7 @@ function OutputFilterDialog({
       optionalSaveParams={optionalSaveParams}
       flowId={flowId}
       isSampleDataLoading={sampleDataStatus === 'requested'}
+      path="outputFilter"
     />
   );
 }
@@ -91,7 +92,7 @@ function OutputFilterDialog({
 function OutputFilter(props) {
   const { open } = props;
 
-  return <>{open && <OutputFilterDialog {...props} />}</>;
+  return <>{open && <OutputFilterDrawer {...props} />}</>;
 }
 
 export default {

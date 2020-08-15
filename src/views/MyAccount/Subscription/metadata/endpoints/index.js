@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConnectorNameComp } from '../../../../../components/ResourceTable/metadata';
+import ConnectorName from '../../../../../components/ResourceTable/commonCells/ConnectorName';
 import References from '../../actions/references';
 import ConnectionResourceDrawerLink from '../../../../../components/ResourceDrawerLink/connection';
 
@@ -8,26 +8,16 @@ export default {
     const columns = [
       {
         heading: 'Instances',
-        value: function ConnectionDrawerLink(resource) {
-          return (
-            <ConnectionResourceDrawerLink
-              resource={resource}
-            />
-          );
-        },
+        value: r => <ConnectionResourceDrawerLink resource={r} />,
         orderBy: 'name',
       },
       {
         heading: 'Endpoint apps',
-        value: function ConnectorName(r) {
-          return <ConnectorNameComp r={r} />;
-        },
+        value: r => <ConnectorName resource={r} />,
       },
       {
         heading: 'Where used',
-        value: function Type(r) {
-          return <References resourceType="connections" rowData={r} isSubscriptionPage />;
-        },
+        value: r => <References resourceType="connections" rowData={r} isSubscriptionPage />,
       },
     ];
 

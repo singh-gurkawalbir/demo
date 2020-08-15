@@ -1,17 +1,7 @@
 import { isNewId } from '../../../utils/resource';
-import { isLookupResource } from '../../../utils/flows';
 import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-    if (isLookupResource(flow, resource)) {
-      exportPanelField.visible = false;
-    }
-
-    return fieldMeta;
-  },
   preSave: formValues => {
     const newValues = { ...formValues };
 
