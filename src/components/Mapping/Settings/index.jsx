@@ -11,8 +11,9 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../drawer/TitleBar';
-import { emptyObject } from '../../../utils/constants';
 
+const emptySet = {};
+const emptyObject = {};
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
@@ -47,22 +48,44 @@ export default function MappingSettings({
   flowId,
   subRecordMappingId,
   isCategoryMapping,
+  ...categoryMappingOpts
 }) {
+  const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const {value, lookups} = useSelector(state => {
-    const { mappings, lookups } = selectors.mapping(state);
+    if (isCategoryMapping) {
+      const {mappings, lookups} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
 
+      return {value: mappings[mappingIndex], lookups};
+    }
+    const { mappings, lookups } = selectors.mapping(state);
     const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
 
     return {value, lookups};
   }, shallowEqual);
-  const generateFields = useSelector(state =>
-    selectors.mappingGenerates(state, importId, subRecordMappingId)
+  const generateFields = useSelector(state => {
+    if (isCategoryMapping) {
+      const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
+        sectionId,
+      }) || emptyObject;
+
+      return generateFields || emptySet;
+    }
+
+    return selectors.mappingGenerates(state, importId, subRecordMappingId);
+  }
+
   );
-  const extractFields = useSelector(state =>
-    selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
+  const extractFields = useSelector(state => {
+    if (isCategoryMapping) {
+      return selectors.categoryMappingMetadata(state, integrationId, flowId).extractsMetadata;
+    }
+
+    return selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
+  }
+
   );
   const nsRecordType = useSelector(state =>
     selectors.mappingNSRecordType(state, importId, subRecordMappingId)
@@ -119,8 +142,19 @@ export default function MappingSettings({
       }
     });
 
-    dispatch(actions.mapping.updateLookup(lookupsTmp));
-  }, [dispatch, lookups]);
+    if (isCategoryMapping) {
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.updateLookup(
+          integrationId,
+          flowId,
+          editorId,
+          lookupsTmp
+        )
+      );
+    } else {
+      dispatch(actions.mapping.updateLookup(lookupsTmp));
+    }
+  }, [dispatch, editorId, flowId, integrationId, isCategoryMapping, lookups]);
   const handleSubmit = useCallback(
     formVal => {
       const oldLookupValue = lookupName && lookups.find(lookup => lookup.name === lookupName);
@@ -158,10 +192,23 @@ export default function MappingSettings({
         lookupObj.push({ isDelete: false, obj: conditionalLookup });
       }
       updateLookup(lookupObj);
-      dispatch(actions.mapping.patchSettings(mappingKey, settings));
+      if (isCategoryMapping) {
+        dispatch(
+          actions.integrationApp.settings.categoryMappings.patchSettings(
+            integrationId,
+            flowId,
+            editorId,
+            mappingIndex,
+            settings
+          )
+        );
+      } else {
+        dispatch(actions.mapping.patchSettings(mappingKey, settings));
+      }
+
       onClose();
     },
-    [dispatch, enquesnackbar, extract, generate, lookupName, lookups, mappingKey, onClose, updateLookup]
+    [dispatch, editorId, enquesnackbar, extract, flowId, generate, integrationId, isCategoryMapping, lookupName, lookups, mappingIndex, mappingKey, onClose, updateLookup]
   );
 
   const showCustomFormValidations = useCallback(() => {
