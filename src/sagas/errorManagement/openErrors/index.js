@@ -3,18 +3,25 @@ import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
-import {getErrorMapWithTotal, getResourceIdsOfUpdatedErrors} from '../../../utils/errorManagement';
+import {getErrorMapWithTotal, getErrorCountDiffMap} from '../../../utils/errorManagement';
 
 function* notifyErrorListOnUpdate({ flowId, newFlowErrors }) {
   const {data: prevFlowOpenErrorsMap} = yield select(selectors.errorMap, flowId);
   const currFlowOpenErrorsMap = getErrorMapWithTotal(newFlowErrors?.flowErrors, '_expOrImpId').data;
-  const resourceIds = getResourceIdsOfUpdatedErrors(prevFlowOpenErrorsMap, currFlowOpenErrorsMap);
+  const resourceIdsErrorCountMap = getErrorCountDiffMap(prevFlowOpenErrorsMap, currFlowOpenErrorsMap);
+  const resourceIds = Object.keys(resourceIdsErrorCountMap);
 
   // notifies all the resources whose error details are to be updated
   yield all(
     resourceIds.map(
       resourceId =>
-        put(actions.errorManager.flowErrorDetails.notifyUpdate({ flowId, resourceId}))
+        put(actions.errorManager.flowErrorDetails.notifyUpdate(
+          {
+            flowId,
+            resourceId,
+            diff: resourceIdsErrorCountMap[resourceId],
+          }
+        ))
     )
   );
 }

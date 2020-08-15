@@ -1712,10 +1712,11 @@ const errorManager = {
         resourceId,
         isResolved,
       }),
-    notifyUpdate: ({ flowId, resourceId }) =>
+    notifyUpdate: ({ flowId, resourceId, diff }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
         flowId,
         resourceId,
+        diff,
       }),
   },
   retryData: {

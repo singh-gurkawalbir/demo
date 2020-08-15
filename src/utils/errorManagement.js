@@ -51,20 +51,27 @@ export const getErrorMapWithTotal = (errorList = [], resourceId) => {
   return {data: errorMap, total: totalCount};
 };
 
-export const getResourceIdsOfUpdatedErrors = (prevErrorMap = {}, currErrorMap = {}) => {
-  const resourceIds = new Set();
+export const getErrorCountDiffMap = (prevErrorMap = {}, currErrorMap = {}) => {
+  const resourceIdSet = new Set();
 
   Object.keys(prevErrorMap).forEach(resourceId => {
     if (prevErrorMap[resourceId] !== currErrorMap[resourceId]) {
-      resourceIds.add(resourceId);
+      resourceIdSet.add(resourceId);
     }
   });
   Object.keys(currErrorMap).forEach(resourceId => {
-    if (prevErrorMap[resourceId] !== currErrorMap[resourceId] && !resourceIds.has(resourceId)) {
-      resourceIds.add(resourceId);
+    if (prevErrorMap[resourceId] !== currErrorMap[resourceId] && !resourceIdSet.has(resourceId)) {
+      resourceIdSet.add(resourceId);
     }
   });
 
-  return Array.from(resourceIds);
+  const resourceIds = Array.from(resourceIdSet);
+  const errorDiffMap = {};
+
+  resourceIds.forEach(resourceId => {
+    errorDiffMap[resourceId] = currErrorMap[resourceId] - (prevErrorMap[resourceId] || 0);
+  });
+
+  return errorDiffMap;
 };
 
