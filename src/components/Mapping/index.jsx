@@ -24,52 +24,11 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '100%',
     flex: '1 1 0',
   },
-  assistantContainer: {
-    flex: '1 1 0',
-    width: '0px',
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-  },
-  header: {
-    display: 'flex',
-    width: '100%',
-    marginBottom: theme.spacing(2),
-    alignItems: 'center',
-    padding: theme.spacing(0, 0, 0, 1),
-  },
-  rowContainer: {
-    display: 'block',
-    padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
-  childHeader: {
-    textAlign: 'center',
-    width: '46%',
-    '& > div': {
-      width: '100%',
-    },
-  },
   mappingsBody: {
     height: 'calc(100% - 54px)',
     overflow: 'auto',
     marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
-  },
-  refreshButton: {
-    marginLeft: theme.spacing(1),
-    marginRight: 0,
-  },
-  spinner: {
-    marginLeft: 5,
-    width: 50,
-    height: 50,
-  },
-  topHeading: {
-    fontFamily: 'Roboto500',
   },
 }));
 const Mapping = props => {

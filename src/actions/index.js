@@ -1302,13 +1302,8 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ flowId,
-    resourceId,
-    subRecordMappingId,
-  }) =>
-    action(actionTypes.MAPPING.INIT, {flowId,
-      resourceId,
-      subRecordMappingId}),
+  init: ({ flowId, resourceId, subRecordMappingId}) =>
+    action(actionTypes.MAPPING.INIT, {flowId, resourceId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
@@ -1320,10 +1315,7 @@ const mapping = {
   setVisibility: value =>
     action(actionTypes.MAPPING.SET_VISIBILITY, { value }),
   patchIncompleteGenerates: (key, value) =>
-    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
-      key,
-      value,
-    }),
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
   save: context => action(actionTypes.MAPPING.SAVE, { context }),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
@@ -1338,9 +1330,7 @@ const mapping = {
   updateLastFieldTouched: key => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
-  shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, {
-    key, shiftIndex,
-  }),
+  shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
 };
 
 const searchCriteria = {

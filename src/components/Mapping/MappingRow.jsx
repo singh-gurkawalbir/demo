@@ -16,11 +16,6 @@ import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
 
 const useStyles = makeStyles(theme => ({
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
   childHeader: {
     width: '46%',
     '& > div': {
@@ -76,9 +71,6 @@ const useStyles = makeStyles(theme => ({
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: 38,
-  },
-  topHeading: {
-    fontFamily: 'Roboto500',
   },
 }));
 const emptyObject = {};

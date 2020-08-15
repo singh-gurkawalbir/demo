@@ -155,6 +155,34 @@ export default function MappingSettings({
       dispatch(actions.mapping.updateLookup(lookupsTmp));
     }
   }, [dispatch, editorId, flowId, integrationId, isCategoryMapping, lookups]);
+  const patchCategoryMappingSettings = useCallback(settings => {
+    dispatch(
+      actions.integrationApp.settings.categoryMappings.patchSettings(
+        integrationId,
+        flowId,
+        editorId,
+        mappingIndex,
+        settings
+      )
+    );
+  }, [dispatch, editorId, flowId, integrationId, mappingIndex]);
+  const patchMappingSettings = useCallback(settings => {
+    dispatch(actions.mapping.patchSettings(mappingKey, settings));
+  }, [dispatch, mappingKey]);
+  const handleLookupUpdate = useCallback((oldLookup, newLookup, conditionalLookup) => {
+    const lookupObj = [];
+
+    if (newLookup) {
+      lookupObj.push({ isDelete: false, obj: newLookup });
+    } else if (oldLookup) {
+      // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
+      lookupObj.push({ isDelete: true, obj: oldLookup });
+    }
+    if (conditionalLookup) {
+      lookupObj.push({ isDelete: false, obj: conditionalLookup });
+    }
+    updateLookup(lookupObj);
+  }, [updateLookup]);
   const handleSubmit = useCallback(
     formVal => {
       const oldLookupValue = lookupName && lookups.find(lookup => lookup.name === lookupName);
@@ -176,39 +204,15 @@ export default function MappingSettings({
 
         return;
       }
-      const lookupObj = [];
-
-      if (updatedLookup) {
-        const isDelete = false;
-
-        lookupObj.push({ isDelete, obj: updatedLookup });
-      } else if (oldLookupValue) {
-        // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
-        const isDelete = true;
-
-        lookupObj.push({ isDelete, obj: oldLookupValue });
-      }
-      if (conditionalLookup) {
-        lookupObj.push({ isDelete: false, obj: conditionalLookup });
-      }
-      updateLookup(lookupObj);
+      handleLookupUpdate(oldLookupValue, updatedLookup, conditionalLookup);
       if (isCategoryMapping) {
-        dispatch(
-          actions.integrationApp.settings.categoryMappings.patchSettings(
-            integrationId,
-            flowId,
-            editorId,
-            mappingIndex,
-            settings
-          )
-        );
+        patchCategoryMappingSettings(settings);
       } else {
-        dispatch(actions.mapping.patchSettings(mappingKey, settings));
+        patchMappingSettings(settings);
       }
-
       onClose();
     },
-    [dispatch, editorId, enquesnackbar, extract, flowId, generate, integrationId, isCategoryMapping, lookupName, lookups, mappingIndex, mappingKey, onClose, updateLookup]
+    [enquesnackbar, extract, generate, handleLookupUpdate, isCategoryMapping, lookupName, lookups, onClose, patchCategoryMappingSettings, patchMappingSettings]
   );
 
   const showCustomFormValidations = useCallback(() => {

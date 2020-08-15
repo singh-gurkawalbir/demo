@@ -5,7 +5,7 @@ import MappingRow from './MappingRow';
 import actions from '../../actions';
 
 const emptyObject = {};
-export default function DragContainer({mappings, onDrop, ...props }) {
+export default function DragContainer({ mappings, onDrop, ...props }) {
   const dispatch = useDispatch();
   const [mappingState, setMappingState] = useState(mappings);
   const handleDrop = useCallback(
