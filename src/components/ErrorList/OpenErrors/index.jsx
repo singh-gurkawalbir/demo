@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers';
 import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
@@ -12,6 +9,7 @@ import ErrorActions from '../components/ErrorActions';
 import Spinner from '../../Spinner';
 import ErrorDetailsDrawer from './ErrorDetailsDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
+import useErrorTableConfig from '../ErrorDetails/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -31,110 +29,25 @@ const defaultFilter = {
 };
 
 export default function OpenErrors({ flowId, resourceId, show }) {
-  const dispatch = useDispatch();
   const classes = useStyles();
   const filterKey = `openErrors-${flowId}-${resourceId}`;
-  const errorFilter = useSelector(
-    state => selectors.filter(state, filterKey) || defaultFilter
-  );
+  const options = useMemo(
+    () => ({ defaultFilter, show, filterKey }),
+    [filterKey, show]);
   const {
-    status,
-    errors: openErrors = [],
-    nextPageURL,
-    outdated = false,
-    updated = false,
-  } = useSelector(state =>
-    selectors.resourceErrors(state, {
-      flowId,
-      resourceId,
-      options: { ...errorFilter },
-    })
-  );
-  const isAnyActionInProgress = useSelector(state =>
-    selectors.isAnyErrorActionInProgress(state, {
-      flowId,
-      resourceId,
-    })
-  );
-  const isFreshDataLoad = !!((!status || status === 'requested') && !nextPageURL);
-  const actionProps = useMemo(
-    () => ({
-      filterKey,
-      defaultFilter,
-      resourceId,
-      flowId,
-      actionInProgress: isAnyActionInProgress,
-    }),
-    [filterKey, flowId, isAnyActionInProgress, resourceId]
-  );
-  const requestOpenErrors = useCallback(
-    loadMore =>
-      dispatch(
-        actions.errorManager.flowErrorDetails.request({
-          flowId,
-          resourceId,
-          loadMore,
-        })
-      ),
-    [dispatch, flowId, resourceId]
-  );
-  const fetchMoreData = useCallback(() => requestOpenErrors(true), [
-    requestOpenErrors,
-  ]);
-  const paginationOptions = useMemo(
-    () => ({
-      loadMoreHandler: fetchMoreData,
-      hasMore: !!nextPageURL,
-      loading: status === 'requested',
-    }),
-    [fetchMoreData, nextPageURL, status]
-  );
-
-  useEffect(() => {
-    if (show) {
-      if (!status) {
-        requestOpenErrors();
-      }
-
-      if (
-        status === 'received' &&
-        !openErrors.length &&
-        outdated &&
-        nextPageURL
-      ) {
-        fetchMoreData();
-      }
-    }
-  }, [
-    dispatch,
-    fetchMoreData,
-    flowId,
-    nextPageURL,
-    openErrors.length,
-    outdated,
-    requestOpenErrors,
-    resourceId,
-    show,
-    status,
-  ]);
-
-  useEffect(
-    () => () => {
-      dispatch(
-        actions.errorManager.flowErrorDetails.clear({
-          flowId,
-          resourceId,
-        })
-      );
-    },
-    [dispatch, flowId, resourceId]
-  );
+    errors: openErrors,
+    fetchErrors,
+    isFreshDataLoad,
+    updated,
+    paginationOptions,
+    actionProps,
+  } = useErrorTableConfig(flowId, resourceId, options);
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
       {
         !isFreshDataLoad &&
-        <RefreshCard onRefresh={requestOpenErrors} disabled={!updated} />
+        <RefreshCard onRefresh={fetchErrors} disabled={!updated} />
       }
       {
         !!openErrors.length &&
