@@ -38,3 +38,33 @@ export const formatErrorDetails = error => {
 
   return content;
 };
+
+export const getErrorMapWithTotal = (errorList = [], resourceId) => {
+  const errorMap = {};
+  let totalCount = 0;
+
+  errorList.forEach(error => {
+    errorMap[error[resourceId]] = error.numError;
+    totalCount += error.numError;
+  });
+
+  return {data: errorMap, total: totalCount};
+};
+
+export const getResourceIdsOfUpdatedErrors = (prevErrorMap = {}, currErrorMap = {}) => {
+  const resourceIds = new Set();
+
+  Object.keys(prevErrorMap).forEach(resourceId => {
+    if (prevErrorMap[resourceId] !== currErrorMap[resourceId]) {
+      resourceIds.add(resourceId);
+    }
+  });
+  Object.keys(currErrorMap).forEach(resourceId => {
+    if (prevErrorMap[resourceId] !== currErrorMap[resourceId] && !resourceIds.has(resourceId)) {
+      resourceIds.add(resourceId);
+    }
+  });
+
+  return Array.from(resourceIds);
+};
+

@@ -1712,6 +1712,11 @@ const errorManager = {
         resourceId,
         isResolved,
       }),
+    notifyUpdate: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
+        flowId,
+        resourceId,
+      }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

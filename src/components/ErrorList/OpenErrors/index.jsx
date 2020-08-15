@@ -42,6 +42,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
     errors: openErrors = [],
     nextPageURL,
     outdated = false,
+    updated = false,
   } = useSelector(state =>
     selectors.resourceErrors(state, {
       flowId,
@@ -55,7 +56,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
       resourceId,
     })
   );
-  const isFreshDataLoad = (!status || status === 'requested') && !nextPageURL;
+  const isFreshDataLoad = !!((!status || status === 'requested') && !nextPageURL);
   const actionProps = useMemo(
     () => ({
       filterKey,
@@ -131,10 +132,14 @@ export default function OpenErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      {!isFreshDataLoad ? <RefreshCard onRefresh={requestOpenErrors} /> : null}
-      {openErrors.length ? (
+      {
+        !isFreshDataLoad &&
+        <RefreshCard onRefresh={requestOpenErrors} disabled={!updated} />
+      }
+      {
+        !!openErrors.length &&
         <ErrorActions flowId={flowId} resourceId={resourceId} />
-      ) : null}
+      }
       <div className={classes.search}>
         <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
       </div>

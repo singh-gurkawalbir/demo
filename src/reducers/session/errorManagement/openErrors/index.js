@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import { getErrorMapWithTotal } from '../../../../utils/errorManagement';
 
 const defaultObject = {};
 
@@ -22,17 +23,11 @@ export default (state = {}, action) => {
         break;
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED: {
         const flowErrors = (openErrors && openErrors.flowErrors) || [];
+        const { data, total} = getErrorMapWithTotal(flowErrors, '_expOrImpId');
 
         draft[flowId].status = 'received';
-        const errorMap = {};
-        let totalCount = 0;
-
-        flowErrors.forEach(({ _expOrImpId, numError }) => {
-          errorMap[_expOrImpId] = numError;
-          totalCount += numError;
-        });
-        draft[flowId].data = errorMap;
-        draft[flowId].total = totalCount;
+        draft[flowId].data = data;
+        draft[flowId].total = total;
         break;
       }
 
@@ -42,16 +37,11 @@ export default (state = {}, action) => {
         };
         break;
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED: {
-        draft[integrationId].status = 'received';
-        const errorMap = {};
-        let totalCount = 0;
+        const { data, total} = getErrorMapWithTotal(integrationErrors, '_flowId');
 
-        integrationErrors.forEach(({ _flowId, numError }) => {
-          errorMap[_flowId] = numError;
-          totalCount += numError;
-        });
-        draft[integrationId].data = errorMap;
-        draft[integrationId].total = totalCount;
+        draft[integrationId].status = 'received';
+        draft[integrationId].data = data;
+        draft[integrationId].total = total;
         break;
       }
 

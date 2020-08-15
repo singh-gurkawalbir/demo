@@ -23,16 +23,21 @@ export default (state = {}, action) => {
 
     switch (type) {
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST:
-        if (!draft[flowId]) draft[flowId] = {};
-
-        if (!draft[flowId][resourceId]) draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
-        draft[flowId][resourceId][errorType].status = 'requested';
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        if (!draft[flowId][resourceId]) {
+          draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
+        }
+        // TODO @Raghu: remove this outdated prop - used to load next set of errors automatically
+        // when user selects all and retries. Not a good way to handle. Refer - @components/OpenErrors
         delete draft[flowId][resourceId][errorType].outdated;
-
         if (!loadMore) {
           delete draft[flowId][resourceId][errorType].nextPageURL;
+          delete draft[flowId][resourceId][errorType].updated;
         }
 
+        draft[flowId][resourceId][errorType].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED: {
         const errors =
@@ -119,6 +124,14 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE:
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
+        // Updates all available stages for error types 'updated' to true
+        draft[flowId][resourceId].open.updated = true;
+        draft[flowId][resourceId].resolved.updated = true;
+        break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         draft[flowId][resourceId][errorType] = {};
         draft[flowId][resourceId].actions = {};

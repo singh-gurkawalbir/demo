@@ -19,14 +19,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function RefreshCard(props) {
   const classes = useStyles();
-  const { onRefresh } = props;
+  const { onRefresh, disabled } = props;
   const handleClick = useCallback(() => {
     if (onRefresh) onRefresh();
   }, [onRefresh]);
 
   return (
     <div className={classes.card}>
-      <IconTextButton onClick={handleClick} className={classes.refresh}>
+      <IconTextButton onClick={handleClick} className={classes.refresh} disabled={disabled}>
         <Icon /> Refresh errors
       </IconTextButton>
     </div>
