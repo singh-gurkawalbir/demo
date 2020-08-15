@@ -40,17 +40,7 @@ export default function HttpMappingAssistant({ editorId, data: dataInput, rule }
       );
     }
     setInitTriggered(true);
-  }, [
-    data,
-    dataInput,
-    dispatch,
-    editorId,
-    initTriggered,
-    props.data,
-    props.rule,
-    props.strict,
-    rule,
-  ]);
+  }, [data, dataInput, dispatch, editorId, initTriggered, rule]);
 
   useEffect(() => {
     if (data && dataInput && data !== dataInput) {
