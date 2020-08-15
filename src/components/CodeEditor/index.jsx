@@ -1,4 +1,6 @@
 import loadable from '../../utils/loadable';
+import retry from '../../utils/retry';
 
-const CodeEditor = loadable(() => import(/* webpackChunkName: 'CodeEditor' */ './editor'));
+const CodeEditor = loadable(() => retry(() => import(/* webpackChunkName: 'CodeEditor' */ './editor')));
+
 export default CodeEditor;

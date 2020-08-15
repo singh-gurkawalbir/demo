@@ -6,6 +6,7 @@ import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
 import getExistingResourcePagePath from './resource';
 import getRoutePath from './routePaths';
+import retry from './retry';
 
 const uiRoutePathPrefix = '';
 
@@ -196,4 +197,86 @@ describe('getRequestOptions util method', () => {
       expect(getRequestOptions(action, options)).toEqual(expected);
     }
   );
+});
+
+describe('retry util', () => {
+  test('should retry 5 times and fail', () => {
+    let c = 0;
+
+    return retry(() => {
+      c += 1;
+
+      return Promise.reject(new Error('fail'));
+    }).then(() => {
+      // should not reach here
+      throw new Error('unreachable');
+    }).catch(ex => {
+      expect(c).toEqual(3);
+      expect(ex.message).toEqual('fail');
+    });
+  });
+
+  test('should succeed without retrying', () => {
+    let c = 0;
+
+    return retry(() => {
+      c += 1;
+
+      return Promise.resolve(42);
+    }).then(v => {
+      expect(c).toEqual(1);
+      expect(v).toEqual(42);
+    }).catch(() => {
+      // should not reach here
+      throw new Error('unreachable');
+    });
+  });
+
+  test('should retry and then succeed', () => {
+    let c = 0;
+
+    return retry(() => {
+      c += 1;
+
+      return c > 2 ? Promise.resolve(42) : Promise.reject(new Error('fail'));
+    }).then(v => {
+      expect(c).toEqual(3);
+      expect(v).toEqual(42);
+    }).catch(() => {
+      // should not reach here
+      throw new Error('unreachable');
+    });
+  });
+
+  test('should work with negative retries', () => {
+    let c = 0;
+
+    return retry(() => {
+      c += 1;
+
+      return Promise.reject(new Error('fail'));
+    }, -1, 0).then(() => {
+      // should not reach here
+      throw new Error('unreachable');
+    }).catch(ex => {
+      expect(c).toEqual(1);
+      expect(ex.message).toEqual('fail');
+    });
+  });
+
+  test('should work with NaN retries', () => {
+    let c = 0;
+
+    return retry(() => {
+      c += 1;
+
+      return Promise.reject(new Error('fail'));
+    }, 'abc').then(() => {
+      // should not reach here
+      throw new Error('unreachable');
+    }).catch(ex => {
+      expect(c).toEqual(1);
+      expect(ex.message).toEqual('fail');
+    });
+  });
 });

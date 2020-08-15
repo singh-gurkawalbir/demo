@@ -13,18 +13,19 @@ import KnowledgeBaseIcon from '../../components/icons/KnowledgeBaseIcon';
 import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
 import Tabs from '../Integration/common/Tabs';
+import retry from '../../utils/retry';
 
 const Profile = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile')
+  retry(() => import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile'))
 );
 const Subscription = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription')
+  retry(() => import(/* webpackChunkName: 'MyAccount.Users' */ './Subscription'))
 );
 const Audit = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit')
+  retry(() => import(/* webpackChunkName: 'MyAccount.Audit' */ './Audit'))
 );
 const Transfers = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index')
+  retry(() => import(/* webpackChunkName: 'MyAccount.Transfers' */ './Transfers/index'))
 );
 const tabs = [
   {
