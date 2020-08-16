@@ -49,21 +49,23 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
         !!resolvedErrors.length &&
         <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
       }
-      <div className={classes.search}>
-        <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
-      </div>
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
-        <ErrorTable
-          paginationOptions={paginationOptions}
-          metadata={metadata}
-          data={resolvedErrors}
-          actionProps={actionProps}
-          emptyRowsLabel="No Resolved errors"
+        <>
+          <div className={classes.search}>
+            <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+          </div>
+          <ErrorTable
+            paginationOptions={paginationOptions}
+            metadata={metadata}
+            data={resolvedErrors}
+            actionProps={actionProps}
+            emptyRowsLabel="No Resolved errors"
         />
+        </>
       )}
     </div>
   );

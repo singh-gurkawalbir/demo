@@ -53,21 +53,23 @@ export default function OpenErrors({ flowId, resourceId, show }) {
         !!openErrors.length &&
         <ErrorActions flowId={flowId} resourceId={resourceId} />
       }
-      <div className={classes.search}>
-        <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
-      </div>
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
-        <ErrorTable
-          paginationOptions={paginationOptions}
-          metadata={metadata}
-          data={openErrors}
-          actionProps={actionProps}
-          emptyRowsLabel="No Open errors"
+        <>
+          <div className={classes.search}>
+            <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+          </div>
+          <ErrorTable
+            paginationOptions={paginationOptions}
+            metadata={metadata}
+            data={openErrors}
+            actionProps={actionProps}
+            emptyRowsLabel="No Open errors"
         />
+        </>
       )}
       <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} />
     </div>
