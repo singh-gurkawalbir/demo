@@ -22,7 +22,7 @@ export default {
     },
     {
       heading: 'Connector',
-      value: r => <ConnectorName r={r} />,
+      value: r => <ConnectorName resource={r} />,
     },
     {
       heading: 'API',
