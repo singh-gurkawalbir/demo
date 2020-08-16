@@ -40,6 +40,28 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange }) => {
+  if (!retryId || recordMode === 'view') {
+    return (
+      <ViewErrorDetails
+        errorId={errorId}
+        flowId={flowId}
+        resourceId={resourceId}
+      />
+    );
+  }
+
+  // Incase of recordMode = 'edit' show edit retry data content
+  return (
+    <EditRetryData
+      retryId={retryId}
+      onChange={onChange}
+      flowId={flowId}
+      resourceId={resourceId}
+    />
+  );
+};
+
 export default function ErrorDetails({ flowId, resourceId, onClose }) {
   const match = useRouteMatch();
   const classes = useStyles();
@@ -65,51 +87,36 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   return (
     <div className={classes.root}>
       <div className={classes.detailsContainer}>
-        <Tabs
-          className={classes.tabHeader}
-          value={recordMode}
-          onChange={handleModeChange}
-          textColor="primary"
-          indicatorColor="primary">
-          <Tab
-            label="View error details"
-            value="view"
-            id="tab-1"
-            aria-controls="tab-1"
-            />
-          {retryId && (
-            <Tab
-              label="Edit retry data"
-              value="edit"
-              id="tab-2"
-              aria-controls="tab-2"
-          />
-          )}
-        </Tabs>
-        <div className={classes.tabContent}>
-          {!retryId && (
-            <ViewErrorDetails
-              errorId={errorId}
-              flowId={flowId}
-              resourceId={resourceId}
-            />
-          )}
+        {retryId ? (
+          <Tabs
+            className={classes.tabHeader}
+            value={recordMode}
+            onChange={handleModeChange}
+            textColor="primary"
+            indicatorColor="primary">
+            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
+            <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
+          </Tabs>
+        ) : (
+          <Tabs
+            className={classes.tabHeader}
+            value={recordMode}
+            onChange={handleModeChange}
+            textColor="primary"
+            indicatorColor="primary">
 
-          {retryId &&
-            (recordMode === 'view' ? (
-              <ViewErrorDetails
-                errorId={errorId}
-                flowId={flowId}
-                resourceId={resourceId}
-              />
-            ) : (
-              <EditRetryData
-                retryId={retryId}
-                onChange={onRetryDataChange}
-                flowId={flowId}
-                resourceId={resourceId}
-              />
-            ))}
+            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
+          </Tabs>
+        )}
+        <div className={classes.tabContent}>
+          <TabContent
+            flowId={flowId}
+            resourceId={resourceId}
+            retryId={retryId}
+            errorId={errorId}
+            onChange={onRetryDataChange}
+            recordMode={recordMode}
+          />
         </div>
       </div>
       <div className={classes.actions}>
