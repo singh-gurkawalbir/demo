@@ -50,33 +50,44 @@ export default function Actions({
 
     if (onClose) onClose();
   }, [dispatch, errorId, flowId, onClose, resourceId]);
-  const retry = useCallback(() => {
+
+  const handleSaveAndRetry = useCallback(() => {
     dispatch(
-      actions.errorManager.flowErrorDetails.retry({
+      actions.errorManager.flowErrorDetails.saveAndRetry({
         flowId,
         resourceId,
-        retryIds: [retryId],
+        retryId,
+        retryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId]);
+  }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
 
-  return (
-    <div className={classes.action}>
-      {retryId && (
-        <Button variant="outlined" color="primary" onClick={retry}>
-          Retry
+  if (retryId) {
+    return (
+      <div className={classes.action}>
+        <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>
+          Save &amp; retry
         </Button>
-      )}
-      <Button variant="outlined" color="secondary" onClick={resolve}>
-        Mark resolved
-      </Button>
-      {retryId && (
+        <Button variant="outlined" color="secondary" onClick={resolve}>
+          Mark resolved
+        </Button>
         <Button variant="outlined" color="secondary" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
-      )}
+        <Button variant="text" color="primary" onClick={onClose}>
+          Cancel
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.action}>
+      <Button variant="outlined" color="primary" onClick={resolve}>
+        Mark resolved
+      </Button>
       <Button variant="text" color="primary" onClick={onClose}>
         Cancel
       </Button>
