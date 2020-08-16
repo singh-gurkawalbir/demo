@@ -10,6 +10,8 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
     padding: '12px 0px',
+    display: 'flex',
+    justifyContent: 'space-between',
     '& > div > button': {
       marginLeft: theme.spacing(1),
       marginRight: theme.spacing(1),

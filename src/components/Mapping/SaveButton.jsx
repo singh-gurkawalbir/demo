@@ -54,7 +54,7 @@ const MappingSaveButton = ({
     disableSaveOnClick,
     setDisableSaveOnClick,
   });
-  const handleButtonClick = () => {
+  const handleButtonClick = useCallback(() => {
     if (validationErrMsg) {
       enquesnackbar({
         message: validationErrMsg,
@@ -65,7 +65,7 @@ const MappingSaveButton = ({
     }
 
     handleSubmitForm();
-  };
+  }, [enquesnackbar, handleSubmitForm, validationErrMsg]);
 
   if (showOnlyOnChanges && !mappingsChanged) {
     return null;
