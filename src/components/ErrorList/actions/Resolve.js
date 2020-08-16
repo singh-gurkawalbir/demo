@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
+import CheckmarkIcon from '../../icons/CheckmarkIcon';
 
 export default {
   label: 'Resolve',
+  icon: CheckmarkIcon,
   component: function Resolve({ rowData, flowId, resourceId }) {
     const dispatch = useDispatch();
     const handleClick = useCallback(() => {

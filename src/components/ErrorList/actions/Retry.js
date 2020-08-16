@@ -2,9 +2,11 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import useConfirmDialog from '../../ConfirmDialog';
+import RefreshIcon from '../../icons/RefreshIcon';
 
 export default {
   label: 'Retry',
+  icon: RefreshIcon,
   component: function Retry({ flowId, resourceId, rowData, isResolved }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
