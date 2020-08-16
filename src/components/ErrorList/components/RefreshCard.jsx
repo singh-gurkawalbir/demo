@@ -9,8 +9,6 @@ const useStyles = makeStyles(theme => ({
     top: -71,
     textAlign: 'center',
     left: 500,
-    width: 300,
-    background: theme.palette.secondary.lightest,
   },
   refresh: {
     color: theme.palette.primary.main,
@@ -24,9 +22,21 @@ export default function RefreshCard(props) {
     if (onRefresh) onRefresh();
   }, [onRefresh]);
 
+  if (disabled) {
+    return (
+      <div
+        className={classes.card}
+        title="New errors will take up to 30 seconds to display" >
+        <IconTextButton onClick={handleClick} className={classes.refresh} disabled >
+          <Icon /> Refresh errors
+        </IconTextButton>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.card}>
-      <IconTextButton onClick={handleClick} className={classes.refresh} disabled={disabled}>
+      <IconTextButton onClick={handleClick} className={classes.refresh}>
         <Icon /> Refresh errors
       </IconTextButton>
     </div>
