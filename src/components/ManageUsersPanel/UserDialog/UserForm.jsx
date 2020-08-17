@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import {
@@ -39,7 +39,7 @@ export default function UserForm({
     selectors.makeResourceListSelector,
     integrationsFilterConfig
   ).resources;
-  const users = useSelector(state => selectors.orgUsers(state));
+  const users = useSelector(state => selectors.usersList(state));
   const isEditMode = !!id;
   const data = isEditMode ? users.find(u => u._id === id) : undefined;
   let integrationsToManage = [];

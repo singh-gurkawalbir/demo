@@ -3,7 +3,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import getRequestOptions from '../../utils/requestOptions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { JOB_STATUS, JOB_TYPES, EMPTY_RAW_DATA } from '../../utils/constants';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
@@ -64,7 +64,7 @@ export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
         const dataLoaderFileType = fileTypeToApplicationTypeMap[fileType] || fileType;
         // Incase of JSON, we need to stringify the content to pass while uploading
         const rawDataKey = yield call(uploadRawData, {
-          file: fileType === 'json' ? JSON.stringify(fileContent) : fileContent,
+          file: fileType.includes('json') ? JSON.stringify(fileContent) : fileContent,
           fileName: fileName || `file.${fileType}`,
           fileType: dataLoaderFileType,
         });

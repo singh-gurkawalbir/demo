@@ -1,13 +1,13 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 import { hashCode } from '../../../utils/string';
 
 function DynaExportSelect(props) {
-  const { resource, resourceContext } = props;
+  const { resourceContext } = props;
   const resourceContextType = resourceContext && resourceContext.resourceType;
   const resourceContextId = resourceContext && resourceContext.resourceId;
   const resourceConnId = useSelector(state => {
@@ -15,12 +15,12 @@ function DynaExportSelect(props) {
 
     return t && t._connectionId;
   });
-  const virtual = resource && resource.virtual;
+  const { virtual } = props.resource;
   const kind = 'virtual';
-  const fieldRes = {
+  const fieldRes = useMemo(() => ({
     _connectionId: virtual._connectionId || resourceConnId,
     ...virtual,
-  };
+  }), [resourceConnId, virtual]);
   const identifier = String(hashCode(fieldRes, true));
   const { status, data, errorMessage } = useSelector(state =>
     selectors.exportData(state, identifier)

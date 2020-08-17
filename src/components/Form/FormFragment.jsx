@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import getRenderer from '../DynaForm/renderer';
 
 export const FieldComponent = props => {

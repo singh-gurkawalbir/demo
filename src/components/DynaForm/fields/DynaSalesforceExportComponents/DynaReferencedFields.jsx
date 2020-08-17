@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import EditIcon from '../../../icons/EditIcon';
 import DynaText from '../DynaText';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -35,8 +35,7 @@ const FirstLevelModal = props => {
     id,
   } = props;
   const { data: options } = useSelector(state =>
-    selectors.optionsFromMetadata({
-      state,
+    selectors.optionsFromMetadata(state, {
       connectionId,
       commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${selectedSObject}`,
       filterKey: 'salesforce-sObjects-referenceFields',

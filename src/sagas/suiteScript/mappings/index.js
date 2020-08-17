@@ -3,7 +3,7 @@ import { takeEvery, put, select, call, takeLatest } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { commitStagedChanges } from '../resources';
 import generateFieldAndListMappings, { updateMappingConfigs } from '../../../utils/suiteScript/mapping';
 
@@ -27,13 +27,14 @@ export function* refreshGenerates({ isInit = false }) {
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const { import: importRes } = flow;
   const {type: importType, _connectionId} = importRes;
 
   const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
     // getting all childRelationshipFields of parent sObject
@@ -44,11 +45,13 @@ export function* refreshGenerates({ isInit = false }) {
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
     let sObjectList = [sObjectType];
+
     // check for each mapping sublist if it relates to childSObject
     generateFields.forEach(({id}) => {
       if (id.indexOf('[*].') !== -1) {
         const childObjectName = id.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === childObjectName);
+
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
@@ -59,6 +62,7 @@ export function* refreshGenerates({ isInit = false }) {
       if (generate && generate.indexOf('[*].') !== -1) {
         const subListName = generate.split('[*].')[0];
         const childRelationshipObject = childRelationshipFields.find(field => field.value === subListName);
+
         if (sObjectList.indexOf(childRelationshipObject.childSObject) === -1) {
           sObjectList.push(childRelationshipObject.childSObject);
         }
@@ -75,7 +79,7 @@ export function* refreshGenerates({ isInit = false }) {
         flowId,
         options: {
           sObjects: sObjectList,
-        }
+        },
       }
     ));
     // in case of salesforce import, fetch all child sObject reference
@@ -83,8 +87,10 @@ export function* refreshGenerates({ isInit = false }) {
     const opts = {
       refreshCache: !isInit,
     };
+
     if (subRecordMappingId) {
       const netsuiteSubrecordObj = yield select(selectors.suiteScriptNetsuiteMappingSubRecord, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+
       opts.recordType = netsuiteSubrecordObj.recordType;
     }
     yield put(actions.suiteScript.importSampleData.request(
@@ -92,7 +98,7 @@ export function* refreshGenerates({ isInit = false }) {
         ssLinkedConnectionId,
         integrationId,
         flowId,
-        options: opts
+        options: opts,
       }
     )
     );
@@ -104,13 +110,14 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const {export: exportRes, import: importRes} = flow;
   const {type: importType} = importRes;
 
   let exportType;
+
   if (exportRes.netsuite && ['restlet', 'batch', 'realtime'].includes(exportRes.netsuite.type)) {
     exportType = 'netsuite';
   } else {
@@ -120,13 +127,15 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
     importType,
     exportType,
     connectionId: importRes._connectionId,
-    subRecordMappingId
+    subRecordMappingId,
   };
   let mapping;
   let lookups;
+
   if (importType === 'netsuite') {
     if (subRecordMappingId) {
       const netsuiteSubrecordObj = yield select(selectors.suiteScriptNetsuiteMappingSubRecord, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+
       options.recordType = netsuiteSubrecordObj.recordType;
       mapping = netsuiteSubrecordObj.mapping;
       lookups = netsuiteSubrecordObj.lookups;
@@ -143,6 +152,7 @@ export function* mappingInit({ ssLinkedConnectionId, integrationId, flowId, subR
   const subRecordFields = mapping?.fields?.filter(f => f.mappingId);
   // const {type: importType, mapping} = importRes;
   const generatedMappings = generateFieldAndListMappings({importType, mapping, exportRes, isGroupedSampleData: false});
+
   yield put(actions.suiteScript.mapping.initComplete(
     {
       ssLinkedConnectionId,
@@ -165,19 +175,20 @@ export function* saveMappings() {
     flowId,
     recordType,
     subRecordFields,
-    subRecordMappingId
+    subRecordMappingId,
   } = yield select(selectors.suiteScriptMappings);
   const flow = yield select(
     selectors.suiteScriptFlowDetail,
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const {export: exportConfig, import: importRes, _id: resourceId} = flow;
   const { type: importType, _connectionId } = importRes;
   const options = {};
+
   if (importType === 'salesforce') {
     const { sObjectType } = importRes.salesforce;
 
@@ -187,23 +198,27 @@ export function* saveMappings() {
         commMetaPath: `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`,
         filterKey: 'salesforce-sObjects-childReferenceTo',
       });
+
     options.childRelationships = childRelationshipFields;
   } else if (importType === 'netsuite') {
     options.recordType = recordType;
   }
   const _mappings = updateMappingConfigs({importType, mappings, exportConfig, options});
+
   // add subrecord fields
   if (subRecordFields?.length) {
     _mappings.fields = [..._mappings.fields, ...subRecordFields];
   }
   const patchSet = [];
+
   if (subRecordMappingId) {
     const {subRecordImports} = importRes?.netsuite;
     const modifiedsubRecordImports = deepClone(subRecordImports);
-    const modifyMappingForSubRecord = (subRecords) => {
+    const modifyMappingForSubRecord = subRecords => {
       if (subRecords?.length) {
         for (let i = 0; i < subRecords.length; i += 1) {
           const subRecord = subRecords[i];
+
           if (subRecord.mappingId === subRecordMappingId) {
             subRecord.mapping = _mappings;
             subRecord.lookups = lookups;
@@ -213,6 +228,7 @@ export function* saveMappings() {
         }
       }
     };
+
     modifyMappingForSubRecord(modifiedsubRecordImports);
     patchSet.push({
       op: 'replace',
@@ -235,6 +251,7 @@ export function* saveMappings() {
   }
 
   const resourceType = 'imports';
+
   yield put(
     actions.suiteScript.resource.patchStaged(
       ssLinkedConnectionId,
@@ -251,11 +268,13 @@ export function* saveMappings() {
     ssLinkedConnectionId,
     integrationId,
   });
+
   if (resp && (resp.error || resp.conflict)) {
     return yield put(
       actions.suiteScript.mapping.saveFailed()
     );
   }
+
   return yield put(
     actions.suiteScript.mapping.saveComplete()
   );
@@ -274,11 +293,12 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
     {
       integrationId,
       ssLinkedConnectionId,
-      flowId
+      flowId,
     }
   );
   const { import: importRes } = flow;
   const {type: importType} = importRes;
+
   if (importType !== 'salesforce' || field !== 'generate') {
     return;
   }
@@ -288,13 +308,14 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   const {key} = mappingObj;
   const childRelationshipField =
           generateFields && generateFields.find(field => field.id === value);
+
   if (childRelationshipField && childRelationshipField.childSObject) {
     const { childSObject, relationshipName } = childRelationshipField;
 
     yield put(actions.suiteScript.mapping.patchIncompleteGenerates(
       {
         key,
-        value: relationshipName
+        value: relationshipName,
       }
     )
     );
@@ -305,7 +326,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
         flowId,
         options: {
           sObjects: [childSObject],
-        }
+        },
       }
     ));
   }
@@ -319,6 +340,7 @@ export function* checkForSFSublistExtractPatch({key, value}) {
 
   const childRelationshipField =
   flowSampleData && flowSampleData.find(field => field.value === value);
+
   if (childRelationshipField && childRelationshipField.childSObject) {
     yield put(actions.suiteScript.mapping.setSFSubListFieldName(value));
     yield put(actions.suiteScript.mapping.updateLastFieldTouched(key));
@@ -333,12 +355,14 @@ export function* updateImportSampleData() {
     ssLinkedConnectionId,
     integrationId,
     flowId,
-    subRecordMappingId
+    subRecordMappingId,
   } = yield select(selectors.suiteScriptMappings);
+
   if (!incompleteGenerates.length) return;
 
   const {data: generateFields} = yield select(selectors.suiteScriptGenerates, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId });
   const modifiedMappings = deepClone(mappings);
+
   incompleteGenerates.forEach(generateObj => {
     const {
       value: incompleteGenValue,
@@ -372,6 +396,5 @@ export const mappingSagas = [
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, checkForSFSublistExtractPatch),
-
 
 ];

@@ -20,6 +20,24 @@ export const getTemplateUrlName = applications => {
   return applications.map(appName).join('-').replace(/\./g, '');
 };
 
+export const getApplicationName = conn => {
+  const applications = applicationsList();
+  const app =
+        applications.find(a => {
+          if (conn.assistant) {
+            return a.id === conn.assistant;
+          }
+
+          if (conn.type === 'rdbms' && conn.rdbms) {
+            return a.id === conn.rdbms.type;
+          }
+
+          return a.id === conn.type;
+        }) || {};
+
+  return app.name;
+};
+
 export default {
   getDependentResources: components =>
     components.map(component => ({
@@ -79,20 +97,7 @@ export default {
       if (conn.type === 'salesforce') {
         salesforceConnFound = true;
       }
-      const applications = applicationsList();
-      const app =
-        applications.find(a => {
-          if (conn.assistant) {
-            return a.id === conn.assistant;
-          }
-
-          if (conn.type === 'rdbms' && conn.rdbms) {
-            return a.id === conn.rdbms.type;
-          }
-
-          return a.id === conn.type;
-        }) || {};
-      const connectionType = app.name;
+      const connectionType = getApplicationName(conn);
 
       installSteps.push({
         name: conn.name,
@@ -107,23 +112,23 @@ export default {
     });
     const netsuiteBundleNeeded =
       some(exportDocs || [], exp => {
-        const conn = connections.find(c => c._id === exp._connectionId);
+        const conn = connections?.find(c => c._id === exp._connectionId);
 
         return (
-          ((exp.netsuite || {}).type === 'restlet' &&
-            exp.netsuite.restlet.recordType) ||
-          (exp.type === 'distributed' && conn.type === 'netsuite')
+          ((exp?.netsuite || {}).type === 'restlet' &&
+            exp?.netsuite?.restlet?.recordType) ||
+          (exp?.type === 'distributed' && conn?.type === 'netsuite')
         );
       }) ||
       some(importDocs || [], imp => {
-        const conn = connections.find(c => c._id === imp._connectionId);
+        const conn = connections?.find(c => c._id === imp._connectionId);
 
-        return imp.distributed && conn.type === 'netsuite';
+        return imp.distributed && conn?.type === 'netsuite';
       });
     const salesforceBundleNeeded = some(exportDocs || [], exp => {
-      const conn = connections.find(c => c._id === exp._connectionId);
+      const conn = connections?.find(c => c._id === exp._connectionId);
 
-      return exp.type === 'distributed' && conn.type === 'salesforce';
+      return exp?.type === 'distributed' && conn?.type === 'salesforce';
     });
 
     if (netsuiteBundleNeeded) {

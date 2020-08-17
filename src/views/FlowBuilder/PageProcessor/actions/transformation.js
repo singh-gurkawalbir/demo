@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/TransformIcon';
-import TransformEditorDialog from '../../../../components/AFE/TransformEditor/TransformToggleEditorDialog';
+import TransformEditorDrawer from '../../../../components/AFE/TransformEditor/TransformToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
+function TransformationDrawer({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const resourceType = 'exports';
@@ -53,7 +53,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
   );
 
   return (
-    <TransformEditorDialog
+    <TransformEditorDrawer
       title="Transform record"
       helpKey="export.transform.rules"
       helpTitle="Transform Rules"
@@ -67,6 +67,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
       insertStubKey="transform"
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
+      path="lookupTransformation"
     />
   );
 }
@@ -74,7 +75,7 @@ function TransformationDialog({ flowId, resource, isViewMode, onClose }) {
 function Transformation(props) {
   const { open } = props;
 
-  return <>{open && <TransformationDialog {...props} />}</>;
+  return <>{open && <TransformationDrawer {...props} />}</>;
 }
 
 export default {

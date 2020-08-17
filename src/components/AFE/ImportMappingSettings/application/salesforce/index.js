@@ -247,25 +247,6 @@ export default {
           helpKey: 'mapping.default',
           defaultValue: value.default,
         },
-        defaultSFSelect: {
-          id: 'defaultSFSelect',
-          name: 'defaultSFSelect',
-          type: 'select',
-          label: 'Default value',
-          required: true,
-          visibleWhenAll: [
-            { field: 'standardAction', is: ['default'] },
-            { field: 'fieldMappingType', isNot: ['hardCoded'] },
-            { field: 'fieldMappingType', isNot: ['lookup'] },
-          ],
-          defaultValue: value.default,
-          helpKey: 'mapping.default',
-          options: [
-            {
-              items: selectedGenerateObj && selectedGenerateObj.options,
-            },
-          ],
-        },
         hardcodedAction: {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
@@ -344,43 +325,6 @@ export default {
           helpKey: 'mapping.hardcodedDefault',
           defaultValue: value.hardCodedValue,
         },
-        hardcodedSFSelect: {
-          id: 'hardcodedSFSelect',
-          name: 'hardcodedSFSelect',
-          type: 'select',
-          label: 'Value',
-          placeholder: '',
-          required: true,
-          visibleWhenAll: [
-            { field: 'hardcodedAction', is: ['default'] },
-            { field: 'fieldMappingType', is: ['hardCoded'] },
-          ],
-          options: [
-            {
-              items: selectedGenerateObj && selectedGenerateObj.options,
-            },
-          ],
-          helpKey: 'mapping.hardcodedDefault',
-          defaultValue: value.hardCodedValue,
-        },
-        hardcodedCheckbox: {
-          id: 'hardcodedCheckbox',
-          name: 'hardcodedCheckbox',
-          type: 'radiogroup',
-          label: 'Value',
-          fullWidth: true,
-          defaultValue: value.hardCodedValue || false,
-          options: [
-            {
-              items: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.hardcodedDefault',
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
-        },
         lookupDefault: {
           id: 'lookupDefault',
           name: 'lookupDefault',
@@ -390,24 +334,6 @@ export default {
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-          helpKey: 'mapping.lookupDefault',
-          defaultValue: lookup.default,
-        },
-        lookupSFSelect: {
-          id: 'lookupSFSelect',
-          name: 'lookupSFSelect',
-          type: 'select',
-          label: 'Default lookup value',
-          required: true,
-          visibleWhenAll: [
-            { field: 'lookupAction', is: ['default'] },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-          options: [
-            {
-              items: selectedGenerateObj && selectedGenerateObj.options,
-            },
           ],
           helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
@@ -503,14 +429,10 @@ export default {
           'expression',
           'standardAction',
           'default',
-          'defaultSFSelect',
           'hardcodedAction',
           'lookupAction',
           'hardcodedDefault',
-          'hardcodedSFSelect',
-          'hardcodedCheckbox',
           'lookupDefault',
-          'lookupSFSelect',
           'extractDateFormat',
           'extractDateTimezone',
         ],
@@ -608,68 +530,52 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (
-      selectedGenerateObj &&
-      selectedGenerateObj.type !== 'date' &&
-      selectedGenerateObj.type !== 'datetime'
-    ) {
+    if (!selectedGenerateObj || !['date', 'datetime'].includes(selectedGenerateObj.type)) {
       delete fieldMeta.fieldMap.extractDateFormat;
       delete fieldMeta.fieldMap.extractDateTimezone;
 
       fields = fields.filter(
-        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
+        el => !['extractDateFormat', 'extractDateTimezone'].includes(el)
       );
     }
 
-    if (selectedGenerateObj && selectedGenerateObj.type === 'boolean') {
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.hardcodedSFSelect;
-      delete fieldMeta.fieldMap.lookupSFSelect;
-      delete fieldMeta.fieldMap.defaultSFSelect;
-      delete fieldMeta.fieldMap.default;
-      delete fieldMeta.fieldMap.hardcodedAction;
+    if (selectedGenerateObj?.type === 'boolean') {
+      fieldMeta.fieldMap.default.type = 'radiogroup';
+      fieldMeta.fieldMap.hardcodedDefault.type = 'radiogroup';
+      fieldMeta.fieldMap.lookupDefault.type = 'radiogroup';
+      const options = [
+        {
+          items: [
+            { label: 'True', value: 'true' },
+            { label: 'False', value: 'false' },
+          ],
+        },
+      ];
 
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedDefault' &&
-          el !== 'hardcodedSFSelect' &&
-          el !== 'lookupSFSelect' &&
-          el !== 'defaultSFSelect' &&
-          el !== 'default' &&
-          el !== 'hardcodedAction'
-      );
-    } else if (selectedGenerateObj && selectedGenerateObj.type !== 'picklist') {
-      delete fieldMeta.fieldMap.hardcodedSFSelect;
-      delete fieldMeta.fieldMap.lookupSFSelect;
-      delete fieldMeta.fieldMap.defaultSFSelect;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
+      fieldMeta.fieldMap.default.options = options;
+      fieldMeta.fieldMap.hardcodedDefault.options = options;
+      fieldMeta.fieldMap.lookupDefault.options = options;
+      // show it set false to default
+    } else if (selectedGenerateObj?.type === 'picklist') {
+      fieldMeta.fieldMap.default.type = 'select';
+      fieldMeta.fieldMap.hardcodedDefault.type = 'select';
+      fieldMeta.fieldMap.lookupDefault.type = 'select';
+      const options = [
+        {
+          items: selectedGenerateObj && selectedGenerateObj.options,
+        },
+      ];
 
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedCheckbox' &&
-          el !== 'hardcodedSFSelect' &&
-          el !== 'lookupSFSelect' &&
-          el !== 'defaultSFSelect'
-      );
-    } else {
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.lookupDefault;
-      delete fieldMeta.fieldMap.default;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
-
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedCheckbox' &&
-          el !== 'hardcodedDefault' &&
-          el !== 'lookupDefault' &&
-          el !== 'default'
-      );
-    }
-
-    if (selectedGenerateObj && selectedGenerateObj.type === 'textarea') {
-      fieldMeta.fieldMap.hardcodedDefault.type = 'textarea';
-      fieldMeta.fieldMap.lookupDefault.type = 'textarea';
-      fieldMeta.fieldMap.default.type = 'textarea';
+      fieldMeta.fieldMap.default.options = options;
+      fieldMeta.fieldMap.hardcodedDefault.options = options;
+      fieldMeta.fieldMap.lookupDefault.options = options;
+    } else if (selectedGenerateObj?.type === 'textarea') {
+      fieldMeta.fieldMap.hardcodedDefault.multiline = true;
+      fieldMeta.fieldMap.hardcodedDefault.rowsMax = 5;
+      fieldMeta.fieldMap.lookupDefault.multiline = true;
+      fieldMeta.fieldMap.lookupDefault.rowsMax = 5;
+      fieldMeta.fieldMap.default.multiline = true;
+      fieldMeta.fieldMap.default.rowsMax = 5;
     }
 
     fieldMeta.layout.fields = fields;

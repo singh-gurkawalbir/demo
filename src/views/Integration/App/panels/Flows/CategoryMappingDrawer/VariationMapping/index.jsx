@@ -8,7 +8,7 @@ import {
   useLocation,
   Switch,
 } from 'react-router-dom';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import LoadResources from '../../../../../../../components/LoadResources';
 import ApplicationImg from '../../../../../../../components/icons/ApplicationImg';

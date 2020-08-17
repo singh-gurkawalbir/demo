@@ -10,7 +10,7 @@ import actions from '../../../../actions';
 import Close from '../../../icons/CloseIcon';
 import ConnectionStatusPanel from '../../ConnectionStatusPanel';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {

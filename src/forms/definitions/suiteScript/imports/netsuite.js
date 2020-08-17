@@ -3,6 +3,7 @@ import { isJsonString } from '../../../../utils/string';
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
+
     if (isJsonString(newValues['/import/netsuite/internalIdLookup/expression'])) {
       newValues['/import/netsuite/internalIdLookup/expression'] = JSON.parse(newValues['/import/netsuite/internalIdLookup/expression']);
     }
@@ -14,6 +15,7 @@ export default {
       newValues['/import/netsuite/internalIdLookup'] = {};
       delete newValues['/import/netsuite/internalIdLookup/expression'];
     }
+
     return { ...newValues };
   },
   optionsHandler: (fieldId, fields) => {
@@ -31,7 +33,7 @@ export default {
       };
     }
 
-    if (fieldId === 'import.netsuite.subrecords') {
+    if (fieldId === 'import.netsuite.subRecordImports') {
       const recordTypeField = fields.find(
         field => field.id === 'import.netsuite.recordType'
       );
@@ -46,6 +48,10 @@ export default {
   fieldMap: {
     'import.netsuite.recordType': {
       fieldId: 'import.netsuite.recordType',
+    },
+    'import.netsuite.subRecordImports': {
+      fieldId: 'import.netsuite.subRecordImports',
+      refreshOptionsOnChangesTo: ['import.netsuite.recordType'],
     },
     'import.netsuite.operation': { fieldId: 'import.netsuite.operation' },
     'import.netsuite.ignoreExisting': {fieldId: 'import.netsuite.ignoreExisting'},
@@ -65,12 +71,13 @@ export default {
             label: 'How would you like the records imported?',
             fields: [
               'import.netsuite.recordType',
+              'import.netsuite.subRecordImports',
               'import.netsuite.operation',
               'import.netsuite.ignoreExisting',
               'import.netsuite.ignoreMissing',
               'import.netsuite.internalIdLookup.expression',
             ],
-          }
+          },
         ],
       },
     ],

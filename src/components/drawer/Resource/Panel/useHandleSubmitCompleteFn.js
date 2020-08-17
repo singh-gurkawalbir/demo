@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   generatePath,
   useHistory, useLocation,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { multiStepSaveResourceTypes } from '../../../../utils/resource';
 import getRoutePath from '../../../../utils/routePaths';
 import useDrawerEditUrl from './useDrawerEditUrl';
@@ -92,6 +92,7 @@ const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
       onClose();
     }
   }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceType, skipFormClose, stagedProcessor.patch]);
+
   return handleSubmitComplete;
 };
 export default useHandleSubmitCompleteFn;

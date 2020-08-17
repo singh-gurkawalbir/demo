@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { Button, Drawer, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
@@ -48,9 +48,10 @@ const metadata = {
       label: 'Cancel',
       component: function CancelQueuedJobAction({ resource }) {
         const dispatch = useDispatch();
+        const resourceId = resource?._id;
         const handleCancelJob = useCallback(() => {
-          dispatch(actions.connection.cancelQueuedJob(resource._id));
-        }, [dispatch, resource._id]);
+          dispatch(actions.connection.cancelQueuedJob(resourceId));
+        }, [dispatch, resourceId]);
 
         return (
           <Button onClick={handleCancelJob}>
@@ -111,6 +112,7 @@ function QueuedJobs({ parentUrl }) {
   const queueSize = useSelector(
     state => {
       const connection = selectors.resource(state, 'connections', connectionId);
+
       return connection ? connection.queueSize : 0;
     }
   );

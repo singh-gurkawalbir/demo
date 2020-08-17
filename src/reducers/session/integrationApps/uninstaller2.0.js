@@ -74,11 +74,13 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function uninstall2Data(state, id) {
+export const selectors = {};
+
+selectors.uninstall2Data = (state, id) => {
   if (!state || !state[id]) {
     return emptyObject;
   }
 
   return state[id];
-}
+};
 // #endregion

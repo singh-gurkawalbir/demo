@@ -161,6 +161,7 @@ export default function AppBlock({
 
   const action = useMemo(() => {
     const {import: importRes} = resource;
+
     if (blockType === 'import' && importRes.mapping) {
       return (
         <>

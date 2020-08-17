@@ -1,6 +1,7 @@
 export default {
   preSave: formValues => {
     const newValues = formValues;
+
     newValues['/type'] = newValues['/ftp/useSFTP'] ? 'sftp' : 'ftp';
 
     return newValues;

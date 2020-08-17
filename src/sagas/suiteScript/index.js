@@ -9,7 +9,6 @@ import { flowSampleDataSagas } from './sampleData/flow';
 
 import {mappingSagas} from './mappings';
 
-// eslint-disable-next-line import/prefer-default-export
 export const suiteScriptSagas = [
   ...resourceFormSagas,
   ...resourceSagas,
@@ -19,5 +18,5 @@ export const suiteScriptSagas = [
   ...installerSagas,
   ...importSampleDataSagas,
   ...mappingSagas,
-  ...flowSampleDataSagas
+  ...flowSampleDataSagas,
 ];

@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function useDrawerEditUrl(resourceType, id, pathname) {
   const segments = pathname.split('/');

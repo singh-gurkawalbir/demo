@@ -35,7 +35,7 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
-export const generateSimpleLayout = (fieldsMeta) => {
+export const generateSimpleLayout = fieldsMeta => {
   if (!fieldsMeta) return null;
   const { fieldMap, layout } = fieldsMeta;
 
@@ -48,7 +48,7 @@ export const generateSimpleLayout = (fieldsMeta) => {
   // then the order in which the fields are defined in the map are used as the layout.
     return {
       fieldMap,
-      layout: { fields: Object.keys(fieldMap)}
+      layout: { fields: Object.keys(fieldMap)},
 
     };
   }
@@ -68,6 +68,7 @@ export default function useForm({
     showValidationBeforeTouched,
     fieldsMeta,
   } = formSpecificProps;
+
   const dispatch = useDispatch();
   // form specific props could be
 
@@ -87,6 +88,7 @@ export default function useForm({
     setFormKeyUsed(finalFormKey);
 
     const updatedFieldMeta = generateSimpleLayout(fieldsMeta);
+
     if (updatedFieldMeta) {
       dispatch(
         actions.form.init(finalFormKey, {

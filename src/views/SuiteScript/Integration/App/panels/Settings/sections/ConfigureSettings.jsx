@@ -6,7 +6,7 @@ import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
-import * as selectors from '../../../../../../../reducers';
+import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
 import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
@@ -51,9 +51,10 @@ const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
     <Spinner color="primary" />
-  </Loader>);
+  </Loader>
+);
 
-const SettingsForm = (props) => {
+const SettingsForm = props => {
   const {formKey, fieldMeta, ...rest} = props;
 
   return (
@@ -66,12 +67,14 @@ const SettingsForm = (props) => {
     </>
   );
 };
-export const SuiteScriptForm = (props) => {
+export const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
   const {ssLinkedConnectionId, integrationId } = props;
+
   useEffect(() => {
     dispatch(actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
+
     return () => {
       dispatch(actions.suiteScript.iaForm.initClear(ssLinkedConnectionId, integrationId));
     };
@@ -83,9 +86,11 @@ export const SuiteScriptForm = (props) => {
   }));
 
   const [count, setCount] = useState(0);
+
   useEffect(() => {
     if (status === 'success') setCount(count => count + 1);
   }, [status]);
+
   return (
     <>
       {status === 'saving' && <SavingMask />}

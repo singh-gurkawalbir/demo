@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import RadioGroup from '../DynaForm/fields/radiogroup/DynaRadioGroup';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import DynaForm from '../DynaForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import LoadResources from '../LoadResources';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
@@ -34,7 +34,7 @@ export default function AddOrSelect(props) {
     environment,
     resourceType = 'connections',
     manageOnly = false,
-    onClose
+    onClose,
   } = props;
   const classes = useStyles();
   const [useNew, setUseNew] = useState(true);

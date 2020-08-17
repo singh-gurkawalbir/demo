@@ -9,14 +9,15 @@ import { generateNewId } from '../../../../utils/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
-import * as selectors from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
+import { selectors } from '../../../../reducers';
+import JavaScriptEditorDrawer from '../../../AFE/JavaScriptEditor/Drawer';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -54,7 +55,7 @@ const scriptsFilterConfig = { type: 'scripts' };
 const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook(props) {
-  const [showEditor, setShowEditor] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer();
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const dispatch = useDispatch();
@@ -87,7 +88,7 @@ export default function DynaHook(props) {
     editorResultMode,
     requestForPreHookData,
     isSampleDataLoading,
-    resourceType
+    resourceType,
   } = props;
   const scriptContext = useSelector(state =>
     selectors.getScriptContext(state, {
@@ -100,8 +101,8 @@ export default function DynaHook(props) {
       requestForPreHookData();
     }
 
-    setShowEditor(!showEditor);
-  }, [requestForPreHookData, showEditor]);
+    handleOpenDrawer(id);
+  }, [id, handleOpenDrawer, requestForPreHookData]);
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
@@ -135,6 +136,7 @@ export default function DynaHook(props) {
 
   const handleCreateScriptSave = useCallback(values => {
     const options = { dispatch, isNew: true };
+
     saveScript({ ...values, scriptId: tempScriptId }, options, { flowId });
   }, [dispatch, flowId, tempScriptId]);
 
@@ -194,26 +196,23 @@ export default function DynaHook(props) {
 
   return (
     <>
-      {showEditor && (
-        <JavaScriptEditorDialog
-          title="Script editor"
-          id={id}
-          key={id}
-          disabled={disabled}
-          data={JSON.stringify(preHookData, null, 2)}
-          scriptId={value._scriptId}
-          insertStubKey={hookStage}
-          entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
-          context={scriptContext}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          resultMode={editorResultMode}
-          optionalSaveParams={optionalSaveParams}
-          flowId={flowId}
-          patchOnSave
-          isSampleDataLoading={isSampleDataLoading}
+      <JavaScriptEditorDrawer
+        title="Script editor"
+        id={id}
+        key={id}
+        disabled={disabled}
+        data={JSON.stringify(preHookData, null, 2)}
+        scriptId={value._scriptId}
+        insertStubKey={hookStage}
+        entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
+        context={scriptContext}
+        onSave={handleSave}
+        resultMode={editorResultMode}
+        optionalSaveParams={optionalSaveParams}
+        flowId={flowId}
+        patchOnSave
+        isSampleDataLoading={isSampleDataLoading}
         />
-      )}
       {showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}

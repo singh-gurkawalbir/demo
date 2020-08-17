@@ -4,7 +4,7 @@ import actions from '../../actions';
 import formFactory from '../../forms/formFactory';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';

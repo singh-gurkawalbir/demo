@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { uniq } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, Typography } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import ApplicationImg from '../../components/icons/ApplicationImg';
@@ -60,17 +60,25 @@ export default function ApplicationsList({ filter }) {
     sandbox
   );
   const connectorsMetadata = applicationsList();
-  const templates = useSelector(state => selectors.marketplaceTemplates(state));
+  const templates = useSelector(state => selectors.marketplaceTemplatesByApp(state));
   let applications = [];
+  const lowerCaseFilter = filter?.keyword?.toLowerCase();
 
   connectors.forEach(c => { applications = applications.concat(c.applications); });
   templates.forEach(t => { applications = applications.concat(t.applications); });
   applications = uniq(applications.filter(Boolean).sort());
-  applications = applications.filter(
-    a =>
-      a &&
-      a.toLowerCase().includes(filter.keyword && filter.keyword.toLowerCase())
-  );
+
+  // do not filter the applications if user has not typed in any search string
+  if (lowerCaseFilter) {
+    applications = applications.filter(
+      a => {
+        const {name} = connectorsMetadata?.find(c => c.id === a) || {};
+
+        return a.toLowerCase().includes(lowerCaseFilter) ||
+               name?.toLowerCase().includes(lowerCaseFilter);
+      }
+    );
+  }
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
     dispatch(actions.marketplace.requestTemplates());

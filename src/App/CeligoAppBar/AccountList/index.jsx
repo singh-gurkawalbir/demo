@@ -11,7 +11,7 @@ import { useHistory } from 'react-router-dom';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import getRoutePath from '../../../utils/routePaths';
 import IconTextButton from '../../../components/IconTextButton';
@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontFamily: 'source sans pro',
     padding: 0,
+    paddingRight: theme.spacing(1),
+    marginRight: theme.spacing(-1),
     '& svg': {
       color: theme.palette.secondary.light,
       marginLeft: theme.spacing(0.5),
@@ -41,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   },
   accountListPopper: {
     maxWidth: 250,
-    left: '124px !important',
+    left: '116px !important',
     top: '5px !important',
   },
   accountListPopperArrow: {
@@ -202,7 +204,7 @@ export default function AccountList() {
         anchorEl={anchorEl}
         classes={{
           popper: classes.accountListPopper,
-          arrow: classes.accountListPopperArrow
+          arrow: classes.accountListPopperArrow,
         }}
         placement="bottom-end"
         onClose={handleClose}>

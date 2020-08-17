@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DynaSelect from './DynaSelect';
+import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 
 export default function DynaIASelect(props) {
@@ -9,7 +10,8 @@ export default function DynaIASelect(props) {
     id: fieldName,
     _integrationId,
     autoPostBack,
-    onFieldChange
+    multiselect,
+    onFieldChange,
   } = props;
   const dispatch = useDispatch();
   const handleFieldChange = useCallback((id, val) => {
@@ -17,7 +19,7 @@ export default function DynaIASelect(props) {
       dispatch(
         actions.connectors.refreshMetadata(val, id, _integrationId, {
           key: 'fieldValue',
-          autoPostBack: true
+          autoPostBack: true,
         })
       );
       onFieldChange(id, val);
@@ -34,10 +36,14 @@ export default function DynaIASelect(props) {
       _integrationId
     )
   );
-  return options?.length ?
-    <DynaSelect
-      {...props}
-      options={[{items: options}]}
-      onFieldChange={handleFieldChange} /> :
-    <DynaSelect {...props} />;
+  const IASelect = multiselect ? DynaMultiSelect : DynaSelect;
+
+  return options?.length
+    ? (
+      <IASelect
+        {...props}
+        options={[{items: options}]}
+        onFieldChange={handleFieldChange} />
+    )
+    : <IASelect {...props} />;
 }

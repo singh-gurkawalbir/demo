@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import AuditLog from './index';
 import ModalDialog from '../ModalDialog';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 export default function AuditLogDialog({ resourceType, resourceId, onClose }) {
   const resource = useSelector(state =>

@@ -1,7 +1,7 @@
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import useForm from '../components/Form';
-import * as selectors from '../reducers';
+import { selectors } from '../reducers';
 import { fieldIDsExceptClockedFields } from '../forms/utils';
 import actions from '../actions';
 

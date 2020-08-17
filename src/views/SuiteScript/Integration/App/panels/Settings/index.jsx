@@ -10,12 +10,12 @@ import {
   Redirect, Route,
   Switch,
 
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
 import actions from '../../../../../../actions';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import Spinner from '../../../../../../components/Spinner';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import inferErrorMessage from '../../../../../../utils/inferErrorMessage';
 import ConfigureSettings from './sections/ConfigureSettings';
 
@@ -41,8 +41,8 @@ export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   }, []);
 
   if (!hasSettingsMetadata) { return <Spinner />; }
-
-  if (resource?.errors) {
+  // if settings is of type string...quiet likely its an error
+  if (typeof resource === 'string' || resource?.errors) {
     return <Typography color="error">{inferErrorMessage(resource)[0]}</Typography>;
   }
 
@@ -94,15 +94,17 @@ function SettingsPanelComponent({
 
   const availableSections = useSelector(state => {
     const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
+
     return sections.reduce((newArray, s) => {
       if (!!s.fields || !!s.sections?.length) {
         newArray.push({
           path: s.titleId,
           label: s.title,
           Section: 'FlowsConfiguration',
-          id: s.id
+          id: s.id,
         });
       }
+
       return newArray;
     }, []);
   }, isEqual);
@@ -127,8 +129,10 @@ function SettingsPanelComponent({
               You don&apos;t have any custom settings for this integration.
             </span>
           </div>
-        </div>);
+        </div>
+      );
     }
+
     return (
       <Redirect push={false} to={`${match.url}/${availableSections[0].path}`} />
     );
@@ -166,14 +170,17 @@ function SettingsPanelComponent({
                       sectionId={path}
                       id={id}
                       />
-                  </>) : <Section
+                  </>
+                ) : (
+                  <Section
                     integrationAppName={integrationAppName}
                     integrationId={integrationId}
                     ssLinkedConnectionId={ssLinkedConnectionId}
                     sectionId={path}
                     id={id}
                     {...sectionProps}
-                />}
+                />
+                )}
 
               </Route>
             ))}
@@ -187,12 +194,9 @@ function SettingsPanelComponent({
 export default function SettingsPanel({ ssLinkedConnectionId, integrationId }) {
   const classes = useStyles();
 
-  const infoTextFlow =
-      'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
-
   return (
     <div className={classes.root}>
-      <PanelHeader title="Integration flows" infoText={infoTextFlow} />
+      <PanelHeader title="Integration flows" />
       <LoadSettingsMetadata
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId} >

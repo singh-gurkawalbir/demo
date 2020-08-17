@@ -4,7 +4,7 @@ import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generate
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import LoadResources from '../../components/LoadResources';
@@ -14,8 +14,6 @@ import BottomDrawer from './drawers/BottomDrawer';
 // import WizardDrawer from './drawers/Wizard';
 // import RunDrawer from './drawers/Run';
 import ScheduleDrawer from './drawers/Schedule';
-import ConnectionsDrawer from './drawers/Connections';
-import AuditLogDrawer from './drawers/AuditLog';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
@@ -26,8 +24,6 @@ import AppBlock from './AppBlock';
 import itemTypes from './itemTypes';
 import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
-import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
-import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import CloseIcon from '../../components/icons/CloseIcon';
 import HelpIcon from '../../components/icons/HelpIcon';
@@ -42,6 +38,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
+import LastRun from './LastRun';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -153,7 +150,10 @@ const useStyles = makeStyles(theme => ({
   },
   sourceTitle: {
     marginLeft: -100,
-  }
+  },
+  subtitle: {
+    display: 'flex',
+  },
 }));
 
 function FlowBuilder() {
@@ -168,7 +168,6 @@ function FlowBuilder() {
   // Bottom drawer is shown for existing flows and docked for new flow
   const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
   const [tabValue, setTabValue] = useState(0);
-  //
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const newFlowId = useSelector(state =>
@@ -189,7 +188,6 @@ function FlowBuilder() {
     selectors.isUserInErrMgtTwoDotZero(state)
   );
   const {
-    status: openFlowErrorsStatus,
     data: flowErrorsMap,
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, flowId));
@@ -325,7 +323,7 @@ function FlowBuilder() {
   );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
-    setTabValue(1);
+    setTabValue(0);
 
     // Raise Bottom Drawer height
     setBottomDrawerSize(2);
@@ -341,14 +339,21 @@ function FlowBuilder() {
     // a new browser tab session always has a history depth of 3!
     // if depth is more than 3, we are safe to just go back in the history queue.
     if (history.length > 3) {
-      history.goBack();
+      return history.goBack();
     }
-    // Otherwise parse the location and return the user to the integration details
-    // page.
+
+    // Otherwise parse the location and return the user to the integration
+    // details page.
     const parts = location.pathname.split('/');
-    const newPath = `${parts.slice(0, 4).join('/')}/flows`;
-    history.push(newPath);
+
+    if (parts[1].toLowerCase() === 'integrationapps') {
+      // if user is editing an IA flow, the url is 1 segment longer.
+      return history.push(parts.slice(0, 4).join('/'));
+    }
+
+    return history.push(parts.slice(0, 3).join('/'));
   }, [history, location]);
+
   // #region New Flow Creation logic
   const rewriteUrl = useCallback(
     id => {
@@ -386,16 +391,20 @@ function FlowBuilder() {
   );
 
   useEffect(() => {
-    if (!openFlowErrorsStatus && !isNewFlow && isUserInErrMgtTwoDotZero) {
-      dispatch(actions.errorManager.openFlowErrors.request({ flowId }));
-    }
+    if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
+
+    dispatch(actions.errorManager.openFlowErrors.requestPoll({ flowId }));
+
+    return () => {
+      dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+    };
   }, [
     dispatch,
     flowId,
     isNewFlow,
     isUserInErrMgtTwoDotZero,
-    openFlowErrorsStatus,
   ]);
+
   useEffect(() => {
     // NEW DATA LOADER REDIRECTION
     if (isNewId(flowId)) {
@@ -460,14 +469,12 @@ function FlowBuilder() {
         resourceId={flowId}
         flow={flow}
       />
-      <ConnectionsDrawer flowId={flowId} integrationId={integrationId} />
-      <AuditLogDrawer flowId={flowId} integrationId={integrationId} />
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
 
       <CeligoPageBar
-        title={
+        title={(
           <EditableText
             disabled={isViewMode}
             text={flow.name}
@@ -480,17 +487,18 @@ function FlowBuilder() {
                 : classes.editableTextInput
             }
           />
-        }
-        subtitle={
-          <>
+        )}
+        subtitle={(
+          <div className={classes.subtitle}>
             Last saved:{' '}
             {isNewFlow ? (
               'Never'
             ) : (
               <CeligoTimeAgo date={flow.lastModified} />
             )}
-          </>
-        }
+            <LastRun />
+          </div>
+        )}
         infoText={flow.description}>
         {totalErrors ? (
           <span className={classes.errorStatus}>
@@ -547,24 +555,6 @@ function FlowBuilder() {
               exclude={['mapping', 'detach', 'audit', 'schedule']}
             />
           )}
-          {isUserInErrMgtTwoDotZero && (
-            <>
-              <div className={classes.divider} />
-              <IconButton
-                disabled={isNewFlow}
-                onClick={handleDrawerClick('connections')}
-                data-test="flowConnections">
-                <ConnectionsIcon />
-              </IconButton>
-              <IconButton
-                disabled={isNewFlow}
-                onClick={handleDrawerClick('auditlog')}
-                data-test="flowAuditLog">
-                <AuditLogIcon />
-              </IconButton>
-            </>
-          )}
-
           <div className={classes.divider} />
           <IconButton onClick={handleExitClick} size="small">
             <CloseIcon />

@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 import DynaSelect from '../../DynaSelect';
 import DynaTableView from '../../DynaTableView/DynaTable';
@@ -30,7 +30,7 @@ export const useGetSuiteScriptBaseCommPath = ({connectionId, integrationId}) => 
   return `suitescript/connections/${connectionId}/connections/${salesforceConnectionId}/sObjectTypes`;
 };
 
-export const BaseTableViewComponent = (props) => {
+export const BaseTableViewComponent = props => {
   const classes = useStyles();
   const {onFieldChange, value, optionsMap, id, shouldReset, disabled} = props;
   const computedValue = useMemo(() => Object.keys(value || {}).map(key => ({
@@ -52,17 +52,19 @@ export const BaseTableViewComponent = (props) => {
     []
   );
 
-  return (<DynaTableView
-    {...props}
-    optionsMap={optionsMap}
-    metadata={{optionsMap}}
-    hideLabel
-    shouldReset={shouldReset}
-    className={classes.dynaStaticMapWidgetWrapper}
-    value={computedValue}
-    onFieldChange={handleMapChange}
-    disableDeleteRows={disabled}
-      />);
+  return (
+    <DynaTableView
+      {...props}
+      optionsMap={optionsMap}
+      metadata={{optionsMap}}
+      hideLabel
+      shouldReset={shouldReset}
+      className={classes.dynaStaticMapWidgetWrapper}
+      value={computedValue}
+      onFieldChange={handleMapChange}
+      disableDeleteRows={disabled}
+      />
+  );
 };
 
 const SalesforceProductOptions = ({value,
@@ -72,7 +74,8 @@ const SalesforceProductOptions = ({value,
       value={value}
       onFieldChange={onFieldChange}
       options={options}
-      label="Salesforce item Field" />);
+      label="Salesforce item Field" />
+);
 
 export default function DynaSuiteScriptTable(props) {
   const {
@@ -126,7 +129,9 @@ export default function DynaSuiteScriptTable(props) {
     const selectedOptionList = allFieldsOptions &&
   allFieldsOptions.length && allFieldsOptions.find(opt => opt.label === selectOptionLabel)?.options;
     const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
+
     setShouldReset(state => !state);
+
     return [
       {
         id: 'extracts',
@@ -163,12 +168,14 @@ export default function DynaSuiteScriptTable(props) {
 
   return (
     <>
-      {salesforceProductFieldOptions && <SalesforceProductOptions
+      {salesforceProductFieldOptions && (
+      <SalesforceProductOptions
         value={selectOption}
         onFieldChange={salesforceProductFieldChange}
         options={salesforceProductOptions}
         connectionId={connectionId}
-      />}
+      />
+      )}
       <BaseTableViewComponent
         {...props}
         optionsMap={optionsMap}

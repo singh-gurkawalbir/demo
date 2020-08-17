@@ -273,15 +273,8 @@ export default {
           name: '_mapList',
           type: 'staticMap',
           valueLabel: 'Import field (NetSuite)',
-          commMetaPath:
-            fieldId &&
-            getNetsuiteSelectFieldValueUrl({
-              fieldMetadata,
-              connectionId,
-              fieldId,
-              recordType,
-            }),
-          connectionId: fieldId && connectionId,
+          // commMetaPath:  commMetaPath  to be added based on metadata type
+          // connectionId:  connection  to be added based on metadata type
           label: '',
           keyOptions:
             fieldOptions && fieldOptions.length ? fieldOptions : undefined,
@@ -389,6 +382,7 @@ export default {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
           type: 'text',
+          connectionId,
           required: true,
           label: 'Enter default value',
           placeholder: 'Enter Default Value',
@@ -415,100 +409,6 @@ export default {
           ],
           helpKey: 'mapping.lookupDefault',
           defaultValue: lookup.default,
-        },
-        hardcodedSelect: {
-          id: 'hardcodedSelect',
-          name: 'hardcodedSelect',
-          type: 'netsuitedefaultvalue',
-          label: 'Value',
-          required: true,
-          multiselect: generateFieldType === 'multiselect',
-          defaultValue:
-            generateFieldType === 'multiselect' && value.hardCodedValue
-              ? value.hardCodedValue.split(',')
-              : value.hardCodedValue,
-          commMetaPath:
-            fieldId &&
-            getNetsuiteSelectFieldValueUrl({
-              fieldMetadata,
-              connectionId,
-              fieldId,
-              recordType,
-            }),
-          connectionId,
-          // refreshOptionsOnChangesTo: ['lookup.recordType'],
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
-        },
-        lookupSelect: {
-          id: 'lookupSelect',
-          name: 'lookupSelect',
-          type: 'netsuitedefaultvalue',
-          label: 'Value',
-          required: true,
-          multiselect: generateFieldType === 'multiselect',
-          defaultValue:
-            generateFieldType === 'multiselect' && lookup.default
-              ? lookup.default.split(',')
-              : lookup.default,
-          commMetaPath:
-            fieldId &&
-            getNetsuiteSelectFieldValueUrl({
-              fieldMetadata,
-              connectionId,
-              fieldId,
-              recordType,
-            }),
-          connectionId,
-          visibleWhenAll: [
-            {
-              field: 'lookupAction',
-              is: ['default', 'useDefaultOnMultipleMatches'],
-            },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
-        },
-        hardcodedCheckbox: {
-          id: 'hardcodedCheckbox',
-          name: 'hardcodedCheckbox',
-          type: 'radiogroup',
-          label: 'Value',
-          defaultValue: value.hardCodedValue || false,
-          fullWidth: true,
-          options: [
-            {
-              items: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.hardcodedDefault',
-          visibleWhenAll: [{ field: 'fieldMappingType', is: ['hardCoded'] }],
-        },
-
-        lookupCheckbox: {
-          id: 'lookupCheckbox',
-          name: 'lookupCheckbox',
-          type: 'radiogroup',
-          label: 'Value',
-          defaultValue: lookup.default || false,
-          fullWidth: true,
-          options: [
-            {
-              items: [
-                { label: 'True', value: 'true' },
-                { label: 'False', value: 'false' },
-              ],
-            },
-          ],
-          helpKey: 'mapping.lookupDefault',
-          visibleWhenAll: [
-            {
-              field: 'lookupAction',
-              is: ['default', 'useDefaultOnMultipleMatches'],
-            },
-            { field: 'fieldMappingType', is: ['lookup'] },
-          ],
         },
         extractDateFormat: {
           id: 'extractDateFormat',
@@ -604,10 +504,6 @@ export default {
           'lookupAction',
           'hardcodedDefault',
           'lookupDefault',
-          'hardcodedSelect',
-          'hardcodedCheckbox',
-          'lookupSelect',
-          'lookupCheckbox',
           'extractDateFormat',
           'extractDateTimezone',
           'isKey',
@@ -748,6 +644,19 @@ export default {
     const { fieldMap, layout } = fieldMeta;
     let { fields } = layout;
 
+    // removing date field if not supported
+    if (
+      !fieldMetadata || !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
+    ) {
+      delete fieldMeta.fieldMap.extractDateFormat;
+      delete fieldMeta.fieldMap.extractDateTimezone;
+
+      fields = fields.filter(
+        el => !['extractDateFormat', 'extractDateTimezone'].includes(el)
+      );
+    }
+
+    // removing useFirstRow in case of non-grouped sample data or non-list field
     if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
       delete fieldMeta.fieldMap.useFirstRow;
       fields = fields.filter(el => el !== 'useFirstRow');
@@ -761,69 +670,102 @@ export default {
       delete fieldMeta.fieldMap.useAsAnInitializeValue;
       fields = fields.filter(el => el !== 'useAsAnInitializeValue');
     }
+    if (['celigo_nlobjAttachedType', 'celigo_nlobjDetachedType'].includes(fieldId)) {
+      delete fieldMeta.fieldMap.hardcodedAction;
+      fields = fields.filter(el => el !== 'hardcodedAction');
+      fieldMeta.fieldMap.hardcodedDefault = {
+        ...fieldMeta.fieldMap.hardcodedDefault,
+        filterKey: 'suitescript-recordTypes',
+        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+        type: 'refreshableselect',
+        label: 'Value',
+        connectionId,
+        placeholder: '',
+      };
+      fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
+    }
 
     if (
       recordType &&
       fieldId.indexOf('.internalid') !== -1 &&
       (generateFieldType === 'select' || generateFieldType === 'multiselect')
     ) {
+      // hardcoded actions to be removed in case generate type is select
       delete fieldMeta.fieldMap.hardcodedAction;
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
-      delete fieldMeta.fieldMap.lookupDefault;
-      delete fieldMeta.fieldMap.lookupCheckbox;
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedAction' &&
-          el !== 'hardcodedDefault' &&
-          el !== 'hardcodedCheckbox' &&
-          el !== 'lookupDefault' &&
-          el !== 'lookupCheckbox'
-      );
+      fields = fields.filter(el => el !== 'hardcodedAction');
+      fieldMeta.fieldMap['lookup.mapList'].commMetaPath = getNetsuiteSelectFieldValueUrl({
+        fieldMetadata,
+        connectionId,
+        fieldId,
+        recordType,
+      });
+      fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
+
+      // changing metadata for hardcodedDefault and lookupDefault
+      ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {
+        let fieldValue;
+
+        if (metaKey === 'hardcodedDefault') {
+          fieldValue = generateFieldType === 'multiselect' && value.hardCodedValue
+            ? value.hardCodedValue.split(',')
+            : value.hardCodedValue;
+        } else {
+          fieldValue = lookup.default;
+        }
+        fieldMeta.fieldMap[metaKey] = {
+          ...fieldMeta.fieldMap[metaKey],
+          type: 'netsuitedefaultvalue',
+          label: 'Value',
+          connectionId,
+          multiselect: (generateFieldType === 'multiselect'),
+          commMetaPath: getNetsuiteSelectFieldValueUrl({
+            fieldMetadata,
+            connectionId,
+            fieldId,
+            recordType,
+          }),
+          defaultValue: fieldValue,
+        };
+      });
+      fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
+      fieldMeta.fieldMap.lookupDefault.visibleWhenAll = [
+        {
+          field: 'lookupAction',
+          is: ['default', 'useDefaultOnMultipleMatches'],
+        },
+        { field: 'fieldMappingType', is: ['lookup'] },
+      ];
     } else if (generateFieldType === 'checkbox') {
+      // hardcoded actions to be removed in case generate type is checkbox
       delete fieldMeta.fieldMap.hardcodedAction;
-      delete fieldMeta.fieldMap.hardcodedDefault;
-      delete fieldMeta.fieldMap.hardcodedSelect;
-      delete fieldMeta.fieldMap.lookupDefault;
-      delete fieldMeta.fieldMap.lookupSelect;
-      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
-      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
+      fields = fields.filter(el => el !== 'hardcodedAction');
 
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedAction' &&
-          el !== 'hardcodedDefault' &&
-          el !== 'hardcodedSelect' &&
-          el !== 'lookupDefault' &&
-          el !== 'lookupSelect'
-      );
-    } else {
-      delete fieldMeta.fieldMap.hardcodedSelect;
-      delete fieldMeta.fieldMap.hardcodedCheckbox;
-      delete fieldMeta.fieldMap.lookupSelect;
-      delete fieldMeta.fieldMap.lookupCheckbox;
-      delete fieldMeta.fieldMap['lookup.mapList'].commMetaPath;
-      delete fieldMeta.fieldMap['lookup.mapList'].connectionId;
-
-      fields = fields.filter(
-        el =>
-          el !== 'hardcodedSelect' &&
-          el !== 'hardcodedCheckbox' &&
-          el !== 'lookupSelect' &&
-          el !== 'lookupCheckbox'
-      );
-    }
-
-    if (
-      fieldMetadata &&
-      !['date', 'datetimetz', 'datetime'].includes(fieldMetadata.type)
-    ) {
-      delete fieldMeta.fieldMap.extractDateFormat;
-      delete fieldMeta.fieldMap.extractDateTimezone;
-
-      fields = fields.filter(
-        el => el !== 'extractDateFormat' && el !== 'extractDateTimezone'
-      );
+      // changing metadata for hardcodedDefault and lookupDefault
+      ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {
+        fieldMeta.fieldMap[metaKey] = {
+          ...fieldMeta.fieldMap[metaKey],
+          type: 'radiogroup',
+          label: 'Value',
+          fullWidth: true,
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
+          defaultValue: lookup.default || 'false',
+        };
+      });
+      fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
+      fieldMeta.fieldMap.lookupDefault.visibleWhenAll = [
+        {
+          field: 'lookupAction',
+          is: ['default', 'useDefaultOnMultipleMatches'],
+        },
+        { field: 'fieldMappingType', is: ['lookup'] },
+      ];
     }
 
     if (isCategoryMapping) {

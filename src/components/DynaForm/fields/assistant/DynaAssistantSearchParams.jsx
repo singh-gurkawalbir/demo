@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   },
   configureLabelWrapper: {
     display: 'flex',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
 });
 const SearchParamsModal = props => {

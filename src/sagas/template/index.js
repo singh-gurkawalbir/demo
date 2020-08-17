@@ -2,7 +2,7 @@ import { call, takeEvery, put, select, all } from 'redux-saga/effects';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { getResource } from '../resources';
 
@@ -45,7 +45,7 @@ export function* createComponents({ templateId, runKey }) {
     selectors.templateSetup,
     templateId
   );
-  const template = yield select(selectors.marketplaceTemplate, { templateId });
+  const template = yield select(selectors.marketplaceTemplateById, { templateId });
   const userPreferences = yield select(selectors.userPreferences);
   const sandbox = userPreferences.environment === 'sandbox';
   const path = `/integrations/template${runKey ? '' : `/${templateId}`}`;

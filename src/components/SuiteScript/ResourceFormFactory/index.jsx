@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
+import { selectors } from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
-import * as selectors from '../../../reducers';
 import { FormStateManager } from '../../ResourceFormFactory';
 import SuiteScriptActionsPanel from './SuiteScriptActionsPanel';
 
@@ -103,7 +103,7 @@ export const ResourceFormFactory = props => {
   );
 };
 
-const SuiteScriptFormComponent = (props) => (
+const SuiteScriptFormComponent = props => (
 
   <>
     <ResourceFormFactory {...props} />

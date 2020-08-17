@@ -5,16 +5,15 @@ import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
 import { some, map, isEmpty } from 'lodash';
-import app, * as fromApp from './app';
-import data, * as fromData from './data';
-import * as fromResources from './data/resources';
-import * as fromMarketPlace from './data/marketPlace';
-import session, * as fromSession from './session';
-import * as fromMetadata from './session/metadata';
-import comms, * as fromComms from './comms';
-import * as fromNetworkComms from './comms/networkComms';
-import auth, * as fromAuth from './authentication';
-import user, * as fromUser from './user';
+import app, { selectors as fromApp } from './app';
+import data, { selectors as fromData } from './data';
+import { selectors as fromResources } from './data/resources';
+import { selectors as fromMarketPlace } from './data/marketPlace';
+import session, { selectors as fromSession } from './session';
+import comms, { selectors as fromComms } from './comms';
+import { COMM_STATES, selectors as fromNetworkComms } from './comms/networkComms';
+import auth, { selectors as fromAuth } from './authentication';
+import user, { selectors as fromUser } from './user';
 import actionTypes from '../actions/types';
 import {
   isSimpleImportFlow,
@@ -41,15 +40,12 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
 import {
   getFieldById,
-  isAnyFieldVisibleForMeta,
-  isExpansionPanelErrored,
-  isAnyFieldTouchedForMeta,
-  isExpansionPanelRequired,
 } from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -59,7 +55,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isAS2Resource,
-  adaptorTypeMap
+  adaptorTypeMap,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -75,6 +71,8 @@ import { stringCompare } from '../utils/sort';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
+import { genSelectors } from './util';
+import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -100,81 +98,44 @@ const rootReducer = (state, action) => {
 
 export default rootReducer;
 
-export function recycleBinState(state) {
-  return fromSession.recycleBinState(state && state.session);
-}
+// auto generated selectors
+export const selectors = {};
+const subSelectors = {
+  app: fromApp,
+  session: fromSession,
+  data: fromData,
+  comms: fromComms,
+  auth: fromAuth,
+  user: fromUser,
+};
 
-export function marketPlaceState(state) {
-  return fromData.marketPlaceState(state && state.data);
-}
+genSelectors(selectors, subSelectors);
 
-export function stageState(state) {
-  return fromSession.stageState(state && state.session);
-}
-
-export function resourcesState(state) {
-  return fromData.resourceState(state && state.data);
-}
-
-export function networkCommState(state) {
-  return fromComms.networkCommState(state && state.comms);
-}
-
-export function userState(state) {
-  return state && state.user;
-}
-// TODO: Do we really need to proxy all selectors here?
-// Instead, we could only have the selectors that cross
-// state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintain for the
-// sole purpose of abstracting the state "shape" completely.
-// It may be just fine to directly reference the primary state
-// subdivisions (data, session, comms) in order to simplify the code further...
-
-// -------------------
-// Following this pattern:
-// https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
-
-// #region app selectors
-export function bannerOpened(state) {
-  return fromApp.bannerOpened(state && state.app);
-}
-
-export function reloadCount(state) {
-  return fromApp.reloadCount((state && state.app) || null);
-}
-
-export function isUiVersionDifferent(state) {
-  return fromApp.isUiVersionDifferent(state?.app);
-}
-export function appErrored(state) {
-  return fromApp.appErrored(state && state.app);
-}
-// #endregion app selectors
+// additional user defined selectors
+selectors.userState = state => state && state.user;
 
 // #region PUBLIC COMMS SELECTORS
 // Use shallowEquality operator to prevent re-renders.
 // or convert this to re-select since it has no args, it s perfect
 // case for re-select.
-export function commsErrors(state) {
+selectors.commsErrors = state => {
   const commsState = state?.comms?.networkComms;
 
   if (!commsState) return;
-  // console.log(commsState);
-  let errors;
+  const errors = {};
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
-    if (!c.hidden && c.status === fromNetworkComms.COMM_STATES.ERROR) {
-      if (!errors) errors = {};
+
+    if (!c.hidden && c.status === COMM_STATES.ERROR) {
       errors[key] = inferErrorMessage(c.message);
     }
   });
 
   return errors;
-}
+};
 
-export function commsSummary(state) {
+selectors.commsSummary = state => {
   let isLoading = false;
   let isRetrying = false;
   let hasError = false;
@@ -183,12 +144,13 @@ export function commsSummary(state) {
   if (commsState) {
     Object.keys(commsState).forEach(key => {
       const c = commsState[key];
+
       if (!c.hidden) {
-        if (c.status === fromNetworkComms.COMM_STATES.ERROR) {
+        if (c.status === COMM_STATES.ERROR) {
           hasError = true;
         } else if (c.retryCount > 0) {
           isRetrying = true;
-        } else if (c.status === fromNetworkComms.COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
+        } else if (c.status === COMM_STATES.LOADING && Date.now() - c.timestamp > Number(process.env.NETWORK_THRESHOLD)) {
           isLoading = true;
         }
       }
@@ -196,111 +158,30 @@ export function commsSummary(state) {
   }
 
   return { isLoading, isRetrying, hasError };
-}
+};
 
-export function commStatusPerPath(state, path, method) {
+selectors.commStatusPerPath = (state, path, method) => {
   const key = commKeyGen(path, method);
 
   return fromComms.commStatus(state && state.comms, key);
-}
+};
 // #endregion
 
 // #region PUBLIC SESSION SELECTORS
+selectors.clonePreview = (state, resourceType, resourceId) => fromSession.previewTemplate(
+  state && state.session,
+  `${resourceType}-${resourceId}`
+);
 
-export const formState = (state, formKey) =>
-  fromSession.formState(state && state.session, formKey);
+selectors.cloneData = (state, resourceType, resourceId) => fromSession.template(
+  state && state.session,
+  `${resourceType}-${resourceId}`
+);
 
-export const formParentContext = (state, formKey) =>
-  fromSession.formParentContext(state && state.session, formKey);
-
-export const fieldState = (state, formKey, fieldId) =>
-  fromSession.fieldState(state && state.session, formKey, fieldId);
-
-export const isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
-  const { fields } = formState(state, formKey) || {};
-
-  return isAnyFieldVisibleForMeta(fieldMeta, fields);
-};
-
-export const isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
-  const { fields } = formState(state, formKey) || {};
-
-  return isExpansionPanelRequired(fieldMeta, fields);
-};
-
-export const isExpansionPanelErroredForMetaForm = (
-  state,
-  formKey,
-  fieldMeta
-) => {
-  const { fields } = formState(state, formKey) || {};
-
-  return isExpansionPanelErrored(fieldMeta, fields || []);
-};
-
-export const isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
-  const { fields } = formState(state, formKey) || {};
-
-  return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
-};
-
-export const isActionButtonVisible = (state, formKey, fieldVisibleRules) =>
-  fromSession.isActionButtonVisible(
-    state && state.session,
-    formKey,
-    fieldVisibleRules
-  );
-
-export function resourceFormState(state, resourceType, resourceId) {
-  return fromSession.resourceFormState(
-    state && state.session,
-    resourceType,
-    resourceId
-  );
-}
-
-export function getNumEnabledFlows(state) {
-  return fromSession.getNumEnabledFlows(state && state.session);
-}
-
-export function getLicenseEntitlementUsage(state) {
-  return fromSession.getLicenseEntitlementUsage(state && state.session);
-}
-
-export function resourceFormSaveProcessTerminated(
-  state,
-  resourceType,
-  resourceId
-) {
-  return fromSession.resourceFormSaveProcessTerminated(
-    state && state.session,
-    resourceType,
-    resourceId
-  );
-}
-
-export function getChildIntegrationId(state, parentId) {
-  return fromSession.getChildIntegrationId(state && state.session, parentId);
-}
-
-export function clonePreview(state, resourceType, resourceId) {
-  return fromSession.previewTemplate(
-    state && state.session,
-    `${resourceType}-${resourceId}`
-  );
-}
-
-export function cloneData(state, resourceType, resourceId) {
-  return fromSession.template(
-    state && state.session,
-    `${resourceType}-${resourceId}`
-  );
-}
-
-export function isSetupComplete(
+selectors.isSetupComplete = (
   state,
   { templateId, resourceType, resourceId }
-) {
+) => {
   let isSetupComplete = false;
   const installSteps =
     fromSession.templateInstallSteps(
@@ -313,9 +194,9 @@ export function isSetupComplete(
     !installSteps.reduce((result, step) => result || !step.completed, false);
 
   return isSetupComplete;
-}
+};
 
-export function isUninstallComplete(state, { integrationId, storeId }) {
+selectors.isUninstallComplete = (state, { integrationId, storeId }) => {
   let isSetupComplete = false;
   const uninstallSteps =
     fromSession.uninstallSteps(
@@ -329,12 +210,12 @@ export function isUninstallComplete(state, { integrationId, storeId }) {
     !uninstallSteps.reduce((result, step) => result || !step.completed, false);
 
   return isSetupComplete;
-}
+};
 
-export function redirectToOnInstallationComplete(
+selectors.redirectToOnInstallationComplete = (
   state,
   { resourceType = 'integrations', resourceId, templateId }
-) {
+) => {
   let environment;
   let redirectTo = 'dashboard';
   let flow;
@@ -369,7 +250,7 @@ export function redirectToOnInstallationComplete(
 
       if (flow) {
         // eslint-disable-next-line no-use-before-define
-        flowDetails = resource(state, 'flows', flow._id);
+        flowDetails = selectors.resource(state, 'flows', flow._id);
 
         if (flowDetails) {
           if (!flowDetails._integrationId) {
@@ -390,32 +271,16 @@ export function redirectToOnInstallationComplete(
   }
 
   return { redirectTo: getRoutePath(redirectTo), environment };
-}
+};
 
-export function previewTemplate(state, templateId) {
-  return fromSession.previewTemplate(state && state.session, templateId);
-}
+selectors.installSetup = (state, { resourceType, resourceId, templateId }) => fromSession.template(
+  state && state.session,
+  templateId || `${resourceType}-${resourceId}`
+);
 
-export function isFileUploaded(state) {
-  return fromSession.isFileUploaded(state && state.session);
-}
+selectors.templateSetup = (state, templateId) => fromSession.template(state && state.session, templateId);
 
-export function installSetup(state, { resourceType, resourceId, templateId }) {
-  return fromSession.template(
-    state && state.session,
-    templateId || `${resourceType}-${resourceId}`
-  );
-}
-
-export function templateSetup(state, templateId) {
-  return fromSession.template(state && state.session, templateId);
-}
-
-export function isAuthorized(state, connectionId) {
-  return fromSession.isAuthorized(state && state.session, connectionId);
-}
-
-export function templateInstallSteps(state, templateId) {
+selectors.templateInstallSteps = (state, templateId) => {
   const templateInstallSteps = fromSession.templateInstallSteps(
     state && state.session,
     templateId
@@ -428,33 +293,18 @@ export function templateInstallSteps(state, templateId) {
       unCompletedStep.isCurrentStep = true;
     }
   });
-}
+};
 
-export function cloneInstallSteps(state, resourceType, resourceId) {
-  return templateInstallSteps(state, `${resourceType}-${resourceId}`);
-}
+selectors.cloneInstallSteps = (state, resourceType, resourceId) => selectors.templateInstallSteps(state, `${resourceType}-${resourceId}`);
 
-export function templateConnectionMap(state, templateId) {
-  return fromSession.connectionMap(state && state.session, templateId);
-}
-
-export function connectorMetadata(state, fieldName, id, _integrationId) {
-  return fromSession.connectorMetadata(
-    state && state.session,
-    fieldName,
-    id,
-    _integrationId
-  );
-}
-
-export function connectorFieldOptions(
+selectors.connectorFieldOptions = (
   state,
   fieldName,
   id,
   _integrationId,
   defaultFieldOptions
-) {
-  const { data, isLoading } = connectorMetadata(
+) => {
+  const { data, isLoading } = selectors.connectorMetadata(
     state,
     fieldName,
     id,
@@ -474,182 +324,30 @@ export function connectorFieldOptions(
         }))) ||
       (defaultFieldOptions && defaultFieldOptions[0].items),
   };
-}
+};
 
-export function filter(state, name) {
-  return fromSession.filter(state.session, name);
-}
+selectors.editorHelperFunctions = state => state?.session?.editors?.helperFunctions || [];
 
-export function agentAccessToken(state, id) {
-  return fromSession.agentAccessToken(state && state.session, id);
-}
-
-export function stackSystemToken(state, id) {
-  return fromSession.stackSystemToken(state && state.session, id);
-}
-
-export function getResourceSampleDataWithStatus(state, resourceId, stage) {
-  return fromSession.getResourceSampleDataWithStatus(
-    state && state.session,
-    resourceId,
-    stage
-  );
-}
-
-export function apiAccessToken(state, id) {
-  return fromSession.apiAccessToken(state && state.session, id);
-}
-
-export function editor(state, id) {
-  return fromSession.editor(state && state.session, id);
-}
-
-export function editorViolations(state, id) {
-  return fromSession.editorViolations(state && state.session, id);
-}
-
-export function isEditorDirty(state, id) {
-  return fromSession.isEditorDirty(state && state.session, id);
-}
-
-export function editorPatchSet(state, id) {
-  return fromSession.editorPatchSet(state && state.session, id);
-}
-
-export function editorPatchStatus(state, id) {
-  return fromSession.editorPatchStatus(state && state.session, id);
-}
-
-export function getEditorSampleData(state, { flowId, resourceId, fieldType }) {
-  return fromSession.getEditorSampleData(state && state.session, {
-    flowId,
-    resourceId,
-    fieldType,
-  });
-}
-
-export function mapping(state, id) {
-  return fromSession.mapping(state && state.session, id);
-}
-
-export function mappingsChanged(state, id) {
-  return fromSession.mappingsChanged(state && state.session, id);
-}
-
-export function mappingsSaveStatus(state, id) {
-  return fromSession.mappingsSaveStatus(state && state.session, id);
-}
-
-export function responseMappings(state, id) {
-  return fromSession.responseMappings(state && state.session, id);
-}
-
-export function responseMappingDirty(state, id) {
-  return fromSession.responseMappingDirty(state && state.session, id);
-}
-
-export function searchCriteria(state, id) {
-  return fromSession.getSearchCriteria(state && state.session, id);
-}
-
-export function editorHelperFunctions(state) {
-  return (
-    (state &&
-      state.session &&
-      state.session.editors &&
-      state.session.editors.helperFunctions) ||
-    []
-  );
-}
-
-export function processorRequestOptions(state, id) {
-  return fromSession.processorRequestOptions(state && state.session, id);
-}
-
-export function getSampleData(
-  state,
-  { flowId, resourceId, resourceType, stage }
-) {
-  return fromSession.getSampleData(state && state.session, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-  });
-}
-
-export function getSampleDataContext(
-  state,
-  { flowId, resourceId, resourceType, stage }
-) {
-  return fromSession.getSampleDataContext(state && state.session, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage,
-  });
-}
-
-export function flowMetricsData(state, flowId, measurement) {
-  return fromSession.flowMetricsData(
-    state && state.session,
-    flowId,
-    measurement
-  );
-}
-
-export function getFlowDataState(state, flowId, resourceId) {
-  return fromSession.getFlowDataState(
-    state && state.session,
-    flowId,
-    resourceId
-  );
-}
-
-export function avatarUrl(state) {
-  return fromUser.avatarUrl(state.user);
-}
-
-export function isUserInErrMgtTwoDotZero(state) {
-  return fromUser.isUserInErrMgtTwoDotZero(state && state.user);
-}
-
-export const userProfile = createSelector(
+selectors.userProfile = createSelector(
   state => state?.user?.profile,
   profile => profile
 );
 
-export function developerMode(state) {
-  return (
-    state && state.user && state.user.profile && state.user.profile.developer
-  );
-}
+selectors.developerMode = state => (
+  state && state.user && state.user.profile && state.user.profile.developer
+);
 
-export function userPreferences(state) {
-  return fromUser.userPreferences(state && state.user);
-}
+selectors.currentEnvironment = state => selectors.userPreferences(state).environment;
 
-export function currentEnvironment(state) {
-  return userPreferences(state).environment;
-}
-
-export function accountShareHeader(state, path) {
-  return fromUser.accountShareHeader(state && state.user, path);
-}
-
-export const userOwnPreferences = createSelector(
+selectors.userOwnPreferences = createSelector(
   state => state.user,
   user => fromUser.userOwnPreferences(user)
 );
 
-// export function userOwnPreferences(state) {
-//   return fromUser.userOwnPreferences(state && state.user);
-// }
-
 // TODO: make this selector a lot more granular...its dependency is user
-export const userProfilePreferencesProps = createSelector(
-  userProfile,
-  userPreferences,
+selectors.userProfilePreferencesProps = createSelector(
+  selectors.userProfile,
+  selectors.userPreferences,
   (profile, preferences) => {
     const {
       _id,
@@ -681,110 +379,83 @@ export const userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
     };
-  }
+  });
 
-);
-export function userProfileEmail(state) {
-  return state && state.user && state.user.profile && state.user.profile.email;
-}
+selectors.userProfileEmail = state => state?.user?.profile?.email;
 
-export function userProfileLinkedWithGoogle(state) {
-  return !!(
-    state &&
+selectors.userProfileLinkedWithGoogle = state => !!(
+  state &&
     state.user &&
     state.user.profile &&
     state.user.profile.auth_type_google &&
     state.user.profile.auth_type_google.id
-  );
-}
+);
 // #endregiod
 
 // #region AUTHENTICATION SELECTORS
-export function isAuthenticated(state) {
-  return !!(state && state.auth && state.auth.authenticated);
-}
+selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authenticated);
 
-export function isDefaultAccountSet(state) {
-  return !!(state && state.auth && state.auth.defaultAccountSet);
-}
+selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.defaultAccountSet);
 
-export function isAuthInitialized(state) {
-  return !!(state && state.auth && state.auth.initialized);
-}
+selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 
-export function isAuthLoading(state) {
-  return (
-    state &&
+selectors.isAuthLoading = state => (
+  state &&
     state.auth &&
-    state.auth.commStatus === fromNetworkComms.COMM_STATES.LOADING
-  );
-}
+    state.auth.commStatus === COMM_STATES.LOADING
+);
 
-export function authenticationErrored(state) {
-  return state && state.auth && state.auth.failure;
-}
+selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
-export function isUserLoggedOut(state) {
-  return !!(state && state.auth && state.auth.loggedOut);
-}
+selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
 
-export function isDefaultAccountSetAfterAuth(state) {
-  if (!isAuthLoading(state)) {
-    const authenticated = isAuthenticated(state);
+selectors.isDefaultAccountSetAfterAuth = state => {
+  if (!selectors.isAuthLoading(state)) {
+    const authenticated = selectors.isAuthenticated(state);
 
     if (authenticated) {
-      return isDefaultAccountSet(state);
+      return selectors.isDefaultAccountSet(state);
     }
 
     return true;
   }
 
   return false;
-}
+};
 
 // This selector is used by the UI to determine
 // when to show appRouting component
 // For now only when the default account is set or user is logged out
 // show the appRouting component
-export function shouldShowAppRouting(state) {
-  return isDefaultAccountSetAfterAuth(state) || isUserLoggedOut(state);
-}
+selectors.shouldShowAppRouting = state => selectors.isDefaultAccountSetAfterAuth(state) || selectors.isUserLoggedOut(state);
 
-export function isSessionExpired(state) {
-  return !!(state && state.auth && state.auth.sessionExpired);
-}
+selectors.isSessionExpired = state => !!(state && state.auth && state.auth.sessionExpired);
 
-export function showSessionStatus(state, date) {
-  return fromAuth.showSessionStatus(state && state.auth, date);
-}
-
-export function sessionValidTimestamp(state) {
-  return state && state.auth && state.auth.authTimestamp;
-}
+selectors.sessionValidTimestamp = state => state && state.auth && state.auth.authTimestamp;
 // #endregion AUTHENTICATION SELECTORS
 
 // #region PASSWORD & EMAIL update selectors for modals
-export function changePasswordSuccess(state) {
+selectors.changePasswordSuccess = state => {
   const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === fromNetworkComms.COMM_STATES.SUCCESS;
-}
+  return status === COMM_STATES.SUCCESS;
+};
 
-export function changePasswordFailure(state) {
+selectors.changePasswordFailure = state => {
   const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === fromNetworkComms.COMM_STATES.ERROR;
-}
+  return status === COMM_STATES.ERROR;
+};
 
-export function changePasswordMsg(state) {
+selectors.changePasswordMsg = state => {
   const commKey = commKeyGen(
     changePasswordParams.path,
     changePasswordParams.opts.method
@@ -792,29 +463,29 @@ export function changePasswordMsg(state) {
   const message = fromComms.requestMessage(state && state.comms, commKey);
 
   return message || '';
-}
+};
 
-export function changeEmailFailure(state) {
+selectors.changeEmailFailure = state => {
   const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === fromNetworkComms.COMM_STATES.ERROR;
-}
+  return status === COMM_STATES.ERROR;
+};
 
-export function changeEmailSuccess(state) {
+selectors.changeEmailSuccess = state => {
   const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
   );
   const status = fromComms.commStatus(state && state.comms, commKey);
 
-  return status === fromNetworkComms.COMM_STATES.SUCCESS;
-}
+  return status === COMM_STATES.SUCCESS;
+};
 
-export function changeEmailMsg(state) {
+selectors.changeEmailMsg = state => {
   const commKey = commKeyGen(
     changeEmailParams.path,
     changeEmailParams.opts.method
@@ -822,16 +493,12 @@ export function changeEmailMsg(state) {
   const message = fromComms.requestMessage(state && state.comms, commKey);
 
   return message || '';
-}
+};
 
 // #endregion PASSWORD & EMAIL update selectors for modals
 
 // #region USER SELECTORS
-export function debugOn(state) {
-  return fromUser.debugOn(state && state.user);
-}
-
-export function testConnectionCommState(state, resourceId) {
+selectors.testConnectionCommState = (state, resourceId) => {
   const status = fromComms.testConnectionStatus(
     state && state.comms,
     resourceId
@@ -845,43 +512,15 @@ export function testConnectionCommState(state, resourceId) {
     commState: status,
     message,
   };
-}
+};
 
-export function themeName(state) {
-  return fromUser.appTheme((state && state.user) || null);
-}
+selectors.hasPreferences = state => !!selectors.userPreferences(state);
 
-export function editorTheme(state) {
-  return fromUser.editorTheme((state && state.user) || null);
-}
-
-export function hasPreferences(state) {
-  return !!userPreferences(state);
-}
-
-export function drawerOpened(state) {
-  return fromUser.drawerOpened((state && state.user) || null);
-}
-
-export function expandSelected(state) {
-  return fromUser.expandSelected((state && state.user) || null);
-}
-
-export function hasProfile(state) {
-  return !!userProfile(state);
-}
+selectors.hasProfile = state => !!selectors.userProfile(state);
 // #endregion
 
 // #region PUBLIC DATA SELECTORS
-export function marketplaceTemplate(state, templateId) {
-  return fromData.template(state && state.data, templateId);
-}
-
-export function resource(state, resourceType, id) {
-  return fromData.resource(state && state.data, resourceType, id);
-}
-
-export function resourceList(state, options = {}) {
+selectors.resourceList = (state, options = {}) => {
   if (
     !options.ignoreEnvironmentFilter &&
     ![
@@ -899,16 +538,16 @@ export function resourceList(state, options = {}) {
       options.type
     )
   ) {
-    const preferences = userPreferences(state);
+    const preferences = selectors.userPreferences(state);
 
     // eslint-disable-next-line no-param-reassign
     options.sandbox = preferences.environment === 'sandbox';
   }
 
   return fromData.resourceList(state && state.data, options);
-}
+};
 
-export function resourceListModified(userState, resourcesState, options = {}) {
+selectors.resourceListModified = (userState, resourcesState, options = {}) => {
   if (
     !options.ignoreEnvironmentFilter &&
     ![
@@ -933,55 +572,46 @@ export function resourceListModified(userState, resourcesState, options = {}) {
   }
 
   return fromResources.resourceList(resourcesState, options);
-}
+};
 
-export function hasSettingsForm(state, resourceType, resourceId) {
-  return fromData.hasSettingsForm(
-    state && state.data,
-    resourceType,
-    resourceId
-  );
-}
-
-// optimize this selector further resource state should be per resource type
-export const makeResourceListSelector = () =>
+selectors.makeResourceListSelector = () =>
   createSelector(
-    userState,
-    resourcesState,
+    selectors.userState,
+    selectors.resourceState,
     (_, options) => options,
     (userState, resourcesState, options) =>
-      resourceListModified(userState, resourcesState, options)
+      selectors.resourceListModified(userState, resourcesState, options)
   );
 
-export function iaFlowSettings(state, integrationId, flowId) {
-  const integration = resource(state, 'integrations', integrationId);
+selectors.iaFlowSettings = (state, integrationId, flowId) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
 
   return getIAFlowSettings(integration, flowId);
-}
+};
 
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,
 // showMapping is an IA only field, how do we determine if a DIY flow has mapping support?
 // Maybe its best to only hav common props here and remove all IA props to a separate selector.
-export function flowDetails(state, id) {
-  const flow = resource(state, 'flows', id);
+selectors.flowDetails = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return emptyObject;
-  const integration = resource(state, 'integrations', flow._integrationId);
-  const exports = resourceList(state, {
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
+  const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
 
   return getFlowDetails(flow, integration, exports);
-}
+};
 
 /* ***********************************************************************
   This is the beginning of refactoring the above selector. There is just WAY to
   much data returned above and in most cased a component only needs a small slice
   of the above. */
-export function isDataLoader(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.isDataLoader = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
 
   if (!flow) return false;
 
@@ -992,10 +622,10 @@ export function isDataLoader(state, flowId) {
   if (!exports) return false;
 
   return isSimpleImportFlow(flow, exports);
-}
+};
 
-export function flowType(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.flowType = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
 
   if (!flow) return '';
 
@@ -1015,14 +645,14 @@ export function flowType(state, flowId) {
   // and 'mixed'. Note that mixed is the case where some exports are scheduled
   // and others are not.
   return 'Scheduled';
-}
+};
 
-export function isFlowEnableLocked(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.isFlowEnableLocked = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
 
   if (!flow || !flow._connectorId) return false;
 
-  const integration = resource(state, 'integrations', flow._integrationId);
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
   if (!integration) return false;
 
@@ -1031,17 +661,17 @@ export function isFlowEnableLocked(state, flowId) {
   // strange flow setting name to indicate that flows can not be
   // enabled/disabled by a user...
   return flowSettings.disableSlider;
-}
+};
 
 // Possible refactor! If we need both canSchedule (flow has ability to schedule),
 // and if the IA allows for schedule overrides, then we can return a touple...
 // for the current purpose, we just need to know if a flow allows or doesn't allow
 // schedule editing.
-export function flowAllowsScheduling(state, id) {
-  const flow = resource(state, 'flows', id);
+selectors.flowAllowsScheduling = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
-  const integration = resource(state, 'integrations', flow._integrationId);
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
   const isApp = flow._connectorId;
   const allExports = state && state.data && state.data.resources.exports;
   const canSchedule = showScheduleIcon(flow, allExports);
@@ -1051,23 +681,24 @@ export function flowAllowsScheduling(state, id) {
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
   return canSchedule && !!flowSettings.showSchedule;
-}
+};
 
-export function flowUsesUtilityMapping(state, id) {
-  const flow = resource(state, 'flows', id);
+selectors.flowUsesUtilityMapping = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
-  const integration = resource(state, 'integrations', flow._integrationId);
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
   const isApp = flow._connectorId;
+
   if (!isApp) return false;
 
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
   return !!flowSettings.showUtilityMapping;
-}
+};
 
-export function flowSupportsMapping(state, id) {
-  const flow = resource(state, 'flows', id);
+selectors.flowSupportsMapping = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
 
@@ -1075,15 +706,15 @@ export function flowSupportsMapping(state, id) {
 
   if (!isApp) return true;
 
-  const integration = resource(state, 'integrations', flow._integrationId);
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
   return !!flowSettings.showMapping;
-}
+};
 
-export function flowSupportsSettings(state, id) {
-  const flow = resource(state, 'flows', id);
+selectors.flowSupportsSettings = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
 
   if (!flow) return false;
 
@@ -1091,7 +722,7 @@ export function flowSupportsSettings(state, id) {
 
   if (!isApp) return false;
 
-  const integration = resource(state, 'integrations', flow._integrationId);
+  const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
   const flowSettings = getIAFlowSettings(integration, flow._id);
 
@@ -1099,47 +730,49 @@ export function flowSupportsSettings(state, id) {
     (flowSettings.settings && flowSettings.settings.length) ||
     (flowSettings.sections && flowSettings.sections.length)
   );
-}
+};
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of
    the flowDetails, we should delete that selector.
 *********************************************************************** */
 
-export function flowListWithMetadata(state, options) {
-  const flows = resourceList(state, options).resources || emptySet;
-  const exports = resourceList(state, {
+selectors.flowListWithMetadata = (state, options) => {
+  const flows = selectors.resourceList(state, options).resources || emptySet;
+  const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
 
   return getFlowListWithMetadata(flows, exports);
-}
+};
 
 /*
  * Gives all other valid flows of same Integration
  */
-export function nextDataFlowsForFlow(state, flow) {
-  const flows = flowListWithMetadata(state, { type: 'flows' }).resources || [];
+selectors.nextDataFlowsForFlow = (state, flow) => {
+  const flows = selectors.flowListWithMetadata(state, { type: 'flows' }).resources || [];
 
   return getNextDataFlows(flows, flow);
-}
+};
 
-export function isIAConnectionSetupPending(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId) || {};
+selectors.isIAConnectionSetupPending = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
 
   if (!connection || !connection._connectorId) {
     return;
   }
 
   const { _integrationId } = connection;
-  const integration = resource(state, 'integrations', _integrationId);
+  const integration = selectors.resource(state, 'integrations', _integrationId);
 
   const addNewStoreSteps = fromSession.addNewStoreSteps(
     state?.session,
     _integrationId
   );
   const { steps } = addNewStoreSteps;
+
   if (steps && Array.isArray(steps)) {
     const installStep = steps.find(s => s._connectionId === connectionId);
+
     if (!installStep?.completed) {
       return true;
     }
@@ -1160,29 +793,25 @@ export function isIAConnectionSetupPending(state, connectionId) {
   }
 
   return false;
-}
+};
 
-export function isConnectionOffline(state, id) {
-  const connection = resource(state, 'connections', id);
+selectors.isConnectionOffline = (state, id) => {
+  const connection = selectors.resource(state, 'connections', id);
 
   return connection && connection.offline;
-}
+};
 
 // TODO: could this be converted to re-select?
-export function resourcesByIds(state, resourceType, resourceIds) {
-  const { resources } = resourceList(state, {
+selectors.resourcesByIds = (state, resourceType, resourceIds) => {
+  const { resources } = selectors.resourceList(state, {
     type: resourceType,
   });
 
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
-}
+};
 
-export function userPermissions(state) {
-  return fromUser.permissions(state.user);
-}
-
-export function userAccessLevelOnConnection(state, connectionId) {
-  const permissions = userPermissions(state);
+selectors.userAccessLevelOnConnection = (state, connectionId) => {
+  const permissions = selectors.userPermissions(state);
   let accessLevelOnConnection;
 
   if (
@@ -1194,7 +823,7 @@ export function userAccessLevelOnConnection(state, connectionId) {
   ) {
     accessLevelOnConnection = permissions.accessLevel;
   } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-    const ioIntegrations = resourceList(state, {
+    const ioIntegrations = selectors.resourceList(state, {
       type: 'integrations',
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
@@ -1219,14 +848,14 @@ export function userAccessLevelOnConnection(state, connectionId) {
   }
 
   return accessLevelOnConnection;
-}
-export function matchingConnectionList(state, connection = {}, environment, manageOnly) {
+};
+selectors.matchingConnectionList = (state, connection = {}, environment, manageOnly) => {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
-    environment = currentEnvironment(state);
+    environment = selectors.currentEnvironment(state);
   }
 
-  const { resources = [] } = resourceList(state, {
+  const { resources = [] } = selectors.resourceList(state, {
     type: 'connections',
     ignoreEnvironmentFilter: true,
     filter: {
@@ -1240,7 +869,8 @@ export function matchingConnectionList(state, connection = {}, environment, mana
         }
 
         if (['netsuite'].indexOf(connection.type) > -1) {
-          const accessLevel = manageOnly ? userAccessLevelOnConnection(state, this._id) : 'owner';
+          const accessLevel = manageOnly ? selectors.userAccessLevelOnConnection(state, this._id) : 'owner';
+
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
@@ -1260,10 +890,10 @@ export function matchingConnectionList(state, connection = {}, environment, mana
   });
 
   return resources;
-}
+};
 
-export function matchingStackList(state) {
-  const { resources = [] } = resourceList(state, {
+selectors.matchingStackList = state => {
+  const { resources = [] } = selectors.resourceList(state, {
     type: 'stacks',
     filter: {
       _connectorId: { $exists: false },
@@ -1271,31 +901,25 @@ export function matchingStackList(state) {
   });
 
   return resources;
-}
+};
 
-export function filteredResourceList(
+selectors.filteredResourceList = (
   state,
   resource,
   resourceType,
   environment,
   manageOnly
-) {
-  return resourceType === 'connections'
-    ? matchingConnectionList(state, resource, environment, manageOnly)
-    : matchingStackList(state);
-}
+) => resourceType === 'connections'
+  ? selectors.matchingConnectionList(state, resource, environment, manageOnly)
+  : selectors.matchingStackList(state);
 
-export function integrationAppList(state) {
-  return fromData.integrationAppList(state && state.data);
-}
-
-export function marketplaceConnectors(
+selectors.marketplaceConnectors = (
   userState,
   marketPlaceState,
   resourceState,
   application,
   sandbox
-) {
+) => {
   const licenses = fromUser.licenses(userState);
   const connectors = fromMarketPlace.connectors(
     marketPlaceState,
@@ -1306,7 +930,7 @@ export function marketplaceConnectors(
 
   return connectors
     .map(c => {
-      const installedIntegrationApps = resourceListModified(
+      const installedIntegrationApps = selectors.resourceListModified(
         userState,
         resourceState,
         {
@@ -1319,17 +943,17 @@ export function marketplaceConnectors(
       return { ...c, installed: !!installedIntegrationApps.resources.length };
     })
     .sort(stringCompare('name'));
-}
+};
 
-export const makeMarketPlaceConnectorsSelector = () =>
+selectors.makeMarketPlaceConnectorsSelector = () =>
   createSelector(
-    userState,
-    marketPlaceState,
-    resourcesState,
+    selectors.userState,
+    selectors.marketPlaceState,
+    selectors.resourceState,
     (_, application) => application,
     (_1, _2, sandbox) => sandbox,
     (userState, marketPlaceState, resourceState, application, sandbox) =>
-      marketplaceConnectors(
+      selectors.marketplaceConnectors(
         userState,
         marketPlaceState,
         resourceState,
@@ -1338,17 +962,13 @@ export const makeMarketPlaceConnectorsSelector = () =>
       )
   );
 
-export function marketplaceTemplates(state, application) {
-  return fromData.marketplaceTemplates(state.data, application);
-}
-
-export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
+selectors.getAllConnectionIdsUsedInTheFlow = (state, flow, options = {}) => {
   const exportIds = getExportIdsFromFlow(flow);
   const importIds = getImportIdsFromFlow(flow);
   const connectionIds = [];
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const exports = resourceList(state, { type: 'exports' }).resources;
-  const imports = resourceList(state, { type: 'imports' }).resources;
+  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
+  const exports = selectors.resourceList(state, { type: 'exports' }).resources;
+  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
     return emptySet;
@@ -1395,9 +1015,9 @@ export function getAllConnectionIdsUsedInTheFlow(state, flow, options = {}) {
   }
 
   return connectionIds;
-}
+};
 
-export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
+selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
   const { resource: flowResource, properties } = fieldMeta;
   let resourceId;
 
@@ -1413,86 +1033,33 @@ export function getFlowsAssociatedExportFromIAMetadata(state, fieldMeta) {
     resourceId = flowResource.pageGenerators[0]._exportId;
   }
 
-  return resource(state, 'exports', resourceId);
-}
+  return selectors.resource(state, 'exports', resourceId);
+};
 // #begin integrationApps Region
-
-export function integrationAppSettingsFormState(
-  state,
-  integrationId,
-  flowId,
-  sectionId
-) {
-  return fromSession.integrationAppSettingsFormState(
-    state && state.session,
-    integrationId,
-    flowId,
-    sectionId
-  );
-}
-
-export function shouldRedirect(state, integrationId) {
-  return fromSession.shouldRedirect(state && state.session, integrationId);
-}
-
-export function queuedJobs(state, connectionId) {
-  return fromSession.queuedJobs(state && state.session, connectionId);
-}
-
-export function iClients(state, connectionId) {
-  return fromSession.iClients(state && state.session, connectionId);
-}
-
-export function integrationAppAddOnState(state, integrationId) {
-  return fromSession.integrationAppAddOnState(
-    state && state.session,
-    integrationId
-  );
-}
-
-export function integrationAppMappingMetadata(state, integrationId) {
-  return fromSession.integrationAppMappingMetadata(
-    state && state.session,
-    integrationId
-  );
-}
-
-export function isAddOnInstallInProgress(state, id) {
-  return fromSession.isAddOnInstallInProgress(state && state.session, id);
-}
-
-export function checkUpgradeRequested(state, licenseId) {
-  return fromSession.checkUpgradeRequested(state && state.session, licenseId);
-}
-
-export function isOnOffInProgress(state, flowId) {
-  return fromSession.isOnOffInProgress(state && state.session, flowId);
-}
-export function canOpenOauthConnection(state, integrationId) {
-  return fromSession.canOpenOauthConnection(state && state.session, integrationId);
-}
-
-export function integrationConnectionList(state, integrationId, childId, tableConfig) {
-  const integration = resource(state, 'integrations', integrationId) || {};
+selectors.integrationConnectionList = (state, integrationId, childId, tableConfig) => {
+  const integration = selectors.resource(state, 'integrations', integrationId) || {};
   // eslint-disable-next-line no-use-before-define
-  const childIntegrations = map(integrationChildren(state, integrationId), 'value');
-  let { resources = [] } = resourceList(state, {
+  const childIntegrations = map(selectors.integrationChildren(state, integrationId), 'value');
+  let { resources = [] } = selectors.resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
   });
 
   if (integrationId && integrationId !== 'none' && !integration._connectorId) {
     let registeredConnections = [];
+
     if (!childId) {
       childIntegrations.forEach(intId => {
-        const integration = resource(state, 'integrations', intId);
+        const integration = selectors.resource(state, 'integrations', intId);
+
         if (integration) {
           registeredConnections = registeredConnections.concat(integration._registeredConnectionIds);
         }
       });
     } else {
-      const parentIntegration = resource(state, 'integrations', integrationId);
-      const childIntegration = resource(state, 'integrations', childId);
+      const parentIntegration = selectors.resource(state, 'integrations', integrationId);
+      const childIntegration = selectors.resource(state, 'integrations', childId);
+
       if (parentIntegration) {
         registeredConnections = registeredConnections.concat(parentIntegration._registeredConnectionIds);
       }
@@ -1509,29 +1076,30 @@ export function integrationConnectionList(state, integrationId, childId, tableCo
       if (childId && childId !== integrationId) {
         return [integrationId, childId].includes(conn._integrationId);
       }
+
       return childIntegrations.includes(conn._integrationId);
     });
   }
 
   return resources;
-}
+};
 
-export function integrationAppV2FlowList(state, integrationId, childId) {
+selectors.integrationAppV2FlowList = (state, integrationId, childId) => {
   if (!state) return null;
 
-  return resourceList(state, {
+  return selectors.resourceList(state, {
     type: 'flows',
     filter: { _integrationId: childId },
   }).resources;
-}
+};
 
-export function integrationAppV2ConnectionList(state, integrationId, childId) {
+selectors.integrationAppV2ConnectionList = (state, integrationId, childId) => {
   if (!state) return null;
   const isParent = integrationId === childId;
   let integrations;
 
   if (isParent) {
-    const childIntegrations = resourceList(state, {
+    const childIntegrations = selectors.resourceList(state, {
       type: 'integrations',
       filter: { _parentId: integrationId },
     }).resources;
@@ -1541,7 +1109,7 @@ export function integrationAppV2ConnectionList(state, integrationId, childId) {
     integrations = [integrationId, childId];
   }
 
-  const connections = resourceList(state, {
+  const connections = selectors.resourceList(state, {
     type: 'connections',
     filter: {
       $where() {
@@ -1551,20 +1119,20 @@ export function integrationAppV2ConnectionList(state, integrationId, childId) {
   }).resources;
 
   return connections;
-}
+};
 
-export function integrationAppResourceList(
+selectors.integrationAppResourceList = (
   state,
   integrationId,
   storeId,
   tableConfig
-) {
+) => {
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
     fromData.integrationAppSettings(state.data, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = resourceList(state, {
+  const { resources: integrationConnections } = selectors.resourceList(state, {
     type: 'connections',
     filter: { _integrationId: integrationId },
     ...(tableConfig || {}),
@@ -1573,7 +1141,7 @@ export function integrationAppResourceList(
   if (!supportsMultiStore || !storeId) {
     return {
       connections: integrationConnections,
-      flows: resourceList(state, {
+      flows: selectors.resourceList(state, {
         type: 'flows',
         filter: { _integrationId: integrationId },
       }).resources,
@@ -1592,9 +1160,10 @@ export function integrationAppResourceList(
   });
 
   flowIds.forEach(fid => {
-    const flow = resource(state, 'flows', fid) || {};
+    const flow = selectors.resource(state, 'flows', fid) || {};
+
     flows.push({_id: flow._id, name: flow.name});
-    connections.push(...getAllConnectionIdsUsedInTheFlow(state, flow));
+    connections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
   });
@@ -1607,9 +1176,9 @@ export function integrationAppResourceList(
     exports,
     imports,
   };
-}
+};
 
-export function integrationAppStore(state, integrationId, storeId) {
+selectors.integrationAppStore = (state, integrationId, storeId) => {
   const integration = fromData.integrationAppSettings(
     state && state.data,
     integrationId
@@ -1622,52 +1191,17 @@ export function integrationAppStore(state, integrationId, storeId) {
   return (
     integration.stores.find(store => store.value === storeId) || emptyObject
   );
-}
+};
 
-export function integrationAppConnectionList(
+selectors.integrationAppConnectionList = (
   state,
   integrationId,
   storeId,
   tableConfig
-) {
-  return integrationAppResourceList(state, integrationId, storeId, tableConfig)
-    .connections;
-}
+) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig)
+  .connections;
 
-export function categoryMappingsForSection(state, integrationId, flowId, id) {
-  return fromSession.categoryMappingsForSection(
-    state && state.session,
-    integrationId,
-    flowId,
-    id
-  );
-}
-
-export function categoryMappingsCollapsedStatus(state, integrationId, flowId) {
-  return fromSession.categoryMappingsCollapsedStatus(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-}
-
-export function categoryMappingsChanged(state, integrationId, flowId) {
-  return fromSession.categoryMappingsChanged(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-}
-
-export function categoryMappingSaveStatus(state, integrationId, flowId) {
-  return fromSession.categoryMappingSaveStatus(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-}
-
-export function pendingCategoryMappings(state, integrationId, flowId) {
+selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
   const { response, mappings, deleted, uiAssistant } =
     fromSession.categoryMapping(
       state && state.session,
@@ -1695,17 +1229,9 @@ export function pendingCategoryMappings(state, integrationId, flowId) {
   );
 
   return sessionMappings;
-}
+};
 
-export function categoryMapping(state, integrationId, flowId) {
-  return fromSession.categoryMapping(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-}
-
-export function categoryMappingMetadata(state, integrationId, flowId) {
+selectors.categoryMappingMetadata = (state, integrationId, flowId) => {
   const categoryMappingData =
     fromSession.categoryMapping(
       state && state.session,
@@ -1740,9 +1266,9 @@ export function categoryMappingMetadata(state, integrationId, flowId) {
   }
 
   return categoryMappingMetadata;
-}
+};
 
-export function mappedCategories(state, integrationId, flowId) {
+selectors.mappedCategories = (state, integrationId, flowId) => {
   const categoryMappingData =
     fromSession.categoryMapping(
       state && state.session,
@@ -1767,14 +1293,14 @@ export function mappedCategories(state, integrationId, flowId) {
   }
 
   return mappedCategories;
-}
+};
 
-export function categoryMappingGenerateFields(
+selectors.categoryMappingGenerateFields = (
   state,
   integrationId,
   flowId,
   options
-) {
+) => {
   const { sectionId } = options;
   const generatesMetadata =
     fromSession.categoryMappingGeneratesMetadata(
@@ -1788,25 +1314,9 @@ export function categoryMappingGenerateFields(
   }
 
   return null;
-}
+};
 
-export function categoryMappingFilters(state, integrationId, flowId) {
-  return fromSession.categoryMappingFilters(
-    state && state.session,
-    integrationId,
-    flowId
-  );
-}
-
-export function categoryRelationshipData(state, integrationId, flowId) {
-  return fromData.categoryRelationshipData(
-    state && state.data,
-    integrationId,
-    flowId
-  );
-}
-
-export function mappingsForVariation(state, integrationId, flowId, filters) {
+selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
   const { sectionId, variation, isVariationAttributes } = filters;
   let mappings = {};
   const recordMappings =
@@ -1832,13 +1342,13 @@ export function mappingsForVariation(state, integrationId, flowId, filters) {
     variation_themes.find(theme => theme.variation_theme === variation) ||
     emptyObject
   );
-}
+};
 
-export function mappingsForCategory(state, integrationId, flowId, filters) {
+selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   const { sectionId } = filters;
   let mappings = emptySet;
   const { attributes = {}, mappingFilter = 'all' } =
-    categoryMappingFilters(state, integrationId, flowId) || {};
+    selectors.categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
     fromSession.categoryMappingData(
       state && state.session,
@@ -1846,7 +1356,7 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
       flowId
     ) || {};
   const { fields = [] } =
-    categoryMappingGenerateFields(state, integrationId, flowId, {
+    selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
       sectionId,
     }) || {};
 
@@ -1876,13 +1386,13 @@ export function mappingsForCategory(state, integrationId, flowId, filters) {
     ...mappings,
     fieldMappings: filteredMappings,
   };
-}
+};
 
-export function integrationChildren(state, integrationId) {
+selectors.integrationChildren = (state, integrationId) => {
   if (!state) return null;
   const children = [];
-  const integration = resource(state, 'integrations', integrationId) || {};
-  const childIntegrations = resourceList(state, {
+  const integration = selectors.resource(state, 'integrations', integrationId) || {};
+  const childIntegrations = selectors.resourceList(state, {
     type: 'integrations',
     filter: { _parentId: integrationId },
   }).resources;
@@ -1893,24 +1403,15 @@ export function integrationChildren(state, integrationId) {
   });
 
   return children;
-}
+};
 
-export function integrationAppSettings(state, id) {
-  if (!state) return null;
-
-  return fromData.integrationAppSettings(state.data, id);
-}
-
-export function suiteScriptIASettings(state, id, ssLinkedConnectionId) {
-  return fromData.suiteScriptIASettings(state && state.data, id, ssLinkedConnectionId);
-}
-export function integrationAppLicense(state, id) {
+selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
-  const upgradeRequested = checkUpgradeRequested(state, license._id);
+  const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const { expires, created } = license;
   const hasExpired = moment(expires) - moment() < 0;
   const createdFormatted = `Started on ${moment(created).format(
@@ -1937,9 +1438,9 @@ export function integrationAppLicense(state, id) {
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
-}
+};
 
-export function integrationAppFlowSections(state, id, store) {
+selectors.integrationAppFlowSections = (state, id, store) => {
   if (!state) return emptySet;
   let flowSections = [];
   const integrationResource =
@@ -1965,9 +1466,9 @@ export function integrationAppFlowSections(state, id, store) {
     ...sec,
     titleId: getTitleIdFromSection(sec),
   }));
-}
+};
 
-export function integrationAppGeneralSettings(state, id, storeId) {
+selectors.integrationAppGeneralSettings = (state, id, storeId) => {
   if (!state) return emptyObject;
   let fields;
   let subSections;
@@ -1990,9 +1491,9 @@ export function integrationAppGeneralSettings(state, id, storeId) {
     fields,
     sections: subSections,
   };
-}
+};
 
-export function hasGeneralSettings(state, integrationId, storeId) {
+selectors.hasGeneralSettings = (state, integrationId, storeId) => {
   if (!state) return false;
   const integrationResource =
     fromData.integrationAppSettings(state.data, integrationId) || {};
@@ -2006,14 +1507,14 @@ export function hasGeneralSettings(state, integrationId, storeId) {
   }
 
   return !isEmpty(general);
-}
+};
 
-export function integrationAppSectionMetadata(
+selectors.integrationAppSectionMetadata = (
   state,
   integrationId,
   section,
   storeId
-) {
+) => {
   if (!state) {
     return emptyObject;
   }
@@ -2042,19 +1543,19 @@ export function integrationAppSectionMetadata(
     ) || {};
 
   return selectedSection;
-}
+};
 
-export function suiteScriptIASectionMetadata(
+selectors.suiteScriptIASectionMetadata = (
   state,
   integrationId,
   ssLinkedConnectionId,
   section,
-) {
+) => {
   if (!state) {
     return emptyObject;
   }
 
-  const integrationResource = suiteScriptIASettings(
+  const integrationResource = selectors.suiteScriptIASettings(
     state,
     integrationId,
     ssLinkedConnectionId
@@ -2070,8 +1571,9 @@ export function suiteScriptIASectionMetadata(
     ) || {};
 
   return selectedSection;
-}
-export function integrationAppFlowSettings(state, id, section, storeId) {
+};
+
+selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   if (!state) return emptyObject;
   const integrationResource =
     fromData.integrationAppSettings(state.data, id) || emptyObject;
@@ -2119,7 +1621,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     f => f.showNSInternalIdLookup
   );
   hasDescription = some(selectedSection.flows, f => {
-    const flow = resource(state, 'flows', f._id) || {};
+    const flow = selectors.resource(state, 'flows', f._id) || {};
 
     return !!flow.description;
   });
@@ -2129,7 +1631,7 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
       !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
   );
   const { fields, sections: subSections } = selectedSection;
-  let flows = flowListWithMetadata(state, {
+  let flows = selectors.flowListWithMetadata(state, {
     type: 'flows',
     filter: {
       _integrationId: id,
@@ -2152,20 +1654,20 @@ export function integrationAppFlowSettings(state, id, section, storeId) {
     showFlowSettings,
     showMatchRuleEngine,
   };
-}
+};
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
-export function integrationAppFlowIds(state, integrationId, storeId) {
-  const allIntegrationFlows = resourceList(state, {
+selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
+  const allIntegrationFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: { _integrationId: integrationId },
   }).resources;
-  const integration = integrationAppSettings(state, integrationId);
+  const integration = selectors.integrationAppSettings(state, integrationId);
 
   if (integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
-    const { flows } = integrationAppFlowSettings(
+    const { flows } = selectors.integrationAppFlowSettings(
       state,
       integrationId,
       null,
@@ -2186,6 +1688,7 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
           ? flowStore === store.label
           : flows.indexOf(f._id) > -1;
       });
+
       return map(storeFlows.length ? storeFlows : flows,
         '_id'
       );
@@ -2195,13 +1698,9 @@ export function integrationAppFlowIds(state, integrationId, storeId) {
   }
 
   return map(allIntegrationFlows, '_id');
-}
+};
 
-export function defaultStoreId(state, id, store) {
-  return fromData.defaultStoreId(state && state.data, id, store);
-}
-
-export function integrationInstallSteps(state, integrationId) {
+selectors.integrationInstallSteps = (state, integrationId) => {
   if (!state) return null;
   const integrationInstallSteps = fromData.integrationInstallSteps(
     state.data,
@@ -2221,10 +1720,11 @@ export function integrationInstallSteps(state, integrationId) {
 
     return step;
   });
-}
+};
 
 const emptyStepsArr = [];
-export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }) {
+
+selectors.integrationUninstallSteps = (state, { integrationId, isFrameWork2 }) => {
   const uninstallData = isFrameWork2 ? fromSession.uninstall2Data(
     state && state.session,
     integrationId
@@ -2239,6 +1739,7 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
   }
 
   const visibleSteps = uninstallSteps.filter(s => s.type !== 'hidden');
+
   if (visibleSteps.length === 0) {
     return { steps: emptyStepsArr, error, isFetched, isComplete };
   }
@@ -2252,9 +1753,9 @@ export function integrationUninstallSteps(state, { integrationId, isFrameWork2 }
   });
 
   return { steps: modifiedSteps, error, isFetched, isComplete };
-}
+};
 
-export function addNewStoreSteps(state, integrationId) {
+selectors.addNewStoreSteps = (state, integrationId) => {
   const addNewStoreSteps = fromSession.addNewStoreSteps(
     state && state.session,
     integrationId
@@ -2265,7 +1766,7 @@ export function addNewStoreSteps(state, integrationId) {
     return addNewStoreSteps;
   }
 
-  const modifiedSteps = produce(steps, (draft) => {
+  const modifiedSteps = produce(steps, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -2274,10 +1775,11 @@ export function addNewStoreSteps(state, integrationId) {
   });
 
   return { steps: modifiedSteps };
-}
+};
 
-export function isIAV2UninstallComplete(state, { integrationId }) {
+selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   const integration = fromData.integrationAppSettings(state.data, integrationId);
+
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
 
@@ -2287,19 +1789,23 @@ export function isIAV2UninstallComplete(state, { integrationId }) {
   );
 
   const { steps: uninstallSteps, isFetched } = uninstallData;
+
   if (isFetched) {
     if (!uninstallSteps || uninstallSteps.length === 0) return true;
+
     return !(uninstallSteps.find(s =>
       !s.completed
     ));
   }
+
   return false;
-}
+};
 
 // FIXME: @ashu, we can refactor this later and completely remove
 // the clone check once the functionality is clear and tested for all scenarios
-export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
-  const integration = resource(state, 'integrations', integrationId);
+selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
   if (!integration) return false;
   let isCloned = false;
 
@@ -2315,61 +1821,50 @@ export function isIntegrationAppVersion2(state, integrationId, skipCloneCheck) {
       integration.uninstallSteps &&
         integration.uninstallSteps.length) ||
     isCloned;
-  return isFrameWork2;
-}
 
-export function integrationAppChildIdOfFlow(state, integrationId, flowId) {
+  return isFrameWork2;
+};
+
+selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (!state || !integrationId) {
     return null;
   }
   const integration = fromData.resource(state.data, 'integrations', integrationId);
+
   if (integration?.settings?.supportsMultiStore) {
-    const { stores } = integrationAppSettings(state, integrationId);
+    const { stores } = selectors.integrationAppSettings(state, integrationId);
+
     if (!flowId && stores?.length) {
       return stores[0].value;
     }
-    return stores.find(store => integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
+
+    return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
   }
-  if (isIntegrationAppVersion2(state, integrationId, true)) {
+  if (selectors.isIntegrationAppVersion2(state, integrationId, true)) {
     if (!flowId) return integrationId;
+
     return fromData.resource(state.data, 'flows', flowId)?._integrationId;
   }
+
   return null;
-}
-
-// #end integrationApps Region
-
-export function resourceReferences(state) {
-  return fromSession.resourceReferences(state && state.session);
-}
-
-export function resourceDetailsMap(state) {
-  return fromData.resourceDetailsMap(state.data);
-}
-
-export function exportNeedsRouting(state, id) {
-  return fromData.exportNeedsRouting(state && state.data, id);
-}
-
-export function connectionHasAs2Routing(state, id) {
-  return fromData.connectionHasAs2Routing(state && state.data, id);
-}
-// #endregion
+};
 
 // #region PUBLIC ACCOUNTS SELECTORS
-export const platformLicense = createSelector(
-  userPreferences,
 
+
+selectors.platformLicense = createSelector(
+  selectors.userPreferences,
   // TODO: Surya make it even more granular the selector
   // it should be made receptive to changes to the state.user.org.accounts
-  userState,
+  selectors.userState,
   (preferencesObj, userStateObj) =>
     fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
 );
 
-export function platformLicenseActionDetails(state) {
+
+selectors.platformLicenseActionDetails = state => {
   let licenseActionDetails = {};
-  const license = platformLicense(state);
+  const license = selectors.platformLicense(state);
 
   if (!license) {
     return licenseActionDetails;
@@ -2412,7 +1907,7 @@ export function platformLicenseActionDetails(state) {
   licenseActionDetails.upgradeRequested = license.upgradeRequested;
 
   return licenseActionDetails;
-}
+};
 
 function getTierToFlowsMap(license) {
   const flowsInTier = {
@@ -2439,204 +1934,204 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-export const platformLicenseWithMetadata = createSelector(
-  platformLicense,
-  (license) => {
-    const licenseActionDetails = { ...license };
-    const nameMap = {
-      none: 'None',
-      free: 'Free',
-      limited: 'Limited',
-      standard: 'Standard',
-      premium: 'Premium',
-      enterprise: 'Enterprise',
-    };
+selectors.platformLicenseWithMetadata = createSelector(
+  selectors.platformLicense,
+  license => {
+  const licenseActionDetails = { ...license };
+  const nameMap = {
+    none: 'None',
+    free: 'Free',
+    limited: 'Limited',
+    standard: 'Standard',
+    premium: 'Premium',
+    enterprise: 'Enterprise',
+  };
 
-    if (!licenseActionDetails) {
-      return licenseActionDetails;
-    }
-
-    licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-    licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
-    licenseActionDetails.inTrial = false;
-
-    if (licenseActionDetails.tier === 'free') {
-      if (licenseActionDetails.trialEndDate) {
-        licenseActionDetails.inTrial =
-        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
-      }
-    }
-
-    licenseActionDetails.hasSubscription = false;
-
-    if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
-      licenseActionDetails.hasSubscription = true;
-    } else if (
-      licenseActionDetails.tier === 'free' &&
-    !licenseActionDetails.inTrial
-    ) {
-      if (
-        licenseActionDetails.numAddOnFlows > 0 ||
-      licenseActionDetails.sandbox ||
-      licenseActionDetails.numSandboxAddOnFlows > 0
-      ) {
-        licenseActionDetails.hasSubscription = true;
-      }
-    }
-
-    licenseActionDetails.isFreemium =
-    licenseActionDetails.tier === 'free' &&
-    !licenseActionDetails.hasSubscription &&
-    !licenseActionDetails.inTrial;
-    licenseActionDetails.hasExpired = false;
-
-    if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
-      licenseActionDetails.hasExpired =
-      moment(licenseActionDetails.expires) - moment() < 0;
-    }
-
-    licenseActionDetails.isExpiringSoon = false;
-    let dateToCheck;
-
-    if (licenseActionDetails.hasSubscription) {
-      if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
-        dateToCheck = licenseActionDetails.expires;
-      }
-    } else if (licenseActionDetails.inTrial) {
-      dateToCheck = licenseActionDetails.trialEndDate;
-    }
-
-    if (dateToCheck) {
-      licenseActionDetails.isExpiringSoon =
-      moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
-    }
-
-    licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
-
-    if (licenseActionDetails.inTrial) {
-      licenseActionDetails.subscriptionName = 'Free trial';
-    }
-
-    licenseActionDetails.expirationDate = licenseActionDetails.expires;
-
-    if (licenseActionDetails.inTrial) {
-      licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
-    } else if (licenseActionDetails.isFreemium) {
-      licenseActionDetails.expirationDate = '';
-    }
-
-    if (licenseActionDetails.expirationDate) {
-      licenseActionDetails.expirationDate = moment(
-        licenseActionDetails.expirationDate
-      ).format('MMM Do, YYYY');
-    }
-
-    const names = {
-      free: 'Free',
-      light: 'Starter',
-      moderate: 'Professional',
-      heavy: 'Enterprise',
-      custom: 'Custom',
-    };
-
-    licenseActionDetails.usageTierName =
-    names[licenseActionDetails.usageTier || 'free'];
-
-    const hours = {
-      free: 1,
-      light: 40,
-      moderate: 400,
-      heavy: 4000,
-      custom: 10000, // TODO - not sure how to get this
-    };
-
-    licenseActionDetails.usageTierHours =
-    hours[licenseActionDetails.usageTier || 'free'];
-    licenseActionDetails.status = '';
-
-    if (licenseActionDetails.hasSubscription) {
-      licenseActionDetails.status = licenseActionDetails.hasExpired
-        ? 'expired'
-        : 'active';
-    }
-
-    if (
-      licenseActionDetails.tier === 'free' &&
-    (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
-    ) {
-      licenseActionDetails.status = 'active';
-    }
-
-    licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
-      licenseActionDetails
-    );
-
-    if (licenseActionDetails.numAddOnFlows > 0) {
-      licenseActionDetails.totalFlowsAvailable +=
-      licenseActionDetails.numAddOnFlows;
-    }
-
-    licenseActionDetails.totalSandboxFlowsAvailable = 0;
-
-    if (licenseActionDetails.sandbox) {
-      licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
-        licenseActionDetails
-      );
-    }
-
-    if (licenseActionDetails.numSandboxAddOnFlows > 0) {
-      licenseActionDetails.totalSandboxFlowsAvailable +=
-      licenseActionDetails.numSandboxAddOnFlows;
-    }
-
-    if (
-      !(
-        (licenseActionDetails.status === 'active' ||
-        licenseActionDetails.isFreemium) &&
-      licenseActionDetails.supportTier
-      )
-    ) {
-      licenseActionDetails.supportTier = '';
-    }
-
-    const toReturn = {
-      actions: [],
-    };
-
-    toReturn.__trialExtensionRequested =
-    licenseActionDetails.__trialExtensionRequested;
-
-    if (licenseActionDetails.tier === 'none') {
-      toReturn.actions = ['start-free-trial'];
-    } else if (licenseActionDetails.tier === 'free') {
-      if (licenseActionDetails.inTrial) {
-        toReturn.actions = ['request-subscription'];
-      } else if (licenseActionDetails.hasSubscription) {
-        if (licenseActionDetails.hasExpired) {
-          toReturn.actions = ['request-upgrade'];
-        }
-      } else if (licenseActionDetails.trialEndDate) {
-        toReturn.actions = ['request-upgrade', 'request-trial-extension'];
-      } else {
-        toReturn.actions = ['start-free-trial'];
-      }
-    } else if (licenseActionDetails.hasExpired) {
-      toReturn.actions = ['request-upgrade'];
-    } else if (licenseActionDetails.tier !== 'enterprise') {
-      toReturn.actions = ['request-upgrade'];
-    } else {
-      toReturn.actions = ['add-more-flows'];
-    }
-
-    licenseActionDetails.subscriptionActions = toReturn;
-
+  if (!licenseActionDetails) {
     return licenseActionDetails;
   }
 
-);
-export function isLicenseValidToEnableFlow(state) {
+  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
+  licenseActionDetails.inTrial = false;
+
+  if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.trialEndDate) {
+      licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    }
+  }
+
+  licenseActionDetails.hasSubscription = false;
+
+  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+    licenseActionDetails.hasSubscription = true;
+  } else if (
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.inTrial
+  ) {
+    if (
+      licenseActionDetails.numAddOnFlows > 0 ||
+      licenseActionDetails.sandbox ||
+      licenseActionDetails.numSandboxAddOnFlows > 0
+    ) {
+      licenseActionDetails.hasSubscription = true;
+    }
+  }
+
+  licenseActionDetails.isFreemium =
+    licenseActionDetails.tier === 'free' &&
+    !licenseActionDetails.hasSubscription &&
+    !licenseActionDetails.inTrial;
+  licenseActionDetails.hasExpired = false;
+
+  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+    licenseActionDetails.hasExpired =
+      moment(licenseActionDetails.expires) - moment() < 0;
+  }
+
+  licenseActionDetails.isExpiringSoon = false;
+  let dateToCheck;
+
+  if (licenseActionDetails.hasSubscription) {
+    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+      dateToCheck = licenseActionDetails.expires;
+    }
+  } else if (licenseActionDetails.inTrial) {
+    dateToCheck = licenseActionDetails.trialEndDate;
+  }
+
+  if (dateToCheck) {
+    licenseActionDetails.isExpiringSoon =
+      moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
+  }
+
+  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.subscriptionName = 'Free trial';
+  }
+
+  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+
+  if (licenseActionDetails.inTrial) {
+    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+  } else if (licenseActionDetails.isFreemium) {
+    licenseActionDetails.expirationDate = '';
+  }
+
+  if (licenseActionDetails.expirationDate) {
+    licenseActionDetails.expirationDate = moment(
+      licenseActionDetails.expirationDate
+    ).format('MMM Do, YYYY');
+  }
+
+  const names = {
+    free: 'Free',
+    light: 'Starter',
+    moderate: 'Professional',
+    heavy: 'Enterprise',
+    custom: 'Custom',
+  };
+
+  licenseActionDetails.usageTierName =
+    names[licenseActionDetails.usageTier || 'free'];
+
+  const hours = {
+    free: 1,
+    light: 40,
+    moderate: 400,
+    heavy: 4000,
+    custom: 10000, // TODO - not sure how to get this
+  };
+
+  licenseActionDetails.usageTierHours =
+    hours[licenseActionDetails.usageTier || 'free'];
+  licenseActionDetails.status = '';
+
+  if (licenseActionDetails.hasSubscription) {
+    licenseActionDetails.status = licenseActionDetails.hasExpired
+      ? 'expired'
+      : 'active';
+  }
+
+  if (
+    licenseActionDetails.tier === 'free' &&
+    (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
+  ) {
+    licenseActionDetails.status = 'active';
+  }
+
+  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails
+  );
+
+  if (licenseActionDetails.numAddOnFlows > 0) {
+    licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+  }
+
+  licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+  if (licenseActionDetails.sandbox) {
+    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+      licenseActionDetails
+    );
+  }
+
+  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+    licenseActionDetails.totalSandboxFlowsAvailable +=
+      licenseActionDetails.numSandboxAddOnFlows;
+  }
+
+  if (
+    !(
+      (licenseActionDetails.status === 'active' ||
+        licenseActionDetails.isFreemium) &&
+      licenseActionDetails.supportTier
+    )
+  ) {
+    licenseActionDetails.supportTier = '';
+  }
+
+  const toReturn = {
+    actions: [],
+  };
+
+  toReturn.__trialExtensionRequested =
+    licenseActionDetails.__trialExtensionRequested;
+
+  if (licenseActionDetails.tier === 'none') {
+    toReturn.actions = ['start-free-trial'];
+  } else if (licenseActionDetails.tier === 'free') {
+    if (licenseActionDetails.inTrial) {
+      toReturn.actions = ['request-subscription'];
+    } else if (licenseActionDetails.hasSubscription) {
+      if (licenseActionDetails.hasExpired) {
+        toReturn.actions = ['request-upgrade'];
+      }
+    } else if (licenseActionDetails.trialEndDate) {
+      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+    } else {
+      toReturn.actions = ['start-free-trial'];
+    }
+  } else if (licenseActionDetails.hasExpired) {
+    toReturn.actions = ['request-upgrade'];
+  } else if (licenseActionDetails.tier !== 'enterprise') {
+    toReturn.actions = ['request-upgrade'];
+  } else {
+    toReturn.actions = ['add-more-flows'];
+  }
+
+  licenseActionDetails.subscriptionActions = toReturn;
+
+  return licenseActionDetails;
+});
+
+
+selectors.isLicenseValidToEnableFlow = state => {
   const licenseDetails = { enable: true };
-  const license = platformLicenseWithMetadata(state);
+  const license = selectors.platformLicenseWithMetadata(state);
 
   if (!license) {
     return licenseDetails;
@@ -2648,54 +2143,38 @@ export function isLicenseValidToEnableFlow(state) {
   }
 
   return licenseDetails;
-}
+};
 
-export function accountSummary(state) {
-  return fromUser.accountSummary(state.user);
-}
+selectors.hasAccounts = state => !!(state && state.user && state.user.accounts);
 
-export function userNotifications(state) {
-  return fromUser.userNotifications(state.user);
-}
-
-export function hasAccounts(state) {
-  return !!(state && state.user && state.user.accounts);
-}
-
-export function hasAcceptedUsers(state) {
-  return !!(
-    state &&
+selectors.hasAcceptedUsers = state => !!(
+  state &&
     state.user &&
     state.user.org &&
     state.user.org.users &&
     state.user.org.users.filter(a => a.accepted && !a.disabled).length > 0
-  );
-}
+);
 
-export function hasAcceptedAccounts(state) {
-  return !!(
-    state &&
+selectors.hasAcceptedAccounts = state => !!(
+  state &&
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
       a => a._id !== ACCOUNT_IDS.OWN && a.accepted && !a.disabled
     ).length > 0
-  );
-}
+);
 
-export function isValidSharedAccountId(state, _id) {
-  return !!(
-    state &&
+selectors.isValidSharedAccountId = (state, _id) => !!(
+  state &&
     state.user &&
     state.user.org.accounts &&
     state.user.org.accounts.filter(
       a =>
         a.accepted && !a.disabled && a._id === _id && a._id !== ACCOUNT_IDS.OWN
     ).length > 0
-  );
-}
+);
 
-export function getOneValidSharedAccountId(state) {
+selectors.getOneValidSharedAccountId = state => {
   let _id;
 
   if (state && state.user && state.user.org && state.user.org.accounts) {
@@ -2709,11 +2188,7 @@ export function getOneValidSharedAccountId(state) {
   }
 
   return _id;
-}
-
-export function userAccessLevel(state) {
-  return fromUser.accessLevel(state.user);
-}
+};
 
 const parentResourceToLookUpTo = {
   flows: 'integrations',
@@ -2726,7 +2201,7 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   if (!parentResourceType) return null;
 
   if (parentResourceType === 'integrations') {
-    const { _integrationId } = resource(state, resourceType, resourceId) || {};
+    const { _integrationId } = selectors.resource(state, resourceType, resourceId) || {};
 
     return _integrationId;
   }
@@ -2734,11 +2209,11 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-export const getResourceEditUrl = (state, resourceType, resourceId) => {
+selectors.getResourceEditUrl = (state, resourceType, resourceId) => {
   if (resourceType === 'flows') {
     const integrationId = getParentsResourceId(state, resourceType, resourceId);
     const { _connectorId, name } =
-      resource(state, resourceType, resourceId) || {};
+      selectors.resource(state, resourceType, resourceId) || {};
 
     // if _connectorId its an integrationApp
     if (_connectorId) {
@@ -2757,8 +2232,8 @@ export const getResourceEditUrl = (state, resourceType, resourceId) => {
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
 };
 
-export function userPermissionsOnConnection(state, connectionId) {
-  const permissions = userPermissions(state);
+selectors.userPermissionsOnConnection = (state, connectionId) => {
+  const permissions = selectors.userPermissions(state);
 
   if (!permissions) {
     return emptyObject;
@@ -2771,7 +2246,7 @@ export function userPermissionsOnConnection(state, connectionId) {
       USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
     ].includes(permissions.accessLevel)
   ) {
-    const connection = resource(state, 'connections', connectionId);
+    const connection = selectors.resource(state, 'connections', connectionId);
 
     return (
       (connection && connection._connectorId
@@ -2780,7 +2255,7 @@ export function userPermissionsOnConnection(state, connectionId) {
     ).connections;
   }
   if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-    const ioIntegrations = resourceList(state, {
+    const ioIntegrations = selectors.resourceList(state, {
       type: 'integrations',
     }).resources;
     const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
@@ -2804,21 +2279,33 @@ export function userPermissionsOnConnection(state, connectionId) {
   }
 
   return emptyObject;
-}
+};
 
-export const resourcePermissions = (
+selectors.resourcePermissions = (
   state,
   resourceType,
   resourceId,
   childResourceType
 ) => {
+  // to support parent-child integration permissions
+  if (resourceType === 'integrations') {
+    const resourceData = selectors.resource(state, 'integrations', resourceId);
+
+    if (resourceData?._parentId) {
+      return selectors.resourcePermissions(
+        state,
+        resourceType,
+        resourceData._parentId,
+        childResourceType);
+    }
+  }
   //  when resourceType == connection and resourceID = connectionId, we fetch connection
   //  permission by checking for highest order connection permission under integrations
   if (resourceType === 'connections' && resourceId) {
-    return userPermissionsOnConnection(state, resourceId) || emptyObject;
+    return selectors.userPermissionsOnConnection(state, resourceId) || emptyObject;
   }
 
-  const permissions = userPermissions(state);
+  const permissions = selectors.userPermissions(state);
 
   if (!permissions) return emptyObject;
 
@@ -2826,7 +2313,7 @@ export const resourcePermissions = (
   // ie. connections, flows can be retrieved by passing childResourceType
   if (resourceType === 'integrations' && (childResourceType || resourceId)) {
     const resourceData =
-      resourceId && resource(state, 'integrations', resourceId);
+      resourceId && selectors.resource(state, 'integrations', resourceId);
 
     if (
       [
@@ -2848,6 +2335,7 @@ export const resourcePermissions = (
     }
     if (resourceId) {
       let value = permissions[resourceType][resourceId];
+
       if (!value && resourceType === 'integrations') {
         value = permissions[resourceType].all;
       }
@@ -2886,14 +2374,14 @@ export const resourcePermissions = (
   return permissions || emptyObject;
 };
 
-export function isFormAMonitorLevelAccess(state, integrationId) {
-  const { accessLevel } = resourcePermissions(state);
+selectors.isFormAMonitorLevelAccess = (state, integrationId) => {
+  const { accessLevel } = selectors.resourcePermissions(state);
 
   // if all forms is monitor level
   if (accessLevel === 'monitor') return true;
 
   // check integration level is monitor level
-  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
     state,
     'integrations',
     integrationId
@@ -2902,17 +2390,17 @@ export function isFormAMonitorLevelAccess(state, integrationId) {
   if (accessLevelIntegration === 'monitor') return true;
 
   return false;
-}
+};
 
-export function formAccessLevel(state, integrationId, resource, disabled) {
+selectors.formAccessLevel = (state, integrationId, resource, disabled) => {
   // if all forms is monitor level
 
-  const isMonitorLevelAccess = isFormAMonitorLevelAccess(state, integrationId);
+  const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   if (isMonitorLevelAccess) return { disableAllFields: true };
 
   // check integration access level
-  const { accessLevel: accessLevelIntegration } = resourcePermissions(
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
     state,
     'integrations',
     integrationId
@@ -2928,40 +2416,41 @@ export function formAccessLevel(state, integrationId, resource, disabled) {
   }
 
   return { disableAllFields: !!disabled };
-}
+};
 
 // TODO: @Ashu, we need to add tests for this once GA is done.  I extracted this
 // logic from the DynaSettings component since it needed to be used in multiple
 // places. Also, the logic below, now in one place could surely be cleaned up and made more
 // readable...I left as-is to minimize risk of regressions.
-export function canEditSettingsForm(state, resourceType, resourceId, integrationId) {
-  const r = resource(state, resourceType, resourceId);
+selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId) => {
+  const r = selectors.resource(state, resourceType, resourceId);
   const isIAResource = !!(r && r._connectorId);
-  const {allowedToPublish, developer} = userProfile(state);
-  const viewOnly = isFormAMonitorLevelAccess(state, integrationId);
+  const {allowedToPublish, developer} = selectors.userProfile(state);
+  const viewOnly = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
   // if the resource belongs to an IA and the user cannot publish, then
   // a user can thus also not edit
   const visibleForUser = !isIAResource || allowedToPublish;
-  return developer && !viewOnly && visibleForUser;
-}
 
-export function publishedConnectors(state) {
-  const ioConnectors = resourceList(state, {
+  return developer && !viewOnly && visibleForUser;
+};
+
+selectors.publishedConnectors = state => {
+  const ioConnectors = selectors.resourceList(state, {
     type: 'published',
   }).resources;
 
   return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
-}
+};
 
-export function availableConnectionsToRegister(state, integrationId) {
+selectors.availableConnectionsToRegister = (state, integrationId) => {
   if (!state) {
     return [];
   }
 
-  const connList = resourceList(state, { type: 'connections' });
+  const connList = selectors.resourceList(state, { type: 'connections' });
   const allConnections = connList && connList.resources;
-  const integration = resource(state, 'integrations', integrationId);
+  const integration = selectors.resource(state, 'integrations', integrationId);
   const registeredConnections =
     (integration && integration._registeredConnectionIds) || [];
   let availableConnectionsToRegister = allConnections.filter(
@@ -2970,18 +2459,18 @@ export function availableConnectionsToRegister(state, integrationId) {
 
   availableConnectionsToRegister = availableConnectionsToRegister.filter(
     conn => {
-      const accessLevel = userAccessLevelOnConnection(state, conn._id);
+      const accessLevel = selectors.userAccessLevelOnConnection(state, conn._id);
 
       return accessLevel === 'manage' || accessLevel === 'owner';
     }
   );
 
   return availableConnectionsToRegister;
-}
+};
 
-export function suiteScriptLinkedConnections(state) {
-  const preferences = userPreferences(state);
-  const connections = resourceList(state, {
+selectors.suiteScriptLinkedConnections = state => {
+  const preferences = selectors.userPreferences(state);
+  const connections = selectors.resourceList(state, {
     type: 'connections',
   }).resources;
   const linkedConnections = [];
@@ -2999,7 +2488,7 @@ export function suiteScriptLinkedConnections(state) {
     connection = connections.find(c => c._id === connectionId);
 
     if (connection) {
-      accessLevel = userAccessLevelOnConnection(state, connectionId);
+      accessLevel = selectors.userAccessLevelOnConnection(state, connectionId);
 
       if (accessLevel) {
         linkedConnections.push({
@@ -3013,35 +2502,27 @@ export function suiteScriptLinkedConnections(state) {
   });
 
   return linkedConnections;
-}
+};
 
-export function suiteScriptIntegrations(state, ssLinkedConnectionId) {
-  return fromData.suiteScriptIntegrations(state.data, ssLinkedConnectionId);
-}
-
-export function suiteScriptTiles(state, ssLinkedConnectionId) {
-  return fromData.suiteScriptTiles(state.data, ssLinkedConnectionId);
-}
-
-export function suiteScriptLinkedTiles(state) {
-  const linkedConnections = suiteScriptLinkedConnections(state);
+selectors.suiteScriptLinkedTiles = state => {
+  const linkedConnections = selectors.suiteScriptLinkedConnections(state);
   let tiles = [];
 
   linkedConnections.forEach(connection => {
-    tiles = tiles.concat(suiteScriptTiles(state, connection._id));
+    tiles = tiles.concat(selectors.suiteScriptTiles(state, connection._id));
   });
 
   return tiles;
-}
+};
 
-export function tiles(state) {
-  const tiles = resourceList(state, {
+selectors.tiles = state => {
+  const tiles = selectors.resourceList(state, {
     type: 'tiles',
   }).resources;
   let integrations = [];
 
   if (tiles.length > 0) {
-    integrations = resourceList(state, {
+    integrations = selectors.resourceList(state, {
       type: 'integrations',
     }).resources;
   }
@@ -3050,10 +2531,10 @@ export function tiles(state) {
   const hasConnectorTiles = tiles.filter(t => t._connectorId);
 
   if (hasConnectorTiles) {
-    published = publishedConnectors(state);
+    published = selectors.publishedConnectors(state);
   }
 
-  const permissions = userPermissions(state);
+  const permissions = selectors.userPermissions(state);
   const hasStandaloneTile = tiles.find(
     t => t._integrationId === STANDALONE_INTEGRATION.id
   );
@@ -3101,7 +2582,7 @@ export function tiles(state) {
   let status;
 
   return tiles.map(t => {
-    integration = integrations.find((i) => i._id === t._integrationId) || {};
+    integration = integrations.find(i => i._id === t._integrationId) || {};
 
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
@@ -3119,7 +2600,7 @@ export function tiles(state) {
     }
 
     if (t._connectorId) {
-      connector = published.find((i) => i._id === t._connectorId) || {
+      connector = published.find(i => i._id === t._connectorId) || {
         user: {},
       };
 
@@ -3145,41 +2626,53 @@ export function tiles(state) {
       },
     };
   });
-}
+};
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS
 
-export function isProfileDataReady(state) {
+selectors.isProfileDataReady = state => {
   const commKey = commKeyGen('/profile', 'GET');
 
   return !!(
     state &&
-    hasProfile(state) &&
+    selectors.hasProfile(state) &&
     !fromComms.isLoading(state.comms, commKey)
   );
-}
+};
 
-export function isProfileLoading(state) {
+selectors.isProfileLoading = state => {
   const commKey = commKeyGen('/profile', 'GET');
 
   return !!(state && fromComms.isLoading(state.comms, commKey));
-}
+};
 
-export function isDataReady(state, resource) {
-  return (
-    fromData.hasData(state.data, resource) &&
+selectors.isDataReady = (state, resource) => (
+  fromData.hasData(state.data, resource) &&
     !fromComms.isLoading(state.comms, resource)
-  );
+);
+
+// Below selector will take resourceName as argument and returns
+// true if resource is Loading.
+export function isResourceCollectionLoading(state, resourceName) {
+  // Incase of transfers as we make two API calls for fetching
+  // transfers and invited transfers, checking for both the keys
+  if (resourceName === 'transfers') {
+    return [commKeyGen(`/${resourceName}`, 'GET'), commKeyGen(`/${resourceName}/invited`, 'GET')].some(
+      resourceKey => fromComms.isLoading(state?.comms, resourceKey)
+    );
+  }
+
+  return fromComms.isLoading(state?.comms, commKeyGen(`/${resourceName}`, 'GET'));
 }
 
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
-export function resourceStatus(
+selectors.resourceStatus = (
   state,
   origResourceType,
   resourceReqMethod = 'GET'
-) {
+) => {
   let resourceType;
 
   if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
@@ -3199,14 +2692,14 @@ export function resourceStatus(
     method,
     isReady,
   };
-}
+};
 
-export function resourceStatusModified(
+selectors.resourceStatusModified = (
   resourceState,
   networkCommState,
   origResourceType,
   resourceReqMethod = 'GET'
-) {
+) => {
   let resourceType;
 
   if (origResourceType && origResourceType.startsWith('/')) resourceType = origResourceType;
@@ -3226,40 +2719,34 @@ export function resourceStatusModified(
     method,
     isReady,
   };
-}
+};
 
-export function allResourceStatus(
+selectors.allResourceStatus = (
   resourceState,
   networkCommState,
   resourceTypes
-) {
-  return (typeof resourceTypes === 'string'
-    ? resourceTypes.split(',')
-    : resourceTypes
-  ).map(resourceType =>
-    resourceStatusModified(resourceState, networkCommState, resourceType.trim())
-  );
-}
+) => (typeof resourceTypes === 'string'
+  ? resourceTypes.split(',')
+  : resourceTypes
+).map(resourceType =>
+  selectors.resourceStatusModified(resourceState, networkCommState, resourceType.trim())
+);
 
-export const makeAllResourceStatusSelector = () =>
+selectors.makeAllResourceStatusSelector = () =>
   createSelector(
-    resourcesState,
-    networkCommState,
+    selectors.resourceState,
+    selectors.networkCommState,
     (_, resourceTypes) => resourceTypes,
     (resourcesState, networkCommState, resourceTypes) =>
-      allResourceStatus(resourcesState, networkCommState, resourceTypes)
+      selectors.allResourceStatus(resourcesState, networkCommState, resourceTypes)
   );
 
-export function getAllResourceConflicts(state) {
-  return fromSession.getAllResourceConflicts(state && state.session);
-}
-
-export function resourceDataModified(
+selectors.resourceDataModified = (
   resourceIdState,
   stagedIdState,
   resourceType,
   id
-) {
+) => {
   if (!resourceType || !id) return emptyObject;
 
   const master = resourceIdState;
@@ -3301,11 +2788,11 @@ export function resourceDataModified(
   if (conflict) data.conflict = conflict;
 
   return data;
-}
+};
 
 // fromResources.resourceIdState
 // nothing but state && state.data && state.data.resources && state.data.resources.type
-export const makeResourceDataSelector = () => {
+selectors.makeResourceDataSelector = () => {
   const cachedStageSelector = fromSession.makeTransformStagedResource();
   const cachedResourceSelector = fromData.makeResourceSelector();
 
@@ -3339,37 +2826,42 @@ export const makeResourceDataSelector = () => {
     (_1, _2, id) => id,
 
     (resourceIdState, stagedIdState, resourceType, id) =>
-      resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+      selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
 
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
-export const resourceData = makeResourceDataSelector();
+selectors.resourceData = selectors.makeResourceDataSelector();
 
-export function isEditorV2Supported(state, resourceId, resourceType) {
-  const { merged: resource = {} } = resourceData(
+selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
+  const { merged: res = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId
   );
 
+  // AFE 2.0 not supported for Native REST Adaptor
+  if (['RESTImport', 'RESTExport'].includes(res.adaptorType)) {
+    const restConnection = selectors.resource(state, 'connections', res._connectionId);
+
+    return !!restConnection.isHTTP;
+  }
+
   return [
     'HTTPImport',
     'HTTPExport',
-    'RESTImport',
-    'RESTExport',
     'FTPImport',
     'FTPExport',
     'AS2Import',
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(resource.adaptorType);
-}
+  ].includes(res.adaptorType);
+};
 
-export function resourceFormField(state, resourceType, resourceId, id) {
-  const data = resourceData(state, resourceType, resourceId);
+selectors.resourceFormField = (state, resourceType, resourceId, id) => {
+  const data = selectors.resourceData(state, resourceType, resourceId);
 
   if (!data || !data.merged) return;
 
@@ -3383,18 +2875,10 @@ export function resourceFormField(state, resourceType, resourceId, id) {
   if (!field) return;
 
   return field;
-}
+};
 
-export function orgUsers(state) {
-  return fromUser.usersList(state.user);
-}
-
-export function integrationUsersForOwner(state, integrationId) {
-  return fromUser.integrationUsers(state.user, integrationId);
-}
-
-export function integrationResources(state, _integrationId, storeId) {
-  const diyFlows = resourceList(state, {
+selectors.integrationResources = (state, _integrationId, storeId) => {
+  const diyFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: {
       $where() {
@@ -3407,8 +2891,8 @@ export function integrationResources(state, _integrationId, storeId) {
     },
   }).resources;
   const { _registeredConnectionIds = [], _connectorId } =
-    resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = resourceList(state, {
+    selectors.resource(state, 'integrations', _integrationId) || {};
+  const diyConnections = selectors.resourceList(state, {
     type: 'connections',
     filter: {
       _id: id =>
@@ -3416,13 +2900,13 @@ export function integrationResources(state, _integrationId, storeId) {
         ['none', 'none-sb'].includes(_integrationId),
     },
   }).resources;
-  const notifications = resourceList(state, { type: 'notifications' })
+  const notifications = selectors.resourceList(state, { type: 'notifications' })
     .resources;
   const connections = _connectorId
-    ? integrationAppConnectionList(state, _integrationId, storeId)
+    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
   let flows = _connectorId
-    ? integrationAppResourceList(state, _integrationId, storeId).flows
+    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
     : diyFlows;
   const connectionValues = connections
     .filter(c => !!notifications.find(n => n._connectionId === c._id))
@@ -3446,23 +2930,15 @@ export function integrationResources(state, _integrationId, storeId) {
     connectionValues,
     flowValues,
   };
-}
+};
 
-export function integrationUsers(state, integrationId) {
-  return fromData.integrationUsers(state.data, integrationId);
-}
-
-export function accountOwner(state) {
-  return fromUser.accountOwner(state.user);
-}
-
-export function auditLogs(
+selectors.auditLogs = (
   state,
   resourceType,
   resourceId,
   filters,
   options = {}
-) {
+) => {
   let auditLogs = fromData.auditLogs(
     state.data,
     resourceType,
@@ -3473,7 +2949,7 @@ export function auditLogs(
   const result = {
     logs: [],
     count: 0,
-    totalCount: 0
+    totalCount: 0,
   };
 
   if (options.storeId) {
@@ -3482,7 +2958,7 @@ export function auditLogs(
       imports = [],
       flows = [],
       connections = [],
-    } = integrationAppResourceList(state, resourceId, options.storeId);
+    } = selectors.integrationAppResourceList(state, resourceId, options.storeId);
     const resourceIds = [
       ...exports,
       ...imports,
@@ -3504,60 +2980,16 @@ export function auditLogs(
   result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
   result.count = result.logs.length;
   result.totalCount = auditLogs.length;
-  return result;
-}
 
-export function affectedResourcesAndUsersFromAuditLogs(
-  state,
-  resourceType,
-  resourceId
-) {
-  return fromData.affectedResourcesAndUsersFromAuditLogs(
-    state.data,
-    resourceType,
-    resourceId
-  );
-}
+  return result;
+};
+
 // #endregion
 
 // #region Session metadata selectors
+selectors.makeOptionsFromMetadata = () => {
+  const madeSelector = fromSession.makeOptionsFromMetadata();
 
-export function netsuiteUserRoles(
-  state,
-  connectionId,
-  netsuiteResourceType,
-  env,
-  acc
-) {
-  return fromSession.netsuiteUserRoles(
-    state && state.session,
-    connectionId,
-    netsuiteResourceType,
-    env,
-    acc
-  );
-}
-
-export function stagedResource(state, id, scope) {
-  return fromSession.stagedResource(state && state.session, id, scope);
-}
-
-export function optionsFromMetadata({
-  state,
-  connectionId,
-  commMetaPath,
-  filterKey,
-}) {
-  return fromSession.optionsFromMetadata({
-    state: state && state.session,
-    connectionId,
-    commMetaPath,
-    filterKey,
-  });
-}
-
-export const makeOptionsFromMetadata = () => {
-  const madeSelector = fromMetadata.makeOptionsFromMetadata();
   return (state,
     connectionId,
     commMetaPath,
@@ -3570,101 +3002,37 @@ export const makeOptionsFromMetadata = () => {
   );
 };
 
-export function optionsMapFromMetadata(
-  state,
-  connectionId,
-  applicationType,
-  recordType,
-  selectField,
-  optionsMap
-) {
-  return fromSession.optionsMapFromMetadata(
-    state && state.session,
-    connectionId,
-    applicationType,
-    recordType,
-    selectField,
-    optionsMap
-  );
-}
-
-export const preBuiltFileDefinitions = (state, format) =>
-  fromData.preBuiltFileDefinitions(state && state.data, format);
-
-export const fileDefinition = (state, definitionId, options) =>
-  fromData.fileDefinition(state && state.data, definitionId, options);
-
-export function metadataOptionsAndResources({
-  state,
+selectors.metadataOptionsAndResources = (state, {
   connectionId,
   commMetaPath,
   filterKey,
-}) {
-  return (
-    optionsFromMetadata({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    }) || emptyObject
-  );
-}
+}) => (
+  selectors.optionsFromMetadata(state, {
+    connectionId,
+    commMetaPath,
+    filterKey,
+  }) || emptyObject
+);
 
-/*
- * TODO: @Raghu - Should be removed and use above selector
- * Function Definition needs to be changed to
- * metadataOptionsAndResources(
-    state,
-    {
-      connectionId,
-      commMetaPath,
-      filterKey,
-  }) to support yield select
-  * Change needs to be done all the places where it is getting called
- */
-export function getMetadataOptions(
+selectors.getMetadataOptions = (
   state,
   { connectionId, commMetaPath, filterKey }
-) {
-  return (
-    optionsFromMetadata({
-      state,
-      connectionId,
-      commMetaPath,
-      filterKey,
-    }) || emptyObject
-  );
-}
+) => (
+  selectors.optionsFromMetadata(state, {
+    connectionId,
+    commMetaPath,
+    filterKey,
+  }) || emptyObject
+);
 
-export function isValidatingNetsuiteUserRoles(state) {
+selectors.isValidatingNetsuiteUserRoles = state => {
   const commPath = commKeyGen('/netsuite/alluserroles', 'POST');
 
   return fromComms.isLoading(state.comms, commPath);
-}
-
-export function createdResourceId(state, tempId) {
-  return fromSession.createdResourceId(state && state.session, tempId);
-}
-
-export function platformLicenseActionMessage(state) {
-  return fromSession.platformLicenseActionMessage(state && state.session);
-}
-
+};
 // #endregion Session metadata selectors
 
-// #region Session token selectors
-
-export function connectionTokens(state, resourceId) {
-  return fromSession.connectionTokens(state && state.session, resourceId);
-}
-
-export function tokenRequestLoading(state, resourceId) {
-  return fromSession.tokenRequestLoading(state && state.session, resourceId);
-}
-
-// #endregion
-
-export function commStatusByKey(state, key) {
+selectors.commStatusByKey = (state, key) => {
   const commStatus =
     state &&
     state.comms &&
@@ -3672,18 +3040,18 @@ export function commStatusByKey(state, key) {
     state.comms.networkComms[key];
 
   return commStatus;
-}
+};
 
 // TODO: This all needs to be refactored, and the code that uses is too.
 // The extra data points added to the results should be a different selector
 // also the new selector (that fetches metadata about a token) should be for a
 // SINGLE resource and then called in the iterator function of the presentation
 // layer.
-export function accessTokenList(
+selectors.accessTokenList = (
   state,
   { integrationId, take, keyword, sort, sandbox }
-) {
-  const tokensList = resourceList(state, {
+) => {
+  const tokensList = selectors.resourceList(state, {
     type: 'accesstokens',
     keyword,
     sort,
@@ -3760,71 +3128,106 @@ export function accessTokenList(
   tokensList.count = (tokensList.resources || []).length;
 
   return tokensList;
-}
+};
 
-export function flowJobsPagingDetails(state) {
-  return fromData.flowJobsPagingDetails(state.data);
-}
+selectors.flowJobs = (state, options = {}) => {
+  const jobs = fromData.flowJobs(state?.data, options);
+  const resourceMap = fromData.resourceDetailsMap(state?.data);
 
-export const makeFlowJobs = () => createSelector(
-  state => state?.data,
-  (_1, options) => options,
-  (data, options) => {
-    const jobs = fromData.flowJobs(data, options);
-    const resourceMap = fromData.resourceDetailsMap(data);
-
-    return jobs.map(job => {
-      if (job.children && job.children.length > 0) {
+  return jobs.map(job => {
+    if (job.children && job.children.length > 0) {
       // eslint-disable-next-line no-param-reassign
-        job.children = job.children.map(cJob => {
-          const additionalChildProps = {
-            name: cJob._exportId
-              ? resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports[cJob._importId]?.name,
-          };
+      job.children = job.children.map(cJob => {
+        const additionalChildProps = {
+          name: cJob._exportId
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+        };
 
-          return { ...cJob, ...additionalChildProps };
-        });
-      }
+        return { ...cJob, ...additionalChildProps };
+      });
+    }
 
-      const additionalProps = {
-        name:
+    const additionalProps = {
+      name:
         resourceMap.flows &&
         resourceMap.flows[job._flowId] &&
         resourceMap.flows[job._flowId].name,
-      };
+    };
 
-      if (job.doneExporting && job.numPagesGenerated > 0) {
-        additionalProps.percentComplete = Math.floor(
-          (job.numPagesProcessed * 100) /
+    if (job.doneExporting && job.numPagesGenerated > 0) {
+      additionalProps.percentComplete = Math.floor(
+        (job.numPagesProcessed * 100) /
           (job.numPagesGenerated *
             ((resourceMap.flows &&
               resourceMap.flows[job._flowId] &&
               resourceMap.flows[job._flowId].numImports) ||
               1))
-        );
-      } else {
-        additionalProps.percentComplete = 0;
-      }
+      );
+    } else {
+      additionalProps.percentComplete = 0;
+    }
 
-      return { ...job, ...additionalProps };
-    });
+    return { ...job, ...additionalProps };
   });
-
-export const makeFlowJob = () => {
-  const cachedFlowJobsSelector = makeFlowJobs();
-  return createSelector((state, ops) => cachedFlowJobsSelector(
-    state, ops),
-  (_1, ops) => ops,
-  (jobList, ops) => jobList.find(j => j._id === ops?.jobId));
 };
 
-export function inProgressJobIds(state) {
-  return fromData.inProgressJobIds(state.data);
-}
+selectors.latestFlowJobs = createSelector(
+  state => selectors.flowJobs(state),
+  jobList => {
+    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
+    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
 
-export function job(state, { type, jobId, parentJobId }) {
-  const resourceMap = resourceDetailsMap(state);
+    // If there are any in progress jobs too, show them with queued jobs if exist
+    if (inProgressJobs.length) {
+      return [...queuedJobs, ...inProgressJobs];
+    }
+    // show queued jobs if exist
+    if (queuedJobs.length) {
+      return queuedJobs;
+    }
+
+    // If there are no in progress / queued jobs, show the latest job
+    // TODO : Discuss on this use case on what to show
+    return jobList[0] ? [jobList[0]] : emptySet;
+  });
+
+selectors.flowDashboardDetails = createSelector(
+  state => selectors.latestFlowJobs(state),
+  latestJobs => {
+    if (!latestJobs.length) return emptySet;
+
+    const childJobDetails = [];
+
+    latestJobs.forEach(job => {
+      if (job.status === JOB_STATUS.QUEUED) {
+        childJobDetails.push(job);
+      } else if (job.children?.length) {
+        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+      }
+    });
+
+    return childJobDetails;
+  });
+
+selectors.areFlowJobsLoading = (state, filters = {}) => {
+  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters,
+  }) || {};
+
+  const commKey = commKeyGen(path, opts.method);
+
+  return fromComms.isLoading(state.comms, commKey);
+};
+
+selectors.flowJob = (state, ops = {}) => {
+  const jobList = selectors.flowJobs(state, ops);
+
+  return jobList.find(j => j._id === ops?.jobId);
+};
+
+selectors.job = (state, { type, jobId, parentJobId }) => {
+  const resourceMap = selectors.resourceDetailsMap(state);
   const j = fromData.job(state.data, { type, jobId, parentJobId });
 
   if (!j) {
@@ -3835,48 +3238,25 @@ export function job(state, { type, jobId, parentJobId }) {
     ...j,
     name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
   };
-}
+};
 
-export function isBulkRetryInProgress(state) {
-  return fromData.isBulkRetryInProgress(state.data);
-}
-
-export function jobErrors(state, jobId) {
-  return fromData.jobErrors(state.data, jobId);
-}
-
-export function jobErrorRetryObject(state, retryId) {
-  return fromData.jobErrorRetryObject(state.data, retryId);
-}
-
-export function assistantData(state, { adaptorType, assistant }) {
-  return fromSession.assistantData(state && state.session, {
-    adaptorType,
-    assistant,
-  });
-}
-
-export function assistantPreviewData(state, resourceId) {
-  return fromSession.assistantPreviewData(state && state.session, resourceId);
-}
-
-export function flowJobConnections(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.flowJobConnections = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
   const connections = [];
-  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow, {
+  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
     ignoreBorrowedConnections: true,
   });
 
   connectionIds.forEach(c => {
-    const conn = resource(state, 'connections', c);
+    const conn = selectors.resource(state, 'connections', c);
 
     connections.push({ id: conn._id, name: conn.name });
   });
 
   return connections;
-}
+};
 
-export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
+selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
   let connectionIdsToRegister = [];
 
   if (!selectedFlows) {
@@ -3885,45 +3265,38 @@ export function getAllConnectionIdsUsedInSelectedFlows(state, selectedFlows) {
 
   selectedFlows.forEach(flow => {
     connectionIdsToRegister = connectionIdsToRegister.concat(
-      getAllConnectionIdsUsedInTheFlow(state, flow)
+      selectors.getAllConnectionIdsUsedInTheFlow(state, flow)
     );
   });
 
   return connectionIdsToRegister;
-}
+};
 
 // returns a list of import resources for a given flow,
 // identified by flowId.
-export function flowImports(state, id) {
-  const flow = resource(state, 'flows', id);
-  const imports = resourceList(state, { type: 'imports' }).resources;
+selectors.flowImports = (state, id) => {
+  const flow = selectors.resource(state, 'flows', id);
+  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
 
   return getImportsFromFlow(flow, imports);
-}
+};
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
-export function getAllPageProcessorImports(state, pageProcessors) {
-  const imports = resourceList(state, { type: 'imports' }).resources;
+selectors.getAllPageProcessorImports = (state, pageProcessors) => {
+  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
 
   return getPageProcessorImportsFromFlow(imports, pageProcessors);
-}
+};
 
-export function integrationAppImportMetadata(state, importId) {
-  return fromSession.integrationAppImportMetadata(
-    state && state.session,
-    importId
-  );
-}
-
-export function getImportSampleData(state, resourceId, options = {}) {
-  const { merged: resource } = resourceData(state, 'imports', resourceId);
+selectors.getImportSampleData = (state, resourceId, options = {}) => {
+  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
 
   if (assistant && assistant !== 'financialforce') {
     // get assistants sample data
-    return assistantPreviewData(state, resourceId);
+    return selectors.assistantPreviewData(state, resourceId);
   }
   if (adaptorType === 'NetSuiteDistributedImport') {
     // eslint-disable-next-line camelcase
@@ -3939,8 +3312,7 @@ export function getImportSampleData(state, resourceId, options = {}) {
       commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
     }
 
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath,
       filterKey: 'suitescript-recordTypeDetail',
@@ -3951,8 +3323,7 @@ export function getImportSampleData(state, resourceId, options = {}) {
   if (adaptorType === 'SalesforceImport') {
     const { _connectionId: connectionId, salesforce } = resource;
     const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath,
       filterKey:
@@ -3965,7 +3336,7 @@ export function getImportSampleData(state, resourceId, options = {}) {
   }
   if (isIntegrationApp) {
     // handles incase of IAs
-    return integrationAppImportMetadata(state, resourceId);
+    return selectors.integrationAppImportMetadata(state, resourceId);
   }
   if (sampleData) {
     // Formats sample data into readable form
@@ -3976,53 +3347,52 @@ export function getImportSampleData(state, resourceId, options = {}) {
   }
 
   return emptyObject;
-}
+};
 
-export function getSalesforceMasterRecordTypeInfo(state, resourceId) {
-  const { merged: resource } = resourceData(state, 'imports', resourceId);
+selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
+  const { merged: resource } = selectors.resourceData(state, 'imports', resourceId);
   const { _connectionId: connectionId, salesforce } = resource;
   const commMetaPath = `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`;
-  const { data, status } = metadataOptionsAndResources({
-    state,
+  const { data, status } = selectors.metadataOptionsAndResources(state, {
     connectionId,
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
 
   return { data, status };
-}
+};
 
-export function isAnyFlowConnectionOffline(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.isAnyFlowConnectionOffline = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
 
   if (!flow) return false;
 
-  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList =
-    resourcesByIds(state, 'connections', connectionIds) || [];
+    selectors.resourcesByIds(state, 'connections', connectionIds) || [];
 
   return connectionList.some(c => c.offline);
-}
+};
 
-export function flowConnectionList(state, flow) {
-  const connectionIds = getAllConnectionIdsUsedInTheFlow(state, flow);
-  const connectionList = resourcesByIds(state, 'connections', connectionIds);
+selectors.flowConnectionList = (state, flow) => {
+  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
+  const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
-}
+};
 
-export function flowConnections(state, flowId) {
-  const flow = resource(state, 'flows', flowId);
+selectors.flowConnections = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
 
-  return flowConnectionList(state, flow);
-}
+  return selectors.flowConnectionList(state, flow);
+};
 
-export function flowReferencesForResource(state, resourceType, resourceId) {
+selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
   const flowsState = state && state.session && state.session.flowData;
-  const exports = resourceList(state, {
+  const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
-  const imports = resourceList(state, {
+  const imports = selectors.resourceList(state, {
     type: 'imports',
   }).resources;
 
@@ -4033,22 +3403,23 @@ export function flowReferencesForResource(state, resourceType, resourceId) {
     resourceType,
     resourceId
   );
-}
+};
 
 /*
  * Given flowId, resourceId determines whether resource is a pg/pp
  */
-export function isPageGenerator(state, flowId, resourceId, resourceType) {
+selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
   // If imports , straight forward not a pg
   if (resourceType === 'imports') return false;
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
-  const { merged: resource = {} } = resourceData(
+  const { merged: resource = {} } = selectors.resourceData(
     state,
     'exports',
     resourceId
   );
+
   if (isNewId(resourceId)) {
     return !resource.isLookup;
   }
@@ -4058,85 +3429,37 @@ export function isPageGenerator(state, flowId, resourceId, resourceType) {
   }
 
   // Search in flow doc to determine pg/pp
-  const { merged: flow } = resourceData(state, 'flows', flowId, 'value');
+  const { merged: flow } = selectors.resourceData(state, 'flows', flowId, 'value');
 
   return isPageGeneratorResource(flow, resourceId);
-}
+};
 
-export function getUsedActionsForResource(
+selectors.getUsedActionsForResource = (
   state,
   resourceId,
   resourceType,
   flowNode
-) {
-  const r = resource(state, resourceType, resourceId);
+) => {
+  const r = selectors.resource(state, resourceType, resourceId);
 
   if (!r) return emptyObject;
 
   return getUsedActionsMapForResource(r, resourceType, flowNode);
-}
+};
 
-export function debugLogs(state) {
-  return fromSession.debugLogs(state && state.session);
-}
-
-export function getLastExportDateTime(state, flowId) {
-  return fromSession.getLastExportDateTime(state && state.session, flowId);
-}
-
-export function getTransferPreviewData(state) {
-  return fromSession.getTransferPreviewData(state && state.session);
-}
-
-export function transferListWithMetadata(state) {
+selectors.transferListWithMetadata = state => {
   const transfers =
-    resourceList(state, {
+    selectors.resourceList(state, {
       type: 'transfers',
     }).resources || [];
-  const preferences = userProfilePreferencesProps(state);
 
-  transfers.forEach((transfer, i) => {
-    let fromUser = '';
-    let toUser = '';
+  const updatedTransfers = [...transfers];
+
+  updatedTransfers.forEach((transfer, i) => {
     let integrations = [];
 
-    if (transfer.transferToUser && transfer.transferToUser._id) {
-      transfers[i].ownerUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-    } else if (transfer.ownerUser && transfer.ownerUser._id) {
-      transfers[i].transferToUser = {
-        _id: preferences._id,
-        email: preferences.email,
-        name: 'Me',
-      };
-      transfers[i].isInvited = true;
-    }
-
-    if (transfers[i].ownerUser && transfers[i].ownerUser.name) {
-      fromUser = transfers[i].ownerUser.name;
-    }
-
-    if (
-      transfers[i].isInvited &&
-      transfers[i].ownerUser &&
-      transfers[i].ownerUser.email
-    ) {
-      fromUser = transfers[i].ownerUser.email;
-    }
-
-    if (transfers[i].transferToUser && transfers[i].transferToUser.name) {
-      toUser = transfers[i].transferToUser.name;
-    }
-
-    if (
-      !transfers[i].isInvited &&
-      transfers[i].transferToUser &&
-      transfers[i].transferToUser.email
-    ) {
-      toUser = transfers[i].transferToUser.email;
+    if (transfer.ownerUser && transfer.ownerUser._id) {
+      updatedTransfers[i].isInvited = true;
     }
 
     if (transfer.toTransfer && transfer.toTransfer.integrations) {
@@ -4158,16 +3481,14 @@ export function transferListWithMetadata(state) {
     }
 
     integrations = integrations.join('\n');
-    transfers[i].fromUser = fromUser;
-    transfers[i].toUser = toUser;
-    transfers[i].integrations = integrations;
+    updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: transfers };
-}
+  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
+};
 
-export function isRestCsvMediaTypeExport(state, resourceId) {
-  const { merged: resourceObj } = resourceData(state, 'exports', resourceId);
+selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
+  const { merged: resourceObj } = selectors.resourceData(state, 'exports', resourceId);
   const { adaptorType, _connectionId: connectionId } = resourceObj || {};
 
   // Returns false if it is not a rest export
@@ -4175,40 +3496,43 @@ export function isRestCsvMediaTypeExport(state, resourceId) {
     return false;
   }
 
-  const connection = resource(state, 'connections', connectionId);
+  const connection = selectors.resource(state, 'connections', connectionId);
 
   // Check for media type 'csv' from connection object
   return connection && connection.rest && connection.rest.mediaType === 'csv';
-}
+};
 
-export function isDataLoaderExport(state, resourceId, flowId) {
+selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
-    const { merged: flowObj = {} } = resourceData(state, 'flows', flowId, 'value');
+    const { merged: flowObj = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
               flowObj.pageGenerators[0].application === 'dataLoader');
   }
-  const { merged: resourceObj = {} } = resourceData(
+  const { merged: resourceObj = {} } = selectors.resourceData(
     state,
     'exports',
     resourceId,
     'value'
   );
+
   return resourceObj.type === 'simple';
-}
+};
 /**
  * All the adaptors whose preview depends on connection
  * are disabled if their respective connections are offline
  * Any other criteria to disable preview panel can be added here
  */
-export function isExportPreviewDisabled(state, resourceId, resourceType) {
-  const { merged: resourceObj = {} } = resourceData(
+selectors.isExportPreviewDisabled = (state, resourceId, resourceType) => {
+  const { merged: resourceObj = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
+
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
   // their preview does not depend on connection, so it can be enabled
   // TODO @Raghu: Add a selector which tells whether resource is file upload supported type or not
@@ -4216,36 +3540,37 @@ export function isExportPreviewDisabled(state, resourceId, resourceType) {
   if (
     isFileAdaptor(resourceObj) ||
     isAS2Resource(resourceObj) ||
-    isRestCsvMediaTypeExport(state, resourceId)
+    selectors.isRestCsvMediaTypeExport(state, resourceId)
   ) {
     return false;
   }
+
   // In all other cases, where preview depends on connection being online, return the same
-  return isConnectionOffline(state, resourceObj._connectionId);
-}
+  return selectors.isConnectionOffline(state, resourceObj._connectionId);
+};
 
 // Gives back supported stages of data flow based on resource type
-export function getAvailableResourcePreviewStages(
+selectors.getAvailableResourcePreviewStages = (
   state,
   resourceId,
   resourceType,
   flowId
-) {
-  const { merged: resourceObj = {} } = resourceData(
+) => {
+  const { merged: resourceObj = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
 
-  const isDataLoader = isDataLoaderExport(state, resourceId, flowId);
-  const isRestCsvExport = isRestCsvMediaTypeExport(state, resourceId);
+  const isDataLoader = selectors.isDataLoaderExport(state, resourceId, flowId);
+  const isRestCsvExport = selectors.isRestCsvMediaTypeExport(state, resourceId);
 
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
-}
+};
 
-export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceType) {
-  const resourceObj = resourceData(
+selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceType) => {
+  const resourceObj = selectors.resourceData(
     state,
     resourceType,
     resourceId,
@@ -4253,19 +3578,20 @@ export function isPostUrlAvailableForPreviewPanel(state, resourceId, resourceTyp
   ).merged;
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
+
   return ['http', 'rest'].includes(appType);
-}
+};
 
 /*
  * Returns boolean true/false whether it is a lookup export or not based on passed flowId and resourceType
  */
-export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
+selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
   // If not an export , then it is not a lookup
   if (resourceType !== 'exports' || !resourceId) return false;
 
   // Incase of a new resource , check for isLookup flag on resource patched for new lookup exports
   // Also for existing exports ( newly created after Flow Builder feature ) have isLookup flag
-  const { merged: resourceObj = {} } = resourceData(
+  const { merged: resourceObj = {} } = selectors.resourceData(
     state,
     'exports',
     resourceId
@@ -4275,24 +3601,24 @@ export function isLookUpExport(state, { flowId, resourceId, resourceType }) {
   if (resourceObj.isLookup) return true;
 
   // If it is an existing export with a flow context, search in pps to match this resource id
-  const flow = resource(state, 'flows', flowId);
+  const flow = selectors.resource(state, 'flows', flowId);
   const { pageProcessors = [] } = flow || {};
 
   return !!pageProcessors.find(pp => pp._exportId === resourceId);
-}
+};
 
 /*
  * This Selector handles all Resource Type's Label in case of Stand alone / Flow Builder Context
  * Used at Resource Form's Title like 'Create/Edit Export' , at Bread Crumb level to show 'Add/Edit Export'
  */
-export function getCustomResourceLabel(
+selectors.getCustomResourceLabel = (
   state,
   { resourceType, resourceId, flowId }
-) {
-  const isLookup = isLookUpExport(state, { flowId, resourceId, resourceType });
-  const isDataloader = !!flowDetails(state, flowId).isSimpleImport;
+) => {
+  const isLookup = selectors.isLookUpExport(state, { flowId, resourceId, resourceType });
+  const isDataloader = !!selectors.flowDetails(state, flowId).isSimpleImport;
   const isNewResource = isNewId(resourceId);
-  const { merged: resource = {} } = resourceData(
+  const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId
@@ -4357,76 +3683,70 @@ export function getCustomResourceLabel(
   }
 
   return resourceLabel;
-}
+};
 
 /*
  * This selector used to differentiate drawers with/without Preview Panel
  */
-export function isPreviewPanelAvailableForResource(
+selectors.isPreviewPanelAvailableForResource = (
   state,
   resourceId,
   resourceType,
   flowId
-) {
+) => {
   if (resourceType !== 'exports') return false;
-  const { merged: resourceObj = {} } = resourceData(
+  const { merged: resourceObj = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId,
     'value'
   );
-  const connectionObj = resource(
+  const connectionObj = selectors.resource(
     state,
     'connections',
     resourceObj._connectionId
   );
-  if (isDataLoaderExport(state, resourceId, flowId)) {
+
+  if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
     return true;
-  }
-  // Preview panel is not shown for lookups
-  if (
-    resourceObj.isLookup ||
-    isLookUpExport(state, { resourceId, flowId, resourceType })
-  ) {
-    return false;
   }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
-}
+};
 
 // TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
-export const getSampleDataWrapper = createSelector(
+selectors.getSampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
-    (state, params) => getSampleDataContext(state, params),
+    (state, params) => selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return getSampleDataContext(state, { ...params, stage: 'preMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
       }
 
       return undefined;
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
-        return getSampleDataContext(state, { ...params, stage: 'postMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
       }
 
       return undefined;
     },
-    (state, { flowId }) => resource(state, 'flows', flowId) || emptyObject,
+    (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
-      const flow = resource(state, 'flows', flowId) || emptyObject;
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return (
-        resource(state, 'integrations', flow._integrationId) || emptyObject
+        selectors.resource(state, 'integrations', flow._integrationId) || emptyObject
       );
     },
     (state, { resourceId, resourceType }) =>
-      resource(state, resourceType, resourceId) || emptyObject,
+      selectors.resource(state, resourceType, resourceId) || emptyObject,
     (state, { resourceId, resourceType }) => {
-      const res = resource(state, resourceType, resourceId) || emptyObject;
+      const res = selectors.resource(state, resourceType, resourceId) || emptyObject;
 
-      return resource(state, 'connections', res._connectionId) || emptyObject;
+      return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
     },
     (state, { stage }) => stage,
   ],
@@ -4600,20 +3920,16 @@ export const getSampleDataWrapper = createSelector(
   }
 );
 
-export function getUploadedFile(state, fileId) {
-  return fromSession.getUploadedFile(state && state.session, fileId);
-}
-
 /*
  * The selector returns appropriate context for the JS Processor to run
  * For now, it supports contextType: hook
  * Other context types are 'settings' and 'setup'
  */
-export const getScriptContext = createSelector(
+selectors.getScriptContext = createSelector(
   [
     (state, { contextType }) => contextType,
     (state, { flowId }) => {
-      const flow = resource(state, 'flows', flowId) || emptyObject;
+      const flow = selectors.resource(state, 'flows', flowId) || emptyObject;
 
       return flow._integrationId;
     },
@@ -4630,21 +3946,23 @@ export const getScriptContext = createSelector(
 );
 
 // #region suiteScript
-export function suiteScriptIAFlowSections(state, id, ssLinkedConnectionId) {
-  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.suiteScriptIAFlowSections = (state, id, ssLinkedConnectionId) => {
+  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+
   return sections.map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
   }));
-}
+};
 
-export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
-  const {sections = []} = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.suiteScriptIASections = (state, id, ssLinkedConnectionId) => {
+  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
-  const {general } = suiteScriptIASettings(state, id, ssLinkedConnectionId);
+  const {general } = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
 
   let selectedGeneral = general;
+
   if (Array.isArray(general)) {
     selectedGeneral = general.find(s => s.title === 'General');
   }
@@ -4654,26 +3972,11 @@ export function suiteScriptIASections(state, id, ssLinkedConnectionId) {
       ...sections] : sections).map(sec => ({
     ...sec,
     titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1)
+    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
   }));
-}
+};
 
-export function hasSuiteScriptData(
-  state,
-  {
-    resourceType,
-    ssLinkedConnectionId,
-    integrationId,
-  }
-) {
-  return fromData.hasSuiteScriptData(state.data, {
-    resourceType,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-}
-
-export function suiteScriptResourceStatus(
+selectors.suiteScriptResourceStatus = (
   state,
   {
     resourceType,
@@ -4681,7 +3984,7 @@ export function suiteScriptResourceStatus(
     integrationId,
     resourceReqMethod = 'GET',
   }
-) {
+) => {
   let path = `/suitescript/connections/${ssLinkedConnectionId}/`;
 
   if (resourceType === 'flows') {
@@ -4711,26 +4014,9 @@ export function suiteScriptResourceStatus(
     method,
     isReady,
   };
-}
+};
 
-export const suiteScriptResource = (
-  state,
-  { resourceType, id, ssLinkedConnectionId, integrationId }
-) =>
-  fromData.suiteScriptResource(state && state.data, {
-    resourceType,
-    id,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-
-export function suiteScriptIAFeatureCheckState(
-  state,
-  { ssLinkedConnectionId, integrationId, featureName}
-) {
-  return fromSession.suiteScriptIAFeatureCheckState(state && state.session, { ssLinkedConnectionId, integrationId, featureName});
-}
-export const suiteScriptResourceData = (
+selectors.suiteScriptResourceData = (
   state,
   { resourceType, id, ssLinkedConnectionId, integrationId, scope }
 ) => {
@@ -4738,7 +4024,7 @@ export const suiteScriptResourceData = (
     return emptyObject;
   }
 
-  const master = suiteScriptResource(state, {
+  const master = selectors.suiteScriptResource(state, {
     resourceType,
     id,
     ssLinkedConnectionId,
@@ -4784,21 +4070,11 @@ export const suiteScriptResourceData = (
   return data;
 };
 
-export const suiteScriptResourceList = (
-  state,
-  { resourceType, ssLinkedConnectionId, integrationId }
-) =>
-  fromData.suiteScriptResourceList(state && state.data, {
-    resourceType,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-
-export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section) {
+selectors.suiteScriptFlowSettings = (state, id, ssLinkedConnectionId, section) => {
   if (!state) return emptyObject;
 
   const integrationResource =
-    suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
+    selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
   const { sections = []} = integrationResource || {};
   let requiredFlows = [];
   const allSections = sections;
@@ -4818,33 +4094,35 @@ export function suiteScriptFlowSettings(state, id, ssLinkedConnectionId, section
   }
   const { fields, sections: subSections } = selectedSection;
 
-  let flows = suiteScriptResourceList(state, {
+  let flows = selectors.suiteScriptResourceList(state, {
     resourceType: 'flows',
     integrationId: id,
     ssLinkedConnectionId,
   });
+
   flows = flows
     .filter(f => requiredFlows.includes(f.flowGUID))
     .sort(
       (a, b) => requiredFlows.indexOf(a.flowGUID) - requiredFlows.indexOf(b.flowGUID)
     );
+
   return {
     flows,
     fields,
     sections: subSections,
   };
-}
+};
 
-export function suiteScriptFlowConnectionList(
+selectors.suiteScriptFlowConnectionList = (
   state,
   { ssLinkedConnectionId, flowId }
-) {
-  const flow = suiteScriptResource(state, {
+) => {
+  const flow = selectors.suiteScriptResource(state, {
     resourceType: 'flows',
     id: flowId,
     ssLinkedConnectionId,
   });
-  const connections = suiteScriptResourceList(state, {
+  const connections = selectors.suiteScriptResourceList(state, {
     resourceType: 'connections',
     ssLinkedConnectionId,
   });
@@ -4863,18 +4141,18 @@ export function suiteScriptFlowConnectionList(
   return connections.filter(
     c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
   );
-}
+};
 
-export function suiteScriptIntegrationConnectionList(
+selectors.suiteScriptIntegrationConnectionList = (
   state,
   { ssLinkedConnectionId, integrationId }
-) {
-  const flows = suiteScriptResourceList(state, {
+) => {
+  const flows = selectors.suiteScriptResourceList(state, {
     resourceType: 'flows',
     ssLinkedConnectionId,
     integrationId,
   });
-  const connections = suiteScriptResourceList(state, {
+  const connections = selectors.suiteScriptResourceList(state, {
     resourceType: 'connections',
     ssLinkedConnectionId,
   });
@@ -4897,25 +4175,13 @@ export function suiteScriptIntegrationConnectionList(
   return connections.filter(
     c => c.id !== 'ACTIVITY_STREAM' && connectionIdsInUse.includes(c.id)
   );
-}
+};
 
-export function suiteScriptResourceFormState(
-  state,
-  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
-) {
-  return fromSession.suiteScriptResourceFormState(state && state.session, {
-    resourceType,
-    resourceId,
-    ssLinkedConnectionId,
-    integrationId,
-  });
-}
-
-export function suiteScriptTestConnectionCommState(
+selectors.suiteScriptTestConnectionCommState = (
   state,
   resourceId,
   ssLinkedConnectionId
-) {
+) => {
   const status = fromComms.suiteScriptTestConnectionStatus(
     state && state.comms,
     resourceId,
@@ -4931,107 +4197,52 @@ export function suiteScriptTestConnectionCommState(
     commState: status,
     message,
   };
-}
+};
 
-export function suiteScriptResourceFormSaveProcessTerminated(
-  state,
-  { resourceType, resourceId, ssLinkedConnectionId, integrationId }
-) {
-  return fromSession.suiteScriptResourceFormSaveProcessTerminated(
-    state && state.session,
-    { resourceType, resourceId, ssLinkedConnectionId, integrationId }
-  );
-}
-
-export function suiteScriptIAFormSaving(
-  state,
-  { ssLinkedConnectionId, integrationId }
-) {
-  return fromSession.suiteScriptIAFormSaving(
-    state && state.session,
-    { ssLinkedConnectionId, integrationId }
-  );
-}
-
-export function suiteScriptIAFormState(
-  state,
-  { ssLinkedConnectionId, integrationId }
-) {
-  return fromSession.suiteScriptIAFormState(
-    state && state.session,
-    { ssLinkedConnectionId, integrationId }
-  );
-}
-export function suiteScriptJobsPagingDetails(state) {
-  return fromData.suiteScriptJobsPagingDetails(state.data);
-}
-
-export function suiteScriptJob(
+selectors.suiteScriptJob = (
   state,
   { ssLinkedConnectionId, integrationId, jobId, jobType }
-) {
-  const jobList = suiteScriptResourceList(state, {
+) => {
+  const jobList = selectors.suiteScriptResourceList(state, {
     ssLinkedConnectionId,
     integrationId,
     resourceType: 'jobs',
   });
 
   return jobList.find(j => j._id === jobId && j.type === jobType);
-}
-
-export function suiteScriptJobErrors(state, { jobId, jobType }) {
-  return fromData.suiteScriptJobErrors(state.data, { jobId, jobType });
-}
-
-// #endregion suiteScript
-
-export function getJobErrorsPreview(state, jobId) {
-  return fromSession.getJobErrorsPreview(state && state.session, jobId);
-}
-
-export function integrationAppClonedDetails(state, id) {
-  return fromSession.integrationAppClonedDetails(state && state.session, id);
-}
-
-export function resourceErrors(state, { flowId, resourceId, options = {} }) {
-  return fromSession.resourceErrors(state && state.session, {
-    flowId,
-    resourceId,
-    options,
-  });
-}
+};
 
 // Given an errorId, gives back error doc
-export function resourceError(state, { flowId, resourceId, options, errorId }) {
-  const { errors = [] } = resourceErrors(state, {
+selectors.resourceError = (state, { flowId, resourceId, options, errorId }) => {
+  const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
     options,
   });
 
   return errors.find(error => error.errorId === errorId);
-}
+};
 
-export function selectedRetryIds(state, { flowId, resourceId, options = {} }) {
-  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedRetryIds = (state, { flowId, resourceId, options = {} }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
 
   return errors
     .filter(({ selected, retryDataKey }) => selected && !!retryDataKey)
     .map(error => error.retryDataKey);
-}
+};
 
-export function selectedErrorIds(state, { flowId, resourceId, options = {} }) {
-  const { errors } = resourceErrors(state, { flowId, resourceId, options });
+selectors.selectedErrorIds = (state, { flowId, resourceId, options = {} }) => {
+  const { errors } = selectors.resourceErrors(state, { flowId, resourceId, options });
 
   return errors.filter(({ selected }) => selected).map(error => error.errorId);
-}
+};
 
-export function isAllErrorsSelected(
+selectors.isAllErrorsSelected = (
   state,
   { flowId, resourceId, filterKey, defaultFilter, isResolved }
-) {
-  const errorFilter = filter(state, filterKey) || defaultFilter;
-  const { errors = [] } = resourceErrors(state, {
+) => {
+  const errorFilter = selectors.filter(state, filterKey) || defaultFilter;
+  const { errors = [] } = selectors.resourceErrors(state, {
     flowId,
     resourceId,
     options: { ...errorFilter, isResolved },
@@ -5044,42 +4255,22 @@ export function isAllErrorsSelected(
     isResolved,
     errorIds,
   });
-}
+};
 
-export function errorMap(state, resourceId) {
-  return fromSession.errorMap(state && state.session, resourceId);
-}
-
-export function errorActionsContext(
-  state,
-  { flowId, resourceId, actionType, errorType }
-) {
-  return fromSession.errorActionsContext(state && state.session, {
-    flowId,
-    resourceId,
-    actionType,
-    errorType,
-  });
-}
-
-export function isAnyErrorActionInProgress(state, { flowId, resourceId }) {
+selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   const isRetryInProgress =
-    errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
       .status === 'requested';
   const isResolveInProgress =
-    errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+    selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
       .status === 'requested';
 
   return isRetryInProgress || isResolveInProgress;
-}
+};
 
-export function customSettingsForm(state, resourceId) {
-  return fromSession.customSettingsForm(state && state.session, resourceId);
-}
-
-export function flowResources(state, flowId) {
+selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
+  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 
@@ -5138,9 +4329,9 @@ export function flowResources(state, flowId) {
   }
 
   return resources;
-}
+};
 
-export const redirectUrlToResourceListingPage = (
+selectors.redirectUrlToResourceListingPage = (
   state,
   resourceType,
   resourceId
@@ -5150,7 +4341,7 @@ export const redirectUrlToResourceListingPage = (
   }
 
   if (resourceType === 'flow') {
-    const flow = resource(state, 'flows', resourceId);
+    const flow = selectors.resource(state, 'flows', resourceId);
 
     if (flow) {
       return getRoutePath(
@@ -5162,22 +4353,21 @@ export const redirectUrlToResourceListingPage = (
   return getRoutePath(RESOURCE_TYPE_SINGULAR_TO_PLURAL[resourceType]);
 };
 
-export const exportData = (state, identifier) =>
-  fromSession.exportData(state && state.session, identifier);
-export function httpAssistantSupportsMappingPreview(state, importId) {
-  const importRes = resource(state, 'imports', importId);
+selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
+  const importRes = selectors.resource(state, 'imports', importId);
   const { _integrationId, _connectionId, http } = importRes;
 
   if (_integrationId && http) {
-    const connection = resource(state, 'connections', _connectionId);
+    const connection = selectors.resource(state, 'connections', _connectionId);
+
     return (http.requestMediaType === 'xml' || connection?.http?.mediaType === 'xml');
   }
 
   return false;
-}
+};
 
-export function mappingPreviewType(state, importId) {
-  const importRes = resource(state, 'imports', importId);
+selectors.mappingPreviewType = (state, importId) => {
+  const importRes = selectors.resource(state, 'imports', importId);
 
   if (!importRes) return;
   const { adaptorType } = importRes;
@@ -5185,7 +4375,7 @@ export function mappingPreviewType(state, importId) {
   if (adaptorType === 'NetSuiteDistributedImport') {
     return 'netsuite';
   } if (adaptorType === 'SalesforceImport') {
-    const masterRecordTypeInfo = getSalesforceMasterRecordTypeInfo(
+    const masterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(
       state,
       importId
     );
@@ -5198,7 +4388,7 @@ export function mappingPreviewType(state, importId) {
       }
     }
   } else if (importRes.http) {
-    const showHttpAssistant = httpAssistantSupportsMappingPreview(
+    const showHttpAssistant = selectors.httpAssistantSupportsMappingPreview(
       state,
       importId
     );
@@ -5207,23 +4397,16 @@ export function mappingPreviewType(state, importId) {
       return 'http';
     }
   }
-}
-export function retryDataContext(state, retryId) {
-  return fromSession.retryDataContext(state && state.session, retryId);
-}
+};
 
-export const rdbmsConnectionType = (state, connectionId) => {
-  const connection = resource(state, 'connections', connectionId) || {};
+selectors.rdbmsConnectionType = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId) || {};
 
   return connection.rdbms && connection.rdbms.type;
 };
 
-export function isSuiteScriptFlowOnOffInProgress(state, { ssLinkedConnectionId, _id }) {
-  return fromSession.isSuiteScriptFlowOnOffInProgress(state && state.session, { ssLinkedConnectionId, _id });
-}
-
-export function netsuiteAccountHasSuiteScriptIntegrations(state, connectionId) {
-  const connection = resource(state, 'connections', connectionId);
+selectors.netsuiteAccountHasSuiteScriptIntegrations = (state, connectionId) => {
+  const connection = selectors.resource(state, 'connections', connectionId);
 
   if (!(connection && connection.netsuite && connection.netsuite.account)) {
     return false;
@@ -5233,23 +4416,26 @@ export function netsuiteAccountHasSuiteScriptIntegrations(state, connectionId) {
     state && state.session,
     connection.netsuite.account
   );
-}
+};
 
-export function canLinkSuiteScriptIntegrator(state, connectionId) {
-  const preferences = userPreferences(state);
+selectors.canLinkSuiteScriptIntegrator = (state, connectionId) => {
+  const preferences = selectors.userPreferences(state);
+
   if (preferences && preferences.ssConnectionIds) {
     if (preferences.ssConnectionIds.includes(connectionId)) {
       return true;
     }
 
     const linkedAccounts = [];
-    let connection = resource(state, 'connections', connectionId);
+    let connection = selectors.resource(state, 'connections', connectionId);
+
     if (!connection?.netsuite?.account || connection._connectorId) {
       return false;
     }
     const connectionAccount = connection.netsuite.account.toUpperCase();
+
     preferences.ssConnectionIds.forEach(connId => {
-      connection = resource(state, 'connections', connId);
+      connection = selectors.resource(state, 'connections', connId);
       if (connection && connection.netsuite && connection.netsuite.account) {
         linkedAccounts.push(connection.netsuite.account.toUpperCase());
       }
@@ -5259,43 +4445,48 @@ export function canLinkSuiteScriptIntegrator(state, connectionId) {
     }
   }
 
-  return netsuiteAccountHasSuiteScriptIntegrations(state, connectionId);
-}
+  return selectors.netsuiteAccountHasSuiteScriptIntegrations(state, connectionId);
+};
 
-export function suiteScriptIntegratorLinkedConnectionId(state, account) {
-  const preferences = userPreferences(state);
+selectors.suiteScriptIntegratorLinkedConnectionId = (state, account) => {
+  const preferences = selectors.userPreferences(state);
+
   if (!preferences || !preferences.ssConnectionIds || !account) {
     return;
   }
 
   let linkedConnectionId;
   let connection;
+
   preferences.ssConnectionIds.forEach(connId => {
-    connection = resource(state, 'connections', connId);
+    connection = selectors.resource(state, 'connections', connId);
     if (
       connection?.netsuite?.account?.toUpperCase() === account.toUpperCase()
     ) {
       linkedConnectionId = connId;
     }
   });
+
   return linkedConnectionId;
-}
+};
 
 const emptyArr = [];
-export function suiteScriptIntegrationAppInstallerData(state, id) {
+
+selectors.suiteScriptIntegrationAppInstallerData = (state, id) => {
   if (!state) return null;
   const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
-  const modifiedSteps = produce(installer.steps || emptyArr, (draft) => {
+  const modifiedSteps = produce(installer.steps || emptyArr, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
       unCompletedStep.isCurrentStep = true;
     }
   });
-  return {...installer, steps: modifiedSteps};
-}
 
-export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
+  return {...installer, steps: modifiedSteps};
+};
+
+selectors.isSuiteScriptIntegrationAppInstallComplete = (state, id) => {
   if (!state) return null;
   let isInstallComplete = false;
   const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
@@ -5306,70 +4497,66 @@ export function isSuiteScriptIntegrationAppInstallComplete(state, id) {
     !installer.steps.reduce((result, step) => result || !step.completed, false);
 
   return isInstallComplete;
-}
+};
 
-export function userHasManageAccessOnSuiteScriptAccount(state, ssLinkedConnectionId) {
-  return !!resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
-}
-export function suiteScriptMappings(state) {
-  return fromSession.suiteScriptMappings(state && state.session);
-}
-export function suitesciptMappingsChanged(state) {
-  return fromSession.suitesciptMappingsChanged(state && state.session);
-}
-export function suiteScriptMappingsSaveStatus(state) {
-  return fromSession.suiteScriptMappingsSaveStatus(state && state.session);
-}
+selectors.userHasManageAccessOnSuiteScriptAccount = (state, ssLinkedConnectionId) => !!selectors.resourcePermissions(state, 'connections', ssLinkedConnectionId)?.edit;
 
-export function suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}) {
-  const flows = suiteScriptResourceList(state, {
+selectors.suiteScriptFlowDetail = (state, {ssLinkedConnectionId, integrationId, flowId}) => {
+  const flows = selectors.suiteScriptResourceList(state, {
     resourceType: 'flows',
     integrationId,
     ssLinkedConnectionId,
   });
-  return flows && flows.find(flow => flow._id === flowId);
-}
 
-export function suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) {
+  return flows && flows.find(flow => flow._id === flowId);
+};
+
+selectors.suiteScriptNetsuiteMappingSubRecord = (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
   if (!subRecordMappingId) return emptyObject;
-  const flow = suiteScriptFlowDetail(state, {
+  const flow = selectors.suiteScriptFlowDetail(state, {
     integrationId,
     ssLinkedConnectionId,
-    flowId
+    flowId,
   });
+
   if (flow?.import?.netsuite?.subRecordImports?.length) {
     let selectedSubRecord = emptyObject;
-    const iterateSubRecord = (subRecords) => {
+    const iterateSubRecord = subRecords => {
       if (subRecords?.length) {
         for (let i = 0; i < subRecords.length; i += 1) {
           if (subRecords[i].mappingId === subRecordMappingId) {
             selectedSubRecord = subRecords[i];
+
             return;
           }
           iterateSubRecord(subRecords[i]?.subRecordImports);
         }
       }
     };
+
     iterateSubRecord(flow.import.netsuite.subRecordImports);
+
     return selectedSubRecord;
   }
-  return emptyObject;
-}
 
-export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) {
-  const flow = suiteScriptFlowDetail(state, {
+  return emptyObject;
+};
+
+selectors.suiteScriptImportSampleData = (state, {ssLinkedConnectionId, integrationId, flowId, options = {}}) => {
+  const flow = selectors.suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { import: importConfig } = flow;
   const { type: importType, _connectionId } = importConfig;
+
   if (importType === 'netsuite') {
     const recordType = options.recordType || importConfig.netsuite?.recordType;
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'suitescript-recordTypeDetail',
@@ -5382,8 +4569,7 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
 
     const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
     // TO check
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectCompositeMetadata',
@@ -5391,27 +4577,32 @@ export function suiteScriptImportSampleData(state, {ssLinkedConnectionId, integr
 
     return { data, status };
   }
-  return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
-}
 
-export const suiteScriptGenerates = createSelector(
+  return fromSession.suiteScriptImportSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
+};
+
+selectors.suiteScriptGenerates = createSelector(
   [
     (state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId}) => {
       const options = {};
+
       if (subRecordMappingId) {
-        const {recordType} = suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+        const {recordType} = selectors.suiteScriptNetsuiteMappingSubRecord(state, {ssLinkedConnectionId, integrationId, flowId, subRecordMappingId});
+
         options.recordType = recordType;
       }
-      return suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
+
+      return selectors.suiteScriptImportSampleData(state, {ssLinkedConnectionId, integrationId, flowId, options});
     },
     (state, {ssLinkedConnectionId, integrationId, flowId}) => {
-      const flow = suiteScriptFlowDetail(state, {
+      const flow = selectors.suiteScriptFlowDetail(state, {
         integrationId,
         ssLinkedConnectionId,
-        flowId
+        flowId,
       });
+
       return flow?.import?.type;
-    }
+    },
 
   ],
   ({ data, status }, importType) => {
@@ -5432,26 +4623,28 @@ export const suiteScriptGenerates = createSelector(
 
       return 0; // names must be equal
     });
+
     return {data: generates, status};
   }
 );
 
-export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId}) {
-  const flow = suiteScriptFlowDetail(state, {
+selectors.suiteScriptFlowSampleData = (state, {ssLinkedConnectionId, integrationId, flowId}) => {
+  const flow = selectors.suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { export: exportConfig } = flow;
   const { type: exportType, _connectionId } = exportConfig;
+
   if (exportConfig.netsuite && exportConfig.netsuite.type === 'realtime') {
     const {recordType} = exportConfig.netsuite.realtime;
 
     const commMetaPath = `netsuite/metadata/suitescript/connections/${ssLinkedConnectionId}/recordTypes/${recordType}`;
 
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'raw',
@@ -5465,37 +4658,39 @@ export function suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrat
 
     const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
     // TO check
-    const { data, status } = metadataOptionsAndResources({
-      state,
+    const { data, status } = selectors.metadataOptionsAndResources(state, {
       connectionId: ssLinkedConnectionId,
       commMetaPath,
       filterKey: 'suiteScriptSalesforce-sObjectMetadata',
     });
+
     return { data, status };
   }
-  return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
-}
 
-export const suiteScriptExtracts = createSelector(
-  [(state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
-    (state, {ssLinkedConnectionId, integrationId, flowId}) => suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
+  return fromSession.suiteScriptFlowSampleDataContext(state && state.session, {ssLinkedConnectionId, integrationId, flowId});
+};
+
+selectors.suiteScriptExtracts = createSelector(
+  [(state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId}),
+    (state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
   (flow, flowData) => {
     if (!flowData) {
       return emptySet;
     }
     const {data, status} = flowData;
     let formattedFields;
+
     if (status === 'received') {
       formattedFields = [];
       data?.forEach(extract => {
         formattedFields.push({
           id: extract.id || extract.value,
-          name: extract.name || extract.label || extract.id
+          name: extract.name || extract.label || extract.id,
         });
         if (flow?.export?.netsuite?.type === 'restlet' && extract.type === 'select') {
           formattedFields.push({
             id: `${extract.id}.internalid`,
-            name: `${extract.name} (InternalId)`
+            name: `${extract.name} (InternalId)`,
           });
         }
       });
@@ -5510,17 +4705,19 @@ export const suiteScriptExtracts = createSelector(
 
       return 0; // names must be equal
     });
+
     return {data: sortedFields, status};
   }
 
 );
 
-export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnectionId, integrationId, flowId}) {
-  const flow = suiteScriptFlowDetail(state, {
+selectors.suiteScriptSalesforceMasterRecordTypeInfo = (state, {ssLinkedConnectionId, integrationId, flowId}) => {
+  const flow = selectors.suiteScriptFlowDetail(state, {
     ssLinkedConnectionId,
     integrationId,
-    flowId
+    flowId,
   });
+
   if (!flow) { return emptyObject; }
   const { import: importConfig} = flow;
 
@@ -5532,34 +4729,32 @@ export function suiteScriptSalesforceMasterRecordTypeInfo(state, {ssLinkedConnec
   const {sObjectType} = salesforce;
 
   const commMetaPath = `suitescript/connections/${ssLinkedConnectionId}/connections/${_connectionId}/sObjectTypes/${sObjectType}`;
-  return metadataOptionsAndResources({
-    state,
+
+  return selectors.metadataOptionsAndResources(state, {
     connectionId: ssLinkedConnectionId,
     commMetaPath,
     filterKey: 'salesforce-masterRecordTypeInfo',
   });
-}
+};
 
-export function suiteScriptConnections(state, ssLinkedConnectionId) {
-  return fromData.suiteScriptConnections(state && state.data, ssLinkedConnectionId);
-}
 /*
 * Definition rules are fetched in 2 ways
 * 1. In creation of an export, from FileDefinitions list based on 'definitionId' and 'format'
 * 2. In Editing an existing export, from UserSupportedFileDefinitions based on userDefinitionId
 * TODO @Raghu: Refactor this selector to be more clear
 */
-export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
+selectors.fileDefinitionSampleData = (state, { userDefinitionId, resourceType, options }) => {
   const { resourcePath, definitionId, format } = options;
   let template;
+
   if (definitionId && format) {
-    template = fileDefinition(state, definitionId, {
+    template = selectors.fileDefinition(state, definitionId, {
       format,
       resourceType,
     });
   } else if (userDefinitionId) {
     // selector to get that resource based on userDefId
-    template = resource(state, 'filedefinitions', userDefinitionId);
+    template = selectors.resource(state, 'filedefinitions', userDefinitionId);
   }
 
   if (!template) return {};
@@ -5597,72 +4792,80 @@ export const fileDefinitionSampleData = (state, { userDefinitionId, resourceType
  * Note : Incase of xlsx 'csv' stage is requested as the raw stage contains xlsx format which is not used
  * Modify this if we need xlsx content any where to show
  */
-export function fileSampleData(state, { resourceId, resourceType, fileType}) {
+selectors.fileSampleData = (state, { resourceId, resourceType, fileType}) => {
   const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = getResourceSampleDataWithStatus(
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
     stage,
   );
+
   if (!rawData) {
-    const resourceObj = resource(state, resourceType, resourceId);
+    const resourceObj = selectors.resource(state, resourceType, resourceId);
+
     if (resourceObj?.file?.type === fileType) {
       return resourceObj.sampleData;
     }
   }
+
   return rawData?.body;
-}
-export function suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId}) {
+};
+selectors.suiteScriptFileExportSampleData = (state, { ssLinkedConnectionId, resourceType, resourceId}) => {
   // const stage = fileType === 'xlsx' ? 'csv' : 'rawFile';
-  const { data: rawData } = getResourceSampleDataWithStatus(
+  const { data: rawData } = selectors.getResourceSampleDataWithStatus(
     state,
     resourceId,
     'rawFile',
   );
+
   if (!rawData) {
-    const resourceObj = suiteScriptResource(state, {resourceType, id: resourceId, ssLinkedConnectionId});
+    const resourceObj = selectors.suiteScriptResource(state, {resourceType, id: resourceId, ssLinkedConnectionId});
+
     if (
       resourceObj?.export?.file?.csv
     ) {
       return resourceObj.export.sampleData;
     }
   }
+
   return rawData?.body;
-}
-export const getSuitescriptMappingSubRecordList = createSelector([
+};
+selectors.getSuitescriptMappingSubRecordList = createSelector([
   (state, {integrationId,
     ssLinkedConnectionId,
-    flowId}) => suiteScriptFlowDetail(state, {
+    flowId}) => selectors.suiteScriptFlowDetail(state, {
     integrationId,
     ssLinkedConnectionId,
-    flowId
+    flowId,
   }),
-], (flow) => {
+], flow => {
   if (flow?.import?.netsuite?.subRecordImports?.length) {
     // recursively fetch subrecordMapping
     const subRecordList = [];
-    const iterateSubRecord = (subRecords) => {
+    const iterateSubRecord = subRecords => {
       if (subRecords?.length) {
         subRecords.forEach(_subRecordImp => {
           subRecordList.push({
             id: _subRecordImp.mappingId,
-            name: `${_subRecordImp.recordType} (Subrecord)`
+            name: `${_subRecordImp.recordType} (Subrecord)`,
           });
           iterateSubRecord(_subRecordImp?.subRecordImports);
         });
       }
     };
+
     iterateSubRecord(flow?.import?.netsuite?.subRecordImports);
 
     return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
   }
+
   return emptySet;
 });
-export const applicationType = (state, resourceType, id) => {
-  const resourceObj = resource(state, resourceType, id);
-  const stagedResourceObj = stagedResource(state, id);
+selectors.applicationType = (state, resourceType, id) => {
+  const resourceObj = selectors.resource(state, resourceType, id);
+  const stagedResourceObj = selectors.stagedResource(state, id);
 
-  if (!resourceObj && (!stagedResource || !stagedResource.patch)) {
+  if (!resourceObj && (!stagedResourceObj || !stagedResourceObj.patch)) {
     return '';
   }
 
@@ -5686,10 +4889,10 @@ export const applicationType = (state, resourceType, id) => {
   }
 
   if (adaptorType && adaptorType.startsWith('RDBMS')) {
-    const connection = resource(
+    const connection = selectors.resource(
       state,
       'connections',
-      getStagedValue('/_connectionId') || (resource && resource._connectionId)
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
     );
 
     return connection && connection.rdbms && connection.rdbms.type;
@@ -5697,8 +4900,8 @@ export const applicationType = (state, resourceType, id) => {
 
   return assistant || adaptorType;
 };
-export const lookupProcessorResourceType = (state, resourceId) => {
-  const stagedProcessor = stagedResource(state, resourceId);
+selectors.lookupProcessorResourceType = (state, resourceId) => {
+  const stagedProcessor = selectors.stagedResource(state, resourceId);
 
   if (!stagedProcessor || !stagedProcessor.patch) {
     // TODO: we need a better pattern for logging warnings. We need a common util method
@@ -5722,15 +4925,16 @@ export const lookupProcessorResourceType = (state, resourceId) => {
 
   return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
 };
-export function tradingPartnerConnections(
+selectors.tradingPartnerConnections = (
   state,
   connectionId,
-) {
-  const connections = resourceList(state, { type: 'connections' }).resources;
-  const currConnection = resource(state, 'connections', connectionId);
+) => {
+  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
+  const currConnection = selectors.resource(state, 'connections', connectionId);
+
   return connections?.filter(c => (c.type === 'ftp' &&
       c.ftp.hostURI === currConnection.ftp.hostURI &&
       c.ftp.port === currConnection.ftp.port &&
       c.sandbox === currConnection.sandbox
   ));
-}
+};

@@ -5,17 +5,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
-import CeligoTable from '../../components/CeligoTable';
+import ResourceTable from '../../components/ResourceTable';
 import CheckPermissions from '../../components/CheckPermissions';
 import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import LoadResources from '../../components/LoadResources';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { PERMISSIONS } from '../../utils/constants';
 import infoText from '../ResourceList/infoText';
-import metadata from './metadata';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 
@@ -27,6 +26,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
+
 export const LoadingMask = ({message}) => (
   <Loader open>
     <Typography variant="h4">{message}</Typography>
@@ -35,7 +35,7 @@ export const LoadingMask = ({message}) => (
 );
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
-  sort: { orderBy: 'doc.name', order: 'asc' }
+  sort: { orderBy: 'doc.name', order: 'asc' },
 };
 
 export default function RecycleBin(props) {
@@ -97,12 +97,7 @@ export default function RecycleBin(props) {
                   : 'Your search didn’t return any matching results. Try expanding your search criteria.'}
               </Typography>
             ) : (
-              <CeligoTable
-                data={list.resources}
-                filterKey="recycleBinTTL"
-                {...metadata}
-                actionProps={{ resourceType: 'recycleBinTTL' }}
-              />
+              <ResourceTable resources={list.resources} resourceType="recycleBinTTL" />
             )}
           </LoadResources>
         </div>

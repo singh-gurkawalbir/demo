@@ -70,12 +70,14 @@ export default function getFormMetadata(options) {
         multiline: true,
         helpKey: 'import.file.csv.customHeaderRows',
         defaultValue: options?.customHeaderRows || '',
-      }
+      },
     },
 
   };
+
   if (!options.customHeaderRowsSupported) {
     delete fieldMeta.fieldMap.customHeaderRows;
   }
+
   return fieldMeta;
 }

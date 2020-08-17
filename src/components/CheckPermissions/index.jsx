@@ -2,11 +2,12 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   permissionErrors: {
     color: theme.palette.error.main,
+    padding: theme.spacing(2, 3),
   },
 }));
 

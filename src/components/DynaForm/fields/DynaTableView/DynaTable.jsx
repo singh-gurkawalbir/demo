@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState, useCallback, Fragment, } from 'react';
+import React, { useReducer, useEffect, useState, useCallback, Fragment } from 'react';
 import produce from 'immer';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -84,7 +84,10 @@ const useStyles = makeStyles(theme => ({
         whiteSpace: 'normal',
       },
     },
-  }
+  },
+  refreshIcon: {
+    cursor: 'pointer',
+  },
 }));
 
 function reducer(state, action) {
@@ -312,7 +315,7 @@ export const DynaTable = props => {
               <div className={classes.header} key={r.id}>
                 <span className={classes.label}>{r.label || r.name}</span>
                 {r.supportsRefresh && !isLoading?.[r.id] && (
-                  <RefreshIcon onClick={onFetchResource(r.id)} />
+                  <RefreshIcon className={classes.refreshIcon} onClick={onFetchResource(r.id)} />
                 )}
                 {r.supportsRefresh && isLoading?.[r.id] && (
                   <Spinner size={24} />

@@ -9,7 +9,7 @@ import PanelTitle from '../../PanelTitle';
 import PanelGridItem from '../../PanelGridItem';
 import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CsvParsePanel from './Panel';
 
 const useStyles = makeStyles({
@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 

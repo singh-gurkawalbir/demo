@@ -10,14 +10,6 @@ const useEnableButtonOnTouchedForm = ({
   isFormTouchedForMeta,
   ignoreFormTouchedCheck,
   formKey,
-  integrationId,
-  flowId,
-  sectionId,
-  isIAForm,
-  resourceType,
-  resourceId,
-  showCustomFormValidations,
-  ssLinkedConnectionId,
 }) => {
   const dispatch = useDispatch();
   const formTouched = useMemo(() => {
@@ -30,36 +22,12 @@ const useEnableButtonOnTouchedForm = ({
   }, [fields, ignoreFormTouchedCheck, isFormTouchedForMeta]);
   const onClickWhenValid = useCallback(
     value => {
-      if (ssLinkedConnectionId) {
-        dispatch(
-          actions.suiteScript.resourceForm.showFormValidations(
-            resourceType,
-            resourceId,
-            ssLinkedConnectionId
-          )
-        );
-
-        // Util user resolves form validation do we allow the onClick to take place ...
-        if (formIsValid) onClick(value);
-
-        return;
-      }
-      if (showCustomFormValidations) {
-        showCustomFormValidations();
-      } else if (isIAForm) {
-        dispatch(
-          actions.integrationApp.settings.showFormValidations(
-            integrationId,
-            flowId,
-            sectionId
-          )
-        );
-      } else dispatch(actions.form.showFormValidations(formKey));
+      dispatch(actions.form.showFormValidations(formKey));
 
       // Util user resolves form validation do we allow the onClick to take place ...
       if (formIsValid) onClick(value);
     },
-    [ssLinkedConnectionId, showCustomFormValidations, isIAForm, dispatch, formKey, formIsValid, onClick, resourceType, resourceId, integrationId, flowId, sectionId]
+    [dispatch, formKey, formIsValid, onClick]
   );
 
   return { formTouched, onClickWhenValid };

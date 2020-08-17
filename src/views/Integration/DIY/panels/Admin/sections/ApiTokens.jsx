@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import ResourceDrawer from '../../../../../../components/drawer/Resource';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import ResourceTable from '../../../../../../components/ResourceTable';

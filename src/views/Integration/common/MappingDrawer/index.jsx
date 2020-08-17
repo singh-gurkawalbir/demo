@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer } from '@material-ui/core';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../components/LoadResources';
 import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
@@ -41,6 +41,7 @@ function MappingDrawer({integrationId}) {
   const mappingEditorId = `${importId}-${flowId}`;
   const hasPreviewPanel = useSelector(state => {
     const mappingPreviewType = selectors.mappingPreviewType(state, importId);
+
     return !!mappingPreviewType;
   });
 

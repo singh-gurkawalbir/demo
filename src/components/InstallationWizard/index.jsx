@@ -9,7 +9,7 @@ import {
   Breadcrumbs,
 } from '@material-ui/core';
 import ArrowBackIcon from '../icons/ArrowLeftIcon';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import openExternalUrl from '../../utils/window';
@@ -27,6 +27,7 @@ import { INSTALL_STEP_TYPES } from '../../utils/constants';
 import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../Loader';
 import Spinner from '../Spinner';
+import { getApplicationName } from '../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 29,
   },
 
-  stepTable: { maxWidth: 750, },
+  stepTable: { maxWidth: 750 },
   floatRight: {
     float: 'right',
   },
@@ -128,7 +129,7 @@ export default function InstallationWizard(props) {
     resourceType,
     templateId,
     isInstallFailed,
-    destinationEnvironment
+    destinationEnvironment,
   ]);
 
   if (!installSteps) {
@@ -140,9 +141,12 @@ export default function InstallationWizard(props) {
   }
 
   const handleStepClick = (step, conn) => {
-    const { _connectionId, installURL, type } = step;
+    const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
 
+    if (completed) {
+      return false;
+    }
     // handle connection step click
     if (type === INSTALL_STEP_TYPES.CONNECTION) {
       if (step.isTriggered) {
@@ -157,6 +161,7 @@ export default function InstallationWizard(props) {
       }
 
       delete connObj._id;
+      connObj.application = getApplicationName(connObj);
       dispatch(
         actions.resource.patchStaged(
           newId,

@@ -32,26 +32,6 @@ module.exports = {
     'react-hooks'
   ],
   rules: {
-    // Override AirBnB's configuration of 'always', since they only set that value due to
-    // babel-preset-airbnb not supporting class properties, whereas @neutrinojs/react does.
-    'react/state-in-constructor': ['error', 'never'],
-    // Disable rules for which there are eslint-plugin-babel replacements:
-    // https://github.com/babel/eslint-plugin-babel#rules
-    'new-cap': 'off',
-    'no-invalid-this': 'off',
-    'object-curly-spacing': 'off',
-    'semi': 'error',
-    'no-unused-expressions': 'off',
-    'babel/no-invalid-this': airbnbBaseBestPractices['no-invalid-this'],
-    // // The worker/serviceworker envs above don't properly respect
-    // // the `self` global with the Airbnb preset rules
-    // // https://github.com/airbnb/javascript/issues/1632
-    'no-restricted-globals': airbnbBaseRules[
-      'no-restricted-globals'
-    ].filter(global => global !== 'self'),
-    // Prefer double or quotes in JSX attributes
-    // http://eslint.org/docs/rules/jsx-quotes
-    'jsx-quotes': ['error', 'prefer-double'],
     // Enable anchors with react-router Link
     'jsx-a11y/anchor-is-valid': [
       'error',
@@ -62,6 +42,9 @@ module.exports = {
     ],
     'jsx-a11y/click-events-have-key-events': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
+    // Override AirBnB's configuration of 'always', since they only set that value due to
+    // babel-preset-airbnb not supporting class properties, whereas @neutrinojs/react does.
+    'react/state-in-constructor': ['error', 'never'],
     // Disallow spaces for JSX attribute braces interior
     // JSX braces are interpolation, not objects
     'react/jsx-curly-spacing': ['error', 'never'],
@@ -85,7 +68,8 @@ module.exports = {
     // Require space before self-closing bracket in JSX
     'react/jsx-tag-spacing': ['error', { beforeSelfClosing: 'always' }],
     // Ensure multiline JSX is wrapped in parentheses (idiomatic React)
-    // Must be coupled with no-extra-parens: off
+    // Must be coupled with 
+    'no-extra-parens': 'off',
     'react/jsx-wrap-multilines': 'error',
     // Disable enforcement of React PropTypes
     'react/default-props-match-prop-types': 'off',
@@ -107,16 +91,39 @@ module.exports = {
     'react/no-unused-prop-types': 'off',
     // Doesn't always help with a lot of PureComponents:
     'react/require-default-props': 'off',
-    // The following rules are set by our UI team
-    'max-len': 'off',
     'react/jsx-filename-extension': [
       'warn',
       { extensions: ['.js', '.jsx'] },
     ],
     'react/no-did-mount-set-state': 'off',
-    'no-underscore-dangle': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+    'react/jsx-props-no-spreading': 'off',
+    "react/jsx-max-props-per-line": ['error', { maximum: 4, when: 'always' }],
+    'react/destructuring-assignment': 'off',
+    'react/jsx-one-expression-per-line': 'off',
+
+    // Disable rules for which there are eslint-plugin-babel replacements:
+    // https://github.com/babel/eslint-plugin-babel#rules
+    'new-cap': 'off',
+    'no-invalid-this': 'off',
+    'object-curly-spacing': 'off',
+    'semi': 'error',
+    'no-unused-expressions': 'off',
+    // Prefer double or quotes in JSX attributes
+    // http://eslint.org/docs/rules/jsx-quotes
+    'jsx-quotes': ['error', 'prefer-double'],
+    'babel/no-invalid-this': airbnbBaseBestPractices['no-invalid-this'],
+    // // The worker/serviceworker envs above don't properly respect
+    // // the `self` global with the Airbnb preset rules
+    // // https://github.com/airbnb/javascript/issues/1632
+    'no-restricted-globals': airbnbBaseRules[
+      'no-restricted-globals'
+    ].filter(global => global !== 'self'),
+    // This is a lot of custom work to fix line length...
+    // save this change for last.
+    'max-len': 'off', // ['error', { code: 120, ignoreComments: true }],
+    'no-underscore-dangle': 'off',
     'no-param-reassign': [
       'error',
       {
@@ -124,13 +131,18 @@ module.exports = {
         ignorePropertyModificationsFor: ['draft', 'acc', 'response'],
       },
     ],
-    'react/jsx-props-no-spreading': 'off',
-    'arrow-parens': 'off',
+    'arrow-parens': ['error', 'as-needed'],
     'object-curly-newline': 'off',
     'function-paren-newline': 'off',
-    'comma-dangle': 'off',
+    'comma-dangle': ['error', { 
+      objects: 'always-multiline', 
+      arrays: 'always-multiline',
+      imports: 'always-multiline',
+      exports: 'always-multiline',
+      functions: 'only-multiline',
+      // functions: 'never' }
+    }],
     'implicit-arrow-linebreak': 'off',
-    'react/destructuring-assignment': 'off',
     'import/no-extraneous-dependencies': [
       'error', 
       {
@@ -147,12 +159,20 @@ module.exports = {
     ],
     'no-shadow': 'off',
     'no-confusing-arrow': 'off',
-    'react/jsx-one-expression-per-line': 'off',
-    'react/jsx-wrap-multilines': 'off',
+    'no-multiple-empty-lines': ['error', { 'max': 1 }],
+    'no-multi-spaces': ["error", { 'ignoreEOLComments': true }],
+    'key-spacing': 'error',
+    'padding-line-between-statements': [
+      "error",
+      { blankLine: "always", prev: "*", next: ["return"] },
+      { blankLine: "always", prev: ["export", "const", "let", "var"], next: "*"},
+      { blankLine: "any",    prev: ["export", "const", "let", "var"], next: ["export", "const", "let", "var"]},
+    ],
+    'operator-linebreak': ["error", "after", { "overrides": { "?": "before", ":": "before" } }],
     // The following rules would actually benefit us if turned on
     // they are turned off so that we can transition into the new toolchain more easily
-    'operator-linebreak': 'off',
     'consistent-return': 'off',
     'import/no-cycle': 'off',
+    'import/prefer-default-export': 'off',
   },
 };

@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import resourceConstants from '../../../../forms/constants/connection';
 import { getResourceSubType, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import consolidatedActions from '../../../ResourceFormFactory/Actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const getConnectionType = resource => {
@@ -20,8 +20,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 }));
 /**
  * We use primary and secondary actions to differentiate two sets of buttons we use for forms
@@ -42,6 +42,7 @@ const ActionButtons = ({actions, formProps, proceedOnChange, consolidatedActions
     return actions.reduce((acc, action) => {
       const Action = consolidatedActions[action.id];
       let actionProps = {};
+
       /**
       * Passes a global state for disable functionality for actions except 'cancel'
       * used to manage disable states across buttons
@@ -52,34 +53,39 @@ const ActionButtons = ({actions, formProps, proceedOnChange, consolidatedActions
       if (action.id !== 'cancel') {
         actionProps = {
           disableSaveOnClick,
-          setDisableSaveOnClick
+          setDisableSaveOnClick,
         };
       }
       // remove form disabled prop...
       // they dont necessary apply to action button
       const { disabled, ...rest } = formProps;
-      const actionContainer = <Action
-        key={action.id}
-        dataTest={action.id}
-        proceedOnChange={proceedOnChange}
-        {...rest}
-        {...action}
-        {...actionProps}
-      />;
+      const actionContainer = (
+        <Action
+          key={action.id}
+          dataTest={action.id}
+          proceedOnChange={proceedOnChange}
+          {...rest}
+          {...action}
+          {...actionProps}
+      />
+      );
+
       if (action.mode === 'secondary') {
         acc.secondaryActions.push(actionContainer);
       } else {
         acc.primaryActions.push(actionContainer);
       }
+
       return acc;
     }, {
       primaryActions: [],
-      secondaryActions: []
+      secondaryActions: [],
 
     });
   }, [actions, consolidatedActions, disableSaveOnClick, formProps, proceedOnChange]);
 
   if (!actions?.length) { return null; }
+
   return (
     <div className={classes.actions}>
       {primaryActions?.length ? <div> {primaryActions} </div> : null}
@@ -127,6 +133,7 @@ export default function ResourceFormActionsPanel(props) {
     // if props has defined actions return it
     if (actions) return actions;
     let actionButtons;
+
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && !isNew) {
       if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
@@ -139,11 +146,13 @@ export default function ResourceFormActionsPanel(props) {
     } else {
       actionButtons = ['saveandclose', 'cancel'];
     }
+
     return actionButtons.map(id => ({
       id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
     }));
   }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource]);
+
   if (!formState.initComplete) return null;
 
   return <ActionsFactory consolidatedActions={consolidatedActions} fieldMap={fieldMap} actions={actionButtons} {...props} />;

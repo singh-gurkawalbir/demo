@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FormGenerator from '..';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 

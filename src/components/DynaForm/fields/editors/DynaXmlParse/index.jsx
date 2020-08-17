@@ -2,12 +2,13 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../reducers';
-import XmlParseEditorDialog from '../../../../AFE/XmlParseEditor/Dialog';
+import { selectors } from '../../../../../reducers';
+import XmlParseEditorDrawer from '../../../../AFE/XmlParseEditor/Drawer';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
+import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 
 const getParserValue = ({
   resourcePath,
@@ -22,7 +23,7 @@ const getParserValue = ({
   const rules = {
     V0_json: V0_json === 'true',
     trimSpaces,
-    stripNewLineChars
+    stripNewLineChars,
   };
 
   if (attributePrefix) rules.attributePrefix = attributePrefix;
@@ -35,7 +36,7 @@ const getParserValue = ({
     {
       type: 'xml',
       version: 1,
-      rules
+      rules,
     },
   ];
 
@@ -70,7 +71,7 @@ const useStyles = makeStyles(theme => ({
   fileUploadLabelWrapper: {
     width: '100%',
     marginTop: 'auto',
-    marginBottom: 'auto'
+    marginBottom: 'auto',
 
   },
   fileUploadRoot: {
@@ -78,7 +79,7 @@ const useStyles = makeStyles(theme => ({
   },
   actionContainer: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
 
   },
   uploadContainer: {
@@ -86,11 +87,11 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent !important',
     border: '0px !important',
     width: 'auto !important',
-    padding: 4
+    padding: 4,
   },
   uploadFileErrorContainer: {
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 }));
 
 export default function DynaXmlParse({
@@ -100,15 +101,15 @@ export default function DynaXmlParse({
   resourceId,
   resourceType,
   disabled,
-  uploadSampleDataFieldName
+  uploadSampleDataFieldName,
 }) {
   const classes = useStyles();
-  const [showEditor, setShowEditor] = useState(false);
   const [formKey, setFormKey] = useState(1);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
   const getInitOptions = useCallback(
-    (val) => ({ resourcePath, ...val?.[0]?.rules}),
+    val => ({ resourcePath, ...val?.[0]?.rules}),
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
@@ -117,15 +118,12 @@ export default function DynaXmlParse({
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
 
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
-
   const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     // console.log(shouldCommit, editorValues);
 
     if (shouldCommit) {
       const parsersValue = getParserValue(editorValues);
+
       setCurrentOptions(getInitOptions(parsersValue));
 
       setForm(getForm(editorValues));
@@ -134,14 +132,12 @@ export default function DynaXmlParse({
     }
   }, [formKey, getInitOptions, id, onFieldChange]);
 
-  const handleEditorClose = useCallback(() => {
-    setShowEditor(false);
-  }, []);
   const handleFormChange = useCallback(
     (newOptions, isValid) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
+
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
@@ -173,7 +169,7 @@ export default function DynaXmlParse({
                 labelWrapper: classes.fileUploadLabelWrapper,
                 uploadFile: classes.uploadContainer,
                 actionContainer: classes.actionContainer,
-                errorContainer: classes.uploadFileErrorContainer
+                errorContainer: classes.uploadFileErrorContainer,
               }
             }
           />
@@ -184,22 +180,22 @@ export default function DynaXmlParse({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uploadSampleDataFieldName]
   );
+
   return (
     <>
       <div className={classes.container}>
-        {showEditor && (
-          <XmlParseEditorDialog
-            title="XML parser helper"
-            id={id + resourceId}
-            data={data}
-            resourceType={resourceType}
-            rule={currentOptions}
-            onSave={handleEditorSave}
-            onClose={handleEditorClose}
-            disabled={disabled}
-            editorDataTitle={editorDataTitle}
+        <XmlParseEditorDrawer
+          title="XML parser helper"
+          id={id + resourceId}
+          data={data}
+          resourceType={resourceType}
+          rule={currentOptions}
+          onSave={handleEditorSave}
+          disabled={disabled}
+          editorDataTitle={editorDataTitle}
+          path={id}
         />
-        )}
+
         <div className={classes.labelWrapper}>
           <FormLabel className={classes.label}>XML parser helper</FormLabel>
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
@@ -209,7 +205,7 @@ export default function DynaXmlParse({
           variant="outlined"
           color="secondary"
           className={classes.button}
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
       </div>

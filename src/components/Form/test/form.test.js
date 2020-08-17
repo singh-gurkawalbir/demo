@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import useForm from '..';
 import actions from '../../../actions';
-import reducer, * as selectors from '../../../reducers';
+import reducer, { selectors } from '../../../reducers';
 import themeProvider from '../../../theme/themeProvider';
 import FormGenerator from '../../DynaForm/DynaFormGenerator';
 
@@ -21,6 +21,7 @@ import FormGenerator from '../../DynaForm/DynaFormGenerator';
 // and wraps out custom component with react router
 
 export const theme = themeProvider();
+
 configure({ testIdAttribute: 'data-test' });
 
 export function reduxWrappedComponent({ Component, store, componentProps }) {
@@ -246,6 +247,7 @@ describe('visible behavior', () => {
 
   test('visibleField should be again invisible after it visible expression criteria is not met ', () => {
     let ele = queryByDisplayValue('123');
+
     // make it visible first
     fireEvent.change(ele, {
       target: {

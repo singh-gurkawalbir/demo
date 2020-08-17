@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Button, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
@@ -65,18 +65,15 @@ function ImportMapping({
 
   const subrecords = useSelector(
     state => {
-      const mapping = selectors.mapping(state, mappingEditorId);
+      const resource = selectors.resource(state, 'imports', resourceId);
 
       if (
-        mapping &&
-        mapping.resource &&
-        mapping.resource.netsuite_da &&
-        mapping.resource.netsuite_da.mapping
+        resource && resource.netsuite_da?.mapping
       ) {
-        const subrecords = getNetSuiteSubrecordImports(mapping.resource).map(
+        const subrecords = getNetSuiteSubrecordImports(resource).map(
           sr => ({
             ...sr,
-            name: `${mapping.resource.name || mapping.resource._id} - ${
+            name: `${resource.name || resource._id} - ${
               sr.name
             } (Subrecord)`,
           })
@@ -86,7 +83,7 @@ function ImportMapping({
           return [
             {
               fieldId: '__parent',
-              name: mapping.resource.name || mapping.resource._id,
+              name: resource.name || resource._id,
             },
             ...subrecords,
           ];

@@ -7,8 +7,9 @@ import {
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
   RESOURCE_TYPE_SINGULAR_TO_PLURAL,
 } from '../../constants/resource';
-import { OPTION_ALL } from './util';
 import CeligoSelect from '../CeligoSelect';
+
+const OPTION_ALL = { id: 'all', label: 'All' };
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -36,6 +37,7 @@ export function ResourceTypeFilter(props) {
     'connections',
     'stacks',
     'scripts',
+    'apis',
   ];
   const resource =
     resourceType &&

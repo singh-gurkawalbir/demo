@@ -23,8 +23,9 @@ export default {
     mappings = {},
     recordType,
     isGroupedSampleData,
+    resource,
   }) => {
-    const toReturn = [];
+    let toReturn = [];
     let isItemSubtypeRecord = false;
 
     isItemSubtypeRecord =
@@ -74,6 +75,106 @@ export default {
           toReturn.push(tempFm);
         }
       });
+    let index;
+
+    if (resource && resource.netsuite_da?.operation === 'attach') {
+      toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjAttachToId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjAttachToId',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjAttachedType'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjAttachedType',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjAttachedId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjAttachedId',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+    } else if (resource && resource.netsuite_da?.operation === 'detach') {
+      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjAttachedType', 'celigo_nlobjAttachedId'].includes(m.generate)));
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjDetachFromId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjDetachFromId',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjDetachedType'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjDetachedType',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjDetachedId'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjDetachedId',
+          isRequired: true,
+        });
+      } else {
+        toReturn[index].isRequired = true;
+      }
+    } else {
+      toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjDetachFromId', 'celigo_nlobjAttachedType', 'celigo_nlobjDetachedType', 'celigo_nlobjAttachedId', 'celigo_nlobjDetachedId'].includes(m.generate)));
+    }
+
+    if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation)) {
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesRole'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjAttachDetachAttributesRole',
+        });
+      }
+
+      index = toReturn.findIndex(
+        mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesField'
+      );
+      if (index === -1) {
+        toReturn.push({
+          generate: 'celigo_nlobjAttachDetachAttributesField',
+        });
+      }
+    }
     mappings.lists &&
       mappings.lists.forEach(lm => {
         lm.fields.forEach(fm => {
@@ -100,17 +201,18 @@ export default {
             );
           }
 
-          if (isGroupedSampleData) {
-            if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
-              tempFm.extract = tempFm.extract.substr('*.'.length);
-            } else {
-              // remove 0. in the begining of extract
-              if (tempFm.extract && /^0\./.test(tempFm.extract)) {
-                tempFm.extract = tempFm.extract.substr('0.'.length);
-              }
+          if (isGroupedSampleData && tempFm.extract && tempFm.extract.indexOf('*.') !== 0) {
+            tempFm.useFirstRow = true;
+          }
+          if (tempFm.extract && tempFm.extract.indexOf('*.') === 0) {
+            tempFm.extract = tempFm.extract.substr('*.'.length);
+          } else if (tempFm.extract && /^0\./.test(tempFm.extract)) {
+            tempFm.extract = tempFm.extract.substr('0.'.length);
+          }
 
-              tempFm.useFirstRow = true;
-            }
+          if (/^\['.*']$/.test(tempFm.extract)) {
+            // Remove [' in the start and  remove '] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
           }
 
           if (fm.subRecordMapping && fm.subRecordMapping.recordType) {

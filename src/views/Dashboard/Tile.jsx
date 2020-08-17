@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Button, Zoom } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
 import Status from '../../components/Status';
@@ -157,6 +157,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5e7d921e2387e356b67669ce', // SFNSIO EU
       '581cebf290a63a26daea6081', // Jet - NetSuite
       '57dbed962eca42c50e6e22be', // Walmart - NetSuite
+      '592e8679c95560380ff1325c', // Salesforce - Subscription Billing
+      '58f772ed3c25f31c8041d5fe', // Vendor Payment Manager
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -169,13 +171,20 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        history.push(
-          getRoutePath(
-            `/dashboard/${tile._integrationId}/offlineconnections/${
-              tile.offlineConnections[0]
-            }`
-          )
-        );
+        // https://celigo.atlassian.net/browse/IO-16798. Need to remove fix connection drawer changes.
+        if (tile._connectorId) {
+          history.push(
+            getRoutePath(
+              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
+            )
+          );
+        } else {
+          history.push(
+            getRoutePath(
+              `/integrations/${tile._integrationId}/connections`
+            )
+          );
+        }
       } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
@@ -210,7 +219,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       status.variant,
       tile._connectorId,
       tile._integrationId,
-      tile.offlineConnections,
       tile.status,
       isCloned,
     ]
@@ -246,9 +254,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
-  // Opacity to blur selected tile
-  const opacity = isDragging ? 0.2 : 1;
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
+  // need to show different style for selected tile
+  const isCardSelected = !!isDragging;
 
   drag(drop(ref));
   // #endregion
@@ -270,8 +278,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           </Button>
         </ModalDialog>
       )}
-      <div style={{ opacity }} ref={ref}>
-        <HomePageCardContainer onClick={handleTileClick}>
+      <div ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected} >
           <Header>
             <Status
               label={status.label}

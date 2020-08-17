@@ -14,7 +14,7 @@ import { map } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { JOB_TYPES, STANDALONE_INTEGRATION } from '../../utils/constants';
@@ -30,6 +30,7 @@ export function* getJobFamily({ jobId, type }) {
   );
   const { path, opts } = requestOptions;
   let job;
+
   // console.log(path, opts);
   try {
     job = yield call(apiCallWithRetry, { path, opts });
@@ -648,8 +649,16 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   }
 }
 
+function* getLatestJobs({ integrationId, flowId}) {
+  yield call(requestJobCollection, { integrationId, flowId });
+  const latestJobs = yield select(selectors.latestFlowJobs);
+
+  yield all(latestJobs.map(job => put(actions.job.requestFamily({ jobId: job._id}))));
+}
+
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
+  takeEvery(actionTypes.JOB.REQUEST_LATEST, getLatestJobs),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,

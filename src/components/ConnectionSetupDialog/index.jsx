@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ResourceForm from '../ResourceFormFactory';
 import CloseIcon from '../icons/CloseIcon';

@@ -25,8 +25,8 @@ const useStyles = makeStyles(theme => ({
   },
   resourceFormButtons: {
     display: 'flex',
-    justifyContent: 'space-between'
-  }
+    justifyContent: 'space-between',
+  },
 }));
 
 const DynaForm = props => {
@@ -49,6 +49,7 @@ const DynaForm = props => {
   // console.log('RENDER: DynaForm', layout);
   // useTraceUpdate(props);
   const formRef = useRef();
+
   useEffect(() => {
     if (!autoFocus) return;
 
@@ -66,6 +67,7 @@ const DynaForm = props => {
   const {layout, fieldMap} = updatedFieldMeta;
 
   if (!fieldMap) return null;
+
   return (
     <>
       <div ref={formRef} className={clsx(classes.fieldContainer, className)}>

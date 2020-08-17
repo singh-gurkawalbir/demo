@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
 import {
   getUnionObject,
@@ -26,6 +26,8 @@ const useStyles = makeStyles(theme => ({
   rowContainer: {
     display: 'flex',
     marginBottom: 6,
+    minHeight: 42,
+    paddingRight: theme.spacing(1),
   },
 }));
 

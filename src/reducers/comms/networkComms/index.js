@@ -9,6 +9,7 @@ export const COMM_STATES = {
   ERROR: 'error',
   SUCCESS: 'success',
 };
+
 Object.freeze(COMM_STATES);
 
 export default (state = initialState, action) => {
@@ -82,36 +83,24 @@ export default (state = initialState, action) => {
   });
 };
 
-export function networkCommState(state) {
-  return state;
-}
+export const selectors = {};
+
+selectors.networkCommState = state => state;
 
 // #region PUBLIC SELECTORS
-export function commReqType(state, resourceName) {
-  return (state && state[resourceName] && state[resourceName].method) || 'GET';
-}
+selectors.commReqType = (state, resourceName) => (state && state[resourceName] && state[resourceName].method) || 'GET';
 
-export function isLoading(state, resourceName) {
-  return !!(
-    state &&
+selectors.isLoading = (state, resourceName) => !!(
+  state &&
     state[resourceName] &&
     state[resourceName].status === COMM_STATES.LOADING
-  );
-}
+);
 
-export function commStatus(state, resourceName) {
-  return state && state[resourceName] && state[resourceName].status;
-}
+selectors.commStatus = (state, resourceName) => state && state[resourceName] && state[resourceName].status;
 
-export function requestMessage(state, resourceName) {
-  return (state && state[resourceName] && state[resourceName].message) || '';
-}
+selectors.requestMessage = (state, resourceName) => (state && state[resourceName] && state[resourceName].message) || '';
 
-export function timestampComms(state, resourceName) {
-  return (state && state[resourceName] && state[resourceName].timestamp) || 0;
-}
+selectors.timestampComms = (state, resourceName) => (state && state[resourceName] && state[resourceName].timestamp) || 0;
 
-export function retryCount(state, resourceName) {
-  return (state && state[resourceName] && state[resourceName].retry) || 0;
-}
+selectors.retryCount = (state, resourceName) => (state && state[resourceName] && state[resourceName].retry) || 0;
 // #endregion

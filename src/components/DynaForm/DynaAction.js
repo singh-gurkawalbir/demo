@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector } from 'react-redux';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import trim from '../../utils/trim';
 import useFormContext from '../Form/FormContext';
 

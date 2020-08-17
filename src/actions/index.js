@@ -134,7 +134,7 @@ const connection = {
       connectionId,
       integrationId,
     }),
-  updateTradingPartner: (connectionId) =>
+  updateTradingPartner: connectionId =>
     action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, {
       connectionId,
     }),
@@ -147,7 +147,7 @@ const connection = {
       deregisteredId,
       integrationId,
     }),
-  completeTradingPartner: (connectionIds) =>
+  completeTradingPartner: connectionIds =>
     action(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE_COMPLETE, {
       connectionIds,
     }),
@@ -439,7 +439,7 @@ const connectors = {
   clearStatus: (fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.STATUS_CLEAR, {
       fieldName,
-      _integrationId
+      _integrationId,
     }),
   receivedMetadata: (metadata, fieldType, fieldName, _integrationId) =>
     action(actionTypes.CONNECTORS.METADATA_RECEIVED, {
@@ -538,7 +538,7 @@ const fileDefinitions = {
           definitionRules,
           formValues,
           flowId,
-          skipClose
+          skipClose,
         }),
     },
   },
@@ -849,7 +849,7 @@ const integrationApp = {
   installer: {
     setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.RECEIVED_OAUTH_CONNECTION_STATUS, {
-        connectionId, openOauthConnection, id
+        connectionId, openOauthConnection, id,
       }),
     initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.INIT_CHILD, {
       id: integrationId,
@@ -1009,7 +1009,7 @@ const integrationApp = {
         id,
         isCloned: !error,
         integrationId,
-        sandbox
+        sandbox,
       }),
     clearIntegrationClonedStatus: id =>
       action(actionTypes.INTEGRATION_APPS.CLONE.STATUS, {
@@ -1196,8 +1196,8 @@ const user = {
       action(actionTypes.UPDATE_PREFERENCES, { preferences }),
   },
   sharedNotifications: {
-    acceptInvite: (resourceType, id) =>
-      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id }),
+    acceptInvite: (resourceType, id, isAccountTransfer) =>
+      action(actionTypes.SHARED_NOTIFICATION_ACCEPT, { resourceType, id, isAccountTransfer }),
     acceptedInvite: id =>
       action(actionTypes.SHARED_NOTIFICATION_ACCEPTED, { id }),
     rejectInvite: (resourceType, id) =>
@@ -1298,7 +1298,7 @@ const flowData = {
     action(actionTypes.FLOW_DATA.FLOWS_FOR_RESOURCE_UPDATE, {
       resourceId,
       resourceType,
-      stagesToReset
+      stagesToReset,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
   updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
@@ -1310,10 +1310,11 @@ const flowData = {
 };
 const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
-  updateUIVersion: (version) => action(actionTypes.UI_VERSION_UPDATE, {version}),
+  updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
+  userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
 };
 const postFeedback = (resourceType, fieldId, helpful, feedback) =>
   action(actionTypes.POST_FEEDBACK, {
@@ -1392,7 +1393,7 @@ const mapping = {
   setNSAssistantFormLoaded: (id, value) =>
     action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { id, value }),
   refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
-  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key })
+  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key }),
 
 };
 
@@ -1518,6 +1519,11 @@ const job = {
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
       collection,
     }),
+  requestLatestJobs: ({ integrationId, flowId }) =>
+    action(actionTypes.JOB.REQUEST_LATEST, {
+      integrationId,
+      flowId,
+    }),
   requestFamily: ({ jobId }) =>
     action(actionTypes.JOB.REQUEST_FAMILY, { jobId }),
   receivedFamily: ({ job }) => action(actionTypes.JOB.RECEIVED_FAMILY, { job }),
@@ -1633,6 +1639,8 @@ const job = {
 };
 const errorManager = {
   openFlowErrors: {
+    requestPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST_FOR_POLL, { flowId }),
     request: ({ flowId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST, { flowId }),
     received: ({ flowId, openErrors }) =>
@@ -1640,6 +1648,8 @@ const errorManager = {
         flowId,
         openErrors,
       }),
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL),
   },
   integrationErrors: {
     request: ({ integrationId }) =>
@@ -1923,8 +1933,8 @@ const editorSampleData = {
       sampleData,
       templateVersion,
     }),
-  receivedError: ({ flowId, resourceId, fieldType }) =>
-    action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED_ERROR, {
+  failed: ({ flowId, resourceId, fieldType }) =>
+    action(actionTypes.EDITOR_SAMPLE_DATA.FAILED, {
       resourceId,
       flowId,
       fieldType,

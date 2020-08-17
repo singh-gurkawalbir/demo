@@ -8,7 +8,7 @@ import PanelTitle from '../../PanelTitle';
 import PanelGridItem from '../../PanelGridItem';
 import ErrorGridItem from '../../ErrorGridItem';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import CsvGeneratePanel from './Panel';
 import PanelLoader from '../../../PanelLoader';
 
@@ -17,6 +17,7 @@ const useStyles = makeStyles({
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 
@@ -69,9 +70,12 @@ export default function CsvGenerateEditor(props) {
         })
       );
     }
-  }, [data, dispatch, editorId, editorInit, props.data]);
+  // do not add `data` dependency. In that case, this use effect will re-run in case user changes data
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, editorId, editorInit, props.data]);
+
   return (
-    <PanelGrid className={classes.template}>
+    <PanelGrid className={classes.template} >
       <PanelGridItem gridArea="rule">
         <PanelTitle title="CSV generator options" />
         <CsvGeneratePanel disabled={disabled} editorId={editorId} />

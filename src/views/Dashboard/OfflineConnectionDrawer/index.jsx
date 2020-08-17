@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Route, useHistory, useRouteMatch, NavLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, List, ListItem } from '@material-ui/core';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import LoadResources from '../../../components/LoadResources';
 import ResourceForm from '../../../components/ResourceFormFactory';

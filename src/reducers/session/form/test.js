@@ -473,7 +473,7 @@ describe('reducer expression test cases', () => {
           actions.form.forceFieldState(formKey)(
             'FIELD1', {
               isValid: false,
-              errorMessages: 'some error'
+              errorMessages: 'some error',
             }
 
           )

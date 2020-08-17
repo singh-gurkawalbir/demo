@@ -9,7 +9,7 @@ import ModalDialog from '../../../../components/ModalDialog';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const emptyObject = {};
 

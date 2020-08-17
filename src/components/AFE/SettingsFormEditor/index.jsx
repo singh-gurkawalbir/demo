@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../../reducers';
 import { hashCode } from '../../../utils/string';
+import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
 import ConsoleGridItem from '../ConsoleGridItem';
 import ErrorGridItem from '../ErrorGridItem';
@@ -100,7 +100,7 @@ export default function SettingsFormEditor({
     remount: key,
     resourceId,
     resourceType,
-    ...formState
+    ...formState,
   });
 
   return (

@@ -15,9 +15,10 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.REQUEST:
-        draft[flowId] = {
-          status: 'requested',
-        };
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        draft[flowId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.RECEIVED: {
         const flowErrors = (openErrors && openErrors.flowErrors) || [];
@@ -59,7 +60,9 @@ export default (state = {}, action) => {
   });
 };
 
-export const errorMap = (state, resourceId) => {
+export const selectors = {};
+
+selectors.errorMap = (state, resourceId) => {
   if (!state || !resourceId || !state[resourceId]) return defaultObject;
 
   return state[resourceId];

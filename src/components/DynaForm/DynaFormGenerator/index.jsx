@@ -8,7 +8,7 @@ import {
   TabComponentWithoutSave,
   TabIAComponent,
   TabComponentWithoutSaveVertical,
-  SuiteScriptTabIACompleteSave
+  SuiteScriptTabIACompleteSave,
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
 import BoxComponents from './BoxComponents';

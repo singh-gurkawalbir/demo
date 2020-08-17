@@ -2,7 +2,7 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { requestSampleData } from '../sampleData/flows';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
 import { isNewId, isFileAdaptor, isAS2Resource } from '../../utils/resource';
@@ -45,8 +45,9 @@ export function* requestEditorSampleData({
       const parsedData = yield select(
         selectors.getResourceSampleDataWithStatus,
         resourceId,
-        'preview'
+        'parse'
       );
+
       if (parsedData && parsedData.data) {
         sampleData = parsedData.data;
       }
@@ -117,7 +118,6 @@ export function* requestEditorSampleData({
     };
 
     body[resourceType === 'imports' ? 'import' : 'export'] = resource;
-
     body.fieldPath = fieldType;
 
     const opts = {
@@ -125,28 +125,40 @@ export function* requestEditorSampleData({
       body,
     };
     const path = '/processors/handleBar/getContext';
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Loading',
-      hidden: false,
-    });
 
-    if (response) {
-      const { context, templateVersion } = response;
+    try {
+      const response = yield call(apiCallWithRetry, {
+        path,
+        opts,
+        message: 'Loading',
+        hidden: false,
+      });
 
+      if (response) {
+        const { context, templateVersion } = response;
+
+        yield put(
+          actions.editorSampleData.received({
+            flowId,
+            resourceId,
+            fieldType,
+            sampleData: context,
+            templateVersion,
+          })
+        );
+      } else {
+        yield put(
+          actions.editorSampleData.failed({
+            resourceId,
+            flowId,
+            fieldType,
+          })
+        );
+      }
+    } catch (e) {
+      // TODO: How do we show error in case getContext api fails with some response
       yield put(
-        actions.editorSampleData.received({
-          flowId,
-          resourceId,
-          fieldType,
-          sampleData: context,
-          templateVersion,
-        })
-      );
-    } else {
-      yield put(
-        actions.editorSampleData.receivedError({
+        actions.editorSampleData.failed({
           resourceId,
           flowId,
           fieldType,

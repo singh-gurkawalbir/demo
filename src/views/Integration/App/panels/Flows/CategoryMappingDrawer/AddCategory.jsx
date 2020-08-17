@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Route, useHistory,
 
-  useLocation, useRouteMatch
+  useLocation, useRouteMatch,
 } from 'react-router-dom';
+import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
@@ -13,7 +14,6 @@ import LoadResources from '../../../../../../components/LoadResources';
 import Spinner from '../../../../../../components/Spinner';
 import SpinnerWrapper from '../../../../../../components/SpinnerWrapper';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../../../../../reducers';
 import DrawerTitleBar from './TitleBar';
 
 const useStyles = makeStyles(theme => ({

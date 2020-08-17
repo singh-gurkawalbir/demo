@@ -3,7 +3,7 @@ import { Typography, Slider } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import useFormContext from '../../../Form/FormContext';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   titleSlider: {
     paddingTop: theme.spacing(1),
     marginLeft: theme.spacing(-1),
@@ -24,7 +24,6 @@ export default function DynaSlider(props) {
     step,
     max,
     min,
-    setReset,
     formKey,
   } = props;
   const form = useFormContext(formKey);
@@ -54,7 +53,6 @@ export default function DynaSlider(props) {
       <Slider
         value={parseInt(sliderVal, 10)}
         onChange={(evt, value) => {
-          setReset && setReset(false);
           handleChange(evt, value);
         }}
         step={step}

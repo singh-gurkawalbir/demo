@@ -316,9 +316,18 @@ export const sanitizePatchSet = ({
     return [...removePatches, ...valuePatches];
   }
 
+  let resourceAfterRemovePatches;
+
+  if (removePatches?.length) {
+    resourceAfterRemovePatches = jsonPatch.applyPatch(deepClone(resource), removePatches).newDocument;
+  } else {
+    resourceAfterRemovePatches = resource;
+  }
+
+  // we should generate missing patches against a resource with its remove patches applied to it
   const missingPatchSet = getMissingPatchSet(
     valuePatches.map(p => p.path),
-    resource
+    resourceAfterRemovePatches
   );
   // Though we are adding the missing patches, in some scenarios the path is getting replaced later
   // and it's resulting in referring to the undefined path. Sorting the missing and valuePatchSet by path
@@ -363,7 +372,7 @@ const refGeneration = field => {
   throw new Error('cant generate reference');
 };
 
-const getFieldConfig = (field = {}, resource = {}) => {
+const getFieldConfig = (field = {}, resource = {}, isSuiteScript) => {
   const newField = { ...field };
 
   if (!newField.type || newField.type === 'input') {
@@ -383,11 +392,10 @@ const getFieldConfig = (field = {}, resource = {}) => {
     newField.isIAField = true;
   } else if (newField.type === 'matchingCriteria') {
     newField.type = 'matchingcriteria';
-  } else if (newField.type === 'select' && newField.supportsRefresh) {
-    newField.type = 'integrationapprefreshableselect';
-  } else if (newField.type === 'multiselect' && newField.supportsRefresh) {
-    newField.type = 'integrationapprefreshableselect';
-    newField.multiselect = true;
+  } else if (newField.supportsRefresh && (newField.type === 'select' || newField.type === 'multiselect')) {
+    if (newField.type === 'multiselect') { newField.multiselect = true; }
+    if (isSuiteScript) newField.type = 'suitescriptsettings';
+    else { newField.type = 'integrationapprefreshableselect'; }
   } else if (['select', 'multiselect'].includes(newField.type) && !newField.supportsRefresh) {
     newField.multiselect = newField.type === 'multiselect';
     newField.type = 'iaselect';
@@ -445,7 +453,6 @@ function extractRules(fields, currFieldName, value) {
       };
     }
 
-
     return rule;
   });
 }
@@ -479,6 +486,7 @@ export const translateDependencyProps = fieldMap => {
         Object.keys(dependencies?.[value]).forEach(componentType => {
         // links are similar to fields property and these are dependencies defined for link components
           const dependencyFields = dependencies[value][componentType];
+
           // feature is a checkbox
           if (type === 'checkbox' || type === 'featurecheck') {
             rules.push(
@@ -487,7 +495,6 @@ export const translateDependencyProps = fieldMap => {
           } else rules.push(...(extractRules(dependencyFields, key, value) || []));
         });
       });
-
 
       delete fieldMapCopy[key].dependencies;
     }
@@ -535,7 +542,7 @@ const translateFieldProps = (fields = [], _integrationId, resource, ssLinkedConn
 
       return {
         ...(propsSpreadToFields || {}),
-        ...getFieldConfig(field, resource),
+        ...getFieldConfig(field, resource, !!ssLinkedConnectionId),
         defaultValue,
         name: `/${name}`,
         ssLinkedConnectionId,

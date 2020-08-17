@@ -41,11 +41,13 @@ export function parseTiles(tiles) {
       ...tile,
       displayName,
     };
+
     if (connector) {
       updatedTile._connectorId = connector._id;
       updatedTile.urlName = connector.urlName;
     }
     let status;
+
     if (updatedTile._connectorId && tile.mode === INTEGRATION_MODES.INSTALL) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (tile.offlineConnections && tile.offlineConnections.length > 0) {
@@ -55,6 +57,7 @@ export function parseTiles(tiles) {
     } else {
       status = TILE_STATUS.SUCCESS;
     }
+
     return {...updatedTile, status};
   });
 }

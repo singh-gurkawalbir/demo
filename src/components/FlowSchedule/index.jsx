@@ -7,15 +7,14 @@ import { sanitizePatchSet } from '../../forms/utils';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import {
   getMetadata,
   getScheduleStartMinute,
-  getScheduleVal, setValues
+  getScheduleVal, setValues,
 } from './util';
-
 
 export default function FlowSchedule({
   flow,
@@ -40,7 +39,7 @@ export default function FlowSchedule({
   const schedule = pg?.schedule || flow?.schedule;
   const scheduleStartMinute = getScheduleStartMinute(exp || flow, preferences);
 
-  const onSave = useCallback((formVal) => {
+  const onSave = useCallback(formVal => {
     const scheduleVal = getScheduleVal(formVal, scheduleStartMinute);
     const patchSet = [
       {
@@ -74,11 +73,12 @@ export default function FlowSchedule({
             : undefined,
       },
     ];
+
     if (formVal.timeZone) {
       patchSet.push({
         op: 'replace',
         path: '/timezone',
-        value: formVal.timeZone
+        value: formVal.timeZone,
       });
     }
     const sanitized = sanitizePatchSet({
@@ -118,6 +118,7 @@ export default function FlowSchedule({
   );
 
   const resourceIdentifier = pg?._exportId ? 'pagegenerator' : 'flow';
+
   resource = setValues(resource, schedule, scheduleStartMinute, flow, index, resourceIdentifier);
 
   if (resource && !resource.frequency) {

@@ -11,6 +11,11 @@ export default {
     placeholder: 'Please select a record type',
     connectionId: r => r && r.ssLinkedConnectionId,
   },
+  'import.netsuite.subRecordImports': {
+    required: false,
+    type: 'suitescriptnetsuitesubrecords',
+    connectionId: r => r && r.ssLinkedConnectionId,
+  },
   'import.netsuite.operation': {
     type: 'radiogroupforresetfields',
     fieldsToReset: [
@@ -36,9 +41,9 @@ export default {
     visibleWhen: [
       {
         field: 'import.netsuite.operation',
-        is: ['add']
-      }
-    ]
+        is: ['add'],
+      },
+    ],
   },
   'import.netsuite.ignoreMissing': {
     type: 'checkbox',
@@ -47,9 +52,9 @@ export default {
     visibleWhen: [
       {
         field: 'import.netsuite.operation',
-        is: ['update']
-      }
-    ]
+        is: ['update'],
+      },
+    ],
   },
   'import.netsuite.internalIdLookup.expression': {
     type: 'suitescriptnetsuitelookup',

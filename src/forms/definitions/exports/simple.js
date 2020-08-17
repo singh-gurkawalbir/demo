@@ -5,6 +5,7 @@ export default {
     // console.log(formValues);
     const newValues = { ...formValues };
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
     }
@@ -76,6 +77,7 @@ export default {
       newValues['/file/compressionFormat'] = undefined;
     }
     delete newValues['/file/decompressFiles'];
+
     return newValues;
   },
   optionsHandler: (fieldId, fields) => {
@@ -88,14 +90,16 @@ export default {
       const hasHeaderRowField = fields.find(
         field => field.id === 'file.xlsx.hasHeaderRow'
       );
+
       // resetting key columns when hasHeaderRow changes
       if (keyColoumnField.hasHeaderRow !== hasHeaderRowField.value) {
         keyColoumnField.value = [];
         keyColoumnField.hasHeaderRow = hasHeaderRowField.value;
       }
+
       return {
         hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value
+        fileType: fileType.value,
       };
     }
     if (fieldId === 'uploadFile') {
@@ -194,9 +198,9 @@ export default {
                 'file.json.resourcePath',
                 'file.xlsx.hasHeaderRow',
                 'file.xlsx.rowsPerRecord',
-                'file.xlsx.keyColumns'
-              ]}
-            ]
+                'file.xlsx.keyColumns',
+              ]},
+            ],
           },
           {
             collapsed: true,
@@ -207,7 +211,7 @@ export default {
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
   },
 };

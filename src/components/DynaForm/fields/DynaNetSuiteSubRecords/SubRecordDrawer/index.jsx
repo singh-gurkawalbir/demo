@@ -8,7 +8,7 @@ import DynaForm from '../../..';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import DrawerTitleBar from '../../../../drawer/TitleBar';
 import DynaSubmit from '../../../DynaSubmit';
@@ -54,8 +54,7 @@ function SubRecordDrawer(props) {
   const { resourceContext, flowId, connectionId, recordType } = props;
   const recordTypeObj = useSelector(state =>
     selectors
-      .metadataOptionsAndResources({
-        state,
+      .metadataOptionsAndResources(state, {
         connectionId,
         commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
         filterKey: 'suitescript-recordTypes',

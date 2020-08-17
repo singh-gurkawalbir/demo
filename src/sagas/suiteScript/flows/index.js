@@ -46,7 +46,7 @@ export function* enableFlow({ ssLinkedConnectionId, integrationId, _id }) {
     path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${flowId}/enable`,
     opts: {
       method: 'PUT',
-      body: {type: flowType}
+      body: {type: flowType},
     },
   };
   let flow;
@@ -69,7 +69,7 @@ export function* disableFlow({ ssLinkedConnectionId, integrationId, _id }) {
     path: `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/${flowId}/disable`,
     opts: {
       method: 'PUT',
-      body: {type: flowType}
+      body: {type: flowType},
     },
   };
   let flow;
@@ -94,6 +94,7 @@ export function* deleteFlow({ ssLinkedConnectionId, integrationId, _id }) {
       method: 'DELETE',
     },
   };
+
   try {
     yield call(apiCallWithRetry, requestOptions);
   } catch (error) {

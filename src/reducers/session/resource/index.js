@@ -72,15 +72,17 @@ export default function reducer(state = {}, action) {
 }
 
 // #region PUBLIC SELECTORS
-export function createdResourceId(state, tempId) {
+export const selectors = {};
+
+selectors.createdResourceId = (state, tempId) => {
   if (!state) {
     return;
   }
 
   return state[tempId];
-}
+};
 
-export const resourceReferences = createSelector(
+selectors.resourceReferences = createSelector(
   state => state && state.references,
   references => {
     if (!references) {
@@ -103,23 +105,23 @@ export const resourceReferences = createSelector(
   }
 );
 
-export function platformLicenseActionMessage(state) {
+selectors.platformLicenseActionMessage = state => {
   if (!state) {
     return;
   }
 
   return state.platformLicenseActionMessage;
-}
+};
 
-export function getChildIntegrationId(state, parentId) {
+selectors.getChildIntegrationId = (state, parentId) => {
   if (!state || !state.parentChildMap) {
     return;
   }
 
   return state.parentChildMap[parentId];
-}
+};
 
-export const getNumEnabledFlows = createSelector(
+selectors.getNumEnabledFlows = createSelector(
   state => state && state.numEnabledFlows,
   numEnabledFlows => {
     if (!numEnabledFlows) {
@@ -134,7 +136,7 @@ export const getNumEnabledFlows = createSelector(
   }
 );
 
-export const getLicenseEntitlementUsage = createSelector(
+selectors.getLicenseEntitlementUsage = createSelector(
   state => state && state.licenseEntitlementUsage,
   licenseEntitlementUsage => {
     if (!licenseEntitlementUsage) {

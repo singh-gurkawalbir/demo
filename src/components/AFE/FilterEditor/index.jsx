@@ -7,7 +7,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ErrorGridItem from '../ErrorGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import { isJsonString } from '../../../utils/string';
@@ -39,7 +39,7 @@ export default function FilterEditor(props) {
         lastValidData: props.data,
         rule: props.rule,
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [dispatch, editorId, optionalSaveParams, props.data, props.rule, props.isSampleDataLoading]);
@@ -71,7 +71,7 @@ export default function FilterEditor(props) {
   }
 
   return (
-    <PanelGrid className={classes[`${layout}Template`]}>
+    <PanelGrid className={classes[`${layout}Template`]} height="calc(100vh - 200px)" >
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Rules" />
         <FilterPanel
@@ -95,7 +95,8 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={{ showGutter: false }}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

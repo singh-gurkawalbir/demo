@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Panel from './Panel';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {

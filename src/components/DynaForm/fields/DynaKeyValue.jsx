@@ -12,11 +12,11 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
-    overflowY: 'off',
   },
 
   rowContainer: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr auto',
     marginBottom: 6,
   },
   label: {
@@ -35,8 +35,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     display: 'flex',
     alignItems: 'flex-start',
-
-  }
+  },
 }));
 
 /**
@@ -109,7 +108,7 @@ export function KeyValueComponent(props) {
     onUpdate(removedEmptyValues);
   };
 
-  const tableData = values ? values.map((r, n) => ({ ...r, row: n })) : [];
+  const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
 
@@ -160,6 +159,7 @@ export function KeyValueComponent(props) {
                 data-test={`${keyName}-${r.row}`}
                 placeholder={keyName}
                 variant="filled"
+                fullWidth
                 onChange={handleKeyUpdate(r.row)}
                 className={clsx(classes.dynaField, classes.dynaKeyField)}
               />
@@ -191,6 +191,7 @@ export function KeyValueComponent(props) {
                 defaultValue={r[valueName]}
                 placeholder={valueName}
                 variant="filled"
+                fullWidth
                 onChange={handleValueUpdate(r.row)}
                 className={clsx(classes.dynaField, classes.dynaValueField)}
               />
@@ -211,6 +212,7 @@ export function KeyValueComponent(props) {
       <div key="new" className={classes.rowContainer}>
         <TextField
           disabled={disabled}
+          fullWidth
           value=""
           id={`new-${keyName}`}
           data-test={`new-${keyName}`}
@@ -222,6 +224,7 @@ export function KeyValueComponent(props) {
 
         <TextField
           disabled={disabled}
+          fullWidth
           value=""
           id={`new-${valueName}`}
           data-test={`new-${valueName}`}

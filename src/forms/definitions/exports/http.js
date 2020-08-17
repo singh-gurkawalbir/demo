@@ -1,19 +1,8 @@
 import { isNewId } from '../../../utils/resource';
-import { isLookupResource } from '../../../utils/flows';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-    if (isLookupResource(flow, resource)) {
-      exportPanelField.visible = false;
-    }
-
-    return fieldMeta;
-  },
   preSave: formValues => {
     const retValues = { ...formValues };
-
 
     if (retValues['/http/successMediaType'] === 'csv') {
       retValues['/file/type'] = 'csv';
@@ -354,7 +343,7 @@ export default {
         hasHeaderRow: false,
         keyColumns: [],
         rowsToSkip: 0,
-        trimSpaces: false
+        trimSpaces: true,
       },
       visibleWhenAll: [
         {
@@ -410,6 +399,7 @@ export default {
               'http.method',
               'http.blobMethod',
               'http.headers',
+              'http.requestMediaType',
               'http.relativeURI',
               'http.body',
               'http.response.blobFormat',
@@ -462,22 +452,21 @@ export default {
                   'http.response.failPath',
                   'http.response.failValues',
                   'http.successMediaType',
-                ]
+                ],
               },
               {
                 type: 'indent',
                 containers: [
                   {fields: [
                     'file.csv',
-                  ]}
-                ]
+                  ]},
+                ],
               },
               {
                 fields: [
                   'http.errorMediaType',
-                  'http.requestMediaType',
-                ]
-              }
+                ],
+              },
             ],
           },
           {

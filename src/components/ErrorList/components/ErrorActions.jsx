@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
-import {
-  selectedRetryIds,
-  selectedErrorIds,
-  errorActionsContext,
-} from '../../../reducers';
+import { selectors } from '../../../reducers';
 import Spinner from '../../Spinner';
 import ActionStatus from './ActionStatus';
 
@@ -38,13 +34,13 @@ export default function ErrorActions(props) {
   const { flowId, resourceId, isResolved } = props;
   const isRetryInProgress = useSelector(
     state =>
-      errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
+      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
         .status === 'requested'
   );
   const isResolveInProgress = useSelector(
     state =>
       !isResolved &&
-      errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
+      selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'resolve' })
         .status === 'requested'
   );
   const isActionInProgress = useMemo(
@@ -53,7 +49,7 @@ export default function ErrorActions(props) {
   );
   const areSelectedErrorsRetriable = useSelector(
     state =>
-      !!selectedRetryIds(state, {
+      !!selectors.selectedRetryIds(state, {
         flowId,
         resourceId,
         options: { isResolved },
@@ -61,7 +57,7 @@ export default function ErrorActions(props) {
   );
   const isAtleastOneErrorSelected = useSelector(
     state =>
-      !!selectedErrorIds(state, {
+      !!selectors.selectedErrorIds(state, {
         flowId,
         resourceId,
         options: { isResolved },

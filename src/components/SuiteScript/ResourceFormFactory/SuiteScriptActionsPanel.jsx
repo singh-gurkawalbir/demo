@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import React, { useMemo } from 'react';
 import { ActionsFactory } from '../../drawer/Resource/Panel/ResourceFormActionsPanel';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import consolidatedActions from './Actions';
 
@@ -23,13 +23,15 @@ export default function (props) {
     // if props has defined actions return it
     if (actions) return actions;
     let actionButtons = ['save', 'saveandclose', 'cancel'];
+
     // When action button metadata isn't provided we infer the action buttons.
     if (resourceType === 'connections' && resource?.type !== 'other') {
       actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
     }
+
     return actionButtons.map(id => ({
       id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary'
+      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
     }));
   }, [actions, resource?.type, resourceType]);
 

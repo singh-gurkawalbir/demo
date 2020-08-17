@@ -3,7 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, IconButton } from '@material-ui/core';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import actions from '../../actions';
 import FlowStartDateDialog from './FlowStartDateDialog';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
@@ -26,12 +26,13 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: 'none',
       color: theme.palette.primary.main,
-    }
+    },
   },
 }));
 
-function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
+function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
   const classes = useStyles();
+
   if (isRequested) return <Spinner size={20} />;
 
   if (variant === 'icon') {
@@ -69,7 +70,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant}) {
         variant="text"
         data-test="runFlow"
         onClick={onRunClick}>
-        <RunIcon /> Run now
+        <RunIcon /> {label}
       </IconTextButton>
     );
   }
@@ -85,6 +86,7 @@ export default function RunFlowButton({
   flowId,
   onRunStart,
   variant = 'icon',
+  label = 'Run now',
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -210,7 +212,6 @@ export default function RunFlowButton({
         // Removes uploaded file from session as it is no longer needed once triggered flow run
         dispatch(actions.file.reset(flowId));
 
-
         if (onRunStart) onRunStart();
         break;
       default:
@@ -241,6 +242,7 @@ export default function RunFlowButton({
         onRunClick={handleClick}
         variant={variant}
         disabled={disabled}
+        label={label}
       />
 
       {isDataLoaderFlow && !hasRunKey && (

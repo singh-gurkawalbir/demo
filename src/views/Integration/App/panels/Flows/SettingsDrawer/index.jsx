@@ -4,7 +4,7 @@ import { Route, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import clsx from 'clsx';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
@@ -31,6 +31,7 @@ const useStyles = makeStyles(theme => ({
     '& > * div.MuiTabs-vertical': {
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
+      marginRight: theme.spacing(2),
     },
     '& > div[class*= "fieldsContainer"]': {
       height: '100%',

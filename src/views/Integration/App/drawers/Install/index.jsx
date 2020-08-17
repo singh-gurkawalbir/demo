@@ -11,7 +11,7 @@ import {
   Typography,
   Link,
 } from '@material-ui/core';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import {
   getConnectionType,
@@ -84,9 +84,11 @@ export default function ConnectorInstallation(props) {
     stores,
     supportsMultiStore,
     _connectorId,
-    initChild
+    initChild,
+    parentId,
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
+
     if (integration) {
       return {
         name: integration.name,
@@ -97,32 +99,37 @@ export default function ConnectorInstallation(props) {
         supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
         _connectorId: integration._connectorId,
         integrationInstallSteps: integration.installSteps,
+        parentId: integration._parentId,
       };
     }
+
     return emptyObject;
   }, shallowEqual
   );
   const {
     name: childIntegrationName,
     id: childIntegrationId,
-    mode: childIntegrationMode
+    mode: childIntegrationMode,
   } = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
 
     if (id) {
       const integration = selectors.resource(state, 'integrations', id);
+
       if (integration) {
         return {
           name: integration.name,
           id: integration._id,
-          mode: integration.mode
+          mode: integration.mode,
         };
       }
     }
+
     return emptyObject;
   }, shallowEqual);
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
+
     return integrationApp && integrationApp.helpURL;
   });
   const installSteps = useSelector(state =>
@@ -139,6 +146,7 @@ export default function ConnectorInstallation(props) {
     state => selectors.canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
+
   if (openOauthConnection) {
     dispatch(actions.integrationApp.installer.setOauthConnectionMode(connectionId, false, integrationId));
     setConnection({
@@ -151,6 +159,7 @@ export default function ConnectorInstallation(props) {
       'connections',
       connection && connection._connectionId
     );
+
     return getConnectionType(selectedConnection);
   });
   const integrationAppName = getIntegrationAppUrlName(integrationName);
@@ -252,6 +261,10 @@ export default function ConnectorInstallation(props) {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
+        } else if (parentId) {
+          props.history.push(
+            getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
+          );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
@@ -273,6 +286,7 @@ export default function ConnectorInstallation(props) {
     childIntegrationMode,
     integrationChildAppName,
     initChild,
+    parentId,
     integrationInstallSteps]);
 
   if (!installSteps || !_connectorId) {
@@ -330,7 +344,7 @@ export default function ConnectorInstallation(props) {
     });
   };
 
-  const handleStepClick = (step) => {
+  const handleStepClick = step => {
     const {
       _connectionId,
       installURL,
@@ -449,7 +463,6 @@ export default function ConnectorInstallation(props) {
     e.preventDefault();
     openExternalUrl({url: helpUrl});
   };
-
 
   return (
     <LoadResources required resources="connections,integrations,published">

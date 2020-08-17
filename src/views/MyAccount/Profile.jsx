@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
@@ -13,7 +13,6 @@ import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
-
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -48,6 +47,7 @@ const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
   { value: 'DD MMMM, YYYY', label: '31 December, 1900' },
   { value: 'YYYY/MM/DD', label: '1900/12/31' },
   { value: 'YYYY-MM-DD', label: '1900-12-31' }];
+
 export default function ProfileComponent() {
   const classes = useStyles();
 
@@ -248,6 +248,7 @@ export default function ProfileComponent() {
     },
   }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);
   const [count, setCount] = useState(0);
+
   useEffect(() => {
     setCount(count => count + 1);
   }, [fieldMeta]);
@@ -255,7 +256,7 @@ export default function ProfileComponent() {
   const formKey = useFormInitWithPermissions({
     fieldsMeta: fieldMeta,
     remount: count,
-    ...formState
+    ...formState,
   });
 
   return (

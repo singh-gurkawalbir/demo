@@ -7,8 +7,8 @@ import { makeStyles } from '@material-ui/styles';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
-import metadata from '../../../../../components/ResourceTable/metadata/connections';
-import * as selectors from '../../../../../reducers';
+import metadata from '../../../../../components/ResourceTable/connections/metadata';
+import { selectors } from '../../../../../reducers';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
@@ -108,7 +108,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
           data={connections}
           filterKey={filterKey}
           {...metadata}
-          actionProps={{ integrationId, resourceType: 'connections', showTradingPartner
+          actionProps={{ integrationId, resourceType: 'connections', showTradingPartner,
           }}
         />
       </LoadResources>

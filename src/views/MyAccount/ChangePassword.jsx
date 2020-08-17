@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typography, makeStyles } from '@material-ui/core';
 import actions from '../../actions';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import ModalDialog from '../../components/ModalDialog';
 import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';
@@ -80,14 +80,14 @@ export default function ChangePassword({ show, onClose }) {
 
   return (
     <ModalDialog show={show} onClose={onClose}>
-      <span>Change Password</span>
+      <span>Change password</span>
       {error && (
         <NotificationToaster variant="error" size="large">
           <Typography variant="h6">{message}</Typography>
         </NotificationToaster>
       )}
 
-      {!success &&
+      {!success && (
         <div className={classes.container}>
           <Typography variant="body2">
             {`Please note that clicking 'Change Password' will sign you out of the
@@ -102,7 +102,8 @@ export default function ChangePassword({ show, onClose }) {
               Change password
             </DynaSubmit>
           </DynaForm>
-        </div>}
+        </div>
+      )}
     </ModalDialog>
   );
 }

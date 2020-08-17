@@ -10,9 +10,8 @@ const hasPatch = patches => patches && patches.length;
 const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
-// eslint-disable-next-line import/prefer-default-export
 export function resourceConflictResolution({ merged, master, origin }) {
-  if (origin.lastModified === master.lastModified) {
+  if (origin?.lastModified === master?.lastModified) {
     // no conflict here
     return { merged, conflict: null };
   }

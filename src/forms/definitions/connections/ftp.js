@@ -139,7 +139,7 @@ export default {
           'ftp.pgpPassphrase',
           'ftp.useCustomPGPEncryptionAlgorithm',
           'ftp.pgpKeyAlgorithm',
-          'ftp.concurrencyLevel'
+          'ftp.concurrencyLevel',
         ],
       },
     ],

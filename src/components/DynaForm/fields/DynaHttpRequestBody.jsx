@@ -1,9 +1,10 @@
 import { FormLabel } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import * as selectors from '../../../reducers';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import { selectors } from '../../../reducers';
 import lookupUtil from '../../../utils/lookup';
 import useFormContext from '../../Form/FormContext';
 import FieldHelp from '../FieldHelp';
@@ -67,8 +68,8 @@ const DynaHttpRequestBody = props => {
   } = props;
   const classes = useStyles();
   const formContext = useFormContext(formKey);
+  const handleOpenDrawer = usePushRightDrawer(id);
   const contentType = options.contentType || props.contentType;
-  const [showEditor, setShowEditor] = useState(false);
   const { merged: resourceData = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -111,9 +112,6 @@ const DynaHttpRequestBody = props => {
     resourceType,
     supportLookup,
   ]);
-  const handleEditorClick = useCallback(() => {
-    setShowEditor(!showEditor);
-  }, [showEditor]);
   // TODO: break into different function. To be done across all editors
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -135,44 +133,41 @@ const DynaHttpRequestBody = props => {
 
   return (
     <Fragment key={`${resourceId}-${id}`}>
-      {showEditor && (
-        <DynaEditorWithFlowSampleData
-          contentType={contentType === 'json' ? 'json' : 'xml'}
-          title={`${
-            contentType === 'json'
-              ? 'Build JSON Document'
-              : 'Build XML Document'
-          }`}
-          fieldId={id}
-          onFieldChange={onFieldChange}
-          lookups={lookups}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          action={action}
-          editorType="httpRequestBody"
-          flowId={flowId}
-          resourceId={resourceId}
-          resourceType={resourceType}
-          disableEditorV2={disableEditorV2}
-          rule={formattedRule}
+      <DynaEditorWithFlowSampleData
+        contentType={contentType === 'json' ? 'json' : 'xml'}
+        title={`${
+          contentType === 'json'
+            ? 'Build JSON Document'
+            : 'Build XML Document'
+        }`}
+        fieldId={id}
+        onFieldChange={onFieldChange}
+        lookups={lookups}
+        onSave={handleSave}
+        action={action}
+        editorType="httpRequestBody"
+        flowId={flowId}
+        resourceId={resourceId}
+        resourceType={resourceType}
+        disableEditorV2={disableEditorV2}
+        rule={formattedRule}
+        path={id}
         />
-      )}
       <div className={classes.dynaHttpRequestBodyWrapper}>
         <div className={classes.dynaHttpRequestlabelWrapper}>
           <FormLabel className={classes.dynaHttpReqLabel}>
             {label}
           </FormLabel>
-          <FieldHelp {...props} helpText={label} />
+          <FieldHelp {...props} />
         </div>
         <Button
           data-test={id}
           variant="outlined"
           color="secondary"
           className={classes.dynaReqBodyBtn}
-          onClick={handleEditorClick}>
+          onClick={handleOpenDrawer}>
           Launch
         </Button>
-
       </div>
       <ErroredMessageComponent {...props} />
     </Fragment>

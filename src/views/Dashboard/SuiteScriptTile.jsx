@@ -23,12 +23,12 @@ import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '
 import {
   tileStatus,
   dragTileConfig,
-  dropTileConfig
+  dropTileConfig,
 } from './util';
 import getRoutePath from '../../utils/routePaths';
 import ModalDialog from '../../components/ModalDialog';
 import { getDomain } from '../../utils/resource';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -136,9 +136,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
-  // Opacity to blur selected tile
-  const opacity = isDragging ? 0.2 : 1;
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
+  // need to show different styling for selected card
+  const isCardSelected = !!isDragging;
 
   drag(drop(ref));
 
@@ -162,8 +162,8 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
           </Button>
         </ModalDialog>
       )}
-      <div style={{ opacity }} ref={ref}>
-        <HomePageCardContainer onClick={handleTileClick}>
+      <div ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected}>
           <Header>
             <Status
               label={status.label}

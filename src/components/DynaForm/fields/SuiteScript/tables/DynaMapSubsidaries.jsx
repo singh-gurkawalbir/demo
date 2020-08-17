@@ -4,7 +4,7 @@ import {BaseTableViewComponent, useGetSuiteScriptBaseCommPath} from './DynaSales
 import DynaRadio from '../../radiogroup/DynaRadioGroup';
 import DynaSelect from '../../DynaSelect';
 import actions from '../../../../../actions';
-import * as selectors from '../../../../../reducers';
+import { selectors } from '../../../../../reducers';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import Spinner from '../../../../Spinner';
 import useFormContext from '../../../../Form/FormContext';
@@ -48,6 +48,7 @@ export default function DynaMapSubsidaries(props) {
   const [subsidaryValue, setSubsidaryValue] = useState(typeof value === 'string' ? value : '');
   const mapSubsidiariesSalesforceSubsidiaryFieldID = 'MapSubsidiaries_salesforceSubsidiaryField';
   const [shouldReset, setShouldReset] = useState(false);
+
   useEffect(() => {
     registerField({id: mapSubsidiariesSalesforceSubsidiaryFieldID, name: `/${mapSubsidiariesSalesforceSubsidiaryFieldID}`, value: salesforceSubsidiaryField});
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -59,6 +60,7 @@ export default function DynaMapSubsidaries(props) {
 
   const selectedOption = fields?.[mapSubsidiariesSalesforceSubsidiaryFieldID]?.value;
   const salesforceSubsidaryMetaPath = `${basePath}/Account?ignoreCache=true`;
+
   useEffect(() => {
     dispatch(actions.metadata.request(connectionId, salesforceSubsidaryMetaPath));
   }, [connectionId, dispatch, salesforceSubsidaryMetaPath]);
@@ -73,6 +75,7 @@ export default function DynaMapSubsidaries(props) {
     const finalSelectedOptionList = selectedOptionList ? selectedOptionList.map(({label, value}) => ({text: label, id: value})) : [];
 
     setShouldReset(state => !state);
+
     return [
       {
         id: 'extracts',
@@ -119,38 +122,41 @@ export default function DynaMapSubsidaries(props) {
         label="Field Mapping Type"
         options={fieldMappingTypeOptions} />
 
-      {fieldMappingType === 'Always Use' ?
+      {fieldMappingType === 'Always Use'
 
-        (<DynaSelect
-          label="Select Subsidiary"
-          id={id}
-          disabled={disabled}
-          onFieldChange={(id, value) => {
-            setSubsidaryValue(value);
-          }}
-          options={generateOptions}
-          value={subsidaryValue} />) : (
-            <>
-              {metadataStatus === 'requested' ? <Spinner /> : (
-                <SalesforceSubsidarySelect
-                  disabled={disabled}
-                  salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
-                  selectedOption={selectedOption}
-                  mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
-                  onFieldChange={onFieldChange}
-              />)}
-              <BaseTableViewComponent
-                {...props}
-                optionsMap={optionsMap}
-                value={tableValue}
-                onFieldChange={(id, value) => {
-                  setTableValue(value);
-                }}
-                hideLabel
-                shouldReset={shouldReset}
-                disableDeleteRows={disabled}
+        ? (
+          <DynaSelect
+            label="Select Subsidiary"
+            id={id}
+            disabled={disabled}
+            onFieldChange={(id, value) => {
+              setSubsidaryValue(value);
+            }}
+            options={generateOptions}
+            value={subsidaryValue} />
+        ) : (
+          <>
+            {metadataStatus === 'requested' ? <Spinner /> : (
+              <SalesforceSubsidarySelect
+                disabled={disabled}
+                salesforceSubsidiaryFieldOptions={salesforceSubsidiaryFieldOptions}
+                selectedOption={selectedOption}
+                mapSubsidiariesSalesforceSubsidiaryFieldID={mapSubsidiariesSalesforceSubsidiaryFieldID}
+                onFieldChange={onFieldChange}
+              />
+            )}
+            <BaseTableViewComponent
+              {...props}
+              optionsMap={optionsMap}
+              value={tableValue}
+              onFieldChange={(id, value) => {
+                setTableValue(value);
+              }}
+              hideLabel
+              shouldReset={shouldReset}
+              disableDeleteRows={disabled}
       />
-            </>
+          </>
 
         )}
 

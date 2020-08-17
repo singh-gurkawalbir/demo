@@ -1,5 +1,5 @@
 export default {
-  preSave: (formValues) => ({
+  preSave: formValues => ({
     ...formValues,
     '/type': 'http',
     '/assistant': 'concurinvoice',
@@ -89,10 +89,4 @@ export default {
       { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
     ],
   },
-  actions: [
-    {
-      id: 'save',
-      label: 'Save',
-    }
-  ]
 };

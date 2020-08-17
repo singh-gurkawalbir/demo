@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
@@ -10,19 +10,21 @@ import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles({
   template: {
     gridTemplateColumns: '1fr 2fr',
     gridTemplateRows: '1fr 2fr 0fr',
     gridTemplateAreas: '"rule data" "rule result" "error error"',
+    height: 'calc(100vh - 200px)',
   },
 });
 
 export default function XmlParseEditor(props) {
   const { editorId, disabled, rule = {}, editorDataTitle } = props;
   const classes = useStyles();
+  const [editorInit, setEditorInit] = useState(false);
   const { data, result, error } = useSelector(state =>
     selectors.editor(state, editorId)
   );
@@ -33,6 +35,7 @@ export default function XmlParseEditor(props) {
   const handleDataChange = data => {
     dispatch(actions.editor.patch(editorId, { data }));
   };
+
   useEffect(() => {
     // trigger data change when editor is initialized and sample data changes while uploading new file
     if (data !== undefined && props.data !== data) {
@@ -61,7 +64,12 @@ export default function XmlParseEditor(props) {
     );
   }, [dispatch, editorId, props.data, rule]);
 
-  useEffect(() => handleInit(), [handleInit]);
+  useEffect(() => {
+    if (!editorInit) {
+      handleInit();
+      setEditorInit(true);
+    }
+  }, [editorInit, handleInit]);
 
   return (
     <PanelGrid key={editorId} className={classes.template}>

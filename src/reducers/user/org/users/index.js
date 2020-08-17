@@ -66,8 +66,9 @@ export default (state = [], action) => {
 };
 
 // #region PUBLIC SELECTORS
+export const selectors = {};
 
-export function list(state) {
+selectors.usersList = state => {
   if (!state || !state.length) {
     return [];
   }
@@ -78,14 +79,14 @@ export function list(state) {
   }));
 
   return aShares;
-}
+};
 
-export function integrationUsers(state, integrationId) {
+selectors.integrationUsersForOwner = (state, integrationId) => {
   if (!state || !state.length) {
     return [];
   }
 
-  const aShares = list(state);
+  const aShares = selectors.usersList(state);
   const integrationUsers = [];
   let integrationAccessLevel;
 
@@ -118,6 +119,6 @@ export function integrationUsers(state, integrationId) {
   });
 
   return integrationUsers;
-}
+};
 
 // #endregion

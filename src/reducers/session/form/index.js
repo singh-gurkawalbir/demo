@@ -9,6 +9,7 @@ import {
   isVisible,
 } from '../../../utils/form';
 import fields from './fields';
+import { isAnyFieldVisibleForMeta, isExpansionPanelRequired, isExpansionPanelErrored, isAnyFieldTouchedForMeta} from '../../../forms/utils';
 
 function form(state = {}, action) {
   const { type, formKey, formSpecificProps = {} } = action;
@@ -18,6 +19,7 @@ function form(state = {}, action) {
     disabled,
   } = formSpecificProps;
   const { fieldsMeta = {} } = formSpecificProps;
+
   // if default fields have changed then reset touched state
   return produce(state, draft => {
     switch (type) {
@@ -65,33 +67,64 @@ export default reduceReducers(form, fields);
 
 // #region Selectors
 
-export const formState = (state, formKey) => {
+export const selectors = {};
+
+selectors.formState = (state, formKey) => {
   if (!state || !state[formKey]) return null;
 
   return state[formKey];
 };
 
-export const formParentContext = (state, formKey) => {
-  const form = formState(state, formKey);
+selectors.formParentContext = (state, formKey) => {
+  const form = selectors.formState(state, formKey);
 
   if (!form) return null;
 
   return form.parentContext;
 };
 
-export const fieldState = (state, formKey, fieldId) => {
-  const form = formState(state, formKey);
+selectors.fieldState = (state, formKey, fieldId) => {
+  const form = selectors.formState(state, formKey);
 
   if (!form) return null;
 
   return form.fields && form.fields[fieldId];
 };
 
-export const isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
-  const form = formState(state, formKey);
+selectors.isActionButtonVisible = (state, formKey, fieldVisibleRules) => {
+  const form = selectors.formState(state, formKey);
 
   if (!form) return false;
 
   return isVisible(fieldVisibleRules, form.fields);
 };
+
+selectors.isAnyFieldVisibleForMetaForm = (state, formKey, fieldMeta) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return isAnyFieldVisibleForMeta(fieldMeta, fields);
+};
+
+selectors.isExpansionPanelRequiredForMetaForm = (state, formKey, fieldMeta) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return isExpansionPanelRequired(fieldMeta, fields);
+};
+
+selectors.isExpansionPanelErroredForMetaForm = (
+  state,
+  formKey,
+  fieldMeta
+) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return isExpansionPanelErrored(fieldMeta, fields || []);
+};
+
+selectors.isAnyFieldTouchedForMetaForm = (state, formKey, fieldMeta) => {
+  const { fields } = selectors.formState(state, formKey) || {};
+
+  return isAnyFieldTouchedForMeta(fieldMeta, fields || []);
+};
+
 // #endregion

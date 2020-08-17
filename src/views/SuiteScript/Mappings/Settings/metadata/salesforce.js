@@ -114,7 +114,7 @@ export default {
           type: 'suitescriptrefreshableselect',
           ignoreCache: true,
           // Todo (Aditya): label is needed
-          label: 'Value field',
+          label: 'Result field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
@@ -224,7 +224,7 @@ export default {
           defaultValue: !(lookup.allowFailures),
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
-          ]
+          ],
         },
         'lookup.useNull': {
           id: 'lookup.useNull',
@@ -237,7 +237,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.failIfMatchNotFound', is: [false] },
-          ]
+          ],
         },
         'lookup.useEmptyString': {
           id: 'lookup.useEmptyString',
@@ -250,7 +250,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.failIfMatchNotFound', is: [false] },
-          ]
+          ],
         },
         lookupDefault: {
           id: 'lookupDefault',
@@ -434,7 +434,7 @@ export default {
             'hardcodedCheckbox',
             'hardcodedSFSelect',
             'lookupSFSelect',
-            'defaultSFSelect'
+            'defaultSFSelect',
           ].includes(el));
     } else if (selectedGenerateObj.type === 'boolean') {
       delete fieldMeta.fieldMap.hardcodedDefault;
@@ -448,7 +448,7 @@ export default {
             'hardcodedDefault',
             'hardcodedSFSelect',
             'lookupSFSelect',
-            'defaultSFSelect'
+            'defaultSFSelect',
           ].includes(el)
       );
     } else if (selectedGenerateObj.type !== 'picklist') {
@@ -462,7 +462,7 @@ export default {
             'hardcodedCheckbox',
             'hardcodedSFSelect',
             'lookupSFSelect',
-            'defaultSFSelect'
+            'defaultSFSelect',
           ].includes(el)
       );
     } else {

@@ -16,11 +16,13 @@ const flowTypeToIdPrefixMap = {
 
 export const flowTypeFromId = _id => {
   let type;
+
   Object.keys(flowTypeToIdPrefixMap).forEach(key => {
     if (_id.startsWith(flowTypeToIdPrefixMap[key])) {
       type = key;
     }
   });
+
   return type;
 };
 
@@ -28,6 +30,7 @@ export const generateUniqueFlowId = (_id, type) => `${flowTypeToIdPrefixMap[type
 
 export const getFlowIdAndTypeFromUniqueId = _id => {
   const flowType = flowTypeFromId(_id);
+
   return {flowType, flowId: _id.replace(flowTypeToIdPrefixMap[flowType], '')};
 };
 
@@ -56,6 +59,7 @@ export const flowType = flow => {
 
 export const flowSupportsMapping = flow => {
   let supportsMapping = !!flow.editable;
+
   if (supportsMapping && flow.import) {
     if (['ACTIVITY_STREAM', 'ftp', 'magento', 'ebay'].includes(flow.import.type)) {
       supportsMapping = false;
@@ -64,11 +68,13 @@ export const flowSupportsMapping = flow => {
   if (supportsMapping && flow.export?.type === 'MY_COMPUTER') {
     supportsMapping = false;
   }
+
   return supportsMapping;
 };
 
 export const flowAllowsScheduling = flow => {
   let supportsScheduling = !!flow.editable;
+
   if (supportsScheduling) {
     if ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type)) {
       supportsScheduling = false;
@@ -77,11 +83,12 @@ export const flowAllowsScheduling = flow => {
   if (supportsScheduling && flow.export?.type === 'MY_COMPUTER') {
     supportsScheduling = false;
   }
+
   return supportsScheduling;
 };
 
 export const isFlowRunnable = flow => {
-  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export.type !== 'MY_COMPUTER') {
+  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export?.type !== 'MY_COMPUTER') {
     if (flow.version && flow.hasConfiguration) {
       return true;
     }
@@ -89,5 +96,6 @@ export const isFlowRunnable = flow => {
       return true;
     }
   }
+
   return false;
 };

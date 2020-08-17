@@ -1,9 +1,10 @@
 import { useSelector, shallowEqual } from 'react-redux';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 
+const emptyObj = {};
 export default function useFormContext(formKey) {
   const formState = useSelector(
-    state => selectors.formState(state, formKey),
+    state => selectors.formState(state, formKey) || emptyObj,
     shallowEqual
   );
 

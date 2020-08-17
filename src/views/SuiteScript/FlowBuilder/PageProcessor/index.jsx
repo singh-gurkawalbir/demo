@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import AppBlock from '../AppBlock';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   ppContainer: {

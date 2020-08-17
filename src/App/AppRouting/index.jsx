@@ -89,6 +89,11 @@ export default function AppRouting() {
         render={({ history }) => history.replace(getRoutePath('/dashboard'))}
         />
       <Route
+        path={['/pg/*']}
+        exact
+        render={({ history, match }) => history.replace(getRoutePath(match.url.replace('/pg/', '/')))}
+        />
+      <Route
         path={getRoutePath('/clone/:resourceType/:resourceId')}
         exact
         render={({ history, match }) => history.replace(
@@ -165,7 +170,7 @@ export default function AppRouting() {
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
-          getRoutePath('/integrations/:integrationId/:tab')
+          getRoutePath('/integrations/:integrationId/:tab'),
         ]}
         component={Integration}
         />

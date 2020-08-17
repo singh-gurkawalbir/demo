@@ -8,7 +8,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import layouts from '../layout/defaultDialogLayout';
 import ConsoleGridItem from '../ConsoleGridItem';
 import PanelLoader from '../../PanelLoader';
@@ -63,7 +63,7 @@ export default function JavaScriptEditor(props) {
         autoEvaluateDelay: 500,
         _init_entryFunction: entryFunction || 'main',
         optionalSaveParams,
-        isSampleDataLoading: props.isSampleDataLoading
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
   }, [
@@ -84,7 +84,7 @@ export default function JavaScriptEditor(props) {
   const logs = result && !error && !violations && result.logs;
 
   return (
-    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]} height="calc(100vh - 200px)">
       <PanelGridItem gridArea="rule">
         <JavaScriptPanel
           disabled={disabled}
@@ -104,7 +104,8 @@ export default function JavaScriptEditor(props) {
             mode="json"
             readOnly={disabled}
             onChange={handleDataChange}
-        />)}
+        />
+        )}
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title="Function output" />

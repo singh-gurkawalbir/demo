@@ -5,7 +5,7 @@ import { matchPath, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import ArrowRightIcon from '../../../components/icons/ArrowRightIcon';
 import IntegrationCrumb from './crumbs/Integration';
 import MarketplaceCrumb from './crumbs/Marketplace';
@@ -126,14 +126,6 @@ const routes = [
       ...flowBuilderRoutes,
     ],
   },
-  {
-    path: getRoutePath('/connectors/:connectorId/connectorLicenses'),
-    breadcrumb: 'Licenses',
-  },
-  {
-    path: getRoutePath('/connectors/:connectorId/installBase'),
-    breadcrumb: 'Install base',
-  },
   { path: getRoutePath('/dashboard') }, // exclusion of breadcrumb prop will skip this segment.
   {
     path: getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
@@ -206,8 +198,8 @@ const routes = [
         breadcrumb: ConnectorCrumb,
         childRoutes: [
           { path: '/connectorLicenses', breadcrumb: 'Licenses' },
-          { path: '/installBase', breadcrumb: 'Install base' }]}
-    ]
+          { path: '/installBase', breadcrumb: 'Install base' }]},
+    ],
   },
   {
     path: getRoutePath('/marketplace'),
@@ -231,7 +223,7 @@ const routes = [
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
         childRoutes: [
-          { path: '/preview', breadcrumb: 'Clone-detail' },
+          { path: '/preview', breadcrumb: 'Clone-details' },
           { path: '/setup', breadcrumb: 'Install' },
         ],
       },

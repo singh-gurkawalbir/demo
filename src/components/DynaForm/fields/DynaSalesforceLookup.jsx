@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
-import * as selectors from '../../../reducers';
-import SalesforceLookupFilterEditorDialog from '../../AFE/SalesforceLookupFilterEditor';
+import { selectors } from '../../../reducers';
+import SalesforceLookupFilterEditorDrawer from '../../AFE/SalesforceLookupFilterEditor/Drawer';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   lookupFieldWrapper: {
@@ -25,7 +26,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaSalesforceLookup(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     // disabled,
@@ -43,9 +43,7 @@ export default function DynaSalesforceLookup(props) {
     multiline,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const dispatch = useDispatch();
   const handleSave = (shouldCommit, editorValues) => {
@@ -97,18 +95,15 @@ export default function DynaSalesforceLookup(props) {
 
   return (
     <>
-      {showEditor && (
-        <SalesforceLookupFilterEditorDialog
-          title="Define lookup criteria"
-          id={id}
-          data={formattedExtractFields}
-          value={value}
-          onSave={handleSave}
-          onClose={handleEditorClick}
+      <SalesforceLookupFilterEditorDrawer
+        title="Define lookup criteria"
+        id={id}
+        data={formattedExtractFields}
+        value={value}
+        onSave={handleSave}
           // disabled={disabled}
-          options={options}
+        options={options}
         />
-      )}
 
       <FormControl className={classes.dynaTextFormControl}>
         <div className={classes.dynaTextLabelWrapper}>
@@ -137,7 +132,7 @@ export default function DynaSalesforceLookup(props) {
           </div>
           <ActionButton
             data-test={id}
-            onClick={handleEditorClick}
+            onClick={handleOpenDrawer}
             className={classes.exitButton}>
             <FilterIcon />
           </ActionButton>

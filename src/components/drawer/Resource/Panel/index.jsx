@@ -4,11 +4,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   matchPath, useHistory, useLocation,
-  useRouteMatch
+  useRouteMatch,
 } from 'react-router-dom';
-import useTraceUpdate from 'use-trace-update';
 import actions from '../../../../actions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
@@ -19,7 +18,7 @@ import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
-const isNestedDrawer = (url) => !!matchPath(url, {
+const isNestedDrawer = url => !!matchPath(url, {
   path: `/**${DRAWER_PATH}${DRAWER_PATH}`,
   exact: true,
   strict: false});
@@ -156,6 +155,7 @@ export default function Panel(props) {
   const match = useRouteMatch();
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
+
   useRedirectionToParentRoute(resourceType, id);
   const classes = useStyles({
     ...props,
@@ -207,6 +207,7 @@ export default function Panel(props) {
   const onCloseNotificationToaster = useCallback(() => {
     setShowNotificationToaster(false);
   }, []);
+
   // will be patching useTechAdaptorForm for assistants if export/import is not supported
   // based on this value, will be showing banner on the new export/import creation
   // using isNew as dependency and this will be false for export/import form
@@ -215,32 +216,36 @@ export default function Panel(props) {
       const useTechAdaptorForm = stagedProcessor?.patch?.find(
         p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
       );
+
       setShowNotificationToaster(!!useTechAdaptorForm?.value);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
   const variant = match.isExact ? 'edit' : 'view';
-  useTraceUpdate({
-    variant,
-    isNew,
-    resourceType,
-    flowId,
-    integrationId,
-    handleSubmitComplete,
-    showNotificationToaster,
-    onCloseNotificationToaster,
-  });
+
+  // useTraceUpdate({
+  //   variant,
+  //   isNew,
+  //   resourceType,
+  //   flowId,
+  //   integrationId,
+  //   handleSubmitComplete,
+  //   showNotificationToaster,
+  //   onCloseNotificationToaster,
+  // });
+
   return (
     <>
       <div className={classes.root}>
         <div className={classes.title}>
-          {isNestedDrawer(location.pathname) &&
+          {isNestedDrawer(location.pathname) && (
           <IconButton
             data-test="backDrawer"
             className={classes.backButton}
             onClick={onClose}>
             <Back />
-          </IconButton>}
+          </IconButton>
+          )}
           <div className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}

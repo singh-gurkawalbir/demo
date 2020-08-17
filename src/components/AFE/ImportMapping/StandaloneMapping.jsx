@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEqual } from 'lodash';
 import ImportMapping from './index';
 import * as ResourceUtil from '../../../utils/resource';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getImportOperationDetails } from '../../../utils/assistant';
 import mappingUtil from '../../../utils/mapping';
@@ -269,6 +269,7 @@ export default function StandaloneMapping(props) {
     application,
     subRecordMappingId,
     connection,
+    exportRes: exportResource,
   };
 
   if (isSalesforce) {

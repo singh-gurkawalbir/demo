@@ -8,7 +8,7 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
@@ -16,8 +16,10 @@ const useStyles = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
     overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
+    '& > div:first-child': {
+      marginLeft: theme.spacing(-1),
+      paddingRight: 0,
+    },
   },
 }));
 
@@ -44,7 +46,7 @@ export default function SettingsDrawer({
           helpKey: 'flow.name',
           label: 'Name',
           defaultValue: flow && flow.name,
-          required: true
+          required: true,
         },
         description: {
           id: 'description',
@@ -61,7 +63,7 @@ export default function SettingsDrawer({
           type: 'multiselect',
           placeholder: 'Please select flow',
           helpKey: 'flow._runNextFlowIds',
-          label: 'Next data flow:',
+          label: 'Next integration flow:',
           displayEmpty: true,
           defaultValue: (flow && flow._runNextFlowIds) || [],
           options: [
@@ -99,7 +101,7 @@ export default function SettingsDrawer({
             ],
           },
           {
-            fields: ['settings']
+            fields: ['settings'],
           },
         ],
       },
@@ -182,9 +184,10 @@ export default function SettingsDrawer({
     integrationId,
     resourceType,
     resourceId,
-    validationHandler
+    validationHandler,
 
   });
+
   return (
     <RightDrawer
       path="settings"

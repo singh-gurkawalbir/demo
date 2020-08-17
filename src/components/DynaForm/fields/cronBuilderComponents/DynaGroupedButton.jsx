@@ -16,7 +16,6 @@ export default function GroupedButton(props) {
     onFieldChange,
     clearFields,
     options,
-    setReset,
     formKey,
   } = props;
   const form = useFormContext(formKey);
@@ -34,12 +33,10 @@ export default function GroupedButton(props) {
         res = [...finalValues, item.value];
       }
 
-      setReset && setReset(false);
-
       onFieldChange(id, !res.length ? '*' : res.sort().join(','));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [finalValues, id, onFieldChange, setReset]
+    [finalValues, id, onFieldChange]
   );
 
   useEffect(() => {

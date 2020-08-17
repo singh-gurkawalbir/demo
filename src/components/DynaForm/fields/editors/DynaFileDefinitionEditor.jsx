@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import FileDefinitionEditorDialog from '../../../AFE/FileDefinitionEditor/Dialog';
-import { fileDefinitionSampleData } from '../../../../reducers';
+import FileDefinitionEditorDrawer from '../../../AFE/FileDefinitionEditor/Drawer';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
 import {
@@ -13,6 +13,7 @@ import {
 import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
 import { safeParse } from '../../../../utils/string';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 /*
  * This editor is shown in case of :
@@ -45,8 +46,10 @@ const useStyles = makeStyles(theme => ({
 function extractResourcePath(value, initialResourcePath) {
   if (value) {
     const jsonValue = safeParse(value) || {};
+
     return jsonValue.resourcePath;
   }
+
   return initialResourcePath;
 }
 
@@ -76,9 +79,8 @@ function DynaFileDefinitionEditor(props) {
   const formContext = useFormContext(formKey);
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
-  // Local states
-  const [showEditor, setShowEditor] = useState(false);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   // Default values
   const parserType =
@@ -88,16 +90,12 @@ function DynaFileDefinitionEditor(props) {
   const processor = resourceType === 'imports' ? FILE_GENERATOR : FILE_PARSER;
 
   // selector to fetch file definition sample data
-  const { sampleData, rule } = useSelector(state => fileDefinitionSampleData(state, {
+  const { sampleData, rule } = useSelector(state => selectors.fileDefinitionSampleData(state, {
     userDefinitionId,
     resourceType,
-    options: { format, definitionId, resourcePath }
+    options: { format, definitionId, resourcePath },
   }), shallowEqual);
 
-  // click handlers
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { data, rule } = editorValues;
@@ -124,10 +122,6 @@ function DynaFileDefinitionEditor(props) {
       }
     }
   }, [dispatch, formContext.value, id, onFieldChange, parserType, resourceId, resourceType]);
-
-  const handleClose = useCallback(() => {
-    setShowEditor(false);
-  }, [setShowEditor]);
 
   // Effects to update values and sample data
   useEffect(() => {
@@ -173,23 +167,22 @@ function DynaFileDefinitionEditor(props) {
     <>
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
-          {showEditor && (
-            <FileDefinitionEditorDialog
-              title={label || 'File definition editor'}
-              id={id + resourceId}
-              processor={processor}
-              data={
+          <FileDefinitionEditorDrawer
+            title={label || 'File definition editor'}
+            id={id + resourceId}
+            processor={processor}
+            data={
                 sampleData ||
                 (resourceType === 'exports'
                   ? props.sampleData
                   : JSON.stringify(props.sampleData, null, 2))
               }
-              rule={value}
-              onSave={handleSave}
-              onClose={handleClose}
-              disabled={disabled}
+            rule={value}
+            onSave={handleSave}
+            disabled={disabled}
+            path={id}
             />
-          )}
+
           <FormLabel className={classes.fileDefinitionLabel}>
             {label}:
           </FormLabel>
@@ -197,7 +190,7 @@ function DynaFileDefinitionEditor(props) {
             variant="outlined"
             color="secondary"
             className={classes.fileDefinitionBtn}
-            onClick={handleEditorClick}>
+            onClick={handleOpenDrawer}>
             Launch
           </Button>
           <FieldHelp {...props} />

@@ -1,21 +1,12 @@
 import { isNewId } from '../../../utils/resource';
-import { isLookupResource } from '../../../utils/flows';
 import { alterFileDefinitionRulesVisibility } from '../../utils';
 
 export default {
-  init: (fieldMeta, resource = {}, flow) => {
-    const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-    if (isLookupResource(flow, resource)) {
-      exportPanelField.visible = false;
-    }
-
-    return fieldMeta;
-  },
   preSave: formValues => {
     const newValues = { ...formValues };
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
+
     if (typeof jsonResourcePath === 'object' && 'resourcePathToSave' in jsonResourcePath) {
       newValues['/file/json/resourcePath'] = jsonResourcePath.resourcePathToSave || '';
     }
@@ -147,7 +138,7 @@ export default {
 
       return {
         hasHeaderRow: hasHeaderRowField.value,
-        fileType: fileType.value
+        fileType: fileType.value,
       };
     }
 
@@ -217,7 +208,7 @@ export default {
     uploadFile: {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
-      placeholder: 'Sample file (that would be parsed):',
+      placeholder: 'Sample file (that would be parsed)',
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
@@ -230,7 +221,7 @@ export default {
           field: 'file.type',
           is: ['csv'],
         },
-      ], },
+      ] },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
@@ -246,6 +237,16 @@ export default {
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
@@ -329,7 +330,7 @@ export default {
     },
     'file.batchSize': {
       fieldId: 'file.batchSize',
-    }
+    },
   },
   layout: {
     type: 'column',
@@ -360,7 +361,7 @@ export default {
             containers: [{fields: [
               'parsers',
               'file.csv',
-            ]}]
+            ]}],
           },
           {
             collapsed: true,
@@ -375,10 +376,10 @@ export default {
             collapsed: true,
             label: 'Advanced',
             fields: [
-              'fileMetadata',
               'file.decompressFiles',
               'file.compressionFormat',
               'file.skipDelete',
+              'fileMetadata',
               'ftp.backupDirectoryPath',
               'file.encoding',
               'pageSize',
@@ -391,8 +392,8 @@ export default {
       },
       {
         fields: ['exportPanel'],
-      }
-    ]
+      },
+    ],
   },
   actions: [
     {

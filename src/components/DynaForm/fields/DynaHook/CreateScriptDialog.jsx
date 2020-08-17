@@ -22,6 +22,7 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
     fieldsMeta: rest,
     optionsHandler,
   });
+
   return (
     <ModalDialog show onClose={onClose}>
       <div>Create Script</div>

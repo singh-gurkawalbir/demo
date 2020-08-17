@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/OutputFilterIcon';
-import ExportFilterToggleEditorDialog from '../../../../components/AFE/FilterEditor/FilterToggleEditorDialog';
+import ExportFilterToggleEditorDrawer from '../../../../components/AFE/FilterEditor/FilterToggleEditorDrawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
+function ExportFilterDrawer({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
@@ -53,7 +53,7 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
   );
 
   return (
-    <ExportFilterToggleEditorDialog
+    <ExportFilterToggleEditorDrawer
       title="Define output filter"
       helpTitle="Filter Rules"
       helpKey="export.filter.rules"
@@ -69,14 +69,15 @@ function ExportFilterDialog({ flowId, resource, isViewMode, onClose }) {
       optionalSaveParams={optionalSaveParams}
       isSampleDataLoading={sampleDataStatus === 'requested'}
       flowId={flowId}
+      path="exportFilter"
     />
   );
 }
 
-function FilterDialog(props) {
+function FilterDrawer(props) {
   const { open } = props;
 
-  return <>{open && <ExportFilterDialog {...props} />}</>;
+  return <>{open && <ExportFilterDrawer {...props} />}</>;
 }
 
 export default {
@@ -85,5 +86,5 @@ export default {
   position: 'right',
   Icon,
   helpKey: 'fb.pg.exports.filter',
-  Component: FilterDialog,
+  Component: FilterDrawer,
 };

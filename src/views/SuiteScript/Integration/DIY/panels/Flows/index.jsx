@@ -1,15 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-import * as selectors from '../../../../../../reducers';
+import { selectors } from '../../../../../../reducers';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
-import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/flows';
+import metadata from '../../../../../../components/ResourceTable/suiteScript/flows/metadata';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
@@ -26,8 +26,6 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
       ssLinkedConnectionId,
     })
   );
-  const infoTextFlow =
-    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   return (
     <div className={classes.root}>
@@ -36,7 +34,7 @@ export default function FlowsPanel({ ssLinkedConnectionId, integrationId }) {
         ssLinkedConnectionId={ssLinkedConnectionId}
         integrationId={integrationId}
         />
-      <PanelHeader title="Integration flows" infoText={infoTextFlow} />
+      <PanelHeader title="Integration flows" />
       <LoadSuiteScriptResources
         required
         ssLinkedConnectionId={ssLinkedConnectionId}

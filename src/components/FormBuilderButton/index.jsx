@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
-import * as selectors from '../../reducers';
+import { selectors } from '../../reducers';
 import FieldHelp from '../DynaForm/FieldHelp';
 import EditDrawer from '../AFE/SettingsFormEditor/Drawer';
+import usePushRightDrawer from '../../hooks/usePushRightDrawer';
 
 const emptyObj = {};
 
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 export default function FormBuilderButton({resourceId, resourceType, integrationId}) {
   const classes = useStyles();
   const history = useHistory();
-  const match = useRouteMatch();
+  const handleOpenDrawer = usePushRightDrawer();
   const [drawerKey, setDrawerKey] = useState(0);
   const settingsForm = useSelector(state => {
     const resource = selectors.resource(state, resourceType, resourceId);
@@ -32,9 +33,9 @@ export default function FormBuilderButton({resourceId, resourceType, integration
     e => {
       e.stopPropagation();
       setDrawerKey(drawerKey => drawerKey + 1);
-      history.push(`${match.url}/editSettings`);
+      handleOpenDrawer('editSettings');
     },
-    [history, match.url]
+    [handleOpenDrawer]
   );
 
   if (!allowFormEdit) return null;

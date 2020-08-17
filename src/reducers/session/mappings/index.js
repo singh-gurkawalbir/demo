@@ -31,6 +31,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             importSampleData = [],
+            exportRes,
             ...additionalOptions
           } = options;
           let formattedMappings;
@@ -58,14 +59,15 @@ export default function reducer(state = {}, action) {
               false,
               isGroupedSampleData,
               netsuiteRecordType,
-              additionalOptions
+              additionalOptions,
+              exportRes
             );
             lookups = lookupUtil.getLookupFromResource(resourceData);
           }
 
           // key would be unique property associated with each mapping.
           const tmp = {
-            mappings: formattedMappings.map(m => ({
+            mappings: (formattedMappings || []).map(m => ({
               ...m,
               rowIdentifier: 0,
               key: shortid.generate(),
@@ -83,6 +85,7 @@ export default function reducer(state = {}, action) {
             netsuiteRecordType,
             subRecordMappingId,
             salesforceMasterRecordTypeId,
+            exportRes,
           };
 
           tmp.mappingsCopy = deepClone(tmp.mappings);
@@ -167,6 +170,7 @@ export default function reducer(state = {}, action) {
           }
 
           const objCopy = { ...draft[id].mappings[index] };
+
           objCopy.rowIdentifier += 1;
 
           let inputValue = value;
@@ -206,6 +210,7 @@ export default function reducer(state = {}, action) {
           draft[id].lastModifiedRowKey = objCopy.key;
         } else if (value) {
           const newKey = shortid.generate();
+
           draft[id].mappings.push({
             [field]: value,
             rowIdentifier: 0,
@@ -382,7 +387,9 @@ const isMappingObjEqual = (mapping1, mapping2) => {
 };
 
 // #region PUBLIC SELECTORS
-export function mapping(state, id) {
+export const selectors = {};
+
+selectors.mapping = (state, id) => {
   if (!state) {
     return emptySet;
   }
@@ -392,10 +399,10 @@ export function mapping(state, id) {
   if (!mappings) return emptySet;
 
   return mappings;
-}
+};
 
 // #region PUBLIC SELECTORS
-export function mappingsChanged(state, id) {
+selectors.mappingsChanged = (state, id) => {
   if (!state || !state[id]) {
     return false;
   }
@@ -416,9 +423,9 @@ export function mappingsChanged(state, id) {
   }
 
   return isMappingsChanged;
-}
+};
 
-export function mappingsSaveStatus(state, id) {
+selectors.mappingsSaveStatus = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -430,4 +437,4 @@ export function mappingsSaveStatus(state, id) {
     saveCompleted: saveStatus === 'completed',
     saveInProgress: saveStatus === 'requested',
   };
-}
+};

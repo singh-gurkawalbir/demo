@@ -58,7 +58,6 @@ export default (state = {}, action) => {
         draft[id][connectionId] = doc;
         break;
 
-
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE:
         if (draft[id] && draft[id].steps) {
           step = draft[id].steps.find(
@@ -107,12 +106,14 @@ export default (state = {}, action) => {
 };
 
 // #region PUBLIC SELECTORS
-export function installerData(state, id) {
+export const selectors = {};
+
+selectors.suiteScriptIntegrationAppInstallerData = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
 
   return state[id];
-}
+};
 
 // #endregion

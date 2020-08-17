@@ -2,10 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
-import { getUploadedFile } from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 import useFormContext from '../../../Form/FormContext';
 
 const uploadFileType = 'csv';
+
 function DynaSuiteScriptUploadFile(props) {
   const {
     id,
@@ -24,7 +25,7 @@ function DynaSuiteScriptUploadFile(props) {
   const dispatch = useDispatch();
   const [fileName, setFileName] = useState('');
   const uploadedFile = useSelector(
-    state => getUploadedFile(state, fileId),
+    state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
 

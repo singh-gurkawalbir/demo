@@ -28,7 +28,7 @@ export default function ErrorCountCell({count, isError, onClick, isJobInProgress
       onClick={onClick}
       className={clsx(className, {
         [classes.resolved]: showLink && !isError,
-        [classes.link]: showLink
+        [classes.link]: showLink,
       })}>
       {showLink ? 'View' : count}
     </TableCell>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
-import TransformEditorDialog from '../../../AFE/TransformEditor/TransformToggleEditorDialog';
-import * as selectors from '../../../../reducers';
+import TransformEditorDrawer from '../../../AFE/TransformEditor/TransformToggleEditorDrawer';
+import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 
 export default function DynaTransformEditor(props) {
@@ -64,7 +64,7 @@ export default function DynaTransformEditor(props) {
   return (
     <>
       {showEditor && (
-        <TransformEditorDialog
+        <TransformEditorDrawer
           title="Transform Mapping"
           id={id + resourceId}
           data={preTransformData || sampleData}

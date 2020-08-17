@@ -5,7 +5,7 @@ import {
   Button,
 } from '@material-ui/core';
 import actions from '../../../actions';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import RightDrawer from '../../drawer/Right';
@@ -88,6 +88,7 @@ export default function EditorDrawer({
   resourceType,
   disabled,
   hideSaveAction = false,
+  path = 'editSettings',
 }) {
   const { form, init = emptyObj } = settingsForm;
   const classes = useStyles();
@@ -144,7 +145,7 @@ export default function EditorDrawer({
           label: 'No, go back',
           color: 'secondary',
         },
-      ]
+      ],
     });
   }, [confirmDialog, isEditorDirty, onClose]);
   const handlePreviewChange = useCallback(
@@ -206,7 +207,7 @@ export default function EditorDrawer({
 
   return (
     <RightDrawer
-      path="editSettings"
+      path={path}
       height="tall"
       width="xl"
       // type="paper"
