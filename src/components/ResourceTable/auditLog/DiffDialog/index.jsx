@@ -4,9 +4,9 @@ import ReactDiffViewer from 'react-diff-viewer';
 import { RESOURCE_TYPE_SINGULAR_TO_LABEL } from '../../../../constants/resource';
 import ModalDialog from '../../../ModalDialog';
 
-export default function DiffDialog({ auditLog, onCancelClick }) {
+export default function DiffDialog({ auditLog, onClose }) {
   return (
-    <ModalDialog show maxWidth={false} onClose={onCancelClick}>
+    <ModalDialog show maxWidth={false} onClose={onClose}>
       <div>
         {`${
           RESOURCE_TYPE_SINGULAR_TO_LABEL[auditLog.resourceType]
