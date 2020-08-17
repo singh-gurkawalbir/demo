@@ -104,7 +104,7 @@ export default function Integration({ match }) {
   return (
     <>
       <ResourceDrawer match={match} />
-      <LoadResources required resources="integrations">
+      <LoadResources required resources="integrations, connections">
         <LoadSuiteScriptResources
           required
           ssLinkedConnectionId={ssLinkedConnectionId}
