@@ -4260,9 +4260,13 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
 
   resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (!flow) {
+    return resources;
+  }
 
   if (flow._exportId) {
     const exportDoc = fromData.resource(
@@ -4271,7 +4275,7 @@ selectors.flowResources = (state, flowId) => {
       flow._exportId
     );
 
-    resources.push({ _id: flow._exportId, name: exportDoc.name });
+    resources.push({ _id: flow._exportId, name: exportDoc?.name || flow._exportId });
   }
 
   if (flow._importId) {
@@ -4281,7 +4285,7 @@ selectors.flowResources = (state, flowId) => {
       flow._importId
     );
 
-    resources.push({ _id: flow._exportId, name: importDoc.name });
+    resources.push({ _id: flow._importId, name: importDoc?.name || flow._importId});
   }
 
   if (flow.pageGenerators && flow.pageGenerators.length) {
@@ -4292,7 +4296,9 @@ selectors.flowResources = (state, flowId) => {
         pg._exportId
       );
 
-      resources.push({ _id: pg._exportId, name: exportDoc.name });
+      if (exportDoc) {
+        resources.push({ _id: pg._exportId, name: exportDoc?.name || pg._exportId });
+      }
     });
   }
 
@@ -4305,7 +4311,9 @@ selectors.flowResources = (state, flowId) => {
           pp._importId
         );
 
-        resources.push({ _id: pp._importId, name: importDoc.name });
+        if (importDoc) {
+          resources.push({ _id: pp._importId, name: importDoc.name });
+        }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = fromData.resource(
           state && state.data,
@@ -4313,7 +4321,9 @@ selectors.flowResources = (state, flowId) => {
           pp._exportId
         );
 
-        resources.push({ _id: pp._exportId, name: exportDoc.name });
+        if (exportDoc) {
+          resources.push({ _id: pp._exportId, name: exportDoc.name });
+        }
       }
     });
   }
