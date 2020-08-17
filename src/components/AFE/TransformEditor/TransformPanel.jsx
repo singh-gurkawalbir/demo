@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
@@ -38,9 +38,9 @@ export default function TransformPanel(props) {
     selectors.editor(state, editorId)
   );
   const dispatch = useDispatch();
-  const patchEditor = value => {
+  const patchEditor = useCallback(value => {
     dispatch(actions.editor.patch(editorId, { rule: value }));
-  };
+  }, [dispatch, editorId]);
 
   const dataFields = useMemo(() => {
     let parsedData;
