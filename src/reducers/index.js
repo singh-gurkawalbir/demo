@@ -4275,7 +4275,9 @@ selectors.flowResources = (state, flowId) => {
       flow._exportId
     );
 
-    resources.push({ _id: flow._exportId, name: exportDoc?.name || flow._exportId });
+    if (exportDoc) {
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+    }
   }
 
   if (flow._importId) {
@@ -4285,7 +4287,9 @@ selectors.flowResources = (state, flowId) => {
       flow._importId
     );
 
-    resources.push({ _id: flow._importId, name: importDoc?.name || flow._importId});
+    if (importDoc) {
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+    }
   }
 
   if (flow.pageGenerators && flow.pageGenerators.length) {
@@ -4297,7 +4301,7 @@ selectors.flowResources = (state, flowId) => {
       );
 
       if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc?.name || pg._exportId });
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
       }
     });
   }
@@ -4312,7 +4316,7 @@ selectors.flowResources = (state, flowId) => {
         );
 
         if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name });
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
         }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = fromData.resource(
