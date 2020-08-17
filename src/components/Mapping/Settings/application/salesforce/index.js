@@ -111,6 +111,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.sObjectType', isNot: [''] },
           ],
           value: lookup.whereClause,
           data: extractFields,
@@ -129,6 +130,7 @@ export default {
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.sObjectType', isNot: [''] },
           ],
           defaultValue: lookup.whereClause,
         },
