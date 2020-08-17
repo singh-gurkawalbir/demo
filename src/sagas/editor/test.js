@@ -116,14 +116,14 @@ describe('evaluateProcessor saga', () => {
           status: 422,
           message: '{"message":"boom"}',
         }),
-        expectedResult: 'boom',
+        expectedResult: ['Message: boom'],
       },
       {
         initOpt: new APIException({
           status: 401,
           message: '{"message":"boom", "code":"code"}',
         }),
-        expectedResult: 'boom',
+        expectedResult: ['Message: boom'],
       },
     ];
 
