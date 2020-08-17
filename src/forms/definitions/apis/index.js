@@ -41,7 +41,7 @@ export default {
         _scriptId: r._scriptId,
         function: r.function,
       }),
-      hookStage: '',
+      hookStage: 'handleRequest',
       label: 'Script',
       required: true,
     },
