@@ -135,7 +135,7 @@ export default function RetryDrawer({height, jobId, flowJobId}) {
     <RightDrawer
       path="editRetry/:retryId"
       height={height}
-      width="medium"
+      width="large"
       title="Edit retry data"
       variant="permanent">
       <DrawerContent jobId={jobId} flowJobId={flowJobId} />

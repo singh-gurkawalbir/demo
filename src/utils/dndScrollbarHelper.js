@@ -1,7 +1,7 @@
 import throttle from 'lodash/throttle';
 
-let OFFSET = 100; // This is the top/bottom offset you use to start scrolling in the div.
-let PX_DIFF = 10;
+let offset; // This is the top/bottom offset you use to start scrolling in the div.
+let pxDiff;
 
 let scrollIncrement = 0;
 let isScrolling = false;
@@ -12,11 +12,11 @@ let clientRectTop = 0;
 
 // Scroll up in the sidebar.
 const goUp = () => {
-  if (scrollIncrement - PX_DIFF < 0) {
+  if (scrollIncrement - pxDiff < 0) {
     return;
   }
 
-  scrollIncrement -= PX_DIFF;
+  scrollIncrement -= pxDiff;
   sidebarElement.scrollTop = scrollIncrement;
 
   if (isScrolling) {
@@ -26,10 +26,10 @@ const goUp = () => {
 
 // Scroll down in the sidebar.
 const goDown = () => {
-  if (scrollIncrement + PX_DIFF > scrollHeightSidebar) {
+  if (scrollIncrement + pxDiff > scrollHeightSidebar) {
     return;
   }
-  scrollIncrement += PX_DIFF;
+  scrollIncrement += pxDiff;
   sidebarElement.scrollTop = scrollIncrement;
   if (isScrolling) {
     window.requestAnimationFrame(goDown);
@@ -40,10 +40,10 @@ const onDragOver = event => {
   const isMouseOnTop =
     scrollIncrement >= 0 &&
     event.clientY > clientRectTop &&
-    event.clientY < clientRectTop + OFFSET;
+    event.clientY < clientRectTop + offset;
   const isMouseOnBottom =
     scrollIncrement <= scrollHeightSidebar &&
-    event.clientY > clientRectBottom - OFFSET &&
+    event.clientY > clientRectBottom - offset &&
     event.clientY <= clientRectBottom;
 
   if (!isScrolling && (isMouseOnTop || isMouseOnBottom)) {
@@ -66,8 +66,8 @@ const throttleOnDragOver = throttle(onDragOver, 150);
 export const addEventListenerForSidebar = (element, height) => {
   sidebarElement = element;
   scrollHeightSidebar = sidebarElement.scrollHeight;
-  PX_DIFF = Math.round(scrollHeightSidebar / height);
-  OFFSET = Math.round(height / 2 - height / 8);
+  pxDiff = Math.round(scrollHeightSidebar / height);
+  offset = Math.round(height / 2 - height / 8);
   const clientRect = sidebarElement.getBoundingClientRect();
 
   clientRectTop = clientRect.top;

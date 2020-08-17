@@ -6,12 +6,30 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import {FormLabel} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import CalendarIcon from '../../../icons/CalendarIcon';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
+import FieldHelp from '../../FieldHelp';
 
+const useStyles = makeStyles(theme => ({
+  dynaDateLabelWrapper: {
+    flexDirection: 'row !important',
+  },
+  dynaDateCalendarBtn: {
+    padding: 0,
+    '&:hover': {
+      background: 'transparent',
+      '& > span': {
+        color: theme.palette.primary.main,
+      },
+    },
+  },
+}));
 export default function DatePicker(props) {
+  const classes = useStyles();
   const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
@@ -50,21 +68,27 @@ export default function DatePicker(props) {
   }, [dateValue]);
 
   return (
-    <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-      <KeyboardDatePicker
-        label={label}
-        format={displayFormat}
-        value={dateValue}
-        invalidLabel={null}
-        invalidDateMessage={null}
-        inputVariant="outlined"
-        InputLabelProps={{ shrink: true }}
-        onChange={setDateValue}
-        disabled={disabled}
-        clearable
-        keyboardIcon={<CalendarIcon />}
+    <>
+      <div className={classes.dynaDateLabelWrapper}>
+        <FormLabel>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
+      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
+        <KeyboardDatePicker
+          format={displayFormat}
+          value={dateValue}
+          invalidLabel={null}
+          invalidDateMessage={null}
+          inputVariant="filled"
+          InputLabelProps={{ shrink: true }}
+          onChange={setDateValue}
+          disabled={disabled}
+          clearable
+          KeyboardButtonProps={{className: classes.dynaDateCalendarBtn}}
+          keyboardIcon={<CalendarIcon />}
       />
-      <ErroredMessageComponent {...props} />
-    </MuiPickersUtilsProvider>
+        <ErroredMessageComponent {...props} />
+      </MuiPickersUtilsProvider>
+    </>
   );
 }

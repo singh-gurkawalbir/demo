@@ -203,6 +203,7 @@ export default {
       allowNew: true,
       allowEdit: true,
       helpKey: 'amazonmws.connection.http._iClientId',
+      ignoreEnvironmentFilter: true,
     },
     application: {
       fieldId: 'application',

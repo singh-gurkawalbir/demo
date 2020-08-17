@@ -13,7 +13,6 @@ export default {
   columns: [
     {
       heading: 'Time',
-      // eslint-disable-next-line react/display-name
       value: al => <DateTimeDisplay dateTime={al.time} />,
       width: '10%',
     },
@@ -51,6 +50,7 @@ export default {
       heading: 'Old value',
       value: al => (
         <OldValue
+          auditLog={al}
           oldValue={al.fieldChange.oldValue}
           newValue={al.fieldChange.newValue}
         />
@@ -61,7 +61,6 @@ export default {
       heading: 'New value',
       value: al => (
         <NewValue
-          auditLog={al}
           oldValue={al.fieldChange.oldValue}
           newValue={al.fieldChange.newValue}
         />

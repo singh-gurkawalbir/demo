@@ -13,7 +13,7 @@ export default {
       },
       {
         heading: 'Endpoint apps',
-        value: r => <ConnectorName r={r} />,
+        value: r => <ConnectorName resource={r} />,
       },
       {
         heading: 'Where used',

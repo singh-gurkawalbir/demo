@@ -17,7 +17,7 @@ export default {
     },
     {
       heading: 'Application',
-      value: r => <ConnectorName r={r} />,
+      value: r => <ConnectorName resource={r} />,
     },
     {
       heading: 'Last updated',

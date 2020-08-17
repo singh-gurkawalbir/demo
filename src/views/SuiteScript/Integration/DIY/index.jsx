@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Chip } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import LoadSuiteScriptResources from '../../../../components/SuiteScript/LoadResources';
@@ -33,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   },
   editableTextInputShift: {
     width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
+  },
+  tag: {
+    marginLeft: theme.spacing(1),
   },
 }));
 const tabs = [
@@ -70,6 +74,7 @@ export default function Integration({ match }) {
       ssLinkedConnectionId,
     })
   );
+  const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', ssLinkedConnectionId));
   const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
 
   const handleTitleChange = useCallback(
@@ -123,6 +128,17 @@ export default function Integration({ match }) {
               />
             )
           }
+            titleTag={
+            ssLinkedConnection?.netsuite?.account && (
+            <Chip
+              disabled
+              className={classes.tag}
+              variant="outlined"
+              label={`V2 ${ssLinkedConnection.netsuite.account}`}
+              size="small"
+            />
+            )
+            }
         />
 
           <IntegrationTabs

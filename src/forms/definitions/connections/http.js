@@ -2,6 +2,9 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues};
 
+    if (newValues['/mode'] === 'cloud') {
+      newValues['/_agentId'] = undefined;
+    }
     delete newValues['/mode'];
 
     if (!newValues['/http/ping/successPath']) {
@@ -350,6 +353,7 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     'http.auth.oauth.clientCredentialsLocation': {
