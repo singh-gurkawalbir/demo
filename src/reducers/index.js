@@ -2952,7 +2952,7 @@ selectors.auditLogs = (
     const resourceIds = [
       ...exports,
       ...imports,
-      ...flows,
+      ...map(flows, '_id'),
       ...map(connections, '_id'),
     ];
 
