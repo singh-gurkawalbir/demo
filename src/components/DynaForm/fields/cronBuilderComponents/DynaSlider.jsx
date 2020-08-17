@@ -26,8 +26,7 @@ export default function DynaSlider(props) {
     min,
     formKey,
   } = props;
-  const form = useFormContext(formKey);
-  const { fields } = form || {};
+  const fields = useFormContext(formKey)?.fields;
   const handleChange = useCallback(
     (evt, slidervalue) => {
       if (unit === 'minute' && slidervalue > 9) {

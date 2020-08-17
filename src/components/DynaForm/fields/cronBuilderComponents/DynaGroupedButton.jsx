@@ -18,8 +18,7 @@ export default function GroupedButton(props) {
     options,
     formKey,
   } = props;
-  const form = useFormContext(formKey);
-  const { fields } = form || {};
+  const fields = useFormContext(formKey)?.fields;
   const classes = useStyles();
   const finalValues =
     value.includes('/') || value.includes('*') ? [] : value && value.split(',');

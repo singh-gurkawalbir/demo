@@ -44,7 +44,7 @@ export default function DynaSettings(props) {
   const { resourceType, resourceId } = resourceContext;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
-  const [secondarFormKey] = useState(generateNewId());
+  const [secondaryFormKey] = useState(generateNewId());
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -70,7 +70,8 @@ export default function DynaSettings(props) {
 
   // TODO: @Surya revisit this implementation of settings form
   // directly register field states
-  const { value, isValid} = useFormContext(secondarFormKey) || {};
+  const { value, isValid} = useFormContext(secondaryFormKey) || {};
+
   useEffect(() => {
     if (hasSettingsForm) {
       handleSettingFormChange(value, isValid);
@@ -96,7 +97,7 @@ export default function DynaSettings(props) {
     if (hasSettingsForm) {
       return (
         <FormView
-          formKey={secondarFormKey}
+          formKey={secondaryFormKey}
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}

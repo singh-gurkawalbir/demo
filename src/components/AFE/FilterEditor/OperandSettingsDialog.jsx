@@ -136,7 +136,6 @@ export default function OperandSettingsDialog({
       <>
         <DynaForm
           formKey={formKey}
-          disabled={disabled}
           fieldMeta={fieldMeta}
           optionsHandler={optionsHandler} />
         <DynaSubmit
@@ -146,7 +145,6 @@ export default function OperandSettingsDialog({
           Save
         </DynaSubmit>
         <Button
-          formKey={formKey}
           data-test="cancelOperandSettings"
           onClick={onClose}>
           Cancel

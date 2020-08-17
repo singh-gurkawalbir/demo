@@ -187,6 +187,7 @@ export default function UserForm({
         fieldMeta={fieldMeta} />
       <div className={classes.actions}>
         <DynaSubmit
+          formKey={formKey}
           disabled={disableSave}
           data-test="submitUserForm"
           className={classes.actionButton}

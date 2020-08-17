@@ -13,8 +13,7 @@ const useStyles = makeStyles(theme => ({
 export default function CronLabel(props) {
   const classes = useStyles();
   const { onFieldChange, id, clearFields, unit, formKey } = props;
-  const form = useFormContext(formKey);
-  const { fields } = form || {};
+  const fields = useFormContext(formKey)?.fields;
 
   useEffect(() => {
     clearFields.forEach(id => {
