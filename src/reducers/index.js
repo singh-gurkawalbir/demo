@@ -4264,7 +4264,7 @@ selectors.flowResources = (state, flowId) => {
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 
-  if (flow?._exportId) {
+  if (flow._exportId) {
     const exportDoc = fromData.resource(
       state && state.data,
       'exports',
@@ -4274,7 +4274,7 @@ selectors.flowResources = (state, flowId) => {
     resources.push({ _id: flow._exportId, name: exportDoc.name });
   }
 
-  if (flow?._importId) {
+  if (flow._importId) {
     const importDoc = fromData.resource(
       state && state.data,
       'imports',
@@ -4284,7 +4284,7 @@ selectors.flowResources = (state, flowId) => {
     resources.push({ _id: flow._exportId, name: importDoc.name });
   }
 
-  if (flow?.pageGenerators?.length) {
+  if (flow.pageGenerators && flow.pageGenerators.length) {
     flow.pageGenerators.forEach(pg => {
       const exportDoc = fromData.resource(
         state && state.data,
@@ -4296,7 +4296,7 @@ selectors.flowResources = (state, flowId) => {
     });
   }
 
-  if (flow?.pageProcessors?.length) {
+  if (flow.pageProcessors && flow.pageProcessors.length) {
     flow.pageProcessors.forEach(pp => {
       if (pp.type === 'import' && pp._importId) {
         const importDoc = fromData.resource(
