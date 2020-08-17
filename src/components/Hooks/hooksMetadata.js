@@ -1,6 +1,7 @@
 import {
   getSupportedHooksForResource,
   hooksLabelMap,
+  hooksToHelpKeyMap,
   getHookType,
   isStacksSupportedForResource,
   isSuiteScriptHooksSupportedForResource,
@@ -87,6 +88,7 @@ const generateExportHooksMetadata = ({
         type: 'hook',
         label: 'Pre save page',
         hookType: 'script',
+        helpKey: hooksToHelpKeyMap.preSavePage,
         flowId,
         resourceId,
         resourceType,
@@ -100,6 +102,7 @@ const generateExportHooksMetadata = ({
         label: 'Pre save page',
         type: 'hook',
         hookType: 'stack',
+        helpKey: hooksToHelpKeyMap.preSavePage,
         defaultValue:
           defaultHookType === 'stack' ? defaultHooks.preSavePage : {},
         visibleWhen: [{ field: 'hookType', is: ['stack'] }],
@@ -168,6 +171,7 @@ const generateImportHooksMetadata = ({
       type: 'hook',
       hookType: 'script',
       hookStage: hook,
+      helpKey: hooksToHelpKeyMap[hook],
       flowId,
       resourceId,
       resourceType,
@@ -182,6 +186,7 @@ const generateImportHooksMetadata = ({
         label: hooksLabelMap[hook],
         type: 'hook',
         hookType: 'stack',
+        helpKey: hooksToHelpKeyMap[hook],
         defaultValue: defaultHookType === 'stack' ? defaultHooks[hook] : {},
         visibleWhen: [{ field: 'hookType', is: ['stack'] }],
       };

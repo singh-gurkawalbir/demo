@@ -10,6 +10,7 @@ import RightDrawer from '../../../../components/drawer/Right';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -136,15 +137,18 @@ export default function SettingsDrawer({
         },
         {
           op: 'replace',
-          path: '/_integrationId',
-          value: integrationId,
-        },
-        {
-          op: 'replace',
           path: '/_runNextFlowIds',
           value: formVal._runNextFlowIds,
         },
       ];
+
+      if (integrationId && integrationId !== STANDALONE_INTEGRATION.id) {
+        patchSet.push({
+          op: 'replace',
+          path: '/_integrationId',
+          value: integrationId,
+        });
+      }
 
       if (Object.hasOwnProperty.call(formVal, 'settings')) {
         patchSet.push({

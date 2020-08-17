@@ -222,6 +222,11 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
+
+    if (options && options.action === 'flowEnableDisable') {
+      yield put(actions.flow.isOnOffActionInprogress(false, id));
+    }
+
     return { error };
   }
 
@@ -383,6 +388,10 @@ export function* updateIntegrationSettings({
     });
     // eslint-disable-next-line no-empty
   } catch (e) {
+    if (options.action === 'flowEnableDisable') {
+      yield put(actions.flow.isOnOffActionInprogress(false, flowId));
+    }
+
     return yield put(
       actions.integrationApp.settings.submitFailed({
         storeId,

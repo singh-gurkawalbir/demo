@@ -83,6 +83,7 @@ export default {
       connType: 'netsuite',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
       requiredWhen: r => {
         const isRequired =
           !!r._connectorId || (!r._connectorId && !isProduction());
