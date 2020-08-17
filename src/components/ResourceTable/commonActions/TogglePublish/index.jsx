@@ -29,7 +29,7 @@ export default {
     const togglePublishConfirm = useCallback(() => {
       confirmDialog({
         title: `Confirm ${isPublished ? 'unpublish' : 'publish'}`,
-        message: `Are you sure you want to ${isPublished ? 'unpublish' : 'publish'} this app?`,
+        message: `Are you sure you want to ${isPublished ? 'unpublish' : 'publish'} this integration app?`,
         buttons: [
           {
             label: isPublished ? 'Unpublish' : 'Publish',
