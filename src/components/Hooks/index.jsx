@@ -136,7 +136,7 @@ export default function Hooks(props) {
   );
   // console.log('RENDER: Hooks');
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     disabled,
   });
 

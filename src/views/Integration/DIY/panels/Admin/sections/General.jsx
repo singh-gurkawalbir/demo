@@ -94,7 +94,7 @@ export default function GeneralSection({ integrationId }) {
   );
 
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     disabled: !canEditIntegration,
     remount: count,
     resourceType: 'integrations',

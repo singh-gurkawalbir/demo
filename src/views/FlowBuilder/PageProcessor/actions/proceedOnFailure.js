@@ -90,7 +90,7 @@ function ProceedOnFailureDialog(props) {
   );
 
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     disabled: isViewMode,
   });
 

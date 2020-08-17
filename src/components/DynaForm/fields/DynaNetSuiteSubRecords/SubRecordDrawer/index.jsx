@@ -145,7 +145,7 @@ function SubRecordDrawer(props) {
     ]
   );
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
   });
 
   return (

@@ -46,7 +46,7 @@ export default function OperandSettingsDialog({
     [onSubmit]
   );
 
-  const formKey = useFormInitWithPermissions({disabled, fieldsMeta: fieldMeta});
+  const formKey = useFormInitWithPermissions({disabled, fieldMeta});
 
   return (
     <ModalDialog show>

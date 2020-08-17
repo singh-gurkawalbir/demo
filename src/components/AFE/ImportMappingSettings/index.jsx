@@ -130,7 +130,7 @@ export default function ImportMappingSettings(props) {
   );
   const formKey = useFormInitWithPermissions({
     disabled,
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
 

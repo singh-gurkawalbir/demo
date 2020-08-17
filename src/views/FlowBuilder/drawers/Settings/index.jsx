@@ -180,7 +180,7 @@ export default function SettingsDrawer({
     submitHandler(closeOnSave)(formVal);
   }, [submitHandler]);
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     integrationId,
     resourceType,
     resourceId,

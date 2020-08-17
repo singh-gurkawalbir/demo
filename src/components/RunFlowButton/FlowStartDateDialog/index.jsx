@@ -86,7 +86,7 @@ export default function FlowStartDateDialog(props) {
   });
   const formKey = useFormInitWithPermissions({
     disabled,
-    fieldsMeta: fieldMeta,
+    fieldMeta,
   });
 
   if (!selectorStatus) {

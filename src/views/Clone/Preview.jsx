@@ -357,7 +357,7 @@ export default function ClonePreview(props) {
     },
   };
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
 

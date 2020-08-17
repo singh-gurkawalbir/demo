@@ -88,7 +88,7 @@ export default function Invite(props) {
 
   // TODO: Ashok, There is  no description in the new mock please check.
 
-  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
     <>

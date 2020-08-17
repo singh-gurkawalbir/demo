@@ -13,7 +13,7 @@ const Form = props => {
   const { fieldMeta } = props;
   const formKey = useFormInitWithPermissions({
     ...props,
-    fieldsMeta: fieldMeta,
+    fieldMeta,
   });
 
   return <DynaForm {...props} formKey={formKey} />;

@@ -58,7 +58,7 @@ const SearchParamsModal = props => {
   }
 
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: {
+    fieldMeta: {
       fieldMap,
       layout,
     },

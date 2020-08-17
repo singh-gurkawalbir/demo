@@ -96,7 +96,7 @@ export default function SettingsFormEditor({
   const key = useMemo(() => hashCode(result), [result]);
   const logs = result && !error && !violations && result.logs;
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: result?.data,
+    fieldMeta: result?.data,
     remount: key,
     resourceId,
     resourceType,

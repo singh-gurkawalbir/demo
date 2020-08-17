@@ -18,7 +18,7 @@ function form(state = {}, action) {
     conditionalUpdate,
     disabled,
   } = formSpecificProps;
-  const { fieldsMeta = {} } = formSpecificProps;
+  const { fieldMeta = {} } = formSpecificProps;
 
   // if default fields have changed then reset touched state
   return produce(state, draft => {
@@ -32,7 +32,7 @@ function form(state = {}, action) {
           resetTouchedState: false,
         };
         draft[formKey].fields = registerFields(
-          fieldsMeta.fieldMap,
+          fieldMeta.fieldMap,
           draft[formKey].value
         );
         getNextStateFromFields(draft[formKey]);

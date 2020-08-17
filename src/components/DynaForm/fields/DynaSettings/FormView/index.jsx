@@ -51,10 +51,10 @@ export default function FormView({
     formKey,
     remount: settingsFormState?.key,
     disabled,
-    fieldsMeta: settingsFormState?.meta,
+    fieldMeta: settingsFormState?.meta,
     resourceId,
     resourceType,
-    ...formState
+    ...formState,
   });
 
   if (settingsFormState && settingsFormState.error) {

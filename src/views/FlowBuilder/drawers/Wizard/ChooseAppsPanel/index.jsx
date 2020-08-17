@@ -52,7 +52,7 @@ export default function WizardDrawer({
       fields: ['sourceApps', 'destinationApps'],
     },
   };
-  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
     <>

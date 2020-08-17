@@ -184,7 +184,7 @@ export default function ManageLookup(props) {
 
   const formKey = useFormInitWithPermissions({
     disabled,
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
     ...formState,
   });

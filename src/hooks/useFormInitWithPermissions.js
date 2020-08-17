@@ -18,11 +18,11 @@ export default function useFormInitWithPermissions(props) {
     shallowEqual
   );
   const formKey = useForm({ ...props, disabled: disableAllFields });
-  const { fieldsMeta } = props;
+  const { fieldMeta } = props;
 
   useEffect(() => {
     if (disableAllFieldsExceptClocked && formKey) {
-      fieldIDsExceptClockedFields(fieldsMeta, resourceType).forEach(fieldId => {
+      fieldIDsExceptClockedFields(fieldMeta, resourceType).forEach(fieldId => {
         fieldId &&
           dispatch(
             actions.form.forceFieldState(formKey)(fieldId, undefined, true)

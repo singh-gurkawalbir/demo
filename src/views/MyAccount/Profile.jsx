@@ -254,7 +254,7 @@ export default function ProfileComponent() {
   }, [fieldMeta]);
 
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     remount: count,
     ...formState,
   });

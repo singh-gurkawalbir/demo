@@ -7,7 +7,7 @@ import { Component, reduxWrappedComponent } from './form.test';
 
 describe('options handler', () => {
   const onFormChange = jest.fn();
-  const fieldsMeta = {
+  const fieldMeta = {
     fieldMap: {
       field1: {
         id: 'FIELD1',
@@ -70,7 +70,7 @@ describe('options handler', () => {
         store,
         componentProps: {
           formKey,
-          fieldsMeta,
+          fieldMeta,
           onChange: onFormChange,
           optionsHandler,
         },

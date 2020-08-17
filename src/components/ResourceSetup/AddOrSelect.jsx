@@ -102,7 +102,7 @@ export default function AddOrSelect(props) {
   };
 
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
 

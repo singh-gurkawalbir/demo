@@ -167,7 +167,7 @@ function EditListItemModal(props) {
     },
   };
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler,
   });
 

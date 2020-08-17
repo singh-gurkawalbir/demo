@@ -139,7 +139,7 @@ export default function FlowSchedule({
     resourceType: 'flows',
     resourceId: flow._id,
     disabled,
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
 

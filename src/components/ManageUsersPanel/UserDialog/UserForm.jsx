@@ -178,7 +178,7 @@ export default function UserForm({
       ],
     },
   };
-  const formKey = useFormInitWithPermissions({ fieldsMeta: fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
     <LoadResources required resources="integrations">

@@ -348,7 +348,7 @@ export default function CronBuilder(props) {
 
   // TODO:Verify changes
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: meta,
+    fieldMeta: meta,
     remount: count,
   });
   const form = useFormContext(formKey);

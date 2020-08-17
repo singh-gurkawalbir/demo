@@ -8,7 +8,7 @@ describe('reducer expression test cases', () => {
   describe('validation expression test case', () => {
     describe('shown validation errors immediately', () => {
       let formState;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           field1: {
             id: 'FIELD1',
@@ -46,7 +46,7 @@ describe('reducer expression test cases', () => {
         formState = forms(
           undefined,
           actions.form.init(formKey, {
-            fieldsMeta,
+            fieldMeta,
             showValidationBeforeTouched: true,
           })
         );
@@ -96,7 +96,7 @@ describe('reducer expression test cases', () => {
     });
     describe('shown validation errors only for fields touched', () => {
       let formState;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           field1: {
             id: 'FIELD1',
@@ -134,7 +134,7 @@ describe('reducer expression test cases', () => {
         formState = forms(
           undefined,
           actions.form.init(formKey, {
-            fieldsMeta,
+            fieldMeta,
           })
         );
       });
@@ -183,7 +183,7 @@ describe('reducer expression test cases', () => {
   // couldn't apply verify new field instances behaviour for both required and visible test suite since any change should affect both the fields
   describe('required expression test case', () => {
     let formState;
-    const fieldsMeta = {
+    const fieldMeta = {
       fieldMap: {
         requiredField: {
           id: 'FIELD1',
@@ -210,7 +210,7 @@ describe('reducer expression test cases', () => {
       formState = forms(
         undefined,
         actions.form.init(formKey, {
-          fieldsMeta,
+          fieldMeta,
         })
       );
     });
@@ -251,7 +251,7 @@ describe('reducer expression test cases', () => {
 
   describe('visible expression test case', () => {
     let formState;
-    const fieldsMeta = {
+    const fieldMeta = {
       fieldMap: {
         visibleField: {
           id: 'FIELD1',
@@ -278,7 +278,7 @@ describe('reducer expression test cases', () => {
       formState = forms(
         undefined,
         actions.form.init(formKey, {
-          fieldsMeta,
+          fieldMeta,
         })
       );
     });
@@ -326,7 +326,7 @@ describe('reducer expression test cases', () => {
 
     Object.keys(supportedExpression).forEach(expression => {
       test(`the default expression state for ${expression} should be true`, () => {
-        const fieldsMeta = {
+        const fieldMeta = {
           fieldMap: {
             field: {
               id: 'FIELD1',
@@ -340,12 +340,12 @@ describe('reducer expression test cases', () => {
           layout: { fields: ['field'] },
         };
 
-        fieldsMeta.fieldMap.field[supportedExpression[expression]] = true;
+        fieldMeta.fieldMap.field[supportedExpression[expression]] = true;
 
         const formState = forms(
           undefined,
           actions.form.init(formKey, {
-            fieldsMeta,
+            fieldMeta,
           })
         );
         const { FIELD1 } = formState[formKey].fields;
@@ -358,7 +358,7 @@ describe('reducer expression test cases', () => {
   describe('force field state behavior', () => {
     describe('visible behavior ', () => {
       let formState;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           visibleField: {
             id: 'FIELD1',
@@ -385,7 +385,7 @@ describe('reducer expression test cases', () => {
         formState = forms(
           undefined,
           actions.form.init(formKey, {
-            fieldsMeta,
+            fieldMeta,
           })
         );
       });
@@ -431,7 +431,7 @@ describe('reducer expression test cases', () => {
 
     describe('valid behavior', () => {
       let formState;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           field1: {
             id: 'FIELD1',
@@ -455,7 +455,7 @@ describe('reducer expression test cases', () => {
         formState = forms(
           undefined,
           actions.form.init(formKey, {
-            fieldsMeta,
+            fieldMeta,
             showValidationBeforeTouched: true,
           })
         );

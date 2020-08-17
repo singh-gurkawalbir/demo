@@ -198,7 +198,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
     },
   };
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
 

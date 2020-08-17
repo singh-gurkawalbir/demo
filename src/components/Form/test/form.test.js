@@ -35,16 +35,16 @@ export function reduxWrappedComponent({ Component, store, componentProps }) {
 }
 
 export const Component = hookProps => {
-  const { fieldsMeta } = hookProps;
+  const { fieldMeta } = hookProps;
   const formKey = useForm(hookProps);
 
   if (!formKey) return null;
 
-  return <FormGenerator {...fieldsMeta} formKey={formKey} />;
+  return <FormGenerator {...fieldMeta} formKey={formKey} />;
 };
 
 describe('validation warnings', () => {
-  const fieldsMeta = {
+  const fieldMeta = {
     fieldMap: {
       field1: {
         id: 'FIELD1',
@@ -91,7 +91,7 @@ describe('validation warnings', () => {
           store,
           componentProps: {
             formKey: null,
-            fieldsMeta,
+            fieldMeta,
             showValidationBeforeTouched: true,
           },
         })
@@ -109,7 +109,7 @@ describe('validation warnings', () => {
           store,
           componentProps: {
             formKey: 123,
-            fieldsMeta,
+            fieldMeta,
             showValidationBeforeTouched: true,
           },
         })
@@ -137,7 +137,7 @@ describe('validation warnings', () => {
         reduxWrappedComponent({
           Component,
           store,
-          componentProps: { formKey, fieldsMeta },
+          componentProps: { formKey, fieldMeta },
         })
       ));
     });
@@ -181,7 +181,7 @@ describe('validation warnings', () => {
 describe('visible behavior', () => {
   const formKey = '123';
   let store;
-  const fieldsMeta = {
+  const fieldMeta = {
     fieldMap: {
       visibleField: {
         id: 'FIELD1',
@@ -221,7 +221,7 @@ describe('visible behavior', () => {
       reduxWrappedComponent({
         Component,
         store,
-        componentProps: { formKey, fieldsMeta },
+        componentProps: { formKey, fieldMeta },
       })
     ));
   });
@@ -270,7 +270,7 @@ describe('visible behavior', () => {
 describe('required behavior', () => {
   const formKey = '123';
   let store;
-  const fieldsMeta = {
+  const fieldMeta = {
     fieldMap: {
       requiredField: {
         id: 'FIELD1',
@@ -312,7 +312,7 @@ describe('required behavior', () => {
         store,
         componentProps: {
           formKey,
-          fieldsMeta,
+          fieldMeta,
           showValidationBeforeTouched: true,
         },
       })
@@ -372,7 +372,7 @@ describe('required behavior', () => {
 });
 
 describe('changing form value prop', () => {
-  const fieldsMeta = {
+  const fieldMeta = {
     fieldMap: {
       field1: {
         id: 'FIELD1',
@@ -406,7 +406,7 @@ describe('changing form value prop', () => {
         reduxWrappedComponent({
           Component,
           store,
-          componentProps: { formKey, fieldsMeta },
+          componentProps: { formKey, fieldMeta },
         })
       );
     });
@@ -445,7 +445,7 @@ describe('various layout specific behavior ', () => {
       let store;
       let queryAllByText;
       let queryByDisplayValue;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           FIELD1: {
             id: 'FIELD1',
@@ -491,7 +491,7 @@ describe('various layout specific behavior ', () => {
             store,
             componentProps: {
               formKey,
-              fieldsMeta,
+              fieldMeta,
               showValidationBeforeTouched: true,
             },
           })
@@ -529,7 +529,7 @@ describe('various layout specific behavior ', () => {
       let store;
       let queryByTestId;
       let queryByDisplayValue;
-      const fieldsMeta = {
+      const fieldMeta = {
         fieldMap: {
           FIELD1: {
             id: 'FIELD1',
@@ -569,7 +569,7 @@ describe('various layout specific behavior ', () => {
             store,
             componentProps: {
               formKey,
-              fieldsMeta,
+              fieldMeta,
               showValidationBeforeTouched: true,
             },
           })

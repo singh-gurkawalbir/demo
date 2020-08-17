@@ -19,7 +19,7 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
     }
   );
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: rest,
+    fieldMeta: rest,
     optionsHandler,
   });
 

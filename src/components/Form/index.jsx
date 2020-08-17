@@ -11,7 +11,7 @@ const normalizeAllPropsToFormApi = props => {
     disabled,
     showValidationBeforeTouched,
     conditionalUpdate,
-    fieldsMeta,
+    fieldMeta,
     ...rest
   } = props;
   const formApiProps = {
@@ -23,7 +23,7 @@ const normalizeAllPropsToFormApi = props => {
     // lets get rid of conditional update
 
     conditionalUpdate,
-    fieldsMeta,
+    fieldMeta,
     // deprecated Value
     // value,
   };
@@ -35,9 +35,9 @@ const normalizeAllPropsToFormApi = props => {
   return formApiProps;
 };
 
-export const generateSimpleLayout = fieldsMeta => {
-  if (!fieldsMeta) return null;
-  const { fieldMap, layout } = fieldsMeta;
+export const generateSimpleLayout = fieldMeta => {
+  if (!fieldMeta) return null;
+  const { fieldMap, layout } = fieldMeta;
 
   if (!fieldMap) return null;
 
@@ -53,7 +53,7 @@ export const generateSimpleLayout = fieldsMeta => {
     };
   }
 
-  return fieldsMeta;
+  return fieldMeta;
 };
 
 export default function useForm({
@@ -66,7 +66,7 @@ export default function useForm({
   const {
     disabled,
     showValidationBeforeTouched,
-    fieldsMeta,
+    fieldMeta,
   } = formSpecificProps;
 
   const dispatch = useDispatch();
@@ -87,12 +87,12 @@ export default function useForm({
 
     setFormKeyUsed(finalFormKey);
 
-    const updatedFieldMeta = generateSimpleLayout(fieldsMeta);
+    const updatedFieldMeta = generateSimpleLayout(fieldMeta);
 
     if (updatedFieldMeta) {
       dispatch(
         actions.form.init(finalFormKey, {
-          ...normalizeAllPropsToFormApi({...formSpecificProps, fieldsMeta: updatedFieldMeta}),
+          ...normalizeAllPropsToFormApi({...formSpecificProps, fieldMeta: updatedFieldMeta}),
         })
       );
     }

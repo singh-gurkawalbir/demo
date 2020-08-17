@@ -83,7 +83,7 @@ const FirstLevelModal = props => {
     },
   };
   const formKey = useFormInitWithPermissions({
-    fieldsMeta: fieldMeta,
+    fieldMeta,
     optionsHandler,
   });
 
