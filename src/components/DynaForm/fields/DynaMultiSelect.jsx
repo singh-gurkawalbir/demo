@@ -110,6 +110,10 @@ export default function DynaMultiSelect(props) {
       ),
     []
   );
+
+  /**
+   * Get a list of option items to filter out invalid options from value, when removeInvalidValues prop is set
+   */
   const optionItems = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -126,6 +130,7 @@ export default function DynaMultiSelect(props) {
 
   useEffect(() => {
     if (removeInvalidValues) {
+      // If the value contains any item not present in the options array, remove it.
       if (Array.isArray(processedValue) &&
        processedValue.length &&
         processedValue.filter(val => optionItems.includes(val))?.length !== processedValue.length) {
