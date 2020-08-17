@@ -12,8 +12,7 @@ import CloseIcon from '../icons/CloseIcon';
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
     display: 'flex',
-    margin: theme.spacing(0, 2),
-    padding: theme.spacing(2, 0, 1, 0),
+    padding: theme.spacing(2),
 
   },
   actionButton: {

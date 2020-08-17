@@ -40,6 +40,7 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -69,6 +70,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -109,17 +111,6 @@ genSelectors(selectors, subSelectors);
 
 // additional user defined selectors
 selectors.userState = state => state && state.user;
-// TODO: Do we really need to proxy all selectors here?
-// Instead, we could only have the selectors that cross
-// state subdivisions (marked GLOBAL right now)
-// This is a lot of boiler plate code to maintain for the
-// sole purpose of abstracting the state "shape" completely.
-// It may be just fine to directly reference the primary state
-// subdivisions (data, session, comms) in order to simplify the code further...
-
-// -------------------
-// Following this pattern:
-// https://hackernoon.com/selector-pattern-painless-redux-state-destructuring-bfc26b72b9ae
 
 // #region PUBLIC COMMS SELECTORS
 // Use shallowEquality operator to prevent re-renders.
@@ -129,14 +120,12 @@ selectors.commsErrors = state => {
   const commsState = state?.comms?.networkComms;
 
   if (!commsState) return;
-  // console.log(commsState);
-  let errors;
+  const errors = {};
 
   Object.keys(commsState).forEach(key => {
     const c = commsState[key];
 
     if (!c.hidden && c.status === COMM_STATES.ERROR) {
-      if (!errors) errors = {};
       errors[key] = inferErrorMessage(c.message);
     }
   });
@@ -2963,7 +2952,7 @@ selectors.auditLogs = (
     const resourceIds = [
       ...exports,
       ...imports,
-      ...flows,
+      ...map(flows, '_id'),
       ...map(connections, '_id'),
     ];
 
@@ -3141,8 +3130,8 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports[cJob._importId]?.name,
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3171,6 +3160,54 @@ selectors.flowJobs = (state, options = {}) => {
 
     return { ...job, ...additionalProps };
   });
+};
+
+selectors.latestFlowJobs = createSelector(
+  state => selectors.flowJobs(state),
+  jobList => {
+    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
+    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+
+    // If there are any in progress jobs too, show them with queued jobs if exist
+    if (inProgressJobs.length) {
+      return [...queuedJobs, ...inProgressJobs];
+    }
+    // show queued jobs if exist
+    if (queuedJobs.length) {
+      return queuedJobs;
+    }
+
+    // If there are no in progress / queued jobs, show the latest job
+    // TODO : Discuss on this use case on what to show
+    return jobList[0] ? [jobList[0]] : emptySet;
+  });
+
+selectors.flowDashboardDetails = createSelector(
+  state => selectors.latestFlowJobs(state),
+  latestJobs => {
+    if (!latestJobs.length) return emptySet;
+
+    const childJobDetails = [];
+
+    latestJobs.forEach(job => {
+      if (job.status === JOB_STATUS.QUEUED) {
+        childJobDetails.push(job);
+      } else if (job.children?.length) {
+        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+      }
+    });
+
+    return childJobDetails;
+  });
+
+selectors.areFlowJobsLoading = (state, filters = {}) => {
+  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters,
+  }) || {};
+
+  const commKey = commKeyGen(path, opts.method);
+
+  return fromComms.isLoading(state.comms, commKey);
 };
 
 selectors.flowJob = (state, ops = {}) => {
@@ -3437,7 +3474,7 @@ selectors.transferListWithMetadata = state => {
     updatedTransfers[i].integrations = integrations;
   });
 
-  return { resources: updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved') };
+  return updatedTransfers.filter(t => !t.isInvited || t.status !== 'unapproved');
 };
 
 selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
@@ -3522,7 +3559,7 @@ selectors.getAvailableResourcePreviewStages = (
   return getAvailablePreviewStages(resourceObj, { isDataLoader, isRestCsvExport });
 };
 
-selectors.isPostUrlAvailableForPreviewPanel = (state, resourceId, resourceType) => {
+selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceType) => {
   const resourceObj = selectors.resourceData(
     state,
     resourceType,
@@ -3662,13 +3699,6 @@ selectors.isPreviewPanelAvailableForResource = (
 
   if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
     return true;
-  }
-  // Preview panel is not shown for lookups
-  if (
-    resourceObj.isLookup ||
-    selectors.isLookUpExport(state, { resourceId, flowId, resourceType })
-  ) {
-    return false;
   }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
@@ -4230,7 +4260,7 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
+  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
 import clsx from 'clsx';
@@ -7,8 +7,9 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ActionButton from '../../ActionButton';
 import ExitIcon from '../../icons/ExitIcon';
-import ModalDialog from '../../ModalDialog';
-import SqlQueryBuilderEditorDialog from '../../AFE/SqlQueryBuilderEditor/Dialog';
+import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
+import FieldHelp from '../FieldHelp';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,6 +28,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     height: theme.spacing(10),
   },
+  dynaSqlQueryWrapper: {
+    display: 'flex',
+  },
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '50vh',
@@ -36,7 +40,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaSqlQuery(props) {
   const dispatch = useDispatch();
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
     id,
@@ -51,9 +54,7 @@ export default function DynaSqlQuery(props) {
     isValid,
     errorMessages,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const isPageGenerator = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId, resourceType)
@@ -88,26 +89,6 @@ export default function DynaSqlQuery(props) {
     }
   };
 
-  const editorDialog = (
-    <ModalDialog
-      show
-      handleClose={handleEditorClick}
-      aria-labelledby="form-dialog-title">
-      <div>{label}</div>
-      <div className={classes.editorContainer}>
-        <SqlQueryBuilderEditorDialog
-          title="SQL Query"
-          id={`${id}-inline`}
-          rule={value}
-          sampleData={JSON.stringify(sampleData, null, 2)}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          disabled={disabled}
-          showDefaultData={false}
-        />
-      </div>
-    </ModalDialog>
-  );
   const onChange = useCallback(value => onFieldChange(id, value), [
     id,
     onFieldChange,
@@ -117,15 +98,26 @@ export default function DynaSqlQuery(props) {
     <>
       <ActionButton
         data-test={id}
-        onClick={handleEditorClick}
+        onClick={handleOpenDrawer}
         className={classes.editorButton}>
         <ExitIcon />
       </ActionButton>
       <div className={classes.container}>
-        {showEditor && editorDialog}
+        <SqlQueryBuilderEditorDrawer
+          title="SQL Query"
+          id={`${id}-inline`}
+          rule={value}
+          sampleData={JSON.stringify(sampleData, null, 2)}
+          onSave={handleSave}
+          disabled={disabled}
+          showDefaultData={false}
+          path={id}
+        />
 
-        <FormLabel className={classes.label}>{label}</FormLabel>
-
+        <div className={classes.dynaSqlQueryWrapper}>
+          <FormLabel className={classes.label}>{label}</FormLabel>
+          <FieldHelp {...props} />
+        </div>
         <div
           className={clsx(
             classes.inlineEditorContainer,

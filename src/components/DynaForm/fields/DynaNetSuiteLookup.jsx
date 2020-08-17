@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { TextField, FormControl, FormLabel } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import NetSuiteLookupFilterEditorDialog from '../../AFE/NetSuiteLookupFilterEditor';
+import NetSuiteLookupFilterEditorDrawer from '../../AFE/NetSuiteLookupFilterEditor/Drawer';
 import actions from '../../../actions';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
 import ActionButton from '../../ActionButton';
 import FilterIcon from '../../icons/FilterIcon';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   dynaNetsuiteLookupFormControl: {
@@ -31,10 +32,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DynaNetSuiteLookup(props) {
-  const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const {
-    // disabled,
     errorMessages,
     id,
     isValid,
@@ -48,18 +47,16 @@ export default function DynaNetSuiteLookup(props) {
     label,
     options,
   } = props;
-  const handleEditorClick = () => {
-    setShowEditor(!showEditor);
-  };
+  const handleOpenDrawer = usePushRightDrawer(id);
 
   const dispatch = useDispatch();
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { rule } = editorValues;
 
       onFieldChange(id, JSON.stringify(rule));
     }
-  };
+  }, [id, onFieldChange]);
 
   const extractFields = useSelector(state =>
     selectors.getSampleData(state, {
@@ -105,18 +102,14 @@ export default function DynaNetSuiteLookup(props) {
 
   return (
     <>
-      {showEditor && (
-        <NetSuiteLookupFilterEditorDialog
-          title="Define lookup criteria"
-          id={id}
-          data={formattedExtractFields}
-          value={rule}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          // disabled={disabled}
-          options={options}
+      <NetSuiteLookupFilterEditorDrawer
+        title="Define lookup criteria"
+        id={id}
+        data={formattedExtractFields}
+        value={rule}
+        onSave={handleSave}
+        options={options}
         />
-      )}
 
       <FormControl className={classes.dynaNetsuiteLookupFormControl}>
         <div className={classes.dynaNetsuiteLookupLabelWrapper}>
@@ -146,7 +139,7 @@ export default function DynaNetSuiteLookup(props) {
           <ActionButton
             disabled={options?.disableFetch}
             data-test={id}
-            onClick={handleEditorClick}
+            onClick={handleOpenDrawer}
             className={classes.dynaNetsuiteLookupActionBtn}>
             <FilterIcon />
           </ActionButton>

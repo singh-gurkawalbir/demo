@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
-    height: '100%',
     overflowY: 'auto',
+    height: 'calc(100vh - 200px)',
   },
 }));
 const defaultFilters = [];
@@ -72,6 +72,12 @@ export default function FilterPanel({
               filterData.id = `val:${filter.value.replace('.internalid', '')}`;
             } else {
               filterData.id = `text:${filter.value}`;
+            }
+          } else if (filter.type === 'multiselect') {
+            if (filter.value.includes('.internalid')) {
+              filterData.id = `vals:${filter.value.replace('.internalid', '')}`;
+            } else {
+              filterData.id = `texts:${filter.value}`;
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [

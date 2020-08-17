@@ -13,11 +13,11 @@ import {
 // import { differenceInHours, fromUnixTime } from 'date-fns';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
+import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
-import { getLabel } from '../../../../utils/flowMetrics';
 import actions from '../../../../actions';
-import Loader from '../../../../components/Loader';
 import Spinner from '../../../../components/Spinner';
+import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,7 +58,7 @@ const getLegend = index => {
 };
 
 const Chart = ({ id, flowId, selectedResources }) => {
-  const { data: flowData } =
+  const { data = [{time: new Date().toISOString()}] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
@@ -76,18 +76,14 @@ const Chart = ({ id, flowId, selectedResources }) => {
   };
 
   const parseValue = (value, name) => [value, getResourceName(name)];
-  const renderColorfulLegendText = (value, entry) => {
-    const { color } = entry;
-
-    return <span style={{ color }}>{getResourceName(value)}</span>;
-  };
+  const renderColorfulLegendText = (value, { color }) => <span style={{ color }}>{getResourceName(value)}</span>;
 
   return (
     <>
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={flowData}
+          data={data}
           margin={{
             top: 5,
             right: 30,
@@ -104,7 +100,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
             yAxisId={id}
             type="number"
             label={{
-              value: '# of transmissions',
+              value: getAxisLabel(id),
               angle: -90,
               position: 'insideLeft',
               textAnchor: 'middle',
@@ -146,10 +142,9 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   if (data.status === 'requested') {
     return (
-      <Loader open hideBackDrop>
-        <Typography variant="body2">Loading</Typography>
-        <Spinner color="primary" size={24} />
-      </Loader>
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
     );
   }
   if (data.status === 'error') {

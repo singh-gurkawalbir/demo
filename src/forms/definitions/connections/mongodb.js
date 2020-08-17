@@ -3,6 +3,9 @@ export default {
     const newValues = { ...formValues };
 
     newValues['/mongodb/host'] = [newValues['/mongodb/host']];
+    if (newValues['/mode'] === 'cloud') {
+      newValues['/_agentId'] = undefined;
+    }
     delete newValues['/mode'];
 
     return newValues;

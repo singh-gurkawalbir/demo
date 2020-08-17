@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
-import JavaScriptEditorDialog from '../../../../components/AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDrawer from '../../../../components/AFE/JavaScriptEditor/Drawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 
-function PostResponseMapHookDialog({
+function PostResponseMapHookDrawer({
   flowId,
   resource,
   isViewMode,
@@ -65,7 +65,7 @@ function PostResponseMapHookDialog({
   );
 
   return (
-    <JavaScriptEditorDialog
+    <JavaScriptEditorDrawer
       title="Script editor"
       id={resourceId + flowId}
       key={resourceId + flowId}
@@ -80,6 +80,7 @@ function PostResponseMapHookDialog({
       onClose={onClose}
       optionalSaveParams={optionalSaveParams}
       isSampleDataLoading={sampleDataStatus === 'requested'}
+      path="postResponseMapHook"
     />
   );
 }
@@ -88,7 +89,7 @@ function PostResponseMapHook(props) {
   const { open } = props;
 
   return (
-    <>{open && <PostResponseMapHookDialog {...props} />}</>
+    <>{open && <PostResponseMapHookDrawer {...props} />}</>
   );
 }
 

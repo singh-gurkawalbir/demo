@@ -52,7 +52,7 @@ function GenerateUrl(props) {
     resourceId;
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Your URL has been copied to your clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
     if (inValidFields(webookRequiredFields, fieldStates)) {
       webookRequiredFields.forEach(fieldId => {

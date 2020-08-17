@@ -45,7 +45,7 @@ export function* createComponents({ templateId, runKey }) {
     selectors.templateSetup,
     templateId
   );
-  const template = yield select(selectors.marketplaceTemplate, { templateId });
+  const template = yield select(selectors.marketplaceTemplateById, { templateId });
   const userPreferences = yield select(selectors.userPreferences);
   const sandbox = userPreferences.environment === 'sandbox';
   const path = `/integrations/template${runKey ? '' : `/${templateId}`}`;

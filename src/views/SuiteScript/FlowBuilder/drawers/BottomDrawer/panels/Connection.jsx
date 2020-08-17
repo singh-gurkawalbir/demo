@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import LoadResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
-import metadata from '../../../../../../components/ResourceTable/metadata/suiteScript/connections';
+import metadata from '../../../../../../components/ResourceTable/suiteScript/connections/metadata';
 import { selectors } from '../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({

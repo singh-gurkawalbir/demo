@@ -11,7 +11,7 @@ import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import CeligoTable from '../../../../../components/CeligoTable';
-import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
+import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';

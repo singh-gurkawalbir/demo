@@ -1,4 +1,4 @@
-import { applicationsList } from '../../../views/TemplateList/util';
+import { applicationsList } from '../../../constants/templates';
 
 export default {
   name: {

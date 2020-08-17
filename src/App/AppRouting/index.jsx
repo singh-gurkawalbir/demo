@@ -11,72 +11,73 @@ import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
+import retry from '../../utils/retry';
 
 const RecycleBin = loadable(() =>
-  import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin')
+  retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
 );
 const Dashboard = loadable(() =>
-  import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard')
+  retry(() => import(/* webpackChunkName: 'Dashboard' */ '../../views/Dashboard'))
 );
 const NotFound = loadable(() =>
-  import(/* webpackChunkName: 'NotFound' */ '../../views/NotFound')
+  retry(() => import(/* webpackChunkName: 'NotFound' */ '../../views/NotFound'))
 );
 const Permissions = loadable(() =>
-  import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions')
+  retry(() => import(/* webpackChunkName: 'Permissions' */ '../../views/Permissions'))
 );
 const Editors = loadable(() =>
-  import(/* webpackChunkName: 'Editors' */ '../../views/Editors')
+  retry(() => import(/* webpackChunkName: 'Editors' */ '../../views/Editors'))
 );
 const FlowBuilder = loadable(() =>
-  import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder')
+  retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder'))
 );
 const ResourceList = loadable(() =>
-  import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList')
+  retry(() => import(/* webpackChunkName: 'ResourceList' */ '../../views/ResourceList'))
 );
 const TemplateList = loadable(() =>
-  import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList')
+  retry(() => import(/* webpackChunkName: 'Marketplace' */ '../../views/TemplateList'))
 );
 const MyAccount = loadable(() =>
-  import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount')
+  retry(() => import(/* webpackChunkName: 'MyAccount' */ '../../views/MyAccount'))
 );
 const Integration = loadable(() =>
-  import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration')
+  retry(() => import(/* webpackChunkName: 'IntegrationApp' */ '../../views/Integration'))
 );
 const AccessTokenList = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'AccessTokensList' */ '../../views/AccessTokenList'
-  )
+  ))
 );
 const ConnectorInstallBase = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'InstallBase' */ '../../views/Connector/InstallBase'
-  )
+  ))
 );
 const ConnectorLicenses = loadable(() =>
-  import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses')
+  retry(() => import(/* webpackChunkName: 'Licenses' */ '../../views/Connector/Licenses'))
 );
 
 const SuiteScriptIntegration = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/DIY'
-  )
+  ))
 );
 
 const SuiteScriptIntegrationApp = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'SuiteScriptIntegration' */ '../../views/SuiteScript/Integration/App'
-  )
+  ))
 );
 
 const SuiteScriptFlowBuilder = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'SuiteScriptFlowBuilder' */ '../../views/SuiteScript/FlowBuilder'
-  )
+  ))
 );
 const SuiteScriptIntegrationAppInstallation = loadable(() =>
-  import(
+  retry(() => import(
     /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/SuiteScript/Integration/App/Install'
-  )
+  ))
 );
 
 export default function AppRouting() {
