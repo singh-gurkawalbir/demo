@@ -129,6 +129,10 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     case actionsMap.hooks: {
       // for NS exports hooks(suitescript) will be stored in netsuite -> restlet/distributed schema
       // and for NS imports hooks is stored in netsuite_da schema
+
+      /* TODO: remove the preSend checks once BE fixes IO-17088 and
+         IO-6602(confirm with BE on this as they still haven't removed batchSize from restlet.hooks object)
+      */
       return !!hooks || !!netsuite.restlet?.hooks?.preSend || !!netsuite.distributed?.hooks?.preSend?.function || !!netsuite_da.hooks;
     }
     case actionsMap.responseMapping: {
