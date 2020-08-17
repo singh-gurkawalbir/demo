@@ -97,15 +97,32 @@ export default {
       ],
     },
     dataMappings: { formId: 'dataMappings' },
-    advancedSettings: {
-      formId: 'advancedSettings',
-      visibleWhenAll: [
+    idLockTemplate: {
+      fieldId: 'idLockTemplate',
+      visibleWhen: [
         {
           field: 'inputMode',
           is: ['records'],
         },
       ],
     },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+      visibleWhenA: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    apiIdentifier: {
+      fieldId: 'apiIdentifier',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ], },
     settings: { fieldId: 'settings' },
   },
   layout: {
@@ -145,7 +162,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.batchSize', 'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
+          'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },
