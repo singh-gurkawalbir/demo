@@ -46,6 +46,9 @@ export default {
         return 'records';
       },
     },
+    'netsuite_da.batchSize': {
+      fieldId: 'netsuite_da.batchSize',
+    },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
@@ -142,7 +145,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
+          'netsuite_da.batchSize', 'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
       },
     ],
   },
