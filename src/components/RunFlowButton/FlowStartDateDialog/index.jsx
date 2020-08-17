@@ -79,7 +79,7 @@ export default function FlowStartDateDialog(props) {
   };
 
   if (!selectorStatus) {
-    return <Spinner />;
+    return <Spinner size={24} color="primary" />;
   }
 
   if (selectorStatus === 'error') {
@@ -93,8 +93,8 @@ export default function FlowStartDateDialog(props) {
   });
 
   return (
-    <ModalDialog show minWidth="sm" onClose={onClose}>
-      <div>Delta Flow</div>
+    <ModalDialog show onClose={onClose}>
+      <div>Delta flow</div>
       <div>
         <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
           <DynaSubmit

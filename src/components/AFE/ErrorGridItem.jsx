@@ -28,11 +28,10 @@ export default function ErrorGridItem({ error, violations }) {
   const classes = useStyles();
 
   if (!error && !violations) return null;
-
   const errorText = [
-    JSON.stringify(error),
-    violations && violations.ruleError,
-    violations && violations.dataError,
+    ...(Array.isArray(error) ? error : [error]),
+    violations?.ruleError,
+    violations?.dataError,
   ]
     .filter(e => !!e)
     .join('\n');

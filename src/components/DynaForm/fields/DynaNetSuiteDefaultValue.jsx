@@ -44,8 +44,7 @@ export default function DynaNetSuiteDefaultValue(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { data, status } = useSelector(state =>
-    selectors.metadataOptionsAndResources({
-      state,
+    selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath,
       filterKey: options.filterKey || filterKey,

@@ -25,7 +25,7 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
   let childJobIndex = -1;
 
   if (parentJobIndex > -1 && jobId) {
-    childJobIndex = jobs[parentJobIndex].children.findIndex(
+    childJobIndex = jobs[parentJobIndex]?.children?.findIndex(
       cj => cj._id === jobId
     );
   }
@@ -36,8 +36,8 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
   };
 }
 
-function parseJobErrors(collection = []) {
-  const errors = collection.map(je => ({
+function parseJobErrors(collection) {
+  const errors = (collection || []).map(je => ({
     _id: shortid.generate(),
     ...je,
   }));

@@ -21,6 +21,7 @@ export function* pageProcessorPreview({
   hidden = false,
   throwOnError = false,
   refresh = false,
+  includeStages = false,
 }) {
   if (!flowId || !_pageProcessorId) return;
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
@@ -85,7 +86,7 @@ export function* pageProcessorPreview({
     });
   }
 
-  const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap };
+  const body = { flow, _pageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
 
   try {
     const previewData = yield call(apiCallWithRetry, {

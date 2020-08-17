@@ -1,6 +1,7 @@
 import { each } from 'lodash';
 import { MAX_FILE_SIZE } from './constants';
 import { isJsonString } from './string';
+import retry from './retry';
 
 // A map that returns corresponding application file types used for file uploading
 export const fileTypeToApplicationTypeMap = {
@@ -83,7 +84,7 @@ export const getJSONContent = data => {
  * @returns {object} CSV Data
  */
 export async function getCsvFromXlsx(data) {
-  const { default: XLSX } = await import(/* webpackChunkName: "XLSX" */'xlsx');
+  const { default: XLSX } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx'));
   let workBook;
   let result;
 

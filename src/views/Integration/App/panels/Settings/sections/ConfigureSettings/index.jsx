@@ -10,6 +10,7 @@ import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIAS
 
 const useStyles = makeStyles(theme => ({
   configureform: {
+    minHeight: 300,
     padding: theme.spacing(2, 3),
     '& + div': {
       padding: theme.spacing(2, 0),
@@ -19,19 +20,9 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
     },
-    '& > div[class*= "fieldsContainer"]': {
-      height: '100%',
-      '& > div[class*= "makeStyles-root"]': {
-        paddingTop: theme.spacing(5),
-        height: '100%',
-        '& > div[class*= "panelContainer"]': {
-          paddingBottom: theme.spacing(5),
-        },
-      },
-    },
   },
   configureCamForm: {
-    minHeight: '100%',
+    minHeight: 300,
   },
 }));
 

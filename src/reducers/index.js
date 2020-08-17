@@ -40,6 +40,7 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -69,6 +70,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -2950,7 +2952,7 @@ selectors.auditLogs = (
     const resourceIds = [
       ...exports,
       ...imports,
-      ...flows,
+      ...map(flows, '_id'),
       ...map(connections, '_id'),
     ];
 
@@ -3128,8 +3130,8 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-            ? resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports[cJob._importId]?.name,
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3158,6 +3160,54 @@ selectors.flowJobs = (state, options = {}) => {
 
     return { ...job, ...additionalProps };
   });
+};
+
+selectors.latestFlowJobs = createSelector(
+  state => selectors.flowJobs(state),
+  jobList => {
+    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
+    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+
+    // If there are any in progress jobs too, show them with queued jobs if exist
+    if (inProgressJobs.length) {
+      return [...queuedJobs, ...inProgressJobs];
+    }
+    // show queued jobs if exist
+    if (queuedJobs.length) {
+      return queuedJobs;
+    }
+
+    // If there are no in progress / queued jobs, show the latest job
+    // TODO : Discuss on this use case on what to show
+    return jobList[0] ? [jobList[0]] : emptySet;
+  });
+
+selectors.flowDashboardDetails = createSelector(
+  state => selectors.latestFlowJobs(state),
+  latestJobs => {
+    if (!latestJobs.length) return emptySet;
+
+    const childJobDetails = [];
+
+    latestJobs.forEach(job => {
+      if (job.status === JOB_STATUS.QUEUED) {
+        childJobDetails.push(job);
+      } else if (job.children?.length) {
+        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+      }
+    });
+
+    return childJobDetails;
+  });
+
+selectors.areFlowJobsLoading = (state, filters = {}) => {
+  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
+    filters,
+  }) || {};
+
+  const commKey = commKeyGen(path, opts.method);
+
+  return fromComms.isLoading(state.comms, commKey);
 };
 
 selectors.flowJob = (state, ops = {}) => {
@@ -3649,13 +3699,6 @@ selectors.isPreviewPanelAvailableForResource = (
 
   if (selectors.isDataLoaderExport(state, resourceId, flowId)) {
     return true;
-  }
-  // Preview panel is not shown for lookups
-  if (
-    resourceObj.isLookup ||
-    selectors.isLookUpExport(state, { resourceId, flowId, resourceType })
-  ) {
-    return false;
   }
 
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
@@ -4221,6 +4264,10 @@ selectors.flowResources = (state, flowId) => {
 
   resources.push({ _id: flowId, name: 'Flow-level' });
 
+  if (!flow) {
+    return resources;
+  }
+
   if (flow._exportId) {
     const exportDoc = fromData.resource(
       state && state.data,
@@ -4228,7 +4275,9 @@ selectors.flowResources = (state, flowId) => {
       flow._exportId
     );
 
-    resources.push({ _id: flow._exportId, name: exportDoc.name });
+    if (exportDoc) {
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+    }
   }
 
   if (flow._importId) {
@@ -4238,7 +4287,9 @@ selectors.flowResources = (state, flowId) => {
       flow._importId
     );
 
-    resources.push({ _id: flow._exportId, name: importDoc.name });
+    if (importDoc) {
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+    }
   }
 
   if (flow.pageGenerators && flow.pageGenerators.length) {
@@ -4249,7 +4300,9 @@ selectors.flowResources = (state, flowId) => {
         pg._exportId
       );
 
-      resources.push({ _id: pg._exportId, name: exportDoc.name });
+      if (exportDoc) {
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
+      }
     });
   }
 
@@ -4262,7 +4315,9 @@ selectors.flowResources = (state, flowId) => {
           pp._importId
         );
 
-        resources.push({ _id: pp._importId, name: importDoc.name });
+        if (importDoc) {
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
+        }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = fromData.resource(
           state && state.data,
@@ -4270,7 +4325,9 @@ selectors.flowResources = (state, flowId) => {
           pp._exportId
         );
 
-        resources.push({ _id: pp._exportId, name: exportDoc.name });
+        if (exportDoc) {
+          resources.push({ _id: pp._exportId, name: exportDoc.name });
+        }
       }
     });
   }

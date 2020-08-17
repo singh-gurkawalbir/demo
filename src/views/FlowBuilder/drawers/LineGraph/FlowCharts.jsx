@@ -10,10 +10,11 @@ import {
   Line,
   ResponsiveContainer,
 } from 'recharts';
-// import { differenceInHours, fromUnixTime } from 'date-fns';
+import * as d3 from 'd3';
+import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
 import PanelHeader from '../../../../components/PanelHeader';
-import { getLabel, getAxisLabel } from '../../../../utils/flowMetrics';
+import { getLabel, getAxisLabel, getXAxisFormat, getTicks } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Spinner from '../../../../components/Spinner';
@@ -57,12 +58,44 @@ const getLegend = index => {
   return legendTypes[index % 10];
 };
 
-const Chart = ({ id, flowId, selectedResources }) => {
-  const { data = [{time: new Date().toISOString()}] } =
+const Chart = ({ id, flowId, range, selectedResources }) => {
+  const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
   );
+  const { startDate, endDate } = range;
+
+  let dateTimeFormat;
+  const userOwnPreferences = useSelector(
+    state => selectors.userOwnPreferences(state),
+    (left, right) =>
+      left &&
+      right &&
+      left.dateFormat === right.dateFormat &&
+      left.timeFormat === right.timeFormat
+  );
+
+  if (!userOwnPreferences) {
+    dateTimeFormat = 'MM/DD hh:mm';
+  } else {
+    dateTimeFormat = `${userOwnPreferences.dateFormat || 'MM/DD'} ${userOwnPreferences.timeFormat || 'hh:mm'} `;
+  }
+
+  const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
+  const ticks = getTicks(domainRange, range);
+
+  // Add Zero data for ticks
+  ticks.forEach(tick => {
+    if (!data.find(d => d.timeInMills === tick)) {
+      selectedResources.forEach(r => {
+        data.push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
+      });
+    }
+  });
+
+  const flowData = sortBy(data, ['timeInMills']);
+
   const getResourceName = name => {
     const resourceId = name.replace(/-value/, '');
     let modifiedName = resourceId;
@@ -75,7 +108,18 @@ const Chart = ({ id, flowId, selectedResources }) => {
     return modifiedName;
   };
 
-  const parseValue = (value, name) => [value, getResourceName(name)];
+  function CustomTooltip({ payload, label, active }) {
+    if (active && payload[0]?.value) {
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
+          <p> {payload[0]?.value} </p>
+        </div>
+      );
+    }
+
+    return null;
+  }
   const renderColorfulLegendText = (value, { color }) => <span style={{ color }}>{getResourceName(value)}</span>;
 
   return (
@@ -83,7 +127,7 @@ const Chart = ({ id, flowId, selectedResources }) => {
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data}
+          data={flowData}
           margin={{
             top: 5,
             right: 30,
@@ -91,10 +135,12 @@ const Chart = ({ id, flowId, selectedResources }) => {
             bottom: 5,
           }}>
           <XAxis
-            dataKey="time"
-            name="Time"
-            type="category"
-            tickFormatter={unixTime => moment(unixTime).format('DD/MMM HH:mm  ')}
+            dataKey="timeInMills"
+            domain={domainRange}
+            scale="time"
+            type="number"
+            ticks={ticks}
+            tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
             yAxisId={id}
@@ -108,13 +154,14 @@ const Chart = ({ id, flowId, selectedResources }) => {
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
-          <Tooltip formatter={(value, name) => parseValue(value, name)} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend formatter={renderColorfulLegendText} />
           {selectedResources.map((r, i) => (
             <Line
               key={r}
               dataKey={`${r}-value`}
               yAxisId={id}
+              strokeWidth="2"
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
             />
@@ -157,6 +204,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
         <Chart
           key={m}
           id={m}
+          range={range}
           flowId={flowId}
           selectedResources={selectedResources}
         />

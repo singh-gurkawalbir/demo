@@ -39,6 +39,15 @@ export const hooksToFunctionNamesMap = {
   handleRequest: 'handleRequest',
 };
 
+export const hooksToHelpKeyMap = {
+  preSavePage: 'import.hooks.preSavePage',
+  preMap: 'import.hooks.preMap',
+  postMap: 'import.hooks.postMap',
+  postSubmit: 'import.hooks.postSubmit',
+  postAggregate: 'import.hooks.postAggregate',
+  postResponseMap: 'import.hooks.postResponseMap',
+};
+
 export const getScriptHookStub = hook => scriptHookStubs[hook];
 
 export const hooksLabelMap = {

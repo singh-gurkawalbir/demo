@@ -10,17 +10,19 @@ import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import WarningIcon from '../../../../components/icons/WarningIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
-import RunIcon from '../../../../components/icons/RunIcon';
+import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import CloseIcon from '../../../../components/icons/CloseIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
-import RunDashboardPanel from './panels/RunDashboard';
+import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
+import RunDashboardV2Panel from './panels/Dashboard/RunDashboardV2Panel';
 import AuditPanel from './panels/Audit';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -119,9 +121,10 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
-  // Hard coded to false as we need to show bottom drawer
-  // till the new drawers are fully functional
-  const isUserInErrMgtTwoDotZero = false;
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
+
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -188,6 +191,8 @@ export default function BottomDrawer({
     []
   );
 
+  // TODO @Raghu: For all the components used below , cant we just pass flowId rather than the whole flow object
+  // Go through each and update the components
   return (
     <Drawer
       open
@@ -202,40 +207,28 @@ export default function BottomDrawer({
       variant="persistent"
       anchor="bottom">
       <div className={classes.tabBar}>
-        {isUserInErrMgtTwoDotZero ? (
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example">
-            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-          </Tabs>
-        ) : (
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            aria-label="scrollable auto tabs example">
-            <Tab
-              {...tabProps(0)}
-              icon={
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="scrollable auto tabs example">
+          <Tab {...tabProps(0)} icon={<DashboardIcon />} label="Dashboard" />
+          <Tab
+            {...tabProps(1)}
+            icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
                 ) : (
                   <ConnectionsIcon />
                 )
               }
-              label="Connections"
+            label="Connections"
             />
-            <Tab {...tabProps(1)} icon={<RunIcon />} label="Run dashboard" />
-            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-            {connectionDebugLogs &&
+          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+          {connectionDebugLogs &&
               Object.keys(connectionDebugLogs).map(
                 (connectionId, cIndex) =>
                   connectionDebugLogs[connectionId] && (
@@ -258,8 +251,11 @@ export default function BottomDrawer({
                     />
                   )
               )}
-          </Tabs>
-        )}
+        </Tabs>
+        {
+         isUserInErrMgtTwoDotZero && tabValue === 0 &&
+         <RunDashboardActions flowId={flow._id} />
+        }
         <div className={classes.actionsContainer}>
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
@@ -275,22 +271,19 @@ export default function BottomDrawer({
           </IconButton>
         </div>
       </div>
-      {isUserInErrMgtTwoDotZero ? (
+      <>
         <TabPanel value={tabValue} index={0} classes={classes}>
-          <RunDashboardPanel flow={flow} />
+          { isUserInErrMgtTwoDotZero
+            ? <RunDashboardV2Panel flow={flow} />
+            : <RunDashboardPanel flow={flow} />}
         </TabPanel>
-      ) : (
-        <>
-          <TabPanel value={tabValue} index={0} classes={classes}>
-            <ConnectionPanel flow={flow} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={1} classes={classes}>
-            <RunDashboardPanel flow={flow} />
-          </TabPanel>
-          <TabPanel value={tabValue} index={2} classes={classes}>
-            <AuditPanel flow={flow} />
-          </TabPanel>
-          {connectionDebugLogs &&
+        <TabPanel value={tabValue} index={1} classes={classes}>
+          <ConnectionPanel flow={flow} />
+        </TabPanel>
+        <TabPanel value={tabValue} index={2} classes={classes}>
+          <AuditPanel flow={flow} />
+        </TabPanel>
+        {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (
@@ -318,8 +311,7 @@ export default function BottomDrawer({
                   </TabPanel>
                 )
             )}
-        </>
-      )}
+      </>
     </Drawer>
   );
 }
