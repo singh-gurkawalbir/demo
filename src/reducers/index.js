@@ -4326,7 +4326,7 @@ selectors.flowResources = (state, flowId) => {
         );
 
         if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name });
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
         }
       }
     });
