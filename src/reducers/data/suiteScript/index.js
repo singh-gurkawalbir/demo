@@ -498,7 +498,7 @@ selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId
 };
 
 selectors.suiteScriptIASettings = (state, id, ssLinkedConnectionId) => {
-  const integration = selectors.resource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
+  const integration = selectors.suiteScriptResource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
 
   if (!integration) {
     return null;

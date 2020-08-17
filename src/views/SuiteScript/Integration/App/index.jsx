@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { Chip } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
@@ -34,6 +35,9 @@ const useStyles = makeStyles(theme => ({
   editableTextInputShift: {
     width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
   },
+  tag: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 const tabs = [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -66,6 +70,7 @@ export default function Integration({ match }) {
       ssLinkedConnectionId,
     })
   );
+  const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', ssLinkedConnectionId));
   const canEdit = isManageLevelUser && integration && !integration.isNotEditable;
 
   const handleTitleChange = useCallback(
@@ -99,7 +104,7 @@ export default function Integration({ match }) {
   return (
     <>
       <ResourceDrawer match={match} />
-      <LoadResources required resources="integrations">
+      <LoadResources required resources="integrations, connections">
         <LoadSuiteScriptResources
           required
           ssLinkedConnectionId={ssLinkedConnectionId}
@@ -120,6 +125,17 @@ export default function Integration({ match }) {
               />
             )
           }
+            titleTag={
+            ssLinkedConnection?.netsuite?.account && (
+            <Chip
+              disabled
+              className={classes.tag}
+              variant="outlined"
+              label={`V2 ${ssLinkedConnection.netsuite.account}`}
+              size="small"
+            />
+            )
+            }
         />
 
           <IntegrationTabs
