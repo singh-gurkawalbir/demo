@@ -88,7 +88,7 @@ selectors.netsuiteUserRoles = (
       .filter(account => account.account.internalId === acc)
       .map(account => ({
         label: account.role.name,
-        value: account.role.internalId,
+        value: account.role.internalId.toString(),
       }))
       .sort(stringCompare('label'));
 
