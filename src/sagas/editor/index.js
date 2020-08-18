@@ -51,7 +51,16 @@ export function* evaluateProcessor({ id }) {
       if (e.status >= 400 && e.status < 500) {
         const errJSON = JSON.parse(e.message);
 
-        return yield put(actions.editor.evaluateFailure(id, errJSON.message));
+        const errorMessage = [`Message: ${errJSON.message}`];
+
+        if (errJSON.location) {
+          errorMessage.push(`Location: ${errJSON.location}`);
+        }
+        if (errJSON.stack) {
+          errorMessage.push(`Stack: ${errJSON.stack}`);
+        }
+
+        return yield put(actions.editor.evaluateFailure(id, errorMessage));
       }
     }
   }

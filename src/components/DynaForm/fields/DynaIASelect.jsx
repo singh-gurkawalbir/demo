@@ -43,7 +43,8 @@ export default function DynaIASelect(props) {
       <IASelect
         {...props}
         options={[{items: options}]}
+        removeInvalidValues
         onFieldChange={handleFieldChange} />
     )
-    : <IASelect {...props} />;
+    : <IASelect {...props} removeInvalidValues />;
 }
