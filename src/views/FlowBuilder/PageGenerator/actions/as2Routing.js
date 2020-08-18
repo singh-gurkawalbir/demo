@@ -16,6 +16,7 @@ const getFieldMeta = defaultValue => ({
       id: 'as2.contentBasedFlowRouter',
       name: 'contentBasedFlowRouter',
       type: 'hook',
+      editorResultMode: 'text',
       label:
         'Choose a script and function name to use for determining AS2 message routing',
       hookType: 'script',

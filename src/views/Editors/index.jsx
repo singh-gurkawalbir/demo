@@ -20,70 +20,70 @@ import EditorListItem from './EditorListItem';
 const editors = [
   {
     name: 'UrlEditor',
-    label: 'Url editor',
+    label: 'URL editor',
     description:
-      'This editor lets you create and test url templates against your raw data.',
+      'This editor lets you create and test URL templates against your raw data.',
   },
   {
     name: 'HttpRequestBodyEditor',
     label: 'Build HTTP request body',
     description:
-      'This editor lets you create and test json or xml templates against your raw data.',
+      'This editor lets you create and test JSON or XML templates against your raw data.',
   },
   {
     name: 'MergeEditor',
     label: 'Merge editor',
     description:
-      'This editor lets you merge 2 objects. Typical use is to apply defaults to a record.',
+      'This editor lets you merge two objects, such as when you want to apply defaults to a record.',
   },
   {
     name: 'CsvParseEditor',
     label: 'CSV parser',
-    description: 'This processor converts comma separated values into JSON.',
+    description: 'This processor converts comma-separated values into JSON.',
   },
   {
     name: 'XmlParseEditor',
     label: 'XML parser',
     description:
-      'This processor wll convert XML to JSON controlled by an set of parse options.',
+      'This processor converts XML to JSON, controlled by a set of parse options.',
   },
 
   {
     name: 'TransformEditor',
     label: 'Transform editor',
     description:
-      'This processor allows a user to "reshape" a json object using simple {extract/generate} pairs.',
+      'This processor allows you to "reshape" a JSON object using simple {extract/generate} pairs.',
   },
 
   {
     name: 'JavaScriptEditor',
     label: 'JavaScript editor',
     description:
-      'This processor allows a user to run javascript safely in our secure jsruntime environment.',
+      'This processor allows you to run JavaScript safely in a secure runtime environment.',
   },
   {
     name: 'FileDefinitionEditor',
-    label: 'File-Definition Parser',
+    label: 'File-definition parser',
     description:
-      'This processor allows a user to parse junk data into readable json format by applying file definition structure on it',
+      'This processor allows you to parse junk data into a readable JSON format by applying a file-definition structure.',
   },
   {
     name: 'SQLQueryBuilderEditor',
-    label: 'SQL Query Builder editor',
+    label: 'SQL query editor',
     description:
-      'This processor allows user to build Sql Query using handlerbars and json as input to it',
+      'This processor allows you to build SQL queries using handlebars and JSON.',
   },
   {
     name: 'FilterEditor',
     label: 'Filter editor',
     description:
-      'This editor allows a user to visually define an expression for filtering records.',
+      'This editor allows you to visually define an expression for filtering records.',
   },
   {
     name: 'SettingsFormEditor',
     label: 'Settings form editor',
     description:
-      'This editor allows a user to build a custom form by providing a form definition as JSON and/or a javascript init function.',
+      'This editor allows you to build a custom form by providing a form definition in JSON and an optional JavaScript initialization function.',
   },
 ];
 const useStyles = makeStyles(theme => ({
