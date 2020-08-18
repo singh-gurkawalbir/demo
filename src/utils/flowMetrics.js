@@ -7,6 +7,38 @@ import * as d3 from 'd3';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
+export const getLineColor = index => {
+  const colorSpectrum = [
+    '#2B5B36',
+    '#24448E',
+    '#3A6CA1',
+    '#549FC3',
+    '#8FC4C6',
+    '#AFCF8B',
+    '#80B875',
+    '#57A05C',
+  ];
+
+  return colorSpectrum[index % 8];
+};
+
+export const getLegend = index => {
+  const legendTypes = [
+    'line',
+    'square',
+    'circle',
+    'cross',
+    'diamond',
+    'star',
+    'triangle',
+    'wye',
+    'rect',
+    'plainline',
+  ];
+
+  return legendTypes[index % 10];
+};
+
 export const getTicks = (domainRange, range) => {
   let ticks;
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');

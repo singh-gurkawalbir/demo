@@ -99,9 +99,13 @@ export default {
     ],
   },
   'mongodb.ignoreLookupFilter': {
-    type: 'editor',
-    mode: 'json',
-    label: 'Ignore lookup filter',
+    id: 'mongodb.ignoreLookupFilter',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Filter builder',
+    title: 'MongoDB filter builder',
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',
@@ -114,16 +118,20 @@ export default {
     ],
   },
   'mongodb.filter': {
-    type: 'editor',
-    mode: 'json',
-    label: 'Filter',
-    required: true,
+    id: 'mongodb.filter',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Filter builder',
+    title: 'MongoDB filter builder',
+    ruleTitle:
+      'Template (use handlebar expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
         is: ['updateOne'],
       },
     ],
+    required: true,
   },
   'mongodb.ignoreExtract': {
     type: 'text',
