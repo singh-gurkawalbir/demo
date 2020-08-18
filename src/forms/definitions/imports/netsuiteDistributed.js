@@ -93,7 +93,6 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -111,7 +110,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode', 'dataMappings'],
+        fields: ['common', 'inputMode'],
       },
       {
         collapsed: true,

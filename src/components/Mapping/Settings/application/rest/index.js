@@ -1,40 +1,59 @@
-import mappingUtil from '../../../../../utils/mapping';
 import dateTimezones from '../../../../../utils/dateTimezones';
+import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 import {
   isProduction,
-  conditionalLookupOptionsforSalesforce,
-  conditionalLookupOptionsforSalesforceProduction,
+  conditionalLookupOptionsforRest,
+  conditionalLookupOptionsforRestProduction,
 } from '../../../../../forms/utils';
 
+const emptyObject = {};
 export default {
-  getMetaData: (params = {}) => {
-    const {
-      value,
-      lookup = {},
-      extractFields,
-      generate,
-      generateFields,
-      options,
-      lookups,
-    } = params;
-    const { connectionId, flowId, resourceId } = options;
-    const selectedGenerateObj =
-      generateFields && generateFields.find(field => field.id === generate);
-    let picklistOptions = [];
+  getMetaData: ({
+    value = {},
+    flowId,
+    extractFields,
+    lookups,
+    importResource = {},
+  }) => {
+    const {generate, lookupName} = value;
+    const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
+    const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importResource.netsuite_da?.operation === 'addupdate');
+    const isGroupedSampleData = Array.isArray(extractFields);
+    const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
-    if (selectedGenerateObj && selectedGenerateObj.type === 'picklist') {
-      picklistOptions = selectedGenerateObj.options;
+    let conditionalWhenOptions = isProduction()
+      ? conditionalLookupOptionsforRestProduction
+      : conditionalLookupOptionsforRest;
+
+    if (!isComposite) {
+      conditionalWhenOptions = conditionalWhenOptions.slice(
+        2,
+        conditionalWhenOptions.length + 1
+      );
     }
+
     const fieldMeta = {
       fieldMap: {
-        immutable: {
-          id: 'immutable',
-          name: 'immutable',
-          type: 'checkbox',
-          defaultValue: value.immutable || false,
-          helpKey: 'mapping.immutable',
-          label: 'Immutable (Advanced)',
+        dataType: {
+          id: 'dataType',
+          name: 'dataType',
+          type: 'select',
+          label: 'Data type',
+          defaultValue: mappingUtil.getDefaultDataType(value),
+          helpKey: 'mapping.dataType',
+          options: [
+            {
+              items: [
+                { label: 'String', value: 'string' },
+                { label: 'Number', value: 'number' },
+                { label: 'Boolean', value: 'boolean' },
+                { label: 'Date', value: 'date' },
+                { label: 'Number array', value: 'numberarray' },
+                { label: 'String array', value: 'stringarray' },
+              ],
+            },
+          ],
         },
         discardIfEmpty: {
           id: 'discardIfEmpty',
@@ -43,6 +62,21 @@ export default {
           defaultValue: value.discardIfEmpty || false,
           helpKey: 'mapping.discardIfEmpty',
           label: 'Discard if empty',
+        },
+        immutable: {
+          id: 'immutable',
+          name: 'immutable',
+          type: 'checkbox',
+          defaultValue: value.immutable || false,
+          helpKey: 'mapping.immutable',
+          label: 'Immutable (Advanced)',
+        },
+        useFirstRow: {
+          id: 'useFirstRow',
+          name: 'useFirstRow',
+          type: 'checkbox',
+          defaultValue: value.useFirstRow || false,
+          label: 'Use first row',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
@@ -69,80 +103,81 @@ export default {
           type: 'radiogroup',
           label: 'Options',
           fullWidth: true,
+          defaultValue: lookup.name && (lookup.map ? 'static' : 'dynamic'),
           visibleWhen: [{ field: 'fieldMappingType', is: ['lookup'] }],
-          defaultValue: lookup.name && lookup.map ? 'static' : 'dynamic',
           helpKey: 'mapping.lookup.mode',
           options: [
             {
               items: [
-                { label: 'Dynamic: Salesforce search', value: 'dynamic' },
+                { label: 'Dynamic search', value: 'dynamic' },
                 { label: 'Static: Value to value', value: 'static' },
               ],
             },
           ],
         },
-        'lookup.sObjectType': {
-          id: 'lookup.sObjectType',
-          name: 'sObjectType',
-          defaultValue: lookup.sObjectType,
-          type: 'refreshableselect',
-          filterKey: 'salesforce-sObjects',
-          commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes`,
-          label: 'SObject type',
-          required: true,
+        'lookup.relativeURI': {
+          id: 'lookup.relativeURI',
+          name: '_relativeURI',
+          type: 'relativeuri',
+          showLookup: false,
           connectionId,
-          helpKey: 'mapping.salesforce.lookup.sObjectType',
+          resourceId,
+          flowId,
+          resourceType: 'imports',
+          label: 'Relative URI',
+          placeholder: 'Relative URI',
+          defaultValue: lookup.relativeURI,
+          helpKey: 'mapping.relativeURI',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
         },
-        'lookup.whereClause': {
-          id: 'lookup.whereClause',
-          name: 'whereClause',
-          type: 'salesforcelookupfilters',
-          label: '',
-          connectionId,
+        'lookup.method': {
+          id: 'lookup.method',
+          name: '_method',
+          type: 'select',
+          label: 'HTTP method',
           required: true,
-          filterKey: 'salesforce-recordType',
-          refreshOptionsOnChangesTo: ['lookup.sObjectType'],
+          defaultValue: lookup.method,
+          options: [
+            {
+              heading: 'Select Http Method',
+              items: [
+                { label: 'GET', value: 'GET' },
+                { label: 'POST', value: 'POST' },
+              ],
+            },
+          ],
+          helpKey: 'mapping.lookup.method',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
           ],
-          value: lookup.whereClause,
-          data: extractFields,
-          opts: options,
         },
-        'lookup.whereClauseText': {
-          id: 'lookup.whereClauseText',
-          name: 'whereClauseText',
-          label: 'Where clause',
+        'lookup.body': {
+          id: 'lookup.body',
+          name: '_body',
+          type: 'httprequestbody',
+          connectionId: r => r && r._connectionId,
+          defaultValue: lookup.body || '',
+          required: true,
+          // helpText not present
+          visibleWhenAll: [
+            { field: 'fieldMappingType', is: ['lookup'] },
+            { field: 'lookup.mode', is: ['dynamic'] },
+            { field: 'lookup.method', is: ['POST'] },
+          ],
+        },
+        'lookup.extract': {
+          id: 'lookup.extract',
+          name: '_extract',
           type: 'text',
-          multiline: true,
-          disableText: true,
+          label: 'Resource identifier path',
+          placeholder: 'Resource Identifier Path',
+          defaultValue: lookup.extract,
           required: true,
-          refreshOptionsOnChangesTo: ['lookup.whereClause'],
-          helpKey: 'mapping.salesforce.lookup.whereClauseText',
-          visibleWhenAll: [
-            { field: 'fieldMappingType', is: ['lookup'] },
-            { field: 'lookup.mode', is: ['dynamic'] },
-          ],
-          defaultValue: lookup.whereClause,
-        },
-        'lookup.resultField': {
-          id: 'lookup.resultField',
-          name: 'resultField',
-          type: 'refreshableselect',
-          // Todo (Aditya): label is needed
-          label: 'Value field',
-          filterKey: 'salesforce-recordType',
-          savedSObjectType: lookup.sObjectType,
-          defaultValue: lookup.resultField,
-          connectionId,
-          required: true,
-          refreshOptionsOnChangesTo: ['lookup.sObjectType'],
-          helpKey: 'mapping.salesforce.lookup.resultField',
+          helpKey: 'mapping.lookup.extract',
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['dynamic'] },
@@ -156,15 +191,15 @@ export default {
           keyName: 'export',
           keyLabel: 'Export field',
           valueName: 'import',
-          valueLabel: 'Import field (Salesforce)',
+          valueLabel: 'Import field (REST)',
           defaultValue:
             lookup.map &&
             Object.keys(lookup.map).map(key => ({
               export: key,
               import: lookup.map[key],
             })),
-          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
           map: lookup.map,
+          // helpText not present
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -178,13 +213,12 @@ export default {
           helpKey: 'mapping.functions',
           visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
+        // TODO (Aditya) : resetting Field after selection
         extract: {
           id: 'extract',
           name: 'extract',
           type: 'select',
           label: 'Field',
-          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
-          helpKey: 'mapping.extract',
           options: [
             {
               items:
@@ -196,6 +230,8 @@ export default {
                 [],
             },
           ],
+          helpKey: 'mapping.extract',
+          visibleWhen: [{ field: 'fieldMappingType', is: ['multifield'] }],
         },
         expression: {
           id: 'expression',
@@ -233,20 +269,6 @@ export default {
             { field: 'fieldMappingType', is: ['multifield'] },
           ],
         },
-        default: {
-          id: 'default',
-          name: 'default',
-          type: 'text',
-          label: 'Default value',
-          required: true,
-          visibleWhenAll: [
-            { field: 'standardAction', is: ['default'] },
-            { field: 'fieldMappingType', isNot: ['hardCoded'] },
-            { field: 'fieldMappingType', isNot: ['lookup'] },
-          ],
-          helpKey: 'mapping.default',
-          defaultValue: value.default,
-        },
         hardcodedAction: {
           id: 'hardcodedAction',
           name: 'hardcodedAction',
@@ -261,7 +283,7 @@ export default {
                   value: 'useEmptyString',
                 },
                 {
-                  label: 'Use null as hardcoded value',
+                  label: 'Use null as hardcoded Value',
                   value: 'useNull',
                 },
                 {
@@ -294,14 +316,8 @@ export default {
                   label: 'Use empty string as default value',
                   value: 'useEmptyString',
                 },
-                {
-                  label: 'Use null as default value',
-                  value: 'useNull',
-                },
-                {
-                  label: 'Use custom default value',
-                  value: 'default',
-                },
+                { label: 'Use null as default value', value: 'useNull' },
+                { label: 'Use custom default value', value: 'default' },
               ],
             },
           ],
@@ -311,12 +327,27 @@ export default {
             { field: 'fieldMappingType', is: ['lookup'] },
           ],
         },
+        default: {
+          id: 'default',
+          name: 'default',
+          type: 'text',
+          label: 'Enter default value',
+          placeholder: 'Enter Default Value',
+          required: true,
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded'] },
+            { field: 'fieldMappingType', isNot: ['lookup'] },
+          ],
+          helpKey: 'mapping.default',
+          defaultValue: value.default,
+        },
         hardcodedDefault: {
           id: 'hardcodedDefault',
           name: 'hardcodedDefault',
           type: 'text',
-          label: 'Value',
-          placeholder: '',
+          label: 'Enter default value',
+          placeholder: 'Enter default value',
           required: true,
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
@@ -329,7 +360,8 @@ export default {
           id: 'lookupDefault',
           name: 'lookupDefault',
           type: 'text',
-          label: 'Default lookup value',
+          label: 'Enter default value',
+          placeholder: 'Enter default value',
           required: true,
           visibleWhenAll: [
             { field: 'lookupAction', is: ['default'] },
@@ -342,35 +374,83 @@ export default {
           id: 'extractDateFormat',
           name: 'extractDateFormat',
           type: 'autosuggest',
+          label: 'Export date format',
+          placeholder: '',
           options: {
             suggestions: dateFormats,
           },
           labelName: 'name',
           valueName: 'value',
-          label: 'Date format',
           defaultValue: value.extractDateFormat,
           helpKey: 'mapping.extractDateFormat',
-          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         extractDateTimezone: {
           id: 'extractDateTimezone',
           name: 'extractDateTimezone',
           type: 'select',
-          label: 'Time zone',
           defaultValue: value.extractDateTimezone,
+          label: 'Export date time zone',
           options: [
             {
               items:
                 (dateTimezones &&
                   dateTimezones.map(date => ({
-                    label: date.value,
-                    value: date.name,
+                    label: date.label,
+                    value: date.value,
                   }))) ||
                 [],
             },
           ],
-          helpKey: 'mapping.extractDateTimezone',
-          visibleWhen: [{ field: 'fieldMappingType', is: ['standard'] }],
+          helpkey: 'mapping.extractDateTimezone',
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
+        },
+        generateDateFormat: {
+          id: 'generateDateFormat',
+          name: 'generateDateFormat',
+          type: 'autosuggest',
+          defaultValue: value.generateDateFormat,
+          label: 'Import date format',
+          placeholder: '',
+          options: {
+            suggestions: dateFormats,
+          },
+          labelName: 'name',
+          valueName: 'value',
+          helpKey: 'mapping.generateDateFormat',
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
+        },
+        generateDateTimezone: {
+          id: 'generateDateTimezone',
+          name: 'generateDateTimezone',
+          type: 'select',
+          defaultValue: value.generateDateTimezone,
+          label: 'Import date time zone',
+          options: [
+            {
+              items:
+                (dateTimezones &&
+                  dateTimezones.map(date => ({
+                    label: date.label,
+                    value: date.value,
+                  }))) ||
+                [],
+            },
+          ],
+          helpKey: 'mapping.generateDateTimezone',
+          visibleWhenAll: [
+            { field: 'dataType', is: ['date'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+          ],
         },
         'conditional.when': {
           id: 'conditional.when',
@@ -378,31 +458,17 @@ export default {
           type: 'select',
           label: 'Only perform mapping when:',
           defaultValue: value.conditional && value.conditional.when,
-          helpKey: 'mapping.conditional.when',
-          options: [
-            {
-              items: isProduction()
-                ? conditionalLookupOptionsforSalesforceProduction
-                : conditionalLookupOptionsforSalesforce,
-            },
-          ],
+          options: [{ items: conditionalWhenOptions }],
         },
-        lookups: {
-          name: 'lookups',
-          id: 'lookups',
-          fieldId: 'lookups',
-          visible: false,
-          defaultValue: lookups,
-        },
+
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
+          label: 'Lookup name:',
           type: 'selectlookup',
           flowId,
           resourceId,
-          importType: 'salesforce',
           refreshOptionsOnChangesTo: ['lookups'],
-          label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {
@@ -412,29 +478,40 @@ export default {
           ],
           required: true,
         },
+        lookups: {
+          name: 'lookups',
+          fieldId: 'lookups',
+          id: 'lookups',
+          visible: false,
+          defaultValue: lookups,
+        },
       },
       layout: {
         fields: [
-          'immutable',
+          'dataType',
           'discardIfEmpty',
+          'immutable',
+          'useFirstRow',
           'fieldMappingType',
           'lookup.mode',
-          'lookup.sObjectType',
-          'lookup.whereClause',
-          'lookup.whereClauseText',
-          'lookup.resultField',
+          'lookup.relativeURI',
+          'lookup.method',
+          'lookup.body',
+          'lookup.extract',
           'lookup.mapList',
           'functions',
           'extract',
           'expression',
           'standardAction',
-          'default',
           'hardcodedAction',
           'lookupAction',
+          'default',
           'hardcodedDefault',
           'lookupDefault',
           'extractDateFormat',
           'extractDateTimezone',
+          'generateDateFormat',
+          'generateDateTimezone',
         ],
         type: 'collapse',
         containers: [
@@ -471,46 +548,12 @@ export default {
 
           return expressionValue;
         }
-        if (fieldId === 'lookup.whereClause') {
-          const sObjectTypeField = fields.find(
-            field => field.id === 'lookup.sObjectType'
-          );
 
-          return {
-            disableFetch: !(sObjectTypeField && sObjectTypeField.value),
-            commMetaPath: sObjectTypeField
-              ? `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`
-              : '',
-          };
+        if (fieldId === 'lookup.relativeURI') {
+          return { resourceName };
         }
-        if (fieldId === 'lookup.whereClauseText') {
-          const whereClauseField = fields.find(
-            field => field.id === 'lookup.whereClause'
-          );
-          const whereClauseTextField = fields.find(
-            field => field.id === 'lookup.whereClauseText'
-          );
 
-          whereClauseTextField.value = whereClauseField.value;
-        } else if (fieldId === 'lookup.resultField') {
-          const sObjectTypeField = fields.find(
-            field => field.id === 'lookup.sObjectType'
-          );
-          const sObjectType = sObjectTypeField.value;
-          const resultField = fields.find(
-            field => field.id === 'lookup.resultField'
-          );
-
-          if (resultField.savedSObjectType !== sObjectType) {
-            resultField.savedSObjectType = sObjectType;
-            resultField.value = '';
-          }
-
-          return {
-            disableFetch: !sObjectType,
-            commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`,
-          };
-        } else if (fieldId === 'conditional.lookupName') {
+        if (fieldId === 'conditional.lookupName') {
           const lookupField = fields.find(field => field.fieldId === 'lookups');
 
           return {
@@ -530,52 +573,9 @@ export default {
     };
     let { fields } = fieldMeta.layout;
 
-    if (!selectedGenerateObj || !['date', 'datetime'].includes(selectedGenerateObj.type)) {
-      delete fieldMeta.fieldMap.extractDateFormat;
-      delete fieldMeta.fieldMap.extractDateTimezone;
-
-      fields = fields.filter(
-        el => !['extractDateFormat', 'extractDateTimezone'].includes(el)
-      );
-    }
-
-    if (selectedGenerateObj?.type === 'boolean') {
-      fieldMeta.fieldMap.default.type = 'radiogroup';
-      fieldMeta.fieldMap.hardcodedDefault.type = 'radiogroup';
-      fieldMeta.fieldMap.lookupDefault.type = 'radiogroup';
-      const options = [
-        {
-          items: [
-            { label: 'True', value: 'true' },
-            { label: 'False', value: 'false' },
-          ],
-        },
-      ];
-
-      fieldMeta.fieldMap.default.options = options;
-      fieldMeta.fieldMap.hardcodedDefault.options = options;
-      fieldMeta.fieldMap.lookupDefault.options = options;
-      // show it set false to default
-    } else if (selectedGenerateObj?.type === 'picklist') {
-      fieldMeta.fieldMap.default.type = 'select';
-      fieldMeta.fieldMap.hardcodedDefault.type = 'select';
-      fieldMeta.fieldMap.lookupDefault.type = 'select';
-      const options = [
-        {
-          items: selectedGenerateObj && selectedGenerateObj.options,
-        },
-      ];
-
-      fieldMeta.fieldMap.default.options = options;
-      fieldMeta.fieldMap.hardcodedDefault.options = options;
-      fieldMeta.fieldMap.lookupDefault.options = options;
-    } else if (selectedGenerateObj?.type === 'textarea') {
-      fieldMeta.fieldMap.hardcodedDefault.multiline = true;
-      fieldMeta.fieldMap.hardcodedDefault.rowsMax = 5;
-      fieldMeta.fieldMap.lookupDefault.multiline = true;
-      fieldMeta.fieldMap.lookupDefault.rowsMax = 5;
-      fieldMeta.fieldMap.default.multiline = true;
-      fieldMeta.fieldMap.default.rowsMax = 5;
+    if (!isGroupedSampleData || generate.indexOf('[*].') === -1) {
+      delete fieldMeta.fieldMap.useFirstRow;
+      fields = fields.filter(el => el !== 'useFirstRow');
     }
 
     fieldMeta.layout.fields = fields;

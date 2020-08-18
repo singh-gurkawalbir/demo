@@ -11,7 +11,6 @@ import LoadResources from '../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
 
-
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     marginTop: theme.appBarHeight,
