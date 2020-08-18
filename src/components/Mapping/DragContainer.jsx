@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDrop } from 'react-dnd-cjs';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import {selectors} from '../../reducers';
 import MappingRow from './MappingRow';
 import actions from '../../actions';
 
 const emptyObject = {};
-export default function DragContainer({ mappings, onDrop, ...props }) {
+export default function DragContainer({ onDrop, ...props }) {
   const dispatch = useDispatch();
+  const mappings = useSelector(state => selectors.mapping(state).mappings);
   const [mappingState, setMappingState] = useState(mappings);
   const handleDrop = useCallback(
     (key, finalIndex) => {

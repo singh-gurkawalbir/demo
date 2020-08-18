@@ -5000,10 +5000,6 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   };
 });
 
-selectors.mappingChanged = state => fromSession.mappingChanged(state && state.session);
-
-selectors.mappingSaveStatus = state => fromSession.mappingSaveStatus(state && state.session);
-
 selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);
   const {adaptorType} = importResource;

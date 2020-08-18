@@ -10,7 +10,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type} = action;
+  const { type, key, field, shiftIndex, value, mappings, lookups, flowId, resourceId, subRecordMappingId } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -23,9 +23,7 @@ export default (state = {}, action) => {
           draft.mapping.status = 'requested';
         }
         break;
-      case actionTypes.MAPPING.INIT_COMPLETE: {
-        const {mappings, lookups, flowId, resourceId, subRecordMappingId} = action;
-
+      case actionTypes.MAPPING.INIT_COMPLETE:
         draft.mapping = {
           mappings,
           lookups,
@@ -37,17 +35,10 @@ export default (state = {}, action) => {
           lookupsCopy: deepClone(lookups),
         };
         break;
-      }
-
-      case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
-        const {key} = action;
-
+      case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD:
         draft.mapping.lastModifiedRowKey = key;
         break;
-      }
       case actionTypes.MAPPING.DELETE: {
-        const {key} = action;
-
         const filteredMapping = draft.mapping.mappings.filter(m => m.key !== key);
 
         draft.mapping.mappings = filteredMapping;
@@ -65,8 +56,6 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.PATCH_FIELD: {
-        const {field, key, value} = action;
-
         const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
         if (draft.mapping.mappings[index]) {
@@ -136,24 +125,24 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES: {
-        const { key, value} = action;
+        if (draft.mapping.incompleteGenerates) {
+          const incompleteGeneObj = draft.mapping.incompleteGenerates.find(
+            gen => gen.key === key
+          );
 
-        const incompleteGeneObj = draft.mapping.incompleteGenerates.find(
-          gen => gen.key === key
-        );
-
-        if (incompleteGeneObj) {
-          incompleteGeneObj.value = value;
+          if (incompleteGeneObj) {
+            incompleteGeneObj.value = value;
+          } else {
+            draft.mapping.incompleteGenerates.push({ key, value });
+          }
         } else {
-          draft.mapping.incompleteGenerates.push({ key, value });
+          draft.mapping.incompleteGenerates = [{ key, value }];
         }
 
         break;
       }
 
       case actionTypes.MAPPING.PATCH_SETTINGS: {
-        const { key, value} = action;
-
         const index = draft.mapping.mappings.findIndex(m => m.key === key);
 
         if (draft.mapping.mappings[index]) {
@@ -191,8 +180,6 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.UPDATE_LOOKUP: {
-        const {lookups} = action;
-
         draft.mapping.lookups = lookups;
         const {
           isSuccess,
@@ -211,12 +198,10 @@ export default (state = {}, action) => {
         draft.mapping.validationErrMsg = undefined;
         draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
         draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
-
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
         draft.mapping.saveStatus = 'failed';
         draft.mapping.validationErrMsg = undefined;
-
         break;
       case actionTypes.MAPPING.PREVIEW_REQUESTED:
         if (draft.mapping.preview) {
@@ -224,44 +209,26 @@ export default (state = {}, action) => {
         } else {
           draft.mapping.preview = { status: 'requested' };
         }
-
         break;
-      case actionTypes.MAPPING.PREVIEW_RECEIVED: {
-        const {value} = action;
-        const { preview } = draft.mapping;
-
-        preview.data = value;
-        preview.status = 'received';
+      case actionTypes.MAPPING.PREVIEW_RECEIVED:
+        draft.mapping.preview.data = value;
+        draft.mapping.preview.status = 'received';
         break;
-      }
-
-      case actionTypes.MAPPING.PREVIEW_FAILED: {
-        const {preview} = draft.mapping;
-
-        delete preview.data;
-        preview.status = 'error';
+      case actionTypes.MAPPING.PREVIEW_FAILED:
+        delete draft.mapping.preview.data;
+        draft.mapping.preview.status = 'error';
         break;
-      }
-
-      case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED: {
-        const { value} = action;
-
+      case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:
         draft.mapping.isNSAssistantFormLoaded = value;
         break;
-      }
-      case actionTypes.MAPPING.UPDATE_LIST: {
-        const { mappings } = action;
-
+      case actionTypes.MAPPING.UPDATE_LIST:
         draft.mapping.mappings = mappings;
         break;
-      }
-      case actionTypes.MAPPING.CLEAR: {
+      case actionTypes.MAPPING.CLEAR:
         delete draft.mapping;
         break;
-      }
       case actionTypes.MAPPING.SHIFT_ORDER: {
-        const {key: shiftKey, shiftIndex} = action;
-        const itemIndex = draft.mapping.mappings.findIndex(m => m.key === shiftKey);
+        const itemIndex = draft.mapping.mappings.findIndex(m => m.key === key);
         const [removed] = draft.mapping.mappings.splice(itemIndex, 1);
 
         draft.mapping.mappings.splice(shiftIndex, 0, removed);

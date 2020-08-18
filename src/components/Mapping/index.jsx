@@ -35,8 +35,6 @@ const Mapping = props => {
   const {flowId, resourceId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
 
-  const mappings = useSelector(state => selectors.mapping(state).mappings);
-
   return (
     <div className={classes.root}>
       <div
@@ -48,7 +46,6 @@ const Mapping = props => {
         />
         <div className={classes.mappingsBody}>
           <DragContainer
-            mappings={mappings}
             disabled={disabled}
             importId={resourceId}
             flowId={flowId}
