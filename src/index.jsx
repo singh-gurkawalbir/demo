@@ -51,12 +51,11 @@ if (process.env.NODE_ENV === 'development') {
 
 const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
-  process.env.NODE_ENV === 'development'
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+  process.env.NODE_ENV === 'development' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       trace: true,
       traceLimit: 25,
-    })
-    : window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+    })) || compose;
 
 store = createStore(
   rootReducer,
