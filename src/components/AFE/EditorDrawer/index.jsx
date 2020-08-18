@@ -195,7 +195,7 @@ export default function EditorDrawer(props) {
 
   return (
     <RightDrawer
-      path={path}
+      path={typeof path === 'string' ? path.replace(/\.|\s/g, '') : path}
       height="tall"
       width="full"
       data-test={dataTest}
