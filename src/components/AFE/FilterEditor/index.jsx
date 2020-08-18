@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { deepClone } from 'fast-json-patch';
 import CodePanel from '../GenericEditor/CodePanel';
 import FilterPanel from './FilterPanel';
 import PanelGrid from '../PanelGrid';
@@ -21,7 +22,7 @@ const useStyles = makeStyles({
     gridTemplateAreas: '"data rule result" "error error error"',
   },
 });
-
+const overrides = { showGutter: false };
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
   const classes = useStyles(props);
@@ -38,6 +39,7 @@ export default function FilterEditor(props) {
         data: props.data,
         lastValidData: props.data,
         rule: props.rule,
+        _init_rule: deepClone(props.rule),
         optionalSaveParams,
         isSampleDataLoading: props.isSampleDataLoading,
       })
@@ -93,7 +95,7 @@ export default function FilterEditor(props) {
             readOnly={disabled}
             value={data}
             mode="json"
-            overrides={{ showGutter: false }}
+            overrides={overrides}
             onChange={handleDataChange}
         />
         )}
@@ -103,7 +105,7 @@ export default function FilterEditor(props) {
         <PanelTitle title="Output" />
         <CodePanel
           name="result"
-          overrides={{ showGutter: false }}
+          overrides={overrides}
           value={outputMessage}
           mode="text"
           readOnly
