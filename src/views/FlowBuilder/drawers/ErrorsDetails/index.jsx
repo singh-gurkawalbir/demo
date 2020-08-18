@@ -9,8 +9,8 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const [errorType, setErrorType] = useState('open');
   const errorTypes = [
-    { label: 'View open errors', value: 'open' },
-    { label: 'View resolved errors', value: 'resolved' },
+    { label: 'Open errors', value: 'open' },
+    { label: 'Resolved errors', value: 'resolved' },
   ];
   const handleErrorTypeChange = useCallback(() => {
     setErrorType(errorType === 'open' ? 'resolved' : 'open');
