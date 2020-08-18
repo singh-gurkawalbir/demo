@@ -9,6 +9,9 @@ import DynaUploadFile from '../../DynaUploadFile';
 import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { generateNewId } from '../../../../../utils/resource';
+import {useUpdateParentHook} from '../DynaCsvGenerate';
 
 const getParserValue = ({
   resourcePath,
@@ -133,7 +136,7 @@ export default function DynaXmlParse({
   }, [formKey, getInitOptions, id, onFieldChange]);
 
   const handleFormChange = useCallback(
-    (newOptions, isValid) => {
+    (newOptions, isValid, touched) => {
       setCurrentOptions({...newOptions, V0_json: newOptions.V0_json === 'true'});
       // console.log('optionsChange', newOptions);
       const parsersValue = getParserValue(newOptions);
@@ -141,9 +144,9 @@ export default function DynaXmlParse({
       // TODO: HACK! add an obscure prop to let the validationHandler defined in
       // the formFactory.js know that there are child-form validation errors
       if (!isValid) {
-        onFieldChange(id, { ...parsersValue, __invalid: true });
+        onFieldChange(id, { ...parsersValue, __invalid: true }, touched);
       } else {
-        onFieldChange(id, parsersValue);
+        onFieldChange(id, parsersValue, touched);
       }
     },
     [id, onFieldChange]
@@ -181,6 +184,17 @@ export default function DynaXmlParse({
     [uploadSampleDataFieldName]
   );
 
+  const [secondaryFormKey] = useState(generateNewId());
+
+  useUpdateParentHook(secondaryFormKey, handleFormChange);
+  const formKeyComponent = useFormInitWithPermissions({
+    formKey: secondaryFormKey,
+    remount: formKey,
+    optionsHandler: form?.optionsHandler,
+    disabled,
+    fieldMeta: form,
+  });
+
   return (
     <>
       <div className={classes.container}>
@@ -211,9 +225,7 @@ export default function DynaXmlParse({
       </div>
 
       <DynaForm
-        key={formKey}
-        onChange={handleFormChange}
-        disabled={disabled}
+        formKey={formKeyComponent}
         fieldMeta={form}
       />
     </>
