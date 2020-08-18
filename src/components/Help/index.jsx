@@ -6,6 +6,7 @@ import ArrowPopper from '../ArrowPopper';
 import HelpContent from '../HelpContent';
 import HelpIcon from '../icons/HelpIcon';
 import RawHtml from '../RawHtml';
+import retry from '../../utils/retry';
 
 let _helpTextMap = {};
 
@@ -13,9 +14,9 @@ export function getHelpTextMap() {
   return _helpTextMap;
 }
 
-import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ './helpTextMap').then(({ default: tm }) => {
+retry(() => import(/* webpackChunkName: "HelpTextMap", webpackPreload: true */ './helpTextMap').then(({ default: tm }) => {
   _helpTextMap = tm || {};
-}).catch(() => {});
+}).catch(() => {}));
 
 const useStyles = makeStyles(theme => ({
   helpIcon: {
@@ -59,7 +60,7 @@ function Help(props) {
         </IconButton>
       </ClickAwayListener>
       <ArrowPopper
-        placement="left"
+        placement="right"
         id="helpBubble"
         open={open}
         disablePortal

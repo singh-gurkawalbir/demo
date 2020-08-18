@@ -2,6 +2,9 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues};
 
+    if (newValues['/mode'] === 'cloud') {
+      newValues['/_agentId'] = undefined;
+    }
     delete newValues['/mode'];
 
     if (!newValues['/rest/pingSuccessPath']) {

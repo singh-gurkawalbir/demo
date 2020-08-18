@@ -53,8 +53,8 @@ export default function WorkArea({ onChange, rawData }) {
     <>
       <Paper className={classes.paper}>
         <Typography variant="body1">
-          Click on any editor in the left margin to launch it. The sample data
-          below will be used as the input to the editor.
+          Click any editor at the left to launch it. The sample data
+          below will appear as input in the editor.
         </Typography>
 
         <div className={classes.rawDataTitleBar}>
@@ -63,7 +63,7 @@ export default function WorkArea({ onChange, rawData }) {
               color="textSecondary"
               className={classes.caption}
               variant="caption">
-              Sample Data
+              Sample data
             </Typography>
           </div>
           <div className={classes.titleBarItem}>
