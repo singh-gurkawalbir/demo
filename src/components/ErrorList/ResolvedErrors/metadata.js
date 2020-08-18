@@ -31,7 +31,7 @@ export default {
     },
     {
       heading: 'Resolved By',
-      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
+      value: r => <UserName userId={r.resolvedBy} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {

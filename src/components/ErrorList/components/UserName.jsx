@@ -20,5 +20,5 @@ export default function UserName({ userId }) {
     return 'Auto pilot';
   }
 
-  return <div> {userName}</div>;
+  return <div> {userName || userId}</div>;
 }
