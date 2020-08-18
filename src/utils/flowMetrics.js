@@ -2,14 +2,80 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
 import isSameDay from 'date-fns/isSameDay';
+import moment from 'moment';
+import * as d3 from 'd3';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
+
+export const getLineColor = index => {
+  const colorSpectrum = [
+    '#2B5B36',
+    '#24448E',
+    '#3A6CA1',
+    '#549FC3',
+    '#8FC4C6',
+    '#AFCF8B',
+    '#80B875',
+    '#57A05C',
+  ];
+
+  return colorSpectrum[index % 8];
+};
+
+export const getLegend = index => {
+  const legendTypes = [
+    'line',
+    'square',
+    'circle',
+    'cross',
+    'diamond',
+    'star',
+    'triangle',
+    'wye',
+    'rect',
+    'plainline',
+  ];
+
+  return legendTypes[index % 10];
+};
+
+export const getTicks = (domainRange, range) => {
+  let ticks;
+  const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+
+  if (days < 7) {
+    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+  } else if (days < 180) {
+    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+  } else {
+    ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
+  }
+
+  return ticks;
+};
+export const getXAxisFormat = range => {
+  const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+  let xAxisFormat;
+
+  if (days < 2) {
+    xAxisFormat = 'HH:mm:ss';
+  } else if (days < 90) {
+    xAxisFormat = 'MM/DD/YY';
+  } else {
+    xAxisFormat = 'MMM';
+  }
+
+  return xAxisFormat;
+};
 
 export const getDurationLabel = (ranges = []) => {
   const { startDate, endDate } = ranges[0] || {};
   const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
   const distanceInHours = formatDistanceStrict(startDate, endDate, {
     unit: 'hour',
+  });
+  const distanceInMonths = formatDistanceStrict(startDate, endDate, {
+    unit: 'month',
   });
   const startOfToday = startOfDay(new Date());
   const startOfYesterday = startOfDay(addDays(new Date(), -1));
@@ -32,6 +98,12 @@ export const getDurationLabel = (ranges = []) => {
 
       return 'Custom';
     default:
+      if (!['0 months', '1 month'].includes(distanceInMonths) && isSameDay(new Date(), endDate)) {
+        return `Last ${distanceInMonths}`;
+      } if (isSameDay(new Date(), endDate)) {
+        return `Last ${distance}`;
+      }
+
       return 'Custom';
   }
 };
@@ -53,10 +125,19 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     end = range.endDate;
   }
 
-  return `from(bucket: "flowEvents") 
+  const days = moment(end).diff(moment(start), 'days');
+  const bucket = days > 7 ? 'flowEvents_1hr' : 'flowEvents';
+  let aggregrate = '';
+
+  if (days > 180) {
+    aggregrate = '|> aggregateWindow(every: 1d, fn: sum)';
+  }
+
+  return `from(bucket: "${bucket}") 
             |> range(start: ${start}, stop: ${end}) 
             |> filter(fn: (r) => r.u == "${userId}") 
             |> filter(fn: (r) => r.f == "${flowId}")
+            ${aggregrate}
             |> drop(columns: ["_start", "_stop"])`;
 };
 

@@ -8,8 +8,9 @@ import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import DrawerTitleBar from '../../../../../../components/drawer/TitleBar';
 import LoadResources from '../../../../../../components/LoadResources';
-import { IAFormStateManager } from '..';
+import { IAFormStateManager, useActiveTab } from '..';
 import useIASettingsStateWithHandleClose from '../../../../../../hooks/useIASettingsStateWithHandleClose';
+
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -32,19 +33,22 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
       marginRight: theme.spacing(2),
-    },
-    '& > div[class*= "fieldsContainer"]': {
-      height: '100%',
-      '& > div[class*= "makeStyles-root"]': {
-        height: '100%',
-        '& > div[class*= "makeStyles-panelContainer"]': {
-          paddingBottom: theme.spacing(5),
-        },
-      },
+      minHeight: '100%',
     },
   },
   settingsDrawerCamForm: {
-    minHeight: '100%',
+    minHeight: 'calc(100% - 65px)',
+    marginBottom: theme.spacing(4),
+    '& > div': {
+      height: '100%',
+      '& > div': {
+        height: '100%',
+        paddingBottom: theme.spacing(5),
+      },
+    },
+  },
+  settingsDrawerDetails: {
+    minHeight: 'calc(100% - 138px)',
   },
 }));
 
@@ -66,6 +70,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
   const { settings: fields, sections } = useSelector(
     state => selectors.iaFlowSettings(state, integrationId, flowId),
     shallowEqual
+
   );
   const flowSettingsMemo = useMemo(
     () =>
@@ -86,6 +91,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
     null,
     parentUrl
   );
+  const activeTabProps = useActiveTab();
 
   return (
     <Drawer
@@ -99,8 +105,10 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
       <DrawerTitleBar title={`Settings: ${flowName}`} />
 
       <IAFormStateManager
+        {...activeTabProps}
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,
+          [classes.settingsDrawerDetails]: !sections,
         })}
         integrationId={integrationId}
         flowId={flowId}
@@ -108,6 +116,7 @@ function SettingsDrawer({ integrationId, storeId, parentUrl }) {
         onSubmitComplete={handleClose}
         formState={formState}
         fieldMeta={flowSettingsMemo}
+
       />
     </Drawer>
   );

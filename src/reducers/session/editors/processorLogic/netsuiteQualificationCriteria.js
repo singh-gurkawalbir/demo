@@ -11,7 +11,7 @@ export default {
     const initKeys = Object.keys(editor).filter(key => key.indexOf('_init') !== -1);
 
     // If there are no initKeys , return undefined
-    // as we return a boolean only incase of initKeys passed - refer @editorDialog disableSave property
+    // as we return a boolean only incase of initKeys passed - refer @editorDrawer disableSave property
     if (!initKeys.length) {
       return;
     }

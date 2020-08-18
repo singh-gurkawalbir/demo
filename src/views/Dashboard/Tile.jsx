@@ -157,6 +157,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
       '5e7d921e2387e356b67669ce', // SFNSIO EU
       '581cebf290a63a26daea6081', // Jet - NetSuite
       '57dbed962eca42c50e6e22be', // Walmart - NetSuite
+      '592e8679c95560380ff1325c', // Salesforce - Subscription Billing
+      '58f772ed3c25f31c8041d5fe', // Vendor Payment Manager
     ].includes(tile._connectorId);
   const handleStatusClick = useCallback(
     event => {
@@ -252,9 +254,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop));
-  // Opacity to blur selected tile
-  const opacity = isDragging ? 0.2 : 1;
+  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
+  // need to show different style for selected tile
+  const isCardSelected = !!isDragging;
 
   drag(drop(ref));
   // #endregion
@@ -276,8 +278,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           </Button>
         </ModalDialog>
       )}
-      <div style={{ opacity }} ref={ref}>
-        <HomePageCardContainer onClick={handleTileClick}>
+      <div ref={ref}>
+        <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected} >
           <Header>
             <Status
               label={status.label}

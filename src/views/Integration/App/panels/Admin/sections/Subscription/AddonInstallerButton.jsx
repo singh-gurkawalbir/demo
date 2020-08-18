@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import clsx from 'clsx';
 import { Button, makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../../../reducers';
@@ -8,11 +9,12 @@ import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader';
 
 const useStyles = makeStyles(theme => ({
-  button: {
-    margin: theme.spacing(1, 0),
+  unInstallBtn: {
     color: theme.palette.error.main,
     borderColor: theme.palette.error.main,
+    background: 'none',
     '&:hover': {
+      background: 'none',
       borderColor: theme.palette.error.main,
       color: theme.palette.error.light,
     },
@@ -138,8 +140,8 @@ export default function AddonInstallerButton({ resource }) {
       data-test="addOnInstall"
       size="small"
       variant="outlined"
-      color="secondary"
-      className={classes.button}
+      color="primary"
+      className={clsx({[classes.unInstallBtn]: resource.status === 'installed'})}
       onClick={() => onClick(resource)}>
       {getLabel()}
     </Button>

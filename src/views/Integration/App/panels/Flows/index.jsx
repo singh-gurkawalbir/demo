@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Route,
   NavLink,
@@ -11,7 +11,7 @@ import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import CeligoTable from '../../../../../components/CeligoTable';
-import flowTableMeta from '../../../../../components/ResourceTable/metadata/flows';
+import flowTableMeta from '../../../../../components/ResourceTable/flows/metadata';
 import SettingsDrawer from './SettingsDrawer';
 import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
@@ -48,7 +48,16 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
-
+export const useActiveTab = () => {
+  const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
+  const setExternalTabState = useCallback(
+    (index, val) => {
+      setExternalTabStateFn({activeTab: val});
+    },
+    []
+  );
+  return {externalTabState, setExternalTabState, index: 0 };
+};
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
   const { integrationId, flowId, sectionId } = props;

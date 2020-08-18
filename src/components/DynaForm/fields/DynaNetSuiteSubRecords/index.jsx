@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../actions';
@@ -76,19 +77,23 @@ export default function DynaNetSuiteSubRecords(props) {
   const classes = useStyles();
   const { resourceId } = resourceContext;
   const { recordType } = options;
-  const hasSubrecord = useSelector(state => {
-    const recordTypes = selectors.metadataOptionsAndResources(state, {
+
+  const {hasSubrecord, status} = useSelector(state => {
+    const {data: recordTypes, status} = selectors.metadataOptionsAndResources(state, {
       connectionId,
       commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
       filterKey: 'suitescript-recordTypes',
-    }).data;
+    });
+    let hasSubrecord;
 
     if (recordTypes) {
       const rec = recordTypes.find(record => record.value === recordType);
 
-      return rec && rec.hasSubRecord;
+      hasSubrecord = rec && rec.hasSubRecord;
     }
-  });
+
+    return {hasSubrecord, status};
+  }, shallowEqual);
   const { merged: importDoc } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'imports',
@@ -138,13 +143,19 @@ export default function DynaNetSuiteSubRecords(props) {
   }, [dispatch, hasNetsuiteDa, resourceId, subrecords, subrecordsFromMappings]);
 
   useEffect(() => {
+    if (status === 'received' && !hasSubrecord) {
+      if (Array.isArray(value) && value.length) { onFieldChange(id, []); }
+
+      return;
+    }
     if (subrecords && JSON.stringify(subrecords) !== JSON.stringify(value)) {
       if (value === '') {
         // shallow update. Form not to be treated as touched
         onFieldChange(id, subrecords, true);
       } else onFieldChange(id, subrecords);
     }
-  }, [defaultValue, id, onFieldChange, subrecords, value]);
+  }, [defaultValue, hasSubrecord, id, onFieldChange, status, subrecords, value]);
+
   const match = useRouteMatch();
   const handleDeleteClick = useCallback(
     fieldId => {

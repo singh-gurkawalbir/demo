@@ -18,6 +18,10 @@ export default {
       baseURI = 'https://mws.amazonservices.com.au';
     }
 
+    // backend not accepting empty string for iclientId. So in case iclientId is
+    // not selected, sending null instead of empty string.
+    const iClientId = formValues['/http/_iClientId'] || null;
+
     return {
       ...formValues,
       '/type': 'http',
@@ -25,6 +29,7 @@ export default {
       '/http/auth/type': 'custom',
       '/http/mediaType': 'xml',
       '/http/baseURI': baseURI,
+      '/http/_iClientId': iClientId,
       '/http/ping/relativeURI':
         '/Sellers/2011-07-01?Action=ListMarketplaceParticipations&Version=2011-07-01',
       '/http/ping/errorPath': '/ErrorResponse/Error/Message/text()',
@@ -198,6 +203,7 @@ export default {
       allowNew: true,
       allowEdit: true,
       helpKey: 'amazonmws.connection.http._iClientId',
+      ignoreEnvironmentFilter: true,
     },
     application: {
       fieldId: 'application',

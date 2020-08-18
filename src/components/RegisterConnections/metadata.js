@@ -1,43 +1,42 @@
 import React from 'react';
-import { formatLastModified, onlineStatus } from '../CeligoTable/util';
 import ResourceDrawerLink from '../ResourceDrawerLink';
-import { ConnectorNameComp } from '../ResourceTable/metadata';
+import ConnectorName from '../ResourceTable/commonCells/ConnectorName';
+import OnlineStatus from '../ResourceTable/commonCells/OnlineStatus';
+import CeligoTimeAgo from '../CeligoTimeAgo';
 
 export default {
   columns: (r, { onClose }) => [
     {
       heading: 'Name',
-      value: function RegisterConnectionsDrawerLink(r) {
-        return (
-          <ResourceDrawerLink
-            resourceType="connections"
-            resource={r}
-            onClick={onClose}
+      value: r => (
+        <ResourceDrawerLink
+          resourceType="connections"
+          resource={r}
+          onClick={onClose}
           />
-        );
-      },
+      ),
       orderBy: 'name',
     },
-    { heading: 'Status', value: r => onlineStatus(r) },
+    { heading: 'Status',
+      value: r => <OnlineStatus offline={r.offline} />,
+    },
     {
       heading: 'Connector',
-      value: function ConnectorName(r) {
-        return <ConnectorNameComp r={r} />;
-      },
+      value: r => <ConnectorName resource={r} />,
     },
     {
       heading: 'API',
       value: r => {
-        if (r.type === 'rest') return r && r.rest && r.rest.baseURI;
+        if (r.type === 'rest') return r?.rest?.baseURI;
 
-        if (r.type === 'http') return r && r.http && r.http.baseURI;
+        if (r.type === 'http') return r?.http?.baseURI;
 
         return null;
       },
     },
     {
       heading: 'Last updated',
-      value: r => formatLastModified(r.lastModified),
+      value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
     {

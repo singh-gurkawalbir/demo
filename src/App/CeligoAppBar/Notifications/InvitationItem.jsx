@@ -34,14 +34,14 @@ export default function InvitationItem({
   const classes = useStyles();
 
   return (
-    <Grid container alignItems="center" className={classes.root}>
+    <Grid container alignItems="center" justify="space-between" className={classes.root}>
       <Grid item>
         <Typography variant="h4">{name}</Typography>
         <Typography className={classes.email}>{email}</Typography>
         <Typography variant="body2">{message}</Typography>
         <Typography>Please accept or decline this invitation.</Typography>
       </Grid>
-      <Grid item className={classes.actions}>
+      <Grid className={classes.actions}>
         <IconButton
           size="small"
           className={classes.acceptButton}

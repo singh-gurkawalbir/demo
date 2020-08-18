@@ -9,23 +9,20 @@ import { generateNewId } from '../../../../utils/resource';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
 import DynaSelect from '../DynaSelect';
 import DynaText from '../DynaText';
+import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
-import JavaScriptEditorDialog from '../../../AFE/JavaScriptEditor/Dialog';
+import JavaScriptEditorDrawer from '../../../AFE/JavaScriptEditor/Drawer';
 import EditIcon from '../../../icons/EditIcon';
 import AddIcon from '../../../icons/AddIcon';
 import CreateScriptDialog from './CreateScriptDialog';
 import { saveScript } from './utils';
 import ActionButton from '../../../ActionButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
-  },
-  label: {
-    minWidth: 100,
-    marginTop: 10,
-    marginBottom: 10,
   },
   field: {
     width: '50%',
@@ -46,6 +43,14 @@ const useStyles = makeStyles(theme => ({
   hookActionBtnEdit: {
     marginLeft: theme.spacing(1),
   },
+  labelWithHelpTextWrapper: {
+    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-start',
+    minWidth: 100,
+    marginTop: 10,
+    marginBottom: 10,
+  },
 }));
 /*
  * pass patchOnSave = true along with processorKey, if network save is required on click of Save button
@@ -54,7 +59,7 @@ const scriptsFilterConfig = { type: 'scripts' };
 const stacksFilterConfig = { type: 'stacks' };
 
 export default function DynaHook(props) {
-  const [showEditor, setShowEditor] = useState(false);
+  const handleOpenDrawer = usePushRightDrawer();
   const [showCreateScriptDialog, setShowCreateScriptDialog] = useState(false);
   const [tempScriptId, setTempScriptId] = useState(generateNewId());
   const dispatch = useDispatch();
@@ -100,8 +105,8 @@ export default function DynaHook(props) {
       requestForPreHookData();
     }
 
-    setShowEditor(!showEditor);
-  }, [requestForPreHookData, showEditor]);
+    handleOpenDrawer(id);
+  }, [id, handleOpenDrawer, requestForPreHookData]);
   const handleSave = (shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { scriptId, entryFunction } = editorValues;
@@ -195,26 +200,23 @@ export default function DynaHook(props) {
 
   return (
     <>
-      {showEditor && (
-        <JavaScriptEditorDialog
-          title="Script editor"
-          id={id}
-          key={id}
-          disabled={disabled}
-          data={JSON.stringify(preHookData, null, 2)}
-          scriptId={value._scriptId}
-          insertStubKey={hookStage}
-          entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
-          context={scriptContext}
-          onSave={handleSave}
-          onClose={handleEditorClick}
-          resultMode={editorResultMode}
-          optionalSaveParams={optionalSaveParams}
-          flowId={flowId}
-          patchOnSave
-          isSampleDataLoading={isSampleDataLoading}
+      <JavaScriptEditorDrawer
+        title="Script editor"
+        id={id}
+        key={id}
+        disabled={disabled}
+        data={JSON.stringify(preHookData, null, 2)}
+        scriptId={value._scriptId}
+        insertStubKey={hookStage}
+        entryFunction={value.function || hooksToFunctionNamesMap[hookStage]}
+        context={scriptContext}
+        onSave={handleSave}
+        resultMode={editorResultMode}
+        optionalSaveParams={optionalSaveParams}
+        flowId={flowId}
+        patchOnSave
+        isSampleDataLoading={isSampleDataLoading}
         />
-      )}
       {showCreateScriptDialog && (
         <CreateScriptDialog
           onClose={handleCreateScriptDialogClose}
@@ -225,7 +227,10 @@ export default function DynaHook(props) {
       )}
 
       <div className={classes.inputContainer}>
-        <InputLabel className={classes.label}>{label}</InputLabel>
+        <div className={classes.labelWithHelpTextWrapper}>
+          <InputLabel>{label}</InputLabel>
+          <FieldHelp label={props.label} helpKey={props.helpKey} />
+        </div>
         <div className={classes.wrapper}>
           <div className={classes.field}>
             <DynaText

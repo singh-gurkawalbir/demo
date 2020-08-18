@@ -324,6 +324,7 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
       hidden: true,
       _pageProcessorDoc,
       throwOnError: true,
+      includeStages: true,
     });
 
     yield put(
