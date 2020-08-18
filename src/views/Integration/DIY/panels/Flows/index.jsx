@@ -73,12 +73,18 @@ export default function FlowsPanel({ integrationId, childId }) {
   );
   const {
     status,
-    // data: integrationErrorsMap = {},
-    total: totalErrors = 0,
+    data: integrationErrorsMap = {},
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
+  let totalErrors = 0;
+
+  flows.forEach(flow => {
+    if (!flow.disabled && integrationErrorsMap[flow._id]) {
+      totalErrors += integrationErrorsMap[flow._id];
+    }
+  });
   const handleClose = useCallback(() => {
     setShowDialog();
   }, [setShowDialog]);
