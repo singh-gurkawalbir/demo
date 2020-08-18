@@ -51,6 +51,7 @@ if (process.env.NODE_ENV === 'development') {
 
 const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
+  // TODO: check if we need to enable it in staging.
   process.env.NODE_ENV === 'development' &&
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       trace: true,
