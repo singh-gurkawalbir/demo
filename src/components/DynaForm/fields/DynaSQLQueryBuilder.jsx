@@ -46,6 +46,7 @@ export default function DynaSQLQueryBuilder(props) {
     flowId,
     resourceType,
     hideDefaultData,
+    required,
   } = props;
   const {
     lookups: lookupObj,
@@ -268,7 +269,7 @@ export default function DynaSQLQueryBuilder(props) {
           />
 
         <div className={classes.sqlLabelWrapper}>
-          <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
+          <FormLabel className={classes.sqlLabel} required={required}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
