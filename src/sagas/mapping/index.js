@@ -23,8 +23,6 @@ export function* fetchRequiredMappingData({
 }) {
   const importResource = yield select(selectors.resource, 'imports', resourceId);
 
-  yield;
-
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
