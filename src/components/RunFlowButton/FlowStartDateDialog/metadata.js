@@ -43,11 +43,12 @@ export default {
         startDateAutomatic: {
           id: 'startDateAutomatic',
           name: 'startDateAutomatic',
-          type: 'text',
+          type: 'datetime',
           label: 'Start date/time',
           defaultDisabled: true,
           defaultValue: startDate,
           visibleWhen: [{ field: 'deltaType', is: ['automatic'] }],
+          format,
         },
         startDateCustom: {
           id: 'startDateCustom',

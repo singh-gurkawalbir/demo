@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
-import { IAFormStateManager } from '../../Flows';
+import { IAFormStateManager, useActiveTab } from '../../Flows';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -47,12 +47,14 @@ export default function GeneralPanel({ integrationId, storeId }) {
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual
   );
+  const activeTabProps = useActiveTab();
 
   return (
     <div>
       <PanelHeader title="General" />
       {hasGeneralSettings && (
       <IAFormStateManager
+        {...activeTabProps}
         key={storeId}
         fieldMeta={translatedMeta}
         integrationId={integrationId}
