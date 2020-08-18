@@ -11,7 +11,7 @@ import getForm from './formMeta';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { generateNewId } from '../../../../../utils/resource';
-import {useUpdateParentHook} from '../DynaCsvGenerate';
+import {useUpdateParentForm} from '../DynaCsvGenerate';
 
 const getParserValue = ({
   resourcePath,
@@ -186,7 +186,7 @@ export default function DynaXmlParse({
 
   const [secondaryFormKey] = useState(generateNewId());
 
-  useUpdateParentHook(secondaryFormKey, handleFormChange);
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
     remount: formKey,

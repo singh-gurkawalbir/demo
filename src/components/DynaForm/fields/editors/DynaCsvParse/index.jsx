@@ -10,7 +10,7 @@ import DynaUploadFile from '../../DynaUploadFile';
 import getFormMetadata from './metadata';
 import DynaForm from '../../..';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
-import {useUpdateParentHook} from '../DynaCsvGenerate';
+import {useUpdateParentForm} from '../DynaCsvGenerate';
 import { generateNewId } from '../../../../../utils/resource';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
@@ -184,7 +184,7 @@ export default function DynaCsvParse(props) {
 
   const [secondaryFormKey] = useState(generateNewId());
 
-  useUpdateParentHook(secondaryFormKey, handleFormChange);
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
     remount: formKey,

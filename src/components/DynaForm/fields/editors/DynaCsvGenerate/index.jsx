@@ -124,7 +124,7 @@ export default function DynaCsvGenerate(props) {
 
   const [secondaryFormKey] = useState(generateNewId());
 
-  useUpdateParentHook(secondaryFormKey, handleFormChange);
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
     remount: formKey,
