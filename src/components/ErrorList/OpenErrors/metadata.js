@@ -20,6 +20,7 @@ export default {
     },
     {
       heading: 'Message',
+      width: '40%',
       value: r => r.message,
     },
     { heading: 'Source', value: r => r.source },

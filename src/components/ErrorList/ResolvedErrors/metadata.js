@@ -18,6 +18,7 @@ export default {
     },
     {
       heading: 'Message',
+      width: '30%',
       value: r => r.message,
     },
     { heading: 'Source', value: r => r.source },
