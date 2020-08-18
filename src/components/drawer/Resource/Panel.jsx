@@ -210,7 +210,7 @@ export default function Panel(props) {
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
     const adaptorType = resourceType === 'connections'
-      ? getStagedValue('type') || resource?.type
+      ? getStagedValue('type') || resource?.rdbms?.type || resource?.type
       : getStagedValue('/adaptorType') || resource?.adaptorType;
     const assistant = getStagedValue('/assistant') || resource?.assistant;
 

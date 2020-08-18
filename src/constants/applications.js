@@ -56,6 +56,7 @@ const connectors = [
     type: 'webhook',
     name: 'Travis Org',
     webhookOnly: true,
+    icon: 'travis-org',
   },
   {
     id: 'helpscout',
@@ -210,7 +211,7 @@ const connectors = [
     assistant: 'bigcommerce',
   },
   // { id: 'bill.com', name: 'bill.com', type: 'http', assistant: 'bill.com' },
-  { id: 'box', name: 'Box', type: 'http', webhookOnly: true },
+  { id: 'box', name: 'Box', type: 'http', webhookOnly: true, icon: 'box' },
   { id: 'braintree', name: 'Braintree', marketPlaceOnly: true },
   { id: 'bronto', name: 'Oracle Bronto', type: 'rest', assistant: 'bronto' },
   {
@@ -291,6 +292,7 @@ const connectors = [
     name: 'Dropbox',
     type: 'rest',
     webhookOnly: true,
+    icon: 'dropbox',
   },
   {
     id: 'dunandbradstreet',
@@ -640,7 +642,7 @@ const connectors = [
     name: 'Salesforce',
     type: 'salesforce',
   },
-  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true },
+  { id: 'segment', name: 'segment', type: 'http', webhookOnly: true, icon: 'segment' },
   {
     id: 'servicenow',
     name: 'ServiceNow',
@@ -737,6 +739,7 @@ const connectors = [
     name: 'Travis CI',
     type: 'http',
     webhookOnly: true,
+    icon: 'travis',
   },
   { id: 'trinet', name: 'TriNet', type: 'http', assistant: 'trinet' },
   { id: 'tsheets', name: 'TSheets', type: 'http', assistant: 'tsheets' },
