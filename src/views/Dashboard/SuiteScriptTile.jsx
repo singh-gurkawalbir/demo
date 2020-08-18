@@ -1,7 +1,7 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, Button, makeStyles } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -26,8 +26,6 @@ import {
   dropTileConfig
 } from './util';
 import getRoutePath from '../../utils/routePaths';
-import ModalDialog from '../../components/ModalDialog';
-import { getDomain } from '../../utils/resource';
 import * as selectors from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -54,9 +52,6 @@ const useStyles = makeStyles(theme => ({
 
 function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
-  const [showNotYetSupportedDialog, setShowNotYetSupportedDialog] = useState(
-    false
-  );
   const accessLevel = useSelector(state => selectors.userAccessLevelOnConnection(state, tile.ssLinkedConnectionId));
   const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
   const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
@@ -71,16 +66,9 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
-  const isNotYetSupported = [].includes(getDomain());
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
-
-      if (isNotYetSupported) {
-        setShowNotYetSupportedDialog(true);
-
-        return false;
-      }
 
       if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
         // TODO - open connection edit
@@ -102,32 +90,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
         );
       }
     },
-    [isNotYetSupported, tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history]
-  );
-  const handleLinkClick = useCallback(
-    event => {
-      event.stopPropagation();
-
-      if (isNotYetSupported) {
-        event.preventDefault();
-        setShowNotYetSupportedDialog(true);
-      }
-    },
-    [isNotYetSupported]
-  );
-  const handleNotYetSupportedDialogCloseClick = useCallback(
-    () => setShowNotYetSupportedDialog(false),
-    []
-  );
-  const handleTileClick = useCallback(
-    event => {
-      event.stopPropagation();
-
-      if (isNotYetSupported) {
-        setShowNotYetSupportedDialog(true);
-      }
-    },
-    [isNotYetSupported]
+    [tile.status, tile._connectorId, tile.ssLinkedConnectionId, tile.urlName, tile._integrationId, history]
   );
   // IO-13418
   const getApplication = application =>
@@ -144,101 +107,79 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
 
   // #endregion
   return (
-    <>
-      {showNotYetSupportedDialog && (
-        <ModalDialog show onClose={handleNotYetSupportedDialogCloseClick}>
-          Not Yet Available
-          <Typography>
-            This Integration{tile._connectorId && ' App'} is not yet available
-            from this UI. To access your Integration
-            {tile._connectorId && ' App'}, switch back to the{' '}
-            <a href="/">legacy UI</a>.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleNotYetSupportedDialogCloseClick}>
-            Close
-          </Button>
-        </ModalDialog>
-      )}
-      <div style={{ opacity }} ref={ref}>
-        <HomePageCardContainer onClick={handleTileClick}>
-          <Header>
-            <Status
-              label={status.label}
-              onClick={handleStatusClick}
-              className={classes.status}>
-              <StatusCircle variant={status.variant} />
-            </Status>
-          </Header>
-          <Content>
-            <CardTitle>
-              <Typography variant="h3">
-                <Link
-                  color="inherit"
-                  to={getRoutePath(urlToIntegrationSettings)}
-                  className={classes.tileName}
-                  onClick={handleLinkClick}>
-                  {tile.displayName}
-                </Link>
-              </Typography>
-            </CardTitle>
-            {tile.connector && tile.connector.applications && (
-              <ApplicationImages>
-                <ApplicationImg
-                  type={getApplication(tile.connector.applications[0])}
+    <div style={{ opacity }} ref={ref}>
+      <HomePageCardContainer>
+        <Header>
+          <Status
+            label={status.label}
+            onClick={handleStatusClick}
+            className={classes.status}>
+            <StatusCircle variant={status.variant} />
+          </Status>
+        </Header>
+        <Content>
+          <CardTitle>
+            <Typography variant="h3">
+              <Link
+                color="inherit"
+                to={getRoutePath(urlToIntegrationSettings)}
+                className={classes.tileName}>
+                {tile.displayName}
+              </Link>
+            </Typography>
+          </CardTitle>
+          {tile.connector && tile.connector.applications && (
+          <ApplicationImages>
+            <ApplicationImg
+              type={getApplication(tile.connector.applications[0])}
                 />
-                <span>
-                  <AddIcon />
-                </span>
-                <ApplicationImg
-                  type={getApplication(tile.connector.applications[1])}
+            <span>
+              <AddIcon />
+            </span>
+            <ApplicationImg
+              type={getApplication(tile.connector.applications[1])}
                 />
-              </ApplicationImages>
-            )}
-          </Content>
-          <Footer>
-            <FooterActions>
-              {accessLevel && (
-                <Manage>
-                  {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
-                    <Tooltip
-                      title="You have monitor permissions"
-                      placement="bottom">
-                      <Link
-                        color="inherit"
-                        className={classes.action}
-                        to={getRoutePath(urlToIntegrationSettings)}
-                        onClick={handleLinkClick}>
-                        <PermissionsMonitorIcon />
-                      </Link>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      title="You have manage permissions"
-                      placement="bottom">
-                      <Link
-                        color="inherit"
-                        className={classes.action}
-                        to={getRoutePath(urlToIntegrationSettings)}
-                        onClick={handleLinkClick}>
-                        <PermissionsManageIcon />
-                      </Link>
-                    </Tooltip>
-                  )}
-                </Manage>
+          </ApplicationImages>
+          )}
+        </Content>
+        <Footer>
+          <FooterActions>
+            {accessLevel && (
+            <Manage>
+              {accessLevel === INTEGRATION_ACCESS_LEVELS.MONITOR ? (
+                <Tooltip
+                  title="You have monitor permissions"
+                  placement="bottom">
+                  <Link
+                    color="inherit"
+                    className={classes.action}
+                    to={getRoutePath(urlToIntegrationSettings)}>
+                    <PermissionsMonitorIcon />
+                  </Link>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  title="You have manage permissions"
+                  placement="bottom">
+                  <Link
+                    color="inherit"
+                    className={classes.action}
+                    to={getRoutePath(urlToIntegrationSettings)}>
+                    <PermissionsManageIcon />
+                  </Link>
+                </Tooltip>
               )}
-              {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
-            </FooterActions>
-            <Info
-              variant={tile._connectorId ? 'Integration app' : 'Legacy'}
-              label={connector?.user?.company}
+            </Manage>
+            )}
+            {ssLinkedConnection?.netsuite?.account && <Tag variant={`NS Account #${ssLinkedConnection.netsuite.account}`} />}
+          </FooterActions>
+          <Info
+            variant={tile._connectorId ? 'Integration app' : 'Legacy'}
+            label={connector?.user?.company}
             />
-          </Footer>
-        </HomePageCardContainer>
-      </div>
-    </>
+        </Footer>
+      </HomePageCardContainer>
+    </div>
   );
 }
 
