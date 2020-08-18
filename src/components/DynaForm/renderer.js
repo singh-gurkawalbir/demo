@@ -31,7 +31,7 @@ function getRenderer(formKey, resourceId, resourceType, proceedOnChange) {
          function is not a react function neither hook so added inline. */
 
       <div key={fid} style={wrapper}>
-        <div style={fieldStyle}>
+        <div id={id} style={fieldStyle}>
           <DynaField {...rest} {...field} resourceContext={context} proceedOnChange={proceedOnChange} />
         </div>
       </div>
