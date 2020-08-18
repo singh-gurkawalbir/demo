@@ -13,6 +13,7 @@ import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic from '../../reducers/session/editors/processorLogic';
 import { SCOPES } from '../resourceForm';
+import { getErrorMessage } from '../../utils/inferErrorMessage';
 
 export function* invokeProcessor({ processor, body }) {
   const path = `/processors/${processor}`;
@@ -49,11 +50,7 @@ export function* evaluateProcessor({ id }) {
     } catch (e) {
       // Error with status code between 400 and 500 are json, hence we can parse them
       if (e.status >= 400 && e.status < 500) {
-        const errJSON = JSON.parse(e.message);
-
-        // Below code is for in case if error object is in canonical format
-        // Example: {errors: [{message: 'request entity too large!'}]}
-        const errorMessage = errJSON.message || errJSON.errors?.[0]?.message;
+        const errorMessage = getErrorMessage(e.message);
 
         return yield put(actions.editor.evaluateFailure(id, errorMessage));
       }
