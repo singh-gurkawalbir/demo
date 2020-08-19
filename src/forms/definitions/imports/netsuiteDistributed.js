@@ -96,7 +96,6 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
     idLockTemplate: {
       fieldId: 'idLockTemplate',
       visibleWhen: [
