@@ -96,6 +96,7 @@ export const ResourceFormFactory = props => {
   return (
     <FormStateManager
       {...props}
+      formState={formState}
       fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}

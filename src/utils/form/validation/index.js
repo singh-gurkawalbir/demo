@@ -11,7 +11,7 @@ export const compareSize = (value, comparedTo, type) => {
 
   if (isNaN(targetValue) || isNaN(compareValue)) {
     return false;
-  } else if (type === 'BIGGER') {
+  } if (type === 'BIGGER') {
     return targetValue > compareValue;
   }
 
@@ -46,7 +46,7 @@ export const compareLength = (value, comparedTo, type) => {
 
   if (valueLength === undefined || compareLength === undefined) {
     return false;
-  } else if (type === 'LONGER') {
+  } if (type === 'LONGER') {
     return valueLength > compareLength;
   }
 
@@ -77,25 +77,25 @@ export const comparedTo = ({
     case 'BIGGER': {
       return targetFields.every(targetField => isBigger(value, targetField))
         ? undefined
-        : message || `Not the biggest field`;
+        : message || 'Not the biggest field';
     }
 
     case 'SMALLER': {
       return targetFields.every(targetField => isSmaller(value, targetField))
         ? undefined
-        : message || `Not the smallest field`;
+        : message || 'Not the smallest field';
     }
 
     case 'LONGER': {
       return targetFields.every(targetField => isLonger(value, targetField))
         ? undefined
-        : message || `Not the longer field`;
+        : message || 'Not the longer field';
     }
 
     case 'SHORTER': {
       return targetFields.every(targetField => isShorter(value, targetField))
         ? undefined
-        : message || `Not the shortest field`;
+        : message || 'Not the shortest field';
     }
 
     default:
@@ -126,9 +126,9 @@ export const matchesRegEx = ({ value, pattern = '.*', message }) => {
 export const getDefaultNumericalRangeErrorMessages = (min, max) => {
   if (typeof min !== 'undefined' && typeof max !== 'undefined') {
     return `Value cannot be less than ${min} or greater than ${max}`;
-  } else if (typeof min !== 'undefined') {
+  } if (typeof min !== 'undefined') {
     return `Value cannot be less than ${min}`;
-  } else if (typeof max !== 'undefined') {
+  } if (typeof max !== 'undefined') {
     return `Value cannot be greater than ${max}`;
   }
 };

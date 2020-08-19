@@ -234,14 +234,11 @@ export const processFields = (
 
     field.touched = getTouchedStateForField(touched, resetTouchedState);
 
-    if (!isValueForceComputed(forceComputation, 'visible'))
-      field.visible = isVisible(field, fieldsById);
+    if (!isValueForceComputed(forceComputation, 'visible')) { field.visible = isVisible(field, fieldsById); }
 
-    if (!isValueForceComputed(forceComputation, 'required'))
-      field.required = isRequired(field, fieldsById);
+    if (!isValueForceComputed(forceComputation, 'required')) { field.required = isRequired(field, fieldsById); }
 
-    if (!isValueForceComputed(forceComputation, 'disabled'))
-      field.disabled = formIsDisabled || isDisabled(field, fieldsById);
+    if (!isValueForceComputed(forceComputation, 'disabled')) { field.disabled = formIsDisabled || isDisabled(field, fieldsById); }
   });
 };
 
@@ -401,7 +398,7 @@ export const calculateFormValue = fields =>
 
     if (shouldOmitFieldValue(field)) {
       return formValue;
-    } else if (useChangesAsValues) {
+    } if (useChangesAsValues) {
       determineChangedValues(field).forEach(({ name, value }) =>
         set(formValue, name, value)
       );
