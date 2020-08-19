@@ -19,6 +19,7 @@ export default {
     let columns = [
       {
         heading: 'Name',
+        // TODO: update 'storeId' references to 'childId'
         value: function Name(r, { parentId, storeId }) {
           return (
             <NameCell
@@ -28,7 +29,7 @@ export default {
               name={r.name}
               description={r.description}
               isFree={r.free}
-              storeId={storeId}
+              childId={storeId}
             />
           );
         },

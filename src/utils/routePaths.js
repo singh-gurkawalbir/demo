@@ -14,3 +14,14 @@ export default function getRoutePath(path = '') {
 
   return `${prefix + pagePath}`;
 }
+
+export const getValidRelativePath = path => {
+  let pathToReturn = path;
+
+  if (typeof pathToReturn === 'string') {
+    // remove dot and whitespace from path
+    pathToReturn = pathToReturn.replace(/\.|\s/g, '');
+  }
+
+  return pathToReturn;
+};

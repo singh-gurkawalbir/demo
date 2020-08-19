@@ -8,6 +8,7 @@ import {
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import actions from '../../../actions';
 import { preSaveValidate } from '../../../utils/editor';
+import { getValidRelativePath } from '../../../utils/routePaths';
 import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
@@ -195,7 +196,7 @@ export default function EditorDrawer(props) {
 
   return (
     <RightDrawer
-      path={typeof path === 'string' ? path.replace(/\.|\s/g, '') : path}
+      path={getValidRelativePath(path)}
       height="tall"
       width="full"
       data-test={dataTest}
