@@ -320,7 +320,7 @@ describe('template reducer test cases', () => {
       );
 
       expect(state).toEqual({
-        [testTemplateId]: { preview: testComponents },
+        [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
       });
     });
 
@@ -331,7 +331,7 @@ describe('template reducer test cases', () => {
       );
 
       expect(state).toEqual({
-        [testTemplateId]: { preview: testComponents },
+        [testTemplateId]: { preview: {components: testComponents, status: 'success'} },
       });
     });
   });

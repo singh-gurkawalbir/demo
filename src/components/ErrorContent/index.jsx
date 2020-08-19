@@ -8,9 +8,9 @@ const isHTML = text => /<\/?[a-z][\s\S]*>/i.test(text);
 
 const useStyles = makeStyles({
   errorText: {
-    maxHeight: 300,
+    overflow: 'hidden',
     maxWidth: 500,
-    overflow: 'auto',
+    paddingLeft: 12,
   },
 });
 

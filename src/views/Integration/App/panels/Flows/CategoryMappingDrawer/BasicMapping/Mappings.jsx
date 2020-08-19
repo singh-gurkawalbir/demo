@@ -9,7 +9,7 @@ import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
 import LockIcon from '../../../../../../../components/icons/LockIcon';
-import MappingSettings from '../../../../../../../components/AFE/ImportMappingSettings/MappingSettingsField';
+import MappingSettings from '../../../../../../../components/Mapping/Settings/SettingsButton';
 import TrashIcon from '../../../../../../../components/icons/TrashIcon';
 import DynaTypeableSelect from '../../../../../../../components/DynaForm/fields/DynaTypeableSelect';
 import PreferredIcon from '../../../../../../../components/icons/PreferredIcon';
@@ -140,7 +140,6 @@ export default function ImportMapping(props) {
   // generateFields and extractFields are passed as an array of field names
   const {
     editorId,
-    application,
     integrationId,
     flowId,
     generateFields = [],
@@ -154,7 +153,7 @@ export default function ImportMapping(props) {
     useSelector(state =>
       selectors.categoryMappingFilters(state, integrationId, flowId)
     ) || {};
-  const { mappings, lookups, initChangeIdentifier } = useSelector(state =>
+  const { mappings, initChangeIdentifier } = useSelector(state =>
     selectors.categoryMappingsForSection(state, integrationId, flowId, editorId)
   );
   const { fields = [] } =
@@ -212,18 +211,6 @@ export default function ImportMapping(props) {
     },
     [dispatch, editorId]
   );
-  const patchSettings = (row, settings) => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.patchSettings(
-        integrationId,
-        flowId,
-        editorId,
-        row,
-        settings
-      )
-    );
-  };
-
   const handleDelete = row => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.delete(
@@ -231,34 +218,6 @@ export default function ImportMapping(props) {
         flowId,
         editorId,
         row
-      )
-    );
-  };
-
-  const updateLookupHandler = (lookupOps = []) => {
-    let lookupsTmp = [...lookups];
-    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
-
-    lookupOps.forEach(({ isDelete, obj }) => {
-      if (isDelete) {
-        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-      } else {
-        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
-
-        if (index !== -1) {
-          lookupsTmp[index] = obj;
-        } else {
-          lookupsTmp.push(obj);
-        }
-      }
-    });
-
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.updateLookup(
-        integrationId,
-        flowId,
-        editorId,
-        lookupsTmp
       )
     );
   };
@@ -477,20 +436,14 @@ export default function ImportMapping(props) {
                 <div className={classes.mappingActionsCategory}>
                   <div>
                     <MappingSettings
-                      id={`fieldMappingSettings-${mapping.index}`}
-                      onSave={(id, evt) => {
-                        patchSettings(mapping.index, evt);
-                      }}
-                      value={mapping}
-                      options={options}
-                      generate={mapping.generate}
-                      application={application}
+                      dataTest={`fieldMappingSettings-${mapping.index}`}
                       isCategoryMapping
-                      updateLookup={updateLookupHandler}
                       disabled={mapping.isNotEditable || disabled}
-                      lookups={lookups}
-                      extractFields={extractFields}
-                      generateFields={generateFields}
+                      mappingIndex={mapping.index}
+                      integrationId={integrationId}
+                      flowId={flowId}
+                      editorId={editorId}
+                      {...options}
                     />
                   </div>
                   <div key="delete_button">

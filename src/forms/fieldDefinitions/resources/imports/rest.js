@@ -170,19 +170,6 @@ export default {
       },
     ],
   },
-  mapping: {
-    type: 'mapping',
-    connectionId: r => r && r._connectionId,
-    label: 'Manage import mapping',
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-    defaultValue: r =>
-      r && r.rest && r.rest.relativeURI && r.rest.relativeURI[0],
-  },
   'rest.body': {
     type: 'httprequestbody',
     defaultValue: r =>

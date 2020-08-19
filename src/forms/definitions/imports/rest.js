@@ -920,9 +920,6 @@ export default {
         },
       ],
     },
-    dataMappings: {
-      formId: 'dataMappings',
-    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
@@ -949,7 +946,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode', 'dataMappings', 'formView'],
+        fields: ['common', 'inputMode', 'formView'],
       },
       {
         collapsed: true,
@@ -966,7 +963,6 @@ export default {
           'rest.headers',
           'rest.compositeType',
           'rest.lookups',
-          // 'mapping',
           'rest.relativeURI',
           'rest.body',
         ],

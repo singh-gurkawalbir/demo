@@ -4,9 +4,8 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import CodePanel from '../GenericEditor/CodePanel';
+import CodePanel from '../../AFE/GenericEditor/CodePanel';
 
-// TODO: Azhar to review styling
 const useStyles = makeStyles(theme => ({
   header: {
     marginTop: theme.spacing(1),
@@ -21,8 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HttpMappingAssistant(props) {
-  const { editorId, data: dataInput, rule } = props;
+export default function HttpMappingAssistant({ editorId, data: dataInput, rule }) {
   const [initTriggered, setInitTriggered] = useState(false);
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -42,17 +40,7 @@ export default function HttpMappingAssistant(props) {
       );
     }
     setInitTriggered(true);
-  }, [
-    data,
-    dataInput,
-    dispatch,
-    editorId,
-    initTriggered,
-    props.data,
-    props.rule,
-    props.strict,
-    rule,
-  ]);
+  }, [data, dataInput, dispatch, editorId, initTriggered, rule]);
 
   useEffect(() => {
     if (data && dataInput && data !== dataInput) {

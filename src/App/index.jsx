@@ -74,7 +74,24 @@ const useSnackbarStyles = makeStyles({
     '& div > span > svg': {
       color: colors.celigoError,
     },
+    '& .MuiSnackbarContent-message': {
+      gridTemplateColumns: 'auto, 1fr',
+    },
   },
+  message: {
+    marginLeft: 30,
+    overflow: 'auto',
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr',
+    maxHeight: 300,
+    '& > svg': {
+      position: 'fixed',
+      left: 16,
+      top: '50%',
+      transform: 'translateY(-50%)',
+    },
+  },
+
 });
 
 function NonSigninHeaderComponents(props) {

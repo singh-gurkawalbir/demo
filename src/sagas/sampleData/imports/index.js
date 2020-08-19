@@ -1,9 +1,9 @@
-import { takeLatest, select, call, put } from 'redux-saga/effects';
+import { takeLatest, select, call, put, all } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import { convertFromImport, convertToExport } from '../../../utils/assistant';
-import { requestAssistantMetadata } from '../../resources/meta';
+import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
 import actions from '../../../actions';
 import { isIntegrationApp } from '../../../utils/flows';
@@ -163,7 +163,7 @@ function* fetchIAMetaData({
   }
 }
 
-function* requestSampleData({ resourceId, options = {}, refreshCache }) {
+export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     'imports',
@@ -192,40 +192,24 @@ function* requestSampleData({ resourceId, options = {}, refreshCache }) {
           commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
         }
 
-        yield put(
-          actions.metadata.request(connectionId, commMetaPath, { refreshCache })
-        );
+        yield call(getNetsuiteOrSalesforceMeta, {connectionId, commMetaPath, addInfo: { refreshCache }});
 
         return;
       }
 
       case 'SalesforceImport': {
         const { _connectionId: connectionId, salesforce } = resource;
-        const {sObjects} = options;
+        const sObjectsToFetch = options.sObjects ? options.sObjects : [salesforce.sObjectType];
 
-        if (sObjects && Array.isArray(sObjects)) {
-          for (let i = 0; i < sObjects.length; i += 1) {
-            yield put(
-              actions.metadata.request(
-                connectionId,
-                `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjects[i]}`,
-                { refreshCache }
-              )
-            );
-          }
-        } else {
-          yield put(
-            actions.metadata.request(
-              connectionId,
-              `salesforce/metadata/connections/${connectionId}/sObjectTypes/${salesforce.sObjectType}`,
-              { refreshCache }
-            )
-          );
-        }
+        yield all(sObjectsToFetch.map(sObjectType => call(
+          getNetsuiteOrSalesforceMeta, {
+            connectionId,
+            commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}`,
+            addInfo: { refreshCache }}
+        )));
 
         return;
       }
-
       default:
     }
   }

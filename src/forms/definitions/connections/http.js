@@ -550,9 +550,6 @@ export default {
           'http.mediaType',
           'http.successMediaType',
           'http.errorMediaType',
-          'http.auth.failStatusCode',
-          'http.auth.failPath',
-          'http.auth.failValues',
         ],
       },
       {
@@ -587,6 +584,9 @@ export default {
           'http.auth.oauth.scheme',
           'http.oauth.customAuthScheme',
           'http.auth.oauth.paramName',
+          'http.auth.failStatusCode',
+          'http.auth.failPath',
+          'http.auth.failValues',
         ],
       },
       {

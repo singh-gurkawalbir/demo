@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import { cloneDeep } from 'lodash';
-import { Button, FormLabel } from '@material-ui/core';
+import { Button, FormLabel, FormHelperText } from '@material-ui/core';
 import { adaptorTypeMap } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -15,7 +16,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   sqlContainer: {
     width: '100%',
   },
@@ -28,7 +29,15 @@ const useStyles = makeStyles({
   sqlLabelWrapper: {
     display: 'flex',
   },
-});
+  errorBtn: {
+    borderColor: theme.palette.error.dark,
+    color: theme.palette.error.dark,
+    '&:hover': {
+      borderColor: theme.palette.error.main,
+      color: theme.palette.error.main,
+    },
+  },
+}));
 
 export default function DynaSQLQueryBuilder(props) {
   const classes = useStyles();
@@ -46,6 +55,9 @@ export default function DynaSQLQueryBuilder(props) {
     flowId,
     resourceType,
     hideDefaultData,
+    required,
+    isValid,
+    errorMessages,
   } = props;
   const {
     lookups: lookupObj,
@@ -268,17 +280,19 @@ export default function DynaSQLQueryBuilder(props) {
           />
 
         <div className={classes.sqlLabelWrapper}>
-          <FormLabel className={classes.sqlLabel}>{label}</FormLabel>
+          <FormLabel className={classes.sqlLabel} required={required}>{label}</FormLabel>
           <FieldHelp {...props} />
         </div>
         <Button
-          className={classes.sqlBtn}
+          className={clsx(classes.sqlBtn, { [classes.errorBtn]: !isValid})}
           data-test={id}
           variant="outlined"
           color="secondary"
           onClick={handleOpenDrawer}>
           Launch
         </Button>
+        {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
+
       </div>
     </>
   );
