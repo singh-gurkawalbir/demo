@@ -2,6 +2,8 @@ import React from 'react';
 import Retry from '../actions/Retry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
+import UserName from '../components/UserName';
+import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
   columns: [
@@ -16,6 +18,7 @@ export default {
     },
     {
       heading: 'Message',
+      width: '30%',
       value: r => r.message,
     },
     { heading: 'Source', value: r => r.source },
@@ -25,11 +28,11 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => r.occurredAt,
+      value: r => <DateTimeDisplay dateTime={r.occurredAt} />,
     },
     {
       heading: 'Resolved By',
-      value: r => r.resolvedBy,
+      value: r => <UserName userId={r.resolvedBy} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {

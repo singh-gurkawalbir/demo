@@ -1652,6 +1652,14 @@ const errorManager = {
         checked,
         options,
       }),
+    saveAndRetry: ({ flowId, resourceId, retryId, retryData }) => action(
+      actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }
+    ),
     retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
@@ -1702,6 +1710,12 @@ const errorManager = {
         flowId,
         resourceId,
         isResolved,
+      }),
+    notifyUpdate: ({ flowId, resourceId, diff }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
+        flowId,
+        resourceId,
+        diff,
       }),
   },
   retryData: {

@@ -15,6 +15,7 @@ export default (state = {}, action) => {
     errorIds,
     retryCount,
     resolveCount,
+    diff,
   } = action;
 
   return produce(state, draft => {
@@ -23,16 +24,22 @@ export default (state = {}, action) => {
 
     switch (type) {
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST:
-        if (!draft[flowId]) draft[flowId] = {};
-
-        if (!draft[flowId][resourceId]) draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
-        draft[flowId][resourceId][errorType].status = 'requested';
+        if (!draft[flowId]) {
+          draft[flowId] = {};
+        }
+        if (!draft[flowId][resourceId]) {
+          draft[flowId][resourceId] = { open: {}, resolved: {}, actions: {} };
+        }
+        // TODO @Raghu: remove this outdated prop - used to load next set of errors automatically
+        // when user selects all and retries. Not a good way to handle. Refer - @components/OpenErrors
         delete draft[flowId][resourceId][errorType].outdated;
-
         if (!loadMore) {
           delete draft[flowId][resourceId][errorType].nextPageURL;
+          delete draft[flowId][resourceId][errorType].updated;
+          draft[flowId][resourceId].actions = {};
         }
 
+        draft[flowId][resourceId][errorType].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.RECEIVED: {
         const errors =
@@ -119,6 +126,21 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE: {
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          break;
+        }
+        draft[flowId][resourceId].resolved.updated = true;
+        // If whatever count diff occured is because of errors resolved by this user
+        // in this case, don't notify open errors
+        const userActions = draft[flowId][resourceId].actions;
+        const errorsUpdatedByUser = (userActions.retry?.count || 0) + (userActions.resolve?.count || 0);
+
+        if (errorsUpdatedByUser !== Math.abs(diff)) {
+          draft[flowId][resourceId].open.updated = true;
+        }
+        break;
+      }
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.CLEAR:
         draft[flowId][resourceId][errorType] = {};
         draft[flowId][resourceId].actions = {};

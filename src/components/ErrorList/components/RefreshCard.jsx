@@ -6,11 +6,9 @@ import Icon from '../../icons/RefreshIcon';
 const useStyles = makeStyles(theme => ({
   card: {
     position: 'absolute',
-    top: 0,
+    top: -71,
     textAlign: 'center',
     left: 500,
-    width: 300,
-    background: theme.palette.secondary.lightest,
   },
   refresh: {
     color: theme.palette.primary.main,
@@ -19,10 +17,22 @@ const useStyles = makeStyles(theme => ({
 
 export default function RefreshCard(props) {
   const classes = useStyles();
-  const { onRefresh } = props;
+  const { onRefresh, disabled } = props;
   const handleClick = useCallback(() => {
     if (onRefresh) onRefresh();
   }, [onRefresh]);
+
+  if (disabled) {
+    return (
+      <div
+        className={classes.card}
+        title="New errors will take up to 30 seconds to display" >
+        <IconTextButton onClick={handleClick} className={classes.refresh} disabled >
+          <Icon /> Refresh errors
+        </IconTextButton>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.card}>

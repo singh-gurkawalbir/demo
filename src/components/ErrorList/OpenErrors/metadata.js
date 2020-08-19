@@ -5,6 +5,7 @@ import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
+import DateTimeDisplay from '../../DateTimeDisplay';
 
 export default {
   columns: [
@@ -19,6 +20,7 @@ export default {
     },
     {
       heading: 'Message',
+      width: '40%',
       value: r => r.message,
     },
     { heading: 'Source', value: r => r.source },
@@ -28,7 +30,7 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => r.occurredAt,
+      value: r => <DateTimeDisplay dateTime={r.occurredAt} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {

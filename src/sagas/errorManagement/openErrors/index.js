@@ -1,8 +1,30 @@
-import { put, takeLatest, select, fork, take, call, delay, cancel } from 'redux-saga/effects';
+import { put, takeLatest, select, fork, take, call, delay, cancel, all } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
 import { selectors } from '../../../reducers';
+import {getErrorMapWithTotal, getErrorCountDiffMap} from '../../../utils/errorManagement';
+
+function* notifyErrorListOnUpdate({ flowId, newFlowErrors }) {
+  const {data: prevFlowOpenErrorsMap} = yield select(selectors.errorMap, flowId);
+  const currFlowOpenErrorsMap = getErrorMapWithTotal(newFlowErrors?.flowErrors, '_expOrImpId').data;
+  const resourceIdsErrorCountMap = getErrorCountDiffMap(prevFlowOpenErrorsMap, currFlowOpenErrorsMap);
+  const resourceIds = Object.keys(resourceIdsErrorCountMap);
+
+  // notifies all the resources whose error details are to be updated
+  yield all(
+    resourceIds.map(
+      resourceId =>
+        put(actions.errorManager.flowErrorDetails.notifyUpdate(
+          {
+            flowId,
+            resourceId,
+            diff: resourceIdsErrorCountMap[resourceId],
+          }
+        ))
+    )
+  );
+}
 
 function* requestFlowOpenErrors({ flowId }) {
   try {
@@ -13,6 +35,7 @@ function* requestFlowOpenErrors({ flowId }) {
       },
     });
 
+    yield call(notifyErrorListOnUpdate, { flowId, newFlowErrors: flowOpenErrors});
     yield put(
       actions.errorManager.openFlowErrors.received({
         flowId,
