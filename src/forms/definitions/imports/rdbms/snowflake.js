@@ -110,7 +110,6 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
   },
   layout: {
     type: 'collapse',
@@ -118,7 +117,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'dataMappings', 'modelMetadata'],
+        fields: ['common', 'modelMetadata'],
       },
       {
         collapsed: true,

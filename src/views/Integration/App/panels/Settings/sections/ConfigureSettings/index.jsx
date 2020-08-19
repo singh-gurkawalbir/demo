@@ -1,4 +1,4 @@
-import React, { useMemo, } from 'react';
+import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export default function ConfigureSettings({ integrationId, storeId, sectionId, parentUrl }) {
   const classes = useStyles();
   const section = useSelector(state => {
@@ -38,7 +37,6 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId, p
 
     return flowSections.find(s => s.titleId === sectionId);
   }, shallowEqual);
-
 
   const flowSettingsMeta = useSelector(
     state =>

@@ -67,42 +67,6 @@ export default {
     type: 'text',
     label: 'NetSuite internal ID lookup expression',
   },
-  'netsuite.lookups[*].name': {
-    type: 'text',
-    label: 'NetSuite lookups[*] name',
-  },
-  'netsuite.lookups[*].map': {
-    type: 'text',
-    label: 'NetSuite lookups[*] map',
-  },
-  'netsuite.lookups[*].default': {
-    type: 'text',
-    label: 'NetSuite lookups[*] default',
-  },
-  'netsuite.lookups[*].recordType': {
-    type: 'text',
-    label: 'NetSuite lookups[*] record type',
-  },
-  'netsuite.lookups[*].searchField': {
-    type: 'text',
-    label: 'NetSuite lookups[*] search field',
-  },
-  'netsuite.lookups[*].expression': {
-    type: 'text',
-    label: 'NetSuite lookups[*] expression',
-  },
-  'netsuite.lookups[*].resultField': {
-    type: 'text',
-    label: 'NetSuite lookups[*] result field',
-  },
-  'netsuite.lookups[*].includeInactive': {
-    type: 'text',
-    label: 'NetSuite lookups[*] include inactive',
-  },
-  'netsuite.lookups[*].allowFailures': {
-    type: 'text',
-    label: 'NetSuite lookups[*] allow failures',
-  },
   'netsuite.preferences.ignoreReadOnlyFields': {
     type: 'checkbox',
     label: 'NetSuite preferences ignore read only fields',

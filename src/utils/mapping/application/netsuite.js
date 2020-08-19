@@ -235,7 +235,6 @@ export default {
     isGroupedSampleData,
     generateFields,
     recordType,
-    flowSampleData,
   }) => {
     const initializeValues = [];
     let generateParts;
@@ -273,7 +272,6 @@ export default {
         }
 
         if (
-          flowSampleData &&
           isGroupedSampleData &&
           mapping.extract &&
           mapping.extract.indexOf('[*].') === -1 &&

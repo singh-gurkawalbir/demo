@@ -37,7 +37,7 @@ function* requestRetryData({ flowId, resourceId, retryId }) {
   }
 }
 
-function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
+export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
   try {
     yield apiCallWithRetry({
       path: `/flows/${flowId}/${resourceId}/${retryId}/data`,

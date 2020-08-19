@@ -1,8 +1,8 @@
 import shortid from 'shortid';
-import RestMappingSettings from './rest';
-import NetsuiteMappingSettings from './netsuite';
-import SalesforceMappingSettings from './salesforce';
-import FTPMappingSettings from './ftp';
+import restMappingSettings from './rest';
+import netsuiteMappingSettings from './netsuite';
+import salesforceMappingSettings from './salesforce';
+import ftpMappingSettings from './ftp';
 import { adaptorTypeMap } from '../../../../utils/resource';
 import rdbmsMappingSettings from './rdbms';
 // TODO (Aditya) test cases to be added for save functionality
@@ -64,74 +64,31 @@ const getFormattedLookup = (lookup, formVal) => {
 export default {
   getMetaData: params => {
     const {
-      application,
       value,
-      extractFields = [],
-      generate,
-      generateFields = [],
-      options,
-      lookups,
-      isCategoryMapping,
+      importResource,
     } = params;
+    const {adaptorType} = importResource;
     let fieldMeta = {};
-    const lookup = lookups.find(l => l.name === value.lookupName);
 
-    switch (application) {
+    switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
-        fieldMeta = RestMappingSettings.getMetaData({
-          value,
-          extractFields,
-          generate,
-          options,
-          lookups,
-          lookup,
-        });
+        fieldMeta = restMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.NetSuiteDistributedImport:
-        fieldMeta = NetsuiteMappingSettings.getMetaData({
-          value,
-          extractFields,
-          generate,
-          generateFields,
-          options,
-          lookups,
-          lookup,
-          isCategoryMapping,
-        });
+        fieldMeta = netsuiteMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.SalesforceImport:
-        fieldMeta = SalesforceMappingSettings.getMetaData({
-          value,
-          extractFields,
-          generate,
-          generateFields,
-          options,
-          lookups,
-          lookup,
-        });
+        fieldMeta = salesforceMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.AS2Import:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.FTPImport:
-        fieldMeta = FTPMappingSettings.getMetaData({
-          value,
-          extractFields,
-          options,
-          lookups,
-          lookup,
-        });
+        fieldMeta = ftpMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.RDBMSImport: {
-        fieldMeta = rdbmsMappingSettings.getMetaData({
-          value,
-          extractFields,
-          generate,
-          options,
-          lookups,
-          lookup,
-        });
+        fieldMeta = rdbmsMappingSettings.getMetaData(params);
         break;
       }
 
