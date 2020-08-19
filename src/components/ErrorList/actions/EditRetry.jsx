@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import EditIcon from '../../icons/EditIcon';
 
 export default {
   label: 'Edit retry',
+  icon: EditIcon,
   component: function EditRetry({rowData = {}}) {
     const { errorId } = rowData;
     const history = useHistory();

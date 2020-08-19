@@ -222,7 +222,7 @@ export default function MarketplaceList() {
                 Integration app
               </Typography>
               <Typography className={classes.user} variant="body2">
-                Celigo
+                { connector?.user?.company || connector?.user?.name || connector?.user?.email || 'Celigo'}
               </Typography>
             </div>
           </Card>
@@ -257,7 +257,7 @@ export default function MarketplaceList() {
                 Template
               </Typography>
               <Typography className={classes.user} variant="body2">
-                Celigo
+                { template?.user?.company || template?.user?.name || template?.user?.email || 'Celigo'}
               </Typography>
             </div>
           </Card>

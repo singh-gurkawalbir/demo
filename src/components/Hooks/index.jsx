@@ -141,7 +141,7 @@ export default function Hooks(props) {
   });
 
   return (
-    <LoadResources resources="scripts, stacks">
+    <LoadResources resources="scripts,stacks">
       <div className={classes.fbContDrawer}>
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
         <DynaSubmit

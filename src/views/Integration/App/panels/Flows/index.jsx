@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Route,
   NavLink,
@@ -51,21 +51,35 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
 }));
+export const useActiveTab = () => {
+  const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
+  const setExternalTabState = useCallback(
+    (index, val) => {
+      setExternalTabStateFn({activeTab: val});
+    },
+    []
+  );
+
+  return {externalTabState, setExternalTabState, index: 0 };
+};
 
 export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
   const actionButtons = useMemo(() => actions.map(action => ({
     ...actionProps,
     id: action?.id,
-    mode: 'primary'
+    mode: 'primary',
   })), [actions, actionProps]);
+
   if (!actions || !actions.length) { return null; }
 
-  return <GenerateButtons
-    fieldMap={fieldMap}
-    actions={actionButtons}
-    consolidatedActions={consolidatedActions}
+  return (
+    <GenerateButtons
+      fieldMap={fieldMap}
+      actions={actionButtons}
+      consolidatedActions={consolidatedActions}
 
-/>;
+/>
+  );
 };
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
@@ -78,7 +92,7 @@ export const IAFormStateManager = props => {
   }), [integrationId, props]);
 
   const allActionProps = useMemo(() => ({
-    ...allProps, formKey
+    ...allProps, formKey,
   }), [allProps, formKey]);
 
   useEffect(() => {

@@ -21,7 +21,7 @@ import templates, { selectors as fromTemplates } from './templates';
 import oAuthAuthorize, { selectors as fromOAuthAuthorize } from './oAuthAuthorize';
 import resource, { selectors as fromResource } from './resource';
 import flowMetrics, { selectors as fromFlowMetrics } from './flowMetrics';
-import mappings, { selectors as fromMappings } from './mappings';
+import mapping, { selectors as fromMapping } from './mapping';
 import searchCriteriaReducer, { selectors as fromSearchCriteria } from './searchCriteria';
 import flows, { selectors as fromFlows } from './flows';
 import transfers, { selectors as fromTransfers } from './transfers';
@@ -58,7 +58,7 @@ export default combineReducers({
   integrationApps,
   templates,
   oAuthAuthorize,
-  mappings,
+  mapping,
   searchCriteriaReducer,
   flows,
   transfers,
@@ -97,7 +97,7 @@ const subSelectors = {
   oAuthAuthorize: fromOAuthAuthorize,
   resource: fromResource,
   flowMetrics: fromFlowMetrics,
-  mappings: fromMappings,
+  mapping: fromMapping,
   searchCriteriaReducer: fromSearchCriteria,
   flows: fromFlows,
   transfers: fromTransfers,

@@ -79,13 +79,11 @@ export default function DynaNetSuiteSubRecords(props) {
   const { recordType } = options;
 
   const {hasSubrecord, status} = useSelector(state => {
-    const {data: recordTypes, status} = selectors.metadataOptionsAndResources(
-      state,
-      {
-        connectionId,
-        commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
-        filterKey: 'suitescript-recordTypes',
-      });
+    const {data: recordTypes, status} = selectors.metadataOptionsAndResources(state, {
+      connectionId,
+      commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes`,
+      filterKey: 'suitescript-recordTypes',
+    });
     let hasSubrecord;
 
     if (recordTypes) {

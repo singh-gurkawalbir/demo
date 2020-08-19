@@ -8,10 +8,6 @@ import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
 
 export default function SalesforceMappingAssistant({
-  style = {
-    width: '100%',
-    height: '500px',
-  },
   connectionId,
   sObjectType,
   sObjectLabel,
@@ -81,7 +77,10 @@ export default function SalesforceMappingAssistant({
   return (
     <Frame
       data-test="salesforceMappingAssistant"
-      style={style}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
       head={(
         <>
           <link

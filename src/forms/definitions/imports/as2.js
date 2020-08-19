@@ -135,7 +135,6 @@ export default {
     'as2.fileNameTemplate': { fieldId: 'as2.fileNameTemplate' },
     'as2.messageIdTemplate': { fieldId: 'as2.messageIdTemplate' },
     'as2.headers': { fieldId: 'as2.headers' },
-    dataMappings: { formId: 'dataMappings' },
     compressFiles: { formId: 'compressFiles' },
     'as2.maxRetries': { fieldId: 'as2.maxRetries' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
@@ -175,7 +174,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'dataMappings'],
+        fields: ['common'],
       },
       {
         collapsed: true,

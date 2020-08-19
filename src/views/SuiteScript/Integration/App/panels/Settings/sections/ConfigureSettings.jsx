@@ -32,15 +32,6 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
     },
-    '& > div[class*= "fieldsContainer"]': {
-      height: '100%',
-      '& > div[class*= "makeStyles-root"]': {
-        height: '100%',
-        '& > div[class*= "panelContainer"]': {
-          paddingBottom: theme.spacing(5),
-        },
-      },
-    },
   },
   configureDrawerCamForm: {
     minHeight: '100%',

@@ -2835,15 +2835,15 @@ selectors.makeResourceDataSelector = () => {
 selectors.resourceData = selectors.makeResourceDataSelector();
 
 selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
-  const { merged: res = {} } = selectors.resourceData(
+  const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
     resourceId
   );
 
   // AFE 2.0 not supported for Native REST Adaptor
-  if (['RESTImport', 'RESTExport'].includes(res.adaptorType)) {
-    const restConnection = selectors.resource(state, 'connections', res._connectionId);
+  if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+    const restConnection = selectors.resource(state, 'connections', resource._connectionId);
 
     return !!restConnection.isHTTP;
   }
@@ -2857,7 +2857,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     'AS2Export',
     'S3Import',
     'S3Export',
-  ].includes(res.adaptorType);
+  ].includes(resource.adaptorType);
 };
 
 selectors.resourceFormField = (state, resourceType, resourceId, id) => {
@@ -2962,7 +2962,7 @@ selectors.auditLogs = (
     const resourceIds = [
       ...exports,
       ...imports,
-      ...flows,
+      ...map(flows, '_id'),
       ...map(connections, '_id'),
     ];
 
@@ -4270,9 +4270,13 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
 
 selectors.flowResources = (state, flowId) => {
   const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId) || {};
+  const flow = fromData.resource(state && state.data, 'flows', flowId);
 
   resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (!flow) {
+    return resources;
+  }
 
   if (flow._exportId) {
     const exportDoc = fromData.resource(
@@ -4281,7 +4285,9 @@ selectors.flowResources = (state, flowId) => {
       flow._exportId
     );
 
-    resources.push({ _id: flow._exportId, name: exportDoc.name });
+    if (exportDoc) {
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+    }
   }
 
   if (flow._importId) {
@@ -4291,7 +4297,9 @@ selectors.flowResources = (state, flowId) => {
       flow._importId
     );
 
-    resources.push({ _id: flow._exportId, name: importDoc.name });
+    if (importDoc) {
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+    }
   }
 
   if (flow.pageGenerators && flow.pageGenerators.length) {
@@ -4302,7 +4310,9 @@ selectors.flowResources = (state, flowId) => {
         pg._exportId
       );
 
-      resources.push({ _id: pg._exportId, name: exportDoc.name });
+      if (exportDoc) {
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
+      }
     });
   }
 
@@ -4315,7 +4325,9 @@ selectors.flowResources = (state, flowId) => {
           pp._importId
         );
 
-        resources.push({ _id: pp._importId, name: importDoc.name });
+        if (importDoc) {
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
+        }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = fromData.resource(
           state && state.data,
@@ -4323,7 +4335,9 @@ selectors.flowResources = (state, flowId) => {
           pp._exportId
         );
 
-        resources.push({ _id: pp._exportId, name: exportDoc.name });
+        if (exportDoc) {
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
+        }
       }
     });
   }
@@ -4354,8 +4368,8 @@ selectors.redirectUrlToResourceListingPage = (
 };
 
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
-  const { _integrationId, _connectionId, http } = importRes;
+  const importResource = selectors.resource(state, 'imports', importId);
+  const { _integrationId, _connectionId, http } = importResource;
 
   if (_integrationId && http) {
     const connection = selectors.resource(state, 'connections', _connectionId);
@@ -4367,10 +4381,10 @@ selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
 };
 
 selectors.mappingPreviewType = (state, importId) => {
-  const importRes = selectors.resource(state, 'imports', importId);
+  const importResource = selectors.resource(state, 'imports', importId);
 
-  if (!importRes) return;
-  const { adaptorType } = importRes;
+  if (!importResource) return;
+  const { adaptorType } = importResource;
 
   if (adaptorType === 'NetSuiteDistributedImport') {
     return 'netsuite';
@@ -4387,7 +4401,7 @@ selectors.mappingPreviewType = (state, importId) => {
         return 'salesforce';
       }
     }
-  } else if (importRes.http) {
+  } else if (importResource.http) {
     const showHttpAssistant = selectors.httpAssistantSupportsMappingPreview(
       state,
       importId
@@ -4603,7 +4617,6 @@ selectors.suiteScriptGenerates = createSelector(
 
       return flow?.import?.type;
     },
-
   ],
   ({ data, status }, importType) => {
     if (!data) {
@@ -4937,4 +4950,158 @@ selectors.tradingPartnerConnections = (
       c.ftp.port === currConnection.ftp.port &&
       c.sandbox === currConnection.sandbox
   ));
+};
+
+selectors.mappingImportSampleDataSupported = (state, importId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+  const isAssistant =
+  !!importResource.assistant && importResource.assistant !== 'financialforce';
+
+  return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
+};
+
+selectors.mapping = state => fromSession.mapping(state && state.session);
+
+selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+
+  if (subRecordMappingId && ['NetSuiteImport', 'NetSuiteDistributedImport'].includes(importResource.adaptorType)) {
+    return mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId);
+  }
+
+  return emptyObject;
+};
+selectors.mappingGenerates = createSelector([
+  (state, importId) => selectors.resource(state, 'imports', importId).adaptorType,
+  (state, importId, subRecordMappingId) => {
+    const opts = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
+
+    return selectors.getImportSampleData(state, importId, opts).data;
+  },
+], (adaptorType, importSampleData) => mappingUtil.getFormattedGenerateData(importSampleData, adaptorTypeMap[adaptorType]));
+
+selectors.mappingExtracts = createSelector([
+  (state, resourceId, flowId) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId,
+    stage: 'importMappingExtract',
+    resourceType: 'imports',
+  }).data,
+  (state, resourceId, flowId, subRecordMappingId) => selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId),
+], (flowData, subRecordObj) => {
+  if (flowData) {
+    const extractPaths = mappingUtil.getExtractPaths(
+      flowData,
+      subRecordObj
+    );
+
+    return (extractPaths &&
+        extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
+        emptySet;
+  }
+
+  return emptySet;
+});
+
+selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
+  if (type === 'generate') {
+    /** generating generate Label */
+    const importResource = selectors.resource(state, 'imports', resourceId);
+    const importConn = selectors.resource(state, 'connections', importResource._connectionId);
+
+    return `Import field (${mappingUtil.getApplicationName(
+      importResource,
+      importConn
+    )})`;
+  }
+  if (type === 'extract') {
+    /** generating extract Label */
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
+      const {_exportId} = flow.pageGenerators[0];
+      const exportResource = selectors.resource(state, 'exports', _exportId);
+      const exportConn = selectors.resource(state, 'connections', exportResource._connectionId);
+
+      return `Export field (${mappingUtil.getApplicationName(
+        exportResource,
+        exportConn
+      )})`;
+    }
+
+    return 'Source record field';
+  }
+};
+selectors.mappingHttpAssistantPreviewData = createSelector([
+  state => {
+    const mappingPreview = selectors.mapping(state).preview;
+
+    return mappingPreview && mappingPreview.data;
+  },
+  (state, importId) => {
+    const previewType = selectors.mappingPreviewType(state, importId);
+
+    return previewType === 'http';
+  },
+  (state, importId) => selectors.resource(state, 'imports', importId),
+  (state, importId) => {
+    const importResource = selectors.resource(state, 'imports', importId);
+
+    return selectors.resource(state, 'connections', importResource._connectionId);
+  },
+  (state, importId) => selectors.getImportSampleData(state, importId, {}).data,
+], (previewData, isHttpPreview, importResource, importConn, importSampleData) => {
+  if (!isHttpPreview) {
+    return;
+  }
+  const model = {
+    connection: importConn,
+    data: [],
+  };
+
+  if (previewData) {
+    model.data = previewData;
+  } else if (importSampleData) {
+    model.data = Array.isArray(importSampleData)
+      ? importSampleData
+      : [importSampleData];
+  }
+
+  return {
+    rule: importResource?.http?.body[0],
+    data: JSON.stringify(model),
+  };
+});
+
+selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
+  const importResource = selectors.resource(state, 'imports', importId);
+  const {adaptorType} = importResource;
+
+  if (!['NetSuiteImport', 'NetSuiteDistributedImport'].includes(adaptorType)) {
+    return;
+  }
+  if (subRecordMappingId) {
+    const { recordType } = mappingUtil.getSubRecordRecordTypeAndJsonPath(
+      importResource,
+      subRecordMappingId
+    );
+
+    return recordType;
+  }
+
+  return importResource.netsuite_da.recordType;
+};
+
+/** returns 1st Page generator for a flow */
+selectors.firstFlowPageGenerator = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (flow?.pageGenerators?.length) {
+    const exportId = flow.pageGenerators[0]._exportId;
+
+    return selectors.resource(state, 'exports', exportId);
+  }
+
+  return emptyObject;
 };

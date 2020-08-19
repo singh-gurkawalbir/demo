@@ -5,11 +5,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
-import { IAFormStateManager } from '../../../Flows';
+import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIASettingsStateWithHandleClose';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
+    minHeight: 300,
     padding: theme.spacing(2, 3),
     '& + div': {
       padding: theme.spacing(2, 0),
@@ -19,19 +20,9 @@ const useStyles = makeStyles(theme => ({
       marginTop: theme.spacing(-2),
       marginLeft: theme.spacing(-3),
     },
-    '& > div[class*= "fieldsContainer"]': {
-      height: '100%',
-      '& > div[class*= "makeStyles-root"]': {
-        paddingTop: theme.spacing(5),
-        height: '100%',
-        '& > div[class*= "panelContainer"]': {
-          paddingBottom: theme.spacing(5),
-        },
-      },
-    },
   },
   configureCamForm: {
-    minHeight: '100%',
+    minHeight: 300,
   },
 }));
 
@@ -46,6 +37,7 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId, p
 
     return flowSections.find(s => s.titleId === sectionId);
   }, shallowEqual);
+
   const flowSettingsMeta = useSelector(
     state =>
       selectors.integrationAppSectionMetadata(
@@ -71,12 +63,14 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId, p
     sectionId,
     parentUrl
   );
+  const activeTabProps = useActiveTab();
 
   return (
     <LoadResources
       required
       resources={['flows', 'exports', 'imports', 'connections']}>
       <IAFormStateManager
+        {...activeTabProps}
         key={storeId}
         formState={formState}
         className={clsx(classes.configureform, {

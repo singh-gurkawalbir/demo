@@ -28,6 +28,7 @@ export default {
       type: 'dynaiclient',
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',

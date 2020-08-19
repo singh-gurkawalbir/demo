@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import Spinner from '../../Spinner';
 import ActionStatus from './ActionStatus';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsContainer: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorActions(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const { confirmDialog } = useConfirmDialog();
   const { flowId, resourceId, isResolved } = props;
   const isRetryInProgress = useSelector(
     state =>
@@ -72,7 +74,7 @@ export default function ErrorActions(props) {
       })
     );
   }, [dispatch, flowId, isResolved, resourceId]);
-  const resolveErrors = useCallback(() => {
+  const handleResolve = useCallback(() => {
     dispatch(
       actions.errorManager.flowErrorDetails.resolve({
         flowId,
@@ -81,6 +83,29 @@ export default function ErrorActions(props) {
     );
   }, [dispatch, flowId, resourceId]);
 
+  const handleRetry = useCallback(() => {
+    if (!isResolved) {
+      return retryErrors();
+    }
+    // show confirmation dialog for resolved errors trying to be retried
+    confirmDialog({
+      title: 'Confirm retry',
+      message: 'You are requesting to retry one or more errors that have been resolved. The retry data associated with these errors represents the data at the time of the original error, and could be older and/or out of date. Please confirm you would like to proceed.',
+      buttons: [
+        {
+          label: 'Retry',
+          onClick: () => {
+            retryErrors();
+          },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
+    });
+  }, [isResolved, retryErrors, confirmDialog]);
+
   return (
     <div className={classes.actionButtonsContainer}>
       <ActionStatus flowId={flowId} resourceId={resourceId} />
@@ -88,7 +113,7 @@ export default function ErrorActions(props) {
         <Button
           variant="outlined"
           disabled={!isAtleastOneErrorSelected || isActionInProgress}
-          onClick={resolveErrors}>
+          onClick={handleResolve}>
           Resolve &nbsp;{isResolveInProgress ? <Spinner size={16} /> : null}
         </Button>
       ) : null}
@@ -96,7 +121,7 @@ export default function ErrorActions(props) {
       <Button
         variant="outlined"
         disabled={!areSelectedErrorsRetriable || isActionInProgress}
-        onClick={retryErrors}>
+        onClick={handleRetry}>
         Retry &nbsp;{isRetryInProgress ? <Spinner size={16} /> : null}
       </Button>
     </div>
