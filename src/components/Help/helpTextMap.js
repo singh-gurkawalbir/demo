@@ -136,14 +136,14 @@ export default {
   'zohocrm.connection.http.zohoSubdomain': 'Please enter the Domain. Input ".com" to connect to US data-center. Input ".in" to connect to India data-center. Input ".com.cn" to connect to China data-center. Input ".eu" to connect to Europe data-center.',
   'tsheets.connection.http.tsheetsSubdomain':
     'Please enter your subdomain here which can be obtained from the base url of your Tsheets account.',
-  'squareup.connection.http.auth.type': 'Please select Authentication Type',
+  'squareup.connection.http.auth.type': 'Please select Authentication Type.',
   'squareup.connection.http.auth.token.token':
     'Enter your access token for Square here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
   'connection.http.encrypted.serverToken':
     'Please enter your Server Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Server Token safe. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.',
   'connection.http.encrypted.accountToken':
     'Please enter your Account Token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Account Token safe. Used for requests that require account level privileges. This token is only accessible by the account owner, and can be found on the API tokens tab of your Postmark account.',
-  'zendesk.connection.http.auth.type': 'Please select Authentication Type',
+  'zendesk.connection.http.auth.type': 'Please select Authentication Type.',
   'zendesk.connection.http.zendeskSubdomain':
     'Please enter your team name here which you configured while signing up for a new Zendesk account.',
   'zendesk.connection.http.apiToken':
@@ -214,8 +214,8 @@ export default {
     'Get Seller ID from the seller/Newegg that authorized the Newegg Marketplace API Services access to you, for each seller you are integrating for.',
   'asana.connection.http.auth.token.token':
     'Enter your personal access token.Note: There are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.',
-  'slack.connection.http.auth.type': 'Please select Authentication Type',
-  'bigcommerce.connection.http.auth.type': 'Please select Authentication Type',
+  'slack.connection.http.auth.type': 'Please select Authentication Type.',
+  'bigcommerce.connection.http.auth.type': 'Please select Authentication Type.',
   'bigcommerce.connection.http.auth.basic.username':
     'Client ID will be the Username.',
   'bigcommerce.connection.http.auth.basic.password':
@@ -257,7 +257,7 @@ export default {
   'jobvite.connection.http.encrypted.secret':
     'The Secret Key of your Jobvite account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe. This can be obtained from the Settings section and user secret subsection.',
   'liquidplanner.connection.http.auth.type':
-    'Please select Authentication Type',
+    'Please select Authentication Type.',
   'liquidplanner.connection.http.auth.basic.username':
     'Enter Username of your registered LiquidPlanner account.',
   'liquidplanner.connection.http.auth.basic.password':
@@ -356,17 +356,48 @@ export default {
   'taxjar.connection.http.auth.token.token':
     'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   'pitneybowes.connection.http.sandbox':
-    'Select either Locate/Identity or Ship.',
+    'Please select your environment here.',
   'pitneybowes.connection.http.unencrypted.apiKey':
     'Please enter API Key of your Pitney Bowes Account.',
   'pitneybowes.connection.http.encrypted.apiSecret':
     'Please enter API Secret of your Pitney Bowes Account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
   'pitneybowes.connection.http.auth.token.token':
     'The access token of your Pitney Bowes account.',
+  'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
+  'lexbizz.connection.instanceURI':
+    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://try.lexbizz.com/isv.',
+  'lexbizz.connection.http.unencrypted.endpointName':
+    'Please enter endpoint name of your lexbizz account.',
+  'lexbizz.connection.http.unencrypted.endpointVersion':
+    'Please enter endpoint version of your lexbizz account.',
+  'lexbizz.connection.http.unencrypted.username':
+    'Please enter username of your lexbizz account.',
+  'lexbizz.connection.http.encrypted.password':
+    'Please enter password of your lexbizz account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+  'lexbizz.connection.http.unencrypted.company':
+    'Please enter company name of your lexbizz account.',
+  'lexbizz.connection.http.unencrypted.locale':
+    'Please enter locale of your lexbizz account.',
+  'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
+  'myobadvanced.connection.instanceURI':
+      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be try.myobadvanced.com/isv.',
+  'myobadvanced.connection.http.unencrypted.endpointName':
+      'Please enter endpoint name of your MYOB Advanced account.',
+  'myobadvanced.connection.http.unencrypted.endpointVersion':
+      'Please enter endpoint version of your MYOB Advanced account.',
+  'myobadvanced.connection.http.unencrypted.username':
+      'Please enter username of your MYOB Advanced account.',
+  'myobadvanced.connection.http.encrypted.password':
+      'Please enter password of your MYOB Advanced account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
+  'myobadvanced.connection.http.unencrypted.company':
+      'Please enter company name of your MYOB Advanced account.',
+  'myobadvanced.connection.http.unencrypted.locale':
+      'Please enter locale of your MYOB Advanced account.',
+  'g2.connection.http.auth.token.token': 'Please enter your API Token here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API token safe.<br><b>Steps to get API Token:</b> <br>Login to your G2 account, under Integrations > API Tokens, you can create and manage your Tokens.',
   'shippo.connection.http.encrypted.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can find your token on the Shippo API settings page.',
   'acumatica.connection.instanceURI':
-    'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
+    'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
   'acumatica.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your Acumatica account.',
   'acumatica.connection.http.unencrypted.endpointVersion':
@@ -571,7 +602,7 @@ export default {
   'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
   'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
-  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s enviornment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
+  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s environment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1341,6 +1372,12 @@ export default {
     'Important: only records where your filter expression evaluates to true will get processed by this import.  All other records will be marked as ignored.  Defining a filter on your import allows you to skip processing for specific records. For example, if you have an import that posts messages to Slack for all web orders that come in throughout the day you could add an import filter to instead only post orders that are above a certain amount. Please note that unlike export filters, import filters do not discard data traveling through your flow. Records that get ignored will still get passed along to subsequent processors in your flow.',
   'import.file.filedefinition.rules':
     'File definition rules are used by our platform to generate custom files. The file generator helper allows you to modify our templated rules to solve more specific file generation requirements. Within the editor, you can use the rules panel to describe how a custom file should be generated from the JSON records/rows being processed by your flow, and then you can use the sample flow data and generated file panels to test your rules.',
+  'import.hooks.preMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>',
+  'import.hooks.preSavePage': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preSavePageHook" target="_blank"/> Get more info</a>',
+  'import.hooks.postResponseMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postResponseMapHook" target="_blank"/> Get more info</a>',
+  'import.hooks.postMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postMapHook" target="_blank"/> Get more info</a>',
+  'import.hooks.postSubmit': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postSubmitHook" target="_blank"/> Get more info</a>',
+  'import.hooks.postAggregate': 'Invoke this function after the final aggregated file is uploaded to the destination app. Make sure to set the skipAggregation property to false for this hook to work. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postAggregateHook" target="_blank"/> Get more info</a>',
   'import.hooks.preMap.function':
     "The name of the preMap hook function in your code that you want invoked. Please see <a href='https://github.com/celigo/integrator-extension/blob/master/README.md#hooks' target='_blank'>here</a> for the full documentation on hooks.",
   'import.hooks.preMap._stackId':
@@ -1709,12 +1746,6 @@ export default {
   'import.netsuite.jsonPath':
     'Select the element of the data that contains the list of objects that will be used in mapping to the subrecords. If you are mapping to subrecord under a sublist (such as inventory detail on the item list of a transaction) you should select the node that contains the list of items.',
   'import.netsuite.hooks.preMap': '',
-  'import.hooks.preMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preMapHook" target="_blank"/> Get more info</a>',
-  'import.hooks.preSavePage': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#preSavePageHook" target="_blank"/> Get more info</a>',
-  'import.hooks.postResponseMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postResponseMapHook" target="_blank"/> Get more info</a>',
-  'import.hooks.postMap': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postMapHook" target="_blank"/> Get more info</a>',
-  'import.hooks.postSubmit': 'Invoke this function before the fields are mapped to their respective fields in the objects to be imported. You can use this to reformat the record’s field to anything you like. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postSubmitHook" target="_blank"/> Get more info</a>',
-  'import.hooks.postAggregate': 'Invoke this function after the final aggregated file is uploaded to the destination app. Make sure to set the skipAggregation property to false for this hook to work. <a href="https://celigosuccess.zendesk.com/hc/en-us/articles/360039655111-Hooks-for-integrator-io#postAggregateHook" target="_blank"/> Get more info</a>',
   'import.netsuite.hooks.postMap': '',
   'import.netsuite.hooks.postSubmit': '',
   'import.netsuite.lookups.failFields':
