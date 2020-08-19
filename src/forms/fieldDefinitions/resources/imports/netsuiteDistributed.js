@@ -212,4 +212,14 @@ export default {
       },
     ],
   },
+  'netsuite_da.batchSize': {
+    type: 'text',
+    label: 'Batch size limit',
+    helpKey: 'import.netsuite_da.batchSize',
+    validWhen: [
+      {
+        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+      },
+    ],
+  },
 };
