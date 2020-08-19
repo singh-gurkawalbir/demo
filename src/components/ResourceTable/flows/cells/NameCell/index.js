@@ -33,6 +33,7 @@ export default function NameCell({
   flowId,
   isIntegrationApp,
   integrationId,
+  storeId,
 }) {
   const classes = useStyles();
   const isDataLoader = useSelector(state =>
@@ -55,9 +56,17 @@ export default function NameCell({
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
 
-  const flowBuilderTo = isIntegrationApp
-    ? getRoutePath(`/integrationApps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`)
-    : getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
+  let flowBuilderTo;
+
+  if (isIntegrationApp) {
+    if (storeId) {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${storeId}/${flowBuilderPathName}/${flowId}`);
+    } else {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+    }
+  } else {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
+  }
 
   return (
     <div className={classes.root}>
