@@ -152,6 +152,7 @@ function CategoryMappings({
   flowId,
   sectionId,
   isRoot = true,
+  depth = 0,
   isParentCommonCategory = false,
 }) {
   const [requestedGenerateFields, setRequestedGenerateFields] = useState(false);
@@ -181,6 +182,7 @@ function CategoryMappings({
     useSelector(state =>
       selectors.mappingsForCategory(state, integrationId, flowId, {
         sectionId,
+        depth,
       })
     ) || {};
   const hasVariationMappings =
@@ -361,6 +363,7 @@ function CategoryMappings({
                   flowId={flowId}
                   key={child.id}
                   isRoot={false}
+                  depth={depth + 1}
                   isParentCommonCategory={isCommonCategory}
                   generateFields={generateFields || emptySet}
                   sectionId={child.id}
