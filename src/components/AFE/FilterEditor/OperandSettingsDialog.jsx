@@ -136,8 +136,7 @@ export default function OperandSettingsDialog({
       <>
         <DynaForm
           formKey={formKey}
-          fieldMeta={fieldMeta}
-          optionsHandler={optionsHandler} />
+          fieldMeta={fieldMeta} />
         <DynaSubmit
           formKey={formKey}
           data-test="saveOperandSettings"

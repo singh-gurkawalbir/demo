@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import { Drawer } from '@material-ui/core';
@@ -11,6 +11,7 @@ import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../drawer/TitleBar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 const emptySet = {};
 const emptyObject = {};
@@ -90,9 +91,7 @@ export default function MappingSettings({
   const nsRecordType = useSelector(state =>
     selectors.mappingNSRecordType(state, importId, subRecordMappingId)
   );
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
+
   const importResource = useSelector(state =>
     selectors.resource(state, 'imports', importId)
   );
@@ -215,11 +214,11 @@ export default function MappingSettings({
     [enquesnackbar, extract, generate, handleLookupUpdate, isCategoryMapping, lookupName, lookups, onClose, patchCategoryMappingSettings, patchMappingSettings]
   );
 
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
     <Drawer
@@ -231,25 +230,22 @@ export default function MappingSettings({
       <DrawerTitleBar onClose={onClose} title="Settings" />
       <div className={classes.content}>
         <DynaForm
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}
-          formState={formState}>
-          <DynaSubmit
-            disabled={disableSave}
-            id="fieldMappingSettingsSave"
-            showCustomFormValidations={showCustomFormValidations}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test="fieldMappingSettingsCancel"
-            onClick={onClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+          formKey={formKey}
+          fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          id="fieldMappingSettingsSave"
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button
+          data-test="fieldMappingSettingsCancel"
+          onClick={onClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
       </div>
     </Drawer>
   );

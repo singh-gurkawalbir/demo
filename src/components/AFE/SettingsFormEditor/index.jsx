@@ -139,7 +139,6 @@ export default function SettingsFormEditor({
             <DynaForm
               formKey={formKey}
               className={classes.formPreviewContainer}
-              key={key}
               fieldMeta={result.data}
               />
 
