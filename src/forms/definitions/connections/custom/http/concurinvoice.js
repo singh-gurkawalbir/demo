@@ -12,8 +12,6 @@ export default {
     '/http/auth/oauth/authURI': `${
       formValues['/http/baseURI']
     }/oauth2/v0/authorize`,
-    '/http/ping/relativeURI': '/profile/v1/me',
-    '/http/ping/method': 'GET',
     '/http/auth/oauth/tokenURI': `${
       formValues['/http/baseURI']
     }/oauth2/v0/token`,
