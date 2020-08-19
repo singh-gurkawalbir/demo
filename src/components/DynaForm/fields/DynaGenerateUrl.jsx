@@ -54,24 +54,26 @@ function GenerateUrl(props) {
   const handleCopy = useCallback(() =>
     enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
-    if (inValidFields(webookRequiredFields, fieldStates)) {
-      webookRequiredFields.forEach(fieldId => {
-        onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
-      });
+    if (isNewId(finalResourceId)) {
+      if (inValidFields(webookRequiredFields, fieldStates)) {
+        webookRequiredFields.forEach(fieldId => {
+          onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+        });
 
-      return;
+        return;
+      }
+      dispatch(
+        actions.resourceForm.submit(
+          'exports',
+          finalResourceId,
+          formValues,
+          null,
+          true,
+          false,
+          flowId
+        )
+      );
     }
-    dispatch(
-      actions.resourceForm.submit(
-        'exports',
-        finalResourceId,
-        formValues,
-        null,
-        true,
-        false,
-        flowId
-      )
-    );
     setUrl(true);
   }, [dispatch, fieldStates, finalResourceId, flowId, formValues, onFieldChange]);
 
