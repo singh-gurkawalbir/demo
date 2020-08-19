@@ -32,7 +32,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
     <RightDrawer
       path="errors/:resourceId"
       width="full"
-      title={<ErrorDetailsTitle />}
+      title={<ErrorDetailsTitle flowId={flowId} />}
       actions={ErrorTypeToggle}
       onClose={handleClose}
       variant="temporary"

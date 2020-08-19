@@ -28,7 +28,7 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => <DateTimeDisplay dateTime={r.occurredAt} />,
+      value: r => <DateTimeDisplay dateTime={r.resolvedAt} />,
     },
     {
       heading: 'Resolved By',
