@@ -1344,7 +1344,7 @@ selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
 };
 
 selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
-  const { sectionId } = filters;
+  const { sectionId, depth } = filters;
   let mappings = emptySet;
   const { attributes = {}, mappingFilter = 'all' } =
     selectors.categoryMappingFilters(state, integrationId, flowId) || {};
@@ -1360,7 +1360,11 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
     }) || {};
 
   if (recordMappings) {
-    mappings = recordMappings.find(item => item.id === sectionId);
+    if (depth === undefined) {
+      mappings = recordMappings.find(item => item.id === sectionId);
+    } else {
+      mappings = recordMappings.find(item => item.id === sectionId && depth === item.depth);
+    }
   }
 
   // If no filters are passed, return all mapppings
