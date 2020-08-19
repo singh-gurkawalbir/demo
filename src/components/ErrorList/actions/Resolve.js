@@ -1,29 +1,27 @@
-import React, { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
 import actions from '../../../actions';
-import Icon from '../../icons/RevokeTokenIcon';
+import CheckmarkIcon from '../../icons/CheckmarkIcon';
 
 export default {
   label: 'Resolve',
-  component: function Resolve({ flowId, resourceId, resource }) {
+  icon: CheckmarkIcon,
+  component: function Resolve({ rowData, flowId, resourceId }) {
     const dispatch = useDispatch();
     const handleClick = useCallback(() => {
       dispatch(
         actions.errorManager.flowErrorDetails.resolve({
           flowId,
           resourceId,
-          errorIds: [resource.errorId],
+          errorIds: [rowData.errorId],
         })
       );
-    }, [dispatch, flowId, resource.errorId, resourceId]);
+    }, [dispatch, flowId, rowData.errorId, resourceId]);
 
-    return (
-      <>
-        <IconButton data-test="resolve" size="small" onClick={handleClick}>
-          <Icon />
-        </IconButton>
-      </>
-    );
+    useEffect(() => {
+      handleClick();
+    }, [handleClick]);
+
+    return null;
   },
 };

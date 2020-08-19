@@ -1302,44 +1302,35 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ id, options }) =>
-    action(actionTypes.MAPPING.INIT, {
-      id,
-      options,
-    }),
-  patchField: (id, field, key, value) =>
-    action(actionTypes.MAPPING.PATCH_FIELD, { id, field, key, value }),
-  updateImportSampleData: (id, value) =>
-    action(actionTypes.MAPPING.UPDATE_IMPORT_SAMPLE_DATA, { id, value }),
-  updateLookup: (id, lookups) =>
-    action(actionTypes.MAPPING.UPDATE_LOOKUP, { id, lookups }),
-  patchSettings: (id, key, value) =>
-    action(actionTypes.MAPPING.PATCH_SETTINGS, { id, key, value }),
-  setVisibility: (id, value) =>
-    action(actionTypes.MAPPING.SET_VISIBILITY, { id, value }),
-  patchIncompleteGenerates: (id, key, value) =>
-    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, {
-      id,
-      key,
-      value,
-    }),
-  delete: (id, key) => action(actionTypes.MAPPING.DELETE, { id, key }),
-  save: (id, context) => action(actionTypes.MAPPING.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.MAPPING.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.MAPPING.SAVE_COMPLETE, { id }),
-  updateFlowData: (id, value) =>
-    action(actionTypes.MAPPING.UPDATE_FLOW_DATA, { id, value }),
-  requestPreview: id => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { id }),
-  previewReceived: (id, value) =>
-    action(actionTypes.MAPPING.PREVIEW_RECEIVED, { id, value }),
-  previewFailed: id => action(actionTypes.MAPPING.PREVIEW_FAILED, { id }),
-  changeOrder: (id, value) =>
-    action(actionTypes.MAPPING.CHANGE_ORDER, { id, value }),
-  setNSAssistantFormLoaded: (id, value) =>
-    action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { id, value }),
-  refreshGenerates: id => action(actionTypes.MAPPING.REFRESH_GENERATES, { id }),
-  updateLastFieldTouched: (id, key) => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { id, key }),
-
+  init: ({ flowId, resourceId, subRecordMappingId}) =>
+    action(actionTypes.MAPPING.INIT, {flowId, resourceId, subRecordMappingId}),
+  initComplete: (options = {}) =>
+    action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+  patchField: (field, key, value) =>
+    action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  updateLookup: lookups =>
+    action(actionTypes.MAPPING.UPDATE_LOOKUP, { lookups }),
+  patchSettings: (key, value) =>
+    action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
+  setVisibility: value =>
+    action(actionTypes.MAPPING.SET_VISIBILITY, { value }),
+  patchIncompleteGenerates: (key, value) =>
+    action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
+  delete: key => action(actionTypes.MAPPING.DELETE, { key }),
+  save: context => action(actionTypes.MAPPING.SAVE, { context }),
+  saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
+  saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
+  requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
+  previewReceived: value =>
+    action(actionTypes.MAPPING.PREVIEW_RECEIVED, {value }),
+  previewFailed: () => action(actionTypes.MAPPING.PREVIEW_FAILED, { }),
+  setNSAssistantFormLoaded: value =>
+    action(actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED, { value }),
+  refreshGenerates: () => action(actionTypes.MAPPING.REFRESH_GENERATES, { }),
+  updateLastFieldTouched: key => action(actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD, { key }),
+  updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
+  clear: () => action(actionTypes.MAPPING.CLEAR, {}),
+  shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
 };
 
 const searchCriteria = {
@@ -1661,6 +1652,14 @@ const errorManager = {
         checked,
         options,
       }),
+    saveAndRetry: ({ flowId, resourceId, retryId, retryData }) => action(
+      actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY, {
+        flowId,
+        resourceId,
+        retryId,
+        retryData,
+      }
+    ),
     retry: ({ flowId, resourceId, retryIds = [], isResolved = false }) =>
       action(
         actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.RETRY.REQUEST,
@@ -1711,6 +1710,12 @@ const errorManager = {
         flowId,
         resourceId,
         isResolved,
+      }),
+    notifyUpdate: ({ flowId, resourceId, diff }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.NOTIFY_UPDATE, {
+        flowId,
+        resourceId,
+        diff,
       }),
   },
   retryData: {

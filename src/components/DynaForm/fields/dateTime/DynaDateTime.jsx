@@ -82,8 +82,7 @@ export default function DateTimePicker(props) {
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
         <FormLabel>{label}</FormLabel>
-        {/* TODO: Mounika helptext is missing */}
-        <FieldHelp helpText={label} />
+        <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
         <KeyboardDateTimePicker

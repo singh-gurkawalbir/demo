@@ -1,8 +1,9 @@
-import { put, takeLatest, select, takeEvery } from 'redux-saga/effects';
+import { put, takeLatest, select, takeEvery, call } from 'redux-saga/effects';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
+import { updateRetryData } from '../retryData';
 
 function* requestErrorDetails({
   flowId,
@@ -168,7 +169,18 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
   }
 }
 
+function* saveAndRetryError({ flowId, resourceId, retryId, retryData }) {
+  try {
+    yield call(updateRetryData, { flowId, resourceId, retryId, retryData });
+    yield put(actions.errorManager.flowErrorDetails.retry({ flowId, resourceId, retryIds: [retryId]}));
+  } catch (e) {
+    //  error
+  }
+}
+
 export default [
+  takeEvery(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY,
+    saveAndRetryError),
   takeEvery(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.REQUEST,
     requestErrorDetails

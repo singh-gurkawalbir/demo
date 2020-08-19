@@ -1,8 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import ViewDetailsIcon from '../../icons/ViewDetailsIcon';
 
 export default {
   label: 'View error details',
+  icon: ViewDetailsIcon,
   component: function ViewErrorDetails({ rowData = {} }) {
     const { errorId } = rowData;
     const history = useHistory();

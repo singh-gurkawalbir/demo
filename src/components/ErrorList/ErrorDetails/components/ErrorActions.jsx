@@ -1,9 +1,17 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 
+const useStyles = makeStyles(theme => ({
+  action: {
+    '& button': {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 export default function Actions({
   errorId,
   retryData,
@@ -12,6 +20,7 @@ export default function Actions({
   onClose,
 }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const retryId = useSelector(state => {
     const errorDoc =
       selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
@@ -41,37 +50,47 @@ export default function Actions({
 
     if (onClose) onClose();
   }, [dispatch, errorId, flowId, onClose, resourceId]);
-  const retry = useCallback(() => {
+
+  const handleSaveAndRetry = useCallback(() => {
     dispatch(
-      actions.errorManager.flowErrorDetails.retry({
+      actions.errorManager.flowErrorDetails.saveAndRetry({
         flowId,
         resourceId,
-        retryIds: [retryId],
+        retryId,
+        retryData,
       })
     );
 
     if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId]);
+  }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
 
-  return (
-    <>
-      {retryId && (
-        <Button variant="outlined" onClick={retry}>
-          Retry
+  if (retryId) {
+    return (
+      <div className={classes.action}>
+        <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>
+          Save &amp; retry
         </Button>
-      )}
-      <Button variant="outlined" onClick={resolve}>
-        Resolve
-      </Button>
-      {retryId ? (
-        <Button variant="outlined" disabled={!retryData} onClick={updateRetry}>
+        <Button variant="outlined" color="secondary" onClick={resolve}>
+          Mark resolved
+        </Button>
+        <Button variant="outlined" color="secondary" disabled={!retryData} onClick={updateRetry}>
           Save &amp; close
         </Button>
-      ) : (
-        <Button variant="outlined" onClick={onClose}>
-          Close
+        <Button variant="text" color="primary" onClick={onClose}>
+          Cancel
         </Button>
-      )}
-    </>
+      </div>
+    );
+  }
+
+  return (
+    <div className={classes.action}>
+      <Button variant="outlined" color="primary" onClick={resolve}>
+        Mark resolved
+      </Button>
+      <Button variant="text" color="primary" onClick={onClose}>
+        Cancel
+      </Button>
+    </div>
   );
 }

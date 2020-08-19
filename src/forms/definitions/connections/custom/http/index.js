@@ -181,6 +181,9 @@ import sapbydesign from './sapbydesign';
 import concurinvoice from './concurinvoice';
 import concurexpense from './concurexpense';
 import concurall from './concurall';
+import g2 from './g2';
+import myobadvanced from './myobadvanced';
+import lexbizz from './lexbizz';
 
 export default {
   concurexpense,
@@ -365,4 +368,7 @@ export default {
   sapbydesign,
   concurinvoice,
   concurall,
+  g2,
+  myobadvanced,
+  lexbizz,
 };

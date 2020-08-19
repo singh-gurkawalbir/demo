@@ -266,7 +266,8 @@ export default function IntegrationApp(props) {
         />
       );
     }
-  } else if (!tab) {
+  }
+  if (!tab) {
     return <Redirect push={false} to={`${match.url}/flows`} />;
   }
 

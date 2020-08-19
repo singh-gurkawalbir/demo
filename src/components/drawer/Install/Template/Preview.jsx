@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
@@ -55,14 +55,14 @@ export default function TemplatePreview() {
   const location = useLocation();
   const match = useRouteMatch();
   const { templateId } = match.params;
-  const [requested, setRequested] = useState(false);
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const template = useSelector(state =>
     selectors.marketplaceTemplateById(state, templateId)
   );
-  const { objects: components, stackRequired } =
+  const { components: origComponents, status} =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
+  const { objects: components, stackRequired } = origComponents || {};
 
   useEffect(() => {
     if (!template) {
@@ -70,11 +70,10 @@ export default function TemplatePreview() {
     }
   }, [dispatch, template]);
   useEffect(() => {
-    if (!components || !requested) {
+    if (!components) {
       dispatch(actions.template.requestPreview(templateId));
-      setRequested(true);
     }
-  }, [components, dispatch, requested, templateId]);
+  }, [components, dispatch, templateId]);
 
   if (!template) {
     return <Typography>Loading Template...</Typography>;
@@ -192,13 +191,17 @@ export default function TemplatePreview() {
             </Button>
           )}
         </div>
-
         <div className={classes.componentPreview}>
-          <Typography variant="body2">
-            The following components will be created in your account.
-          </Typography>
+          {status === 'failure' ? null : (
+            <>
+              <Typography variant="body2">
+                The following components will be created in your account.
+              </Typography>
 
-          <PreviewTable templateId={templateId} />
+              <PreviewTable templateId={templateId} />
+            </>
+          )}
+
         </div>
       </div>
     </>

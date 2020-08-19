@@ -454,7 +454,8 @@ export default function Integration(props) {
         />
       );
     }
-  } else if (!tab && isIntegrationApp) {
+  }
+  if (!tab && isIntegrationApp) {
     return (
       <Redirect
         push={false}

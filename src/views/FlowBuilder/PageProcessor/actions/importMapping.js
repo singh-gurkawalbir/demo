@@ -7,8 +7,9 @@ import { selectors } from '../../../../reducers';
 import Icon from '../../../../components/icons/MapDataIcon';
 import LoadResources from '../../../../components/LoadResources';
 import DrawerTitleBar from '../../../../components/drawer/TitleBar';
-import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
+// import StandaloneMapping from '../../../../components/AFE/ImportMapping/StandaloneMapping';
 import { getNetSuiteSubrecordImports } from '../../../../utils/resource';
+import Mapping from '../../../../components/Mapping';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -147,7 +148,7 @@ function ImportMapping({
                 ))}
               </div>
             ) : (
-              <StandaloneMapping
+              <Mapping
                 id={mappingEditorId}
                 disabled={isMonitorLevelAccess}
                 resourceId={resourceId}

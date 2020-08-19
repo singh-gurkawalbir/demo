@@ -3,9 +3,12 @@ import mappingUtil from '../../../../../utils/mapping';
 import dateFormats from '../../../../../utils/dateFormats';
 
 export default {
-  getMetaData: (params = {}) => {
-    const { value, extractFields, generate, options = {} } = params;
-    const { isGroupedSampleData = false } = options;
+  getMetaData: ({
+    value = {},
+    extractFields,
+  }) => {
+    const {generate} = value;
+    const isGroupedSampleData = Array.isArray(extractFields);
     const fieldMeta = {
       fieldMap: {
         dataType: {
