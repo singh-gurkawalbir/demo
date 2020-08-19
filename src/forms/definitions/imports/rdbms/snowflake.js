@@ -78,6 +78,7 @@ export default {
       type: 'sqlquerybuilder',
       arrayIndex: 0,
       label: 'Query builder',
+      required: true,
       title: 'SQL Query Builder',
       refreshOptionsOnChangesTo: ['rdbms.lookups',
         'rdbms.queryType',
