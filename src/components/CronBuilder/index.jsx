@@ -318,7 +318,7 @@ export default function CronBuilder(props) {
           const fieldId =
             meta.layout.containers[key].containers[tabHistory[key]].fields[0];
 
-          return { key, value: formValue[fieldId] || splitVal[key + 1] || '*' };
+          return { key, value: formValue?.[fieldId] || splitVal?.[key + 1] || '*' };
         })
         .sort((first, second) => first.key - second.key)
         .reduce((finalRes, curr) => {
