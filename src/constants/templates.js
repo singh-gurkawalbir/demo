@@ -79,10 +79,10 @@ const getAssistants = () => {
 };
 export const applicationsList = () => {
   const assistants = getAssistants();
-  const applications = templates.filter(templates => {
-    const assistant = assistants.find(a => a.id === templates.value);
+  const applications = templates.filter(template => {
+    const assistant = assistants.find(a => a.id === template.value);
 
-    return !assistant || !templates.value;
+    return !assistant || !template.value;
   });
 
   assistants.forEach(asst => {

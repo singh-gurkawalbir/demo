@@ -29,8 +29,6 @@ export default {
       label: 'API token',
       required: true,
       helpKey: 'g2.connection.http.auth.token.token',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
     },
     application: {
       fieldId: 'application',

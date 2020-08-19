@@ -48,7 +48,7 @@ export default {
         },
       },
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
         const subdomain =
           baseUri &&
           baseUri.substring(
@@ -66,10 +66,7 @@ export default {
       label: 'Endpoint name',
       required: true,
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointName) ||
+        (r?.http?.unencrypted?.endpointName) ||
         'Default',
     },
     'http.unencrypted.endpointVersion': {
@@ -79,10 +76,7 @@ export default {
       label: 'Endpoint version',
       required: true,
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointVersion) ||
+        (r?.http?.unencrypted?.endpointVersion) ||
         '18.200.001',
     },
     'http.unencrypted.username': {
@@ -90,8 +84,6 @@ export default {
       type: 'text',
       label: 'Username',
       required: true,
-      defaultValue: r =>
-        r && r.http && r.http.unencrypted && r.http.unencrypted.username,
       helpKey: 'myobadvanced.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {

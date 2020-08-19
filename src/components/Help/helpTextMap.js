@@ -365,7 +365,7 @@ export default {
     'The access token of your Pitney Bowes account.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
-    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001.',
+    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be http://try.lexbizz.com/isv.',
   'lexbizz.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.endpointVersion':
@@ -380,7 +380,7 @@ export default {
     'Please enter locale of your lexbizz account.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
-      'Please enter URL of your instance with myobadvanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001.',
+      'Please enter URL of your instance with myobadvanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be http://try.myobadvanced.com/isv.',
   'myobadvanced.connection.http.unencrypted.endpointName':
       'Please enter endpoint name of your myobadvanced account.',
   'myobadvanced.connection.http.unencrypted.endpointVersion':
@@ -397,7 +397,7 @@ export default {
   'shippo.connection.http.encrypted.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. You can find your token on the Shippo API settings page.',
   'acumatica.connection.instanceURI':
-    'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
+    'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
   'acumatica.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your Acumatica account.',
   'acumatica.connection.http.unencrypted.endpointVersion':
@@ -602,7 +602,7 @@ export default {
   'sapbydesign.connection.storeURL': 'Please enter the Store URL of your SAP ByDesign account.',
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
   'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
-  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s enviornment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
+  'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s environment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':

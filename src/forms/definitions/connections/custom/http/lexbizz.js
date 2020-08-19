@@ -77,24 +77,6 @@ export default {
         },
       ],
     },
-    mode: {
-      id: 'mode',
-      type: 'radiogroup',
-      label: 'Mode',
-      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      options: [
-        {
-          items: [
-            { label: 'Cloud', value: 'cloud' },
-            { label: 'On-premise', value: 'onpremise' },
-          ],
-        },
-      ],
-    },
-    _agentId: {
-      fieldId: '_agentId',
-      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
-    },
     instanceURI: {
       id: 'instanceURI',
       type: 'text',
@@ -104,7 +86,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'lexbizz.connection.instanceURI',
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
@@ -120,7 +102,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       helpKey: 'lexbizz.connection.instanceURI',
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
@@ -135,10 +117,7 @@ export default {
       required: true,
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointName) ||
+        (r?.http?.unencrypted?.endpointName) ||
         'Default',
     },
     'http.unencrypted.endpointVersion': {
@@ -149,10 +128,7 @@ export default {
       required: true,
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointVersion) ||
+        (r?.http?.unencrypted?.endpointVersion) ||
         '18.200.001',
     },
     'http.unencrypted.username': {
@@ -161,8 +137,6 @@ export default {
       label: 'Username',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
-      defaultValue: r =>
-        r && r.http && r.http.unencrypted && r.http.unencrypted.username,
       helpKey: 'lexbizz.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {
