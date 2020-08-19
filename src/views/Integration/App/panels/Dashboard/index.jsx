@@ -6,6 +6,7 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import JobDashboard from '../../../../../components/JobDashboard';
 import PanelHeader from '../../../../../components/PanelHeader';
+import LoadResources from '../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,9 +40,11 @@ export default function DashboardPanel({ integrationId, storeId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Dashboard" />
+      <LoadResources required resources="flows">
+        <PanelHeader title="Dashboard" />
 
-      <JobDashboard integrationId={integrationId} />
+        <JobDashboard integrationId={integrationId} />
+      </LoadResources>
     </div>
   );
 }

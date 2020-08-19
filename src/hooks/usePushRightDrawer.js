@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { getValidRelativePath } from '../utils/routePaths';
 
 const usePushRightDrawer = pathProp => {
   const history = useHistory();
@@ -13,7 +14,7 @@ const usePushRightDrawer = pathProp => {
     }
 
     if (!pathToPush) { return; }
-    history.push(`${match.url}/${pathToPush}`);
+    history.push(`${match.url}/${getValidRelativePath(pathToPush)}`);
   }, [pathProp, history, match.url]);
 
   return pushRelativePath;
