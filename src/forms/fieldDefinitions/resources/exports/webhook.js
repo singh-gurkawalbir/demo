@@ -116,7 +116,6 @@ export default {
     type: 'generateurl',
     label: 'Public URL',
     provider: r => r && r.webhook && r.webhook.provider,
-    verify: r => r && r.webhook && r.webhook.verify,
     buttonLabel: 'Generate URL',
     required: true,
   },
