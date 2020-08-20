@@ -66,4 +66,45 @@ const templates = [
 
 templates.sort(stringCompare('label'));
 
+const getAssistants = () => {
+  let localStorageAssistants;
+
+  try {
+    localStorageAssistants = JSON.parse(localStorage.getItem('assistants')) || [];
+  } catch (e) {
+    localStorageAssistants = [];
+  }
+
+  return localStorageAssistants;
+};
+export const applicationsList = () => {
+  const assistants = getAssistants();
+  const applications = templates.filter(template => {
+    const assistant = assistants.find(a => a.id === template.value);
+
+    return !assistant || !template.value;
+  });
+
+  assistants.forEach(asst => {
+    if (
+      ![
+        'yammer',
+        'hybris',
+        'etsy',
+        'concur',
+        'concurall',
+        'concurv4',
+        'constantcontact',
+      ].includes(asst.id)
+    ) {
+      applications.push({
+        value: asst.id,
+        label: asst.name,
+      });
+    }
+  });
+  applications.sort(stringCompare('label'));
+
+  return applications;
+};
 export default templates;

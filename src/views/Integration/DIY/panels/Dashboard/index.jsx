@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import JobDashboard from '../../../../../components/JobDashboard';
 import PanelHeader from '../../../../../components/PanelHeader';
+import LoadResources from '../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,9 +21,11 @@ export default function DashboardPanel({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
+      <LoadResources required resources="flows">
+        <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
 
-      <JobDashboard integrationId={childId || integrationId} />
+        <JobDashboard integrationId={childId || integrationId} />
+      </LoadResources>
     </div>
   );
 }

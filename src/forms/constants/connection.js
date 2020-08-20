@@ -103,6 +103,9 @@ export default {
     'sapbydesign',
     'concurexpense',
     'concurinvoice',
+    'g2',
+    'myobadvanced',
+    'lexbizz',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
