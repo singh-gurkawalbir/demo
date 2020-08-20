@@ -1,16 +1,16 @@
 import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import ViewDetailsIcon from '../../icons/ViewDetailsIcon';
+import EditIcon from '../../../icons/EditIcon';
 
 export default {
-  label: 'View error details',
-  icon: ViewDetailsIcon,
-  component: function ViewErrorDetails({ rowData = {} }) {
+  label: 'Edit retry',
+  icon: EditIcon,
+  component: function EditRetry({rowData = {}}) {
     const { errorId } = rowData;
     const history = useHistory();
     const match = useRouteMatch();
     const handleClick = useCallback(() => {
-      history.push(`${match.url}/details/${errorId}/view`);
+      history.push(`${match.url}/details/${errorId}/edit`);
     }, [errorId, history, match.url]);
 
     useEffect(() => {

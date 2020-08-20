@@ -1,39 +1,29 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import RightDrawer from '../../../../components/drawer/Right';
 import ErrorList from '../../../../components/ErrorList';
-import ErrorDetailsTitle from './ErrorDetailsTitle';
-import TextToggle from '../../../../components/TextToggle';
+import ErrorDrawerTitle from './ErrorDrawerTitle';
+import ErrorDrawerAction from './ErrorDrawerAction';
 
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const [errorType, setErrorType] = useState('open');
-  const errorTypes = [
-    { label: 'Open errors', value: 'open' },
-    { label: 'Resolved errors', value: 'resolved' },
-  ];
-  const handleErrorTypeChange = useCallback(() => {
-    setErrorType(errorType === 'open' ? 'resolved' : 'open');
-  }, [errorType]);
-  const ErrorTypeToggle = useMemo(() => (
-    <TextToggle
-      value={errorType}
-      onChange={handleErrorTypeChange}
-      exclusive
-      options={errorTypes}
-    />
-  ), [errorType, errorTypes, handleErrorTypeChange]);
   const handleClose = useCallback(() => {
     history.goBack();
-    setTimeout(() => setErrorType('open'));
+    setTimeout(setErrorType('open'), 1000);
   }, [history]);
 
   return (
     <RightDrawer
       path="errors/:resourceId"
       width="full"
-      title={<ErrorDetailsTitle />}
-      actions={ErrorTypeToggle}
+      title={<ErrorDrawerTitle flowId={flowId} />}
+      actions={(
+        <ErrorDrawerAction
+          flowId={flowId}
+          errorType={errorType}
+          setErrorType={setErrorType} />
+      )}
       onClose={handleClose}
       variant="temporary"
       hideBackButton>
