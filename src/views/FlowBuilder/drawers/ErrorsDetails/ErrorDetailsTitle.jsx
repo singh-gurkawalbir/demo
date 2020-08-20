@@ -38,7 +38,9 @@ export default function ErrorDetailsTitle({ flowId }) {
     return selectors.resource(state, 'imports', resourceId)?.name;
   });
 
-  const isRetrying = useSelector(state => selectors.retryStatus(state, flowId, resourceId) === 'retrying');
+  const isRetrying = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId) === 'retrying'
+  );
 
   if (!match) return null;
 

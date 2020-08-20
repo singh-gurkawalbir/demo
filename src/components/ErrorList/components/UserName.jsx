@@ -17,7 +17,7 @@ export default function UserName({ userId }) {
   });
 
   if (userId === 'autopilot') {
-    return 'Auto pilot';
+    return 'Autopilot';
   }
 
   return <div> {userName || userId}</div>;
