@@ -1,10 +1,8 @@
-// TODO Ashok: Same code is being used in Mapping settings also. This code should be refactored.
-
 export default {
   getLookupMetadata: ({
     lookup = {},
     connectionId,
-    opts = {},
+    picklistOptions,
     extractFields,
   }) => {
     const fieldMeta = {
@@ -48,10 +46,12 @@ export default {
           required: true,
           filterKey: 'salesforce-recordType',
           refreshOptionsOnChangesTo: ['_sObjectType'],
-          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          visibleWhenAll: [
+            { field: '_mode', is: ['dynamic'] },
+            { field: '_sObjectType', isNot: [''] },
+          ],
           value: lookup.whereClause,
           data: extractFields,
-          opts,
         },
         _whereClauseText: {
           id: '_whereClauseText',
@@ -63,7 +63,10 @@ export default {
           disableText: true,
           refreshOptionsOnChangesTo: ['_whereClause'],
           helpKey: 'mapping.salesforce.lookup.whereClauseText',
-          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          visibleWhenAll: [
+            { field: '_mode', is: ['dynamic'] },
+            { field: '_sObjectType', isNot: [''] },
+          ],
           defaultValue: lookup.whereClause,
         },
         _resultField: {
@@ -72,6 +75,7 @@ export default {
           required: true,
           type: 'refreshableselect',
           filterKey: 'salesforce-recordType',
+          label: 'Value field',
           savedSObjectType: lookup.sObjectType,
           defaultValue: lookup.resultField,
           connectionId,
@@ -94,8 +98,27 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
+          valueOptions: picklistOptions,
+
           map: lookup.map,
           visibleWhenAll: [{ field: '_mode', is: ['static'] }],
+        },
+        _name: {
+          id: '_name',
+          name: '_name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpText:
+            'Name of the lookups that will be exposed to the mapping to refer.',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
         },
       },
       layout: {
@@ -106,6 +129,7 @@ export default {
           '_whereClauseText',
           '_resultField',
           '_mapList',
+          '_name',
         ],
       },
       optionsHandler: (fieldId, fields) => {

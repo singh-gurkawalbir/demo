@@ -144,19 +144,13 @@ export default function ManageLookup({
       extractFields,
     });
   } else if (resource.adaptorType === 'SalesforceImport') {
-    const { recordType, fieldMetadata, fieldId } = others;
+    const { extractFields, picklistOptions } = others;
 
     fieldMeta = salesforceMetadata.getLookupMetadata({
       lookup: value,
-      showDynamicLookupOnly,
       connectionId,
-      resourceId,
-      resourceType,
-      flowId,
-      fieldMetadata,
-      fieldId,
-      recordType,
-      opts: others,
+      extractFields,
+      picklistOptions,
     });
   } else if (resource.adaptorType === 'RDBMSImport') {
     fieldMeta = rdbmsMetadata.getLookupMetadata({

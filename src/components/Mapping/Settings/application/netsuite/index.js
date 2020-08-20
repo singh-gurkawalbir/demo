@@ -680,7 +680,6 @@ export default {
       fieldMeta.fieldMap['lookup.mapList'].commMetaPath = commMetaPath;
       fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
       fieldMeta.fieldMap['conditional.lookupName'].staticLookupCommMetaPath = commMetaPath;
-      fieldMeta.fieldMap['conditional.lookupName'].connectionId = connectionId;
       // changing metadata for hardcodedDefault and lookupDefault
       ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {
         let fieldValue;

@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 export default function DynaSelectConditionalLookup(props) {
-  const { id, value, resourceId, flowId, disabled, onFieldChange, staticLookupCommMetaPath, extractFields } = props;
+  const { id, value, resourceId, flowId, disabled, onFieldChange, staticLookupCommMetaPath, extractFields, picklistOptions } = props;
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -90,6 +90,7 @@ export default function DynaSelectConditionalLookup(props) {
         onSave={handleSave}
         staticLookupCommMetaPath={staticLookupCommMetaPath}
         extractFields={extractFields}
+        picklistOptions={picklistOptions}
       />
     </>
   );
