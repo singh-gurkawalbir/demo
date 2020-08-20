@@ -54,6 +54,10 @@ export default {
 
     if (newValues['/rest/authType'] !== 'token') {
       newValues['/rest/bearerToken'] = undefined;
+      newValues['/rest/authScheme'] = undefined;
+      newValues['/rest/authHeader'] = undefined;
+      newValues['/rest/tokenLocation'] = undefined;
+      newValues['/rest/tokenParam'] = undefined;
     }
 
     if (newValues['/rest/authType'] !== 'cookie') {
