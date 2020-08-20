@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
-import RefreshCard from '../components/RefreshCard';
-import ErrorActions from '../components/ErrorActions';
+import RefreshCard from '../RefreshCard';
+import ErrorActions from '../ErrorActions';
 import Spinner from '../../Spinner';
 import ErrorDetailsDrawer from './ErrorDetailsDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
-import useErrorTableConfig from '../hooks/useErrorTableConfig';
+import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -64,7 +63,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
-            metadata={metadata}
+            errorType="open"
             data={openErrors}
             actionProps={actionProps}
             emptyRowsLabel="No Open errors"

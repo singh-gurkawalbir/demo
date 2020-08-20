@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectors } from '../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function UserName({ userId }) {
   // TODO @Raghu: Add selector to get user name

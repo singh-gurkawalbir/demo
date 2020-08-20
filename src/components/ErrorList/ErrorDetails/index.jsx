@@ -4,11 +4,11 @@ import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
-import EditRetryData from './components/EditRetryData';
-import ViewErrorDetails from './components/ViewErrorDetails';
+import EditRetryData from './EditRetryData';
+import ViewErrorDetails from './ViewErrorDetails';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
-import ErrorActions from './components/ErrorActions';
+import ErrorDetailActions from './ErrorDetailActions';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -120,7 +120,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
         </div>
       </div>
       <div className={classes.actions}>
-        <ErrorActions
+        <ErrorDetailActions
           retryData={retryData}
           flowId={flowId}
           resourceId={resourceId}

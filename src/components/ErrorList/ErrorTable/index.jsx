@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
 import CeligoTable from '../../CeligoTable';
 import { selectors } from '../../../reducers';
+import metadata from './metadata';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: { float: 'right' },
@@ -22,7 +23,7 @@ export default function ErrorTable(props) {
     paginationOptions,
     actionProps,
     data = [],
-    metadata,
+    errorType,
     emptyRowsLabel,
   } = props;
   const { filterKey, defaultFilter } = actionProps;
@@ -64,7 +65,7 @@ export default function ErrorTable(props) {
           <CeligoTable
             data={errorsInCurrentPage}
             filterKey={filterKey}
-            {...metadata}
+            {...metadata[errorType]}
             actionProps={actionProps}
           />
         </>

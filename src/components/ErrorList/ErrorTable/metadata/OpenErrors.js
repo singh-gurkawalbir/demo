@@ -1,9 +1,11 @@
 import React from 'react';
 import Retry from '../actions/Retry';
+import Resolve from '../actions/Resolve';
+import ViewErrorDetails from '../actions/ViewErrorDetails';
+import EditRetryData from '../actions/EditRetry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
-import UserName from '../components/UserName';
-import DateTimeDisplay from '../../DateTimeDisplay';
+import DateTimeDisplay from '../../../DateTimeDisplay';
 
 export default {
   columns: [
@@ -18,7 +20,7 @@ export default {
     },
     {
       heading: 'Message',
-      width: '30%',
+      width: '40%',
       value: r => r.message,
     },
     { heading: 'Source', value: r => r.source },
@@ -28,18 +30,18 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => <DateTimeDisplay dateTime={r.resolvedAt} />,
-    },
-    {
-      heading: 'Resolved By',
-      value: r => <UserName userId={r.resolvedBy} />,
+      value: r => <DateTimeDisplay dateTime={r.occurredAt} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {
     if (actionInProgress) return [];
+    const actions = [
+      ...(retryDataKey ? [EditRetryData] : []),
+      Resolve,
+      ...(retryDataKey ? [Retry] : []),
+      ViewErrorDetails,
+    ];
 
-    if (retryDataKey) return [Retry];
-
-    return [];
+    return actions;
   },
 };
