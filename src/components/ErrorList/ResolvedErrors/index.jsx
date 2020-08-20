@@ -8,7 +8,7 @@ import RefreshCard from '../components/RefreshCard';
 import ErrorActions from '../components/ErrorActions';
 import Spinner from '../../Spinner';
 import SpinnerWrapper from '../../SpinnerWrapper';
-import useErrorTableConfig from '../ErrorDetails/hooks/useErrorTableConfig';
+import useErrorTableConfig from '../hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   search: {

@@ -9,7 +9,7 @@ import ErrorActions from '../components/ErrorActions';
 import Spinner from '../../Spinner';
 import ErrorDetailsDrawer from './ErrorDetailsDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
-import useErrorTableConfig from '../ErrorDetails/hooks/useErrorTableConfig';
+import useErrorTableConfig from '../hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {

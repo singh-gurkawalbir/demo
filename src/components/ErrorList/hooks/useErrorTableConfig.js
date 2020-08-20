@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
 
 export default function useErrorTableConfig(flowId, resourceId, options = {}) {
   const {filterKey, defaultFilter, show, isResolved = false } = options;
