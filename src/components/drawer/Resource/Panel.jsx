@@ -210,7 +210,7 @@ export default function Panel(props) {
 
     // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
     const adaptorType = resourceType === 'connections'
-      ? getStagedValue('type') || resource?.rdbms?.type || resource?.type
+      ? getStagedValue('type') || resource?.type
       : getStagedValue('/adaptorType') || resource?.adaptorType;
     const assistant = getStagedValue('/assistant') || resource?.assistant;
 
@@ -225,12 +225,13 @@ export default function Panel(props) {
       return '';
     }
 
-    if (adaptorType && adaptorType.startsWith('RDBMS')) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        getStagedValue('/_connectionId') || (resource && resource._connectionId)
-      );
+    if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
+      const connection = resourceType === 'connections' ? resource
+        : selectors.resource(
+          state,
+          'connections',
+          getStagedValue('/_connectionId') || (resource && resource._connectionId)
+        );
 
       return connection && connection.rdbms && connection.rdbms.type;
     }
