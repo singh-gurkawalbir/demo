@@ -174,6 +174,14 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     ]
   );
 
+  const handleTileClick = useCallback(
+    event => {
+      event.stopPropagation();
+      history.push(getRoutePath(urlToIntegrationSettings));
+    },
+    [history, urlToIntegrationSettings]
+  );
+
   // #region Drag&Drop related
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
@@ -187,7 +195,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   return (
     <div ref={ref}>
-      <HomePageCardContainer isCardSelected={isCardSelected}>
+      <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected}>
         <Header>
           <Status
             label={status.label}
