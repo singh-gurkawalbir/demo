@@ -19,16 +19,17 @@ export default {
     let columns = [
       {
         heading: 'Name',
-        value: function Name(r) {
+        // TODO: update 'storeId' references to 'childId'
+        value: function Name(r, { parentId, storeId }) {
           return (
             <NameCell
               flowId={r._id}
-              integrationId={r._integrationId}
+              integrationId={parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
               name={r.name}
               description={r.description}
               isFree={r.free}
-
+              childId={storeId}
             />
           );
         },

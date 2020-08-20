@@ -315,25 +315,18 @@ export default (state = {}, action) => {
         );
       });
     case actionTypes.CONNECTION.UPDATE_STATUS: {
-      // cant implement immer here with current implementation. Sort being used in selector.
-      if (newState.connections && newState.connections.length) {
-        collection &&
-          collection.length &&
+      return produce(state, draft => {
+        if (collection?.length) {
           collection.forEach(({ _id: cId, offline, queues }) => {
-            resourceIndex = newState.connections.findIndex(r => r._id === cId);
-
-            if (resourceIndex !== -1) {
-              newState.connections[resourceIndex].offline = !!offline;
-              newState.connections[resourceIndex].queueSize = queues[0].size;
+            resourceIndex = draft?.connections?.findIndex(r => r._id === cId);
+            if (resourceIndex >= 0) {
+              draft.connections[resourceIndex].offline = !!offline;
+              draft.connections[resourceIndex].queueSize = queues[0].size;
             }
           });
-
-        return newState;
-      }
-
-      return state;
+        }
+      });
     }
-
     case actionTypes.CONNECTION.MADE_ONLINE:
       if (!state.tiles) {
         return state;
@@ -608,7 +601,7 @@ selectors.resourceList = (
   const comparer = ({ order, orderBy }) =>
     order === 'desc' ? stringCompare(orderBy, true) : stringCompare(orderBy);
   // console.log('sort:', sort, resources.sort(comparer, sort));
-  const sorted = sort ? resources.sort(comparer(sort)) : resources;
+  const sorted = sort ? [...resources].sort(comparer(sort)) : resources;
   let filteredByEnvironment;
 
   if (filterByEnvironment) {

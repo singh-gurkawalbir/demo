@@ -42,7 +42,7 @@ export default function MappingWrapper(props) {
   const options = {
     flowId,
     connectionId,
-    resourceId,
+    importId: resourceId,
     resourceName,
   };
   const mappingOptions = {
@@ -103,8 +103,6 @@ export default function MappingWrapper(props) {
     mappingInitialized,
   ]);
 
-  const isGenerateRefreshSupported = true;
-
   return (
     <ImportMapping
       editorId={id}
@@ -113,8 +111,6 @@ export default function MappingWrapper(props) {
       disabled={deleted}
       integrationId={integrationId}
       flowId={flowId}
-      isGenerateRefreshSupported={isGenerateRefreshSupported}
-      application={application}
       sectionId={sectionId}
       options={options}
     />

@@ -187,7 +187,6 @@ export default {
       fieldId: 'salesforce.upsert.externalIdField',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
-    dataMappings: { formId: 'dataMappings' },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
       visibleWhen: [
@@ -200,13 +199,6 @@ export default {
     'salesforce.lookups': {
       fieldId: 'salesforce.lookups',
       visible: false,
-    },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: [
-        'salesforce.sObjectType',
-        'salesforce.lookups',
-      ],
     },
     advancedSettings: {
       formId: 'advancedSettings',
@@ -224,7 +216,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode', 'dataMappings'],
+        fields: ['common', 'inputMode'],
       },
       {
         collapsed: true,

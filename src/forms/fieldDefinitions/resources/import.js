@@ -47,8 +47,4 @@ export default {
     type: 'text',
     label: 'Ftp file name',
   },
-  'ftp.importMapping': {
-    type: 'labeltitle',
-    label: 'How should the data be mapped?',
-  },
 };

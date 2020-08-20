@@ -64,7 +64,7 @@ export default (
         {
           const { collection = emptyList } = action;
 
-          draft.jobs = parseJobs(collection);
+          draft.jobs = parseJobs(collection || []);
           draft.paging.jobs.currentPage = 0;
           draft.paging.jobs.totalJobs = draft.jobs.length;
         }

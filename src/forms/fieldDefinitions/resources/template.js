@@ -1,4 +1,4 @@
-import templates from '../../../constants/templates';
+import { applicationsList } from '../../../constants/templates';
 
 export default {
   name: {
@@ -34,7 +34,7 @@ export default {
     valueDelimiter: ',',
     options: [
       {
-        items: templates,
+        items: applicationsList(),
       },
     ],
   },

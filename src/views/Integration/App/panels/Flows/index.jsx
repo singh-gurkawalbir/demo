@@ -56,6 +56,7 @@ export const useActiveTab = () => {
     },
     []
   );
+
   return {externalTabState, setExternalTabState, index: 0 };
 };
 export const IAFormStateManager = props => {

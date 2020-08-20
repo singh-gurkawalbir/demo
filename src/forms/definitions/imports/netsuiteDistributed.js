@@ -46,6 +46,9 @@ export default {
         return 'records';
       },
     },
+    'netsuite_da.batchSize': {
+      fieldId: 'netsuite_da.batchSize',
+    },
     blobKeyPath: { fieldId: 'blobKeyPath' },
     distributed: { fieldId: 'distributed' },
     'netsuite_da.recordType': { fieldId: 'netsuite_da.recordType' },
@@ -93,16 +96,32 @@ export default {
         },
       ],
     },
-    dataMappings: { formId: 'dataMappings' },
-    advancedSettings: {
-      formId: 'advancedSettings',
-      visibleWhenAll: [
+    idLockTemplate: {
+      fieldId: 'idLockTemplate',
+      visibleWhen: [
         {
           field: 'inputMode',
           is: ['records'],
         },
       ],
     },
+    dataURITemplate: {
+      fieldId: 'dataURITemplate',
+      visibleWhenA: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
+    apiIdentifier: {
+      fieldId: 'apiIdentifier',
+      visibleWhen: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ] },
     settings: { fieldId: 'settings' },
   },
   layout: {
@@ -111,7 +130,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode', 'dataMappings'],
+        fields: ['common', 'inputMode'],
       },
       {
         collapsed: true,
@@ -142,7 +161,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'blobKeyPath', 'advancedSettings', 'deleteAfterImport'],
+          'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

@@ -19,11 +19,7 @@ export default {
       '/http/auth/token/scheme': 'Bearer',
       '/http/auth/token/headerName': 'Authorization',
       '/http/ping/method': 'GET',
-      '/http/ping/relativeURI': `${
-        formValues['/http/sandbox'] === 'true'
-          ? 'shippingservices/v1/countries?originCountryCode=US&carrier=usps'
-          : 'location-intelligence/geo911/v1/psap/byaddress?address=1 Global View, Troy, NY'
-      }`,
+      '/http/ping/relativeURI': 'shippingservices/v1/countries?originCountryCode=US&carrier=usps',
       '/http/headers': headers,
       '/http/auth/token/refreshRelativeURI': `https://api${
         formValues['/http/sandbox'] === 'true' ? '-sandbox' : ''
@@ -53,8 +49,8 @@ export default {
       options: [
         {
           items: [
-            { label: 'Locate & Identify', value: 'false' },
-            { label: 'Ship', value: 'true' },
+            { label: 'Production', value: 'false' },
+            { label: 'Sandbox', value: 'true' },
           ],
         },
       ],

@@ -16,26 +16,6 @@ export default {
       fieldId: 'netsuite.internalIdLookup.expression',
     },
     'netsuite.lookups': { fieldId: 'netsuite.lookups' },
-    'netsuite.lookups[*].map': { fieldId: 'netsuite.lookups[*].map' },
-    'netsuite.lookups[*].default': { fieldId: 'netsuite.lookups[*].default' },
-    'netsuite.lookups[*].recordType': {
-      fieldId: 'netsuite.lookups[*].recordType',
-    },
-    'netsuite.lookups[*].searchField': {
-      fieldId: 'netsuite.lookups[*].searchField',
-    },
-    'netsuite.lookups[*].expression': {
-      fieldId: 'netsuite.lookups[*].expression',
-    },
-    'netsuite.lookups[*].resultField': {
-      fieldId: 'netsuite.lookups[*].resultField',
-    },
-    'netsuite.lookups[*].includeInactive': {
-      fieldId: 'netsuite.lookups[*].includeInactive',
-    },
-    'netsuite.lookups[*].allowFailures': {
-      fieldId: 'netsuite.lookups[*].allowFailures',
-    },
     'netsuite.preferences.ignoreReadOnlyFields': {
       fieldId: 'netsuite.preferences.ignoreReadOnlyFields',
     },
@@ -62,14 +42,6 @@ export default {
       'netsuite.internalIdLookup.searchField',
       'netsuite.internalIdLookup.expression',
       'netsuite.lookups',
-      'netsuite.lookups[*].map',
-      'netsuite.lookups[*].default',
-      'netsuite.lookups[*].recordType',
-      'netsuite.lookups[*].searchField',
-      'netsuite.lookups[*].expression',
-      'netsuite.lookups[*].resultField',
-      'netsuite.lookups[*].includeInactive',
-      'netsuite.lookups[*].allowFailures',
       'netsuite.preferences.ignoreReadOnlyFields',
       'netsuite.preferences.warningAsError',
       'netsuite.preferences.skipCustomMetadataRequests',

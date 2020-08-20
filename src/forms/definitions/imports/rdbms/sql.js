@@ -115,10 +115,12 @@ export default {
     apiIdentifier: { fieldId: 'apiIdentifier' },
     'rdbms.query': {
       fieldId: 'rdbms.query',
+      required: true,
       defaultValue: r => r && r.rdbms && r.rdbms.query && r.rdbms.query[0],
     },
     'rdbms.queryInsert': {
       fieldId: 'rdbms.queryInsert',
+      required: true,
       defaultValue: r => {
         if (!r || !r.rdbms || !r.rdbms.query) {
           return '';
@@ -131,6 +133,7 @@ export default {
     },
     'rdbms.queryUpdate': {
       fieldId: 'rdbms.queryUpdate',
+      required: true,
       defaultValue: r => {
         if (!r || !r.rdbms || !r.rdbms.query) {
           return '';
@@ -166,7 +169,6 @@ export default {
       type: 'textwithflowsuggestion',
       showSuggestionsWithoutHandlebar: true,
     },
-    dataMappings: { formId: 'dataMappings' },
   },
   layout: {
     type: 'collapse',
@@ -174,7 +176,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'dataMappings', 'modelMetadata'],
+        fields: ['common', 'modelMetadata'],
       },
       {
         collapsed: true,

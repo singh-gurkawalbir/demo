@@ -108,6 +108,8 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: 250,
+    maxHeight: 650,
+    overflowY: 'auto',
   },
   itemRootName: {
     margin: 0,

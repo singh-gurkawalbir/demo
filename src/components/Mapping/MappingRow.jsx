@@ -1,22 +1,21 @@
 import React, { useRef, useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import MappingSettings from '../ImportMappingSettings/MappingSettingsField';
-import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
-import TrashIcon from '../../icons/TrashIcon';
-import ActionButton from '../../ActionButton';
-import LockIcon from '../../icons/LockIcon';
-import MappingConnectorIcon from '../../icons/MappingConnectorIcon';
-import GripperIcon from '../../icons/GripperIcon';
+import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import {selectors} from '../../reducers';
+import actions from '../../actions';
+import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
+import GripperIcon from '../icons/GripperIcon';
+import LockIcon from '../icons/LockIcon';
+import MappingConnectorIcon from '../icons/MappingConnectorIcon';
+import ActionButton from '../ActionButton';
+import TrashIcon from '../icons/TrashIcon';
+import MappingSettingsButton from './Settings/SettingsButton';
 
 const useStyles = makeStyles(theme => ({
-  child: {
-    '& + div': {
-      width: '100%',
-    },
-  },
   childHeader: {
     width: '46%',
     '& > div': {
@@ -65,7 +64,6 @@ const useStyles = makeStyles(theme => ({
     top: 6,
     color: theme.palette.text.hint,
   },
-
   deleteBtn: {
     border: 'none',
     width: 0,
@@ -74,42 +72,46 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.lightest,
     fontSize: 38,
   },
-  topHeading: {
-    fontFamily: 'Roboto500',
-  },
 }));
+const emptyObject = {};
+export default function MappingRow({
+  id,
+  disabled,
+  onMove,
+  index,
+  importId,
+  flowId,
+  mappingKey,
+  subRecordMappingId,
+  isDraggable = false,
+}) {
+  const mapping = useSelector(state => {
+    const {mappings} = selectors.mapping(state);
+    const mapping = mappings.find(({key}) => key === mappingKey);
 
-export default function MappingRow(props) {
+    return mapping || emptyObject;
+  }, shallowEqual);
+  // not destructuring above due to condition check below "'hardCodedValue' in mapping".hardCodedValue can be undefined/null
   const {
-    id,
-    mapping,
-    extractFields,
-    onFieldUpdate,
-    generateFields,
-    disabled,
-    updateLookupHandler,
-    patchSettings,
-    application,
-    options,
-    lookups,
-    onDelete,
-    onMove,
-    onDrop,
-    index,
-    isDraggable = false,
-  } = props;
-  const {
-    key,
     isSubRecordMapping,
     isRequired,
     isNotEditable,
     extract,
     generate,
-    hardCodedValueTmp,
-  } = mapping || {};
+    hardCodedValue,
+  } = mapping;
+  const dispatch = useDispatch();
   const classes = useStyles();
   const ref = useRef(null);
-  // isOver is set to true when hover happens over component
+  const generateFields = useSelector(state =>
+    selectors.mappingGenerates(state, importId, subRecordMappingId)
+  );
+
+  const extractFields = useSelector(state =>
+    selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
+  );
+  const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
+
   const [, drop] = useDrop({
     accept: 'MAPPING',
     hover(item) {
@@ -129,20 +131,12 @@ export default function MappingRow(props) {
       // eslint-disable-next-line no-param-reassign
       item.index = hoverIndex;
     },
-    collect: monitor => ({
-      isOver: monitor.isOver(),
-    }),
   });
   const [{ isDragging }, drag] = useDrag({
-    item: { type: 'MAPPING', index },
+    item: { type: 'MAPPING', index, key: mappingKey },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-    end: dropResult => {
-      if (dropResult) {
-        onDrop();
-      }
-    },
 
     canDrag: isDraggable,
   });
@@ -150,24 +144,47 @@ export default function MappingRow(props) {
 
   drag(drop(ref));
 
-  const handleBlur = useCallback(
-    type => (id, value) => {
-      onFieldUpdate(mapping, type, value);
-    },
-    [mapping, onFieldUpdate]
+  const handleBlur = useCallback((field, value) => {
+    // check if value changes or user entered something in new row
+    if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
+      if (mappingKey && value === '') {
+        if (
+          (field === 'extract' && generate === '') ||
+            (field === 'generate' &&
+              extract === '' &&
+              !('hardCodedValue' in mapping))
+        ) {
+          dispatch(actions.mapping.delete(mappingKey));
+
+          return;
+        }
+      }
+      dispatch(actions.mapping.patchField(field, mappingKey, value));
+
+      return;
+    }
+
+    if (lastModifiedRowKey !== mappingKey) {
+      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
+
+      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
+    }
+  },
+  [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
   );
+  const handleExtractBlur = useCallback((_id, value) => {
+    handleBlur('extract', value);
+  }, [handleBlur]);
+  const handleGenerateBlur = useCallback((_id, value) => {
+    handleBlur('generate', value);
+  }, [handleBlur]);
 
   const handleDeleteClick = useCallback(() => {
-    onDelete(key);
-  }, [onDelete, key]);
-  const handleSettingsSave = useCallback(
-    (id, evt) => {
-      patchSettings(key, evt);
-    },
-    [patchSettings, key]
-  );
+    dispatch(actions.mapping.delete(mappingKey));
+  }, [dispatch, mappingKey]);
 
-  // generateFields and extractFields are passed as an array of field names
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+
   return (
     <div
       ref={ref}
@@ -184,13 +201,14 @@ export default function MappingRow(props) {
               isSubRecordMapping || isNotEditable || disabled,
           })}>
           <DynaTypeableSelect
+            key={extractValue}
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
-            value={extract || hardCodedValueTmp}
+            value={extractValue}
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
-            onBlur={handleBlur('extract')}
+            onBlur={handleExtractBlur}
             triggerBlurOnTouch
           />
 
@@ -207,13 +225,14 @@ export default function MappingRow(props) {
               isSubRecordMapping || isRequired || disabled,
           })}>
           <DynaTypeableSelect
+            key={generate}
             id={`fieldMappingGenerate-${index}`}
             value={generate}
             labelName="name"
             valueName="id"
             options={generateFields}
             disabled={isSubRecordMapping || isRequired || disabled}
-            onBlur={handleBlur('generate')}
+            onBlur={handleGenerateBlur}
             triggerBlurOnTouch
           />
           {(isSubRecordMapping || isRequired) && (
@@ -234,18 +253,13 @@ export default function MappingRow(props) {
           className={clsx({
             [classes.disableChildRow]: isSubRecordMapping,
           })}>
-          <MappingSettings
-            id={`fieldMappingSettings-${index}`}
-            onSave={handleSettingsSave}
-            value={mapping}
-            options={options}
-            generate={generate}
-            application={application}
-            updateLookup={updateLookupHandler}
+          <MappingSettingsButton
+            dataTest={`fieldMappingSettings-${index}`}
+            mappingKey={mappingKey}
             disabled={disabled}
-            lookups={lookups}
-            extractFields={extractFields}
-            generateFields={generateFields}
+            subRecordMappingId={subRecordMappingId}
+            importId={importId}
+            flowId={flowId}
           />
         </div>
         <div
