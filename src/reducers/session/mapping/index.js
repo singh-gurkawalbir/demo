@@ -10,7 +10,20 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, key, field, shiftIndex, value, mappings, lookups, flowId, resourceId, subRecordMappingId } = action;
+  const {
+    type,
+    key,
+    field,
+    shiftIndex,
+    value,
+    mappings,
+    lookups,
+    flowId,
+    resourceId,
+    subRecordMappingId,
+    newLookup,
+    oldLookupName,
+  } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -234,6 +247,20 @@ export default (state = {}, action) => {
         draft.mapping.mappings.splice(shiftIndex, 0, removed);
         break;
       }
+      case actionTypes.MAPPING.ADD_LOOKUP:
+        draft.mapping.lookups.push({...newLookup, _isConditional: true});
+        break;
+      case actionTypes.MAPPING.EDIT_LOOKUP:
+        if (oldLookupName && oldLookupName !== newLookup.name) {
+          for (let i = 0; i < draft.mapping.mappings.length; i += 1) {
+            if (draft.mapping.mappings[i]?.conditional?.lookupName === oldLookupName) {
+              draft.mapping.mappings[i].conditional.lookupName = newLookup.name;
+            }
+          }
+          draft.mapping.lookups = draft.mapping.lookups.filter(l => l.name === oldLookupName);
+        }
+        draft.mapping.lookups.push({...newLookup, _isConditional: true });
+        break;
 
       default:
     }

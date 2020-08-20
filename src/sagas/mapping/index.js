@@ -216,6 +216,12 @@ export function* mappingInit({
     );
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }
+  // adding conditional lookup
+  lookups = lookups.map(lookup => {
+    const isConditionalLookup = formattedMappings.find(mapping => mapping?.conditional?.lookupName === lookup.name);
+
+    return {...lookup, _isConditional: !!isConditionalLookup};
+  });
   yield put(
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({
@@ -292,14 +298,22 @@ export function* saveMappings({context }) {
   });
 
   if (lookups && !subRecordMappingId) {
+    // remove all unused conditional lookups
+    const filteredLookups = lookups.filter(({name, _isConditional}) => {
+      if (_isConditional) {
+        return !!mappings.find(mapping => mapping?.conditional?.lookupName === name);
+      }
+
+      return true;
+    }).map(({_isConditional, ...others}) => ({...others}));
     const lookupPath = lookupUtil.getLookupPath(adaptorTypeMap[importResource.adaptorType]);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
     if (lookupPath) {
       patch.push({
-        op: lookups ? 'replace' : 'add',
+        op: filteredLookups ? 'replace' : 'add',
         path: lookupPath,
-        value: lookups,
+        value: filteredLookups,
       });
     }
   }
@@ -360,12 +374,19 @@ export function* previewMappings() {
   const requestBody = {
     data: flowSampleData,
   };
+  const filteredLookups = lookups.filter(({name, _isConditional}) => {
+    if (_isConditional) {
+      return !!mappings.find(mapping => mapping?.conditional?.lookupName === name);
+    }
+
+    return true;
+  }).map(({_isConditional, ...others}) => ({...others}));
 
   if (importResource.adaptorType === 'SalesforceImport') {
     importResource.mapping = _mappings;
 
-    if (lookups) {
-      importResource.salesforce.lookups = lookups;
+    if (filteredLookups) {
+      importResource.salesforce.lookups = filteredLookups;
     }
   } else if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     path = `/netsuiteDA/previewImportMappingFields?_connectionId=${_connectionId}`;
@@ -376,14 +397,14 @@ export function* previewMappings() {
         resource: importResource,
         subRecordMappingId,
         subRecordMapping: _mappings,
-        subRecordLookups: lookups,
+        subRecordLookups: filteredLookups,
       });
     }
 
     importResource = importResource.netsuite_da;
 
     if (!subRecordMappingId) {
-      importResource.lookups = lookups;
+      importResource.lookups = filteredLookups;
     }
 
     importResource.mapping = _mappings;
@@ -392,7 +413,7 @@ export function* previewMappings() {
   } else if (importResource.adaptorType === 'HTTPImport') {
     importResource.mapping = _mappings;
 
-    if (lookups) importResource.http.lookups = lookups;
+    if (filteredLookups) importResource.http.lookups = filteredLookups;
   }
 
   requestBody.importConfig = importResource;

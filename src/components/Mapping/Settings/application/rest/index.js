@@ -465,7 +465,7 @@ export default {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name:',
-          type: 'selectlookup',
+          type: 'selectconditionallookup',
           flowId,
           resourceId,
           refreshOptionsOnChangesTo: ['lookups'],

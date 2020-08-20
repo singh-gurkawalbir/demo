@@ -1308,6 +1308,10 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  addLookup: ({newLookup}) =>
+    action(actionTypes.MAPPING.ADD_LOOKUP, { newLookup }),
+  editLookup: ({oldLookupName, newLookup}) =>
+    action(actionTypes.MAPPING.EDIT_LOOKUP, { oldLookupName, newLookup }),
   updateLookup: lookups =>
     action(actionTypes.MAPPING.UPDATE_LOOKUP, { lookups }),
   patchSettings: (key, value) =>

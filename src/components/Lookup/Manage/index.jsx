@@ -13,20 +13,18 @@ import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-export default function ManageLookup(props) {
-  const {
-    onSave,
-    value = {},
-    onCancel,
-    error,
-    disabled = false,
-    resourceId,
-    resourceType,
-    flowId,
-    fieldId,
-    showDynamicLookupOnly = false,
-    options = {},
-  } = props;
+export default function ManageLookup({
+  onSave,
+  value = {},
+  onCancel,
+  error,
+  disabled = false,
+  resourceId,
+  resourceType,
+  flowId,
+  showDynamicLookupOnly = false,
+  ...others
+}) {
   // to be removed after form refactor PR merges
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
@@ -36,6 +34,7 @@ export default function ManageLookup(props) {
     resourceType,
     resourceId
   );
+
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
@@ -68,9 +67,8 @@ export default function ManageLookup(props) {
       lookupTmp.name = shortid.generate();
     }
 
-    if (resource.adaptorType === 'NetSuiteImport') {
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {
       if (formVal._mode === 'dynamic') {
-        lookupTmp.extract = formVal._extract;
         lookupTmp.recordType = formVal._recordType;
         lookupTmp.resultField = formVal._resultField;
         lookupTmp.expression = formVal._expression;
@@ -129,28 +127,25 @@ export default function ManageLookup(props) {
           break;
         default:
       }
-
-      lookupObj.name = formVal._name;
     }
-
+    lookupObj.name = formVal._name;
     onSave(isEdit, lookupObj);
   };
 
   let fieldMeta;
-  const { recordType, fieldMetadata } = options;
 
-  if (resource.adaptorType === 'NetSuiteImport') {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
+    const { extractFields, staticLookupCommMetaPath } = others;
+
     fieldMeta = netsuiteMetadata.getLookupMetadata({
       lookup: value,
       connectionId,
-      resourceId,
-      resourceType,
-      flowId,
-      fieldMetadata,
-      fieldId,
-      recordType,
+      staticLookupCommMetaPath,
+      extractFields,
     });
   } else if (resource.adaptorType === 'SalesforceImport') {
+    const { recordType, fieldMetadata, fieldId } = others;
+
     fieldMeta = salesforceMetadata.getLookupMetadata({
       lookup: value,
       showDynamicLookupOnly,
@@ -161,7 +156,7 @@ export default function ManageLookup(props) {
       fieldMetadata,
       fieldId,
       recordType,
-      opts: options,
+      opts: others,
     });
   } else if (resource.adaptorType === 'RDBMSImport') {
     fieldMeta = rdbmsMetadata.getLookupMetadata({

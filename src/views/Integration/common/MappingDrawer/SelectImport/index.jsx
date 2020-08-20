@@ -72,7 +72,7 @@ export default function SelectImport({ flowId }) {
   // If there is only one import then we can safely
   // take the user to the mapping of that import
   if (importId) {
-    return <Redirect push={false} to={`${match.url}/${importId}`} />;
+    return <Redirect push={false} to={`${match.url}/imports/${importId}`} />;
   }
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
@@ -103,7 +103,7 @@ export default function SelectImport({ flowId }) {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={`${match.url}/${i._id}`}>
+            to={`${match.url}/imports/${i._id}`}>
             <Typography variant="h6" color="primary">
               {i.name || i._id}
             </Typography>
@@ -118,7 +118,7 @@ export default function SelectImport({ flowId }) {
                   data-test={`subrecordMapping-${index}`}
                   className={classes.button}
                   component={Link}
-                  to={`${match.url}/${i._id}/${sr.fieldId}`}>
+                  to={`${match.url}/imports/${i._id}/subrecord/${sr.fieldId}`}>
                   <Typography variant="h6" color="primary">
                     {sr.name}
                   </Typography>

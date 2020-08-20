@@ -1,24 +1,9 @@
-// TODO Ashok: Same code is being used in Mapping settings also. This code should be refactored.
-const getNetsuiteSelectFieldValueUrl = ({
-  fieldMetadata,
-  connectionId,
-  fieldId,
-  recordType,
-}) =>
-  `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}/${
-    fieldMetadata && fieldMetadata.sublist
-      ? `sublists/${fieldMetadata.sublist}/`
-      : ''
-  }selectFieldValues/${fieldId.substr(0, fieldId.indexOf('.internalid'))}`;
-
 export default {
   getLookupMetadata: ({
     lookup = {},
     connectionId,
-    extractFields,
-    fieldMetadata,
-    fieldId,
-    recordType,
+    extractFields = [],
+    staticLookupCommMetaPath,
   }) => {
     const fieldMeta = {
       fieldMap: {
@@ -60,7 +45,10 @@ export default {
           required: true,
           connectionId,
           refreshOptionsOnChangesTo: ['_recordType'],
-          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          visibleWhenAll: [
+            { field: '_mode', is: ['dynamic'] },
+            { field: '_recordType', isNot: [''] },
+          ],
           value: lookup.expression,
           data: extractFields,
         },
@@ -73,7 +61,10 @@ export default {
           multiline: true,
           disableText: true,
           refreshOptionsOnChangesTo: ['_expression'],
-          visibleWhenAll: [{ field: '_mode', is: ['dynamic'] }],
+          visibleWhenAll: [
+            { field: '_mode', is: ['dynamic'] },
+            { field: '_recordType', isNot: [''] },
+          ],
           helpKey: 'mapping.netsuite.lookup.expressionText',
           defaultValue: lookup.expression,
         },
@@ -95,15 +86,8 @@ export default {
           name: '_mapList',
           type: 'staticMap',
           valueLabel: 'Import field (NetSuite)',
-          commMetaPath:
-            fieldId &&
-            getNetsuiteSelectFieldValueUrl({
-              fieldMetadata,
-              connectionId,
-              fieldId,
-              recordType,
-            }),
-          connectionId,
+          commMetaPath: staticLookupCommMetaPath,
+          connectionId: staticLookupCommMetaPath && connectionId,
           label: '',
           keyName: 'export',
           keyLabel: 'Export field',
@@ -117,6 +101,23 @@ export default {
           map: lookup.map,
           visibleWhenAll: [{ field: '_mode', is: ['static'] }],
         },
+        _name: {
+          id: '_name',
+          name: '_name',
+          type: 'text',
+          label: 'Name',
+          required: true,
+          defaultValue: lookup.name,
+          placeholder: 'Alphanumeric characters only please',
+          helpText:
+            'Name of the lookups that will be exposed to the mapping to refer.',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[\\S]+$',
+              message: 'Name should not contain spaces.',
+            },
+          },
+        },
       },
       layout: {
         fields: [
@@ -126,6 +127,7 @@ export default {
           '_expressionText',
           '_resultField',
           '_mapList',
+          '_name',
         ],
       },
       optionsHandler: (fieldId, fields) => {

@@ -222,35 +222,37 @@ export default function MappingSettings({
   }, []);
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      classes={{
-        paper: classes.drawerPaper,
-      }}>
-      <DrawerTitleBar onClose={onClose} title="Settings" />
-      <div className={classes.content}>
-        <DynaForm
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}
-          formState={formState}>
-          <DynaSubmit
-            disabled={disableSave}
-            id="fieldMappingSettingsSave"
-            showCustomFormValidations={showCustomFormValidations}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test="fieldMappingSettingsCancel"
-            onClick={onClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
-      </div>
-    </Drawer>
+    <>
+      <Drawer
+        anchor="right"
+        open={open}
+        classes={{
+          paper: classes.drawerPaper,
+        }}>
+        <DrawerTitleBar onClose={onClose} title="Settings" />
+        <div className={classes.content}>
+          <DynaForm
+            disabled={disabled}
+            fieldMeta={fieldMeta}
+            optionsHandler={fieldMeta.optionsHandler}
+            formState={formState}>
+            <DynaSubmit
+              disabled={disableSave}
+              id="fieldMappingSettingsSave"
+              showCustomFormValidations={showCustomFormValidations}
+              onClick={handleSubmit}>
+              Save
+            </DynaSubmit>
+            <Button
+              data-test="fieldMappingSettingsCancel"
+              onClick={onClose}
+              variant="text"
+              color="primary">
+              Cancel
+            </Button>
+          </DynaForm>
+        </div>
+      </Drawer>
+    </>
   );
 }

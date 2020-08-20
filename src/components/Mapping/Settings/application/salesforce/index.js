@@ -401,7 +401,7 @@ export default {
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'selectlookup',
+          type: 'selectconditionallookup',
           flowId,
           resourceId,
           importType: 'salesforce',

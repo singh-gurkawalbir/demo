@@ -96,11 +96,11 @@ export default function MappingDrawerRoute(props) {
 
   return (
     <Route
-      exact
+      // exact
       path={[
+        `${match.url}/:flowId/mapping/imports/:importId/subrecord/:subRecordMappingId`,
+        `${match.url}/:flowId/mapping/imports/:importId`,
         `${match.url}/:flowId/mapping`,
-        `${match.url}/:flowId/mapping/:importId`,
-        `${match.url}/:flowId/mapping/:importId/:subRecordMappingId`,
       ]}>
       <MappingDrawer {...props} />
     </Route>
