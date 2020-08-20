@@ -225,12 +225,13 @@ export default function Panel(props) {
       return '';
     }
 
-    if (adaptorType && adaptorType.startsWith('RDBMS')) {
-      const connection = selectors.resource(
-        state,
-        'connections',
-        getStagedValue('/_connectionId') || (resource && resource._connectionId)
-      );
+    if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
+      const connection = resourceType === 'connections' ? resource
+        : selectors.resource(
+          state,
+          'connections',
+          getStagedValue('/_connectionId') || (resource && resource._connectionId)
+        );
 
       return connection && connection.rdbms && connection.rdbms.type;
     }
