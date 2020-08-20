@@ -200,7 +200,7 @@ export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
-  const { webHookProvider, webHookToken } = options;
+  const { webHookProvider, webHookToken, webHookVerify} = options;
 
   if (resourceId) {
     whURL = `${getApiUrl()}/v1/exports/`;
@@ -225,7 +225,7 @@ export const getWebhookUrl = (options = {}, resourceId) => {
         'sapariba',
       ].indexOf(webHookProvider) > -1
     ) {
-      if (webHookToken) whURL += `/${webHookToken}`;
+      if (webHookToken && webHookVerify !== 'token') whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';

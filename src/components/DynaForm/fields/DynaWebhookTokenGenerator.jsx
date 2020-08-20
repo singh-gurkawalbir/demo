@@ -150,7 +150,7 @@ function DynaWebhookTokenGenerator(props) {
           <div style={{display: 'inline-flex'}}>
             <WarningIcon className={classes.tokenWarning} />
             <Typography variant="body2">
-              Make sure to copy and store this token. For security, we won&apos;t show it again after you click Save or leave this page.
+              Please copy and secure this token externally. It will not be displayed in clear text again.
             </Typography>
           </div>
         )}

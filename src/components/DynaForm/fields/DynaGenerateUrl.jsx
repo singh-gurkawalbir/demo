@@ -44,6 +44,7 @@ function GenerateUrl(props) {
   } = props;
   const { webHookToken } = options;
   const { value: formValues, fields: fieldStates } = formContext;
+  const webHookVerify = fieldStates?.find(field => field.key === 'webhook.verify')?.value;
   const classes = useStyles();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
@@ -79,12 +80,12 @@ function GenerateUrl(props) {
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
-      const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+      const whURL = getWebhookUrl({ webHookProvider, webHookToken, webHookVerify }, finalResourceId);
 
       onFieldChange(id, whURL);
       setUrl(false);
     }
-  }, [finalResourceId, webHookProvider, webHookToken, id, onFieldChange, url]);
+  }, [finalResourceId, webHookProvider, webHookVerify, webHookToken, id, onFieldChange, url]);
 
   return (
     <>
