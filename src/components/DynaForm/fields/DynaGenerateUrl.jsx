@@ -45,6 +45,7 @@ function GenerateUrl(props) {
   const { webHookToken } = options;
   const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
+  const webHookVerify = fieldStates?.find(field => field.key === 'webhook.verify')?.value;
   const classes = useStyles();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
@@ -55,35 +56,37 @@ function GenerateUrl(props) {
   const handleCopy = useCallback(() =>
     enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
-    if (inValidFields(webookRequiredFields, fieldStates)) {
-      webookRequiredFields.forEach(fieldId => {
-        onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
-      });
+    if (isNewId(finalResourceId)) {
+      if (inValidFields(webookRequiredFields, fieldStates)) {
+        webookRequiredFields.forEach(fieldId => {
+          onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+        });
 
-      return;
+        return;
+      }
+      dispatch(
+        actions.resourceForm.submit(
+          'exports',
+          finalResourceId,
+          formValues,
+          null,
+          true,
+          false,
+          flowId
+        )
+      );
     }
-    dispatch(
-      actions.resourceForm.submit(
-        'exports',
-        finalResourceId,
-        formValues,
-        null,
-        true,
-        false,
-        flowId
-      )
-    );
     setUrl(true);
   }, [dispatch, fieldStates, finalResourceId, flowId, formValues, onFieldChange]);
 
   useEffect(() => {
     if (!isNewId(finalResourceId) && url) {
-      const whURL = getWebhookUrl({ webHookProvider, webHookToken }, finalResourceId);
+      const whURL = getWebhookUrl({ webHookProvider, webHookToken, webHookVerify }, finalResourceId);
 
       onFieldChange(id, whURL);
       setUrl(false);
     }
-  }, [finalResourceId, webHookProvider, webHookToken, id, onFieldChange, url]);
+  }, [finalResourceId, webHookProvider, webHookVerify, webHookToken, id, onFieldChange, url]);
 
   return (
     <>

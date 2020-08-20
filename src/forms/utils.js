@@ -126,7 +126,7 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
 };
 
 export const isExpansionPanelRequired = (meta, fieldStates) => {
-  const requiredFields = fieldsStateToArray(fieldStates).filter(field => field.required);
+  const requiredFields = fieldsStateToArray(fieldStates).filter(field => field.required && field.visible);
   const { layout, fieldMap } = meta;
 
   return requiredFields.some(

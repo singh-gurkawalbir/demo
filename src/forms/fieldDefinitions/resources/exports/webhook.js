@@ -32,6 +32,7 @@ export default {
         },
       ];
     },
+    required: true,
   },
   'webhook.slackKey': {
     type: 'textforsetfields',
@@ -77,6 +78,7 @@ export default {
         is: ['hmac'],
       },
     ],
+    required: true,
   },
   'webhook.header': {
     type: 'textforsetfields',
@@ -99,7 +101,7 @@ export default {
       {
         items: [
           { label: 'Base64', value: 'base64' },
-          { label: 'Hexadecimal', value: 'hexadecimal' },
+          { label: 'Hexadecimal', value: 'hex' },
         ],
       },
     ],

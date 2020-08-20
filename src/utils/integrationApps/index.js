@@ -125,6 +125,7 @@ const getIntegrationApp = ({ _connectorId, name }) => {
       '5e8d6f912387e356b6769bc5': 'amazon',
       '5e8d6ca02387e356b6769bb8': 'shopify',
       '5e7d921e2387e356b67669ce': 'sfnsio',
+      '5f1ad76d288b074c1a73fadd': 'zendesk',
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',

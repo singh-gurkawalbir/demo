@@ -315,7 +315,6 @@ export default (state = {}, action) => {
         );
       });
     case actionTypes.CONNECTION.UPDATE_STATUS: {
-      // cant implement immer here with current implementation. Sort being used in selector.
       return produce(state, draft => {
         if (collection?.length) {
           collection.forEach(({ _id: cId, offline, queues }) => {
@@ -328,7 +327,6 @@ export default (state = {}, action) => {
         }
       });
     }
-
     case actionTypes.CONNECTION.MADE_ONLINE:
       if (!state.tiles) {
         return state;

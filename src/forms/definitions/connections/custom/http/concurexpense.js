@@ -9,10 +9,10 @@ export default {
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/oauth/grantType': 'password',
-    '/http/auth/oauth/authURI': `https://${
+    '/http/auth/oauth/authURI': `${
       formValues['/http/baseURI']
     }/oauth2/v0/authorize`,
-    '/http/auth/oauth/tokenURI': `https://${
+    '/http/auth/oauth/tokenURI': `${
       formValues['/http/baseURI']
     }/oauth2/v0/token`,
     '/http/auth/token/refreshMethod': 'POST',

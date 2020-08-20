@@ -70,6 +70,7 @@ export default function DynaCsvGenerate(props) {
     resourceType,
     disabled,
     flowId,
+    formKey: parentFormKey,
   } = props;
   const [formKey, setFormKey] = useState(1);
   const handleOpenDrawer = usePushRightDrawer(id);
@@ -137,6 +138,7 @@ export default function DynaCsvGenerate(props) {
     <>
       <div className={classes.csvContainer}>
         <DynaEditorWithFlowSampleData
+          formKey={parentFormKey}
           title="CSV generator helper"
           id={`csvGenerate-${id}-${resourceId}`}
           mode="csv"

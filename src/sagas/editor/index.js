@@ -50,8 +50,9 @@ export function* evaluateProcessor({ id }) {
       // Error with status code between 400 and 500 are json, hence we can parse them
       if (e.status >= 400 && e.status < 500) {
         const errJSON = JSON.parse(e.message);
-
-        const errorMessage = [`Message: ${errJSON.message}`];
+        // Receiving errors in different formats from BE, for now added below check
+        // Can remove this once backend bug gets fixed (Id: IO-17172)
+        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message}`];
 
         if (errJSON.location) {
           errorMessage.push(`Location: ${errJSON.location}`);

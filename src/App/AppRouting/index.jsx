@@ -136,6 +136,7 @@ export default function AppRouting() {
         />
       <Route
         path={[
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/flowBuilder/:flowId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
@@ -169,6 +170,7 @@ export default function AppRouting() {
       <Route
         path={[
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId/:tab'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:storeId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/:tab'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId'),
           getRoutePath('/integrations/:integrationId/:tab'),

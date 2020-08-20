@@ -184,6 +184,7 @@ export default function ProfileMenuButton() {
         </div>
         <div className={classes.bottomActions}>
           <IconTextButton
+            data-test="uxFeedback"
             component="a"
             variant="text"
             className={classes.bottomActionsBtn}
@@ -193,6 +194,7 @@ export default function ProfileMenuButton() {
             Provide UX feedback
           </IconTextButton>
           <IconTextButton
+            data-test="switchLegacy"
             component="a"
             variant="text"
             color="primary"

@@ -134,6 +134,7 @@ const DynaHttpRequestBody = props => {
   return (
     <Fragment key={`${resourceId}-${id}`}>
       <DynaEditorWithFlowSampleData
+        formKey={formKey}
         contentType={contentType === 'json' ? 'json' : 'xml'}
         title={`${
           contentType === 'json'
