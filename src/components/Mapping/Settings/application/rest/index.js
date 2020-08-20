@@ -468,7 +468,6 @@ export default {
           type: 'selectconditionallookup',
           flowId,
           resourceId,
-          refreshOptionsOnChangesTo: ['lookups'],
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {
@@ -477,13 +476,6 @@ export default {
             },
           ],
           required: true,
-        },
-        lookups: {
-          name: 'lookups',
-          fieldId: 'lookups',
-          id: 'lookups',
-          visible: false,
-          defaultValue: lookups,
         },
       },
       layout: {
@@ -518,7 +510,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+            fields: ['conditional.when', 'conditional.lookupName'],
           },
         ],
       },
@@ -551,21 +543,6 @@ export default {
 
         if (fieldId === 'lookup.relativeURI') {
           return { resourceName };
-        }
-
-        if (fieldId === 'conditional.lookupName') {
-          const lookupField = fields.find(field => field.fieldId === 'lookups');
-
-          return {
-            lookups: {
-              fieldId: 'lookups',
-              data:
-                (lookupField &&
-                  Array.isArray(lookupField.value) &&
-                  lookupField.value) ||
-                [],
-            },
-          };
         }
 
         return null;
