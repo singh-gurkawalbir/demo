@@ -104,12 +104,14 @@ function ProceedOnFailureDialog(props) {
           formKey={formKey}
           fieldMeta={fieldMeta} />
         <DynaSubmit
+          formKey={formKey}
           disabled={disableSave}
           data-test="saveProceedOnFailure"
           onClick={submitHandler()}>
           {defaultLabels.saveLabel}
         </DynaSubmit>
         <DynaSubmit
+          formKey={formKey}
           disabled={disableSave}
           data-test="saveAndCloseProceedOnFailure"
           color="secondary"
