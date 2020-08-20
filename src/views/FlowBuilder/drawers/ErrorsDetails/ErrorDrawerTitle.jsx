@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
 }));
-export default function ErrorDetailsTitle({ flowId }) {
+export default function ErrorDrawerTitle({ flowId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const { resourceId } = match?.params || {};
