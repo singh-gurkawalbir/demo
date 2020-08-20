@@ -41,19 +41,17 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      {
-        !isFreshDataLoad && <RefreshCard onRefresh={fetchErrors} disabled={!updated} />
-      }
-      {
-        !!resolvedErrors.length &&
-        <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
-      }
+      <RefreshCard onRefresh={fetchErrors} disabled={!updated || isFreshDataLoad} />
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
         <>
+          {
+            !!resolvedErrors.length &&
+            <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
+          }
           <div className={classes.search}>
             <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
           </div>
