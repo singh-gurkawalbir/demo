@@ -3,7 +3,6 @@ import {
   convertFromExport,
   PARAMETER_LOCATION,
 } from '../../../../../utils/assistant';
-import { isLookupResource } from '../../../../../utils/flows';
 
 export function hiddenFieldsMeta({ values }) {
   return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
@@ -296,15 +295,6 @@ export function fieldMeta({ resource, assistantData }) {
   };
 
   return {
-    init: (fieldMeta, resource = {}, flow) => {
-      const exportPanelField = fieldMeta.fieldMap.exportPanel;
-
-      if (isLookupResource(flow, resource)) {
-        exportPanelField.visible = false;
-      }
-
-      return fieldMeta;
-    },
     fieldMap,
     layout: {
       type: 'column',
