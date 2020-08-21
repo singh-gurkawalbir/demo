@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import Spinner from '../../Spinner';
-import ActionStatus from './ActionStatus';
 import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
@@ -108,15 +107,14 @@ export default function ErrorActions(props) {
 
   return (
     <div className={classes.actionButtonsContainer}>
-      <ActionStatus flowId={flowId} resourceId={resourceId} />
-      {!isResolved ? (
+      {!isResolved && (
         <Button
           variant="outlined"
           disabled={!isAtleastOneErrorSelected || isActionInProgress}
           onClick={handleResolve}>
           Resolve &nbsp;{isResolveInProgress ? <Spinner size={16} /> : null}
         </Button>
-      ) : null}
+      )}
 
       <Button
         variant="outlined"

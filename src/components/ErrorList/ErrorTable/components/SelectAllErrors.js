@@ -1,10 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Checkbox from '@material-ui/core/Checkbox';
-import CheckboxUnselectedIcon from '../../icons/CheckboxUnselectedIcon';
-import CheckboxSelectedIcon from '../../icons/CheckboxSelectedIcon';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers';
+import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
+import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
 
 export default function SelectAllErrors({
   flowId,
