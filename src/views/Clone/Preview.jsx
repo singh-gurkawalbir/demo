@@ -434,6 +434,15 @@ export default function ClonePreview(props) {
     }
   };
 
+  if (cloneRequested) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
+
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>
       <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={cloningDescription} />
