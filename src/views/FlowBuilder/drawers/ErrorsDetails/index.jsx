@@ -10,7 +10,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const [errorType, setErrorType] = useState('open');
   const handleClose = useCallback(() => {
     history.goBack();
-    setTimeout(setErrorType('open'), 1000);
+    setTimeout(() => setErrorType('open'), 1000);
   }, [history]);
 
   return (

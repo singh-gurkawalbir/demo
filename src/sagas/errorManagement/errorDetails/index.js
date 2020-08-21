@@ -104,6 +104,7 @@ function* retryErrors({ flowId, resourceId, retryIds = [], isResolved }) {
           retryDataKeys,
         },
       },
+      hidden: true,
     });
 
     yield put(
@@ -149,6 +150,7 @@ function* resolveErrors({ flowId, resourceId, errorIds = [] }) {
           errors,
         },
       },
+      hidden: true,
     });
     yield put(
       actions.errorManager.flowErrorDetails.resolveReceived({

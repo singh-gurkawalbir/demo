@@ -13,7 +13,7 @@ export default function ErrorList({ flowId, errorType }) {
   useEffect(() => {
     dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
 
-    return () => dispatch(actions.errorManager.retryStatus.cancelPoll());
+    return () => dispatch(actions.errorManager.retryStatus.clear(flowId));
   }, [dispatch, flowId, resourceId]);
 
   return (
