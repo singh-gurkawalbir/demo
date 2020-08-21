@@ -33,6 +33,7 @@ function* requestFlowOpenErrors({ flowId }) {
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
 
     yield call(notifyErrorListOnUpdate, { flowId, newFlowErrors: flowOpenErrors});
