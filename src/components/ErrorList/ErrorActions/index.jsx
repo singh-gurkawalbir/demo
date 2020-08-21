@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
   },
   btnActions: {
+    height: 32,
     color: theme.palette.secondary.main,
     borderColor: theme.palette.secondary.main,
     '&:hover': {

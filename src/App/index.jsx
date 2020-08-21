@@ -87,8 +87,8 @@ const useSnackbarStyles = makeStyles({
     '& > svg': {
       position: 'fixed',
       left: 16,
-      top: '50%',
-      transform: 'translateY(-50%)',
+      top: '47%',
+      transform: 'translateY(-47%)',
     },
   },
 

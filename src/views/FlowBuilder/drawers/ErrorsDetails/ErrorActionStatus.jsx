@@ -7,12 +7,12 @@ const useStyles = makeStyles(theme => ({
   statusContainer: {
     background: fade(theme.palette.secondary.lightest, 0.7),
     color: theme.palette.secondary.main,
-    marginRight: theme.spacing(1),
     fontSize: 12,
     display: 'flex',
     lineHeight: '16px',
     padding: theme.spacing(0.5, 1),
     borderRadius: 2,
+    marginRight: `${theme.spacing(4)}px !important`,
   },
 }));
 
