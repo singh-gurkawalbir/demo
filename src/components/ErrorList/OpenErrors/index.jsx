@@ -1,15 +1,14 @@
 import React, { useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
-import RefreshCard from '../components/RefreshCard';
-import ErrorActions from '../components/ErrorActions';
+import RefreshCard from '../RefreshCard';
+import ErrorActions from '../ErrorActions';
 import Spinner from '../../Spinner';
 import ErrorDetailsDrawer from './ErrorDetailsDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
-import useErrorTableConfig from '../ErrorDetails/hooks/useErrorTableConfig';
+import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: {
@@ -45,26 +44,23 @@ export default function OpenErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      {
-        !isFreshDataLoad &&
-        <RefreshCard onRefresh={fetchErrors} disabled={!updated} />
-      }
-      {
-        !!openErrors.length &&
-        <ErrorActions flowId={flowId} resourceId={resourceId} />
-      }
+      <RefreshCard onRefresh={fetchErrors} disabled={!updated || isFreshDataLoad} />
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
         <>
+          {
+            !!openErrors.length &&
+            <ErrorActions flowId={flowId} resourceId={resourceId} />
+          }
           <div className={classes.search}>
             <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
-            metadata={metadata}
+            errorType="open"
             data={openErrors}
             actionProps={actionProps}
             emptyRowsLabel="No Open errors"
