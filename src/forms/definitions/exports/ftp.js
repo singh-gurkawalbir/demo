@@ -209,7 +209,7 @@ export default {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
       placeholder: 'Sample file (that would be parsed)',
-      visibleWhenAll: [
+      visibleWhen: [
         {
           field: 'outputMode',
           is: ['records'],
