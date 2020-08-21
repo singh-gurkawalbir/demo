@@ -89,6 +89,7 @@ function* requestRetryStatus({ flowId, resourceId }) {
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
     // TODO @Raghu: Revisit this status update based on the requirement
     const status = pendingRetryList?.length ? 'retrying' : 'completed';
@@ -110,7 +111,7 @@ function* pollForRetryStatus({ flowId, resourceId }) {
 function* startPollingForRetryStatus({ flowId, resourceId }) {
   const watcher = yield fork(pollForRetryStatus, { flowId, resourceId });
 
-  yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.CANCEL_POLL);
+  yield take(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR);
   yield cancel(watcher);
 }
 

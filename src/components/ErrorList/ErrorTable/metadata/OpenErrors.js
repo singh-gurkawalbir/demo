@@ -6,6 +6,7 @@ import EditRetryData from '../actions/EditRetry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
 import DateTimeDisplay from '../../../DateTimeDisplay';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default {
   columns: [
@@ -21,7 +22,7 @@ export default {
     {
       heading: 'Message',
       width: '40%',
-      value: r => r.message,
+      value: r => <ErrorMessage message={r.message} />,
     },
     { heading: 'Source', value: r => r.source },
     {
