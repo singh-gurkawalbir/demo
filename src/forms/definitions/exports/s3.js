@@ -238,9 +238,17 @@ export default {
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
-
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
     },
-
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
