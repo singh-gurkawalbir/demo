@@ -9,7 +9,7 @@ import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   label: {
     textAlign: 'center',
   },
@@ -24,6 +24,9 @@ const useStyles = makeStyles(() => ({
   selectRowsPage: {
     paddingTop: 5,
     marginLeft: 5,
+  },
+  labelLeft: {
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -90,7 +93,7 @@ export default function Pagination(props) {
       {rowsPerPageOptions.length > 1 ? (
 
         <div className={classes.resultsLabel}>
-          <Typography>Results per page:</Typography>
+          <Typography className={classes.labelLeft}>Results per page:</Typography>
           <Select
             value={rowsPerPage}
             IconComponent={ArrowDownIcon}

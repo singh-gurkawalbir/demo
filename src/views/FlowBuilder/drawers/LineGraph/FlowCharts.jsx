@@ -71,6 +71,12 @@ const useStyles = makeStyles(theme => ({
   '8Color': {
     color: '#57A05C',
   },
+  CustomTooltip: {
+    background: theme.palette.secondary.main,
+    color: theme.palette.common.white,
+    padding: '1px 4px',
+    borderRadius: 2,
+  },
 }));
 
 const getIcon = index => {
@@ -185,9 +191,11 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   };
 
   function CustomTooltip({ payload, label, active }) {
+    const classes = useStyles();
+
     if (active && Array.isArray(payload) && payload.length) {
       return (
-        <div className="custom-tooltip">
+        <div className={classes.CustomTooltip}>
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
           {payload.map(
             p => (
