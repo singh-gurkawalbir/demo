@@ -18,7 +18,7 @@ export default (state = defaultState, action) => {
           break;
         }
 
-        const pendingShares = collection.filter(
+        const pendingShares = (collection || []).filter(
           s => s.ownerUser && !s.accepted && !s.rejected && !s.dismissed
         );
 
