@@ -54,10 +54,6 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     flexDirection: 'column',
     overflow: 'auto',
-    '& > div:last-child': {
-      paddingTop: theme.spacing(3),
-    },
-
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
