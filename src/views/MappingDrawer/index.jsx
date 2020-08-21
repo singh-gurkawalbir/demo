@@ -32,19 +32,19 @@ import RightDrawer from '../../components/drawer/Right';
 // }));
 
 const MappingWrapper = ({integrationId}) => {
-  console.log('Check why this keeps on loading');
+  console.log('asdfg');
   const history = useHistory();
   const match = useRouteMatch();
+  const { flowId, importId, subRecordMappingId } = match.params;
 
   const isMonitorLevelUser = useSelector(state => {
     if (integrationId) {
       return selectors.isFormAMonitorLevelAccess(state, integrationId);
     }
 
-    // TODO
+    // TODO for DIV flows
     return true;
   });
-  const { flowId, importId, subRecordMappingId } = match.params;
 
   const handleClose = useCallback(() => {
     history.goBack();
@@ -64,10 +64,13 @@ const MappingWrapper = ({integrationId}) => {
 export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
 
+  console.log('match.url', match.url);
+
   return (
     <RightDrawer
       path={[
-        'mapping/flows/:flowId/imports/:importId/subrecord/:subRecordMappingId',
+        'mapping/flows/:flowId/imports/:importId/subrecord/:subRecordMappingId/view',
+        'mapping/flows/:flowId/imports/:importId/view',
         'mapping/flows/:flowId/imports/:importId',
         'mapping/flows/:flowId',
       ]}
@@ -82,14 +85,20 @@ export default function MappingDrawerRoute(props) {
         <Switch>
           <Route
             path={[
-              `${match.url}/mapping/flows/:flowId/imports/:importId/subrecord/:subRecordMappingId`,
-              `${match.url}/mapping/flows/:flowId/imports/:importId`,
+              `${match.url}/mapping/flows/:flowId/imports/:importId/subrecord/:subRecordMappingId/view`,
+              `${match.url}/mapping/flows/:flowId/imports/:importId/view`,
             ]} >
             <MappingWrapper {...props} />
           </Route>
           <Route
             exact
-            path={`${match.url}/mapping/flows/:flowId`}>
+            path={
+              [
+                `${match.url}/mapping/flows/:flowId`,
+                `${match.url}/mapping/flows/:flowId/imports/:importId`,
+              ]
+            }
+            >
             <SelectImport />
           </Route>
         </Switch>

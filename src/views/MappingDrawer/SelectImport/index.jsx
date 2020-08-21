@@ -29,16 +29,24 @@ const useStyles = makeStyles(theme => ({
 
 export default function SelectImport() {
   const match = useRouteMatch();
-  const { flowId } = match.params;
+  const {flowId, importId} = match.params;
 
   const classes = useStyles();
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const imports = useSelector(
-    state => selectors.flowImports(state, flowId),
+    state => {
+      if (importId) {
+        const subRecordResource = selectors.resource(state, 'imports', importId);
+
+        return [subRecordResource];
+      }
+
+      return selectors.flowImports(state, flowId);
+    },
     (left, right) => left && right && left.length === right.length
   );
   const [subrecordImports, setSubrecordImports] = useState();
-  const [importId, setImportId] = useState();
+  const [selectedImportId, setSelectedImportId] = useState();
 
   useEffect(() => {
     if (imports) {
@@ -60,7 +68,7 @@ export default function SelectImport() {
       if (srImports) {
         setSubrecordImports(srImports);
       } else if (imports.length === 1) {
-        setImportId(imports[0]._id);
+        setSelectedImportId(imports[0]._id);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,8 +80,8 @@ export default function SelectImport() {
 
   // If there is only one import then we can safely
   // take the user to the mapping of that import
-  if (importId) {
-    return <Redirect push={false} to={`${match.url}/imports/${importId}`} />;
+  if (selectedImportId) {
+    return <Redirect push={false} to={importId ? `${match.url}/view` : `${match.url}/imports/${selectedImportId}/view`} />;
   }
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
@@ -104,7 +112,7 @@ export default function SelectImport() {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={`${match.url}/imports/${i._id}`}>
+            to={importId ? `${match.url}/view` : `${match.url}/imports/${i._id}/view`}>
             <Typography variant="h6" color="primary">
               {i.name || i._id}
             </Typography>
@@ -119,7 +127,7 @@ export default function SelectImport() {
                   data-test={`subrecordMapping-${index}`}
                   className={classes.button}
                   component={Link}
-                  to={`${match.url}/imports/${i._id}/subrecord/${sr.fieldId}`}>
+                  to={importId ? `${match.url}/subrecord/${sr.fieldId}/view` : `${match.url}/imports/${i._id}/subrecord/${sr.fieldId}/view`}>
                   <Typography variant="h6" color="primary">
                     {sr.name}
                   </Typography>
