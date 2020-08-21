@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
     height: '12px',
   },
   legendText: {
-    marginRight: '10px',
+    margin: theme.spacing(0, 1),
   },
   iconColor: {
     color: 'red',

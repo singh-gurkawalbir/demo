@@ -133,6 +133,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  actions: {
+    paddingBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(2),
+  },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
     minHeight: 38,
@@ -206,7 +210,7 @@ export default function DateRangeSelector({ value, onSave }) {
               inputRanges={[]}
               showPreview={false}
             />
-            <div>
+            <div className={classes.actions}>
               <Button variant="outlined" color="primary" onClick={handleSave}>
                 Apply
               </Button>
