@@ -81,9 +81,13 @@ const useStyles = makeStyles(theme => ({
   },
   responsiveContainer: {
     background: theme.palette.common.white,
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(4),
+  },
+  legendTextWrapper: {
+    padding: theme.spacing(1),
   },
 }));
 
@@ -159,10 +163,11 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   };
 
   const CustomLegend = props => {
+    const classes = useStyles();
     const { payload } = props;
 
     return (
-      <div className={classes.marginBottom}>
+      <div className={classes.legendTextWrapper}>
         {
           payload.map((entry, index) => (
             <>
@@ -217,9 +222,9 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   }
 
   return (
-    <>
+    <div className={classes.responsiveContainer}>
       <PanelHeader title={getLabel(id)} />
-      <ResponsiveContainer width="100%" height={400} className={classes.responsiveContainer}>
+      <ResponsiveContainer width="100%" height={400} >
         <LineChart
           // data={flowData}
           margin={{
@@ -266,7 +271,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           ))}
         </LineChart>
       </ResponsiveContainer>
-    </>
+    </div>
   );
 };
 
