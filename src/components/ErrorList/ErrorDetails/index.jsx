@@ -94,8 +94,8 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
             onChange={handleModeChange}
             textColor="primary"
             indicatorColor="primary">
-            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
             <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
+            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
           </Tabs>
         ) : (
           <Tabs

@@ -6,25 +6,19 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import Spinner from '../../Spinner';
 import useConfirmDialog from '../../ConfirmDialog';
+import ButtonGroup from '../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  actionButtonsContainer: {
-    position: 'relative',
-    top: '30px',
-    left: 600,
-    width: 430,
-    '& > button': {
-      marginLeft: '10px',
-      width: 120,
-      float: 'right',
-    },
-    '& > div': {
-      width: 150,
-    },
+  spinnerIcon: {
+    marginLeft: theme.spacing(0.5),
   },
-  icon: {
-    position: 'relative',
-    top: theme.spacing(1),
+  btnActions: {
+    color: theme.palette.secondary.main,
+    borderColor: theme.palette.secondary.main,
+    '&:hover': {
+      color: theme.palette.primary.main,
+      borderColor: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -106,22 +100,26 @@ export default function ErrorActions(props) {
   }, [isResolved, retryErrors, confirmDialog]);
 
   return (
-    <div className={classes.actionButtonsContainer}>
+    <ButtonGroup>
       {!isResolved && (
         <Button
           variant="outlined"
+          color="secondary"
+          className={classes.btnActions}
           disabled={!isAtleastOneErrorSelected || isActionInProgress}
           onClick={handleResolve}>
-          Resolve &nbsp;{isResolveInProgress ? <Spinner size={16} /> : null}
+          Resolve{isResolveInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
         </Button>
       )}
 
       <Button
         variant="outlined"
+        color="secondary"
+        className={classes.btnActions}
         disabled={!areSelectedErrorsRetriable || isActionInProgress}
         onClick={handleRetry}>
-        Retry &nbsp;{isRetryInProgress ? <Spinner size={16} /> : null}
+        Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
       </Button>
-    </div>
+    </ButtonGroup>
   );
 }
