@@ -31,6 +31,21 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
   };
 };
 
+const resourceIdInput = {
+  name: '_resourceId',
+  id: '_resourceId',
+};
+
+const userInput = {
+  name: 'byUser',
+  id: 'byUser',
+};
+
+const sourceInput = {
+  name: 'source',
+  id: 'source',
+};
+
 @withStyles(theme => ({
   root: {
     display: 'flex',
@@ -110,10 +125,7 @@ class Filters extends Component {
     return (
       <FormControl className={classes.formControl}>
         <CeligoSelect
-          inputProps={{
-            name: '_resourceId',
-            id: '_resourceId',
-          }}
+          inputProps={resourceIdInput}
           value={filters._resourceId}
           onChange={this.handleChange}>
           <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -167,10 +179,7 @@ class Filters extends Component {
           />
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              inputProps={{
-                name: 'byUser',
-                id: 'byUser',
-              }}
+              inputProps={userInput}
               onChange={this.handleChange}
               value={byUser}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -185,10 +194,7 @@ class Filters extends Component {
           </FormControl>
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              inputProps={{
-                name: 'source',
-                id: 'source',
-              }}
+              inputProps={sourceInput}
               onChange={this.handleChange}
               value={source}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>

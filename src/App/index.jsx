@@ -94,13 +94,13 @@ const useSnackbarStyles = makeStyles({
 
 });
 
-function NonSigninHeaderComponents(props) {
+function NonSigninHeaderComponents({ history }) {
   return (
     <>
-      <CeligoAppBar {...props} />
-      <AppErroredModal {...props} />
-      <AlertDialog {...props} />
-      <CeligoDrawer {...props} />
+      <CeligoAppBar />
+      <AppErroredModal history={history} />
+      <AlertDialog />
+      <CeligoDrawer />
     </>
   );
 }

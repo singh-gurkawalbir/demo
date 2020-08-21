@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -11,6 +11,7 @@ import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -32,9 +33,7 @@ export default function SettingsDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const nextDataFlows = useSelector(state =>
-    selectors.nextDataFlowsForFlow(state, flow)
-  );
+  const nextDataFlows = useSelectorMemo(selectors.mkNextDataFlowsForFlow, flow);
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = useMemo(
     () => ({

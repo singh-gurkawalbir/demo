@@ -605,6 +605,26 @@ selectors.flowDetails = (state, id) => {
   return getFlowDetails(flow, integration, exports);
 };
 
+selectors.mkFlowDetails = () => {
+  const resource = fromData.makeResourceSelector();
+
+  return createSelector(
+    (state, id) => resource(state, 'flows', id),
+    (state, id) => {
+      const flow = resource(state, 'flows', id);
+
+      if (!flow || !flow._integrationId) return null;
+
+      return resource(state, 'integrations', flow._integrationId);
+    },
+    state => state?.data?.resources?.exports,
+    (flow, integration, exports) => {
+      if (!flow) return emptyObject;
+
+      return getFlowDetails(flow, integration, exports);
+    });
+};
+
 /* ***********************************************************************
   This is the beginning of refactoring the above selector. There is just WAY to
   much data returned above and in most cased a component only needs a small slice
@@ -662,24 +682,35 @@ selectors.isFlowEnableLocked = (state, flowId) => {
   return flowSettings.disableSlider;
 };
 
-// Possible refactor! If we need both canSchedule (flow has ability to schedule),
-// and if the IA allows for schedule overrides, then we can return a touple...
-// for the current purpose, we just need to know if a flow allows or doesn't allow
-// schedule editing.
-selectors.flowAllowsScheduling = (state, id) => {
-  const flow = selectors.resource(state, 'flows', id);
+// // Possible refactor! If we need both canSchedule (flow has ability to schedule),
+// // and if the IA allows for schedule overrides, then we can return a touple...
+// // for the current purpose, we just need to know if a flow allows or doesn't allow
+// // schedule editing.
+selectors.mkFlowAllowsScheduling = () => {
+  const resource = selectors.makeResourceSelector();
+  const integrationResource = selectors.makeResourceSelector();
 
-  if (!flow) return false;
-  const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-  const allExports = state && state.data && state.data.resources.exports;
-  const canSchedule = showScheduleIcon(flow, allExports);
+  return createSelector(
+    (state, id) => resource(state, 'flows', id),
+    (state, id) => {
+      const flow = resource(state, 'flows', id);
 
-  if (!isApp) return canSchedule;
+      if (!flow || !flow._integrationId) return null;
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+      return integrationResource(state, 'integrations', flow._integrationId);
+    },
+    state => state?.data?.resources?.exports,
+    (flow, integration, allExports) => {
+      if (!flow) return false;
+      const isApp = flow._connectorId;
+      const canSchedule = showScheduleIcon(flow, allExports);
 
-  return canSchedule && !!flowSettings.showSchedule;
+      if (!isApp) return canSchedule;
+      const flowSettings = getIAFlowSettings(integration, flow._id);
+
+      return canSchedule && !!flowSettings.showSchedule;
+    }
+  );
 };
 
 selectors.flowUsesUtilityMapping = (state, id) => {
@@ -747,11 +778,11 @@ selectors.flowListWithMetadata = (state, options) => {
 /*
  * Gives all other valid flows of same Integration
  */
-selectors.nextDataFlowsForFlow = (state, flow) => {
-  const flows = selectors.flowListWithMetadata(state, { type: 'flows' }).resources || [];
-
-  return getNextDataFlows(flows, flow);
-};
+selectors.mkNextDataFlowsForFlow = () => createSelector(
+  state => state?.data?.resources?.flows,
+  (_, flow) => flow,
+  (flows, flow) => getNextDataFlows(flows, flow)
+);
 
 selectors.isIAConnectionSetupPending = (state, connectionId) => {
   const connection = selectors.resource(state, 'connections', connectionId) || {};
