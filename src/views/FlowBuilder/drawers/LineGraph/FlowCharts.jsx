@@ -72,10 +72,18 @@ const useStyles = makeStyles(theme => ({
     color: '#57A05C',
   },
   CustomTooltip: {
-    background: theme.palette.secondary.main,
-    color: theme.palette.common.white,
+    background: theme.palette.common.white,
+    color: theme.palette.secondary.main,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
     padding: '1px 4px',
     borderRadius: 2,
+  },
+  responsiveContainer: {
+    background: theme.palette.common.white,
+    padding: theme.spacing(1),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -211,7 +219,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   return (
     <>
       <PanelHeader title={getLabel(id)} />
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={400} className={classes.responsiveContainer}>
         <LineChart
           // data={flowData}
           margin={{
