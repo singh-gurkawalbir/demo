@@ -17,8 +17,8 @@ export default (state = defaultState, action) => {
         if (!['shared/ashares', 'shared/sshares', 'transfers', 'transfers/invited'].includes(resourceType)) {
           break;
         }
-
-        const pendingShares = (collection || []).filter(
+        if (!collection) { break; }
+        const pendingShares = collection.filter(
           s => s.ownerUser && !s.accepted && !s.rejected && !s.dismissed
         );
 
