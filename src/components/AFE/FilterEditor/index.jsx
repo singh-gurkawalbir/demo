@@ -73,7 +73,7 @@ export default function FilterEditor(props) {
   }
 
   return (
-    <PanelGrid className={classes[`${layout}Template`]} height="calc(100vh - 200px)" >
+    <PanelGrid className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Rules" />
         <FilterPanel
