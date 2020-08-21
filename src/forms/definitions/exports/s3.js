@@ -226,6 +226,12 @@ export default {
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
       disabledWhenAll: r => {
         if (isNewId(r._id)) {
           return [{ field: 'uploadfile', is: [''] }];
@@ -234,7 +240,13 @@ export default {
         return [];
       },
     },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ] },
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
@@ -251,12 +263,42 @@ export default {
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
     },
-    'edix12.format': { fieldId: 'edix12.format' },
-    'fixed.format': { fieldId: 'fixed.format' },
-    'edifact.format': { fieldId: 'edifact.format' },
+    'edix12.format': { fieldId: 'edix12.format',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ] },
+    'fixed.format': { fieldId: 'fixed.format',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ] },
+    'edifact.format': { fieldId: 'edifact.format',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ] },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
       refreshOptionsOnChangesTo: [
         'edix12.format',
         'fixed.format',
@@ -268,6 +310,12 @@ export default {
     },
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
     },
     fileMetadata: {
       id: 'fileMetadata',
