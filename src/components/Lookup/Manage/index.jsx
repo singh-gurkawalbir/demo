@@ -22,9 +22,12 @@ export default function ManageLookup({
   resourceId,
   resourceType,
   flowId,
+  className,
   showDynamicLookupOnly = false,
   ...others
 }) {
+  const { extractFields, picklistOptions } = others;
+
   // to be removed after form refactor PR merges
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
@@ -57,7 +60,7 @@ export default function ManageLookup({
     [resourceType, sampleData]
   );
   const isEdit = !!value.name;
-  const handleSubmit = formVal => {
+  const handleSubmit = useCallback(formVal => {
     let lookupObj = {};
     const lookupTmp = {};
 
@@ -130,37 +133,35 @@ export default function ManageLookup({
     }
     lookupObj.name = formVal._name;
     onSave(isEdit, lookupObj);
-  };
+  }, [isEdit, onSave, resource.adaptorType, value.name]);
 
-  let fieldMeta;
+  const fieldMeta = useMemo(() => {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
+      const { extractFields, staticLookupCommMetaPath } = others;
 
-  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
-    const { extractFields, staticLookupCommMetaPath } = others;
+      return netsuiteMetadata.getLookupMetadata({
+        lookup: value,
+        connectionId,
+        staticLookupCommMetaPath,
+        extractFields,
+      });
+    } if (resource.adaptorType === 'SalesforceImport') {
+      return salesforceMetadata.getLookupMetadata({
+        lookup: value,
+        connectionId,
+        extractFields,
+        picklistOptions,
+      });
+    } if (resource.adaptorType === 'RDBMSImport') {
+      return rdbmsMetadata.getLookupMetadata({
+        lookup: value,
+        showDynamicLookupOnly,
+        sampleData: formattedSampleData,
+        connectionId,
+      });
+    }
 
-    fieldMeta = netsuiteMetadata.getLookupMetadata({
-      lookup: value,
-      connectionId,
-      staticLookupCommMetaPath,
-      extractFields,
-    });
-  } else if (resource.adaptorType === 'SalesforceImport') {
-    const { extractFields, picklistOptions } = others;
-
-    fieldMeta = salesforceMetadata.getLookupMetadata({
-      lookup: value,
-      connectionId,
-      extractFields,
-      picklistOptions,
-    });
-  } else if (resource.adaptorType === 'RDBMSImport') {
-    fieldMeta = rdbmsMetadata.getLookupMetadata({
-      lookup: value,
-      showDynamicLookupOnly,
-      sampleData: formattedSampleData,
-      connectionId,
-    });
-  } else {
-    fieldMeta = defaultMetadata.getLookupMetadata({
+    return defaultMetadata.getLookupMetadata({
       lookup: value,
       showDynamicLookupOnly,
       connectionId,
@@ -168,7 +169,7 @@ export default function ManageLookup({
       resourceType,
       flowId,
     });
-  }
+  }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
   const showCustomFormValidations = useCallback(() => {
     setFormState({
@@ -177,7 +178,7 @@ export default function ManageLookup({
   }, []);
 
   return (
-    <div data-test="lookup-form">
+    <div data-test="lookup-form" className={className}>
       <DynaForm
         disabled={disabled}
         fieldMeta={fieldMeta}
