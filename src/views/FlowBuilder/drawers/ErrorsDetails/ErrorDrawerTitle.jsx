@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
   status: {
     margin: 'auto',
     paddingLeft: theme.spacing(0.5),
+    color: theme.palette.secondary.main,
   },
   icon: {
     height: theme.spacing(3),

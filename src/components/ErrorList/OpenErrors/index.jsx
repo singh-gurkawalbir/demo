@@ -11,16 +11,21 @@ import SpinnerWrapper from '../../SpinnerWrapper';
 import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
-  tablePaginationRoot: {
-    float: 'right',
-  },
   search: {
-    width: '300px',
-    paddingTop: theme.spacing(1),
+    width: '250px',
     float: 'left',
+    '& > div:first-child': {
+      background: theme.palette.common.white,
+    },
   },
   hide: {
     display: 'none',
+  },
+  header: {
+    paddingBottom: theme.spacing(3),
+    display: 'inline-flex',
+    justifyContent: 'space-between',
+    width: '68%',
   },
 }));
 const defaultFilter = {
@@ -51,19 +56,22 @@ export default function OpenErrors({ flowId, resourceId, show }) {
         </SpinnerWrapper>
       ) : (
         <>
-          {
+          <div className={classes.header}>
+            <div className={classes.search}>
+              <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+            </div>
+            {
             !!openErrors.length &&
             <ErrorActions flowId={flowId} resourceId={resourceId} />
           }
-          <div className={classes.search}>
-            <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
             errorType="open"
             data={openErrors}
             actionProps={actionProps}
-            emptyRowsLabel="No Open errors"
+            emptyRowsLabel="No open errors"
         />
         </>
       )}
