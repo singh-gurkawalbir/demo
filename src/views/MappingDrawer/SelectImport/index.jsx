@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
-import { getNetSuiteSubrecordImports } from '../../../../../utils/resource';
+import { selectors } from '../../../reducers';
+import { getNetSuiteSubrecordImports } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,9 +28,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SelectImport({ flowId }) {
-  const classes = useStyles();
+export default function SelectImport() {
   const match = useRouteMatch();
+  const { flowId } = match.params;
+
+  const classes = useStyles();
   const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
   const imports = useSelector(
     state => selectors.flowImports(state, flowId),

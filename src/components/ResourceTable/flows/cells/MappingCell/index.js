@@ -19,7 +19,7 @@ export default function MappingCell({flowId}) {
       history.push(
         `${history.location.pathname}/${flowId}/utilityMapping/commonAttributes`
       );
-    } else history.push(`${history.location.pathname}/${flowId}/mapping`);
+    } else history.push(`${history.location.pathname}/mapping/flows/${flowId}`);
   }, [history, showUtilityMapping, flowId]);
 
   if (!showMapping) return null;
