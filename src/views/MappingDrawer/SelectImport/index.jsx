@@ -8,7 +8,6 @@ import { getNetSuiteSubrecordImports } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    marginTop: theme.spacing(2),
     width: '100%',
   },
   button: {
