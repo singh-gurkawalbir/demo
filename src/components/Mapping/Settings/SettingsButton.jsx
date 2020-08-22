@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import MappingSettings from '.';
+import { useHistory } from 'react-router-dom';
 import SettingsIcon from '../../icons/SettingsIcon';
 import ActionButton from '../../ActionButton';
 import {selectors} from '../../../reducers';
@@ -15,7 +15,8 @@ export default function MappingSettingsButton(props) {
     mappingKey,
     isCategoryMapping,
   } = props;
-  const [showSettings, setShowSettings] = useState(false);
+  const history = useHistory();
+
   const isDisabled = useSelector(state => {
     if (isCategoryMapping) {
       const {mappingIndex, integrationId, flowId, editorId} = props;
@@ -31,27 +32,17 @@ export default function MappingSettingsButton(props) {
     return !('generate' in value);
   });
   const handleBtnClick = useCallback(() => {
-    if (!isDisabled) setShowSettings(!showSettings);
-  }, [isDisabled, showSettings]);
+    history.push(`${history.location.pathname}/settings/${mappingKey}`);
+  }, [history, mappingKey]);
 
   return (
-    <>
-      {showSettings && (
-        <MappingSettings
-          open={showSettings}
-          onClose={handleBtnClick}
-          {...props}
-        />
-      )}
-
-      <ActionButton
-        data-test={dataTest}
-        disabled={isDisabled}
-        aria-label="settings"
-        onClick={handleBtnClick}
-        key="settings">
-        <SettingsIcon />
-      </ActionButton>
-    </>
+    <ActionButton
+      data-test={dataTest}
+      disabled={isDisabled}
+      aria-label="settings"
+      onClick={handleBtnClick}
+      key="settings">
+      <SettingsIcon />
+    </ActionButton>
   );
 }

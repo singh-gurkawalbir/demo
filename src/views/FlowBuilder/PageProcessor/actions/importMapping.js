@@ -15,7 +15,7 @@ function ImportMapping({
 
   useEffect(() => {
     if (open && match.path.indexOf('mapping') === -1) {
-      history.push(`${history.location.pathname}/mapping/flows/${flowId}/imports/${importId}`);
+      history.push(`${history.location.pathname}/mapping/${flowId}/${importId}`);
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

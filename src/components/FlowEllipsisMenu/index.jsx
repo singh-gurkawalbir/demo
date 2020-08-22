@@ -176,7 +176,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
             history.push(
               `${history.location.pathname}/${flowId}/utilitymapping/commonAttributes`
             );
-          } else history.push(`${history.location.pathname}/mapping/flows/${flowId}`);
+          } else history.push(`${history.location.pathname}/mapping/${flowId}`);
 
           break;
 

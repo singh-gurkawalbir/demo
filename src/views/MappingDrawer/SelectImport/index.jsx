@@ -81,7 +81,7 @@ export default function SelectImport() {
   // If there is only one import then we can safely
   // take the user to the mapping of that import
   if (selectedImportId) {
-    return <Redirect push={false} to={importId ? `${match.url}/view` : `${match.url}/imports/${selectedImportId}/view`} />;
+    return <Redirect push={false} to={importId ? `${match.url}/view` : `${match.url}/${selectedImportId}/view`} />;
   }
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
@@ -112,7 +112,7 @@ export default function SelectImport() {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={importId ? `${match.url}/view` : `${match.url}/imports/${i._id}/view`}>
+            to={importId ? `${match.url}/view` : `${match.url}/${i._id}/view`}>
             <Typography variant="h6" color="primary">
               {i.name || i._id}
             </Typography>
@@ -127,7 +127,7 @@ export default function SelectImport() {
                   data-test={`subrecordMapping-${index}`}
                   className={classes.button}
                   component={Link}
-                  to={importId ? `${match.url}/subrecord/${sr.fieldId}/view` : `${match.url}/imports/${i._id}/subrecord/${sr.fieldId}/view`}>
+                  to={importId ? `${match.url}/${sr.fieldId}/view` : `${match.url}/${i._id}/${sr.fieldId}/view`}>
                   <Typography variant="h6" color="primary">
                     {sr.name}
                   </Typography>

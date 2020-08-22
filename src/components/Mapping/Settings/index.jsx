@@ -1,59 +1,40 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import { Drawer } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { useRouteMatch, useHistory, Redirect } from 'react-router-dom';
 import {selectors} from '../../../reducers';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import DrawerTitleBar from '../../drawer/TitleBar';
+import RightDrawer from '../../drawer/Right';
 
 const emptySet = {};
 const emptyObject = {};
-const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    marginTop: theme.appBarHeight,
-    width: 824,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  content: {
-    overflow: 'auto',
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    '& > div:first-child': {
-      height: 'calc(100vh - 180px)',
-    },
-  },
-}));
 
 /**
  *
  * disabled property set to true in case of monitor level access
  */
 
-export default function MappingSettings({
-  onClose,
-  mappingKey,
-  open,
+function MappingSettings({
   disabled,
-  importId,
-  flowId,
-  subRecordMappingId,
+  mappingKey,
   isCategoryMapping,
   ...categoryMappingOpts
 }) {
+  const history = useHistory();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
-  const classes = useStyles();
+  const [formState, setFormState] = useState({
+    showFormValidationsBeforeTouch: false,
+  });
+
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
+  const {resourceId: importId, flowId, subRecordMappingId} = useSelector(state => selectors.mapping(state));
+
   const {value, lookups} = useSelector(state => {
     if (isCategoryMapping) {
       const {mappings, lookups} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
@@ -61,10 +42,14 @@ export default function MappingSettings({
       return {value: mappings[mappingIndex], lookups};
     }
     const { mappings, lookups } = selectors.mapping(state);
-    const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
     return {value, lookups};
   }, shallowEqual);
+
+  // if (!value?.generate) {
+  //   return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
+  // }
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
@@ -75,24 +60,20 @@ export default function MappingSettings({
     }
 
     return selectors.mappingGenerates(state, importId, subRecordMappingId);
-  }
+  });
 
-  );
   const extractFields = useSelector(state => {
     if (isCategoryMapping) {
       return selectors.categoryMappingMetadata(state, integrationId, flowId).extractsMetadata;
     }
 
     return selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
-  }
+  });
 
-  );
   const nsRecordType = useSelector(state =>
     selectors.mappingNSRecordType(state, importId, subRecordMappingId)
   );
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
+
   const importResource = useSelector(state =>
     selectors.resource(state, 'imports', importId)
   );
@@ -166,9 +147,18 @@ export default function MappingSettings({
       )
     );
   }, [dispatch, editorId, flowId, integrationId, mappingIndex]);
+
+  const hadleClose = useCallback(
+    () => {
+      history.goBack();
+    },
+    [history],
+  );
   const patchMappingSettings = useCallback(settings => {
     dispatch(actions.mapping.patchSettings(mappingKey, settings));
-  }, [dispatch, mappingKey]);
+    hadleClose();
+  }, [dispatch, hadleClose, mappingKey]);
+
   const handleLookupUpdate = useCallback((oldLookup, newLookup, conditionalLookup) => {
     const lookupObj = [];
 
@@ -210,9 +200,8 @@ export default function MappingSettings({
       } else {
         patchMappingSettings(settings);
       }
-      onClose();
     },
-    [enquesnackbar, extract, generate, handleLookupUpdate, isCategoryMapping, lookupName, lookups, onClose, patchCategoryMappingSettings, patchMappingSettings]
+    [enquesnackbar, extract, generate, handleLookupUpdate, isCategoryMapping, lookupName, lookups, patchCategoryMappingSettings, patchMappingSettings]
   );
 
   const showCustomFormValidations = useCallback(() => {
@@ -222,37 +211,69 @@ export default function MappingSettings({
   }, []);
 
   return (
-    <>
-      <Drawer
-        anchor="right"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}>
-        <DrawerTitleBar onClose={onClose} title="Settings" />
-        <div className={classes.content}>
-          <DynaForm
-            disabled={disabled}
-            fieldMeta={fieldMeta}
-            optionsHandler={fieldMeta.optionsHandler}
-            formState={formState}>
-            <DynaSubmit
-              disabled={disableSave}
-              id="fieldMappingSettingsSave"
-              showCustomFormValidations={showCustomFormValidations}
-              onClick={handleSubmit}>
-              Save
-            </DynaSubmit>
-            <Button
-              data-test="fieldMappingSettingsCancel"
-              onClick={onClose}
-              variant="text"
-              color="primary">
-              Cancel
-            </Button>
-          </DynaForm>
-        </div>
-      </Drawer>
-    </>
+    <DynaForm
+      disabled={disabled}
+      fieldMeta={fieldMeta}
+      optionsHandler={fieldMeta.optionsHandler}
+      formState={formState}>
+      <DynaSubmit
+        disabled={disableSave}
+        id="fieldMappingSettingsSave"
+        showCustomFormValidations={showCustomFormValidations}
+        onClick={handleSubmit}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="fieldMappingSettingsCancel"
+        onClick={hadleClose}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
+    </DynaForm>
+
+  );
+}
+
+function MappingSettingsWrapper(props) {
+  const { mappingIndex, isCategoryMapping, integrationId, flowId, editorId} = props;
+  const match = useRouteMatch();
+
+  const { mappingKey } = match.params;
+
+  const isSettingsConfigured = useSelector(state => {
+    if (isCategoryMapping) {
+      const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
+
+      return !!mappings[mappingIndex]?.generate;
+    }
+    const {mappings} = selectors.mapping(state);
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
+
+    return !!value?.generate;
+  });
+
+  if (!isSettingsConfigured) {
+    return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
+  }
+
+  return (
+    <MappingSettings
+      {...props}
+      mappingKey={mappingKey}
+    />
+  );
+}
+export default function SettingsDrawer(props) {
+  return (
+    <RightDrawer
+      path="settings/:mappingKey"
+      title="Settings"
+      height="tall"
+    >
+      <MappingSettingsWrapper
+        {...props}
+      />
+    </RightDrawer>
   );
 }

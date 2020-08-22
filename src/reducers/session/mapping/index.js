@@ -258,8 +258,13 @@ export default (state = {}, action) => {
             }
           }
           draft.mapping.lookups = draft.mapping.lookups.filter(l => l.name === oldLookupName);
+          draft.mapping.lookups.push({...newLookup, _isConditional: true });
+        } else {
+          const index = draft.mapping.lookups.indexOf(l => l.name === newLookup.name);
+
+          draft.mapping.lookups[index] = newLookup;
         }
-        draft.mapping.lookups.push({...newLookup, _isConditional: true });
+
         break;
 
       default:

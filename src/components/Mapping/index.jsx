@@ -10,6 +10,7 @@ import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
 import DragContainer from './DragContainer';
 import actions from '../../actions';
+import SettingsDrawer from './Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,6 +64,9 @@ const Mapping = props => {
         resourceId={resourceId}
         disabled={disabled}
         subRecordMappingId={subRecordMappingId}
+      />
+      <SettingsDrawer
+        disabled={disabled}
       />
     </div>
   );
