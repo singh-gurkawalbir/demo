@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -26,15 +27,89 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Spinner from '../../../../components/Spinner';
 import SpinnerWrapper from '../../../../components/SpinnerWrapper';
+import RequiredIcon from '../../../../components/icons/RequiredIcon';
+import OptionalIcon from '../../../../components/icons/OptionalIcon';
+import ConditionalIcon from '../../../../components/icons/ConditionalIcon';
+import PreferredIcon from '../../../../components/icons/PreferredIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(2),
     background: theme.palette.background.default,
   },
+  legendIcon: {
+    width: '12px',
+    height: '12px',
+  },
+  legendText: {
+    margin: theme.spacing(0, 1),
+  },
+  iconColor: {
+    color: 'red',
+  },
+  '1Color': {
+    color: '#2B5B36',
+  },
+  '2Color': {
+    color: '#24448E',
+  },
+  '3Color': {
+    color: '#3A6CA1',
+  },
+  '4Color': {
+    color: '#549FC3',
+  },
+  '5Color': {
+    color: '#8FC4C6',
+  },
+  '6Color': {
+    color: '#AFCF8B',
+  },
+  '7Color': {
+    color: '#80B875',
+  },
+  '8Color': {
+    color: '#57A05C',
+  },
+  CustomTooltip: {
+    background: theme.palette.common.white,
+    color: theme.palette.secondary.main,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    padding: '1px 4px',
+    borderRadius: 2,
+  },
+  responsiveContainer: {
+    background: theme.palette.common.white,
+    padding: theme.spacing(2),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(4),
+  },
+  legendTextWrapper: {
+    padding: theme.spacing(1),
+  },
 }));
 
+const getIcon = index => {
+  const Symbols = [OptionalIcon, ConditionalIcon, PreferredIcon, RequiredIcon];
+
+  return Symbols[index % 4];
+};
+
+const DataIcon = ({index}) => {
+  const Icon = getIcon(index);
+  const classes = useStyles();
+
+  return (
+    <Icon
+      className={clsx(classes.legendIcon, classes[`${(index % 8) + 1}Color`])}
+    />
+  );
+};
+
 const Chart = ({ id, flowId, range, selectedResources }) => {
+  const classes = useStyles();
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
@@ -87,36 +162,41 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     return modifiedName;
   };
 
-  const CustomizedDot = props => {
-    const {
-      cx, cy, value,
-    } = props;
+  const CustomLegend = props => {
+    const classes = useStyles();
+    const { payload } = props;
 
-    if (value) {
-      return (
-        <svg
-          x={cx - 5} y={cy - 5} width={10} height={10}
-          viewBox="0 0 9 10">
-          <path d="M3.50478 0.666495C3.7584 -0.222166 5.0178 -0.222165 5.27141 0.666496L5.54752 1.63397C5.68356 2.11067 6.17332 2.39343 6.65418 2.2729L7.63008 2.02828C8.52649 1.80358 9.15619 2.89426 8.5134 3.55822L7.81359 4.28107C7.46878 4.63724 7.46878 5.20276 7.81359 5.55893L8.5134 6.28178C9.1562 6.94574 8.52649 8.03642 7.63008 7.81172L6.65418 7.5671C6.17332 7.44657 5.68356 7.72933 5.54752 8.20603L5.27141 9.17351C5.0178 10.0622 3.7584 10.0622 3.50478 9.1735L3.22868 8.20603C3.09264 7.72933 2.60288 7.44657 2.12202 7.5671L1.14611 7.81173C0.249704 8.03642 -0.379997 6.94574 0.262799 6.28178L0.962603 5.55893C1.30742 5.20276 1.30742 4.63724 0.962603 4.28107L0.262798 3.55822C-0.379998 2.89426 0.249705 1.80358 1.14611 2.02828L2.12202 2.2729C2.60288 2.39343 3.09264 2.11067 3.22868 1.63397L3.50478 0.666495Z" />
-        </svg>
-      );
-    }
-
-    return null;
+    return (
+      <div className={classes.legendTextWrapper}>
+        {
+          payload.map((entry, index) => (
+            <>
+              <DataIcon index={index} color={entry.payload.stroke} />
+              <span
+                className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
+                key={entry.dataKey}>
+                {getResourceName(entry.value)}
+              </span>
+            </>
+          ))
+        }
+      </div>
+    );
   };
 
-  const CustomizedActiveDot = props => {
+  const CustomizedDot = props => {
     const {
-      cx, cy, value,
+      cx, cy, value, active, idx, stroke,
     } = props;
+
+    const size = active ? 15 : 10;
+    const Icon = getIcon(idx);
 
     if (value) {
       return (
-        <svg
-          x={cx - 5} y={cy - 5} width={10} height={10}
-          viewBox="0 0 9 10">
-          <path d="M3.50478 0.666495C3.7584 -0.222166 5.0178 -0.222165 5.27141 0.666496L5.54752 1.63397C5.68356 2.11067 6.17332 2.39343 6.65418 2.2729L7.63008 2.02828C8.52649 1.80358 9.15619 2.89426 8.5134 3.55822L7.81359 4.28107C7.46878 4.63724 7.46878 5.20276 7.81359 5.55893L8.5134 6.28178C9.1562 6.94574 8.52649 8.03642 7.63008 7.81172L6.65418 7.5671C6.17332 7.44657 5.68356 7.72933 5.54752 8.20603L5.27141 9.17351C5.0178 10.0622 3.7584 10.0622 3.50478 9.1735L3.22868 8.20603C3.09264 7.72933 2.60288 7.44657 2.12202 7.5671L1.14611 7.81173C0.249704 8.03642 -0.379997 6.94574 0.262799 6.28178L0.962603 5.55893C1.30742 5.20276 1.30742 4.63724 0.962603 4.28107L0.262798 3.55822C-0.379998 2.89426 0.249705 1.80358 1.14611 2.02828L2.12202 2.2729C2.60288 2.39343 3.09264 2.11067 3.22868 1.63397L3.50478 0.666495Z" />
-        </svg>
+        <Icon
+          x={cx - 5} y={cy - 5} width={size} fill={stroke}
+          height={size} />
       );
     }
 
@@ -124,9 +204,11 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   };
 
   function CustomTooltip({ payload, label, active }) {
+    const classes = useStyles();
+
     if (active && Array.isArray(payload) && payload.length) {
       return (
-        <div className="custom-tooltip">
+        <div className={classes.CustomTooltip}>
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
           {payload.map(
             p => (
@@ -138,12 +220,11 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
     return null;
   }
-  const renderColorfulLegendText = (value, { color }) => <span style={{ color }}>{getResourceName(value)}</span>;
 
   return (
-    <>
+    <div className={classes.responsiveContainer}>
       <PanelHeader title={getLabel(id)} />
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={400} >
         <LineChart
           // data={flowData}
           margin={{
@@ -173,7 +254,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           />
 
           <Tooltip content={<CustomTooltip />} />
-          <Legend formatter={renderColorfulLegendText} />
+          <Legend align="center" content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
               key={r}
@@ -181,8 +262,8 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               name={r}
               data={flowData[r]}
               yAxisId={id}
-              dot={<CustomizedDot />}
-              activeDot={<CustomizedActiveDot />}
+              dot={<CustomizedDot idx={i} />}
+              activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
@@ -190,7 +271,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           ))}
         </LineChart>
       </ResponsiveContainer>
-    </>
+    </div>
   );
 };
 

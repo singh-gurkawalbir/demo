@@ -4,6 +4,7 @@ import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
 import UserName from '../components/UserName';
 import DateTimeDisplay from '../../../DateTimeDisplay';
+import ErrorMessage from '../components/ErrorMessage';
 
 export default {
   columns: [
@@ -19,7 +20,7 @@ export default {
     {
       heading: 'Message',
       width: '30%',
-      value: r => r.message,
+      value: r => <ErrorMessage message={r.message} />,
     },
     { heading: 'Source', value: r => r.source },
     {

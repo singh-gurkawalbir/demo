@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
-    height: 'calc(100vh - 200px)',
+    height: '100%',
   },
 }));
 const defaultFilters = [];

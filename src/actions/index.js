@@ -1754,7 +1754,7 @@ const errorManager = {
   retryStatus: {
     requestPoll: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL, { flowId, resourceId }),
-    cancelPoll: () => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.CANCEL_POLL),
+    clear: flowId => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR, { flowId }),
     request: ({ flowId, resourceId }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST, ({ flowId, resourceId })),
     received: ({ flowId, resourceId, status }) => action(actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED, ({ flowId, resourceId, status})),
   },

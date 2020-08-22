@@ -130,7 +130,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   let aggregrate = '';
 
   if (days > 180) {
-    aggregrate = '|> aggregateWindow(every: 1d, fn: sum)';
+    aggregrate = '|> aggregateWindow(every: 1d, fn: mean)';
   }
 
   return `from(bucket: "${bucket}") 
