@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
-import { useRouteMatch, useHistory, Redirect } from 'react-router-dom';
+import { useRouteMatch, useHistory, Redirect, Switch, Route } from 'react-router-dom';
 import {selectors} from '../../../reducers';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
@@ -236,17 +236,10 @@ function MappingSettings({
 }
 
 function MappingSettingsWrapper(props) {
-  const { mappingIndex, isCategoryMapping, integrationId, flowId, editorId} = props;
   const match = useRouteMatch();
 
   const { mappingKey } = match.params;
-
   const isSettingsConfigured = useSelector(state => {
-    if (isCategoryMapping) {
-      const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
-
-      return !!mappings[mappingIndex]?.generate;
-    }
     const {mappings} = selectors.mapping(state);
     const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
@@ -264,16 +257,54 @@ function MappingSettingsWrapper(props) {
     />
   );
 }
+function CategoryMappingSettingsWrapper(props) {
+  const { integrationId, flowId} = props;
+  const match = useRouteMatch();
+  const { editorId, mappingIndex } = match.params;
+  const isSettingsConfigured = useSelector(state => {
+    const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
+
+    return !!mappings[mappingIndex]?.generate;
+  });
+
+  if (!isSettingsConfigured) {
+    return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
+  }
+
+  return (
+    <MappingSettings
+      {...props}
+      isCategoryMapping
+      integrationId={integrationId}
+      flowId={flowId}
+    />
+  );
+}
 export default function SettingsDrawer(props) {
+  const match = useRouteMatch();
+
   return (
     <RightDrawer
-      path="settings/:mappingKey"
+      hideBackButton={false}
+      path={[
+        'settings/:mappingKey',
+        'settings/category/:editorId/:mappingIndex',
+      ]}
       title="Settings"
       height="tall"
     >
-      <MappingSettingsWrapper
-        {...props}
-      />
+      <Switch>
+        <Route
+          path={`${match.url}/settings/:mappingKey`}>
+          <MappingSettingsWrapper
+            {...props} />
+        </Route>
+        <Route
+          path={`${match.url}/settings/category/:editorId/:mappingIndex`}>
+          <CategoryMappingSettingsWrapper
+            {...props} />
+        </Route>
+      </Switch>
     </RightDrawer>
   );
 }

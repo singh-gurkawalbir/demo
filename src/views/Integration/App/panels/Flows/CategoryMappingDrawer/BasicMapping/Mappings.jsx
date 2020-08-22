@@ -20,6 +20,7 @@ import MappingConnectorIcon from '../../../../../../../components/icons/MappingC
 import DynaText from '../../../../../../../components/DynaForm/fields/DynaText';
 import Help from '../../../../../../../components/Help';
 import KnowledgeBaseIcon from '../../../../../../../components/icons/KnowledgeBaseIcon';
+import SettingsDrawer from '../../../../../../../components/Mapping/Settings';
 
 // TODO Azhar style header
 const useStyles = makeStyles(theme => ({
@@ -467,6 +468,11 @@ export default function ImportMapping(props) {
             </div>
           ))}
       </div>
+      <SettingsDrawer
+        disabled={disabled}
+        integrationId={integrationId}
+        flowId={flowId}
+      />
     </div>
   );
 }
