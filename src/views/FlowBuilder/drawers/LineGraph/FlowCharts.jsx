@@ -135,13 +135,14 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
+  const valueTicks = getTicks(domainRange, range, true);
   const flowData = {};
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
       flowData[r] = data.filter(d => d.resourceId === r || d.flowId === r);
       // Add Zero data for ticks
-      ticks.forEach(tick => {
+      valueTicks.forEach(tick => {
         if (!flowData[r].find(d => d.timeInMills === tick)) {
           flowData[r].push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
         }
@@ -174,7 +175,8 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               <DataIcon index={index} color={entry.payload.stroke} />
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
-                key={entry.dataKey}>
+                // eslint-disable-next-line react/no-array-index-key
+                key={entry.dataKey + index}>
                 {getResourceName(entry.value)}
               </span>
             </>
@@ -262,7 +264,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               name={r}
               data={flowData[r]}
               yAxisId={id}
-              dot={<CustomizedDot idx={i} />}
+              dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
               legendType={getLegend(i)}
