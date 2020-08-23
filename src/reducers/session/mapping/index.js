@@ -93,10 +93,8 @@ export default (state = {}, action) => {
                 1,
                 inputValue.length - 2
               );
-              mapping.hardCodedValueTmp = inputValue;
             } else {
               delete mapping.hardCodedValue;
-              delete mapping.hardCodedValueTmp;
               mapping.extract = inputValue;
             }
           } else {
@@ -169,10 +167,10 @@ export default (state = {}, action) => {
             delete mapping.lookupName;
           }
           if (!value.conditional?.when) {
-            delete mapping.conditional.when;
+            delete mapping?.conditional?.when;
           }
           if (!value.conditional?.lookupName) {
-            delete mapping.conditional.lookupName;
+            delete mapping?.conditional?.lookupName;
           }
 
           if ('hardCodedValue' in value) {
