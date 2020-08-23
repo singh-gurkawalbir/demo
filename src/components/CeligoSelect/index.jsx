@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
 import clsx from 'clsx';
+import { Button } from '@material-ui/core';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 
 const useStyles = makeStyles(theme => ({
+  doneButton: {
+    width: '100%',
+    height: theme.spacing(6),
+    border: 0,
+  },
   select: {
     display: 'flex !important',
     flexWrap: 'nowrap',
@@ -47,14 +53,49 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function CeligoSelect({ className, children, ...props }) {
+  const {multiple, onChange} = props;
+  const [open, setOpen] = useState(false);
   const classes = useStyles();
+  const isSelectOverriden = !!props.open;
+  const openSelect = useCallback(() => {
+    setOpen(true);
+  }, []);
+  const closeSelect = useCallback(
+    () => {
+      setOpen(false);
+    }, []
+  );
+  const handleOnChange = useCallback((evt, _item) => {
+    if (_item?.props?.id === 'close-select') {
+      closeSelect();
+
+      return;
+    }
+    onChange(evt);
+  }, [closeSelect, onChange]);
 
   return (
     <Select
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
-      {...props}>
+      open={open}
+      onOpen={openSelect}
+      onClose={closeSelect}
+      {...props}
+      // in case open property is overriden by parent onChange handler to be directly called for parent
+      onChange={isSelectOverriden ? onChange : handleOnChange}
+      >
       {children}
+      {multiple && (
+        <Button
+          id="close-select"
+          data-test="closeSelect"
+          variant="outlined"
+          color="secondary"
+          className={classes.doneButton}>
+          Done
+        </Button>
+      )}
     </Select>
   );
 }
