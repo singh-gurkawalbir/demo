@@ -20,7 +20,7 @@ export default function MappingSettingsButton(props) {
   const isDisabled = useSelector(state => {
     if (isCategoryMapping) {
       const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
-      const value = mappings[mappingIndex];
+      const value = mappings?.[mappingIndex] || emptyObject;
 
       return !('generate' in value);
     }

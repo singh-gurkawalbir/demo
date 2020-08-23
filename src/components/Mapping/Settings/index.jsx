@@ -33,7 +33,13 @@ function MappingSettings({
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const {resourceId: importId, flowId, subRecordMappingId} = useSelector(state => selectors.mapping(state));
+  const {resourceId: importId, flowId, subRecordMappingId} = useSelector(state => {
+    if (isCategoryMapping) {
+      return {resourceId: categoryMappingOpts.importId, flowId: categoryMappingOpts.flowId};
+    }
+
+    return selectors.mapping(state);
+  }, shallowEqual);
 
   const {value, lookups} = useSelector(state => {
     if (isCategoryMapping) {
@@ -47,9 +53,6 @@ function MappingSettings({
     return {value, lookups};
   }, shallowEqual);
 
-  // if (!value?.generate) {
-  //   return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
-  // }
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
@@ -136,6 +139,12 @@ function MappingSettings({
       dispatch(actions.mapping.updateLookup(lookupsTmp));
     }
   }, [dispatch, editorId, flowId, integrationId, isCategoryMapping, lookups]);
+  const hadleClose = useCallback(
+    () => {
+      history.goBack();
+    },
+    [history],
+  );
   const patchCategoryMappingSettings = useCallback(settings => {
     dispatch(
       actions.integrationApp.settings.categoryMappings.patchSettings(
@@ -146,14 +155,9 @@ function MappingSettings({
         settings
       )
     );
-  }, [dispatch, editorId, flowId, integrationId, mappingIndex]);
+    hadleClose();
+  }, [dispatch, editorId, flowId, hadleClose, integrationId, mappingIndex]);
 
-  const hadleClose = useCallback(
-    () => {
-      history.goBack();
-    },
-    [history],
-  );
   const patchMappingSettings = useCallback(settings => {
     dispatch(actions.mapping.patchSettings(mappingKey, settings));
     hadleClose();
@@ -258,13 +262,13 @@ function MappingSettingsWrapper(props) {
   );
 }
 function CategoryMappingSettingsWrapper(props) {
-  const { integrationId, flowId} = props;
+  const { integrationId, flowId, importId} = props;
   const match = useRouteMatch();
   const { editorId, mappingIndex } = match.params;
   const isSettingsConfigured = useSelector(state => {
     const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
 
-    return !!mappings[mappingIndex]?.generate;
+    return !!mappings?.[mappingIndex]?.generate;
   });
 
   if (!isSettingsConfigured) {
@@ -277,6 +281,9 @@ function CategoryMappingSettingsWrapper(props) {
       isCategoryMapping
       integrationId={integrationId}
       flowId={flowId}
+      importId={importId}
+      editorId={editorId}
+      mappingIndex={mappingIndex}
     />
   );
 }
@@ -295,15 +302,16 @@ export default function SettingsDrawer(props) {
     >
       <Switch>
         <Route
-          path={`${match.url}/settings/:mappingKey`}>
-          <MappingSettingsWrapper
-            {...props} />
-        </Route>
-        <Route
           path={`${match.url}/settings/category/:editorId/:mappingIndex`}>
           <CategoryMappingSettingsWrapper
             {...props} />
         </Route>
+        <Route
+          path={`${match.url}/settings/:mappingKey`}>
+          <MappingSettingsWrapper
+            {...props} />
+        </Route>
+
       </Switch>
     </RightDrawer>
   );
