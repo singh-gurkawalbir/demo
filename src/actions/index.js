@@ -553,14 +553,15 @@ const integrationApp = {
             .CLEAR_COLLAPSE_STATUS,
           { integrationId, flowId }
         ),
-      updateLookup: (integrationId, flowId, id, lookups) =>
+      updateLookup: (integrationId, flowId, id, oldValue, newValue) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
           {
             integrationId,
             flowId,
             id,
-            lookups,
+            oldValue,
+            newValue,
           }
         ),
       setVisibility: (integrationId, flowId, id, value) =>
@@ -1308,12 +1309,10 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
-  addLookup: ({newLookup}) =>
-    action(actionTypes.MAPPING.ADD_LOOKUP, { newLookup }),
-  editLookup: ({oldLookupName, newLookup}) =>
-    action(actionTypes.MAPPING.EDIT_LOOKUP, { oldLookupName, newLookup }),
-  updateLookup: lookups =>
-    action(actionTypes.MAPPING.UPDATE_LOOKUP, { lookups }),
+  addLookup: ({value, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
+  updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
   setVisibility: value =>

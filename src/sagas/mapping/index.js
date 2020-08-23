@@ -220,7 +220,7 @@ export function* mappingInit({
   lookups = lookups.map(lookup => {
     const isConditionalLookup = formattedMappings.find(mapping => mapping?.conditional?.lookupName === lookup.name);
 
-    return {...lookup, _isConditional: !!isConditionalLookup};
+    return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
   yield put(
     actions.mapping.initComplete({
@@ -256,7 +256,7 @@ export function* saveMappings({context }) {
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   let _mappings = mappings.map(
-    ({ index, hardCodedValueTmp, key, rowIdentifier, ...others }) => others
+    ({ index, hardCodedValueTmp, key, ...others }) => others
   );
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
@@ -299,13 +299,13 @@ export function* saveMappings({context }) {
 
   if (lookups && !subRecordMappingId) {
     // remove all unused conditional lookups
-    const filteredLookups = lookups.filter(({name, _isConditional}) => {
-      if (_isConditional) {
+    const filteredLookups = lookups.filter(({name, isConditionalLookup}) => {
+      if (isConditionalLookup) {
         return !!mappings.find(mapping => mapping?.conditional?.lookupName === name);
       }
 
       return true;
-    }).map(({_isConditional, ...others}) => ({...others}));
+    }).map(({isConditionalLookup, ...others}) => ({...others}));
     const lookupPath = lookupUtil.getLookupPath(adaptorTypeMap[importResource.adaptorType]);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
@@ -357,7 +357,7 @@ export function* previewMappings() {
   });
   const isGroupedSampleData = Array.isArray(flowSampleData);
   let _mappings = mappings.map(
-    ({ index, hardCodedValueTmp, key, rowIdentifier, ...others }) => others
+    ({ index, hardCodedValueTmp, key, ...others }) => others
   );
 
   _mappings = mappingUtil.generateFieldsAndListMappingForApp({
@@ -374,13 +374,13 @@ export function* previewMappings() {
   const requestBody = {
     data: flowSampleData,
   };
-  const filteredLookups = lookups.filter(({name, _isConditional}) => {
-    if (_isConditional) {
+  const filteredLookups = lookups.filter(({name, isConditionalLookup}) => {
+    if (isConditionalLookup) {
       return !!mappings.find(mapping => mapping?.conditional?.lookupName === name);
     }
 
     return true;
-  }).map(({_isConditional, ...others}) => ({...others}));
+  }).map(({isConditionalLookup, ...others}) => ({...others}));
 
   if (importResource.adaptorType === 'SalesforceImport') {
     importResource.mapping = _mappings;
@@ -510,7 +510,6 @@ export function* updateImportSampleData() {
       const objCopy = { ...modifiedMappings[incompleteGenIndex] };
 
       objCopy.generate = childSObject.id;
-      objCopy.rowIdentifier += 1;
       modifiedMappings[incompleteGenIndex] = objCopy;
     }
   });

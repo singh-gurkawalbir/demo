@@ -34,7 +34,7 @@ export default function DynaSelectConditionalLookup(props) {
   const lookups = useSelector(state => {
     const {lookups} = selectors.mapping(state);
 
-    return lookups.filter(({_isConditional}) => !!_isConditional);
+    return lookups.filter(({isConditionalLookup}) => !!isConditionalLookup);
   }, shallowEqual);
   const lookupMap = useMemo(
     () => lookups.map(l => ({ label: l.name, value: l.name })),
@@ -53,13 +53,13 @@ export default function DynaSelectConditionalLookup(props) {
     [history, match.url, value],
   );
   const handleSave = useCallback(
-    (isEdit, val) => {
+    (isEdit, newValue) => {
       if (isEdit) {
-        dispatch(actions.mapping.editLookup({oldLookupName: value, newLookup: val}));
+        dispatch(actions.mapping.updateLookup({oldValue: value, newValue, isConditionalLookup: true}));
       } else {
-        dispatch(actions.mapping.addLookup({newLookup: val}));
+        dispatch(actions.mapping.addLookup({value: newValue, isConditionalLookup: true}));
       }
-      onFieldChange(id, val.name);
+      onFieldChange(id, newValue.name);
     },
     [dispatch, id, onFieldChange, value],
   );

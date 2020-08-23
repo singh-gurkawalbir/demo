@@ -29,7 +29,7 @@ export default function ConditionalLookup({onSave, disabled, resourceId, resourc
     }
     const {lookups} = selectors.mapping(state);
 
-    const val = lookups.find(({_isConditional, name}) => _isConditional && name === lookupName);
+    const val = lookups.find(({isConditionalLookup, name}) => isConditionalLookup && name === lookupName);
 
     return val || emptySet;
   }, shallowEqual);
