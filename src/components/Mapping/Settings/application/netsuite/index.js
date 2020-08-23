@@ -734,7 +734,7 @@ export default {
               ],
             },
           ],
-          defaultValue: lookup.default || 'false',
+          defaultValue: fieldMeta.fieldMap[metaKey].defaultValue || 'false',
         };
       });
       fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];
