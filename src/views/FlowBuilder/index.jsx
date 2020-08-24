@@ -193,6 +193,9 @@ function FlowBuilder() {
     state => selectors.flowDetails(state, flowId),
     shallowEqual
   );
+  const allowSchedule = useSelector(state =>
+    selectors.flowAllowsScheduling(state, flowId)
+  );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
@@ -538,7 +541,7 @@ function FlowBuilder() {
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-          {flowDetails && flowDetails.showScheduleIcon && (
+          {allowSchedule && (
             <IconButtonWithTooltip
               tooltipProps={{
                 title: 'Schedule',
