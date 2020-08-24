@@ -18,10 +18,10 @@ import {getMappingMetadata as getIAMappingMetadata} from '../integrationApps/set
 
 export function* fetchRequiredMappingData({
   flowId,
-  resourceId,
+  importId,
   subRecordMappingId,
 }) {
-  const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
 
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
@@ -29,12 +29,12 @@ export function* fetchRequiredMappingData({
   yield all([
     call(requestFlowSampleData, {
       flowId,
-      resourceId,
+      resourceId: importId,
       resourceType: 'imports',
       stage: 'importMappingExtract',
     }),
     call(requestImportSampleData, {
-      resourceId,
+      resourceId: importId,
       options: subRecordMappingObj,
     }),
     (importResource.assistant && importResource.assistant !== 'financialforce') && call(requestAssistantMetadata, {
@@ -49,11 +49,11 @@ export function* fetchRequiredMappingData({
 export function* refreshGenerates({ isInit = false }) {
   const {
     mappings,
-    resourceId,
+    importId,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
-  const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
 
   if (importResource.adaptorType === 'SalesforceImport') {
     // salesforce Import could have sub objects as well
@@ -96,13 +96,13 @@ export function* refreshGenerates({ isInit = false }) {
     }
     // fetch all child sObject used in mapping
     yield put(actions.importSampleData.request(
-      resourceId,
+      importId,
       {sObjects: sObjectList},
       !isInit
     ));
 
     /** fetup SF mapping assistant metadata begins */
-    const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, resourceId);
+    const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, importId);
 
     if (salesforceMasterRecordTypeInfo?.data) {
       const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
@@ -119,10 +119,10 @@ export function* refreshGenerates({ isInit = false }) {
     const opts = {};
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
-      opts.recordType = yield select(selectors.mappingNSRecordType, resourceId, subRecordMappingId);
+      opts.recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
     }
     yield put(actions.importSampleData.request(
-      resourceId,
+      importId,
       opts,
       !isInit
     )
@@ -131,20 +131,20 @@ export function* refreshGenerates({ isInit = false }) {
 }
 export function* mappingInit({
   flowId,
-  resourceId,
+  importId,
   subRecordMappingId,
 }) {
   /** Flow Preview data & metadata needs to be loaded before generating mapping list */
   yield call(fetchRequiredMappingData, {
     flowId,
-    resourceId,
+    importId,
     subRecordMappingId,
   });
-  const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
-    resourceId,
+    resourceId: importId,
     stage: 'importMappingExtract',
     resourceType: 'imports',
   });
@@ -154,7 +154,7 @@ export function* mappingInit({
   const options = {};
 
   if (importResource.netsuite_da) {
-    const recordType = yield select(selectors.mappingNSRecordType, resourceId, subRecordMappingId);
+    const recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
 
     options.recordType = recordType;
   }
@@ -231,7 +231,7 @@ export function* mappingInit({
       })),
       lookups,
       flowId,
-      resourceId,
+      importId,
       subRecordMappingId,
     })
   );
@@ -243,16 +243,16 @@ export function* saveMappings({context }) {
   const {
     mappings,
     lookups,
-    resourceId,
+    importId,
     flowId,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
-  const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
   let netsuiteRecordType;
 
   if (importResource.netsuite_da) {
-    netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId, subRecordMappingId);
+    netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   let _mappings = mappings.map(
@@ -260,7 +260,7 @@ export function* saveMappings({context }) {
   );
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
-    resourceId,
+    resourceId: importId,
     stage: 'importMappingExtract',
     resourceType: 'imports',
   });
@@ -318,11 +318,11 @@ export function* saveMappings({context }) {
     }
   }
 
-  yield put(actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
 
   const resp = yield call(commitStagedChanges, {
     resourceType: 'imports',
-    id: resourceId,
+    id: importId,
     scope: SCOPES.VALUE,
     context,
   });
@@ -336,22 +336,22 @@ export function* previewMappings() {
   const {
     mappings,
     lookups,
-    resourceId,
+    importId,
     flowId,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
-  const _importRes = yield select(selectors.resource, 'imports', resourceId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
+  const _importRes = yield select(selectors.resource, 'imports', importId);
   let importResource = deepClone(_importRes);
   let netsuiteRecordType;
 
   if (importResource.netsuite_da) {
-    netsuiteRecordType = yield select(selectors.mappingNSRecordType, resourceId, subRecordMappingId);
+    netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
-    resourceId,
+    resourceId: importId,
     stage: 'importMappingExtract',
     resourceType: 'imports',
   });
@@ -449,15 +449,15 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   }
   const {
     mappings,
-    resourceId,
+    importId,
     subRecordMappingId,
   } = yield select(selectors.mapping);
-  const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const importResource = yield select(selectors.resource, 'imports', importId);
 
   if (importResource.adaptorType !== 'SalesforceImport' || field !== 'generate') {
     return;
   }
-  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
 
   const mappingObj = mappings.find(_mapping => _mapping.generate === value);
   // while adding new row in mapping, key is generated in MAPPING.PATCH_FIELD reducer
@@ -474,7 +474,7 @@ export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
     )
     );
     yield put(actions.importSampleData.request(
-      resourceId,
+      importId,
       {sObjects: [childSObject]}
     ));
   }
@@ -483,13 +483,13 @@ export function* updateImportSampleData() {
   const {
     incompleteGenerates = [],
     mappings = [],
-    resourceId,
+    importId,
     subRecordMappingId,
   } = yield select(selectors.mapping);
 
   if (!incompleteGenerates.length) return;
 
-  const generateFields = yield select(selectors.mappingGenerates, resourceId, subRecordMappingId);
+  const generateFields = yield select(selectors.mappingGenerates, importId, subRecordMappingId);
   const modifiedMappings = deepClone(mappings);
 
   incompleteGenerates.forEach(generateObj => {

@@ -34,9 +34,11 @@ function MappingSettings({
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
-  const {resourceId: importId, flowId, subRecordMappingId} = useSelector(state => {
+  const {importId, flowId, subRecordMappingId} = useSelector(state => {
     if (isCategoryMapping) {
-      return {resourceId: categoryMappingOpts.importId, flowId: categoryMappingOpts.flowId};
+      const {importId, flowId} = categoryMappingOpts;
+
+      return {importId, flowId};
     }
 
     return selectors.mapping(state);

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
@@ -22,74 +22,64 @@ const MappingWrapper = ({integrationId}) => {
     <Mapping
       onClose={handleClose}
       flowId={flowId}
-      resourceId={importId}
+      importId={importId}
       subRecordMappingId={subRecordMappingId}
       disabled={isMonitorLevelUser}
     />
 
   );
 };
-
-function SelectImportDrawer() {
-  return (
-    <RightDrawer
-      hideBackButton
-      exact
-      path={[
-        'mapping/:flowId/:importId',
-        'mapping/:flowId',
-      ]}
-      height="tall"
-      width="default"
-      title="Select Mapping"
-      variant="temporary"
->
-      <LoadResources
-        required="true"
-        resources="imports, exports, connections">
-        <SelectImport />
-      </LoadResources>
-
-    </RightDrawer>
-  );
-}
-function MappingDrawer(props) {
+export default function MappingDrawerRoute(props) {
   const match = useRouteMatch();
   const integrationId = match.params?.integrationId || props.integrationId;
 
   const isMappingPreviewAvailable = useSelector(state => {
-    const resourceId = selectors.mapping(state)?.resourceId;
+    const importId = selectors.mapping(state)?.importId;
 
-    return !!selectors.mappingPreviewType(state, resourceId);
+    return !!selectors.mappingPreviewType(state, importId);
   });
 
   return (
-    <RightDrawer
-      hideBackButton
-      path={[
-        'mapping/:flowId/:importId/:subRecordMappingId/view',
-        'mapping/:flowId/:importId/view',
-      ]}
-      height="tall"
-      width={isMappingPreviewAvailable ? 'full' : 'default'}
-      title="Edit Mapping"
-      variant="temporary"
+
+    // TODO (Aditya/Raghu): Break it into 2 side drawer after changes to RightDrawer is done on exact property. Also check for dummy route implementation on Right Drawer
+    <LoadResources
+      required="true"
+      resources="imports, exports, connections">
+      <RightDrawer
+        hideBackButton
+        path={[
+          'mapping/:flowId/:importId/:subRecordMappingId/view',
+          'mapping/:flowId/:importId/view',
+          'mapping/:flowId/:importId',
+          'mapping/:flowId',
+        ]}
+        height="tall"
+        width={isMappingPreviewAvailable ? 'full' : 'default'}
+        title="Edit Mapping"
+        variant="temporary"
       >
-      <LoadResources
-        required="true"
-        resources="imports, exports, connections">
-        <MappingWrapper
-          integrationId={integrationId}
-          {...props} />
-      </LoadResources>
-    </RightDrawer>
-  );
-}
-export default function MappingDrawerRoute(props) {
-  return (
-    <>
-      <MappingDrawer {...props} />
-      <SelectImportDrawer />
-    </>
+
+        <Switch>
+          <Route
+            path={[
+              `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
+              `${match.url}/mapping/:flowId/:importId/view`,
+            ]} >
+            <MappingWrapper
+              integrationId={integrationId}
+              {...props} />
+          </Route>
+          <Route
+            exact
+            path={[
+              `${match.url}/mapping/:flowId`,
+              `${match.url}/mapping/:flowId/:importId`,
+            ]}
+            >
+            <SelectImport />
+          </Route>
+        </Switch>
+      </RightDrawer>
+    </LoadResources>
   );
 }

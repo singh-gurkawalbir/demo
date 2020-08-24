@@ -1303,8 +1303,8 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ flowId, resourceId, subRecordMappingId}) =>
-    action(actionTypes.MAPPING.INIT, {flowId, resourceId, subRecordMappingId}),
+  init: ({ flowId, importId, subRecordMappingId}) =>
+    action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
