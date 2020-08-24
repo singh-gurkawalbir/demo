@@ -450,6 +450,11 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
     }),
+  setRequestStatus: (connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.SET_REQUEST_STATUS, {
+      connectionId,
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
