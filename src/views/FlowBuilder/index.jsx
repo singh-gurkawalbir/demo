@@ -26,7 +26,6 @@ import RunFlowButton from '../../components/RunFlowButton';
 import SettingsIcon from '../../components/icons/SettingsIcon';
 import CalendarIcon from '../../components/icons/CalendarIcon';
 import CloseIcon from '../../components/icons/CloseIcon';
-import HelpIcon from '../../components/icons/HelpIcon';
 import EditableText from '../../components/EditableText';
 import FlowToggle from '../../components/FlowToggle';
 import { generateNewId, isNewId } from '../../utils/resource';
@@ -39,6 +38,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
+import GraphIcon from '../../components/icons/GraphIcon';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -153,6 +153,14 @@ const useStyles = makeStyles(theme => ({
   },
   subtitle: {
     display: 'flex',
+  },
+  chartsIcon: {
+    padding: 0,
+    marginRight: theme.spacing(2),
+    '&:hover': {
+      color: theme.palette.primary.main,
+      background: 'none',
+    },
   },
 }));
 
@@ -510,19 +518,22 @@ function FlowBuilder() {
           {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
             <IconButton
               disabled={isNewFlow}
+              className={classes.chartsIcon}
               data-test="charts"
               onClick={handleDrawerClick('charts')}>
-              <HelpIcon />
+              <GraphIcon />
             </IconButton>
           )}
           {!isDataLoaderFlow && (
-            <FlowToggle
-              integrationId={integrationId}
-              resource={flowDetails}
-              disabled={isNewFlow || isMonitorLevelAccess}
-              isConnector={isIAType}
-              data-test="switchFlowOnOff"
+            <div className={classes.chartsIcon}>
+              <FlowToggle
+                integrationId={integrationId}
+                resource={flowDetails}
+                disabled={isNewFlow || isMonitorLevelAccess}
+                isConnector={isIAType}
+                data-test="switchFlowOnOff"
             />
+            </div>
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />

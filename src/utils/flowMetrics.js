@@ -39,14 +39,22 @@ export const getLegend = index => {
   return legendTypes[index % 10];
 };
 
-export const getTicks = (domainRange, range) => {
+export const getTicks = (domainRange, range, isValue) => {
   let ticks;
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');
 
   if (days < 7) {
-    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+    if (isValue) {
+      ticks = domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+    } else {
+      ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+    }
   } else if (days < 180) {
-    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+    if (isValue) {
+      ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
+    } else {
+      ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
+    }
   } else {
     ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
   }
@@ -130,7 +138,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   let aggregrate = '';
 
   if (days > 180) {
-    aggregrate = '|> aggregateWindow(every: 1d, fn: sum)';
+    aggregrate = '|> aggregateWindow(every: 1d, fn: mean)';
   }
 
   return `from(bucket: "${bucket}") 

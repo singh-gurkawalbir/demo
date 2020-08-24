@@ -1424,14 +1424,17 @@ export default {
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
     label: 'User directory is root',
+    defaultValue: r => !!(r?.ftp?.userDirectoryIsRoot),
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
     label: 'Use implicit ftps',
+    defaultValue: r => !!(r?.ftp?.useImplicitFtps),
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
     label: 'Require socket reuse',
+    defaultValue: r => !!(r?.ftp?.requireSocketReUse),
   },
   'ftp.usePgp': {
     type: 'checkbox',

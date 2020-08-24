@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import actions from '../../../actions';
-import useConfirmDialog from '../../ConfirmDialog';
-import RefreshIcon from '../../icons/RefreshIcon';
+import actions from '../../../../actions';
+import useConfirmDialog from '../../../ConfirmDialog';
+import RefreshIcon from '../../../icons/RefreshIcon';
 
 export default {
   label: 'Retry',

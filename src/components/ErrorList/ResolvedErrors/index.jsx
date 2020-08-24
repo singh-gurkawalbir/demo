@@ -1,23 +1,31 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import metadata from './metadata';
 import KeywordSearch from '../../KeywordSearch';
 import ErrorTable from '../ErrorTable';
-import RefreshCard from '../components/RefreshCard';
-import ErrorActions from '../components/ErrorActions';
+import RefreshCard from '../RefreshCard';
+import ErrorActions from '../ErrorActions';
 import Spinner from '../../Spinner';
 import SpinnerWrapper from '../../SpinnerWrapper';
-import useErrorTableConfig from '../ErrorDetails/hooks/useErrorTableConfig';
+import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   search: {
-    width: '300px',
+    width: '250px',
     paddingTop: theme.spacing(1),
     float: 'left',
+    '& > div:first-child': {
+      background: theme.palette.common.white,
+    },
   },
   hide: {
     display: 'none',
+  },
+  header: {
+    paddingBottom: theme.spacing(3),
+    display: 'inline-flex',
+    justifyContent: 'space-between',
+    width: '68%',
   },
 }));
 const defaultFilter = {
@@ -42,25 +50,25 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
 
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      {
-        !isFreshDataLoad && <RefreshCard onRefresh={fetchErrors} disabled={!updated} />
-      }
-      {
-        !!resolvedErrors.length &&
-        <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
-      }
+      <RefreshCard onRefresh={fetchErrors} disabled={!updated || isFreshDataLoad} />
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
         <>
-          <div className={classes.search}>
-            <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+          <div className={classes.header}>
+            <div className={classes.search}>
+              <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+            </div>
+            {
+            !!resolvedErrors.length &&
+            <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
+          }
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
-            metadata={metadata}
+            errorType="resolved"
             data={resolvedErrors}
             actionProps={actionProps}
             emptyRowsLabel="No Resolved errors"
