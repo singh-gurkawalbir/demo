@@ -450,6 +450,11 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
     }),
+  setRequestStatus: (connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.SET_REQUEST_STATUS, {
+      connectionId,
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -553,14 +558,15 @@ const integrationApp = {
             .CLEAR_COLLAPSE_STATUS,
           { integrationId, flowId }
         ),
-      updateLookup: (integrationId, flowId, id, lookups) =>
+      updateLookup: (integrationId, flowId, id, oldValue, newValue) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
           {
             integrationId,
             flowId,
             id,
-            lookups,
+            oldValue,
+            newValue,
           }
         ),
       setVisibility: (integrationId, flowId, id, value) =>
@@ -1302,14 +1308,16 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ flowId, resourceId, subRecordMappingId}) =>
-    action(actionTypes.MAPPING.INIT, {flowId, resourceId, subRecordMappingId}),
+  init: ({ flowId, importId, subRecordMappingId}) =>
+    action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
-  updateLookup: lookups =>
-    action(actionTypes.MAPPING.UPDATE_LOOKUP, { lookups }),
+  addLookup: ({value, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
+  updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
   setVisibility: value =>

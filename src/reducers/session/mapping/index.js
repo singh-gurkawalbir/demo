@@ -10,7 +10,21 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, key, field, shiftIndex, value, mappings, lookups, flowId, resourceId, subRecordMappingId } = action;
+  const {
+    type,
+    key,
+    field,
+    shiftIndex,
+    value,
+    mappings,
+    lookups,
+    flowId,
+    importId,
+    subRecordMappingId,
+    oldValue,
+    newValue,
+    isConditionalLookup,
+  } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -28,7 +42,7 @@ export default (state = {}, action) => {
           mappings,
           lookups,
           flowId,
-          resourceId,
+          importId,
           subRecordMappingId,
           status: 'received',
           mappingsCopy: deepClone(mappings),
@@ -39,10 +53,13 @@ export default (state = {}, action) => {
         draft.mapping.lastModifiedRowKey = key;
         break;
       case actionTypes.MAPPING.DELETE: {
-        const filteredMapping = draft.mapping.mappings.filter(m => m.key !== key);
+        const mappingToDelete = draft.mapping.mappings.find(m => m.key === key);
 
-        draft.mapping.mappings = filteredMapping;
-
+        if (mappingToDelete.lookupName) {
+          // delete lookup
+          draft.mapping.lookups = draft.mapping.lookups.filter(l => l.name !== mappingToDelete.lookupName);
+        }
+        draft.mapping.mappings = draft.mapping.mappings.filter(m => m.key !== key);
         if (draft.mapping.lastModifiedRowKey === key) delete draft.mapping.lastModifiedRowKey;
 
         const {
@@ -66,8 +83,6 @@ export default (state = {}, action) => {
 
           const mapping = draft.mapping.mappings[index];
 
-          mapping.rowIdentifier += 1;
-
           let inputValue = value;
 
           if (field === 'extract') {
@@ -78,10 +93,8 @@ export default (state = {}, action) => {
                 1,
                 inputValue.length - 2
               );
-              mapping.hardCodedValueTmp = inputValue;
             } else {
               delete mapping.hardCodedValue;
-              delete mapping.hardCodedValueTmp;
               mapping.extract = inputValue;
             }
           } else {
@@ -108,7 +121,6 @@ export default (state = {}, action) => {
 
           draft.mapping.mappings.push({
             [field]: value,
-            rowIdentifier: 0,
             key: newKey,
           });
           draft.mapping.lastModifiedRowKey = newKey;
@@ -154,8 +166,12 @@ export default (state = {}, action) => {
           if (!value.lookupName) {
             delete mapping.lookupName;
           }
-
-          mapping.rowIdentifier += 1;
+          if (!value.conditional?.when && mapping?.conditional?.when) {
+            delete mapping.conditional.when;
+          }
+          if (!value.conditional?.lookupName && mapping?.conditional?.lookupName) {
+            delete mapping.conditional.lookupName;
+          }
 
           if ('hardCodedValue' in value) {
             delete mapping.extract;
@@ -176,17 +192,6 @@ export default (state = {}, action) => {
           draft.mapping.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         }
 
-        break;
-      }
-
-      case actionTypes.MAPPING.UPDATE_LOOKUP: {
-        draft.mapping.lookups = lookups;
-        const {
-          isSuccess,
-          errMessage: validationErrMsg,
-        } = mappingUtil.validateMappings(draft.mapping.mappings, draft.mapping.lookups);
-
-        draft.mapping.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
       }
 
@@ -232,6 +237,34 @@ export default (state = {}, action) => {
         const [removed] = draft.mapping.mappings.splice(itemIndex, 1);
 
         draft.mapping.mappings.splice(shiftIndex, 0, removed);
+        break;
+      }
+      case actionTypes.MAPPING.ADD_LOOKUP:
+        draft.mapping.lookups.push({...value, isConditionalLookup});
+        break;
+      case actionTypes.MAPPING.UPDATE_LOOKUP: {
+        if (isConditionalLookup) {
+          // case where user updates lookup name. The same is to be updated in all mapping items using it
+          if (oldValue && oldValue.name !== newValue.name) {
+            for (let i = 0; i < draft.mapping.mappings.length; i += 1) {
+              if (draft.mapping.mappings[i]?.conditional?.lookupName === oldValue?.name) {
+                draft.mapping.mappings[i].conditional.lookupName = newValue.name;
+              }
+            }
+          }
+        }
+        if (oldValue?.name) {
+          draft.mapping.lookups = draft.mapping.lookups.filter(l => l.name !== oldValue.name);
+        }
+        if (newValue) {
+          draft.mapping.lookups.push({...newValue, isConditionalLookup});
+        }
+        const {
+          isSuccess,
+          errMessage: validationErrMsg,
+        } = mappingUtil.validateMappings(draft.mapping.mappings, draft.mapping.lookups);
+
+        draft.mapping.validationErrMsg = isSuccess ? undefined : validationErrMsg;
         break;
       }
 

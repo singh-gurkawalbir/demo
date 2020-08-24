@@ -38,6 +38,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
+import MappingDrawerRoute from '../MappingDrawer';
 import GraphIcon from '../../components/icons/GraphIcon';
 
 const bottomDrawerMin = 41;
@@ -720,6 +721,9 @@ function FlowBuilder() {
         setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
+      />
+      <MappingDrawerRoute
+        integrationId={integrationId}
       />
     </LoadResources>
   );

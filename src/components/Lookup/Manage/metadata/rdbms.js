@@ -8,8 +8,10 @@ export default {
           id: '_mode',
           name: '_mode',
           type: 'radiogroup',
-          label: '',
-          defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
+          label: 'Select',
+          required: true,
+          helpKey: 'mapping.lookup.mode',
+          defaultValue: lookup?.map ? 'static' : 'dynamic',
           options: [
             {
               items: [

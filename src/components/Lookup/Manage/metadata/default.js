@@ -14,9 +14,10 @@ const getLookupMetadata = ({
         id: '_mode',
         name: '_mode',
         type: 'radiogroup',
-        label: '',
+        label: 'Select',
         required: true,
-        defaultValue: lookup && (lookup.map ? 'static' : 'dynamic'),
+        helpKey: 'mapping.lookup.mode',
+        defaultValue: lookup?.map ? 'static' : 'dynamic',
         options: [
           {
             items: [
