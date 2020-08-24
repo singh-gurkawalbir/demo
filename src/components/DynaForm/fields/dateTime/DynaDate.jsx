@@ -4,12 +4,11 @@ import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  DatePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-import CalendarIcon from '../../../icons/CalendarIcon';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
@@ -28,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-export default function DatePicker(props) {
+export default function DynaDate(props) {
   const classes = useStyles();
   const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
   const resourceType = resourceContext?.resourceType;
@@ -41,11 +40,7 @@ export default function DatePicker(props) {
 
     return !!(resource?._connectorId);
   });
-  const { dateFormat, timezone } = useSelector(state => {
-    const { dateFormat, timezone } = selectors.userProfilePreferencesProps(state);
-
-    return { dateFormat, timezone };
-  }, shallowEqual);
+  const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
   const displayFormat = props.format || dateFormat || 'MM/DD/YYYY';
 
   useEffect(() => {
@@ -74,18 +69,13 @@ export default function DatePicker(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-        <KeyboardDatePicker
+        <DatePicker
+          disabled={disabled}
+          variant="inline"
           format={displayFormat}
           value={dateValue}
-          invalidLabel={null}
-          invalidDateMessage={null}
-          inputVariant="filled"
-          InputLabelProps={{ shrink: true }}
+          label="Date"
           onChange={setDateValue}
-          disabled={disabled}
-          clearable
-          KeyboardButtonProps={{className: classes.dynaDateCalendarBtn}}
-          keyboardIcon={<CalendarIcon />}
       />
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
