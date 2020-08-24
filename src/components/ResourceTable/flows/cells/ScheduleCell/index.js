@@ -14,8 +14,12 @@ export default function ScheduleCell({flowId, name}) {
   );
   const type = useSelector(state => selectors.flowType(state, flowId));
 
-  if (!allowSchedule && type !== 'Scheduled') {
-    return <Chip size="small" label={type} />;
+  if (!allowSchedule) {
+    if (type !== 'Scheduled') {
+      return <Chip size="small" label={type} />;
+    }
+
+    return null;
   }
 
   return (
