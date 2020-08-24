@@ -164,7 +164,7 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
-          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
+          valueOptions: picklistOptions?.length ? picklistOptions : undefined,
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -395,7 +395,7 @@ export default {
           picklistOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
           extractFields,
           flowId,
-          resourceId,
+          importId: resourceId,
           label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [

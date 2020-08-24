@@ -467,7 +467,7 @@ export default {
           label: 'Lookup name:',
           type: 'selectconditionallookup',
           flowId,
-          resourceId,
+          importId: resourceId,
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {

@@ -166,11 +166,11 @@ export default (state = {}, action) => {
           if (!value.lookupName) {
             delete mapping.lookupName;
           }
-          if (!value.conditional?.when) {
-            delete mapping?.conditional?.when;
+          if (!value.conditional?.when && mapping?.conditional?.when) {
+            delete mapping.conditional.when;
           }
-          if (!value.conditional?.lookupName) {
-            delete mapping?.conditional?.lookupName;
+          if (!value.conditional?.lookupName && mapping?.conditional?.lookupName) {
+            delete mapping.conditional.lookupName;
           }
 
           if ('hardCodedValue' in value) {

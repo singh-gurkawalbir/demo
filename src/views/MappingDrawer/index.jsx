@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Switch, Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
@@ -29,9 +29,33 @@ const MappingWrapper = ({integrationId}) => {
 
   );
 };
-export default function MappingDrawerRoute(props) {
+
+function SelectImportDrawer() {
+  return (
+    <RightDrawer
+      hideBackButton
+      exact
+      path={[
+        'mapping/:flowId/:importId',
+        'mapping/:flowId',
+      ]}
+      height="tall"
+      width="default"
+      title="Select Mapping"
+      variant="temporary"
+>
+      <LoadResources
+        required="true"
+        resources="imports, exports, connections">
+        <SelectImport />
+      </LoadResources>
+
+    </RightDrawer>
+  );
+}
+function MappingDrawer(props) {
   const match = useRouteMatch();
-  const integrationId = match.path?.integrationId || props.integrationId;
+  const integrationId = match.params?.integrationId || props.integrationId;
 
   const isMappingPreviewAvailable = useSelector(state => {
     const resourceId = selectors.mapping(state)?.resourceId;
@@ -41,12 +65,10 @@ export default function MappingDrawerRoute(props) {
 
   return (
     <RightDrawer
-      showBackButton={false}
+      hideBackButton
       path={[
         'mapping/:flowId/:importId/:subRecordMappingId/view',
         'mapping/:flowId/:importId/view',
-        'mapping/:flowId/:importId',
-        'mapping/:flowId',
       ]}
       height="tall"
       width={isMappingPreviewAvailable ? 'full' : 'default'}
@@ -56,28 +78,18 @@ export default function MappingDrawerRoute(props) {
       <LoadResources
         required="true"
         resources="imports, exports, connections">
-        <Switch>
-          <Route
-            path={[
-              `${match.url}/mapping/:flowId/:importId/:subRecordMappingId/view`,
-              `${match.url}/mapping/:flowId/:importId/view`,
-            ]} >
-            <MappingWrapper
-              integrationId={integrationId}
-              {...props} />
-          </Route>
-          <Route
-            exact
-            path={[
-              `${match.url}/mapping/:flowId`,
-              `${match.url}/mapping/:flowId/:importId`,
-            ]}
-            >
-            <SelectImport />
-          </Route>
-        </Switch>
+        <MappingWrapper
+          integrationId={integrationId}
+          {...props} />
       </LoadResources>
-
     </RightDrawer>
+  );
+}
+export default function MappingDrawerRoute(props) {
+  return (
+    <>
+      <MappingDrawer {...props} />
+      <SelectImportDrawer />
+    </>
   );
 }

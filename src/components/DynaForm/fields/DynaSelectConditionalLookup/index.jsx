@@ -1,7 +1,8 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { isEqual } from 'lodash';
 import { selectors } from '../../../../reducers';
 import DynaSelect from '../DynaSelect';
 import AddIcon from '../../../icons/AddIcon';
@@ -25,21 +26,20 @@ const useStyles = makeStyles(theme => ({
 
 }));
 export default function DynaSelectConditionalLookup(props) {
-  const { id, value, resourceId, flowId, disabled, onFieldChange, staticLookupCommMetaPath, extractFields, picklistOptions } = props;
+  const { id, value, importId, flowId, disabled, onFieldChange, staticLookupCommMetaPath, extractFields, picklistOptions } = props;
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
 
-  const lookups = useSelector(state => {
+  const lookupOptions = useSelector(state => {
     const {lookups} = selectors.mapping(state);
 
-    return lookups.filter(({isConditionalLookup}) => !!isConditionalLookup);
-  }, shallowEqual);
-  const lookupMap = useMemo(
-    () => lookups.map(l => ({ label: l.name, value: l.name })),
-    [lookups]
-  );
+    const conditionalLookups = lookups.filter(({isConditionalLookup}) => !!isConditionalLookup);
+
+    return [{ items: conditionalLookups.map(l => ({ label: l.name, value: l.name })) }];
+  }, isEqual);
+
   const handleAddLookupClick = useCallback(
     () => {
       history.push(`${match.url}/conditionalLookup/add`);
@@ -67,7 +67,7 @@ export default function DynaSelectConditionalLookup(props) {
   return (
     <>
       <div className={classes.root}>
-        <DynaSelect {...props} options={[{ items: lookupMap }]} />
+        <DynaSelect {...props} options={lookupOptions} />
         <div className={classes.actions} >
           <ActionButton
             data-test="addNewConditionalLookup"
@@ -84,8 +84,7 @@ export default function DynaSelectConditionalLookup(props) {
       </div>
       <ConditionalLookupDrawer
         disabled={disabled}
-        resourceId={resourceId}
-        resourceType="imports"
+        importId={importId}
         flowId={flowId}
         onSave={handleSave}
         staticLookupCommMetaPath={staticLookupCommMetaPath}

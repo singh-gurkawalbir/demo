@@ -265,7 +265,7 @@ export default function SettingsDrawer(props) {
 
   return (
     <RightDrawer
-      hideBackButton={false}
+      hideBackButton
       path={[
         'settings/:mappingKey',
         'settings/category/:editorId/:mappingIndex',

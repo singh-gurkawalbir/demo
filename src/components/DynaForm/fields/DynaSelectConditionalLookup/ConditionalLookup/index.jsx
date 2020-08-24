@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 });
 
 const emptySet = {};
-export default function ConditionalLookup({onSave, disabled, resourceId, resourceType, flowId, ...props}) {
+export default function ConditionalLookup({onSave, disabled, importId, flowId, ...props}) {
   const match = useRouteMatch();
   const classes = useStyles();
   const history = useHistory();
@@ -52,8 +52,8 @@ export default function ConditionalLookup({onSave, disabled, resourceId, resourc
       value={value}
       onCancel={handleClose}
       disabled={disabled}
-      resourceId={resourceId}
-      resourceType={resourceType}
+      resourceId={importId}
+      resourceType="imports"
       flowId={flowId}
       {...props}
       />
