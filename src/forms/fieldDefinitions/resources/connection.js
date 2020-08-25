@@ -1286,7 +1286,6 @@ export default {
   'http.rateLimit.limit': {
     type: 'text',
     label: 'Wait time in between HTTP requests',
-    endAdornment: 'milliseconds',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1839,7 +1838,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail status code',
+    label: 'HTTP status code for rate limit errors',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1854,7 +1853,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to rate limit errors in HTTP response body',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1871,11 +1870,11 @@ export default {
         is: [true],
       },
     ],
-    label: 'Fail values',
+    label: 'Rate limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
-    label: 'Limit',
+    label: 'Wait time in between HTTP requests',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
