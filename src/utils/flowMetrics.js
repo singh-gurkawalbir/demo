@@ -214,6 +214,8 @@ export const getAxisLabel = key => {
   }
 };
 
+export const getAxisLabelPosition = id => id === 'averageTimeTaken' ? 'insideBottomLeft' : 'insideLeft';
+
 function convertToFullText(text) {
   switch (text) {
     case 's':
