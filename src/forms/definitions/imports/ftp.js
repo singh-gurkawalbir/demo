@@ -231,6 +231,15 @@ export default {
     },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.includeHeader': { fieldId: 'file.xlsx.includeHeader' },
+    dataMappings: {
+      formId: 'dataMappings',
+      visibleWhenAll: [
+        {
+          field: 'inputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'file.lookups': {
       fieldId: 'file.lookups',
       visible: false,
@@ -301,7 +310,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode'],
+        fields: ['common', 'dataMappings', 'inputMode'],
       },
       {
         collapsed: true,
