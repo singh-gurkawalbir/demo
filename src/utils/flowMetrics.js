@@ -78,7 +78,10 @@ export const getXAxisFormat = range => {
 
 export const getDurationLabel = (ranges = []) => {
   const { startDate, endDate } = ranges[0] || {};
+
+  if (!startDate && !endDate) { return 'Please select a range'; }
   const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
+
   const distanceInHours = formatDistanceStrict(startDate, endDate, {
     unit: 'hour',
   });
