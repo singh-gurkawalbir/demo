@@ -76,6 +76,20 @@ export const getXAxisFormat = range => {
   return xAxisFormat;
 };
 
+export const getInterval = range => {
+  const {startDate, endDate} = range || {};
+  const distanceInDays = moment(endDate).diff(moment(startDate), 'days');
+
+  if (distanceInDays > 90 && distanceInDays < 180) {
+    return 24;
+  }
+  if (distanceInDays > 180) {
+    return 30;
+  }
+
+  return undefined;
+};
+
 export const getDurationLabel = (ranges = []) => {
   const { startDate, endDate } = ranges[0] || {};
   const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
@@ -90,10 +104,8 @@ export const getDurationLabel = (ranges = []) => {
 
   switch (distance) {
     case '0 days':
-      if (distanceInHours === '6 hours') {
-        return 'Last 6 hours';
-      }
-      break;
+      return `Last ${distanceInHours}`;
+
     case '1 day':
       if (startDate.toISOString() === startOfToday.toISOString()) {
         return 'Today';

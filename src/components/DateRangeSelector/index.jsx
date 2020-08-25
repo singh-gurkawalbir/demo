@@ -78,21 +78,21 @@ const rangeList = [
     label: 'Last 7 Days',
     range: () => ({
       startDate: defineds.startOfLastSevenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 15 Days',
     range: () => ({
       startDate: defineds.startOfLastFifteenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 30 Days',
     range: () => ({
       startDate: defineds.endOfLastThirtyDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
