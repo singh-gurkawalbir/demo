@@ -42,6 +42,22 @@ export const getLegend = index => {
 export const getTicks = (domainRange, range, isValue) => {
   let ticks;
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+  const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
+
+  if (hours <= 1) {
+    if (isValue) {
+      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+    }
+
+    return domainRange.ticks(d3.timeMinute.every(5)).map(t => t.getTime());
+  }
+  if (hours > 1 && hours < 5) {
+    if (isValue) {
+      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+    }
+
+    return domainRange.ticks(d3.timeMinute.every(10)).map(t => t.getTime());
+  }
 
   if (days < 7) {
     if (isValue) {
@@ -76,6 +92,20 @@ export const getXAxisFormat = range => {
   return xAxisFormat;
 };
 
+export const getInterval = range => {
+  const {startDate, endDate} = range || {};
+  const distanceInDays = moment(endDate).diff(moment(startDate), 'days');
+
+  if (distanceInDays > 90 && distanceInDays < 180) {
+    return 24;
+  }
+  if (distanceInDays > 180) {
+    return 30;
+  }
+
+  return undefined;
+};
+
 export const getDurationLabel = (ranges = []) => {
   const { startDate, endDate } = ranges[0] || {};
 
@@ -92,12 +122,18 @@ export const getDurationLabel = (ranges = []) => {
   const startOfYesterday = startOfDay(addDays(new Date(), -1));
 
   switch (distance) {
+    case '0 days':
+      return `Last ${distanceInHours}`;
+
     case '1 day':
       if (startDate.toISOString() === startOfToday.toISOString()) {
         return 'Today';
       }
       if (startDate.toISOString() === startOfYesterday.toISOString()) {
         return 'Yesterday';
+      }
+      if (distanceInHours === '12 hours') {
+        return 'Last 12 hours';
       }
       if (
         distanceInHours === '24 hours' &&
@@ -161,11 +197,22 @@ export const getLabel = key => {
     case 'ignored':
       return 'Flow: Ignored';
     default:
-      return 'Flow: Average Processing Time/Success Record';
+      return 'Average processing time/success record';
   }
 };
 
-export const getAxisLabel = key => key === 'averageTimeTaken' ? 'Time (ms)' : '# of transmissions';
+export const getAxisLabel = key => {
+  switch (key) {
+    case 'success':
+      return '# of Successes';
+    case 'error':
+      return '# of Errors';
+    case 'ignored':
+      return '# of Ignores';
+    default:
+      return 'Average processing time (ms)';
+  }
+};
 
 function convertToFullText(text) {
   switch (text) {

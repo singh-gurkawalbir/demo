@@ -1,6 +1,7 @@
 import { Button } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import moment from 'moment';
 import {
   addDays,
   addHours,
@@ -10,7 +11,6 @@ import {
   endOfWeek,
   startOfDay,
   startOfMonth,
-  isSameDay,
   startOfWeek,
   addYears,
 } from 'date-fns';
@@ -40,6 +40,20 @@ const defineds = {
 };
 export const rangeList = [
   {
+    label: 'Last 1 hour',
+    range: () => ({
+      startDate: new moment().subtract(1, 'hours').toDate(),
+      endDate: new Date(),
+    }),
+  },
+  {
+    label: 'Last 4 hours',
+    range: () => ({
+      startDate: new moment().subtract(4, 'hours').toDate(),
+      endDate: new Date(),
+    }),
+  },
+  {
     label: 'Today',
     range: () => ({
       startDate: defineds.startOfToday,
@@ -64,21 +78,21 @@ export const rangeList = [
     label: 'Last 7 Days',
     range: () => ({
       startDate: defineds.startOfLastSevenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 15 Days',
     range: () => ({
       startDate: defineds.startOfLastFifteenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 30 Days',
     range: () => ({
       startDate: defineds.endOfLastThirtyDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
@@ -115,10 +129,10 @@ export const staticRangeHandler = {
   isSelected(range) {
     const definedRange = this.range();
 
-    return (
-      isSameDay(range.startDate, definedRange.startDate) &&
-      isSameDay(range.endDate, definedRange.endDate)
-    );
+    const definedRangeDistance = moment(definedRange.endDate).diff(moment(definedRange.startDate), 'hours');
+    const rangeDistance = moment(range.endDate).diff(moment(range.startDate), 'hours');
+
+    return definedRangeDistance === rangeDistance;
   },
 };
 const useStyles = makeStyles(theme => ({
