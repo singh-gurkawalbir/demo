@@ -144,7 +144,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, onSave }) {
+export default function DateRangeSelector({ value, rangesToInclude, onSave }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
       startDate:
@@ -168,12 +168,14 @@ export default function DateRangeSelector({ value, onSave }) {
     setAnchorEl(null);
   }, []);
   const dateRangeOptions = useMemo(
-    () =>
-      rangeList.map(rangeItem => ({
-        ...staticRangeHandler,
-        ...rangeItem,
-      })),
-    []
+    () => (rangesToInclude
+      ? rangeList.filter(({label}) =>
+        rangesToInclude.includes(label))
+      : rangeList).map(rangeItem => ({
+      ...staticRangeHandler,
+      ...rangeItem,
+    })),
+    [rangesToInclude]
   );
 
   return (

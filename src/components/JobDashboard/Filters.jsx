@@ -18,6 +18,7 @@ import RunFlowButton from '../RunFlowButton';
 import CeligoSelect from '../CeligoSelect';
 import IconTextButton from '../IconTextButton';
 import FlowSelector from './FlowSelector';
+import DateRangeSelector from '../DateRangeSelector';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,6 +79,9 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
+const rangeFilters = [
+  'Today', 'Yesterday', 'Last 7 Days', 'Last 15 Days', 'Last 30 Days',
+];
 
 function Filters({
   integrationId,
@@ -128,6 +132,11 @@ function Filters({
     },
     [currentPage, patchFilter]
   );
+
+  const handleDateRangeChange = useCallback(range => {
+    patchFilter('dateRange', range);
+  }, [patchFilter]);
+
   const handleRefreshClick = useCallback(() => {
     dispatch(actions.job.clear());
     patchFilter('currentPage', 0);
@@ -206,6 +215,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
+        <DateRangeSelector rangesToInclude={rangeFilters} onSave={handleDateRangeChange} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
