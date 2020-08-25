@@ -22,6 +22,7 @@ export default {
     'wrapper.configuration': { fieldId: 'wrapper.configuration' },
     'wrapper.lookups': { fieldId: 'wrapper.lookups', visible: false },
     sampleData: { fieldId: 'sampleData' },
+    dataMappings: { formId: 'dataMappings' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -30,7 +31,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common'],
+        fields: ['common', 'dataMappings'],
       },
       {
         collapsed: true,

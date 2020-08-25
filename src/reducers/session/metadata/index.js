@@ -26,6 +26,7 @@ export default (
   return produce(state, draft => {
     switch (type) {
       case actionTypes.METADATA.REQUEST:
+      case actionTypes.METADATA.SET_REQUEST_STATUS:
         if (!draft.application[connectionId]) {
           draft.application[connectionId] = {};
         }

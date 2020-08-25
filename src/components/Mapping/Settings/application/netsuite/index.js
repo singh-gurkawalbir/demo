@@ -455,22 +455,14 @@ export default {
             },
           ],
         },
-        lookups: {
-          name: 'lookups',
-          id: 'lookups',
-          fieldId: 'lookups',
-          visible: false,
-          defaultValue: lookups,
-        },
-
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
           label: 'Lookup name',
-          type: 'selectlookup',
+          extractFields,
+          type: 'selectconditionallookup',
           flowId,
-          resourceId,
-          refreshOptionsOnChangesTo: ['lookups'],
+          importId: resourceId,
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
             {
@@ -511,7 +503,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+            fields: ['conditional.when', 'conditional.lookupName'],
           },
         ],
       },
@@ -621,19 +613,6 @@ export default {
             disableFetch: !recordType,
             commMetaPath: `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordTypeField.value}/searchColumns`,
           };
-        } else if (fieldId === 'conditional.lookupName') {
-          const lookupField = fields.find(field => field.fieldId === 'lookups');
-
-          return {
-            lookups: {
-              fieldId: 'lookups',
-              data:
-                (lookupField &&
-                  Array.isArray(lookupField.value) &&
-                  lookupField.value) ||
-                [],
-            },
-          };
         }
 
         return null;
@@ -691,14 +670,16 @@ export default {
       // hardcoded actions to be removed in case generate type is select
       delete fieldMeta.fieldMap.hardcodedAction;
       fields = fields.filter(el => el !== 'hardcodedAction');
-      fieldMeta.fieldMap['lookup.mapList'].commMetaPath = getNetsuiteSelectFieldValueUrl({
+      const commMetaPath = getNetsuiteSelectFieldValueUrl({
         fieldMetadata,
         connectionId,
         fieldId,
         recordType,
       });
-      fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
 
+      fieldMeta.fieldMap['lookup.mapList'].commMetaPath = commMetaPath;
+      fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
+      fieldMeta.fieldMap['conditional.lookupName'].staticLookupCommMetaPath = commMetaPath;
       // changing metadata for hardcodedDefault and lookupDefault
       ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {
         let fieldValue;
@@ -753,7 +734,7 @@ export default {
               ],
             },
           ],
-          defaultValue: metaKey === 'lookupDefault' ? lookup.default : value?.hardCodedValue,
+          defaultValue: fieldMeta.fieldMap[metaKey].defaultValue || 'false',
         };
       });
       fieldMeta.fieldMap.hardcodedDefault.visibleWhenAll = [{ field: 'fieldMappingType', is: ['hardCoded'] }];

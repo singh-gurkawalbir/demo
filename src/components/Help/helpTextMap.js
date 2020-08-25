@@ -792,7 +792,7 @@ export default {
   'connection.http.rateLimit.failStatusCode': 'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
   'connection.http.rateLimit.failPath': 'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
   'connection.http.rateLimit.failValues': 'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
-  'connection.http.rateLimit.limit': 'Use this field only if your service does not implement and return rate limit responses, and you need to manually regulate calls from <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a>. Enter the number of maximum number of requests per second <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> can make to the service.',
+  'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.unencrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. This values is stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.encrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
   'connection.rdbms.type': 'Select the database type.',
@@ -921,13 +921,13 @@ export default {
   'connection.as2.partnerStationInfo.auth.token.refreshToken':
     'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.as2.partnerStationInfo.auth.token.refreshToken}}}.  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
   'connection.as2.partnerStationInfo.rateLimit.failStatusCode':
-    'The HTTP specification states that rate-limit response errors should return a 429 status code.  Some services have custom rate limit implementations that rely on other status codes, or even throttle errors within the HTTP body. Use this field if the service you are connecting to uses a status code other than 429.',
+    'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
   'connection.as2.partnerStationInfo.rateLimit.failPath':
-    'If the service you are connecting to embeds rate limit errors within the HTTP body, use this field to set the path within the response body where integrator.io should look to identify a throttled response. If there is a specific value (or set of values) that indicate rate-limit response at this path, use the failValues field to further instruct our platform on how to identify this type of error.',
+  'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
   'connection.as2.partnerStationInfo.rateLimit.failValues':
-    'This field is used only if the failPath field is set. It indicates to the integrator.io platform what specific values to test for when determining if the requests we make have been rate-limited.',
+  'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
   'connection.as2.partnerStationInfo.rateLimit.limit':
-    'This field lets the user to tell us the speed at which we can make requests. In other words, how long should we wait before we make subsequent IO calls to the service.  This should be used if the service does not implement and return rate-limit responses and we need to manually regulate IO calls from our platform.',
+    'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.as2.userStationInfo.encryptionType':
     'This is the algorithm we use while decrypting the message (this information is present in the MIME Message itself). So it is nothing more that verification of same.',
   'connection.as2.userStationInfo.signing':

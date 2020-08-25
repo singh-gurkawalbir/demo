@@ -10,6 +10,7 @@ import ButtonPanel from './ButtonPanel';
 import PreviewPanel from './Preview/Panel';
 import DragContainer from './DragContainer';
 import actions from '../../actions';
+import SettingsDrawer from './Settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const Mapping = props => {
-  const {flowId, resourceId, subRecordMappingId, disabled, onClose} = props;
+  const {flowId, importId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
 
   return (
@@ -41,28 +42,31 @@ const Mapping = props => {
         className={clsx(classes.mappingContainer)}>
         <TopPanel
           flowId={flowId}
-          resourceId={resourceId}
+          importId={importId}
           disabled={disabled}
         />
         <div className={classes.mappingsBody}>
           <DragContainer
             disabled={disabled}
-            importId={resourceId}
+            importId={importId}
             flowId={flowId}
             subRecordMappingId={subRecordMappingId}
           />
         </div>
         <ButtonPanel
           flowId={flowId}
-          importId={resourceId}
+          importId={importId}
           disabled={disabled}
           onClose={onClose}
            />
       </div>
       <PreviewPanel
-        resourceId={resourceId}
+        importId={importId}
         disabled={disabled}
         subRecordMappingId={subRecordMappingId}
+      />
+      <SettingsDrawer
+        disabled={disabled}
       />
     </div>
   );
@@ -71,17 +75,17 @@ const Mapping = props => {
 export default function MappingWrapper(props) {
   const {
     flowId,
-    resourceId,
+    importId,
     subRecordMappingId,
   } = props;
   const dispatch = useDispatch();
-  const mappingStatus = useSelector(state => selectors.mapping(state, flowId, resourceId, subRecordMappingId).status);
+  const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
 
   useEffect(() => {
     /** initiate a mapping init each time user opens mapping. Sample data is loaded */
     dispatch(actions.mapping.init({
       flowId,
-      resourceId,
+      importId,
       subRecordMappingId,
     }));
 
@@ -89,7 +93,7 @@ export default function MappingWrapper(props) {
       // clear the mapping list when component unloads.
       dispatch(actions.mapping.clear());
     };
-  }, [dispatch, flowId, resourceId, subRecordMappingId]);
+  }, [dispatch, flowId, importId, subRecordMappingId]);
 
   if (mappingStatus !== 'received') {
     return (

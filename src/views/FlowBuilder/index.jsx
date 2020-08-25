@@ -38,6 +38,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
+import MappingDrawerRoute from '../MappingDrawer';
 import GraphIcon from '../../components/icons/GraphIcon';
 
 const bottomDrawerMin = 41;
@@ -191,6 +192,9 @@ function FlowBuilder() {
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
+  );
+  const allowSchedule = useSelector(state =>
+    selectors.flowAllowsScheduling(state, flowId)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
@@ -537,7 +541,7 @@ function FlowBuilder() {
           )}
 
           <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-          {flowDetails && flowDetails.showScheduleIcon && (
+          {allowSchedule && (
             <IconButtonWithTooltip
               tooltipProps={{
                 title: 'Schedule',
@@ -720,6 +724,9 @@ function FlowBuilder() {
         setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
+      />
+      <MappingDrawerRoute
+        integrationId={integrationId}
       />
     </LoadResources>
   );
