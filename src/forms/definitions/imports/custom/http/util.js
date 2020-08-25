@@ -294,6 +294,7 @@ export function fieldMeta({ resource, assistantData }) {
       formId: 'common',
     },
     formView: { fieldId: 'formView' },
+    dataMappings: { formId: 'dataMappings' },
     apiIdentifier: { fieldId: 'apiIdentifier' },
   };
   const fieldIds = [];
@@ -315,7 +316,7 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'General',
-          fields: ['common', 'formView'],
+          fields: ['common', 'dataMappings', 'formView'],
         },
         {
           collapsed: true,
