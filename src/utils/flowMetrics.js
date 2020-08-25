@@ -89,12 +89,20 @@ export const getDurationLabel = (ranges = []) => {
   const startOfYesterday = startOfDay(addDays(new Date(), -1));
 
   switch (distance) {
+    case '0 days':
+      if (distanceInHours === '6 hours') {
+        return 'Last 6 hours';
+      }
+      break;
     case '1 day':
       if (startDate.toISOString() === startOfToday.toISOString()) {
         return 'Today';
       }
       if (startDate.toISOString() === startOfYesterday.toISOString()) {
         return 'Yesterday';
+      }
+      if (distanceInHours === '12 hours') {
+        return 'Last 12 hours';
       }
       if (
         distanceInHours === '24 hours' &&
@@ -158,11 +166,22 @@ export const getLabel = key => {
     case 'ignored':
       return 'Flow: Ignored';
     default:
-      return 'Flow: Average Processing Time/Success Record';
+      return 'Average processing time/success record';
   }
 };
 
-export const getAxisLabel = key => key === 'averageTimeTaken' ? 'Time (ms)' : '# of transmissions';
+export const getAxisLabel = key => {
+  switch (key) {
+    case 'success':
+      return '# of Successes';
+    case 'error':
+      return '# of Errors';
+    case 'ignored':
+      return '# of Ignores';
+    default:
+      return 'Average processing time (ms)';
+  }
+};
 
 function convertToFullText(text) {
   switch (text) {

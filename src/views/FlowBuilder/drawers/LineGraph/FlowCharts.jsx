@@ -249,8 +249,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: 'insideLeft',
-              textAnchor: 'middle',
+              position: 'inside',
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -300,12 +299,12 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error Occured</Typography>;
+    return <Typography>Error occured</Typography>;
   }
 
   return (
     <div className={classes.root}>
-      {['success', 'error', 'ignored', 'averageTimeTaken'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}
