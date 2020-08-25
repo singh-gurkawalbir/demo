@@ -38,7 +38,7 @@ const defineds = {
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1)),
 };
-const rangeList = [
+export const rangeList = [
   {
     label: 'Last 1 hour',
     range: () => ({
@@ -124,7 +124,7 @@ const rangeList = [
     }),
   },
 ];
-const staticRangeHandler = {
+export const staticRangeHandler = {
   range: {},
   isSelected(range) {
     const definedRange = this.range();
@@ -164,7 +164,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, rangesToInclude, onSave, shouldEditInput = false }) {
+export default function DateRangeSelector({ value, onSave }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
       startDate:
@@ -184,18 +184,17 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave, shou
     onSave && onSave(selectedRanges);
     setAnchorEl(null);
   }, [onSave, selectedRanges]);
+
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
   const dateRangeOptions = useMemo(
-    () => (rangesToInclude
-      ? rangeList.filter(({label}) =>
-        rangesToInclude.includes(label))
-      : rangeList).map(rangeItem => ({
-      ...staticRangeHandler,
-      ...rangeItem,
-    })),
-    [rangesToInclude]
+    () =>
+      rangeList.map(rangeItem => ({
+        ...staticRangeHandler,
+        ...rangeItem,
+      })),
+    []
   );
 
   return (
@@ -215,7 +214,6 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave, shou
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
             <DateRangePicker
-              editableDateInputs={shouldEditInput}
               staticRanges={dateRangeOptions}
               showSelectionPreview
               onChange={item => setSelectedRanges([item.selection])}

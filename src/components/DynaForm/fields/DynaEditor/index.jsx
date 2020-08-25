@@ -137,7 +137,7 @@ export default function DynaEditor({
         />
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel required={required} error={!isValid} >{label}</FormLabel>
-          {helpKey && <FieldHelp helpKey={helpKey} />}
+          {helpKey && <FieldHelp helpKey={helpKey} label={label} />}
         </div>
 
         <div className={clsx(classes.inlineEditorContainer, editorClassName)}>

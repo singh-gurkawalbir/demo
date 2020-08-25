@@ -91,17 +91,14 @@ export default {
     'rest.authType': { fieldId: 'rest.authType', required: true },
     'rest.headers': {
       fieldId: 'rest.headers',
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
       required: true,
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.mediaType': {
       fieldId: 'rest.mediaType',
       required: true,
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.encrypted': {
       fieldId: 'rest.encrypted',
