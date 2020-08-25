@@ -42,6 +42,22 @@ export const getLegend = index => {
 export const getTicks = (domainRange, range, isValue) => {
   let ticks;
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+  const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
+
+  if (hours <= 1) {
+    if (isValue) {
+      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+    }
+
+    return domainRange.ticks(d3.timeMinute.every(5)).map(t => t.getTime());
+  }
+  if (hours > 1 && hours < 5) {
+    if (isValue) {
+      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+    }
+
+    return domainRange.ticks(d3.timeMinute.every(10)).map(t => t.getTime());
+  }
 
   if (days < 7) {
     if (isValue) {

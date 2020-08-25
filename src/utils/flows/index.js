@@ -278,7 +278,7 @@ export function isRealtimeFlow(flow, exports) {
   return isRealtimeExport(exp);
 }
 
-export function hasBatchExport(flow, exports) {
+export function hasBatchExport(flow, exports = []) {
   const exp = getFirstExportFromFlow(flow, exports);
 
   if (isOldFlowSchema(flow)) {
