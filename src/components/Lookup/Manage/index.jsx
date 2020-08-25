@@ -14,20 +14,21 @@ import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-export default function ManageLookup(props) {
-  const {
-    onSave,
-    value = {},
-    onCancel,
-    error,
-    disabled = false,
-    resourceId,
-    resourceType,
-    flowId,
-    fieldId,
-    showDynamicLookupOnly = false,
-    options = {},
-  } = props;
+export default function ManageLookup({
+  onSave,
+  value = {},
+  onCancel,
+  error,
+  disabled = false,
+  resourceId,
+  resourceType,
+  flowId,
+  className,
+  showDynamicLookupOnly = false,
+  ...others
+}) {
+  const { extractFields, picklistOptions } = others;
+
   // to be removed after form refactor PR merges
   const [formState, setFormState] = useState({
     showFormValidationsBeforeTouch: false,
@@ -37,6 +38,7 @@ export default function ManageLookup(props) {
     resourceType,
     resourceId
   );
+
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
     selectors.getSampleData(state, {
@@ -59,7 +61,7 @@ export default function ManageLookup(props) {
     [resourceType, sampleData]
   );
   const isEdit = !!value.name;
-  const handleSubmit = formVal => {
+  const handleSubmit = useCallback(formVal => {
     let lookupObj = {};
     const lookupTmp = {};
 
@@ -69,9 +71,8 @@ export default function ManageLookup(props) {
       lookupTmp.name = shortid.generate();
     }
 
-    if (resource.adaptorType === 'NetSuiteImport') {
+    if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {
       if (formVal._mode === 'dynamic') {
-        lookupTmp.extract = formVal._extract;
         lookupTmp.recordType = formVal._recordType;
         lookupTmp.resultField = formVal._resultField;
         lookupTmp.expression = formVal._expression;
@@ -130,49 +131,38 @@ export default function ManageLookup(props) {
           break;
         default:
       }
+    }
+    lookupObj.name = formVal._name;
+    onSave(isEdit, lookupObj);
+  }, [isEdit, onSave, resource.adaptorType, value.name]);
 
-      lookupObj.name = formVal._name;
+  const fieldMeta = useMemo(() => {
+    if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {
+      const { extractFields, staticLookupCommMetaPath } = others;
+
+      return netsuiteMetadata.getLookupMetadata({
+        lookup: value,
+        connectionId,
+        staticLookupCommMetaPath,
+        extractFields,
+      });
+    } if (resource.adaptorType === 'SalesforceImport') {
+      return salesforceMetadata.getLookupMetadata({
+        lookup: value,
+        connectionId,
+        extractFields,
+        picklistOptions,
+      });
+    } if (resource.adaptorType === 'RDBMSImport') {
+      return rdbmsMetadata.getLookupMetadata({
+        lookup: value,
+        showDynamicLookupOnly,
+        sampleData: formattedSampleData,
+        connectionId,
+      });
     }
 
-    onSave(isEdit, lookupObj);
-  };
-
-  let fieldMeta;
-  const { recordType, fieldMetadata } = options;
-
-  if (resource.adaptorType === 'NetSuiteImport') {
-    fieldMeta = netsuiteMetadata.getLookupMetadata({
-      lookup: value,
-      connectionId,
-      resourceId,
-      resourceType,
-      flowId,
-      fieldMetadata,
-      fieldId,
-      recordType,
-    });
-  } else if (resource.adaptorType === 'SalesforceImport') {
-    fieldMeta = salesforceMetadata.getLookupMetadata({
-      lookup: value,
-      showDynamicLookupOnly,
-      connectionId,
-      resourceId,
-      resourceType,
-      flowId,
-      fieldMetadata,
-      fieldId,
-      recordType,
-      opts: options,
-    });
-  } else if (resource.adaptorType === 'RDBMSImport') {
-    fieldMeta = rdbmsMetadata.getLookupMetadata({
-      lookup: value,
-      showDynamicLookupOnly,
-      sampleData: formattedSampleData,
-      connectionId,
-    });
-  } else {
-    fieldMeta = defaultMetadata.getLookupMetadata({
+    return defaultMetadata.getLookupMetadata({
       lookup: value,
       showDynamicLookupOnly,
       connectionId,
@@ -180,7 +170,7 @@ export default function ManageLookup(props) {
       resourceType,
       flowId,
     });
-  }
+  }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
   const formKey = useFormInitWithPermissions({
     disabled,
@@ -196,29 +186,33 @@ export default function ManageLookup(props) {
 
   return (
     <div data-test="lookup-form">
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-      {error && (
+      <DynaForm
+        formKey={formKey}
+        fieldMeta={fieldMeta}
+        >
+        {error && (
         <div>
           <Typography color="error" variant="h5">
             {error}
           </Typography>
         </div>
-      )}
-      <DynaSubmit
-        formKey={formKey}
-        disabled={disabled}
-        showCustomFormValidations={showCustomFormValidations}
-        data-test="saveLookupForm"
-        onClick={handleSubmit}>
-        Save
-      </DynaSubmit>
-      <Button
-        data-test="cancelLookupForm"
-        onClick={onCancel}
-        variant="text"
-        color="primary">
-        Cancel
-      </Button>
+        )}
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disabled}
+          data-test="saveLookupForm"
+          showCustomFormValidations={showCustomFormValidations}
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button
+          data-test="cancelLookupForm"
+          onClick={onCancel}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </DynaForm>
     </div>
   );
 }

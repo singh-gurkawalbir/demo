@@ -13,6 +13,8 @@ export default {
   'oauth2.clientSecret': {
     type: 'text',
     label: 'Client secret',
+    description:
+        'Note: for security reasons this field must always be re-entered',
     inputType: 'password',
     defaultValue: '',
     required: true,
@@ -27,6 +29,8 @@ export default {
   'amazonmws.secretKey': {
     type: 'text',
     label: 'Secret key:',
+    description:
+        'Note: for security reasons this field must always be re-entered',
     defaultValue: '',
     required: true,
     visible: r => [r.provider, r.assistant].includes('amazonmws'),

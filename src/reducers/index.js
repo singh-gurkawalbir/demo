@@ -4901,9 +4901,13 @@ selectors.applicationType = (state, resourceType, id) => {
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
     );
   }
+  // For Data Loader cases, there is no image.
+  if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
+    return '';
+  }
 
-  if (adaptorType && adaptorType.startsWith('RDBMS')) {
-    const connection = selectors.resource(
+  if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
       state,
       'connections',
       getStagedValue('/_connectionId') || (resourceObj?._connectionId)

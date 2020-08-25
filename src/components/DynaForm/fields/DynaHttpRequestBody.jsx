@@ -1,7 +1,8 @@
 import { FormLabel } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import React, { useMemo, Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { Fragment, useMemo } from 'react';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 import { selectors } from '../../../reducers';
@@ -69,13 +70,20 @@ const DynaHttpRequestBody = props => {
   const classes = useStyles();
   const formContext = useFormContext(formKey);
   const handleOpenDrawer = usePushRightDrawer(id);
-  const contentType = options.contentType || props.contentType;
   const { merged: resourceData = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId
   );
   const { adaptorType, _connectionId: connectionId } = resourceData;
+  const connectionMediaType = useSelector(state => {
+    const connection =
+      selectors.resource(state, 'connections', connectionId) || {};
+
+    return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
+  });
+  const contentType = options.contentType || props.contentType || connectionMediaType;
+
   const formattedRule = useMemo(
     () => (Array.isArray(value) ? value[arrayIndex] : value),
     [arrayIndex, value]

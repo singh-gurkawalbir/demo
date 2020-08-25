@@ -4,12 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
-  KeyboardDateTimePicker,
+  DatePicker,
+  TimePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
-import CalendarIcon from '../../../icons/CalendarIcon';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
@@ -41,11 +41,7 @@ export default function DateTimePicker(props) {
 
     return !!(resource?._connectorId);
   });
-  const { dateFormat, timeFormat, timezone } = useSelector(state => {
-    const { dateFormat, timeFormat, timezone } = selectors.userProfilePreferencesProps(state);
-
-    return { dateFormat, timeFormat, timezone };
-  }, shallowEqual);
+  const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
 
   let userFormat;
 
@@ -59,6 +55,10 @@ export default function DateTimePicker(props) {
     userFormat = 'MM/DD/YYYY h:mm:ss a';
   }
   const displayFormat = props.format || userFormat;
+
+  const displayFormatAr = displayFormat.split(' ');
+  const finalDateFormat = displayFormatAr?.[0];
+  const finalTimeFormat = `${displayFormatAr?.[1]} ${displayFormatAr?.[2]}`;
 
   useEffect(() => {
     let formattedDate = null;
@@ -85,11 +85,13 @@ export default function DateTimePicker(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-        <KeyboardDateTimePicker
-          format={displayFormat}
+        <DatePicker
+          disabled={disabled}
+          variant="inline"
+          format={finalDateFormat}
           value={dateValue}
-          allowKeyboardControl={false}
-          inputVariant="filled"
+          label="Date"
+          onChange={setDateValue}
           onKeyDown={e => {
           // this is specifically for qa to inject their date time string
           // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -102,14 +104,27 @@ export default function DateTimePicker(props) {
 
             e.preventDefault();
           }}
-          variant="dialog"
-          invalidLabel={null}
-          invalidDateMessage={null}
-          onChange={setDateValue}
+      />
+
+        <TimePicker
           disabled={disabled}
-          clearable
-          KeyboardButtonProps={{className: classes.dynaDateCalendarBtn}}
-          keyboardIcon={<CalendarIcon />}
+          variant="inline"
+          label="Time"
+          format={finalTimeFormat}
+          value={dateValue}
+          onChange={setDateValue}
+          onKeyDown={e => {
+            // this is specifically for qa to inject their date time string
+            // they should alter the input dom to add a qa attribute prior to injection for date time
+            if (e.target.hasAttribute('qa')) return;
+
+            e.preventDefault();
+          }}
+          onKeyPress={e => {
+            if (e.target.hasAttribute('qa')) return;
+
+            e.preventDefault();
+          }}
       />
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>

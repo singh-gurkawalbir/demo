@@ -74,6 +74,9 @@ export default {
     'mongodb.ignoreExtract': {
       fieldId: 'mongodb.ignoreExtract',
     },
+    dataMappings: {
+      formId: 'dataMappings',
+    },
   },
   layout: {
     type: 'collapse',
@@ -81,7 +84,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common'],
+        fields: ['common', 'dataMappings'],
       },
       {
         collapsed: true,

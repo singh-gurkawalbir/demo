@@ -17,12 +17,12 @@ import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
-import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
 import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
+import MappingDrawer from '../../../../MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -149,8 +149,8 @@ function FlowList({ integrationId, storeId }) {
       />
       <MappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
+        // storeId={storeId}
+        // sectionId={sectionId}
       />
       <CategoryMappingDrawer
         integrationId={integrationId}
