@@ -505,6 +505,103 @@ function FlowBuilder() {
   },
   [allowSchedule, classes.actions, classes.chartsIcon, classes.divider, flowDetails, flowId, handleDrawerClick, handleExitClick, handleRunStart, integrationId, isDataLoaderFlow, isIAType, isMonitorLevelAccess, isNewFlow, isUserInErrMgtTwoDotZero]);
 
+  const pageBar = useMemo(() => (
+    <CeligoPageBar
+      title={calcPageBarTitle}
+      subtitle={calcPageBarSubtitle}
+      infoText={flow.description}>
+      {totalErrors ? (
+        <span className={classes.errorStatus}>
+          <StatusCircle variant="error" size="small" />
+          {totalErrors} errors
+        </span>
+      ) : null}
+      {pageBarChildren}
+    </CeligoPageBar>
+  ), [calcPageBarTitle, calcPageBarSubtitle, flow.description, totalErrors, classes.errorStatus, pageBarChildren]);
+
+  const pgs = useMemo(() => (
+    <div className={classes.generatorContainer}>
+      {pageGenerators.map((pg, i) => (
+        <PageGenerator
+          {...pg}
+          onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+          onErrors={handleErrors(pg._exportId)}
+          flowId={flowId}
+          integrationId={integrationId}
+          openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
+          key={
+                    pg._exportId ||
+                    pg._connectionId ||
+                    `${pg.application}${pg.webhookOnly}`
+                  }
+          index={i}
+          isViewMode={isViewMode || isFreeFlow}
+          isLast={pageGenerators.length === i + 1}
+          onMove={handleMovePG}
+                />
+      ))}
+      {!pageGenerators.length && (
+      <AppBlock
+        integrationId={integrationId}
+        className={classes.newPG}
+        isViewMode={isViewMode || isFreeFlow}
+        onBlockClick={handleAddGenerator}
+        blockType="newPG"
+                />
+      )}
+    </div>
+  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleErrors, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
+
+  const pps = useMemo(() => (
+    <div className={classes.processorContainer}>
+      {pageProcessors.map((pp, i) => (
+        <PageProcessor
+          {...pp}
+          onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+          onErrors={handleErrors(pp._importId || pp._exportId)}
+          flowId={flowId}
+          integrationId={integrationId}
+          openErrorCount={
+                    (flowErrorsMap &&
+                      flowErrorsMap[pp._importId || pp._exportId]) ||
+                    0
+                  }
+          key={
+                    pp._importId ||
+                    pp._exportId ||
+                    pp._connectionId ||
+                    `${pp.application}-${i}`
+                  }
+          index={i}
+          isViewMode={isViewMode || isFreeFlow}
+          isMonitorLevelAccess={isMonitorLevelAccess}
+          isLast={pageProcessors.length === i + 1}
+          onMove={handleMovePP}
+                />
+      ))}
+      {!pageProcessors.length && showAddPageProcessor && (
+      <AppBlock
+        className={classes.newPP}
+        integrationId={integrationId}
+        isViewMode={isViewMode || isFreeFlow}
+        onBlockClick={handleAddProcessor}
+        blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
+                />
+      )}
+      {!showAddPageProcessor &&
+                isDataLoaderFlow &&
+                pageProcessors.length === 0 && (
+                  <Typography variant="h5" className={classes.dataLoaderHelp}>
+                    You can add a destination application once you complete the
+                    configuration of your data loader.
+                  </Typography>
+      )}
+    </div>
+  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleErrors, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
 
@@ -587,19 +684,7 @@ function FlowBuilder() {
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
-
-      <CeligoPageBar
-        title={calcPageBarTitle}
-        subtitle={calcPageBarSubtitle}
-        infoText={flow.description}>
-        {totalErrors ? (
-          <span className={classes.errorStatus}>
-            <StatusCircle variant="error" size="small" />
-            {totalErrors} errors
-          </span>
-        ) : null}
-        {pageBarChildren}
-      </CeligoPageBar>
+      {pageBar}
       <div
         className={clsx(classes.canvasContainer, {
           [classes.canvasShift]: drawerOpened,
@@ -625,39 +710,7 @@ function FlowBuilder() {
                 </IconButton>
               )}
             </Typography>
-
-            <div className={classes.generatorContainer}>
-              {pageGenerators.map((pg, i) => (
-                <PageGenerator
-                  {...pg}
-                  onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-                  onErrors={handleErrors(pg._exportId)}
-                  flowId={flowId}
-                  integrationId={integrationId}
-                  openErrorCount={
-                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
-                  }
-                  key={
-                    pg._exportId ||
-                    pg._connectionId ||
-                    `${pg.application}${pg.webhookOnly}`
-                  }
-                  index={i}
-                  isViewMode={isViewMode || isFreeFlow}
-                  isLast={pageGenerators.length === i + 1}
-                  onMove={handleMovePG}
-                />
-              ))}
-              {!pageGenerators.length && (
-                <AppBlock
-                  integrationId={integrationId}
-                  className={classes.newPG}
-                  isViewMode={isViewMode || isFreeFlow}
-                  onBlockClick={handleAddGenerator}
-                  blockType="newPG"
-                />
-              )}
-            </div>
+            {pgs}
           </div>
           <div className={classes.processorRoot}>
             <Typography
@@ -678,50 +731,7 @@ function FlowBuilder() {
                 </IconButton>
               )}
             </Typography>
-            <div className={classes.processorContainer}>
-              {pageProcessors.map((pp, i) => (
-                <PageProcessor
-                  {...pp}
-                  onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-                  onErrors={handleErrors(pp._importId || pp._exportId)}
-                  flowId={flowId}
-                  integrationId={integrationId}
-                  openErrorCount={
-                    (flowErrorsMap &&
-                      flowErrorsMap[pp._importId || pp._exportId]) ||
-                    0
-                  }
-                  key={
-                    pp._importId ||
-                    pp._exportId ||
-                    pp._connectionId ||
-                    `${pp.application}-${i}`
-                  }
-                  index={i}
-                  isViewMode={isViewMode || isFreeFlow}
-                  isMonitorLevelAccess={isMonitorLevelAccess}
-                  isLast={pageProcessors.length === i + 1}
-                  onMove={handleMovePP}
-                />
-              ))}
-              {!pageProcessors.length && showAddPageProcessor && (
-                <AppBlock
-                  className={classes.newPP}
-                  integrationId={integrationId}
-                  isViewMode={isViewMode || isFreeFlow}
-                  onBlockClick={handleAddProcessor}
-                  blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
-                />
-              )}
-              {!showAddPageProcessor &&
-                isDataLoaderFlow &&
-                pageProcessors.length === 0 && (
-                  <Typography variant="h5" className={classes.dataLoaderHelp}>
-                    You can add a destination application once you complete the
-                    configuration of your data loader.
-                  </Typography>
-              )}
-            </div>
+            {pps}
           </div>
         </div>
         {bottomDrawerSize < 3 && (

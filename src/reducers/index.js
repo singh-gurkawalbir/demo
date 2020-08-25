@@ -607,6 +607,7 @@ selectors.flowDetails = (state, id) => {
 
 selectors.mkFlowDetails = () => {
   const resource = fromData.makeResourceSelector();
+  const integrationResource = fromData.makeResourceSelector();
 
   return createSelector(
     (state, id) => resource(state, 'flows', id),
@@ -615,7 +616,7 @@ selectors.mkFlowDetails = () => {
 
       if (!flow || !flow._integrationId) return null;
 
-      return resource(state, 'integrations', flow._integrationId);
+      return integrationResource(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
     (flow, integration, exports) => {

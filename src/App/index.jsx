@@ -94,21 +94,22 @@ const useSnackbarStyles = makeStyles({
 
 });
 
-function NonSigninHeaderComponents({ history }) {
+function NonSigninHeaderComponents() {
   return (
     <>
       <CeligoAppBar />
-      <AppErroredModal history={history} />
+      <AppErroredModal />
       <AlertDialog />
       <CeligoDrawer />
     </>
   );
 }
 
+const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
   <Switch>
     <Route path={getRoutePath('/signin')} component={Signin} />
-    <Route path={[getRoutePath('/*'), getRoutePath('/')]} component={PageContent} />
+    <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
 
