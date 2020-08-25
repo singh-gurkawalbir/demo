@@ -505,7 +505,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
     // }
   }
 
-  return helpUrl;
+  return `/zendesk/sso?return_to=${helpUrl}`;
 };
 
 export const getUniversityUrl = '/litmos/sso';
