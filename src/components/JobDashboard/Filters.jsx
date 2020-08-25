@@ -215,7 +215,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
-        <DateRangeSelector rangesToInclude={rangeFilters} onSave={handleDateRangeChange} />
+        <DateRangeSelector rangesToInclude={rangeFilters} onSave={handleDateRangeChange} shouldEditInput />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"

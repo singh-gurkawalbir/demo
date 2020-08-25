@@ -144,7 +144,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, rangesToInclude, onSave }) {
+export default function DateRangeSelector({ value, rangesToInclude, onSave, shouldEditInput = false }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
       startDate:
@@ -195,6 +195,7 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave }) {
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
             <DateRangePicker
+              editableDateInputs={shouldEditInput}
               staticRanges={dateRangeOptions}
               showSelectionPreview
               onChange={item => setSelectedRanges([item.selection])}
