@@ -38,7 +38,7 @@ const defineds = {
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1)),
 };
-const rangeList = [
+export const rangeList = [
   {
     label: 'Today',
     range: () => ({
@@ -110,7 +110,7 @@ const rangeList = [
     }),
   },
 ];
-const staticRangeHandler = {
+export const staticRangeHandler = {
   range: {},
   isSelected(range) {
     const definedRange = this.range();
@@ -164,6 +164,7 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave, shou
     onSave && onSave(selectedRanges);
     setAnchorEl(null);
   }, [onSave, selectedRanges]);
+
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
