@@ -190,6 +190,7 @@ export default function ProfileMenuButton() {
             className={classes.bottomActionsBtn}
             color="primary"
             href="mailto:product_feedback@celigo.com"
+            target="_blank"
             >
             Provide UX feedback
           </IconTextButton>
