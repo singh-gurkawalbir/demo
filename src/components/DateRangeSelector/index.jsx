@@ -144,7 +144,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, rangesToInclude, onSave, shouldEditInput = false }) {
+export default function DateRangeSelector({ value, onSave }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
       startDate:
@@ -169,14 +169,12 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave, shou
     setAnchorEl(null);
   }, []);
   const dateRangeOptions = useMemo(
-    () => (rangesToInclude
-      ? rangeList.filter(({label}) =>
-        rangesToInclude.includes(label))
-      : rangeList).map(rangeItem => ({
-      ...staticRangeHandler,
-      ...rangeItem,
-    })),
-    [rangesToInclude]
+    () =>
+      rangeList.map(rangeItem => ({
+        ...staticRangeHandler,
+        ...rangeItem,
+      })),
+    []
   );
 
   return (
@@ -196,7 +194,6 @@ export default function DateRangeSelector({ value, rangesToInclude, onSave, shou
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
             <DateRangePicker
-              editableDateInputs={shouldEditInput}
               staticRanges={dateRangeOptions}
               showSelectionPreview
               onChange={item => setSelectedRanges([item.selection])}
