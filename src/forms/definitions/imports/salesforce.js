@@ -201,13 +201,6 @@ export default {
       fieldId: 'salesforce.lookups',
       visible: false,
     },
-    mapping: {
-      fieldId: 'mapping',
-      refreshOptionsOnChangesTo: [
-        'salesforce.sObjectType',
-        'salesforce.lookups',
-      ],
-    },
     advancedSettings: {
       formId: 'advancedSettings',
       visibleWhenAll: [
