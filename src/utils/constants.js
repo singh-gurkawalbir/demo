@@ -390,10 +390,11 @@ export const USAGE_TIER_HOURS = {
   heavy: 4000,
   custom: 10000,
 };
+export const HELP_CENTER_BASE_URL = '/zendesk/sso?return_to=https://docs.celigo.com';
 export const SUBMIT_TICKET_URL =
-  'https://celigosuccess.zendesk.com/hc/en-us/requests/new?preview_as_role=end_user';
+  `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
-  '/zendesk/sso?return_to=https://celigosuccess.zendesk.com/hc/en-us/categories/360002687611';
+  `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AS2_URLS_STAGING = [
   {
