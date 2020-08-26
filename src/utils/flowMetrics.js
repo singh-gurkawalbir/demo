@@ -166,7 +166,18 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
+
+  /*
+    Last 1 hour: minute granularity
+    Last 4 hours: minute granularity
+    Last 1 - 4 days: hourly granularity
+    Else, daily granularity
+    flowEvents bucket -> 1 min granularity
+    flowEvents_1hr -> 1 hour granularity
+  */
   const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+
+  // If duration is more than 4 days, aggregate for 1d
   const duration = days > 4 ? '1d' : '1h';
   const aggregrate = `|> aggregateWindow(every: ${duration}, fn: sum)`;
 
@@ -198,9 +209,21 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
+
+  /*
+    Last 1 hour: minute granularity
+    Last 4 hours: minute granularity
+    Last 1 - 4 days: hourly granularity
+    Else, daily granularity
+    flowEvents bucket -> 1 min granularity
+    flowEvents_1hr -> 1 hour granularity
+  */
   const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+
+  // If duration is more than 4 days, aggregate for 1d
   const duration = days > 4 ? '1d' : '1h';
 
+  // calculate the att values from the sucess values
   const aggregrate = `|> filter(fn: (r) => (r._measurement == "s"))
     |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
     |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
