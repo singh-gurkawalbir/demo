@@ -249,7 +249,7 @@ export default function ProfileComponent() {
   return (
     <>
       <PanelHeader title="Profile" />
-      <DynaForm key={count} formState={formState} fieldMeta={fieldMeta}>
+      <DynaForm key={count} formState={formState} fieldMeta={fieldMeta} doNotDisableFields>
         <DynaSubmit
           showCustomFormValidations={showCustomFormValidations}
           onClick={submitHandler()}

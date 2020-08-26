@@ -117,6 +117,7 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     fieldMeta,
     resourceType,
     resourceId,
+    doNotDisableFields,
   } = props;
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
@@ -134,7 +135,7 @@ export default function DisabledDynaFormPerUserPermissions(props) {
   return (
     <DynaForm
       {...props}
-      disabled={disableAllFields}
+      disabled={disableAllFields && !doNotDisableFields}
       fieldMeta={updatedFieldMeta}
       // when its in view mode we disable validation before touch this ensures that there is no
       // required fields errored messages
