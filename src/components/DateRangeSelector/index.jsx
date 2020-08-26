@@ -128,7 +128,6 @@ export const staticRangeHandler = {
   range: {},
   isSelected(range) {
     const definedRange = this.range();
-
     const definedRangeDistance = moment(definedRange.endDate).diff(moment(definedRange.startDate), 'hours');
     const rangeDistance = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
