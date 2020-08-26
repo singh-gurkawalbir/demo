@@ -71,22 +71,27 @@ export default {
       type: 'text',
       visible: false,
     },
+    application: {
+      fieldId: 'application',
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: [
-      'name',
-      'http.auth.oauth.username',
-      'http.auth.oauth.password',
-      'http.auth.token.token',
-      'http.auth.token.refreshToken',
-      'http.baseURI',
-      'http.unencrypted.edition',
-      'http.unencrypted.refreshTokenExpiresAt',
-    ],
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'Advanced Settings', fields: ['httpAdvanced'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: [
+          'http.auth.oauth.username',
+          'http.auth.oauth.password',
+          'http.auth.token.token',
+          'http.auth.token.refreshToken',
+          'http.baseURI',
+          'http.unencrypted.edition',
+          'http.unencrypted.refreshTokenExpiresAt',
+        ] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
 };

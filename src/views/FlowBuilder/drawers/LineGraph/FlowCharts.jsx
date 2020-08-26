@@ -18,9 +18,11 @@ import PanelHeader from '../../../../components/PanelHeader';
 import {
   getLabel,
   getAxisLabel,
+  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
+  getAxisLabelPosition,
   getLegend,
 } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
@@ -241,6 +243,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             scale="time"
             type="number"
             ticks={ticks}
+            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -249,8 +252,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: 'insideLeft',
-              textAnchor: 'middle',
+              position: getAxisLabelPosition(id),
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -300,12 +302,12 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error Occured</Typography>;
+    return <Typography>Error occured</Typography>;
   }
 
   return (
     <div className={classes.root}>
-      {['success', 'error', 'ignored', 'averageTimeTaken'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

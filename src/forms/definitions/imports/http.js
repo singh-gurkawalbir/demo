@@ -334,6 +334,7 @@ export default {
 
   fieldMap: {
     common: { formId: 'common' },
+    dataMappings: { formId: 'dataMappings' },
     formView: { fieldId: 'formView' },
     inputMode: {
       id: 'inputMode',
@@ -1394,7 +1395,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode', 'formView'],
+        fields: ['common', 'inputMode', 'dataMappings', 'formView'],
       },
       {
         collapsed: true,
