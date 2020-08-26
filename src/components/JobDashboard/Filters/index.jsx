@@ -9,16 +9,16 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
-import { selectors } from '../../reducers';
-import actions from '../../actions';
-import ArrowLeftIcon from '../icons/ArrowLeftIcon';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
-import RefreshIcon from '../icons/RefreshIcon';
-import RunFlowButton from '../RunFlowButton';
-import CeligoSelect from '../CeligoSelect';
-import IconTextButton from '../IconTextButton';
-import FlowSelector from './FlowSelector';
-import DateRangeSelector from '../DateRangeSelector';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../icons/ArrowRightIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
+import RunFlowButton from '../../RunFlowButton';
+import CeligoSelect from '../../CeligoSelect';
+import IconTextButton from '../../IconTextButton';
+import FlowSelector from '../FlowSelector';
+import DateRangeSelector from './DateRangeFilter';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,9 +79,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
-const rangeFilters = [
-  'Today', 'Yesterday', 'Last 7 Days', 'Last 15 Days', 'Last 30 Days',
-];
 
 function Filters({
   integrationId,
@@ -103,6 +100,7 @@ function Filters({
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
+    dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
   // #endregion
   const { rowsPerPage } = paging;
@@ -215,7 +213,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
-        <DateRangeSelector rangesToInclude={rangeFilters} onSave={handleDateRangeChange} shouldEditInput />
+        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"

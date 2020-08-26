@@ -820,12 +820,6 @@ export default {
     type: 'text',
     label: 'Base URI',
     required: true,
-    requiredWhen: [
-      {
-        field: 'http.auth.type',
-        is: ['cookie'],
-      },
-    ],
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
