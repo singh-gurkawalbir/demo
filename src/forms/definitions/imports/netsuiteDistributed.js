@@ -96,6 +96,7 @@ export default {
         },
       ],
     },
+    dataMappings: { formId: 'dataMappings' },
     idLockTemplate: {
       fieldId: 'idLockTemplate',
       visibleWhen: [
@@ -130,7 +131,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode'],
+        fields: ['common', 'inputMode', 'dataMappings'],
       },
       {
         collapsed: true,

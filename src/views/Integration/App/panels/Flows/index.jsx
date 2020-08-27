@@ -17,9 +17,9 @@ import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
-import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
+import MappingDrawer from '../../../../MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -114,8 +114,8 @@ function FlowList({ integrationId, storeId }) {
       />
       <MappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
+        // storeId={storeId}
+        // sectionId={sectionId}
       />
       <CategoryMappingDrawer
         integrationId={integrationId}

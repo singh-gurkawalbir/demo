@@ -54,6 +54,10 @@ export default {
 
     if (newValues['/rest/authType'] !== 'token') {
       newValues['/rest/bearerToken'] = undefined;
+      newValues['/rest/authScheme'] = undefined;
+      newValues['/rest/authHeader'] = undefined;
+      newValues['/rest/tokenLocation'] = undefined;
+      newValues['/rest/tokenParam'] = undefined;
     }
 
     if (newValues['/rest/authType'] !== 'cookie') {
@@ -87,17 +91,14 @@ export default {
     'rest.authType': { fieldId: 'rest.authType', required: true },
     'rest.headers': {
       fieldId: 'rest.headers',
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.baseURI': {
       fieldId: 'rest.baseURI',
       required: true,
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.mediaType': {
       fieldId: 'rest.mediaType',
       required: true,
-      visibleWhenAll: [{ field: 'rest.authType', isNot: [''] }],
     },
     'rest.encrypted': {
       fieldId: 'rest.encrypted',

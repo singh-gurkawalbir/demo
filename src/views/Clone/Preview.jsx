@@ -122,16 +122,9 @@ export default function ClonePreview(props) {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);
 
-    if (
-      selectedAccount &&
-      (selectedAccount.hasSandbox || selectedAccount.hasConnectorSandbox)
-    ) {
-      return true;
-    }
-
-    return false;
+    return selectedAccount?.hasSandbox;
   });
-  const components = useSelector(state =>
+  const { components } = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
   );
   const columns = [
@@ -433,6 +426,15 @@ export default function ClonePreview(props) {
       dispatch(actions.clone.createComponents(resourceType, resourceId));
     }
   };
+
+  if (cloneRequested) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
 
   return (
     <LoadResources resources="flows,exports,imports,integrations" required>

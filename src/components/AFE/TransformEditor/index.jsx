@@ -77,7 +77,7 @@ export default function TransformEditor(props) {
   const parsedData = result && result.data && result.data[0];
 
   return (
-    <PanelGrid key={editorId} className={classes[`${layout}Template`]} height="calc(100vh - 200px)">
+    <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
         <PanelTitle title="Transform rules" />
         <TransformPanel

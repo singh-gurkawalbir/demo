@@ -1,6 +1,7 @@
 import { Button } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import moment from 'moment';
 import {
   addDays,
   addHours,
@@ -10,7 +11,6 @@ import {
   endOfWeek,
   startOfDay,
   startOfMonth,
-  isSameDay,
   startOfWeek,
   addYears,
 } from 'date-fns';
@@ -38,7 +38,21 @@ const defineds = {
   startOfLastMonth: startOfMonth(addMonths(new Date(), -1)),
   endOfLastMonth: endOfMonth(addMonths(new Date(), -1)),
 };
-const rangeList = [
+export const rangeList = [
+  {
+    label: 'Last 1 hour',
+    range: () => ({
+      startDate: new moment().subtract(1, 'hours').toDate(),
+      endDate: new Date(),
+    }),
+  },
+  {
+    label: 'Last 4 hours',
+    range: () => ({
+      startDate: new moment().subtract(4, 'hours').toDate(),
+      endDate: new Date(),
+    }),
+  },
   {
     label: 'Today',
     range: () => ({
@@ -64,21 +78,21 @@ const rangeList = [
     label: 'Last 7 Days',
     range: () => ({
       startDate: defineds.startOfLastSevenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 15 Days',
     range: () => ({
       startDate: defineds.startOfLastFifteenDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
     label: 'Last 30 Days',
     range: () => ({
       startDate: defineds.endOfLastThirtyDays,
-      endDate: defineds.endOfToday,
+      endDate: new Date(),
     }),
   },
   {
@@ -110,15 +124,14 @@ const rangeList = [
     }),
   },
 ];
-const staticRangeHandler = {
+export const staticRangeHandler = {
   range: {},
   isSelected(range) {
     const definedRange = this.range();
+    const definedRangeDistance = moment(definedRange.endDate).diff(moment(definedRange.startDate), 'hours');
+    const rangeDistance = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
-    return (
-      isSameDay(range.startDate, definedRange.startDate) &&
-      isSameDay(range.endDate, definedRange.endDate)
-    );
+    return definedRangeDistance === rangeDistance;
   },
 };
 const useStyles = makeStyles(theme => ({
@@ -132,6 +145,12 @@ const useStyles = makeStyles(theme => ({
   dateRangePickerWrapper: {
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(2),
+    background: theme.palette.background.default,
+  },
+  actions: {
+    paddingBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
   },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
@@ -164,6 +183,7 @@ export default function DateRangeSelector({ value, onSave }) {
     onSave && onSave(selectedRanges);
     setAnchorEl(null);
   }, [onSave, selectedRanges]);
+
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
@@ -206,7 +226,7 @@ export default function DateRangeSelector({ value, onSave }) {
               inputRanges={[]}
               showPreview={false}
             />
-            <div>
+            <div className={classes.actions}>
               <Button variant="outlined" color="primary" onClick={handleSave}>
                 Apply
               </Button>

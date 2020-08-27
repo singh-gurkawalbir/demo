@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import getRoutePath from './routePaths';
 import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -200,7 +200,7 @@ export const getApiUrl = () => getDomainUrl().replace('://', '://api.');
 
 export const getWebhookUrl = (options = {}, resourceId) => {
   let whURL = '';
-  const { webHookProvider, webHookToken } = options;
+  const { webHookProvider, webHookToken, webHookVerify} = options;
 
   if (resourceId) {
     whURL = `${getApiUrl()}/v1/exports/`;
@@ -225,7 +225,7 @@ export const getWebhookUrl = (options = {}, resourceId) => {
         'sapariba',
       ].indexOf(webHookProvider) > -1
     ) {
-      if (webHookToken) whURL += `/${webHookToken}`;
+      if (webHookToken && webHookVerify !== 'token') whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';
@@ -388,7 +388,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
   const domain = getDomain();
   let toReturn = false;
   let filteredConnectors = [];
-  const supportBaseUrl = 'https://celigosuccess.zendesk.com/hc/en-us/categories/';
+  const supportBaseUrl = `${HELP_CENTER_BASE_URL}/hc/en-us/categories/`;
   let connectorToCategoryMap = {};
 
   if (domain === 'localhost.io') {
@@ -466,7 +466,7 @@ export const getHelpUrlForConnector = (_connectorId, marketplaceConnectors) => {
     if (connectorToCategoryMap[_connectorId]) {
       if (connectorToCategoryMap[_connectorId] === '115000327151') {
         toReturn =
-          'https://celigosuccess.zendesk.com/hc/en-us/sections/115000327151';
+          `${HELP_CENTER_BASE_URL}/hc/en-us/sections/115000327151`;
       } else {
         toReturn = supportBaseUrl + connectorToCategoryMap[_connectorId];
       }
@@ -480,7 +480,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   const domainUrl = getDomainUrl();
   const { href } = window.location;
   let connectorId;
-  let helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us'; // platform help url
+  let helpUrl = `${HELP_CENTER_BASE_URL}/hc/en-us`; // platform help url
   const newurl = href.replace(`${domainUrl}/`, '').split('/');
   let integrationId;
 
@@ -498,10 +498,10 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
     }
     // Link https://celigosuccess.zendesk.com/hc/en-us/categories/203820768 seems to be broken recently.So we set https://celigosuccess.zendesk.com/hc/en-us as a default url in integration context.
     // else if (connectorId) {
-    //   helpUrl = 'https://celigosuccess.zendesk.com/hc/en-us';
+    //   helpUrl = `${HELP_CENTER_BASE_URL}/hc/en-us`;
     // } else {
     //   helpUrl =
-    //     'https://celigosuccess.zendesk.com/hc/en-us/categories/203820768';
+    //     `${HELP_CENTER_BASE_URL}/hc/en-us/categories/203820768`;
     // }
   }
 

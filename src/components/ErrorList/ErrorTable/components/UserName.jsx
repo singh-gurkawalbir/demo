@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectors } from '../../../reducers';
+import { selectors } from '../../../../reducers';
 
 export default function UserName({ userId }) {
   // TODO @Raghu: Add selector to get user name
@@ -17,7 +17,7 @@ export default function UserName({ userId }) {
   });
 
   if (userId === 'autopilot') {
-    return 'Auto pilot';
+    return 'Autopilot';
   }
 
   return <div> {userName || userId}</div>;

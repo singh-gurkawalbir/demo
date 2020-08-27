@@ -20,7 +20,6 @@ export default {
     const {lookupName, generate} = value;
     const {_connectionId: connectionId, _id: resourceId } = importResource;
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
-    const isGroupedSampleData = Array.isArray(extractFields);
     const selectedGenerateObj =
       generateFields && generateFields.find(field => field.id === generate);
     let picklistOptions = [];
@@ -115,7 +114,6 @@ export default {
           ],
           value: lookup.whereClause,
           data: extractFields,
-          opts: {isGroupedSampleData},
         },
         'lookup.whereClauseText': {
           id: 'lookup.whereClauseText',
@@ -138,7 +136,6 @@ export default {
           id: 'lookup.resultField',
           name: 'resultField',
           type: 'refreshableselect',
-          // Todo (Aditya): label is needed
           label: 'Value field',
           filterKey: 'salesforce-recordType',
           savedSObjectType: lookup.sObjectType,
@@ -167,7 +164,7 @@ export default {
               export: key,
               import: lookup.map[key],
             })),
-          valueOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
+          valueOptions: picklistOptions?.length ? picklistOptions : undefined,
           map: lookup.map,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
@@ -391,21 +388,14 @@ export default {
             },
           ],
         },
-        lookups: {
-          name: 'lookups',
-          id: 'lookups',
-          fieldId: 'lookups',
-          visible: false,
-          defaultValue: lookups,
-        },
         'conditional.lookupName': {
           id: 'conditional.lookupName',
           name: 'conditionalLookupName',
-          type: 'selectlookup',
+          type: 'selectconditionallookup',
+          picklistOptions: picklistOptions && picklistOptions.length ? picklistOptions : undefined,
+          extractFields,
           flowId,
-          resourceId,
-          importType: 'salesforce',
-          refreshOptionsOnChangesTo: ['lookups'],
+          importId: resourceId,
           label: 'Lookup name:',
           defaultValue: value.conditional && value.conditional.lookupName,
           visibleWhen: [
@@ -445,7 +435,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['lookups', 'conditional.when', 'conditional.lookupName'],
+            fields: ['conditional.when', 'conditional.lookupName'],
           },
         ],
       },
@@ -513,19 +503,6 @@ export default {
           return {
             disableFetch: !sObjectType,
             commMetaPath: `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectTypeField.value}`,
-          };
-        } else if (fieldId === 'conditional.lookupName') {
-          const lookupField = fields.find(field => field.fieldId === 'lookups');
-
-          return {
-            lookups: {
-              fieldId: 'lookups',
-              data:
-                (lookupField &&
-                  Array.isArray(lookupField.value) &&
-                  lookupField.value) ||
-                [],
-            },
           };
         }
 

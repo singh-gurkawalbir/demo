@@ -5,11 +5,12 @@ const defaultObject = {};
 
 export default (
   state = {
+    retryStatus: {},
     retryObjects: {},
   },
   action
 ) => {
-  const { type, retryData, retryId, error } = action;
+  const { type, retryData, retryId, error, flowId, resourceId, status } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -24,6 +25,17 @@ export default (
         draft.retryObjects[retryId].status = 'error';
         draft.retryObjects[retryId].data = error;
         break;
+      case actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST:
+        if (!draft.retryStatus[flowId]) {
+          draft.retryStatus[flowId] = {};
+        }
+        break;
+      case actionTypes.ERROR_MANAGER.RETRY_STATUS.RECEIVED:
+        draft.retryStatus[flowId][resourceId] = status;
+        break;
+      case actionTypes.ERROR_MANAGER.RETRY_STATUS.CLEAR:
+        draft.retryStatus[flowId] = {};
+        break;
       default:
     }
   });
@@ -32,4 +44,8 @@ export default (
 export const selectors = {};
 
 selectors.retryDataContext = (state, retryId) =>
-  (state && state.retryObjects && state.retryObjects[retryId]) || defaultObject;
+  (state.retryObjects?.[retryId]) || defaultObject;
+
+selectors.retryStatus = (state, flowId, resourceId) =>
+  state.retryStatus?.[flowId]?.[resourceId];
+

@@ -1,38 +1,82 @@
 export default {
-  preSave: formValues => ({
-    ...formValues,
-    '/type': 'http',
-    '/assistant': 'myobadvanced',
-    '/http/auth/type': 'cookie',
-    '/http/mediaType': 'json',
-    '/http/baseURI': `https://${formValues['/instanceURI']}/entity/${
-      formValues['/http/unencrypted/endpointName']
-    }/${formValues['/http/unencrypted/endpointVersion']}`,
-    '/http/ping/method': 'GET',
-    '/http/auth/cookie/method': 'POST',
-    '/http/auth/cookie/successStatusCode': '204',
-    '/http/ping/relativeURI': '/Customer',
-    '/http/auth/cookie/uri': `https://${
-      formValues['/instanceURI']
-    }/entity/auth/login`,
-    '/http/auth/cookie/body': `{"name": "${
-      formValues['/http/unencrypted/username']
-    }","password": "${formValues['/http/encrypted/password']}","company": "${
-      formValues['/http/unencrypted/company']
-    }","locale":"${
-      formValues['/http/unencrypted/locale']
-    }"}`,
-    '/http/encrypted/cookieString': '',
-    '/http/auth/token/token': '',
-    '/http/headers': [
-      {
-        name: 'Content-Type',
-        value: 'application/json',
-      },
-    ],
-  }),
+  preSave: formValues => {
+    const retValues = { ...formValues };
+
+    if (retValues['/http/auth/type'] === 'cookie') {
+      retValues['/http/baseURI'] = `${formValues['/instanceURI']}/entity/${
+        formValues['/http/unencrypted/endpointName']
+      }/${formValues['/http/unencrypted/endpointVersion']}`;
+      retValues['/http/auth/cookie/method'] = 'POST';
+      retValues['/http/auth/cookie/successStatusCode'] = 204;
+      retValues['/http/ping/method'] = 'GET';
+      retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
+      retValues['/http/auth/cookie/uri'] = `${
+        formValues['/instanceURI']
+      }/entity/auth/login`;
+      retValues['/http/auth/cookie/body'] = `{"name": "${
+        formValues['/http/unencrypted/username']
+      }","password": "${formValues['/http/encrypted/password']}","company": "${
+        formValues['/http/unencrypted/company']
+      }"}`;
+      retValues['/http/encrypted/cookieString'] = '';
+      retValues['/http/auth/token/token'] = '';
+      delete retValues['/http/auth/oauth/authURI'];
+      delete retValues['/http/auth/oauth/tokenURI'];
+      delete retValues['/http/auth/oauth/scopeDelimiter'];
+      delete retValues['/http/auth/oauth/scope'];
+      delete retValues['/http/auth/oauth/callbackURL'];
+      delete retValues['/http/_iClientId'];
+      retValues['/http/auth/oauth'] = undefined;
+    } else {
+      retValues['/http/baseURI'] = `${
+        formValues['/oauth/instanceURI']
+      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
+        formValues['/http/unencrypted/endpointVersion']
+      }`;
+      retValues['/http/auth/oauth/authURI'] = `${
+        formValues['/oauth/instanceURI']
+      }/AcumaticaERP/identity/connect/authorize`;
+      retValues['/http/auth/oauth/tokenURI'] = `${
+        formValues['/oauth/instanceURI']
+      }/AcumaticaERP/identity/connect/token`;
+      retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
+      delete retValues['/http/auth/cookie/method'];
+      delete retValues['/http/auth/cookie/successStatusCode'];
+      delete retValues['/http/auth/cookie/uri'];
+      delete retValues['/http/auth/cookie/body'];
+      delete retValues['/http/encrypted/cookieString'];
+      delete retValues['/instanceURI'];
+      delete retValues['/http/unencrypted/username'];
+      delete retValues['/http/unencrypted/password'];
+      delete retValues['/http/encrypted/cookieString'];
+      delete retValues['/http/unencrypted/company'];
+      retValues['/http/auth/cookie'] = undefined;
+    }
+
+    return {
+      ...retValues,
+      '/type': 'http',
+      '/assistant': 'myobadvanced',
+      '/http/mediaType': 'json',
+    };
+  },
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.auth.type': {
+      id: 'http.auth.type',
+      required: true,
+      type: 'select',
+      label: 'Authentication type',
+      helpKey: 'myobadvanced.connection.http.auth.type',
+      options: [
+        {
+          items: [
+            { label: 'Cookie', value: 'cookie' },
+            { label: 'OAuth 2.0', value: 'oauth' },
+          ],
+        },
+      ],
+    },
     instanceURI: {
       id: 'instanceURI',
       type: 'text',
@@ -40,6 +84,7 @@ export default {
       endAdornment: '/entity',
       label: 'Instance URI',
       required: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.instanceURI',
       validWhen: {
         matchesRegEx: {
@@ -59,12 +104,34 @@ export default {
         return subdomain;
       },
     },
+    'oauth.instanceURI': {
+      id: 'oauth.instanceURI',
+      type: 'text',
+      startAdornment: 'https://',
+      endAdornment: '/entity',
+      label: 'Instance URI',
+      required: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+      helpKey: 'myobadvanced.connection.instanceURI',
+      defaultValue: r => {
+        const baseUri = r?.http?.baseURI;
+        const subdomain =
+          baseUri &&
+          baseUri.substring(
+            baseUri.indexOf('https://') + 8,
+            baseUri.indexOf('/entity')
+          );
+
+        return subdomain;
+      },
+    },
     'http.unencrypted.endpointName': {
       id: 'http.unencrypted.endpointName',
       type: 'text',
       helpKey: 'myobadvanced.connection.http.unencrypted.endpointName',
       label: 'Endpoint name',
       required: true,
+      visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r?.http?.unencrypted?.endpointName) ||
         'Default',
@@ -75,6 +142,7 @@ export default {
       helpKey: 'myobadvanced.connection.http.unencrypted.endpointVersion',
       label: 'Endpoint version',
       required: true,
+      visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
         (r?.http?.unencrypted?.endpointVersion) ||
         '18.200.001',
@@ -84,6 +152,7 @@ export default {
       type: 'text',
       label: 'Username',
       required: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {
@@ -92,6 +161,7 @@ export default {
       inputType: 'password',
       label: 'Password',
       required: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.encrypted.password',
     },
     'http.unencrypted.company': {
@@ -99,6 +169,7 @@ export default {
       type: 'text',
       label: 'Company',
       defaultValue: '',
+      visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'myobadvanced.connection.http.unencrypted.company',
     },
     'http.unencrypted.locale': {
@@ -107,10 +178,19 @@ export default {
       label: 'Locale',
       helpKey: 'myobadvanced.connection.http.unencrypted.locale',
     },
+    'http.auth.oauth.scope': {
+      fieldId: 'http.auth.oauth.scope',
+      scopes: ['api', 'offline_access', 'api:concurrent_access'],
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    genericOauthConnector: {
+      formId: 'genericOauthConnector',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    httpAdvanced: { formId: 'httpAdvanced' },
     application: {
       fieldId: 'application',
     },
-    httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
     type: 'collapse',
@@ -119,14 +199,70 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: [
+          'http.auth.type',
           'instanceURI',
+          'oauth.instanceURI',
           'http.unencrypted.endpointName',
           'http.unencrypted.endpointVersion',
           'http.unencrypted.username',
           'http.encrypted.password',
           'http.unencrypted.company',
-          'http.unencrypted.locale'] },
+          'http.unencrypted.locale',
+          'http.auth.oauth.scope',
+          'genericOauthConnector'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
+  actions: [
+    {
+      id: 'save',
+      label: 'Save',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'saveandclose',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+        {
+          field: 'http.auth.type',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'oauth',
+      label: 'Save & authorize',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'cancel',
+    },
+    {
+      id: 'test',
+      mode: 'secondary',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['cookie'],
+        },
+      ],
+    },
+  ],
 };

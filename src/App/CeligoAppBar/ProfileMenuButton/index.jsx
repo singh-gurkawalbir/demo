@@ -184,15 +184,18 @@ export default function ProfileMenuButton() {
         </div>
         <div className={classes.bottomActions}>
           <IconTextButton
+            data-test="uxFeedback"
             component="a"
             variant="text"
             className={classes.bottomActionsBtn}
             color="primary"
             href="mailto:product_feedback@celigo.com"
+            target="_blank"
             >
             Provide UX feedback
           </IconTextButton>
           <IconTextButton
+            data-test="switchLegacy"
             component="a"
             variant="text"
             color="primary"
