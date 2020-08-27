@@ -122,6 +122,13 @@ export default {
     'edix12.format': {
       fieldId: 'edix12.format',
     },
+    outputMode: {
+      id: 'outputMode',
+      type: 'text',
+      label: 'Parse files being transferred',
+      defaultValue: 'records',
+      visible: false,
+    },
     'file.type': { fieldId: 'file.type' },
     'file.csv': { fieldId: 'file.csv' },
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
@@ -162,6 +169,7 @@ export default {
             label: 'How would you like to parse files?',
             type: 'indent',
             fields: [
+              'outputMode',
               'file.type',
               'file.xml.resourcePath',
               'file.json.resourcePath',

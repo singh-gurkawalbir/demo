@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import TimeAgo from 'react-timeago';
 import { Tooltip } from '@material-ui/core';
@@ -13,22 +13,13 @@ const formatter = (value, unit, suffix, epochSeconds, nextFormatter) => {
 };
 
 export default function CeligoTimeAgo(props) {
-  const { dateFormat, timeFormat, timezone } = useSelector(state => {
-    const { dateFormat, timeFormat, timezone } = selectors.userProfilePreferencesProps(state);
+  const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
 
-    return { dateFormat, timeFormat, timezone };
-  }, shallowEqual);
+  const lastModifiedInUserFormat = useMemo(() => props.date ? convertUtcToTimezone(props.date, dateFormat, timeFormat, timezone) : '', [dateFormat, timeFormat, timezone, props.date]);
 
   if (!props.date) {
     return null;
   }
-
-  const lastModifiedInUserFormat = convertUtcToTimezone(
-    props.date,
-    dateFormat,
-    timeFormat,
-    timezone
-  );
 
   return (
     <Tooltip title={lastModifiedInUserFormat}>

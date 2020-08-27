@@ -14,14 +14,6 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (r._connectorId) {
-        // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
-        expression.push({_connectorId: r._connectorId});
-      } else {
-        // For DIY connection, borrowconcurrency from other diy integrations.
-        expression.push({ _connectorId: { $exists: false } });
-      }
-
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else {
@@ -1257,11 +1249,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'Non-standard API rate limiter',
+    label: 'Nonstandard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate limit errors',
+    label: 'HTTP status code for rate-limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1270,16 +1262,16 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate limit errors in HTTP response body',
+    label: 'Path to rate-limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Rate limit error values',
+    label: 'Rate-limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Wait time in between HTTP requests',
+    label: 'Wait time between HTTP requests',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1832,7 +1824,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate limit errors',
+    label: 'HTTP status code for rate-limit errors',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1847,7 +1839,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate limit errors in HTTP response body',
+    label: 'Path to rate-limit errors in HTTP response body',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1864,11 +1856,11 @@ export default {
         is: [true],
       },
     ],
-    label: 'Rate limit error values',
+    label: 'Rate-limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
-    label: 'Wait time in between HTTP requests',
+    label: 'Wait time between HTTP requests',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',

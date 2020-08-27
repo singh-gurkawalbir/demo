@@ -106,6 +106,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     remount: count,
+    skipMonitorLevelAccessCheck: true,
   });
 
   return (

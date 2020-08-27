@@ -71,6 +71,7 @@ export default {
     exportPanel: {
       fieldId: 'exportPanel',
     },
+    apiIdentifier: { fieldId: 'apiIdentifier' },
   },
   layout: {
     type: 'column',
@@ -92,7 +93,7 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: ['pageSize', 'dataURITemplate', 'skipRetries'],
+            fields: ['pageSize', 'dataURITemplate', 'skipRetries', 'apiIdentifier'],
           },
         ],
       },

@@ -22,6 +22,7 @@ import {
   getXAxisFormat,
   getTicks,
   getLineColor,
+  getAxisLabelPosition,
   getLegend,
 } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
@@ -251,7 +252,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: 'inside',
+              position: getAxisLabelPosition(id),
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -306,7 +307,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   return (
     <div className={classes.root}>
-      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
+      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

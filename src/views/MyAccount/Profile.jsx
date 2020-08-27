@@ -256,6 +256,7 @@ export default function ProfileComponent() {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     remount: count,
+    skipMonitorLevelAccessCheck: true,
     ...formState,
   });
 

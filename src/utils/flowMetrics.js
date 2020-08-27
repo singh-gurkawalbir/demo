@@ -59,18 +59,10 @@ export const getTicks = (domainRange, range, isValue) => {
     return domainRange.ticks(d3.timeMinute.every(10)).map(t => t.getTime());
   }
 
-  if (days < 7) {
-    if (isValue) {
-      ticks = domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
-    } else {
-      ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
-    }
+  if (days < 5) {
+    ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
   } else if (days < 180) {
-    if (isValue) {
-      ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
-    } else {
-      ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
-    }
+    ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
   } else {
     ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
   }
@@ -173,18 +165,80 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   }
 
   const days = moment(end).diff(moment(start), 'days');
-  const bucket = days > 7 ? 'flowEvents_1hr' : 'flowEvents';
-  let aggregrate = '';
+  const hours = moment(end).diff(moment(start), 'hours');
 
-  if (days > 180) {
-    aggregrate = '|> aggregateWindow(every: 1d, fn: mean)';
+  /*
+    Last 1 hour: minute granularity
+    Last 4 hours: minute granularity
+    Last 1 - 4 days: hourly granularity
+    Else, daily granularity
+    flowEvents bucket -> 1 min granularity
+    flowEvents_1hr -> 1 hour granularity
+  */
+  const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+
+  // If duration is more than 4 days, aggregate for 1d
+  const duration = days > 4 ? '1d' : '1h';
+  const aggregrate = `|> aggregateWindow(every: ${duration}, fn: sum)`;
+
+  return `from(bucket: "${bucket}")
+            |> range(start: ${start}, stop: ${end})
+            |> filter(fn: (r) => r.u == "${userId}")
+            |> filter(fn: (r) => r.f == "${flowId}")
+            |> filter(fn: (r) => r._field != "att")
+            ${days > 4 ? aggregrate : ''}
+            |> drop(columns: ["_start", "_stop"])`;
+};
+
+export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
+  const { range = {} } = filters;
+  let start = '-1d';
+  let end = '-1s';
+
+  if (isDate(range.startDate)) {
+    start = range.startDate.toISOString();
+  } else if (range.startDate) {
+    start = range.startDate;
   }
 
-  return `from(bucket: "${bucket}") 
-            |> range(start: ${start}, stop: ${end}) 
-            |> filter(fn: (r) => r.u == "${userId}") 
+  if (isDate(range.endDate)) {
+    end = range.endDate.toISOString();
+  } else if (range.endDate) {
+    end = range.endDate;
+  }
+
+  const days = moment(end).diff(moment(start), 'days');
+  const hours = moment(end).diff(moment(start), 'hours');
+
+  /*
+    Last 1 hour: minute granularity
+    Last 4 hours: minute granularity
+    Last 1 - 4 days: hourly granularity
+    Else, daily granularity
+    flowEvents bucket -> 1 min granularity
+    flowEvents_1hr -> 1 hour granularity
+  */
+  const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+
+  // If duration is more than 4 days, aggregate for 1d
+  const duration = days > 4 ? '1d' : '1h';
+
+  // calculate the att values from the sucess values
+  const aggregrate = `|> filter(fn: (r) => (r._measurement == "s"))
+    |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
+    |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
+      (tables
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c, attph: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)})
+      )
+    |> drop(columns: ["tc", "tt"])
+    |> set(key: "_field", value: outputField)
+    |> rename(columns: {attph: "_value"})), createEmpty: false)`;
+
+  return `from(bucket: "${bucket}")
+            |> range(start: ${start}, stop: ${end})
+            |> filter(fn: (r) => r.u == "${userId}")
             |> filter(fn: (r) => r.f == "${flowId}")
-            ${aggregrate}
+            ${days > 4 ? aggregrate : ''}
             |> drop(columns: ["_start", "_stop"])`;
 };
 
@@ -214,6 +268,8 @@ export const getAxisLabel = key => {
   }
 };
 
+export const getAxisLabelPosition = id => id === 'averageTimeTaken' ? 'insideBottomLeft' : 'insideLeft';
+
 function convertToFullText(text) {
   switch (text) {
     case 's':
@@ -240,13 +296,13 @@ export const getFlowMetrics = (metrics, measurement) => {
 };
 
 export const parseFlowMetricsJson = response => {
-  if (!response || !response.data || !response.data.length) {
+  if (!response || !response.length) {
     return [];
   }
 
   const metrics = {};
 
-  response.data
+  response
     .map(item => ({
       time: item._time,
       timeInMills: new Date(item._time).getTime(),

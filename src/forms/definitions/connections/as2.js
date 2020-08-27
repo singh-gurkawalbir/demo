@@ -1,5 +1,6 @@
 import React from 'react';
 import { isNewId } from '../../../utils/resource';
+import { HELP_CENTER_BASE_URL } from '../../../utils/constants';
 
 export default {
   preSave: formValues => {
@@ -70,8 +71,8 @@ export default {
           <a
             // eslint-disable-next-line react/jsx-no-target-blank
             target="_blank"
-            href="https://celigosuccess.zendesk.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs">
-            here
+            href={`${HELP_CENTER_BASE_URL}/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs`}>
+            here1
           </a>{' '}
           to see the list of IP Addresses
         </span>
@@ -320,7 +321,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Non-standard API rate limiter',
+        label: 'Nonstandard API rate limiter',
         fields: [
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',

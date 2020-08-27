@@ -1380,7 +1380,7 @@ const mapping = {
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
-  save: context => action(actionTypes.MAPPING.SAVE, { context }),
+  save: () => action(actionTypes.MAPPING.SAVE),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),

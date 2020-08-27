@@ -19,6 +19,21 @@ export default {
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
+  hasAccess: ({ state, rowData, resourceType }) => {
+    const { _integrationId } = rowData;
+
+    // only check permissions for integration flows as only those can be shared
+    if (resourceType !== 'flows' || !_integrationId) { return true; }
+
+    const canDelete = selectors.resourcePermissions(
+      state,
+      'integrations',
+      _integrationId,
+      'flows'
+    ).delete;
+
+    return canDelete;
+  },
   disabledActionText: ({rowData, resourceType}) => {
     if (resourceType === 'accesstokens' && !rowData.revoked) {
       return 'To delete this API token you need to revoke it first.';
