@@ -5,22 +5,20 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import {
   getFlowMetricsQuery,
+  getFlowMetricsAttQuery,
   parseFlowMetricsJson,
 } from '../../utils/flowMetrics';
 import { invokeProcessor } from '../editor';
 
-export function* requestFlowMetrics({ flowId, filters }) {
+function* requestMetric({query}) {
   let csvResponse;
   const path = '/stats/tsdb';
-  const user = yield select(selectors.userProfile);
-  const query = getFlowMetricsQuery(flowId, user._id, filters);
-  const body = { query };
 
   try {
     csvResponse = yield call(apiCallWithRetry, {
       path,
       opts: {
-        body,
+        body: {query},
         method: 'POST',
       },
       message: 'Loading',
@@ -40,10 +38,34 @@ export function* requestFlowMetrics({ flowId, filters }) {
           options: { includeEmptyValues: true },
         },
       });
-      const parsedJson = parseFlowMetricsJson(json);
 
-      yield put(actions.flowMetrics.received(flowId, parsedJson));
+      return json;
     }
+  } catch (e) {
+    return undefined;
+  }
+}
+
+export function* requestFlowMetrics({ flowId, filters }) {
+  const user = yield select(selectors.userProfile);
+  const seiQuery = getFlowMetricsQuery(flowId, user._id, filters);
+  const attQuery = getFlowMetricsAttQuery(flowId, user._id, filters);
+
+  try {
+    const seiData = yield call(requestMetric, {query: seiQuery});
+    const attData = yield call(requestMetric, {query: attQuery});
+    let data = [];
+
+    if (seiData && seiData.data) {
+      data = [...data, ...seiData.data];
+    }
+    if (attData && attData.data) {
+      data = [...data, ...attData.data];
+    }
+
+    const parsedJson = parseFlowMetricsJson(data);
+
+    yield put(actions.flowMetrics.received(flowId, parsedJson));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
