@@ -203,7 +203,7 @@ export default function JobActionsMenu({
       confirmDialog({
         title: 'Confirm cancel',
         message:
-          'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
+          'Are you sure you want to cancel?  Please note that canceling this job will discard all associated data currently queued for processing.',
         buttons: [
           {
             label: 'Yes, cancel',

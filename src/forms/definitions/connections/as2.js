@@ -321,7 +321,7 @@ export default {
       },
       {
         collapsed: true,
-        label: 'Non-standard API rate limiter',
+        label: 'Nonstandard API rate limiter',
         fields: [
           'as2.partnerStationInfo.rateLimit.limit',
           'as2.partnerStationInfo.rateLimit.failStatusCode',
