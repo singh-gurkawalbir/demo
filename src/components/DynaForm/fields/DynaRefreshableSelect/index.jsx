@@ -1,9 +1,17 @@
-import React, { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import RawHtml from '../../../RawHtml';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { DynaGenericSelect } from './RefreshGenericResource';
+
+const useStyles = makeStyles(() => ({
+  validationError: {
+    display: 'inline-block !important',
+  },
+}));
 
 /**
  *
@@ -21,13 +29,12 @@ export default function DynaSelectOptionsGenerator(props) {
     disableFetch,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const { status, data, errorMessage, validationError } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     options.commMetaPath || commMetaPath,
     options.filterKey || filterKey);
-
-  // const isOffline = useSelectorMemo(selectors.isConnectionOffline, connectionId);
 
   const onFetch = useCallback(() => {
     if (!data && !disableOptionsLoad) {
@@ -49,6 +56,9 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch,
     options.commMetaPath,
   ]);
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
+  );
   const onRefresh = useCallback(() => {
     if (disableOptionsLoad) {
       return;
@@ -66,14 +76,6 @@ export default function DynaSelectOptionsGenerator(props) {
     );
   }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, disableOptionsLoad, dispatch, options.commMetaPath]);
 
-  useEffect(() => {
-    if (!ignoreValidation && validationError && bundleUrlHelp) {
-      dispatch(actions.connection.setBundleInstallMessage({ connectionId, validationError}));
-    }
-
-    return () => dispatch(actions.connection.clearBundleInstallMessage(connectionId));
-  }, [dispatch, validationError, connectionId, ignoreValidation, bundleUrlHelp]);
-
   return (
     <>
       <DynaGenericSelect
@@ -87,6 +89,9 @@ export default function DynaSelectOptionsGenerator(props) {
         disableOptionsLoad={disableOptionsLoad}
         {...props}
       />
+      {!ignoreValidation && !isOffline && (
+        <RawHtml className={classes.validationError} html={validationError} />
+      )}
     </>
   );
 }

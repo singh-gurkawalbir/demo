@@ -11,7 +11,6 @@ import NotificationToaster from '../NotificationToaster';
 import { PING_STATES } from '../../reducers/comms/ping';
 import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -83,9 +82,6 @@ export default function ConnectionStatusPanel(props) {
       return commStatus;
     }
   );
-  const bundleInstallMessage = useSelector(state =>
-    selectors.bundleInstallMessage(state, connectionId)
-  );
   const isIAIntegration = useSelector(state => {
     const connection =
       selectors.resource(state, 'connections', connectionId) || {};
@@ -142,7 +138,7 @@ export default function ConnectionStatusPanel(props) {
   }, [connectionId, dispatch, isFlowBuilderView]);
 
   if (
-    (resourceType !== 'connections' && !isOffline && !bundleInstallMessage) ||
+    (resourceType !== 'connections' && !isOffline) ||
     (resourceType === 'connections' && !message)
   ) {
     return null;
@@ -151,10 +147,9 @@ export default function ConnectionStatusPanel(props) {
   return (
     <div className={classes.root}>
       <NotificationToaster variant={variant} size="large">
-        {resourceType === 'connections' && (
+        {resourceType === 'connections' ? (
           <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>
-        )}
-        {resourceType !== 'connections' && isOffline && (
+        ) : (
           <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
             The connection associated with this resource is currently offline
             and configuration is limited.
@@ -165,11 +160,6 @@ export default function ConnectionStatusPanel(props) {
               Fix your connection
             </Button>
             to bring it back online.
-          </Typography>
-        )}
-        {resourceType !== 'connections' && !isOffline && bundleInstallMessage && (
-          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-            <RawHtml html={bundleInstallMessage} />
           </Typography>
         )}
       </NotificationToaster>

@@ -24,7 +24,7 @@ const updateConnectionStatus = (
 };
 
 export default (state = {}, action) => {
-  const { type, debugLogs, connectionId, queuedJobs, iClients, validationError } = action;
+  const { type, debugLogs, connectionId, queuedJobs, iClients } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -53,12 +53,6 @@ export default (state = {}, action) => {
       case actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED:
         draft.queuedJobs = { ...draft.queuedJobs, [connectionId]: queuedJobs };
         break;
-      case actionTypes.CONNECTION.SET_BUNDLE_INSTALL_MESSAGE:
-        draft.bundleInstallMessage = { [connectionId]: validationError };
-        break;
-      case actionTypes.CONNECTION.CLEAR_BUNDLE_INSTALL_MESSAGE:
-        draft.bundleInstallMessage = { [connectionId]: undefined };
-        break;
 
       default:
     }
@@ -81,14 +75,6 @@ selectors.iClients = (state, connectionId) => {
   }
 
   return state.iClients[connectionId] || emptySet;
-};
-
-selectors.bundleInstallMessage = (state, connectionId) => {
-  if (!state || !state.bundleInstallMessage || !connectionId) {
-    return null;
-  }
-
-  return state.bundleInstallMessage[connectionId];
 };
 
 selectors.queuedJobs = (state, connectionId) => {

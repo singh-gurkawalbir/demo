@@ -121,8 +121,6 @@ const connection = {
     }),
   cancelQueuedJob: jobId =>
     action(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, { jobId }),
-  setBundleInstallMessage: ({ connectionId, validationError}) => action(actionTypes.CONNECTION.SET_BUNDLE_INSTALL_MESSAGE, { connectionId, validationError }),
-  clearBundleInstallMessage: ({ connectionId}) => action(actionTypes.CONNECTION.CLEAR_BUNDLE_INSTALL_MESSAGE, { connectionId }),
 };
 const marketplace = {
   requestConnectors: () =>
