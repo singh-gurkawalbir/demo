@@ -14,14 +14,6 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (r._connectorId) {
-        // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
-        expression.push({_connectorId: r._connectorId});
-      } else {
-        // For DIY connection, borrowconcurrency from other diy integrations.
-        expression.push({ _connectorId: { $exists: false } });
-      }
-
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else {
