@@ -234,8 +234,8 @@ export default function (state = {}, action) {
 
         const { pageGenerators, pageProcessors } = currentFlow;
         const {
-          pageGenerators: updatedPageGenerators,
-          pageProcessors: updatedPageProcessors,
+          pageGenerators: updatedPageGenerators = [],
+          pageProcessors: updatedPageProcessors = [],
         } = updatedFlow;
         // get first change in sequence of pgs
         const updatedPgIndex = compare(pageGenerators, updatedPageGenerators);
