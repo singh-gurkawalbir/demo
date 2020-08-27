@@ -3,7 +3,7 @@ export default {
     ...formValues,
     '/type': 'http',
     '/assistant': 'concurexpense',
-    '/http/auth/type': 'token',
+    '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',
@@ -25,7 +25,7 @@ export default {
       type: 'text',
       label: 'Username',
       required: true,
-      // helpKey: 'concurinvoice.connection.http.unencrypted.username',
+      helpKey: 'concurinvoice.connection.http.unencrypted.username',
     },
     'http.auth.oauth.password': {
       id: 'http.auth.oauth.password',
@@ -34,7 +34,7 @@ export default {
       required: true,
       inputType: 'password',
       defaultValue: '',
-      // helpKey: 'concurinvoice.connection.http.encrypted.password',
+      helpKey: 'concurinvoice.connection.http.encrypted.password',
       description:
             'Note: for security reasons this field must always be re-entered.',
     },

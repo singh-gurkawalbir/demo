@@ -20,7 +20,7 @@ export const getTemplateUrlName = applications => {
   return applications.map(appName).join('-').replace(/\./g, '');
 };
 
-export const getApplicationName = conn => {
+export const getApplication = conn => {
   const applications = applicationsList();
   const app =
         applications.find(a => {
@@ -35,7 +35,7 @@ export const getApplicationName = conn => {
           return a.id === conn.type;
         }) || {};
 
-  return app.name;
+  return {name: app.name, id: app.id};
 };
 
 export default {
@@ -97,12 +97,12 @@ export default {
       if (conn.type === 'salesforce') {
         salesforceConnFound = true;
       }
-      const connectionType = getApplicationName(conn);
+      const { name: connectionTypeName, id: connectionType} = getApplication(conn);
 
       installSteps.push({
         name: conn.name,
         _connectionId: conn._id,
-        description: `Please configure ${connectionType} connection`,
+        description: `Please configure ${connectionTypeName} connection`,
         type: INSTALL_STEP_TYPES.CONNECTION,
         completed: false,
         options: {

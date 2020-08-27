@@ -238,7 +238,7 @@ export function* mappingInit({
   yield call(refreshGenerates, {isInit: true});
 }
 
-export function* saveMappings({context }) {
+export function* saveMappings() {
   const patch = [];
   const {
     mappings,
@@ -324,7 +324,7 @@ export function* saveMappings({context }) {
     resourceType: 'imports',
     id: importId,
     scope: SCOPES.VALUE,
-    context,
+    context: { flowId },
   });
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed());
