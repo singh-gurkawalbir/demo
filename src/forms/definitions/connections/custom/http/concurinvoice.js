@@ -3,7 +3,7 @@ export default {
     ...formValues,
     '/type': 'http',
     '/assistant': 'concurinvoice',
-    '/http/auth/type': 'token',
+    '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',
