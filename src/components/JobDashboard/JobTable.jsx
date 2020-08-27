@@ -171,7 +171,11 @@ function JobTable({
     history.goBack();
     // only clear the current error set if the close was fired from
     // this drawer and not the child retry drawer.
-    if (match.isExact) setShowErrorDialogFor({});
+    // if (match.isExact) setShowErrorDialogFor({});
+    /** Dirty fix, I don't see a better option. */
+    if (history?.location?.pathname?.endsWith('dashboard/viewErrors')) {
+      setShowErrorDialogFor({});
+    }
   }
 
   return (
