@@ -1,3 +1,4 @@
+import { HELP_CENTER_BASE_URL } from '../../utils/constants';
 // make sure the dictionary key matches the "model plural" name.
 export default {
   exports: `Exports are used to extract data from an application. 
@@ -19,7 +20,7 @@ export default {
     access an application via its API. When you share an integration with other 
     integrator.io users, they are able to create, edit, or run a flow using the 
     connection resource that you specified within the shared integration. <br />
-    Check out our <a href='https://celigosuccess.zendesk.com/hc/en-us/categories/360002670492' target='_blank'>Connector solutions articles</a> 
+    Check out our <a href='${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002670492' target='_blank'>Connector solutions articles</a> 
     for information on connecting each supported app.`,
   recycleBin: `All deleted items will be kept in the Recycle bin for up to 30 days 
     before being automatically purged. All Flows in Recycle bin are deactivated and 
