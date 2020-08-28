@@ -6,12 +6,14 @@ import PanelHeader from '../../../../../components/PanelHeader';
 const useStyles = makeStyles(theme => ({
   AuditLogWrapper: {
     minWidth: theme.spacing(100),
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
   },
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
 }));
 

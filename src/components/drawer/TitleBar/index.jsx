@@ -34,11 +34,9 @@ const useStyles = makeStyles(theme => ({
   closeButtonTitleBar: {
     position: 'absolute',
     right: theme.spacing(2),
-    top: theme.spacing(2),
-    padding: 0,
+    padding: 4,
     '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.background.paper2,
     },
   },
 }));
