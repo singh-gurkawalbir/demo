@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -107,10 +107,14 @@ export function KeyValueComponent(props) {
     onUpdate(removedEmptyValues);
   };
 
-  const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
+  const tableData = useMemo(() => {
+    const tableArr = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
 
-  // insert an empty row for auto suggest to show options on click
-  tableData.push({ extract: '', generate: ''});
+    // insert an empty row for auto suggest to show options on click
+    tableArr.push({ extract: '', generate: ''});
+
+    return tableArr;
+  }, [values]);
 
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
