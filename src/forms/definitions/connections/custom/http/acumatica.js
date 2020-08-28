@@ -30,15 +30,15 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/authorize`;
+      }/identity/connect/authorize`;
       retValues['/http/auth/oauth/tokenURI'] = `${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/token`;
+      }/identity/connect/token`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
       delete retValues['/http/auth/cookie/successStatusCode'];
@@ -104,7 +104,7 @@ export default {
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
         const subdomain =
           baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
@@ -114,15 +114,15 @@ export default {
     'oauth.instanceURI': {
       id: 'oauth.instanceURI',
       type: 'text',
-      endAdornment: '/AcumaticaERP',
+      endAdornment: '/entity',
       label: 'Instance URI',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {
-        const baseUri = r && r.http && r.http.baseURI;
+        const baseUri = r?.http?.baseURI;
         const subdomain =
-          baseUri && baseUri.substring(0, baseUri.indexOf('/AcumaticaERP'));
+          baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
         return subdomain;
       },
@@ -135,10 +135,7 @@ export default {
       required: true,
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointName) ||
+        (r?.http?.unencrypted?.endpointName) ||
         'Default',
     },
     'http.unencrypted.endpointVersion': {
@@ -149,10 +146,7 @@ export default {
       required: true,
       visibleWhen: [{ field: 'http.auth.type', isNot: [''] }],
       defaultValue: r =>
-        (r &&
-          r.http &&
-          r.http.unencrypted &&
-          r.http.unencrypted.endpointVersion) ||
+        (r?.http?.unencrypted?.endpointVersion) ||
         '18.200.001',
     },
     'http.unencrypted.username': {
@@ -161,8 +155,6 @@ export default {
       label: 'Username',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
-      defaultValue: r =>
-        r && r.http && r.http.unencrypted && r.http.unencrypted.username,
       helpKey: 'acumatica.connection.http.unencrypted.username',
     },
     'http.encrypted.password': {

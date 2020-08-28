@@ -42,10 +42,18 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     color: theme.palette.secondary.main,
   },
-  contentContainer: {
-    margin: theme.spacing(3),
-    position: 'relative',
+  childrenWrapper: {
+    display: 'flex',
     height: '100%',
+    minHeight: '100%',
+    flexDirection: 'column',
+  },
+  contentContainer: {
+    padding: theme.spacing(3),
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'column',
+    overflow: 'auto',
   },
   contentContainer_paper: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
@@ -171,43 +179,45 @@ export default function RightDrawer({
             ),
           }}
           onClose={handleClose}>
-          <div className={classes.titleBar}>
-            {showBackButton && (
+          <div className={classes.childrenWrapper}>
+            <div className={classes.titleBar}>
+              {showBackButton && (
+                <IconButton
+                  size="small"
+                  data-test="backRightDrawer"
+                  aria-label="Close"
+                  onClick={handleBack}>
+                  <BackArrowIcon />
+                </IconButton>
+              )}
+              <Typography variant="h4" className={classes.title}>
+                {title}
+                {helpKey && (
+                  <Help
+                    title={helpTitle}
+                    className={classes.helpTextButton}
+                    helpKey={helpKey}
+                    fieldId={helpKey}
+                />
+                )}
+                {infoText && <InfoIconButton info={infoText} />}
+              </Typography>
+              {actions}
               <IconButton
                 size="small"
-                data-test="backRightDrawer"
+                data-test="closeRightDrawer"
                 aria-label="Close"
-                onClick={handleBack}>
-                <BackArrowIcon />
+                onClick={handleClose}>
+                <CloseIcon />
               </IconButton>
-            )}
-            <Typography variant="h4" className={classes.title}>
-              {title}
-              {helpKey && (
-                <Help
-                  title={helpTitle}
-                  className={classes.helpTextButton}
-                  helpKey={helpKey}
-                  fieldId={helpKey}
-                />
-              )}
-              {infoText && <InfoIconButton info={infoText} />}
-            </Typography>
-            {actions}
-            <IconButton
-              size="small"
-              data-test="closeRightDrawer"
-              aria-label="Close"
-              onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </div>
-          <div
-            className={clsx(
-              classes.contentContainer,
-              classes[`contentContainer_${type}`]
-            )}>
-            {children}
+            </div>
+            <div
+              className={clsx(
+                classes.contentContainer,
+                classes[`contentContainer_${type}`]
+              )}>
+              {children}
+            </div>
           </div>
         </Drawer>
       </Route>

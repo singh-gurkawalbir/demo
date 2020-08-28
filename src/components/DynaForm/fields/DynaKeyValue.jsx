@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -130,7 +130,7 @@ export function KeyValueComponent(props) {
         <FormLabel className={classes.label}>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
-      <Fragment key={`${rowInd}-${isKey}`}>
+      <>
         {tableData.map(r => (
           <div className={classes.rowContainer} key={r.row}>
             {suggestKeyConfig && (
@@ -208,7 +208,7 @@ export function KeyValueComponent(props) {
             )}
           </div>
         ))}
-      </Fragment>
+      </>
       <div key="new" className={classes.rowContainer}>
         <TextField
           disabled={disabled}

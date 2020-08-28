@@ -59,19 +59,19 @@ const SpinnerLoader = ({className}) => (
 );
 export default function TopPanel({
   flowId,
-  resourceId,
+  importId,
   disabled,
   subRecordMappingId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const generateLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, resourceId, 'generate'));
-  const extractLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, resourceId, 'extract'));
+  const generateLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, importId, 'generate'));
+  const extractLabel = useSelector(state => selectors.mappingExtractGenerateLabel(state, flowId, importId, 'extract'));
 
   const isExtractsLoading = useSelector(state => {
     const extractStatus = selectors.getSampleDataContext(state, {
       flowId,
-      resourceId,
+      resourceId: importId,
       stage: 'importMappingExtract',
       resourceType: 'imports',
     }).status;
@@ -79,12 +79,12 @@ export default function TopPanel({
     return extractStatus === 'requested';
   });
   const isGeneratesLoading = useSelector(state => {
-    const subRecordObj = selectors.mappingSubRecordAndJSONPath(state, resourceId, subRecordMappingId);
-    const generateStatus = selectors.getImportSampleData(state, resourceId, subRecordObj).status;
+    const subRecordObj = selectors.mappingSubRecordAndJSONPath(state, importId, subRecordMappingId);
+    const generateStatus = selectors.getImportSampleData(state, importId, subRecordObj).status;
 
     return generateStatus === 'requested';
   });
-  const isGenerateRefreshSupported = useSelector(state => selectors.mappingImportSampleDataSupported(state, resourceId));
+  const isGenerateRefreshSupported = useSelector(state => selectors.mappingImportSampleDataSupported(state, importId));
 
   const handleRefreshFlowDataClick = useCallback(
     () => {
@@ -93,13 +93,13 @@ export default function TopPanel({
       dispatch(
         actions.flowData.requestSampleData(
           flowId,
-          resourceId,
+          importId,
           'imports',
           'importMappingExtract',
           refreshCache
         )
       );
-    }, [dispatch, flowId, resourceId]
+    }, [dispatch, flowId, importId]
   );
 
   const handleRefreshGenerateDataClick = useCallback(

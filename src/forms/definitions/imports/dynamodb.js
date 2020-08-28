@@ -94,6 +94,7 @@ export default {
         },
       ],
     },
+    dataMappings: { formId: 'dataMappings' },
   },
   layout: {
     type: 'collapse',

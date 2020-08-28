@@ -13,10 +13,10 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import AttachIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import MappingDrawer from '../../../common/MappingDrawer';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
+import MappingDrawerRoute from '../../../../MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -125,7 +125,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           onClose={handleClose}
         />
       )}
-      <MappingDrawer integrationId={integrationId} />
+      <MappingDrawerRoute integrationId={integrationId} />
       <ScheduleDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>

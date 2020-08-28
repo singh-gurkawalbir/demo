@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import RawHtml from '../../../RawHtml';
@@ -56,6 +56,9 @@ export default function DynaSelectOptionsGenerator(props) {
     dispatch,
     options.commMetaPath,
   ]);
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
+  );
   const onRefresh = useCallback(() => {
     if (disableOptionsLoad) {
       return;
@@ -86,7 +89,7 @@ export default function DynaSelectOptionsGenerator(props) {
         disableOptionsLoad={disableOptionsLoad}
         {...props}
       />
-      {!ignoreValidation && (
+      {!ignoreValidation && !isOffline && (
         <RawHtml className={classes.validationError} html={validationError} />
       )}
     </>

@@ -71,7 +71,8 @@ export default (state = {}, action) => {
     data,
     id,
     generateFields,
-    lookups,
+    oldValue,
+    newValue,
     value,
     index,
     field,
@@ -477,7 +478,12 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS
         .UPDATE_LOOKUP: {
         if (draft[cKey] && draft[cKey].mappings && draft[cKey].mappings[id]) {
-          draft[cKey].mappings[id].lookups = lookups;
+          if (oldValue) {
+            draft[cKey].mappings[id].lookups = draft[cKey].mappings[id].lookups.filter(l => l.name !== oldValue.name);
+          }
+          if (newValue) {
+            draft[cKey].mappings[id].lookups.push(newValue);
+          }
           const {
             isSuccess,
             errMessage: validationErrMsg,

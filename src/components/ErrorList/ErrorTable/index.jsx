@@ -7,7 +7,12 @@ import { selectors } from '../../../reducers';
 import metadata from './metadata';
 
 const useStyles = makeStyles(() => ({
-  tablePaginationRoot: { float: 'right' },
+  tablePaginationRoot: {
+    float: 'right',
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: 18,
+  },
   emptyRow: {
     position: 'relative',
     top: 100,

@@ -109,7 +109,7 @@ export default function NotificationsSection({ integrationId, childId }) {
 
       <LoadResources required resources="notifications,flows,connections">
         <div className={classes.form}>
-          <DynaForm fieldMeta={fieldMeta} key={count} render>
+          <DynaForm fieldMeta={fieldMeta} key={count} skipMonitorLevelAccessCheck render>
             <DynaSubmit onClick={handleSubmit}>Save</DynaSubmit>
           </DynaForm>
         </div>
