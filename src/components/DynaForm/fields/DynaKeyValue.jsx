@@ -109,6 +109,9 @@ export function KeyValueComponent(props) {
 
   const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
 
+  // insert an empty row for auto suggest to show options on click
+  tableData.push({ extract: '', generate: ''});
+
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
 
@@ -209,37 +212,6 @@ export function KeyValueComponent(props) {
           </div>
         ))}
       </>
-      <div key="new" className={classes.rowContainer}>
-        <TextField
-          disabled={disabled}
-          fullWidth
-          value=""
-          id={`new-${keyName}`}
-          data-test={`new-${keyName}`}
-          placeholder={keyName}
-          variant="filled"
-          onChange={handleKeyUpdate()}
-          className={clsx(classes.dynaField, classes.dynaKeyField)}
-        />
-
-        <TextField
-          disabled={disabled}
-          fullWidth
-          value=""
-          id={`new-${valueName}`}
-          data-test={`new-${valueName}`}
-          placeholder={valueName}
-          variant="filled"
-          onChange={handleValueUpdate()}
-          className={clsx(classes.dynaField, classes.dynaValueField)}
-        />
-
-        {showDelete && (
-          <ActionButton data-test="deleteKeyValue" aria-label="delete" disabled>
-            <TrashIcon />
-          </ActionButton>
-        )}
-      </div>
     </FormControl>
   );
 }
