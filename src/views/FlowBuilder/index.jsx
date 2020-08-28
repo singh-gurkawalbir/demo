@@ -451,7 +451,7 @@ function FlowBuilder() {
 
     return (
       <div className={classes.actions}>
-        {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
+        {!isProduction() && isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
         <IconButton
           disabled={isNewFlow}
           className={classes.chartsIcon}
