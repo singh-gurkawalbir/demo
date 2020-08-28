@@ -151,8 +151,19 @@ export const getDurationLabel = (ranges = []) => {
   }
 };
 
+const getFlowFilterExpression = (flowId, filters) => {
+  const {selectedResources} = filters;
+
+  if (selectedResources && selectedResources.length) {
+    return `|> filter(fn: (r) => ${selectedResources.map((r, i) => `${i ? '' : ' or '}r.f == "${r}"`)})`;
+  }
+
+  return `|> filter(fn: (r) => r.f == "${flowId}")`;
+};
+
 export const getFlowMetricsQuery = (flowId, userId, filters) => {
   const { range = {} } = filters;
+  const flowFilterExpression = getFlowFilterExpression(flowId, filters);
   let start = '-1d';
   let end = '-1s';
 
@@ -170,6 +181,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
+  const startDateFromToday = moment(start).diff(moment(), 'days');
 
   /*
     Last 1 hour: minute granularity
@@ -179,7 +191,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     flowEvents bucket -> 1 min granularity
     flowEvents_1hr -> 1 hour granularity
   */
-  const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+  const bucket = (days > 4 || startDateFromToday > 7) ? 'flowEvents_1hr' : 'flowEvents';
 
   // If duration is more than 4 days, aggregate for 1d
   const duration = days > 4 ? '1d' : '1h';
@@ -188,14 +200,16 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   return `from(bucket: "${bucket}")
             |> range(start: ${start}, stop: ${end})
             |> filter(fn: (r) => r.u == "${userId}")
-            |> filter(fn: (r) => r.f == "${flowId}")
-            |> filter(fn: (r) => r._field != "att")
-            ${days > 4 ? aggregrate : ''}
+            ${flowFilterExpression}
+            |> filter(fn: (r) => r._field == "c")
+            ${hours > 4 ? aggregrate : ''}
             |> drop(columns: ["_start", "_stop"])`;
 };
 
 export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
   const { range = {} } = filters;
+  const flowFilterExpression = getFlowFilterExpression(flowId, filters);
+
   let start = '-1d';
   let end = '-1s';
 
@@ -213,6 +227,7 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
+  const startDateFromToday = moment(start).diff(moment(), 'days');
 
   /*
     Last 1 hour: minute granularity
@@ -222,7 +237,7 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
     flowEvents bucket -> 1 min granularity
     flowEvents_1hr -> 1 hour granularity
   */
-  const bucket = hours > 4 ? 'flowEvents_1hr' : 'flowEvents';
+  const bucket = (days > 4 || startDateFromToday > 7) ? 'flowEvents_1hr' : 'flowEvents';
 
   // If duration is more than 4 days, aggregate for 1d
   const duration = days > 4 ? '1d' : '1h';
@@ -241,8 +256,8 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
   return `from(bucket: "${bucket}")
             |> range(start: ${start}, stop: ${end})
             |> filter(fn: (r) => r.u == "${userId}")
-            |> filter(fn: (r) => r.f == "${flowId}")
-            ${days > 4 ? aggregrate : ''}
+            ${flowFilterExpression}
+            ${hours > 4 ? aggregrate : ''}
             |> drop(columns: ["_start", "_stop"])`;
 };
 
@@ -331,6 +346,8 @@ export const parseFlowMetricsJson = response => {
 
       return r;
     }, metrics);
+
+  console.log('metrics', metrics);
 
   return metrics;
 };

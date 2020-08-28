@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import {
   makeStyles,
@@ -19,6 +20,7 @@ import CeligoSelect from '../../CeligoSelect';
 import IconTextButton from '../../IconTextButton';
 import FlowSelector from '../FlowSelector';
 import DateRangeSelector from './DateRangeFilter';
+import GraphIcon from '../../icons/GraphIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -89,6 +91,8 @@ function Filters({
   disableActions = true,
 }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const dispatch = useDispatch();
   // #region data-layer selectors
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
@@ -124,6 +128,19 @@ function Filters({
     },
     [dispatch, filterKey]
   );
+  const pushOrReplaceHistory = useCallback(
+    to => {
+      if (match.isExact) {
+        history.push(to);
+      } else {
+        history.replace(to);
+      }
+    },
+    [history, match.isExact]
+  );
+  const handleLineGraphsClick = useCallback(() => {
+    pushOrReplaceHistory(`${match.url}/charts`);
+  }, [match.url, pushOrReplaceHistory]);
   const handlePageChange = useCallback(
     offset => () => {
       patchFilter('currentPage', currentPage + offset);
@@ -233,6 +250,13 @@ function Filters({
 
         <div className={classes.rightActionContainer}>
 
+          <IconButton
+            className={classes.chartsIcon}
+            data-test="charts"
+            onClick={handleLineGraphsClick}
+            >
+            <GraphIcon />
+          </IconButton>
           <IconTextButton onClick={handleRefreshClick}>
             <RefreshIcon /> Refresh
           </IconTextButton>
