@@ -1,28 +1,29 @@
-import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import moment from 'moment';
 import { selectors } from '../../reducers';
 
 export default function DateTimeDisplay({ date, dateTime }) {
-  const userOwnPreferences = useSelector(
+  const { dateFormat, timeFormat } = useSelector(
     state => selectors.userOwnPreferences(state),
-    (left, right) =>
-      left &&
-      right &&
-      left.dateFormat === right.dateFormat &&
-      left.timeFormat === right.timeFormat
+    shallowEqual
   );
 
-  if (!userOwnPreferences || !(date || dateTime)) {
-    return '';
-  }
+  const out = useMemo(() => {
+    if (!dateFormat || !timeFormat || !(date || dateTime)) {
+      return '';
+    }
 
-  if (date) {
-    return moment(date).format(userOwnPreferences.dateFormat);
-  }
+    if (date) {
+      return moment(date).format(dateFormat);
+    }
 
-  if (dateTime) {
-    return moment(dateTime).format(
-      `${userOwnPreferences.dateFormat} ${userOwnPreferences.timeFormat}`
-    );
-  }
+    if (dateTime) {
+      return moment(dateTime).format(
+        `${dateFormat} ${timeFormat}`
+      );
+    }
+  }, [date, dateTime, dateFormat, timeFormat]);
+
+  return out;
 }
