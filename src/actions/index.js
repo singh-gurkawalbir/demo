@@ -29,8 +29,8 @@ function action(type, payload = {}) {
 
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
-  request: (email, password) =>
-    action(actionTypes.AUTH_REQUEST, { email, password }),
+  request: (email, password, showAuthError) =>
+    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
