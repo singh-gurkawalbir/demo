@@ -71,9 +71,8 @@ export function KeyValueComponent(props) {
   const [isKey, setIsKey] = useState(true);
 
   useEffect(() => {
-    if (value) {
-      setValues(value);
-    }
+    // value can be empty/undefined also, so updating the state with the same
+    setValues(value || []);
   }, [value]);
 
   const handleDelete = row => () => {
@@ -109,6 +108,7 @@ export function KeyValueComponent(props) {
   };
 
   const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
+
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
 
