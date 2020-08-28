@@ -1,13 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useHistory } from 'react-router-dom';
 import { Typography, Button } from '@material-ui/core';
 import ModalDialog from '../../components/ModalDialog';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 
-function AppErroredModal({ history }) {
+function AppErroredModal() {
+  const history = useHistory();
   const appErrored = useSelector(state => selectors.appErrored(state));
   const dispatch = useDispatch();
 

@@ -117,13 +117,14 @@ export default function DisabledDynaFormPerUserPermissions(props) {
     fieldMeta,
     resourceType,
     resourceId,
+    skipMonitorLevelAccessCheck,
   } = props;
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
   );
   // pass in the integration Id to find access level of its associated forms
   const { disableAllFields, disableAllFieldsExceptClocked } = useSelector(
-    state => selectors.formAccessLevel(state, integrationId, resource, disabled)
+    state => skipMonitorLevelAccessCheck ? {disableAllFields: false, disableAllFieldsExceptClocked: false} : selectors.formAccessLevel(state, integrationId, resource, disabled)
   );
   const updatedFieldMeta = useMemo(() => {
     if (disableAllFieldsExceptClocked) return disableAllFieldsExceptClockedFields(fieldMeta, resourceType);

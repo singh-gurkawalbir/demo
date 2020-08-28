@@ -212,6 +212,9 @@ export default function Subscription() {
   const onDrawerClose = useCallback(() => {
     setShowStartFreeDialog(false);
   }, []);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isUserInErrMgtTwoDotZero(state)
+  );
 
   return (
     <>
@@ -306,6 +309,14 @@ export default function Subscription() {
                   </span>
                   {capitalize(licenseActionDetails.supportTier || 'N/A')}
                 </li>
+                {isUserInErrMgtTwoDotZero && (
+                <li>
+                  <span className={classes.bold}>
+                    Autopilot:&nbsp;
+                  </span>
+                  {licenseActionDetails.autopilot ? 'On' : 'Off'}
+                </li>
+                )}
               </ul>
             </div>
           </div>
