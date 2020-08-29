@@ -1,5 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import useFormContext from '../Form/FormContext';
 
 const isEveryNUnit = val => val?.includes('*') || val?.includes('/');
 
@@ -316,7 +318,7 @@ export default function CronBuilder(props) {
           const fieldId =
             meta.layout.containers[key].containers[tabHistory[key]].fields[0];
 
-          return { key, value: formValue[fieldId] || splitVal[key + 1] || '*' };
+          return { key, value: formValue?.[fieldId] || splitVal?.[key + 1] || '*' };
         })
         .sort((first, second) => first.key - second.key)
         .reduce((finalRes, curr) => {
@@ -344,13 +346,23 @@ export default function CronBuilder(props) {
     if (reset) setCount(count => count + 1);
   }, [reset, setCount]);
 
+  // TODO:Verify changes
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: meta,
+    remount: count,
+  });
+  const form = useFormContext(formKey);
+
+  useEffect(() => {
+    if (form) onFormChange(form.value);
+  }, [onFormChange, form]);
+
   return (
     <DynaForm
-      key={count}
+      formKey={formKey}
       fieldMeta={meta}
       externalTabState={externalTabState}
       setExternalTabState={setExternalTabState}
-      onChange={onFormChange}
     />
   );
 }

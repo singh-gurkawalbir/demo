@@ -9,6 +9,9 @@ import getFormMetadata from './metadata';
 import CsvConfigEditorDialog from '../../../../../AFE/SuiteScript/CsvConfigEditor/Dialog';
 import DynaForm from '../../../..';
 import DynaSuiteScriptUploadFile from '../../../DynaSuiteScriptUploadFile';
+import { useUpdateParentForm } from '../../../editors/DynaCsvGenerate';
+import { generateNewId } from '../../../../../../utils/resource';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -82,14 +85,14 @@ export default function DynaCsvParse(props) {
   const [form, setForm] = useState(getFormMetadata({...value, resourceId, resourceType, ssLinkedConnectionId }));
   const [showEditor, setShowEditor] = useState(false);
   const handleFormChange = useCallback(
-    (newOptions, isValid) => {
+    (newOptions, isValid, touched) => {
       setCurrentOptions(newOptions);
       const parsersValue = getParserValue(newOptions);
 
       if (!isValid) {
-        onFieldChange(id, { ...parsersValue, __invalid: true });
+        onFieldChange(id, { ...parsersValue, __invalid: true }, touched);
       } else {
-        onFieldChange(id, parsersValue);
+        onFieldChange(id, parsersValue, touched);
       }
     },
     [id, onFieldChange]
@@ -192,6 +195,17 @@ export default function DynaCsvParse(props) {
     [uploadSampleDataFieldName]
   );
 
+  const [secondaryFormKey] = useState(generateNewId());
+
+  useUpdateParentForm(secondaryFormKey, handleFormChange);
+  const formKeyComponent = useFormInitWithPermissions({
+    formKey: secondaryFormKey,
+    remount: formKey,
+    optionsHandler: form?.optionsHandler,
+    disabled,
+    fieldMeta: form,
+  });
+
   return (
     <>
       <div className={classes.container}>
@@ -225,11 +239,9 @@ export default function DynaCsvParse(props) {
           Launch
         </Button>
       </div>
+
       <DynaForm
-        key={formKey}
-        onChange={handleFormChange}
-        optionsHandler={form?.optionsHandler}
-        disabled={disabled}
+        formKey={formKeyComponent}
         fieldMeta={form}
       />
     </>

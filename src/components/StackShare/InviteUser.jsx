@@ -5,6 +5,7 @@ import { makeStyles, Button } from '@material-ui/core';
 import actions from '../../actions';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(() => ({
   fieldContainer: {
@@ -50,9 +51,18 @@ export default function InviteUser() {
     [dispatch, handleClose, stackId]
   );
 
+  const formKey = useFormInitWithPermissions({
+
+    fieldMeta,
+  });
+
   return (
-    <DynaForm fieldMeta={fieldMeta} className={classes.fieldContainer}>
+    <>
+      <DynaForm
+        formKey={formKey}
+        fieldMeta={fieldMeta} className={classes.fieldContainer} />
       <DynaSubmit
+        formKey={formKey}
         data-test="saveInviteUser"
         id="saveInviteUser"
         onClick={handleInviteUser}>
@@ -66,6 +76,6 @@ export default function InviteUser() {
         onClick={handleClose}>
         Cancel
       </Button>
-    </DynaForm>
+    </>
   );
 }

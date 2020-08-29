@@ -9,6 +9,7 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
@@ -78,6 +79,16 @@ export default function FlowStartDateDialog(props) {
     onClose();
   };
 
+  const fieldMeta = flowStartDateMetadata.getMetadata({
+    timeZone,
+    startDate: lastExportDateTime,
+    format: `${preferences.dateFormat} ${preferences.timeFormat}`,
+  });
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+  });
+
   if (!selectorStatus) {
     return <Spinner size={24} color="primary" />;
   }
@@ -86,27 +97,21 @@ export default function FlowStartDateDialog(props) {
     onClose();
   }
 
-  const fieldMeta = flowStartDateMetadata.getMetadata({
-    timeZone,
-    startDate: lastExportDateTime,
-    format: `${preferences.dateFormat} ${preferences.timeFormat}`,
-  });
-
   return (
     <ModalDialog show onClose={onClose}>
       <div>Delta flow</div>
       <div>
-        <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-          <DynaSubmit
-            skipDisableButtonForFormTouched
-            data-test="submit"
-            onClick={handleSubmit}>
-            Run
-          </DynaSubmit>
-          <Button data-test="close" onClick={cancelDialog}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          skipDisableButtonForFormTouched
+          data-test="submit"
+          onClick={handleSubmit}>
+          Run
+        </DynaSubmit>
+        <Button data-test="close" onClick={cancelDialog}>
+          Cancel
+        </Button>
       </div>
     </ModalDialog>
   );

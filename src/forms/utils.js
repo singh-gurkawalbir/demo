@@ -79,6 +79,8 @@ export const getPatchPathForCustomForms = (meta, id, offset = 0) => {
   return res;
 };
 
+const fieldsStateToArray = fields => Object.values(fields);
+
 export const getFieldWithReferenceById = ({ meta, id }) =>
   searchMetaForFieldByFindFunc(meta, f => byId(f, id));
 
@@ -113,7 +115,7 @@ export const getFieldByIdFromLayout = (layout, fieldMap, id) => {
 };
 
 export const isExpansionPanelErrored = (meta, fieldStates) => {
-  const invalidFields = fieldStates.filter(
+  const invalidFields = fieldsStateToArray(fieldStates).filter(
     field => !field.isValid || field.isDiscretelyInvalid
   );
   const { layout, fieldMap } = meta;
@@ -124,7 +126,7 @@ export const isExpansionPanelErrored = (meta, fieldStates) => {
 };
 
 export const isExpansionPanelRequired = (meta, fieldStates) => {
-  const requiredFields = fieldStates.filter(field => field.required && field.visible);
+  const requiredFields = fieldsStateToArray(fieldStates).filter(field => field.required && field.visible);
   const { layout, fieldMap } = meta;
 
   return requiredFields.some(
@@ -133,7 +135,9 @@ export const isExpansionPanelRequired = (meta, fieldStates) => {
 };
 
 export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
-  const visibleFields = fieldStates.filter(field => field.visible);
+  const visibleFields = fieldsStateToArray(fieldStates).filter(
+    field => field.visible
+  );
   const { layout, fieldMap } = meta;
 
   return visibleFields.some(
@@ -141,13 +145,10 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
   );
 };
 
-export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
-  const { layout, fieldMap } = meta;
+export const fieldIDsExceptClockedFields = (meta, resourceType) => {
+  const { fieldMap } = meta;
 
-  // if fieldMap is not provided just return metadata untranslated
-  // They DynaForm will probably return null in this case
-  if (!fieldMap) { return meta; }
-  const updatedFieldMap = Object.keys(fieldMap).reduce((acc, curr) => {
+  return Object.keys(fieldMap).reduce((acc, curr) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
@@ -163,9 +164,7 @@ export const disableAllFieldsExceptClockedFields = (meta, resourceType) => {
     }
 
     return acc;
-  }, {});
-
-  return { layout, fieldMap: updatedFieldMap };
+  }, []);
 };
 
 export const getFieldByName = ({ fieldMeta, name }) => {
@@ -177,11 +176,12 @@ export const getFieldByName = ({ fieldMeta, name }) => {
 export const isFormTouched = fields => fields.some(field => field.touched);
 
 export const isAnyFieldTouchedForMeta = ({ layout, fieldMap }, fields) =>
-  fields
+  fieldsStateToArray(fields)
     .filter(field => field.touched)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
+
 export const isAnyFieldVisibleForMeta = ({ layout, fieldMap }, fields) =>
-  fields
+  fieldsStateToArray(fields)
     .filter(field => field.visible)
     .some(({ id }) => !!getFieldByIdFromLayout(layout, fieldMap, id));
 

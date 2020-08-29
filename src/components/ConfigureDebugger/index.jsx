@@ -27,7 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: 600,
-    padding: theme.spacing(1),
   },
   content: {
     flexGrow: 1,
@@ -38,6 +37,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
+    padding: theme.spacing(0, 3, 3, 3),
   },
 }));
 const debugDurationOptions = [

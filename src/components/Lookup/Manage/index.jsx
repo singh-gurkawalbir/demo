@@ -11,6 +11,7 @@ import getFormattedSampleData from '../../../utils/sampleData';
 import netsuiteMetadata from './metadata/netsuite';
 import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function ManageLookup({
@@ -171,6 +172,12 @@ export default function ManageLookup({
     });
   }, [connectionId, extractFields, flowId, formattedSampleData, others, picklistOptions, resource.adaptorType, resourceId, resourceType, showDynamicLookupOnly, value]);
 
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+    ...formState,
+  });
   const showCustomFormValidations = useCallback(() => {
     setFormState({
       showFormValidationsBeforeTouch: true,
@@ -178,21 +185,20 @@ export default function ManageLookup({
   }, []);
 
   return (
-    <div data-test="lookup-form" className={className}>
+    <div data-test="lookup-form">
       <DynaForm
-        disabled={disabled}
+        formKey={formKey}
         fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}
-        // to be removed after form refactor PR merges
-        formState={formState}>
+        >
         {error && (
-          <div>
-            <Typography color="error" variant="h5">
-              {error}
-            </Typography>
-          </div>
+        <div>
+          <Typography color="error" variant="h5">
+            {error}
+          </Typography>
+        </div>
         )}
         <DynaSubmit
+          formKey={formKey}
           disabled={disabled}
           data-test="saveLookupForm"
           showCustomFormValidations={showCustomFormValidations}

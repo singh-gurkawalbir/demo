@@ -1,20 +1,20 @@
-import React, { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
+import { sanitizePatchSet } from '../../forms/utils';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import { selectors } from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
-import { sanitizePatchSet } from '../../forms/utils';
-import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import {
   getMetadata,
-  setValues,
   getScheduleStartMinute,
-  getScheduleVal,
+  getScheduleVal, setValues,
 } from './util';
-import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 
 export default function FlowSchedule({
   flow,
@@ -134,34 +134,41 @@ export default function FlowSchedule({
     scheduleStartMinute,
     resourceIdentifier,
   });
+  const formKey = useFormInitWithPermissions({
+    integrationId: flow._integrationId,
+    resourceType: 'flows',
+    resourceId: flow._id,
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
     <div className={className}>
       <DynaForm
-        integrationId={flow._integrationId}
-        resourceType="flows"
-        resourceId={flow._id}
-        disabled={disabled}
+        formKey={formKey}
         fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}>
-        <DynaSubmit
-          onClick={handleValidateAndSubmit()}
-          color="primary"
-          data-test="saveFlowSchedule"
-          disabled={disableSave}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          onClick={handleValidateAndSubmit(true)}
-          color="secondary"
-          data-test="saveAndCloseFlowSchedule"
-          disabled={disableSave}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button onClick={onClose} variant="text" color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+        />
+      <DynaSubmit
+        formKey={formKey}
+        onClick={handleValidateAndSubmit()}
+        color="primary"
+        data-test="saveFlowSchedule"
+        disabled={disableSave}>
+        {defaultLabels.saveLabel}
+      </DynaSubmit>
+      <DynaSubmit
+        formKey={formKey}
+        onClick={handleValidateAndSubmit(true)}
+        color="secondary"
+        data-test="saveAndCloseFlowSchedule"
+        disabled={disableSave}>
+        {defaultLabels.saveAndCloseLabel}
+      </DynaSubmit>
+      <Button onClick={onClose} variant="text" color="primary">
+        Cancel
+      </Button>
+
     </div>
   );
 }

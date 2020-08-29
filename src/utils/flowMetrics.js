@@ -74,7 +74,7 @@ export const getXAxisFormat = range => {
   let xAxisFormat;
 
   if (days < 2) {
-    xAxisFormat = 'HH:mm:ss';
+    xAxisFormat = 'HH:mm';
   } else if (days < 90) {
     xAxisFormat = 'MM/DD/YY';
   } else {
@@ -115,6 +115,10 @@ export const getDurationLabel = (ranges = []) => {
 
   switch (distance) {
     case '0 days':
+      if (startDate.toISOString() === startOfToday.toISOString()) {
+        return 'Today';
+      }
+
       return `Last ${distanceInHours}`;
 
     case '1 day':

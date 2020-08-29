@@ -11,7 +11,7 @@ const config = {
   target: 'web',
   entry: './src/index.jsx',
   externals: {
-    fs: 'fs'
+    fs: 'fs',
   },
   module: {
     rules: [
@@ -22,9 +22,9 @@ const config = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            cacheCompression: false
-          }
-        }]
+            cacheCompression: false,
+          },
+        }],
       },
       {
         test: /\.css$/i,
@@ -56,7 +56,7 @@ const config = {
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx']
+    extensions: ['*', '.js', '.jsx'],
   },
   plugins: [
     new DotenvPlugin(),
@@ -66,7 +66,7 @@ const config = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
-    })
+    }),
   ],
   output: {
     publicPath: '/',
@@ -83,18 +83,20 @@ const config = {
 
 module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
+  const runOptimizedLocal = argv && argv.runOptimizedLocal;
 
   if (config.mode === 'production' && process.env.NODE_ENV === 'analyze') {
     config.plugins.push(new BundleAnalyzerPlugin());
-  } else if (config.mode === 'development') {
-    config.plugins.push(new ReactRefreshWebpackPlugin());
-    config.output.filename = '[name].js';
-    config.devtool = 'eval-cheap-module-source-map';
-    // if the above source-map scheme results in poor stack traces against pre-compiled code (line number)
-    // we can temporarily toggle back to the inline-source-map scheme below...
-    // config.devtool = 'inline-source-map';
+  } else if (config.mode === 'development' || runOptimizedLocal) {
+    if (!runOptimizedLocal) {
+      config.plugins.push(new ReactRefreshWebpackPlugin());
+      config.devtool = 'eval-cheap-module-source-map';
+      // if the above source-map scheme results in poor stack traces against pre-compiled code (line number)
+      // we can temporarily toggle back to the inline-source-map scheme below...
+      // config.devtool = 'inline-source-map';
 
-    config.optimization.minimize = false;
+      config.optimization.minimize = false;
+    }
     const getProxyOpts = () => {
       console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
@@ -139,6 +141,7 @@ module.exports = (env, argv) => {
       return opts;
     };
     const proxyOpts = getProxyOpts();
+
     config.output.filename = '[name].js';
     config.devServer = {
       hot: true,
@@ -167,5 +170,6 @@ module.exports = (env, argv) => {
       },
     };
   }
+
   return config;
 };

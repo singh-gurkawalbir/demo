@@ -5,7 +5,7 @@ import { IconButton } from '@material-ui/core';
 import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import Spinner from '../../../Spinner';
-import * as selectors from '../../../../reducers';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   status: {
