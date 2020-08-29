@@ -10,6 +10,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import LoadResources from '../../LoadResources';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -177,28 +178,31 @@ export default function UserForm({
       ],
     },
   };
+  const formKey = useFormInitWithPermissions({ fieldMeta });
 
   return (
     <LoadResources required resources="integrations">
-      <DynaForm fieldMeta={fieldMeta}>
-        <div className={classes.actions}>
-          <DynaSubmit
-            disabled={disableSave}
-            data-test="submitUserForm"
-            className={classes.actionButton}
-            onClick={onSaveClick}>
-            {disableSave ? 'Saving...' : 'Save'}
-          </DynaSubmit>
-          <Button
-            data-test="cancelUserForm"
-            onClick={onCancelClick}
-            className={classes.actionButton}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </div>
-      </DynaForm>
+      <DynaForm
+        formKey={formKey}
+        fieldMeta={fieldMeta} />
+      <div className={classes.actions}>
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          data-test="submitUserForm"
+          className={classes.actionButton}
+          onClick={onSaveClick}>
+          {disableSave ? 'Saving...' : 'Save'}
+        </DynaSubmit>
+        <Button
+          data-test="cancelUserForm"
+          onClick={onCancelClick}
+          className={classes.actionButton}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </div>
     </LoadResources>
   );
 }

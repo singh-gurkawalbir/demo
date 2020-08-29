@@ -1,13 +1,13 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { FormContext } from 'react-forms-processor/dist';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { deepClone } from 'fast-json-patch';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
+import useFormContext from '../../../Form/FormContext';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -48,7 +48,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function DynaExportPanel(props) {
-  const { resourceId, formContext, resourceType, flowId } = props;
+  const { resourceId, formKey, resourceType, flowId } = props;
+  const formContext = useFormContext(formKey);
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -165,10 +166,4 @@ function DynaExportPanel(props) {
   );
 }
 
-const DynaExportPanelWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaExportPanel {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaExportPanelWithFormContext;
+export default DynaExportPanel;

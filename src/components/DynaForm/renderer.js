@@ -1,5 +1,4 @@
 import React from 'react';
-import { FieldWrapper } from 'react-forms-processor/dist';
 import fields from './fields';
 
 const wrapper = {
@@ -13,9 +12,10 @@ const fieldStyle = {
   width: '100%',
 };
 
-function getRenderer(editMode, formFieldsMeta, resourceId, resourceType, proceedOnChange) {
-  return function renderer(field) {
+function getRenderer(formKey, resourceId, resourceType, proceedOnChange) {
+  return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
+    const { fieldState: field, ...rest } = props;
     const { id, fieldId, type } = field;
     const DynaField = fields[type];
     const fid = id || fieldId;
@@ -31,10 +31,8 @@ function getRenderer(editMode, formFieldsMeta, resourceId, resourceType, proceed
          function is not a react function neither hook so added inline. */
 
       <div key={fid} style={wrapper}>
-        <div style={fieldStyle}>
-          <FieldWrapper {...field}>
-            <DynaField resourceContext={context} proceedOnChange={proceedOnChange} />
-          </FieldWrapper>
+        <div id={id} style={fieldStyle}>
+          <DynaField {...rest} {...field} resourceContext={context} proceedOnChange={proceedOnChange} />
         </div>
       </div>
     );
