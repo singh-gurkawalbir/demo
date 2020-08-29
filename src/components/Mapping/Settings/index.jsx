@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -10,6 +10,7 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import RightDrawer from '../../drawer/Right';
 
 const emptySet = {};
@@ -28,9 +29,6 @@ function MappingSettings({
 }) {
   const history = useHistory();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
@@ -183,22 +181,23 @@ function MappingSettings({
     [enquesnackbar, extract, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
   );
 
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
-    <DynaForm
-      disabled={disabled}
-      fieldMeta={fieldMeta}
-      optionsHandler={fieldMeta.optionsHandler}
-      formState={formState}>
+    <>
+      <DynaForm
+        formKey={formKey}
+        disabled={disabled}
+        fieldMeta={fieldMeta}
+        optionsHandler={fieldMeta.optionsHandler} />
       <DynaSubmit
+        formKey={formKey}
         disabled={disableSave}
         id="fieldMappingSettingsSave"
-        showCustomFormValidations={showCustomFormValidations}
         onClick={handleSubmit}>
         Save
       </DynaSubmit>
@@ -209,8 +208,7 @@ function MappingSettings({
         color="primary">
         Cancel
       </Button>
-    </DynaForm>
-
+    </>
   );
 }
 

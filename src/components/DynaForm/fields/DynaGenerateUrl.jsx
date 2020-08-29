@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -9,6 +8,7 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
@@ -38,11 +38,12 @@ function GenerateUrl(props) {
     id,
     value,
     buttonLabel,
-    formContext,
     flowId,
+    formKey,
     provider: webHookProvider,
   } = props;
   const { webHookToken } = options;
+  const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
   const webHookVerify = fieldStates?.find(field => field.key === 'webhook.verify')?.value;
   const classes = useStyles();
@@ -125,10 +126,4 @@ function GenerateUrl(props) {
   );
 }
 
-const DynaGenerateUrlFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <GenerateUrl {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaGenerateUrlFormContext;
+export default GenerateUrl;

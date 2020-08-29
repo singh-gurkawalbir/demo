@@ -5,6 +5,7 @@ import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../..';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import Spinner from '../../../../Spinner';
 import SpinnerWrapper from '../../../../SpinnerWrapper';
 
@@ -17,8 +18,8 @@ const useStyles = makeStyles({
 export default function FormView({
   resourceId,
   resourceType,
-  onFormChange,
   disabled,
+  formKey,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -45,6 +46,17 @@ export default function FormView({
     [dispatch, resourceId]
   );
 
+  // TODO:verify this behaviour
+  useFormInitWithPermissions({
+    formKey,
+    remount: settingsFormState?.key,
+    disabled,
+    fieldMeta: settingsFormState?.meta,
+    resourceId,
+    resourceType,
+    ...formState,
+  });
+
   if (settingsFormState && settingsFormState.error) {
     return (
       <div>
@@ -63,15 +75,7 @@ export default function FormView({
 
   return (
     <div className={classes.wrapper}>
-      <DynaForm
-        key={settingsFormState.key}
-        onChange={onFormChange}
-        disabled={disabled}
-        fieldMeta={settingsFormState.meta}
-        resourceId={resourceId}
-        resourceType={resourceType}
-        formState={formState}
-      />
+      <DynaForm formKey={formKey} fieldMeta={settingsFormState?.meta} />
     </div>
   );
 }

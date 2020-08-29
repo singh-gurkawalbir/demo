@@ -9,6 +9,7 @@ import {
   isValidHook,
   isValidSuiteScriptHook,
 } from '../../utils/hooks';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
@@ -134,28 +135,33 @@ export default function Hooks(props) {
     [getSelectedHooks, getSelectedSuiteScriptHooks, submitHandler]
   );
   // console.log('RENDER: Hooks');
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    disabled,
+  });
 
   return (
     <LoadResources resources="scripts,stacks">
       <div className={classes.fbContDrawer}>
-        <DynaForm fieldMeta={fieldMeta} disabled={disabled}>
-          <DynaSubmit
-            disabled={disableSave}
-            data-test={`saveHook-${resourceId}`}
-            onClick={submitHookValues()}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            disabled={disableSave}
-            color="secondary"
-            data-test={`saveAndCloseHook-${resourceId}`}
-            onClick={submitHookValues(true)}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          data-test={`saveHook-${resourceId}`}
+          onClick={submitHookValues()}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          color="secondary"
+          data-test={`saveAndCloseHook-${resourceId}`}
+          onClick={submitHookValues(true)}>
+          {defaultLabels.saveAndCloseLabel}
+        </DynaSubmit>
+        <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
+          Cancel
+        </Button>
       </div>
     </LoadResources>
   );

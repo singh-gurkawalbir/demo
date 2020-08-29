@@ -1,34 +1,35 @@
 import React, { useCallback, useMemo } from 'react';
-import { FormContext } from 'react-forms-processor/dist';
 import Button from '@material-ui/core/Button';
 import useEnableButtonOnTouchedForm from '../../hooks/useEnableButtonOnTouchedForm';
 import trim from '../../utils/trim';
+import useFormContext from '../Form/FormContext';
 
 function FormButton({
-  disabled,
-  isValid,
   onClick,
   children,
   id,
   className,
-  value = {},
   color,
-  fields,
-  resourceType,
-  showCustomFormValidations,
   skipDisableButtonForFormTouched = false,
-  resourceId,
-  ignoreFormTouchedCheck,
+  ...props
 }) {
+  const {
+    fields,
+    isValid: formInValid,
+    disabled: formDisabled,
+    value: formValue,
+  } = useFormContext(props.formKey) || {};
+  const {
+    isValid = formInValid,
+    disabled = formDisabled,
+    value = formValue,
+  } = props;
   const handleClick = useCallback(() => onClick(trim(value)), [onClick, value]);
   const { formTouched, onClickWhenValid } = useEnableButtonOnTouchedForm({
+    ...props,
     onClick: handleClick,
     fields,
     formIsValid: isValid,
-    resourceId,
-    resourceType,
-    ignoreFormTouchedCheck,
-    showCustomFormValidations,
   });
   const buttonDisabled = useMemo(
     () => disabled || (skipDisableButtonForFormTouched ? false : !formTouched),
@@ -38,6 +39,8 @@ function FormButton({
     if (skipDisableButtonForFormTouched) return onClick(value);
     onClickWhenValid(trim(value));
   }, [onClick, onClickWhenValid, skipDisableButtonForFormTouched, value]);
+
+  if (!fields || !value) return null;
 
   return (
     <Button
@@ -54,10 +57,4 @@ function FormButton({
   );
 }
 
-const DynaSubmit = props => (
-  <FormContext.Consumer {...props}>
-    {form => <FormButton {...form} {...props} />}
-  </FormContext.Consumer>
-);
-
-export default DynaSubmit;
+export default FormButton;

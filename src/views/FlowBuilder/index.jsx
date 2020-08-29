@@ -163,6 +163,12 @@ const useStyles = makeStyles(theme => ({
       background: 'none',
     },
   },
+  flowToggle: {
+
+    '& > div:first-child': {
+      padding: '8px 0px',
+    },
+  },
 }));
 
 const tooltipSchedule = {
@@ -461,7 +467,7 @@ function FlowBuilder() {
         </IconButton>
         )}
         {!isDataLoaderFlow && (
-        <div className={classes.chartsIcon}>
+        <div className={clsx(classes.chartsIcon, classes.flowToggle)}>
           <FlowToggle
             integrationId={integrationId}
             resource={flowDetails}
@@ -503,7 +509,7 @@ function FlowBuilder() {
       </div>
     );
   },
-  [allowSchedule, classes.actions, classes.chartsIcon, classes.divider, flowDetails, flowId, handleDrawerClick, handleExitClick, handleRunStart, integrationId, isDataLoaderFlow, isIAType, isMonitorLevelAccess, isNewFlow, isUserInErrMgtTwoDotZero]);
+  [allowSchedule, classes.actions, classes.chartsIcon, classes.flowToggle, classes.divider, flowDetails, flowId, handleDrawerClick, handleExitClick, handleRunStart, integrationId, isDataLoaderFlow, isIAType, isMonitorLevelAccess, isNewFlow, isUserInErrMgtTwoDotZero]);
 
   const pageBar = useMemo(() => (
     <CeligoPageBar

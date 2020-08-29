@@ -14,6 +14,7 @@ import {
   getCronExpression,
 } from './util';
 import { selectors } from '../../../reducers';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 export default function FlowSchedule({ flow, onClose, className }) {
   const dispatch = useDispatch();
@@ -107,23 +108,31 @@ export default function FlowSchedule({ flow, onClose, className }) {
     scheduleStartMinute,
   });
 
+  const formKey = useFormInitWithPermissions({
+
+    integrationId: flow._integrationId,
+    resourceType: 'flows',
+    resourceId: flow._id,
+    disabled: !isManageLevelUser,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+
+  });
+
   return (
     <div className={className}>
       <DynaForm
-        integrationId={flow._integrationId}
-        resourceType="flows"
-        resourceId={flow._id}
-        disabled={!isManageLevelUser}
+        formKey={formKey}
         fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}
-      >
-        <DynaSubmit disabled={!isManageLevelUser} onClick={handleSubmit} >
-          Save
-        </DynaSubmit>
-        <Button onClick={onClose} variant="text" >
-          Cancel
-        </Button>
-      </DynaForm>
+       />
+      <DynaSubmit
+        formKey={formKey}
+        disabled={!isManageLevelUser} onClick={handleSubmit} >
+        Save
+      </DynaSubmit>
+      <Button onClick={onClose} variant="text" >
+        Cancel
+      </Button>
     </div>
   );
 }

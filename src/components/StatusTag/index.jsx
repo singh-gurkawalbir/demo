@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
     },
     '&:before': {
       width: props => `${props.errorValue}%`,
-      left: props => `calc(100% - ${props.errorValue}%)`,
+      left: props => `calc(100% - ${(props.errorValue + props.resolvedValue)}%)`,
     },
   },
   errorValueOnly: {

@@ -64,7 +64,6 @@ export default function ResourceSetupDrawer(props) {
             <ResourceFormWithStatusPanel
               occupyFullWidth
               className={classes.resourceFormWrapper}
-              editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}
               cancelButtonLabel="Cancel"

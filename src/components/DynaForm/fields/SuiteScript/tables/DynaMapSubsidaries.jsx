@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch } from 'react-redux';
 import {BaseTableViewComponent, useGetSuiteScriptBaseCommPath} from './DynaSalesforceProductTable';
 import DynaRadio from '../../radiogroup/DynaRadioGroup';
@@ -8,6 +7,7 @@ import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import Spinner from '../../../../Spinner';
+import useFormContext from '../../../../Form/FormContext';
 
 const fieldMappingTypeOptions = [{items: ['Always Use', 'Map'].map(label => ({label, value: label}))}];
 
@@ -32,14 +32,16 @@ const SalesforceSubsidarySelect = ({
     />
   );
 };
-
-function DynaMapSubsidaries(props) {
+export default function DynaMapSubsidaries(props) {
   const {salesforceSubsidiaryFieldOptions, generates = [], extracts = [], value, onFieldChange, id,
     extractFieldHeader, generateFieldHeader, disabled, registerField,
-    salesforceSubsidiaryField, fields,
+    salesforceSubsidiaryField,
     _integrationId: integrationId,
     ssLinkedConnectionId: connectionId,
+    formKey,
   } = props;
+
+  const fields = useFormContext(formKey)?.fields;
   const [fieldMappingType, setFieldMappingType] = useState((!value || typeof value === 'string') ? 'Always Use' : 'Map');
   const [tableValue, setTableValue] = useState(typeof value !== 'string' ? value : {});
 
@@ -56,7 +58,7 @@ function DynaMapSubsidaries(props) {
   const basePath = useGetSuiteScriptBaseCommPath({connectionId, integrationId});
   const dispatch = useDispatch();
 
-  const selectedOption = fields?.find(({id}) => id === mapSubsidiariesSalesforceSubsidiaryFieldID)?.value;
+  const selectedOption = fields?.[mapSubsidiariesSalesforceSubsidiaryFieldID]?.value;
   const salesforceSubsidaryMetaPath = `${basePath}/Account?ignoreCache=true`;
 
   useEffect(() => {
@@ -159,15 +161,5 @@ function DynaMapSubsidaries(props) {
         )}
 
     </>
-  );
-}
-
-export default function DynaMapSubsidariesWrapped(props) {
-  return (
-    <FormContext.Consumer >
-      {form => (
-        <DynaMapSubsidaries {...props} fields={form.fields} registerField={form.registerField} />
-      )}
-    </FormContext.Consumer>
   );
 }

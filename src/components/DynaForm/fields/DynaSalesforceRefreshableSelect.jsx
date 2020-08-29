@@ -1,14 +1,15 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
-import { salesforceExportSelectOptions } from '../../../utils/resource';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { salesforceExportSelectOptions } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
+import { DynaGenericSelect } from './DynaRefreshableSelect/RefreshGenericResource';
 
 function DynaSalesforceSelectOptionsGenerator(props) {
-  const { connectionId, filterKey, formContext, fieldName } = props;
+  const { connectionId, filterKey, fieldName, formKey } = props;
+  const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const soqlQueryField = formValues['/salesforce/soql'];
   const entityName = (soqlQueryField && soqlQueryField.entityName) || '';
@@ -32,12 +33,4 @@ function DynaSalesforceSelectOptionsGenerator(props) {
   );
 }
 
-const DynaSalesforceFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => (
-      <DynaSalesforceSelectOptionsGenerator {...props} formContext={form} />
-    )}
-  </FormContext.Consumer>
-);
-
-export default DynaSalesforceFormContext;
+export default DynaSalesforceSelectOptionsGenerator;

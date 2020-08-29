@@ -156,6 +156,8 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     minHeight: 38,
     color: theme.palette.secondary.light,
+    fontFamily: 'source sans pro',
+    fontSize: 15,
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,

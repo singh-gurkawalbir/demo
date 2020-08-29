@@ -4,6 +4,7 @@ import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
 import { getCreateScriptMetadata } from './utils';
 import ModalDialog from '../../../ModalDialog';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
 export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
@@ -17,19 +18,28 @@ export default function CreateScriptDialog({ onClose, onSave, scriptId }) {
       onClose,
     }
   );
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: rest,
+    optionsHandler,
+  });
 
   return (
     <ModalDialog show onClose={onClose}>
       <div>Create Script</div>
       <div>
-        <DynaForm fieldMeta={rest} optionsHandler={optionsHandler}>
-          <DynaSubmit data-test="saveScript" onClick={submitHandler(true)} disabled={disableSave}>
-            {saveInProgress ? 'Saving' : 'Save'}
-          </DynaSubmit>
-          <Button data-test="cancelScript" onClick={onClose}>
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm
+          formKey={formKey}
+          fieldMeta={rest} />
+        <DynaSubmit
+          formKey={formKey}
+          data-test="saveScript"
+          onClick={submitHandler(true)}
+          disabled={disableSave}>
+          {saveInProgress ? 'Saving' : 'Save'}
+        </DynaSubmit>
+        <Button data-test="cancelScript" onClick={onClose}>
+          Cancel
+        </Button>
       </div>
     </ModalDialog>
   );

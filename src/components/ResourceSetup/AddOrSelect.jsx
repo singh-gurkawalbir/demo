@@ -11,6 +11,7 @@ import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -100,6 +101,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
+
   return (
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
@@ -126,7 +132,6 @@ export default function AddOrSelect(props) {
             <ResourceFormWithStatusPanel
               heightOffset="250"
               occupyFullWidth
-              editMode={false}
               resourceType={resourceType}
               resourceId={resourceId}
               submitButtonLabel="Save & close"
@@ -136,11 +141,12 @@ export default function AddOrSelect(props) {
               onCancel={onClose}
             />
           ) : (
-            <DynaForm
-              fieldMeta={fieldMeta}
-              optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
-            </DynaForm>
+            <>
+              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+              <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+                Done
+              </DynaSubmit>
+            </>
           )}
         </div>
       </div>

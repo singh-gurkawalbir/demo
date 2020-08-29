@@ -1,16 +1,17 @@
+import { FormLabel } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import React, { useMemo, Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
-import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { selectors } from '../../../reducers';
-import DynaLookupEditor from './DynaLookupEditor';
-import ErroredMessageComponent from './ErroredMessageComponent';
-import lookupUtil from '../../../utils/lookup';
-import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
-import FieldHelp from '../FieldHelp';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import { selectors } from '../../../reducers';
+import lookupUtil from '../../../utils/lookup';
+import useFormContext from '../../Form/FormContext';
+import FieldHelp from '../FieldHelp';
+import DynaEditorWithFlowSampleData from './DynaEditorWithFlowSampleData';
+import DynaLookupEditor from './DynaLookupEditor';
+import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles({
   dynaHttpRequestBodyWrapper: {
@@ -54,7 +55,6 @@ const ManageLookup = props => {
 const DynaHttpRequestBody = props => {
   const {
     id,
-    formContext,
     onFieldChange,
     options = {},
     value,
@@ -65,8 +65,10 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     supportLookup = true,
     disableEditorV2 = false,
+    formKey,
   } = props;
   const classes = useStyles();
+  const formContext = useFormContext(formKey);
   const handleOpenDrawer = usePushRightDrawer(id);
   const { merged: resourceData = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
@@ -140,6 +142,7 @@ const DynaHttpRequestBody = props => {
   return (
     <Fragment key={`${resourceId}-${id}`}>
       <DynaEditorWithFlowSampleData
+        formKey={formKey}
         contentType={contentType === 'json' ? 'json' : 'xml'}
         title={`${
           contentType === 'json'
@@ -180,10 +183,4 @@ const DynaHttpRequestBody = props => {
   );
 };
 
-export default function DynaHttpRequestBodyWrapper(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaHttpRequestBody {...props} formContext={form} />}
-    </FormContext.Consumer>
-  );
-}
+export default DynaHttpRequestBody;

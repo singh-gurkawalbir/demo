@@ -7,6 +7,7 @@ import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
@@ -181,6 +182,14 @@ export default function SettingsDrawer({
     }
     submitHandler(closeOnSave)(formVal);
   }, [submitHandler]);
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    integrationId,
+    resourceType,
+    resourceId,
+    validationHandler,
+
+  });
 
   return (
     <RightDrawer
@@ -189,33 +198,30 @@ export default function SettingsDrawer({
       width="medium">
       <div className={classes.scheduleContainer}>
         <DynaForm
-          integrationId={integrationId}
+          formKey={formKey}
+          fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
           resourceType={resourceType}
           resourceId={resourceId}
-          fieldMeta={fieldMeta}
-          validationHandler={validationHandler}
-          render>
-          <DynaSubmit
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveFlowSettings"
-            onClick={validateAndSubmit()}
-            disabled={disableSave}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveAndCloseFlowSettings"
-            onClick={validateAndSubmit(true)}
-            disabled={disableSave}
-            color="secondary">
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+          data-test="saveFlowSettings"
+          onClick={validateAndSubmit()}
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          formKey={formKey}
+          resourceType={resourceType}
+          resourceId={resourceId}
+          data-test="saveAndCloseFlowSettings"
+          onClick={validateAndSubmit(true)}
+          disabled={disableSave}
+          color="secondary">
+          {defaultLabels.saveAndCloseLabel}
+        </DynaSubmit>
+        <Button onClick={handleClose} variant="text" color="primary">
+          Cancel
+        </Button>
       </div>
     </RightDrawer>
   );
