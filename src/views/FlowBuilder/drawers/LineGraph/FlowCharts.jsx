@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -112,6 +112,7 @@ const DataIcon = ({index}) => {
 
 const Chart = ({ id, flowId, range, selectedResources }) => {
   const classes = useStyles();
+  const [opacity, setOpacity] = useState({});
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
   const flowResources = useSelector(state =>
@@ -165,6 +166,26 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     return modifiedName;
   };
 
+  const handleMouseEnter = e => {
+    if (!e.target.id) {
+      return false;
+    }
+    const resourceId = e.target.id.replace(/-value/, '');
+
+    if (resourceId) {
+      const object = selectedResources.reduce((acc, cur) => {
+        acc[cur] = resourceId === cur ? 1 : 0.2;
+
+        return acc;
+      }, {});
+
+      setOpacity(object);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setOpacity({});
+  };
   const CustomLegend = props => {
     const classes = useStyles();
     const { payload } = props;
@@ -178,7 +199,10 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
                 // eslint-disable-next-line react/no-array-index-key
-                key={entry.dataKey + index}>
+                key={entry.dataKey + index}
+                id={entry.dataKey}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
                 {getResourceName(entry.value)}
               </span>
             </>
@@ -258,7 +282,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           />
 
           <Tooltip content={<CustomTooltip />} />
-          <Legend align="center" content={<CustomLegend />} />
+          <Legend content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
               key={r}
@@ -269,6 +293,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
+              strokeOpacity={opacity[r] || 1}
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
             />
