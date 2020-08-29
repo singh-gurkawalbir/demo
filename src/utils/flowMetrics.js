@@ -194,16 +194,36 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   const bucket = (days > 4 || startDateFromToday > 7) ? 'flowEvents_1hr' : 'flowEvents';
 
   // If duration is more than 4 days, aggregate for 1d
-  const duration = days > 4 ? '1d' : '1h';
+  let duration;
+
+  if (hours < 5 && startDateFromToday < 7) {
+    duration = '1m';
+  } else if (days > 4) {
+    duration = '1d';
+  } else {
+    duration = '1h';
+  }
   const aggregrate = `|> aggregateWindow(every: ${duration}, fn: sum)`;
 
   return `from(bucket: "${bucket}")
-            |> range(start: ${start}, stop: ${end})
-            |> filter(fn: (r) => r.u == "${userId}")
-            ${flowFilterExpression}
-            |> filter(fn: (r) => r._field == "c")
-            ${hours > 4 ? aggregrate : ''}
-            |> drop(columns: ["_start", "_stop"])`;
+    |> range(start: ${start}, stop: ${end})
+    |> filter(fn: (r) => r.u == "${userId}")
+    ${flowFilterExpression}
+    |> filter(fn: (r) => r._field == "c")
+    ${aggregrate}
+    |> drop(columns: ["_start", "_stop"])
+    |> pivot(rowKey: ["_time"], columnKey: ["_measurement"], valueColumn: "_value")
+    |> map(fn: (r) => ({
+      r with
+      time: r._time,
+      flowId: r.f,
+      success: r["s"],
+      error: r["e"],
+      ignored: r["i"],
+      resourceId: r["ei"],
+      averageTimeTaken: r["att"]
+    }))
+    |> drop(columns: ["_start", "_stop","ei","f","u","s","e","i"])`;
 };
 
 export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
@@ -240,25 +260,38 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
   const bucket = (days > 4 || startDateFromToday > 7) ? 'flowEvents_1hr' : 'flowEvents';
 
   // If duration is more than 4 days, aggregate for 1d
-  const duration = days > 4 ? '1d' : '1h';
+  let duration;
 
-  // calculate the att values from the sucess values
-  const aggregrate = `|> filter(fn: (r) => (r._measurement == "s"))
-    |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
-    |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
-      (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c, attph: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)})
-      )
-    |> drop(columns: ["tc", "tt"])
-    |> set(key: "_field", value: outputField)
-    |> rename(columns: {attph: "_value"})), createEmpty: false)`;
+  if (hours < 5 && startDateFromToday < 7) {
+    duration = '1m';
+  } else if (days > 4) {
+    duration = '1d';
+  } else {
+    duration = '1h';
+  }
 
   return `from(bucket: "${bucket}")
-            |> range(start: ${start}, stop: ${end})
-            |> filter(fn: (r) => r.u == "${userId}")
-            ${flowFilterExpression}
-            ${hours > 4 ? aggregrate : ''}
-            |> drop(columns: ["_start", "_stop"])`;
+    |> range(start: ${start}, stop: ${end})
+    |> filter(fn: (r) => r.u == "${userId}")
+    ${flowFilterExpression}
+    |> filter(fn: (r) => (r._measurement == "s"))
+    |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
+    |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
+    (tables
+    |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c, attph: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)})
+    )
+    |> drop(columns: ["tc", "tt"])
+    |> set(key: "_field", value: outputField)
+    |> rename(columns: {attph: "_value"})))
+    |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+    |> map(fn: (r) => ({
+        r with
+        time: r._time,
+        flowId: r.f,
+        resourceId: r.ei,
+        averageTimeTaken: r["att"]
+      }))
+    |> drop(columns: ["_start", "_stop","ei","f","u"])`;
 };
 
 export const getLabel = key => {
@@ -289,27 +322,6 @@ export const getAxisLabel = key => {
 
 export const getAxisLabelPosition = id => id === 'averageTimeTaken' ? 'insideBottomLeft' : 'insideLeft';
 
-function convertToFullText(text) {
-  switch (text) {
-    case 's':
-      return 'success';
-    case 'e':
-      return 'error';
-    case 'ei':
-      return 'resourceId';
-    case 'att':
-      return 'averageTimeTaken';
-    case 'i':
-      return 'ignored';
-    case 'f':
-      return 'flow';
-    case 'c':
-      return 'count';
-    default:
-      return text;
-  }
-}
-
 export const getFlowMetrics = (metrics, measurement) => {
   if (metrics.data) return metrics.data[measurement];
 };
@@ -319,35 +331,14 @@ export const parseFlowMetricsJson = response => {
     return [];
   }
 
-  const metrics = {};
-
-  response
+  return response
     .map(item => ({
-      time: item._time,
       timeInMills: new Date(item._time).getTime(),
-      flowId: item.f,
-      resourceId: item.ei,
-      attribute: convertToFullText(item._measurement),
-      field: convertToFullText(item._field),
-      value: item._value,
-      table: item.table,
-      [`${item.ei}-value`]: parseInt(item._value, 10),
-      [`${item.f}-value`]: parseInt(item._value, 10),
-    }))
-    .reduce((r, a) => {
-      const key =
-        a.attribute === 'success' && a.field === 'averageTimeTaken'
-          ? a.field
-          : a.attribute;
-
-      // eslint-disable-next-line no-param-reassign
-      r[key] = r[key] || [];
-      r[key].push(a);
-
-      return r;
-    }, metrics);
-
-  console.log('metrics', metrics);
-
-  return metrics;
+      success: +item.success || 0,
+      error: +item.error || 0,
+      ignored: +item.ignored || 0,
+      averageTimeTaken: +item.averageTimeTaken || 0,
+      resourceId: item.resourceId,
+      flowId: item.flowId,
+    }));
 };

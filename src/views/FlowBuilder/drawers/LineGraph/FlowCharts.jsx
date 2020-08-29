@@ -114,10 +114,11 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
+    useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
   );
+
   const { startDate, endDate } = range;
 
   let dateTimeFormat;
@@ -138,24 +139,20 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
-  const valueTicks = getTicks(domainRange, range, true);
   const flowData = {};
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r || d.flowId === r);
-      // Add Zero data for ticks
-      valueTicks.forEach(tick => {
-        if (!flowData[r].find(d => d.timeInMills === tick)) {
-          flowData[r].push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
-        }
-      });
+      flowData[r] = data.filter(d => d.resourceId === r);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
 
   const getResourceName = name => {
-    const resourceId = name.replace(/-value/, '');
+    if (!name || typeof name !== 'string') {
+      return name || '';
+    }
+    const resourceId = name.split('-')[0];
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
 
@@ -167,10 +164,12 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   };
 
   const handleMouseEnter = e => {
-    if (!e.target.id) {
+    const id = e?.target?.id;
+
+    if (!id || typeof id !== 'string') {
       return false;
     }
-    const resourceId = e.target.id.replace(/-value/, '');
+    const resourceId = id.split('-')[0];
 
     if (resourceId) {
       const object = selectedResources.reduce((acc, cur) => {
@@ -199,8 +198,8 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
                 // eslint-disable-next-line react/no-array-index-key
-                key={entry.dataKey + index}
-                id={entry.dataKey}
+                key={entry.value}
+                id={entry.value}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}>
                 {getResourceName(entry.value)}
@@ -240,7 +239,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.dataKey}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
             ))}
         </div>
       );
@@ -285,9 +284,9 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           <Legend content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
-              key={r}
-              dataKey={`${r}-value`}
-              name={r}
+              key={`${r}-${id}`}
+              dataKey={id}
+              name={`${r}-${id}`}
               data={flowData[r]}
               yAxisId={id}
               dot={false}
