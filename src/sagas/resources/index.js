@@ -183,7 +183,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   } else if (
     ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
       resourceType
-    )
+    ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment

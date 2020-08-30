@@ -8,6 +8,7 @@ import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -78,6 +79,12 @@ export default function ChangePassword({ show, onClose }) {
     }
   }, [success, message, enqueueSnackbar, onClose]);
 
+  const formKey = useFormInitWithPermissions({
+
+    fieldMeta: changePasswordFieldMeta,
+
+  });
+
   return (
     <ModalDialog show={show} onClose={onClose}>
       <span>Change password</span>
@@ -94,14 +101,14 @@ export default function ChangePassword({ show, onClose }) {
           application, and you will need to sign back in with your new password.`}
           </Typography>
 
-          <DynaForm fieldMeta={changePasswordFieldMeta}>
-            <DynaSubmit
-              data-test="changePassword"
-              id="changePassword"
-              onClick={handleChangePasswordClick}>
-              Change password
-            </DynaSubmit>
-          </DynaForm>
+          <DynaForm formKey={formKey} fieldMeta={changePasswordFieldMeta} />
+          <DynaSubmit
+            formKey={formKey}
+            data-test="changePassword"
+            id="changePassword"
+            onClick={handleChangePasswordClick}>
+            Change password
+          </DynaSubmit>
         </div>
       )}
     </ModalDialog>

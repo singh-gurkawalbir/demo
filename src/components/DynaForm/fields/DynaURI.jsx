@@ -29,6 +29,7 @@ export default function DynaURI(props) {
     resourceType,
     flowId,
     description,
+    formKey,
     disableEditorV2 = false,
   } = props;
   const classes = useStyles();
@@ -46,6 +47,7 @@ export default function DynaURI(props) {
     <>
       <div>
         <DynaEditorWithFlowSampleData
+          formKey={formKey}
           title={editorTitle}
           fieldId={id}
           onSave={handleSave}
