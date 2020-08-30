@@ -113,6 +113,7 @@ const DataIcon = ({index}) => {
 const Chart = ({ id, flowId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
+  let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelector(state =>
@@ -172,17 +173,20 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     const resourceId = id.split('-')[0];
 
     if (resourceId) {
-      const object = selectedResources.reduce((acc, cur) => {
-        acc[cur] = resourceId === cur ? 1 : 0.2;
+      mouseHoverTimer = setTimeout(() => {
+        const object = selectedResources.reduce((acc, cur) => {
+          acc[cur] = resourceId === cur ? 1 : 0.2;
 
-        return acc;
-      }, {});
+          return acc;
+        }, {});
 
-      setOpacity(object);
+        setOpacity(object);
+      }, 10);
     }
   };
 
   const handleMouseLeave = () => {
+    clearTimeout(mouseHoverTimer);
     setOpacity({});
   };
   const CustomLegend = props => {
@@ -197,7 +201,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               <DataIcon index={index} color={entry.payload.stroke} />
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
-                // eslint-disable-next-line react/no-array-index-key
                 key={entry.value}
                 id={entry.value}
                 onMouseEnter={handleMouseEnter}

@@ -155,7 +155,7 @@ const getFlowFilterExpression = (flowId, filters) => {
   const {selectedResources} = filters;
 
   if (selectedResources && selectedResources.length) {
-    return `|> filter(fn: (r) => ${selectedResources.map((r, i) => `${i ? '' : ' or '}r.f == "${r}"`)})`;
+    return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
   }
 
   return `|> filter(fn: (r) => r.f == "${flowId}")`;

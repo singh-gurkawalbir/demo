@@ -49,7 +49,6 @@ export default function MultiSelect(props) {
     onFieldChange,
     placeholder,
     valueDelimiter,
-    displayEmpty,
     isValid,
     label,
     required,
@@ -65,6 +64,12 @@ export default function MultiSelect(props) {
     processedValue = [processedValue];
   }
 
+  // When we submit value as empty array, react forms processor is returning
+  // value as array with empty string. Below block is for handling this case.
+  if (value?.length === 1 && !value[0]) {
+    processedValue = [];
+  }
+
   const Value = ({ selected, items }) => {
     if (!selected || !selected.length) {
       return <span>{placeholder}</span>;
@@ -78,7 +83,7 @@ export default function MultiSelect(props) {
     return <span>Selected({selected.length})</span>;
   };
 
-  let items = options.reduce(
+  const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
         option.items.map(item => {
@@ -113,13 +118,6 @@ export default function MultiSelect(props) {
       ),
     []
   );
-  const defaultItem = (
-    <MenuItem key="__placeholder" value="">
-      {placeholder || 'Please select'}
-    </MenuItem>
-  );
-
-  items = [defaultItem, ...items];
 
   return (
     <div className={classes.multislectWrapper}>
@@ -138,8 +136,8 @@ export default function MultiSelect(props) {
           data-test={id}
           disabled={disabled}
           value={processedValue}
+          displayEmpty
           placeholder={placeholder}
-          displayEmpty={displayEmpty}
           className={classes.wrapper}
           onChange={evt => {
             onFieldChange(id, evt.target.value);

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -113,8 +113,10 @@ const DataIcon = ({index}) => {
 const flowsConfig = { type: 'flows' };
 const Chart = ({ id, integrationId, range, selectedResources }) => {
   const classes = useStyles();
+  const [opacity, setOpacity] = useState({});
+  let mouseHoverTimer;
   const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, integrationId, id)) || {};
+    useSelector(state => selectors.flowMetricsData(state, integrationId)) || {};
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsConfig
@@ -145,24 +147,20 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
-  const valueTicks = getTicks(domainRange, range, true);
   const flowData = {};
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
       flowData[r] = data.filter(d => d.flowId === r);
-      // Add Zero data for ticks
-      valueTicks.forEach(tick => {
-        if (!flowData[r].find(d => d.timeInMills === tick)) {
-          flowData[r].push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
-        }
-      });
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
 
   const getResourceName = name => {
-    const resourceId = name.replace(/-value/, '');
+    if (!name || typeof name !== 'string') {
+      return name || '';
+    }
+    const resourceId = name.split('-')[0];
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
 
@@ -171,6 +169,32 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     }
 
     return modifiedName;
+  };
+
+  const handleMouseEnter = e => {
+    const id = e?.target?.id;
+
+    if (!id || typeof id !== 'string') {
+      return false;
+    }
+    const resourceId = id.split('-')[0];
+
+    if (resourceId) {
+      mouseHoverTimer = setTimeout(() => {
+        const object = selectedResources.reduce((acc, cur) => {
+          acc[cur] = resourceId === cur ? 1 : 0.2;
+
+          return acc;
+        }, {});
+
+        setOpacity(object);
+      }, 10);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(mouseHoverTimer);
+    setOpacity({});
   };
 
   const CustomLegend = props => {
@@ -185,8 +209,10 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
               <DataIcon index={index} color={entry.payload.stroke} />
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
-                // eslint-disable-next-line react/no-array-index-key
-                key={entry.dataKey + index}>
+                key={entry.value}
+                id={entry.value}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
                 {getResourceName(entry.value)}
               </span>
             </>
@@ -224,7 +250,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.dataKey}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
             ))}
         </div>
       );
@@ -238,7 +264,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400} >
         <LineChart
-          // data={flowData}
           margin={{
             top: 5,
             right: 30,
@@ -269,14 +294,15 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
           <Legend align="center" content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
-              key={r}
-              dataKey={`${r}-value`}
-              name={r}
+              key={`${r}-${id}`}
+              dataKey={id}
+              name={`${r}-${id}`}
               data={flowData[r]}
               yAxisId={id}
               dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
+              strokeOpacity={opacity[r] || 1}
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
             />
@@ -290,6 +316,8 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 export default function FlowCharts({ integrationId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
+
   const data =
     useSelector(
       state => selectors.flowMetricsData(state, integrationId),
@@ -297,10 +325,17 @@ export default function FlowCharts({ integrationId, range, selectedResources }) 
     ) || {};
 
   useEffect(() => {
-    if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+    if (selectedResources.length) {
+      setSendQuery(true);
     }
-  }, [data, dispatch, selectedResources, integrationId, range]);
+  }, [selectedResources]);
+
+  useEffect(() => {
+    if (sendQuery) {
+      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+      setSendQuery(false);
+    }
+  }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);
 
   if (data.status === 'requested') {
     return (

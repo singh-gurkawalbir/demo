@@ -7,9 +7,9 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import RightDrawer from '../../drawer/Right';
 import DateRangeSelector from '../../DateRangeSelector';
-import DynaMultiSelect from './MultiSelect';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import DynaMultiSelect from './MultiSelect';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -56,7 +56,9 @@ export default function LineGraphDrawer({ integrationId }) {
   );
   const handleResourcesChange = useCallback(
     (id, val) => {
-      setSelectedResources(val);
+      if (val.length < 9) {
+        setSelectedResources(val);
+      }
     },
     []
   );
@@ -68,7 +70,7 @@ export default function LineGraphDrawer({ integrationId }) {
         <DynaMultiSelect
           name="flowResources"
           value={selectedResources}
-          placeholder="Please select resources"
+          placeholder="Please select up to 8 flows"
           options={[
             {
               items: flowResources.map(r => ({
