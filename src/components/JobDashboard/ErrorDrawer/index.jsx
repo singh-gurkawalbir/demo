@@ -20,15 +20,10 @@ export default function ErrorDrawer({
   integrationName,
 }) {
   const dispatch = useDispatch();
-  const [childJobId, setChildJobId] = useState();
-  const [errorCount, setErrorCount] = useState();
-
-  useEffect(() => {
-    setChildJobId(parentJobId ? jobId : undefined);
-  }, [jobId, parentJobId]);
-  useEffect(() => {
-    setErrorCount(childJobId ? numError + numResolved : undefined);
-  }, [childJobId, numError, numResolved]);
+  const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
+  const [errorCount, setErrorCount] = useState(
+    childJobId ? numError + numResolved : undefined
+  );
   const flowJob = useSelector(state =>
     selectors.flowJob(state, { jobId: parentJobId || jobId, includeAll })
   );
@@ -64,8 +59,8 @@ export default function ErrorDrawer({
   useEffect(() => {
     if (!childJobId && flowJobChildrenLoaded) {
       if (jobWithErrors) {
-        setErrorCount(jobWithErrors.numError + jobWithErrors.numResolved);
         setChildJobId(jobWithErrors._id);
+        setErrorCount(jobWithErrors.numError + jobWithErrors.numResolved);
       }
     }
   }, [dispatch, childJobId, flowJobChildrenLoaded, jobWithErrors, showResolved]);
