@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import Truncate from 'react-truncate';
-import { Typography, Tooltip, makeStyles, Zoom } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Zoom, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
@@ -21,8 +21,9 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
+import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, dragTileConfig, dropTileConfig } from './util';
+import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
@@ -77,6 +78,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
   const status = tileStatus(tile);
+  const isConnectionDown = isTileStatusConnectionDown(tile);
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
   let urlToIntegrationSettings = templateName
@@ -117,26 +119,32 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     }
   }
 
+  const handleConnectionDownStatusClick = useCallback(event => {
+    event.stopPropagation();
+    if (tile._connectorId) {
+      history.push(
+        getRoutePath(
+          `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
+        )
+      );
+    } else {
+      history.push(
+        getRoutePath(
+          `/integrations/${tile._integrationId}/connections`
+        )
+      );
+    }
+  }, [
+    history,
+    integrationAppTileName,
+    tile._connectorId,
+    tile._integrationId,
+  ]);
+
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
-
-      if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        // https://celigo.atlassian.net/browse/IO-16798. Need to remove fix connection drawer changes.
-        if (tile._connectorId) {
-          history.push(
-            getRoutePath(
-              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
-            )
-          );
-        } else {
-          history.push(
-            getRoutePath(
-              `/integrations/${tile._integrationId}/connections`
-            )
-          );
-        }
-      } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
             `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
@@ -203,6 +211,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             className={classes.status}>
             <StatusCircle variant={status.variant} />
           </Status>
+          {isConnectionDown && (
+          <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
+            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
+              <ConnectionDownIcon />
+            </IconButton>
+          </Tooltip>
+          )}
         </Header>
         <Content>
           <CardTitle>
