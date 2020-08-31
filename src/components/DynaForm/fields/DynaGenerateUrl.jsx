@@ -11,7 +11,7 @@ import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
-const inValidFields = (fields, fieldStates) => fieldStates.filter(field => fields.includes(field.id)).some(
+const inValidFields = (fields, fieldStates) => Object.values(fieldStates).filter(field => fields.includes(field.id)).some(
   field => !field.isValid || field.isDiscretelyInvalid
 );
 const useStyles = makeStyles(theme => ({
@@ -45,7 +45,8 @@ function GenerateUrl(props) {
   const { webHookToken } = options;
   const formContext = useFormContext(formKey);
   const { value: formValues, fields: fieldStates } = formContext;
-  const webHookVerify = fieldStates?.find(field => field.key === 'webhook.verify')?.value;
+
+  const webHookVerify = fieldStates?.['webhook.verify']?.value;
   const classes = useStyles();
   const [url, setUrl] = useState(true);
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ function GenerateUrl(props) {
     if (isNewId(finalResourceId)) {
       if (inValidFields(webookRequiredFields, fieldStates)) {
         webookRequiredFields.forEach(fieldId => {
-          onFieldChange(fieldId, (fieldStates.find(({id}) => fieldId === id) || {value: ''}).value);
+          onFieldChange(fieldId, (Object.values(fieldStates).find(({id}) => fieldId === id) || {value: ''}).value);
         });
 
         return;
