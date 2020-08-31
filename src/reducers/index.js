@@ -1836,7 +1836,7 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
 
   return false;
 };
-// here
+
 // FIXME: @ashu, we can refactor this later and completely remove
 // the clone check once the functionality is clear and tested for all scenarios
 selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
