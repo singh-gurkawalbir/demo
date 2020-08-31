@@ -16,7 +16,7 @@ export default {
     },
     {
       heading: 'Success',
-      value: r => r.numSuccess,
+      value: r => (r.type === 'export' && r.numSuccess === 0) ? 'N/A' : r.numSuccess,
     },
     {
       heading: 'Ignored',
