@@ -191,9 +191,7 @@ function MappingSettings({
     <>
       <DynaForm
         formKey={formKey}
-        disabled={disabled}
-        fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler} />
+        fieldMeta={fieldMeta} />
       <DynaSubmit
         formKey={formKey}
         disabled={disableSave}
