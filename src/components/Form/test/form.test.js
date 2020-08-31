@@ -2,6 +2,7 @@
 
 import { MuiThemeProvider } from '@material-ui/core';
 import { fireEvent, render, configure } from '@testing-library/react';
+import { SnackbarProvider } from 'notistack';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
@@ -28,7 +29,9 @@ export function reduxWrappedComponent({ Component, store, componentProps }) {
   return (
     <Provider store={store}>
       <MuiThemeProvider theme={theme}>
-        <Component {...componentProps} />
+        <SnackbarProvider>
+          <Component {...componentProps} />
+        </SnackbarProvider>
       </MuiThemeProvider>
     </Provider>
   );
