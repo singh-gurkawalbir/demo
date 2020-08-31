@@ -27,6 +27,61 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+// #region this form specific source code, please be careful when making changes to the interface
+const form = {
+  init: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
+  formUpdate: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
+  showFormValidations: formKey =>
+    action(actionTypes.FORM.UPDATE, {
+      formKey,
+      formSpecificProps: { showValidationBeforeTouched: true },
+    }),
+  registerField: formKey => fieldProps =>
+    action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
+  fieldChange: formKey => (id, value, skipFieldTouched) =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
+      formKey,
+      fieldProps: { id, value, skipFieldTouched },
+    }),
+  fieldBlur: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
+      formKey,
+      fieldProps: { id },
+    }),
+  fieldFocus: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, {
+      formKey,
+      fieldProps: { id },
+    }),
+  forceFieldState: formKey => (
+    id,
+    { visible,
+      disabled,
+      required,
+      isValid,
+      errorMessages}
+  ) =>
+    action(actionTypes.FORM.FIELD.FORCE_STATE, {
+      formKey,
+      fieldProps: {
+        id,
+        visible,
+        disabled,
+        required,
+        isValid,
+        errorMessages,
+      },
+    }),
+  clearForceFieldState: formKey => id =>
+    action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
+      formKey,
+      fieldProps: { id },
+    }),
+};
+// #endregion
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
@@ -1325,7 +1380,7 @@ const mapping = {
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
-  save: context => action(actionTypes.MAPPING.SAVE, { context }),
+  save: () => action(actionTypes.MAPPING.SAVE),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
@@ -1394,11 +1449,6 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
       resourceId,
       resourceType,
-    }),
-  showFormValidations: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
-      resourceType,
-      resourceId,
     }),
   submit: (
     resourceType,
@@ -1917,6 +1967,7 @@ const editorSampleData = {
 };
 
 export default {
+  form,
   postFeedback,
   app,
   toggleBanner,

@@ -8,6 +8,7 @@ import resourceConstants from '../../../forms/constants/connection';
 import { useLoadingSnackbarOnSave } from '.';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { useLoadIClientOnce } from '../../DynaForm/fields/DynaIclient';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const styles = theme => ({
   actionButton: {
@@ -17,8 +18,12 @@ const styles = theme => ({
 });
 
 function OAuthButton(props) {
-  const { label, classes, resourceType, disabled, resource, ...rest } = props;
-  const { resourceId } = rest;
+  const { label, classes, resourceType, disabled, resourceId, ...rest } = props;
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  ).merged;
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const { iClients } = useLoadIClientOnce({

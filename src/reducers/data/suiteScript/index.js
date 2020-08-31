@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { emptyObject } from '../../../utils/constants';
-import { parseTiles, parseJobs } from './util';
+import { parseTiles, parseJobs, getJobDuration } from './util';
 import { generateUniqueFlowId } from '../../../utils/suiteScript';
 
 const emptyList = [];
@@ -73,6 +73,8 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RECEIVED:
         {
           const { job } = action;
+
+          job.duration = getJobDuration(job);
           const jobIndex = state.jobs?.findIndex(
             j => j._id === job._id && j.type === job.type
           );

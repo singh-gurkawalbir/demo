@@ -5,8 +5,7 @@ export default {
     required: true,
     type: 'refreshableselect',
     bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp:
-      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
+    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> bundle to to enable Real-time export capabilities.',
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
@@ -21,8 +20,7 @@ export default {
     required: true,
     type: 'refreshableselect',
     bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp:
-      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
+    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> bundle to access NetSuite`s RESTlet APIs.',
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
       r &&

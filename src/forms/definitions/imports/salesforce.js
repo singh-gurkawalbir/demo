@@ -187,6 +187,7 @@ export default {
       fieldId: 'salesforce.upsert.externalIdField',
       refreshOptionsOnChangesTo: ['salesforce.sObjectType'],
     },
+    dataMappings: { formId: 'dataMappings' },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
       visibleWhen: [
@@ -216,7 +217,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'inputMode'],
+        fields: ['common', 'inputMode', 'dataMappings'],
       },
       {
         collapsed: true,

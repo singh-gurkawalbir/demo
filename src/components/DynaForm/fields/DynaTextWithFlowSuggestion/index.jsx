@@ -2,9 +2,9 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { TextField, FormLabel, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import Suggestions from './Suggestions';
 import actions from '../../../../actions';
+import useFormContext from '../../../Form/FormContext';
 import { selectors } from '../../../../reducers';
 import FieldHelp from '../../FieldHelp';
 import ErroredMessageComponent from '../ErroredMessageComponent';
@@ -36,12 +36,13 @@ const DynaTextWithFlowSuggestion = props => {
     value,
     onFieldChange,
     flowId,
-    formContext,
     showLookup = true,
     showExtract = true,
     showSuggestionsWithoutHandlebar = false,
     skipExtractWrapOnSpecialChar = false,
+    formKey,
   } = props;
+  const formContext = useFormContext(formKey);
   const ref = useRef(null);
   const dispatch = useDispatch();
   const [lookupModalShown, setLookupModalShown] = useState(false);
@@ -177,10 +178,4 @@ const DynaTextWithFlowSuggestion = props => {
   );
 };
 
-export default function DynaTextWithFlowSuggestionWrapper(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaTextWithFlowSuggestion {...props} formContext={form} />}
-    </FormContext.Consumer>
-  );
-}
+export default DynaTextWithFlowSuggestion;

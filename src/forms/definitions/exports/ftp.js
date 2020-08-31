@@ -209,12 +209,6 @@ export default {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
       placeholder: 'Sample file (that would be parsed)',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
@@ -228,21 +222,9 @@ export default {
           is: ['csv'],
         },
       ] },
-    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
       disabledWhenAll: r => {
         if (isNewId(r._id)) {
           return [{ field: 'uploadfile', is: [''] }];
@@ -251,13 +233,7 @@ export default {
         return [];
       },
     },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
@@ -274,34 +250,10 @@ export default {
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
-    'edix12.format': { fieldId: 'edix12.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'fixed.format': { fieldId: 'fixed.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'edifact.format': { fieldId: 'edifact.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
       refreshOptionsOnChangesTo: [

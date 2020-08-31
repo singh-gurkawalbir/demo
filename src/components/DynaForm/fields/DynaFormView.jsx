@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { FormContext } from 'react-forms-processor/dist';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { getApp } from '../../../constants/applications';
@@ -10,6 +9,7 @@ import {
 } from '../../../forms/utils';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
+import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -19,7 +19,8 @@ const emptyObj = {};
 const isParent = true;
 
 export function FormView(props) {
-  const { resourceType, flowId, resourceId, formContext, value } = props;
+  const { resourceType, flowId, resourceId, value, formKey } = props;
+  const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
     useSelectorMemo(
@@ -108,7 +109,7 @@ export function FormView(props) {
       actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
     );
 
-    let allTouchedFields = formContext.fields
+    let allTouchedFields = Object.values(formContext.fields)
       .filter(field => !!field.touched)
       .map(field => ({ id: field.id, value: field.value }));
 
@@ -142,10 +143,4 @@ export function FormView(props) {
   ) : null;
 }
 
-export default function DynaFormView(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <FormView formContext={form} {...props} />}
-    </FormContext.Consumer>
-  );
-}
+export default FormView;

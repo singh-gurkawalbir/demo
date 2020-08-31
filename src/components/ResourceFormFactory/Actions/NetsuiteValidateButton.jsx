@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormContext } from 'react-forms-processor/dist';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../reducers';
 import trim from '../../../utils/trim';
+import useFormContext from '../../Form/FormContext';
 
 const styles = theme => ({
   actionButton: {
@@ -20,15 +20,22 @@ const NetsuiteValidateButton = props => {
   const {
     resourceId,
     classes,
-    fields,
     id,
-    registerField,
     visibleWhen,
     visibleWhenAll,
     value,
-    disabled,
-    onFieldChange,
+    formKey,
   } = props;
+  const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
+  const { disabled = formDisabled } = props;
+  const onFieldChange = useCallback(
+    field => dispatch(actions.form.fieldChange(formKey)(field)),
+    [dispatch, formKey]
+  );
+  const registerField = useCallback(
+    field => dispatch(actions.form.registerField(formKey)(field)),
+    [dispatch, formKey]
+  );
   const handleValidate = values => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
     dispatch(actions.resource.connections.testClear(resourceId));
@@ -46,7 +53,7 @@ const NetsuiteValidateButton = props => {
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, resourceId)
   );
-  const matchingActionField = fields.find(field => field.id === id);
+  const matchingActionField = fields && Object.values(fields)?.find(field => field.id === id);
   const fieldsIsVisible = matchingActionField && matchingActionField.visible;
 
   useEffect(() => {
@@ -95,7 +102,7 @@ const NetsuiteValidateButton = props => {
         omitWhenValueIs: [undefined, 'false', 'true'],
       });
     }
-  }, [registerField, fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible]);
+  }, [fields, id, visibleWhen, visibleWhenAll, fieldsIsVisible, registerField]);
 
   // Clean up action on un mount , to clear user roles when container is closed
   // TODO @Raghu: check ,should we clear on validate click? or on un mount?
@@ -103,6 +110,7 @@ const NetsuiteValidateButton = props => {
     actions.resource.connections.netsuite.clearUserRoles(resourceId)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), []);
+  if (!fields) return null;
 
   if (id) {
     if (!fieldsIsVisible) return null;
@@ -123,10 +131,4 @@ const NetsuiteValidateButton = props => {
   );
 };
 
-const FormWrappedNetsuiteValidateButton = props => (
-  <FormContext.Consumer>
-    {form => <NetsuiteValidateButton {...form} {...props} />}
-  </FormContext.Consumer>
-);
-
-export default withStyles(styles)(FormWrappedNetsuiteValidateButton);
+export default withStyles(styles)(NetsuiteValidateButton);

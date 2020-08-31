@@ -1,4 +1,3 @@
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import HttpRequestBodyEditorDrawer from '../../AFE/HttpRequestBodyEditor/Drawer';
@@ -10,11 +9,11 @@ import {
   getXMLSampleTemplate,
   getJSONSampleTemplate,
 } from '../../AFE/HttpRequestBodyEditor/templateMapping';
+import useFormContext from '../../Form/FormContext';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
   editorType,
-  formContext,
   flowId,
   resourceId,
   resourceType,
@@ -22,6 +21,7 @@ const DynaEditorWithFlowSampleData = ({
   rule,
   ...props
 }) => {
+  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
     if (disableEditorV2) {
@@ -129,10 +129,4 @@ const DynaEditorWithFlowSampleData = ({
   );
 };
 
-export default function DynaEditorWithFlowSampleDataWrapper(props) {
-  return (
-    <FormContext.Consumer>
-      {form => <DynaEditorWithFlowSampleData {...props} formContext={form} />}
-    </FormContext.Consumer>
-  );
-}
+export default DynaEditorWithFlowSampleData;

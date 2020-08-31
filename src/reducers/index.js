@@ -44,7 +44,9 @@ import {
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
-import { getFieldById } from '../forms/utils';
+import {
+  getFieldById,
+} from '../forms/utils';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -377,10 +379,9 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
     };
-  }
-);
+  });
 
-selectors.userProfileEmail = state => state && state.user && state.user.profile && state.user.profile.email;
+selectors.userProfileEmail = state => state?.user?.profile?.email;
 
 selectors.userProfileLinkedWithGoogle = state => !!(
   state &&
@@ -605,6 +606,27 @@ selectors.flowDetails = (state, id) => {
   return getFlowDetails(flow, integration, exports);
 };
 
+selectors.mkFlowDetails = () => {
+  const resource = fromData.makeResourceSelector();
+  const integrationResource = fromData.makeResourceSelector();
+
+  return createSelector(
+    (state, id) => resource(state?.data?.resources, 'flows', id),
+    (state, id) => {
+      const flow = resource(state?.data?.resources, 'flows', id);
+
+      if (!flow || !flow._integrationId) return null;
+
+      return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
+    },
+    state => state?.data?.resources?.exports,
+    (flow, integration, exports) => {
+      if (!flow) return emptyObject;
+
+      return getFlowDetails(flow, integration, exports);
+    });
+};
+
 /* ***********************************************************************
   This is the beginning of refactoring the above selector. There is just WAY to
   much data returned above and in most cased a component only needs a small slice
@@ -662,24 +684,35 @@ selectors.isFlowEnableLocked = (state, flowId) => {
   return flowSettings.disableSlider;
 };
 
-// Possible refactor! If we need both canSchedule (flow has ability to schedule),
-// and if the IA allows for schedule overrides, then we can return a touple...
-// for the current purpose, we just need to know if a flow allows or doesn't allow
-// schedule editing.
-selectors.flowAllowsScheduling = (state, id) => {
-  const flow = selectors.resource(state, 'flows', id);
+// // Possible refactor! If we need both canSchedule (flow has ability to schedule),
+// // and if the IA allows for schedule overrides, then we can return a touple...
+// // for the current purpose, we just need to know if a flow allows or doesn't allow
+// // schedule editing.
+selectors.mkFlowAllowsScheduling = () => {
+  const resource = selectors.makeResourceSelector();
+  const integrationResource = selectors.makeResourceSelector();
 
-  if (!flow) return false;
-  const integration = selectors.resource(state, 'integrations', flow._integrationId);
-  const isApp = flow._connectorId;
-  const allExports = state && state.data && state.data.resources.exports;
-  const canSchedule = showScheduleIcon(flow, allExports);
+  return createSelector(
+    (state, id) => resource(state?.data?.resources, 'flows', id),
+    (state, id) => {
+      const flow = resource(state?.data?.resources, 'flows', id);
 
-  if (!isApp) return canSchedule;
+      if (!flow || !flow._integrationId) return null;
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
+      return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
+    },
+    state => state?.data?.resources?.exports,
+    (flow, integration, allExports) => {
+      if (!flow) return false;
+      const isApp = flow._connectorId;
+      const canSchedule = showScheduleIcon(flow, allExports);
 
-  return canSchedule && !!flowSettings.showSchedule;
+      if (!isApp) return canSchedule;
+      const flowSettings = getIAFlowSettings(integration, flow._id);
+
+      return canSchedule && !!flowSettings.showSchedule;
+    }
+  );
 };
 
 selectors.flowUsesUtilityMapping = (state, id) => {
@@ -747,11 +780,11 @@ selectors.flowListWithMetadata = (state, options) => {
 /*
  * Gives all other valid flows of same Integration
  */
-selectors.nextDataFlowsForFlow = (state, flow) => {
-  const flows = selectors.flowListWithMetadata(state, { type: 'flows' }).resources || [];
-
-  return getNextDataFlows(flows, flow);
-};
+selectors.mkNextDataFlowsForFlow = () => createSelector(
+  state => state?.data?.resources?.flows,
+  (_, flow) => flow,
+  (flows, flow) => getNextDataFlows(flows, flow)
+);
 
 selectors.isIAConnectionSetupPending = (state, connectionId) => {
   const connection = selectors.resource(state, 'connections', connectionId) || {};
@@ -1853,11 +1886,15 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
 };
 
 // #region PUBLIC ACCOUNTS SELECTORS
-selectors.platformLicense = state => {
-  const preferences = selectors.userPreferences(state);
 
-  return fromUser.platformLicense(state.user, preferences.defaultAShareId);
-};
+selectors.platformLicense = createSelector(
+  selectors.userPreferences,
+  // TODO: Surya make it even more granular the selector
+  // it should be made receptive to changes to the state.user.org.accounts
+  selectors.userState,
+  (preferencesObj, userStateObj) =>
+    fromUser.platformLicense(userStateObj, preferencesObj.defaultAShareId)
+);
 
 selectors.platformLicenseActionDetails = state => {
   let licenseActionDetails = {};
@@ -1931,198 +1968,200 @@ function getTierToFlowsMap(license) {
 
   return flows;
 }
-selectors.platformLicenseWithMetadata = state => {
-  const license = selectors.platformLicense(state);
-  const licenseActionDetails = { ...license };
-  const nameMap = {
-    none: 'None',
-    free: 'Free',
-    limited: 'Limited',
-    standard: 'Standard',
-    premium: 'Premium',
-    enterprise: 'Enterprise',
-  };
+selectors.platformLicenseWithMetadata = createSelector(
+  selectors.platformLicense,
+  license => {
+    const licenseActionDetails = { ...license };
+    const nameMap = {
+      none: 'None',
+      free: 'Free',
+      limited: 'Limited',
+      standard: 'Standard',
+      premium: 'Premium',
+      enterprise: 'Enterprise',
+    };
 
-  if (!licenseActionDetails) {
-    return licenseActionDetails;
-  }
-
-  licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
-  licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
-  licenseActionDetails.inTrial = false;
-
-  if (licenseActionDetails.tier === 'free') {
-    if (licenseActionDetails.trialEndDate) {
-      licenseActionDetails.inTrial =
-        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+    if (!licenseActionDetails) {
+      return licenseActionDetails;
     }
-  }
 
-  licenseActionDetails.hasSubscription = false;
+    licenseActionDetails.isNone = licenseActionDetails.tier === 'none';
+    licenseActionDetails.tierName = nameMap[licenseActionDetails.tier] || licenseActionDetails.tier;
+    licenseActionDetails.inTrial = false;
 
-  if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
-    licenseActionDetails.hasSubscription = true;
-  } else if (
-    licenseActionDetails.tier === 'free' &&
+    if (licenseActionDetails.tier === 'free') {
+      if (licenseActionDetails.trialEndDate) {
+        licenseActionDetails.inTrial =
+        moment(licenseActionDetails.trialEndDate) - moment() >= 0;
+      }
+    }
+
+    licenseActionDetails.hasSubscription = false;
+
+    if (['none', 'free'].indexOf(licenseActionDetails.tier) === -1) {
+      licenseActionDetails.hasSubscription = true;
+    } else if (
+      licenseActionDetails.tier === 'free' &&
     !licenseActionDetails.inTrial
-  ) {
-    if (
-      licenseActionDetails.numAddOnFlows > 0 ||
+    ) {
+      if (
+        licenseActionDetails.numAddOnFlows > 0 ||
       licenseActionDetails.sandbox ||
       licenseActionDetails.numSandboxAddOnFlows > 0
-    ) {
-      licenseActionDetails.hasSubscription = true;
+      ) {
+        licenseActionDetails.hasSubscription = true;
+      }
     }
-  }
 
-  licenseActionDetails.isFreemium =
+    licenseActionDetails.isFreemium =
     licenseActionDetails.tier === 'free' &&
     !licenseActionDetails.hasSubscription &&
     !licenseActionDetails.inTrial;
-  licenseActionDetails.hasExpired = false;
+    licenseActionDetails.hasExpired = false;
 
-  if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
-    licenseActionDetails.hasExpired =
+    if (licenseActionDetails.hasSubscription && licenseActionDetails.expires) {
+      licenseActionDetails.hasExpired =
       moment(licenseActionDetails.expires) - moment() < 0;
-  }
-
-  licenseActionDetails.isExpiringSoon = false;
-  let dateToCheck;
-
-  if (licenseActionDetails.hasSubscription) {
-    if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
-      dateToCheck = licenseActionDetails.expires;
     }
-  } else if (licenseActionDetails.inTrial) {
-    dateToCheck = licenseActionDetails.trialEndDate;
-  }
 
-  if (dateToCheck) {
-    licenseActionDetails.isExpiringSoon =
+    licenseActionDetails.isExpiringSoon = false;
+    let dateToCheck;
+
+    if (licenseActionDetails.hasSubscription) {
+      if (!licenseActionDetails.hasExpired && licenseActionDetails.expires) {
+        dateToCheck = licenseActionDetails.expires;
+      }
+    } else if (licenseActionDetails.inTrial) {
+      dateToCheck = licenseActionDetails.trialEndDate;
+    }
+
+    if (dateToCheck) {
+      licenseActionDetails.isExpiringSoon =
       moment.duration(moment(dateToCheck) - moment()).as('days') <= 15; // 15 days
-  }
+    }
 
-  licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
+    licenseActionDetails.subscriptionName = licenseActionDetails.tierName;
 
-  if (licenseActionDetails.inTrial) {
-    licenseActionDetails.subscriptionName = 'Free trial';
-  }
+    if (licenseActionDetails.inTrial) {
+      licenseActionDetails.subscriptionName = 'Free trial';
+    }
 
-  licenseActionDetails.expirationDate = licenseActionDetails.expires;
+    licenseActionDetails.expirationDate = licenseActionDetails.expires;
 
-  if (licenseActionDetails.inTrial) {
-    licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
-  } else if (licenseActionDetails.isFreemium) {
-    licenseActionDetails.expirationDate = '';
-  }
+    if (licenseActionDetails.inTrial) {
+      licenseActionDetails.expirationDate = licenseActionDetails.trialEndDate;
+    } else if (licenseActionDetails.isFreemium) {
+      licenseActionDetails.expirationDate = '';
+    }
 
-  if (licenseActionDetails.expirationDate) {
-    licenseActionDetails.expirationDate = moment(
-      licenseActionDetails.expirationDate
-    ).format('MMM Do, YYYY');
-  }
+    if (licenseActionDetails.expirationDate) {
+      licenseActionDetails.expirationDate = moment(
+        licenseActionDetails.expirationDate
+      ).format('MMM Do, YYYY');
+    }
 
-  const names = {
-    free: 'Free',
-    light: 'Starter',
-    moderate: 'Professional',
-    heavy: 'Enterprise',
-    custom: 'Custom',
-  };
+    const names = {
+      free: 'Free',
+      light: 'Starter',
+      moderate: 'Professional',
+      heavy: 'Enterprise',
+      custom: 'Custom',
+    };
 
-  licenseActionDetails.usageTierName =
+    licenseActionDetails.usageTierName =
     names[licenseActionDetails.usageTier || 'free'];
 
-  const hours = {
-    free: 1,
-    light: 40,
-    moderate: 400,
-    heavy: 4000,
-    custom: 10000, // TODO - not sure how to get this
-  };
+    const hours = {
+      free: 1,
+      light: 40,
+      moderate: 400,
+      heavy: 4000,
+      custom: 10000, // TODO - not sure how to get this
+    };
 
-  licenseActionDetails.usageTierHours =
+    licenseActionDetails.usageTierHours =
     hours[licenseActionDetails.usageTier || 'free'];
-  licenseActionDetails.status = '';
+    licenseActionDetails.status = '';
 
-  if (licenseActionDetails.hasSubscription) {
-    licenseActionDetails.status = licenseActionDetails.hasExpired
-      ? 'expired'
-      : 'active';
-  }
+    if (licenseActionDetails.hasSubscription) {
+      licenseActionDetails.status = licenseActionDetails.hasExpired
+        ? 'expired'
+        : 'active';
+    }
 
-  if (
-    licenseActionDetails.tier === 'free' &&
+    if (
+      licenseActionDetails.tier === 'free' &&
     (licenseActionDetails.inTrial || licenseActionDetails.isFreemium)
-  ) {
-    licenseActionDetails.status = 'active';
-  }
+    ) {
+      licenseActionDetails.status = 'active';
+    }
 
-  licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
-    licenseActionDetails
-  );
-
-  if (licenseActionDetails.numAddOnFlows > 0) {
-    licenseActionDetails.totalFlowsAvailable +=
-      licenseActionDetails.numAddOnFlows;
-  }
-
-  licenseActionDetails.totalSandboxFlowsAvailable = 0;
-
-  if (licenseActionDetails.sandbox) {
-    licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+    licenseActionDetails.totalFlowsAvailable = getTierToFlowsMap(
       licenseActionDetails
     );
-  }
 
-  if (licenseActionDetails.numSandboxAddOnFlows > 0) {
-    licenseActionDetails.totalSandboxFlowsAvailable +=
+    if (licenseActionDetails.numAddOnFlows > 0) {
+      licenseActionDetails.totalFlowsAvailable +=
+      licenseActionDetails.numAddOnFlows;
+    }
+
+    licenseActionDetails.totalSandboxFlowsAvailable = 0;
+
+    if (licenseActionDetails.sandbox) {
+      licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(
+        licenseActionDetails
+      );
+    }
+
+    if (licenseActionDetails.numSandboxAddOnFlows > 0) {
+      licenseActionDetails.totalSandboxFlowsAvailable +=
       licenseActionDetails.numSandboxAddOnFlows;
-  }
+    }
 
-  if (
-    !(
-      (licenseActionDetails.status === 'active' ||
+    if (
+      !(
+        (licenseActionDetails.status === 'active' ||
         licenseActionDetails.isFreemium) &&
       licenseActionDetails.supportTier
-    )
-  ) {
-    licenseActionDetails.supportTier = '';
-  }
+      )
+    ) {
+      licenseActionDetails.supportTier = '';
+    }
 
-  const toReturn = {
-    actions: [],
-  };
+    const toReturn = {
+      actions: [],
+    };
 
-  toReturn.__trialExtensionRequested =
+    toReturn.__trialExtensionRequested =
     licenseActionDetails.__trialExtensionRequested;
 
-  if (licenseActionDetails.tier === 'none') {
-    toReturn.actions = ['start-free-trial'];
-  } else if (licenseActionDetails.tier === 'free') {
-    if (licenseActionDetails.inTrial) {
-      toReturn.actions = ['request-subscription'];
-    } else if (licenseActionDetails.hasSubscription) {
-      if (licenseActionDetails.hasExpired) {
-        toReturn.actions = ['request-upgrade'];
-      }
-    } else if (licenseActionDetails.trialEndDate) {
-      toReturn.actions = ['request-upgrade', 'request-trial-extension'];
-    } else {
+    if (licenseActionDetails.tier === 'none') {
       toReturn.actions = ['start-free-trial'];
+    } else if (licenseActionDetails.tier === 'free') {
+      if (licenseActionDetails.inTrial) {
+        toReturn.actions = ['request-subscription'];
+      } else if (licenseActionDetails.hasSubscription) {
+        if (licenseActionDetails.hasExpired) {
+          toReturn.actions = ['request-upgrade'];
+        }
+      } else if (licenseActionDetails.trialEndDate) {
+        toReturn.actions = ['request-upgrade', 'request-trial-extension'];
+      } else {
+        toReturn.actions = ['start-free-trial'];
+      }
+    } else if (licenseActionDetails.hasExpired) {
+      toReturn.actions = ['request-upgrade'];
+    } else if (licenseActionDetails.tier !== 'enterprise') {
+      toReturn.actions = ['request-upgrade'];
+    } else {
+      toReturn.actions = ['add-more-flows'];
     }
-  } else if (licenseActionDetails.hasExpired) {
-    toReturn.actions = ['request-upgrade'];
-  } else if (licenseActionDetails.tier !== 'enterprise') {
-    toReturn.actions = ['request-upgrade'];
-  } else {
-    toReturn.actions = ['add-more-flows'];
-  }
 
-  licenseActionDetails.subscriptionActions = toReturn;
+    licenseActionDetails.subscriptionActions = toReturn;
 
-  return licenseActionDetails;
-};
+    return licenseActionDetails;
+  });
+
 selectors.isLicenseValidToEnableFlow = state => {
   const licenseDetails = { enable: true };
   const license = selectors.platformLicenseWithMetadata(state);
@@ -4868,6 +4907,74 @@ selectors.getSuitescriptMappingSubRecordList = createSelector([
 
   return emptySet;
 });
+selectors.applicationType = (state, resourceType, id) => {
+  const resourceObj = selectors.resource(state, resourceType, id);
+  const stagedResourceObj = selectors.stagedResource(state, id);
+
+  if (!resourceObj && (!stagedResourceObj || !stagedResourceObj.patch)) {
+    return '';
+  }
+
+  function getStagedValue(key) {
+    const result = stagedResourceObj?.patch?.find(p => p.op === 'replace' && p.path === key);
+
+    return result?.value;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = resourceType === 'connections'
+    ? getStagedValue('type') || resourceObj?.type
+    : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
+  const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
+
+  if (adaptorType === 'WebhookExport') {
+    return (
+      getStagedValue('/webhook/provider') ||
+      (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
+    );
+  }
+  // For Data Loader cases, there is no image.
+  if (getStagedValue('/type') === 'simple' || resourceObj?.type === 'simple') {
+    return '';
+  }
+
+  if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+
+    return connection && connection.rdbms && connection.rdbms.type;
+  }
+
+  return assistant || adaptorType;
+};
+selectors.lookupProcessorResourceType = (state, resourceId) => {
+  const stagedProcessor = selectors.stagedResource(state, resourceId);
+
+  if (!stagedProcessor || !stagedProcessor.patch) {
+    // TODO: we need a better pattern for logging warnings. We need a common util method
+    // which logs these warning only if the build is dev... if build is prod, these
+    // console.warn/logs should not even be bundled by webpack...
+    // eslint-disable-next-line
+    /*
+     console.warn(
+      'No patch-set available to determine new Page Processor resourceType.'
+    );
+    */
+    return;
+  }
+
+  // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
+  const adaptorType = stagedProcessor?.patch?.find(
+    p => p.op === 'replace' && p.path === '/adaptorType'
+  );
+
+  // console.log(`adaptorType-${id}`, adaptorType);
+
+  return adaptorType?.value?.includes('Export') ? 'exports' : 'imports';
+};
 selectors.tradingPartnerConnections = (
   state,
   connectionId,

@@ -31,6 +31,21 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
   };
 };
 
+const resourceIdInput = {
+  name: '_resourceId',
+  id: '_resourceId',
+};
+
+const userInput = {
+  name: 'byUser',
+  id: 'byUser',
+};
+
+const sourceInput = {
+  name: 'source',
+  id: 'source',
+};
+
 @withStyles(theme => ({
   root: {
     display: 'flex',
@@ -44,6 +59,21 @@ const mapStateToProps = (state, { resourceType, resourceId }) => {
   },
   filterWrapper: {
     padding: 0,
+  },
+  filterContainer: {
+    padding: theme.spacing(2, 0),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    borderWidth: [[1, 0]],
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+
+    '& > *': {
+      marginRight: 10,
+      '&:first-child': {
+        marginLeft: 10,
+      },
+    },
   },
 }))
 class Filters extends Component {
@@ -110,10 +140,7 @@ class Filters extends Component {
     return (
       <FormControl className={classes.formControl}>
         <CeligoSelect
-          inputProps={{
-            name: '_resourceId',
-            id: '_resourceId',
-          }}
+          inputProps={resourceIdInput}
           value={filters._resourceId}
           onChange={this.handleChange}>
           <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -153,7 +180,7 @@ class Filters extends Component {
     const resource = this.getResource();
 
     return (
-      <div className={classes.filterWrapper}>
+      <div className={classes.filterContainer}>
         <form className={classes.root} autoComplete="off">
           <ResourceTypeFilter
             {...this.props}
@@ -167,10 +194,7 @@ class Filters extends Component {
           />
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              inputProps={{
-                name: 'byUser',
-                id: 'byUser',
-              }}
+              inputProps={userInput}
               onChange={this.handleChange}
               value={byUser}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
@@ -185,10 +209,7 @@ class Filters extends Component {
           </FormControl>
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              inputProps={{
-                name: 'source',
-                id: 'source',
-              }}
+              inputProps={sourceInput}
               onChange={this.handleChange}
               value={source}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>

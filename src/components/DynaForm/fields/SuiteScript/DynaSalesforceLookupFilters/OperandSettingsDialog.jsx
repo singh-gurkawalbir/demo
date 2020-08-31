@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import ModalDialog from '../../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../../DynaSubmit';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 export default function OperandSettingsDialog({
   ruleData,
@@ -45,18 +46,19 @@ export default function OperandSettingsDialog({
     [onSubmit]
   );
 
+  const formKey = useFormInitWithPermissions({disabled, fieldMeta});
+
   return (
     <ModalDialog show>
       <span>Operand Settings</span>
       <>
-        <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
-          <Button data-test="cancelOperandSettings" onClick={onClose}>
-            Cancel
-          </Button>
-          <DynaSubmit data-test="saveOperandSettings" onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-        </DynaForm>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <Button data-test="cancelOperandSettings" onClick={onClose}>
+          Cancel
+        </Button>
+        <DynaSubmit formKey={formKey} data-test="saveOperandSettings" onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </>
     </ModalDialog>
   );

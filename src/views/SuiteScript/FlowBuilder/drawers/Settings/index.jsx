@@ -8,6 +8,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../../actions';
 import RightDrawer from '../../../../../components/drawer/Right';
 import { selectors } from '../../../../../reducers';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(() => ({
   settingsContainer: {
@@ -122,17 +123,25 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
     [dispatch, flow._integrationId, flowId, history, ssLinkedConnectionId]
   );
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+
+    disabled: isViewMode || isIntegrationApp,
+
+  });
+
   return (
     <RightDrawer path="settings" title="Settings" width="medium" className={classes.suiteScriptFlowSettingsDrawer}>
       <div className={classes.settingsContainer}>
-        <DynaForm fieldMeta={fieldMeta} disabled={isViewMode || isIntegrationApp} render>
-          <DynaSubmit onClick={handleSubmit} color="primary" variant="outlined">
-            Save
-          </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
+        <DynaForm fieldMeta={fieldMeta} formKey={formKey} />
+        <DynaSubmit
+          formKey={formKey}
+          onClick={handleSubmit} color="primary" variant="outlined">
+          Save
+        </DynaSubmit>
+        <Button onClick={handleClose} variant="text" color="primary">
+          Cancel
+        </Button>
       </div>
     </RightDrawer>
   );

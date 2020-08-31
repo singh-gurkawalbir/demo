@@ -3,6 +3,7 @@ import file from './file';
 import fileAdvancedSettings from './fileAdvancedSettings';
 import fileType from './fileType';
 import compressFiles from './compressFiles';
+import dataMappings from './dataMappings';
 import advancedSettings from './advancedSettings';
 import fileApiIdentifier from './fileApiIdentifier';
 
@@ -11,6 +12,7 @@ export default {
   file,
   fileAdvancedSettings,
   fileType,
+  dataMappings,
   compressFiles,
   advancedSettings,
   fileApiIdentifier,

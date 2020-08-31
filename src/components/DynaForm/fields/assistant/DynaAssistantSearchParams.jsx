@@ -11,6 +11,7 @@ import {
   PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles({
@@ -56,6 +57,13 @@ const SearchParamsModal = props => {
     onClose();
   }
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: {
+      fieldMap,
+      layout,
+    },
+  });
+
   return (
     <ModalDialog show onClose={onClose}>
       <>
@@ -63,21 +71,21 @@ const SearchParamsModal = props => {
       </>
       <>
         <DynaForm
+          formKey={formKey}
           fieldMeta={{
             fieldMap,
             layout,
-          }}>
-          <div>
-            <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
-            <Button
-              data-test="cancelSearchParams"
-              onClick={onClose}
-              variant="text"
-              color="primary">
-              Cancel
-            </Button>
-          </div>
-        </DynaForm>
+          }} />
+        <div>
+          <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
+          <Button
+            data-test="cancelSearchParams"
+            onClick={onClose}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </div>
       </>
     </ModalDialog>
   );
