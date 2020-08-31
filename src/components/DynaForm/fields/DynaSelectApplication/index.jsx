@@ -49,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     marginBottom: theme.spacing(2),
   },
+  formControl: {
+    width: '100%',
+  },
 }));
 
 export default function SelectApplication(props) {
