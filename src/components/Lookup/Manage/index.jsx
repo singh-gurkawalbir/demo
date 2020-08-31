@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import shortid from 'shortid';
 import { useSelector } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -29,10 +29,6 @@ export default function ManageLookup({
 }) {
   const { extractFields, picklistOptions } = others;
 
-  // to be removed after form refactor PR merges
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
   const { merged: resource = {} } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     resourceType,
@@ -176,43 +172,35 @@ export default function ManageLookup({
     disabled,
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
-    ...formState,
   });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
 
   return (
     <div data-test="lookup-form">
       <DynaForm
         formKey={formKey}
         fieldMeta={fieldMeta}
-        >
-        {error && (
+        />
+      {error && (
         <div>
           <Typography color="error" variant="h5">
             {error}
           </Typography>
         </div>
-        )}
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disabled}
-          data-test="saveLookupForm"
-          showCustomFormValidations={showCustomFormValidations}
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
-        <Button
-          data-test="cancelLookupForm"
-          onClick={onCancel}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </DynaForm>
+      )}
+      <DynaSubmit
+        formKey={formKey}
+        disabled={disabled}
+        data-test="saveLookupForm"
+        onClick={handleSubmit}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="cancelLookupForm"
+        onClick={onCancel}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
     </div>
   );
 }
