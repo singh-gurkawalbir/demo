@@ -10,6 +10,7 @@ import Edit from './actions/Edit';
 import NameCell from './cells/NameCell';
 import OnOffCell from './cells/OnOffCell';
 import RunCell from './cells/RunCell';
+import ErrorsCell from './cells/ErrorCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
@@ -34,6 +35,20 @@ export default {
           );
         },
         orderBy: 'name',
+      },
+      {
+        heading: 'Errors',
+        value: function Errors(r) {
+          return (
+            <ErrorsCell
+              flowId={r._id}
+              integrationId={actionProps?.parentId || r._integrationId}
+              isIntegrationApp={!!r._connectorId}
+              childId={actionProps?.storeId}
+            />
+          );
+        },
+        orderBy: 'errors',
       },
       {
         heading: 'Last updated',
