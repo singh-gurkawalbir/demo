@@ -39,6 +39,10 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.background.paper2,
     },
   },
+  arrowLeft: {
+    padding: 0,
+    marginRight: theme.spacing(1),
+  },
 }));
 
 export default function DrawerTitleBar({
