@@ -104,7 +104,7 @@ export default {
       options: [
         {
           items: [
-            { label: 'Use bulk insert SQL Query', value: 'BULK INSERT' },
+            { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
             { label: 'Use MERGE SQL Query', value: 'MERGE' },
           ],
