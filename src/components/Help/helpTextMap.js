@@ -28,9 +28,6 @@ export default {
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
   'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'import.rest.requestType':
-    'Please specify whether the record is being created or updated using this field.',
-
   // definitions
   'http.connection.customScopeDelimiter': 'If your provider doesn\'t use spaces to delimit scopes, check this box and enter your provider’s custom scope delimiter.',
   'connection.salesforce.info.email': 'Your Salesforce account email.',
@@ -608,11 +605,6 @@ export default {
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-  'rest.import.rest.requestTypeCreate':
-    'Please specify whether the record is being created or updated using this field.',
-  'rest.import.rest.requestTypeUpdate':
-    'Please specify whether the record is being created or updated using this field.',
-
   'agent.name':
     'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':
