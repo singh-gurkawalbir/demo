@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch, useLocation } from 'react-router-dom';
 import { makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Checkbox } from '@material-ui/core';
 import { difference } from 'lodash';
@@ -7,6 +7,9 @@ import { JOB_STATUS } from '../../utils/constants';
 import JobDetail from './JobDetail';
 import ErrorDrawer from './ErrorDrawer';
 import actions from '../../actions';
+import SpinnerWrapper from '../SpinnerWrapper';
+import Spinner from '../Spinner';
+import { selectors } from '../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -83,6 +86,7 @@ function JobTable({
   const match = useRouteMatch();
   const [openedJobErrors, setOpenedJobErrors] = useState(false);
   const [showErrorDialogFor, setShowErrorDialogFor] = useState({});
+  const isFlowJobsCollectionLoading = useSelector(state => selectors.isFlowJobsCollectionLoading(state));
   const selectableJobsInCurrentPage = jobsInCurrentPage.filter(
     j =>
       [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED].includes(
@@ -171,50 +175,60 @@ function JobTable({
     history.goBack();
     // only clear the current error set if the close was fired from
     // this drawer and not the child retry drawer.
-    if (match.isExact) setShowErrorDialogFor({});
+    // if (match.isExact) setShowErrorDialogFor({});
+    /** Dirty fix, I don't see a better option. */
+    if (history?.location?.pathname?.endsWith('dashboard/viewErrors')) {
+      setShowErrorDialogFor({});
+    }
   }
 
   return (
     <>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell className={classes.checkFlow}>
-              <Checkbox
-                disabled={jobsInCurrentPage.length === 0}
-                checked={isSelectAllChecked}
-                onChange={handleSelectAllChange}
-                color="primary"
-                inputProps={{ 'aria-label': 'Select all jobs' }}
+      {isFlowJobsCollectionLoading ? (
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
+      ) : (
+        <Table className={classes.table}>
+          <TableHead>
+            <TableRow>
+              <TableCell className={classes.checkFlow}>
+                <Checkbox
+                  disabled={jobsInCurrentPage.length === 0}
+                  checked={isSelectAllChecked}
+                  onChange={handleSelectAllChange}
+                  color="primary"
+                  inputProps={{ 'aria-label': 'Select all jobs' }}
               />
-            </TableCell>
-            <TableCell className={classes.name}>Flow</TableCell>
-            <TableCell className={classes.status}>Status</TableCell>
-            <TableCell className={classes.success}>Success</TableCell>
-            <TableCell className={classes.ignore}>Ignored</TableCell>
-            <TableCell className={classes.error}>Errors</TableCell>
-            <TableCell className={classes.resolved}>Resolved</TableCell>
-            <TableCell className={classes.pages}>Pages</TableCell>
-            <TableCell className={classes.duration}>Duration</TableCell>
-            <TableCell className={classes.completed}>Completed</TableCell>
-            <TableCell className={classes.actions}>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody data-test={`${integrationName}Dashboard`}>
-          {jobsInCurrentPage.map(job => (
-            <JobDetail
-              key={job._id}
-              job={job}
-              onSelectChange={handleSelectChange}
-              selectedJobs={selectedJobs}
-              userPermissionsOnIntegration={userPermissionsOnIntegration}
-              onViewErrorsClick={handleViewErrorsClick}
-              integrationName={integrationName}
-              isFlowBuilderView={isFlowBuilderView}
+              </TableCell>
+              <TableCell className={classes.name}>Flow</TableCell>
+              <TableCell className={classes.status}>Status</TableCell>
+              <TableCell className={classes.success}>Success</TableCell>
+              <TableCell className={classes.ignore}>Ignored</TableCell>
+              <TableCell className={classes.error}>Errors</TableCell>
+              <TableCell className={classes.resolved}>Resolved</TableCell>
+              <TableCell className={classes.pages}>Pages</TableCell>
+              <TableCell className={classes.duration}>Duration</TableCell>
+              <TableCell className={classes.completed}>Completed</TableCell>
+              <TableCell className={classes.actions}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody data-test={`${integrationName}Dashboard`}>
+            {jobsInCurrentPage.map(job => (
+              <JobDetail
+                key={job._id}
+                job={job}
+                onSelectChange={handleSelectChange}
+                selectedJobs={selectedJobs}
+                userPermissionsOnIntegration={userPermissionsOnIntegration}
+                onViewErrorsClick={handleViewErrorsClick}
+                integrationName={integrationName}
+                isFlowBuilderView={isFlowBuilderView}
             />
-          ))}
-        </TableBody>
-      </Table>
+            ))}
+          </TableBody>
+        </Table>
+      )}
       {(showErrorDialogFor?.jobId || _JobId) && (
       <ErrorDrawer
         // for now, force tall (default)

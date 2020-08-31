@@ -11,7 +11,7 @@ import CeligoTable from '../../CeligoTable';
 import JobErrorMessage from './JobErrorMessage';
 import DateTimeDisplay from '../../DateTimeDisplay';
 import ButtonsGroup from '../../ButtonGroup';
-import * as selectors from '../../../reducers';
+import { selectors } from '../../../reducers';
 import openExternalUrl from '../../../utils/window';
 
 const useStyles = makeStyles(theme => ({

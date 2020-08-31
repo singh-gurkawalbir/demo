@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
@@ -10,6 +10,7 @@ import CopyIcon from '../../icons/CopyIcon';
 import ActionButton from '../../ActionButton';
 import FieldHelp from '../FieldHelp';
 import ErroredMessageComponent from './ErroredMessageComponent';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -187,14 +188,18 @@ function DynaText(props) {
 }
 
 export default function TextFieldWithClipboardSupport(props) {
-  const { copyToClipboard, value, subSectionField, className } = props;
+  const { copyToClipboard, value, subSectionField, className} = props;
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
+
+  const handleCopy = useCallback(() =>
+    enquesnackbar({ message: 'Copied to clipboard' }), [enquesnackbar]);
 
   if (copyToClipboard) {
     return (
       <div className={classes.dynaFieldCopyClipboard}>
         <DynaText {...props} />
-        <CopyToClipboard text={value}>
+        <CopyToClipboard text={value} onCopy={handleCopy}>
           <ActionButton
             data-test="copyToClipboard"
             title="Copy to clipboard"

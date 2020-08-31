@@ -14,29 +14,23 @@ export default {
   },
   optionsHandler(fieldId, fields) {
     if (fieldId === 'ftp.port') {
-      const ftpPortField = fields.find(field => field.fieldId === 'ftp.port');
+      const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
 
-      if (!ftpPortField.value || [21, 22, 990].includes(ftpPortField.value)) {
-        const ftpTypeField = fields.find(field => field.fieldId === 'ftp.type');
-
-        if (ftpTypeField.value === 'sftp') {
-          return 22;
-        }
-
-        if (ftpTypeField.value === 'ftps') {
-          const useImplicitFTPS = fields.find(
-            field => field.fieldId === 'ftp.useImplicitFtps'
-          );
-
-          if (useImplicitFTPS.value === true) {
-            return 990;
-          }
-        }
-
-        return 21;
+      if (ftpTypeField.value === 'sftp') {
+        return 22;
       }
 
-      return ftpPortField.value;
+      if (ftpTypeField.value === 'ftps') {
+        const useImplicitFTPS = fields.find(
+          field => field.fieldId === 'ftp.useImplicitFtps'
+        );
+
+        if (useImplicitFTPS.value === true) {
+          return 990;
+        }
+      }
+
+      return 21;
     }
 
     return null;

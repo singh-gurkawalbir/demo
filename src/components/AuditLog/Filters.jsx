@@ -60,6 +60,21 @@ const sourceInput = {
   filterWrapper: {
     padding: 0,
   },
+  filterContainer: {
+    padding: theme.spacing(2, 0),
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
+    borderWidth: [[1, 0]],
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+
+    '& > *': {
+      marginRight: 10,
+      '&:first-child': {
+        marginLeft: 10,
+      },
+    },
+  },
 }))
 class Filters extends Component {
   state = {
@@ -165,7 +180,7 @@ class Filters extends Component {
     const resource = this.getResource();
 
     return (
-      <div className={classes.filterWrapper}>
+      <div className={classes.filterContainer}>
         <form className={classes.root} autoComplete="off">
           <ResourceTypeFilter
             {...this.props}
