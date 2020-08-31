@@ -10,10 +10,10 @@ import DynaText from './DynaText';
 import { isNewId, getWebhookUrl } from '../../../utils/resource';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { getInvalidFields } from '../../../forms/utils';
 
-const inValidFields = (fields, fieldStates) => Object.values(fieldStates).filter(field => fields.includes(field.id)).some(
-  field => !field.isValid || field.isDiscretelyInvalid
-);
+const hasInValidFields = (fields, fieldStates) => getInvalidFields(fieldStates).some(field => fields.includes(field.id));
+
 const useStyles = makeStyles(theme => ({
   children: {
     flex: 1,
@@ -58,7 +58,7 @@ function GenerateUrl(props) {
     enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
   const handleGenerateUrl = useCallback(() => {
     if (isNewId(finalResourceId)) {
-      if (inValidFields(webookRequiredFields, fieldStates)) {
+      if (hasInValidFields(webookRequiredFields, fieldStates)) {
         webookRequiredFields.forEach(fieldId => {
           onFieldChange(fieldId, (Object.values(fieldStates).find(({id}) => fieldId === id) || {value: ''}).value);
         });
