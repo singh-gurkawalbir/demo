@@ -510,6 +510,10 @@ const metadata = {
       connectionId,
       commMetaPath,
     }),
+  getBundleInstallStatus: connectionId =>
+    action(actionTypes.METADATA.BUNDLE_INSTALL_STATUS, {
+      connectionId,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -1494,6 +1498,10 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
+  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleVersion, bundleUrl, resourceType, resourceId}),
+  hideBundleInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, {resourceType, resourceId}),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),
