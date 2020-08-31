@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaGenerateUrlWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
 
   dynaGenerateTokenbtn: {

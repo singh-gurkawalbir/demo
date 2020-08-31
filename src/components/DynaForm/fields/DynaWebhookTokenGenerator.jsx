@@ -18,6 +18,7 @@ import WarningIcon from '../../icons/WarningIcon';
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynaWebhookTokenField: {
     flex: 1,

@@ -17,6 +17,7 @@ import FieldHelp from '../../FieldHelp';
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynaDateCalendarBtn: {
     padding: 0,
