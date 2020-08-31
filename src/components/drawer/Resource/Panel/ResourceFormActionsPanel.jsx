@@ -118,7 +118,7 @@ export default function ResourceFormActionsPanel(props) {
 
   const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
 
-  const connectionType = getConnectionType(resource);
+  const connectionType = getConnectionType(resource.master ? resource.master : resource);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   // Any extra actions other than Save, Cancel which needs to be separated goes here
   const formState = useSelector(state =>
