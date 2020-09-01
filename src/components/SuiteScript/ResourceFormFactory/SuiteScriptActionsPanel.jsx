@@ -10,7 +10,11 @@ const secondaryActions = ['test', 'validate'];
 export default function (props) {
   const { resourceType, resourceId} = props;
 
+<<<<<<< HEAD
   const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
+=======
+  const {merged: resource} = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
+>>>>>>> 801bba3c292c816cb59d85eacb2c86324c3c6036
 
   // Any extra actions other than Save, Cancel which needs to be separated goes here
   const formState = useSelector(state =>
