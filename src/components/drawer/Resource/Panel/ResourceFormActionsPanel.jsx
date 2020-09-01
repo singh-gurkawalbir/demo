@@ -116,9 +116,9 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
 export default function ResourceFormActionsPanel(props) {
   const { resourceType, resourceId, isNew} = props;
 
-  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
+  const {merged: resource} = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
 
-  const connectionType = getConnectionType(resource.master ? resource.master : resource);
+  const connectionType = getConnectionType(resource);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   // Any extra actions other than Save, Cancel which needs to be separated goes here
   const formState = useSelector(state =>
