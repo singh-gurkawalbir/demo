@@ -33,7 +33,7 @@ export default function (props) {
       id,
       mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
     }));
-  }, [actions, resource.type, resourceType]);
+  }, [actions, resource?.type, resourceType]);
 
   if (!formState.initComplete) return null;
 
