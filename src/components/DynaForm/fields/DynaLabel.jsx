@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ArrowPopper from '../../ArrowPopper';
 import { getHelpTextMap } from '../../Help';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   helpPopper: {
@@ -57,6 +58,7 @@ function DynaLabel(props) {
         onMouseLeave={handlePopoverClose}
         className={classes.textField}>
         {label}
+        <FieldHelp {...props} />
       </Typography>
     </>
   );

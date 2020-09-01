@@ -5,6 +5,7 @@ import ReactResizeDetector from 'react-resize-detector';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
+import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
 
 const useStyles = makeStyles(theme => ({
   removeTopPadding: {
@@ -54,6 +55,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
         )}
         {showNotificationToaster &&
           <GenericAdaptorNotification className={classes.notification} onClose={onCloseNotificationToaster} />}
+        <NetSuiteBundleInstallNotification className={classes.notification} resourceType={resourceType} resourceId={resourceId} />
         <ReactResizeDetector handleHeight onResize={resize} />
       </div>
       <ResourceForm className={classes.form} {...props} />
