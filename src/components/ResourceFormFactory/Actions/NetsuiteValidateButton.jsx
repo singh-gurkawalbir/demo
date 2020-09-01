@@ -23,10 +23,10 @@ const NetsuiteValidateButton = props => {
     id,
     visibleWhen,
     visibleWhenAll,
-    value,
     formKey,
   } = props;
-  const { fields, disabled: formDisabled } = useFormContext(formKey) || {};
+
+  const { fields, disabled: formDisabled, value } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
   const onFieldChange = useCallback(
     field => dispatch(actions.form.fieldChange(formKey)(field)),
