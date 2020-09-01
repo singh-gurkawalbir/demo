@@ -111,7 +111,6 @@ selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
   (preferences, org, profile) => {
     const { defaultAShareId } = preferences;
 
-    console.log('profile', profile);
     if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
       return !!profile.useErrMgtTwoDotZero;
     }
