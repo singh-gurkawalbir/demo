@@ -226,7 +226,7 @@ export default function ClonePreview(props) {
     }
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
-  const { objects = [] } = components;
+  const { objects = [] } = components || {};
   const fieldMeta = {
     fieldMap: {
       name: {
