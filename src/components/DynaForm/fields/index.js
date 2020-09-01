@@ -40,6 +40,7 @@ import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaNSWSSavedSearch from './DynaNSWSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
+import DynaAssistantHelper from './assistant/DynaAssistantHelper';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
@@ -170,6 +171,7 @@ export default {
   webhooksampledata: DynaWebHookSampleData,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
+  assistanthelper: DynaAssistantHelper,
   keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,

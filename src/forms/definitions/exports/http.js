@@ -261,10 +261,10 @@ export default {
         const isNew = isNewId(r._id);
 
         // if its create
-        if (isNew) return '';
+        // if (isNew) return '';
         const output = r && r.type;
 
-        return output || 'all';
+        return isNew ? output : output || 'all';
       },
       visibleWhen: [
         {
@@ -379,6 +379,7 @@ export default {
       fieldId: 'exportPanel',
     },
     formView: { fieldId: 'formView' },
+    assistantHelper: {fieldId: 'assistantHelper', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
   },
 
   layout: {
@@ -388,6 +389,11 @@ export default {
         type: 'collapse',
         containers: [
           { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
+          {
+            collapsed: true,
+            label: 'Assistant Helper',
+            fields: ['assistantHelper'],
+          },
           {
             collapsed: true,
             label: r => {
