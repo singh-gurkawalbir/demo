@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
  * TODO @Surya: Revisit this once form refactor is done
  */
 
-const ActionButtons = ({actions, formProps, proceedOnChange, consolidatedActions}) => {
+const ActionButtons = ({actions, formProps, consolidatedActions}) => {
   const classes = useStyles();
 
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
@@ -63,7 +63,6 @@ const ActionButtons = ({actions, formProps, proceedOnChange, consolidatedActions
         <Action
           key={action.id}
           dataTest={action.id}
-          proceedOnChange={proceedOnChange}
           {...rest}
           {...action}
           {...actionProps}
@@ -82,7 +81,7 @@ const ActionButtons = ({actions, formProps, proceedOnChange, consolidatedActions
       secondaryActions: [],
 
     });
-  }, [actions, consolidatedActions, disableSaveOnClick, formProps, proceedOnChange]);
+  }, [actions, consolidatedActions, disableSaveOnClick, formProps]);
 
   if (!actions?.length) { return null; }
 
@@ -105,9 +104,12 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
   // as required, this currently only applies to new connection form
   const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
 
+  // hide action buttons when its a new connections form for a single application dropdown
+  if (proceedOnChange) { return null; }
+
   return (
 
-    ((!proceedOnChange || actions?.length) &&
+    (actions?.length &&
     <ActionButtons consolidatedActions={consolidatedActions} actions={actions} formProps={props} />) || null
 
   );
