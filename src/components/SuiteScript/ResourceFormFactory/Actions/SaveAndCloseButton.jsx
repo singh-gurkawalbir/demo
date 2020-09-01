@@ -1,6 +1,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import DynaAction from '../../../DynaForm/DynaAction';
 import { selectors } from '../../../../reducers';
@@ -18,7 +19,6 @@ const SaveButton = props => {
     resourceType,
     resourceId,
     classes,
-    match,
     disabled = false,
     skipCloseOnSave = false,
     disableSaveOnClick,
@@ -28,6 +28,7 @@ const SaveButton = props => {
     integrationId,
   } = props;
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const saveTerminated = useSelector(state =>
     selectors.suiteScriptResourceFormSaveProcessTerminated(state, {
       resourceType,
