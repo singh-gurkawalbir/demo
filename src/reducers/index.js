@@ -399,12 +399,6 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 
-selectors.isAuthLoading = state => (
-  state &&
-    state.auth &&
-    state.auth.commStatus === COMM_STATES.LOADING
-);
-
 selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);

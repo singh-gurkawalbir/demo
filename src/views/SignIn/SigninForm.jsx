@@ -1,36 +1,20 @@
 import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { makeStyles } from '@material-ui/styles';
+import React, { useState, useCallback} from 'react';
 import { Typography, Button, Link} from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { useLocation } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { getDomain } from '../../utils/resource';
 import getRoutePath from '../../utils/routePaths';
+import Spinner from '../../components/Spinner';
 
-const mapStateToProps = state => ({
-  error: selectors.authenticationErrored(state),
-  userEmail: selectors.userProfileEmail(state),
-  userProfileLinkedWithGoogle: selectors.userProfileLinkedWithGoogle(state),
-});
-const mapDispatchToProps = dispatch => ({
-  handleAuthentication: (email, password) => {
-    dispatch(actions.auth.request(email, password));
-  },
-  handleSignInWithGoogle: returnTo => {
-    dispatch(actions.auth.signInWithGoogle(returnTo));
-  },
-  handleReSignInWithGoogle: email => {
-    dispatch(actions.auth.reSignInWithGoogle(email));
-  },
-  handleReSignInWithGoogleCompleted: () => {
-    dispatch(actions.auth.initSession());
-  },
-});
 const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
 
-@withStyles(theme => ({
+const useStyles = makeStyles(theme => ({
   snackbar: {
     margin: theme.spacing(1),
   },
@@ -120,112 +104,94 @@ const path = `${process.env.CDN_BASE_URI}images/googlelogo.png`;
   label: {
     display: 'flex',
   },
-}))
+}));
 
-class SignIn extends Component {
-  state = {
-    email: '',
-  };
+export default function SignIn({dialogOpen}) {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const classes = useStyles();
+  const [email, setEmail] = useState('');
 
-  componentDidMount() {
-    if (
-      process.env.AUTO_LOGIN === 'true' &&
-      process.env.NODE_ENV === 'development'
-    ) {
-      const e = {
-        target: {
-          email: {
-            value: process.env.API_EMAIL,
-          },
-          password: {
-            value: process.env.API_PASSWORD,
-          },
-        },
-        preventDefault: () => {},
-      };
+  const handleAuthentication = useCallback((email, password) => {
+    dispatch(actions.auth.request(email, password, true));
+  }, [dispatch]);
 
-      this.handleOnSubmit(e);
-    }
-  }
+  const handleReSignInWithGoogleCompleted = useCallback(() => {
+    dispatch(actions.auth.initSession());
+  }, [dispatch]);
 
-  handleOnChangeEmail = e => {
-    this.setState({ email: e.target.value });
-  };
+  const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
 
-  handleOnSubmit = e => {
+  let error = useSelector(state => selectors.authenticationErrored(state));
+  const userEmail = useSelector(state => selectors.userProfileEmail(state));
+  const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
+  const showError = useSelector(state => selectors.showAuthError(state));
+
+  const handleOnChangeEmail = useCallback(e => {
+    setEmail(e.target.value);
+  }, []);
+
+  const handleOnSubmit = useCallback(e => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    this.props.handleAuthentication(email, password);
-  };
+    handleAuthentication(email, password);
+  }, [handleAuthentication]);
 
-  handleSignInWithGoogle = e => {
+  const handleSignInWithGoogle = useCallback(e => {
     e.preventDefault();
+    dispatch(actions.auth.signInWithGoogle(e.target.attemptedRoute.value));
+  }, [dispatch]);
 
-    this.props.handleSignInWithGoogle(e.target.attemptedRoute.value);
-  };
-
-  handleReSignInWithGoogle = e => {
+  const handleReSignInWithGoogle = useCallback(e => {
     e.preventDefault();
+    dispatch(actions.auth.reSignInWithGoogle(userEmail));
+  }, [dispatch, userEmail]);
 
-    this.props.handleReSignInWithGoogle(this.props.userEmail);
+  window.signedInWithGoogle = () => {
+    handleReSignInWithGoogleCompleted();
   };
 
-  render() {
-    window.signedInWithGoogle = () => {
-      this.props.handleReSignInWithGoogleCompleted();
-    };
-
-    const {
-      classes,
-      dialogOpen,
-      userEmail,
-      location,
-      userProfileLinkedWithGoogle,
-    } = this.props;
-    let { error } = this.props;
-    const attemptedRoute =
+  const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
 
-    if (error) {
-      error = 'Sign in failed. Please try again.';
-    } else if (window.signInError) {
-      error = window.signInError;
-    }
+  if (error) {
+    error = 'Sign in failed. Please try again.';
+  } else if (window.signInError) {
+    error = window.signInError;
+  }
 
-    const { email } = this.state;
+  return (
+    <div className={classes.editableFields}>
+      <form onSubmit={handleOnSubmit}>
 
-    return (
-      <div className={classes.editableFields}>
-        <form onSubmit={this.handleOnSubmit}>
-
-          <TextField
-            data-test="email"
-            id="email"
-            type="email"
-            variant="filled"
-            placeholder="Email"
-            value={dialogOpen ? userEmail : email}
-            onChange={this.handleOnChangeEmail}
-            className={classes.textField}
-            disabled={dialogOpen}
+        <TextField
+          data-test="email"
+          id="email"
+          type="email"
+          variant="filled"
+          placeholder="Email"
+          value={dialogOpen ? userEmail : email}
+          onChange={handleOnChangeEmail}
+          className={classes.textField}
+          disabled={dialogOpen}
             />
-          <TextField
-            data-test="password"
-            id="password"
-            variant="filled"
-            type="password"
-            placeholder="Password"
-            className={classes.textField}
+        <TextField
+          data-test="password"
+          id="password"
+          variant="filled"
+          type="password"
+          placeholder="Password"
+          className={classes.textField}
             />
 
-          <div className={classes.forgotPass}>
-            <Link href="/request-reset" className={classes.forgotPass} variant="body2">
-              Forgot password?
-            </Link>
-          </div>
-          {error && (
+        <div className={classes.forgotPass}>
+          <Link href="/request-reset" className={classes.forgotPass} variant="body2">
+            Forgot password?
+          </Link>
+        </div>
+        { showError && error && (
           <Typography
             color="error"
             component="div"
@@ -233,59 +199,59 @@ class SignIn extends Component {
             className={classes.alertMsg}>
             <ErrorIcon /> {error}
           </Typography>
+        )}
+        { isAuthenticating ? <Spinner />
+          : (
+            <Button
+              data-test="submit"
+              variant="contained"
+              color="primary"
+              type="submit"
+              className={classes.submit}
+              value="Submit">
+              Sign in
+            </Button>
           )}
+      </form>
+      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
+      <div>
+        {!dialogOpen && (
+        <form onSubmit={handleSignInWithGoogle}>
+          <TextField
+            type="hidden"
+            id="attemptedRoute"
+            name="attemptedRoute"
+            value={attemptedRoute || getRoutePath('/')}
+                />
+          <div className={classes.or}>
+            <Typography variant="body1">or</Typography>
+          </div>
           <Button
-            data-test="submit"
-            variant="contained"
-            color="primary"
             type="submit"
-            className={classes.submit}
-            value="Submit">
-            Sign in
+            variant="contained"
+            color="secondary"
+            className={classes.googleBtn}>
+            Sign in with Google
           </Button>
         </form>
-        {getDomain() !== 'eu.integrator.io' && (
-          <div>
-            {!dialogOpen && (
-              <form onSubmit={this.handleSignInWithGoogle}>
-                <TextField
-                  type="hidden"
-                  id="attemptedRoute"
-                  name="attemptedRoute"
-                  value={attemptedRoute || getRoutePath('/')}
-                />
-                <div className={classes.or}>
-                  <Typography variant="body1">or</Typography>
-                </div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="secondary"
-                  className={classes.googleBtn}>
-                  Sign in with Google
-                </Button>
-              </form>
-            )}
-            {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-              <form onSubmit={this.handleReSignInWithGoogle}>
-                <div className={classes.or}>
-                  <Typography variant="body1">or</Typography>
-                </div>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="secondary"
-                  className={classes.googleBtn}>
-                  Sign in with Google
-                </Button>
-              </form>
-            )}
+        )}
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+        <form onSubmit={handleReSignInWithGoogle}>
+          <div className={classes.or}>
+            <Typography variant="body1">or</Typography>
           </div>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            className={classes.googleBtn}>
+            Sign in with Google
+          </Button>
+        </form>
         )}
       </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
 
-// prettier-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
   keyColumnFormWrapper: {
     display: 'flex',
     flexDirection: 'row !important',
+
   },
   spinnerWrapper: {
     marginLeft: theme.spacing(1),
