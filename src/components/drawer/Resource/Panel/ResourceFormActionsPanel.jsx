@@ -126,7 +126,7 @@ export function ActionsFactory({ variant = 'edit', consolidatedActions, fieldMap
 export default function ResourceFormActionsPanel(props) {
   const { resourceType, resourceId, isNew} = props;
 
-  const {merged: resource} = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged;
 
   const connectionType = getConnectionType(resource);
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
