@@ -23,7 +23,7 @@ export default function HttpRequestBodyDrawer(props) {
       editorVersion={editorVersion}>
       <HttpRequestBodyEditor
         contentType={contentType}
-        // editorId={id}
+        editorVersion={editorVersion}
         lookups={lookups}
         rule={rule}
         data={data}

@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import EditorDrawer from '../EditorDrawer';
 import TransformEditor from '.';
 import JavaScriptEditor from '../JavaScriptEditor';
 import TextToggle from '../../TextToggle';
+import actions from '../../../actions';
 
 const toggleEditorOptions = [
   { label: 'Rules', value: 'expression' },
@@ -20,13 +22,26 @@ export default function TransformToggleEditorDrawer({
   insertStubKey,
   optionalSaveParams,
   isSampleDataLoading,
+  onClose,
   ...rest
 }) {
+  const dispatch = useDispatch();
   const [activeEditorIndex, setActiveEditorIndex] = useState('0');
   const handleEditorToggle = useCallback(
     value =>
       setActiveEditorIndex(value === 'expression' ? '0' : '1'),
     [setActiveEditorIndex]
+  );
+  const handleCloseEditor = useCallback(
+    () => {
+      // remove both editors from the state when the drawer is closed
+      dispatch(actions.editor.clear(`${id}-0`));
+      dispatch(actions.editor.clear(`${id}-1`));
+      if (onClose) {
+        onClose();
+      }
+    },
+    [dispatch, id, onClose]
   );
   const editorToggleAction = useMemo(() => (
     <TextToggle
@@ -46,6 +61,7 @@ export default function TransformToggleEditorDrawer({
       disabled={disabled}
       toggleAction={editorToggleAction}
       activeEditorIndex={activeEditorIndex}
+      onClose={handleCloseEditor}
       patchOnSave
       showLayoutOptions>
       <TransformEditor
@@ -54,6 +70,7 @@ export default function TransformToggleEditorDrawer({
         disabled={disabled}
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
+        isToggleScreen
       />
       <JavaScriptEditor
         data={JSON.stringify(data, null, 2)}
@@ -63,6 +80,7 @@ export default function TransformToggleEditorDrawer({
         insertStubKey={insertStubKey}
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
+        isToggleScreen
       />
     </EditorDrawer>
   );

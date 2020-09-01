@@ -35,9 +35,10 @@ export default function JavaScriptEditor(props) {
     optionalSaveParams,
     layout = 'compact',
     resultMode = 'json',
+    isToggleScreen,
   } = props;
   const classes = useStyles(props);
-  const { data, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -78,8 +79,16 @@ export default function JavaScriptEditor(props) {
   ]);
 
   useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    if (isToggleScreen) {
+      if (!processor) {
+        handleInit();
+      }
+    } else {
+      handleInit();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleInit, isToggleScreen]);
   const parsedData = result ? result.data : '';
   const logs = result && !error && !violations && result.logs;
 

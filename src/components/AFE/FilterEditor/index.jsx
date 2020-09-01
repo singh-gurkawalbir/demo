@@ -24,9 +24,9 @@ const useStyles = makeStyles({
 });
 const overrides = { showGutter: false };
 export default function FilterEditor(props) {
-  const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
+  const { editorId, disabled, layout = 'column', optionalSaveParams, isToggleScreen } = props;
   const classes = useStyles(props);
-  const { data, lastValidData, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, rule, lastValidData, result, error, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -59,8 +59,17 @@ export default function FilterEditor(props) {
   );
 
   useEffect(() => {
-    handleInit();
-  }, [handleInit]);
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    // TODO: we can remove isToggleScreen flag and implement this logic for all cases instead
+    if (isToggleScreen) {
+      if (!processor) {
+        handleInit();
+      }
+    } else {
+      handleInit();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isToggleScreen, handleInit]);
 
   let outputMessage = '';
 
@@ -80,7 +89,7 @@ export default function FilterEditor(props) {
           key={editorId}
           editorId={editorId}
           data={lastValidData || data}
-          rule={props.rule}
+          rule={rule || props.rule}
           disabled={disabled}
         />
       </PanelGridItem>
