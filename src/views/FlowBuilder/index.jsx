@@ -207,7 +207,7 @@ function FlowBuilder() {
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const {
     data: flowErrorsMap,

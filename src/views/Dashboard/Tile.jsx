@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
-import { Typography, Tooltip, makeStyles, Zoom } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Zoom, Button } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
@@ -174,6 +174,11 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     ]
   );
 
+  const handleUsersClick = useCallback(event => {
+    event.stopPropagation();
+    history.push(getRoutePath(urlToIntegrationUsers));
+  }, [history, urlToIntegrationUsers]);
+
   const handleTileClick = useCallback(
     event => {
       event.stopPropagation();
@@ -214,22 +219,22 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                   placement="top"
                   enterDelay={100}>
                   <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                    <Link
+                    <Button
                       color="inherit"
-                      to={getRoutePath(urlToIntegrationSettings)}
+                      onClick={handleTileClick}
                       className={classes.tileName}>
                       {tile.name}
-                    </Link>
+                    </Button>
                   </Truncate>
                 </Tooltip>
               ) : (
                 <Truncate lines={2} ellipsis="..." onTruncate={setIsTruncated}>
-                  <Link
+                  <Button
                     color="inherit"
-                    to={getRoutePath(urlToIntegrationSettings)}
+                    onClick={handleTileClick}
                     className={classes.tileName}>
                     {tile.name}
-                  </Link>
+                  </Button>
                 </Truncate>
               )}
             </Typography>
@@ -254,23 +259,23 @@ function Tile({ tile, history, onMove, onDrop, index }) {
                 <Tooltip
                   title="You have monitor permissions"
                   placement="bottom">
-                  <Link
+                  <Button
                     color="inherit"
                     className={classes.action}
-                    to={getRoutePath(urlToIntegrationUsers)}>
+                    onClick={handleUsersClick}>
                     <PermissionsMonitorIcon />
-                  </Link>
+                  </Button>
                 </Tooltip>
               ) : (
                 <Tooltip
                   title="You have manage permissions"
                   placement="bottom">
-                  <Link
+                  <Button
                     color="inherit"
                     className={classes.action}
-                    to={getRoutePath(urlToIntegrationUsers)}>
+                    onClick={handleUsersClick}>
                     <PermissionsManageIcon />
-                  </Link>
+                  </Button>
                 </Tooltip>
               )}
             </Manage>
