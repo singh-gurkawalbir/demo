@@ -76,7 +76,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     data: integrationErrorsMap = {},
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isIntegrationInErrMgtTwoDotZero(state)
   );
   let totalErrors = 0;
 

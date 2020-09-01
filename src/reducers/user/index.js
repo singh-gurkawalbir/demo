@@ -76,6 +76,64 @@ selectors.userPreferences = createSelector(
   }
 );
 
+selectors.currentAccountUserId = createSelector(
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
+  state => state && state.org,
+  state => state && state.profile,
+  (preferences, org, profile) => {
+    const { defaultAShareId } = preferences;
+
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      return profile._id;
+    }
+
+    if (!org || !org.accounts || !org.accounts.length) {
+      return profile._id;
+    }
+
+    const { accounts: orgAccounts = {} } = org;
+    const currentAccount = orgAccounts.find(
+      a => a._id === defaultAShareId
+    );
+
+    if (currentAccount && currentAccount.ownerUser) {
+      return currentAccount.ownerUser._id;
+    }
+
+    return profile._id;
+  }
+);
+
+selectors.isIntegrationInErrMgtTwoDotZero = createSelector(
+  state => fromPreferences.userOwnPreferences(state && state.preferences),
+  state => state && state.org,
+  state => state && state.profile,
+  (preferences, org, profile) => {
+    const { defaultAShareId } = preferences;
+
+    console.log('profile', profile);
+    if (!defaultAShareId || defaultAShareId === ACCOUNT_IDS.OWN) {
+      return !!profile.useErrMgtTwoDotZero;
+    }
+
+    if (!org || !org.accounts || !org.accounts.length) {
+      return !!profile.useErrMgtTwoDotZero;
+    }
+
+    /* When the user belongs to an org, we need to return the isErrMgtTwoDotZero from org owner profile. */
+    const { accounts: orgAccounts = {} } = org;
+    const currentAccount = orgAccounts.find(
+      a => a._id === defaultAShareId
+    );
+
+    if (currentAccount && currentAccount.ownerUser) {
+      return !!currentAccount.ownerUser.useErrMgtTwoDotZero;
+    }
+
+    return false;
+  }
+);
+
 selectors.appTheme = createSelector(
   selectors.userPreferences,
   preferences => {

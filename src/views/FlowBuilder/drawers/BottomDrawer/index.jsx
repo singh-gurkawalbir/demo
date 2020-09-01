@@ -122,7 +122,7 @@ export default function BottomDrawer({
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isIntegrationInErrMgtTwoDotZero(state)
   );
 
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
