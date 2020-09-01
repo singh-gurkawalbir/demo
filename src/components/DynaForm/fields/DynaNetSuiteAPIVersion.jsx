@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../Spinner';
 import actions from '../../../actions';
@@ -10,10 +9,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import ErroredMessageComponent from './ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
-  refreshGenericResourceActionBtn: {
-    alignSelf: 'flex-start',
-    marginTop: theme.spacing(4),
-  },
   refreshLoader: {
     marginLeft: theme.spacing(1),
   },
@@ -55,6 +50,10 @@ export default function DynaNetSuiteAPIVersion(props) {
   }
 
   useEffect(() => {
+    if (!data || refreshBundleInstalledInfo) {
+      dispatch(actions.metadata.getBundleInstallStatus(connectionId));
+      setRefreshBundleInstalledInfo(false);
+    }
     const currentFieldValue = isNew && !isInitValueChanged ? initValueForField : value;
     const showBundleInstallNotification = currentFieldValue === 'true' ? !isSuiteAppInstalled : !isSuiteBundleInstalled;
 
@@ -86,14 +85,8 @@ export default function DynaNetSuiteAPIVersion(props) {
     isNew,
     isInitValueChanged,
     initValueForField,
+    connectionId,
   ]);
-
-  useEffect(() => {
-    if (!data || refreshBundleInstalledInfo) {
-      dispatch(actions.metadata.getBundleInstallStatus(connectionId));
-      setRefreshBundleInstalledInfo(false);
-    }
-  }, [dispatch, data, connectionId, refreshBundleInstalledInfo]);
 
   const handleFieldChange = (id, value) => {
     if (!isInitValueChanged) {
@@ -106,10 +99,7 @@ export default function DynaNetSuiteAPIVersion(props) {
     <>
       {(isLoading && isNew && !errorMessage) ? (
         <span
-          className={clsx(
-            classes.refreshGenericResourceActionBtn,
-            classes.refreshLoader
-          )}>
+          className={classes.refreshLoader}>
           <Spinner size={24} />
         </span>
       )

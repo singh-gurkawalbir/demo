@@ -28,7 +28,7 @@ export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {
   const importSuiteScriptHooksList = ['postMap', 'postSubmit'];
 
   if (!isNSApiVersion2Selected) {
-    importSuiteScriptHooksList.push('preMap');
+    importSuiteScriptHooksList.unshift('preMap');
   }
 
   return importSuiteScriptHooksList;
