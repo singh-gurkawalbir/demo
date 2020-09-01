@@ -283,16 +283,16 @@ export default (state = {}, action) => {
             draft[cKey].mappings[id].staged;
           const formattedMappings =
             staged ||
-            mappingUtil.getMappingFromResource(
-              resourceData,
-              false,
+            mappingUtil.getMappingFromResource({
+              importResource: resourceData,
+              getRawMappings: false,
               isGroupedSampleData,
               netsuiteRecordType,
-              {
+              options: {
                 ...additionalOptions,
                 isVariationMapping,
               }
-            );
+            });
           const initChangeIdentifier =
             (draft[cKey] &&
               draft[cKey].mappings &&

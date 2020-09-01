@@ -206,14 +206,14 @@ export function* mappingInit({
     formattedMappings = subRecordMapping;
     lookups = subrecordLookups;
   } else {
-    formattedMappings = mappingUtil.getMappingFromResource(
+    formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      false,
+      getRawMappings:false,
       isGroupedSampleData,
-      options.recordType,
+      netsuiteRecordType: options.recordType,
       options,
       exportResource
-    );
+    });
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }
   // adding conditional lookup
