@@ -186,6 +186,7 @@ import myobadvanced from './myobadvanced';
 import lexbizz from './lexbizz';
 import microsoftdynamics365financeandoperation from './microsoftdynamics365financeandoperation';
 import precisely from './precisely';
+import shipengine from './shipengine';
 
 export default {
   concurexpense,
@@ -375,4 +376,5 @@ export default {
   lexbizz,
   microsoftdynamics365financeandoperation,
   precisely,
+  shipengine,
 };

@@ -515,6 +515,8 @@ export default {
     'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
   'ware2go.connection.http.unencrypted.merchantId':
     'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
+  'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
   'messagemedia.connection.http.auth.basic.username':
     'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'messagemedia.connection.http.auth.basic.password':
@@ -606,6 +608,8 @@ export default {
   'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s environment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
   'precisely.http._iClientId': 'Save your API key and secret of Prcisely account in iClient for an added layer of security.',
   'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
+  'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
+  if you're using a production account, you'll find your API keys under the 'API Management' page.`,
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -776,7 +780,7 @@ export default {
     "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
   'connection.http.auth.token.token':
     "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.",
-  'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that hold the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
+  'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
   'connection.http.auth.token.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
   'connection.http.auth.token.scheme': 'By default, integrator.io follows the HTTP specs for authentication scheme names (for example: Bearer, OAuth, MAC). If the API you are connecting to doesn\'t follow the specs exactly, use this field to provide an override.',
   'connection.http.auth.token.paramName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
@@ -789,7 +793,7 @@ export default {
   'connection.http.auth.token.refreshTokenPath':
     'If the service being connected to supports requests to obtain or refresh existing tokens, use this field to indicate to integrator.io what path to use against the HTTP response to extract the new token.  If no value is found at this path then the token request is considered a failure.',
   'connection.http.auth.token.refreshHeaders':
-    "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}} with a complete path matching the connection field.",
+    "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
   'connection.http.auth.token.refreshToken':
     'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.token.refreshToken}}}.  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
   'connection.http.rateLimit.failStatusCode': 'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
@@ -1877,11 +1881,11 @@ export default {
   'connection.http.auth.oauth.tokenURI':
     'integrator.io retrieves the access token from this URL.',
   'connection.http.auth.oauth.scopeDelimiter':
-    'Provide the non-space delimiter API provider uses to delimit scopes.',
+    'Enter the non-space scope delimiter used by your API provider.',
   'connection.http.auth.oauth.authURI':
     'This is the authorization code retrieval endpoint on the API provider’s authorization server.',
   'connection.generic.http.auth.oauth.scope':
-    'These are the scopes of access granted to authorization server requests. Use a comma (,) to separate values.',
+    'List the scopes to grant access to authorization server requests. Separate multiple scopes with a space character, unless you are providing an alternative delimiter, below.',
   'connection.http.auth.oauth.scope':
     'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   'connection.http.auth.oauth.accessTokenHeaders': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
