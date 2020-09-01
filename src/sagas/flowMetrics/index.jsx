@@ -62,7 +62,7 @@ function* requestMetric({query, isAtt}) {
 }
 
 export function* requestFlowMetrics({ flowId, filters }) {
-  const userId = yield select(selectors.currentAccountUserId);
+  const userId = yield select(selectors.ownerUserId);
   const seiQuery = getFlowMetricsQuery(flowId, userId, filters);
   const attQuery = getFlowMetricsAttQuery(flowId, userId, filters);
 

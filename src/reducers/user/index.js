@@ -76,7 +76,7 @@ selectors.userPreferences = createSelector(
   }
 );
 
-selectors.currentAccountUserId = createSelector(
+selectors.ownerUserId = createSelector(
   state => fromPreferences.userOwnPreferences(state && state.preferences),
   state => state && state.org,
   state => state && state.profile,
@@ -104,7 +104,7 @@ selectors.currentAccountUserId = createSelector(
   }
 );
 
-selectors.isIntegrationInErrMgtTwoDotZero = createSelector(
+selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
   state => fromPreferences.userOwnPreferences(state && state.preferences),
   state => state && state.org,
   state => state && state.profile,
