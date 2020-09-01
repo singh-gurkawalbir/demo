@@ -56,9 +56,9 @@ export default function HandlebarsEditor(props) {
   }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
   const handleRuleChange = rule => {
     if (editorVersion === 2) {
-      dispatch(actions.editor.patch(editorId, { v2template: rule }));
+      dispatch(actions.editor.patch(editorId, { template: rule, v2template: rule }));
     } else {
-      dispatch(actions.editor.patch(editorId, { v1template: rule }));
+      dispatch(actions.editor.patch(editorId, { template: rule, v1template: rule }));
     }
   };
 
