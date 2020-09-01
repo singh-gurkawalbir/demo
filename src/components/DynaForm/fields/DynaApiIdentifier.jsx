@@ -10,6 +10,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 const useStyles = makeStyles(theme => ({
   dynaAPIWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   children: {
     flex: 1,

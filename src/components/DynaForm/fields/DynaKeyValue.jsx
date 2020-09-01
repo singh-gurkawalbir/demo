@@ -12,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
+    width: '100%',
   },
 
   rowContainer: {

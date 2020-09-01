@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaURIWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
 }));
 
