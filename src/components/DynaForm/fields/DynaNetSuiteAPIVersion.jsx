@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Spinner from '../../Spinner';
 import actions from '../../../actions';
@@ -31,6 +31,10 @@ export default function DynaNetSuiteAPIVersion(props) {
   const commMetaPath = `connections/${connectionId}/distributedApps`;
   const filterKey = 'suitescript-bundle-status';
 
+  const isOffline = useSelector(state =>
+    selectors.isConnectionOffline(state, connectionId)
+  );
+
   const {data, status, errorMessage} = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId,
     commMetaPath, filterKey);
 
@@ -54,10 +58,11 @@ export default function DynaNetSuiteAPIVersion(props) {
       dispatch(actions.metadata.getBundleInstallStatus(connectionId));
       setRefreshBundleInstalledInfo(false);
     }
-    const currentFieldValue = isNew && !isInitValueChanged ? initValueForField : value;
-    const showBundleInstallNotification = currentFieldValue === 'true' ? !isSuiteAppInstalled : !isSuiteBundleInstalled;
 
-    if (!isLoading && !refreshBundleInstalledInfo) {
+    if (!isLoading && !refreshBundleInstalledInfo && !isOffline) {
+      const currentFieldValue = isNew && !isInitValueChanged ? initValueForField : value;
+      const showBundleInstallNotification = currentFieldValue === 'true' ? !isSuiteAppInstalled : !isSuiteBundleInstalled;
+
       if (!showBundleInstallNotification) {
         dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
       } else {
@@ -86,6 +91,7 @@ export default function DynaNetSuiteAPIVersion(props) {
     isInitValueChanged,
     initValueForField,
     connectionId,
+    isOffline,
   ]);
 
   const handleFieldChange = (id, value) => {
