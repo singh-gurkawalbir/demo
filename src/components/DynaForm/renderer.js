@@ -12,7 +12,7 @@ const fieldStyle = {
   width: '100%',
 };
 
-function getRenderer(formKey, resourceId, resourceType, proceedOnChange) {
+function getRenderer(formKey, resourceId, resourceType) {
   return function renderer(props) {
     // (field, onChange, onFieldFocus, onFieldBlur) => {
     const { fieldState: field, ...rest } = props;
@@ -32,7 +32,7 @@ function getRenderer(formKey, resourceId, resourceType, proceedOnChange) {
 
       <div key={fid} style={wrapper}>
         <div id={id} style={fieldStyle}>
-          <DynaField {...rest} {...field} resourceContext={context} proceedOnChange={proceedOnChange} />
+          <DynaField {...rest} {...field} resourceContext={context} />
         </div>
       </div>
     );

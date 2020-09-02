@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -14,7 +14,7 @@ import {
 import * as d3 from 'd3';
 import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
-import PanelHeader from '../../../../components/PanelHeader';
+import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
@@ -24,15 +24,16 @@ import {
   getLineColor,
   getAxisLabelPosition,
   getLegend,
-} from '../../../../utils/flowMetrics';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
-import Spinner from '../../../../components/Spinner';
-import SpinnerWrapper from '../../../../components/SpinnerWrapper';
-import RequiredIcon from '../../../../components/icons/RequiredIcon';
-import OptionalIcon from '../../../../components/icons/OptionalIcon';
-import ConditionalIcon from '../../../../components/icons/ConditionalIcon';
-import PreferredIcon from '../../../../components/icons/PreferredIcon';
+} from '../../../utils/flowMetrics';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import Spinner from '../../Spinner';
+import SpinnerWrapper from '../../SpinnerWrapper';
+import RequiredIcon from '../../icons/RequiredIcon';
+import OptionalIcon from '../../icons/OptionalIcon';
+import ConditionalIcon from '../../icons/ConditionalIcon';
+import PreferredIcon from '../../icons/PreferredIcon';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -109,17 +110,23 @@ const DataIcon = ({index}) => {
     />
   );
 };
-
-const Chart = ({ id, flowId, range, selectedResources }) => {
+const flowsConfig = { type: 'flows' };
+const Chart = ({ id, integrationId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
   let mouseHoverTimer;
   const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
-  const flowResources = useSelector(state =>
-    selectors.flowResources(state, flowId)
+    useSelector(state => selectors.flowMetricsData(state, integrationId)) || {};
+  const resourceList = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    flowsConfig
   );
-
+  const flowResources = useMemo(
+    () =>
+      resourceList.resources &&
+      resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
+    [resourceList.resources, integrationId]
+  );
   const { startDate, endDate } = range;
 
   let dateTimeFormat;
@@ -144,7 +151,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r);
+      flowData[r] = data.filter(d => d.flowId === r);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -189,6 +196,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     clearTimeout(mouseHoverTimer);
     setOpacity({});
   };
+
   const CustomLegend = props => {
     const classes = useStyles();
     const { payload } = props;
@@ -256,7 +264,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
       <PanelHeader title={getLabel(id)} />
       <ResponsiveContainer width="100%" height={400} >
         <LineChart
-          // data={flowData}
           margin={{
             top: 5,
             right: 30,
@@ -284,7 +291,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           />
 
           <Tooltip content={<CustomTooltip />} />
-          <Legend content={<CustomLegend />} />
+          <Legend align="center" content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
               key={`${r}-${id}`}
@@ -306,20 +313,29 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   );
 };
 
-export default function FlowCharts({ flowId, range, selectedResources }) {
+export default function FlowCharts({ integrationId, range, selectedResources }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
+
   const data =
     useSelector(
-      state => selectors.flowMetricsData(state, flowId),
+      state => selectors.flowMetricsData(state, integrationId),
       shallowEqual
     ) || {};
 
   useEffect(() => {
-    if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(flowId, { range }));
+    if (selectedResources.length) {
+      setSendQuery(true);
     }
-  }, [data, dispatch, flowId, range]);
+  }, [selectedResources]);
+
+  useEffect(() => {
+    if (sendQuery) {
+      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+      setSendQuery(false);
+    }
+  }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);
 
   if (data.status === 'requested') {
     return (
@@ -339,7 +355,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
           key={m}
           id={m}
           range={range}
-          flowId={flowId}
+          integrationId={integrationId}
           selectedResources={selectedResources}
         />
       ))}
