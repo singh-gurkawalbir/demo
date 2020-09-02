@@ -15,6 +15,8 @@ export default function reducer(state = {}, action) {
     formValues,
     skipClose = false,
     initData,
+    bundleUrl,
+    bundleVersion,
   } = action;
   const key = `${resourceType}-${resourceId}`;
   const stateCopy = { ...state, [key]: { ...state[key] } };
@@ -72,6 +74,26 @@ export default function reducer(state = {}, action) {
           submitFailed: false,
           formValues: undefined,
           skipClose,
+        },
+      };
+
+    case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          bundleVersion,
+          bundleUrl,
+          showBundleInstallNotification: true,
+        },
+      };
+
+    case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          showBundleInstallNotification: false,
         },
       };
 

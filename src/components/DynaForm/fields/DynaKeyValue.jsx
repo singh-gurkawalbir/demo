@@ -12,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
+    width: '100%',
   },
 
   rowContainer: {
@@ -146,7 +147,7 @@ export function KeyValueComponent(props) {
                 value={r[keyName]}
                 id={`${keyName}-${r.row}`}
                 data-test={`${keyName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={keyName}
                 variant="filled"
                 onFieldChange={(_, _value) =>
@@ -178,7 +179,7 @@ export function KeyValueComponent(props) {
                 value={r[valueName]}
                 id={`${valueName}-${r.row}`}
                 data-test={`${valueName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={valueName}
                 variant="filled"
                 labelName={suggestValueConfig.labelName}

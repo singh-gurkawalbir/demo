@@ -43,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: 'calc(100% - 56px)',
     padding: '0px !important',
   },
+  dynaSubmit: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 function SubRecordDrawer(props) {
@@ -173,6 +176,7 @@ function SubRecordDrawer(props) {
               <DynaSubmit
                 formKey={formKey}
                 data-test="save-subrecord"
+                className={classes.dynaSubmit}
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
