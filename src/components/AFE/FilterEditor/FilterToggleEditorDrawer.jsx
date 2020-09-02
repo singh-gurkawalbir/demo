@@ -1,8 +1,10 @@
 import React, { useState, useCallback, useMemo} from 'react';
+import { useDispatch } from 'react-redux';
 import EditorDrawer from '../EditorDrawer';
 import FilterEditor from './index';
 import JavaScriptEditor from '../JavaScriptEditor';
 import TextToggle from '../../TextToggle';
+import actions from '../../../actions';
 
 const toggleEditorOptions = [
   { label: 'Rules', value: 'expression' },
@@ -23,14 +25,26 @@ export default function FilterToggleEditorDrawer(props) {
     isSampleDataLoading,
     isMonitorLevelAccess,
     enableFilterForIA,
+    onClose,
     ...rest
   } = props;
-
+  const dispatch = useDispatch();
   const [activeEditorIndex, setActiveEditorIndex] = useState('0');
   const handleEditorToggle = useCallback(
     value =>
       setActiveEditorIndex(value === 'expression' ? '0' : '1'),
     [setActiveEditorIndex]
+  );
+  const handleCloseEditor = useCallback(
+    () => {
+      // remove both editors from the state when the drawer is closed
+      dispatch(actions.editor.clear(`${id}-0`));
+      dispatch(actions.editor.clear(`${id}-1`));
+      if (onClose) {
+        onClose();
+      }
+    },
+    [dispatch, id, onClose]
   );
   const editorToggleAction = useMemo(() => (
     <TextToggle
@@ -48,6 +62,7 @@ export default function FilterToggleEditorDrawer(props) {
       type={type}
       {...rest}
       disabled={enableFilterForIA ? isMonitorLevelAccess : disabled}
+      onClose={handleCloseEditor}
       toggleAction={editorToggleAction}
       activeEditorIndex={activeEditorIndex}
       patchOnSave
@@ -58,6 +73,7 @@ export default function FilterToggleEditorDrawer(props) {
         rule={rule}
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
+        isToggleScreen
       />
       <JavaScriptEditor
         data={data}
@@ -67,6 +83,7 @@ export default function FilterToggleEditorDrawer(props) {
         insertStubKey={insertStubKey}
         optionalSaveParams={optionalSaveParams}
         isSampleDataLoading={isSampleDataLoading}
+        isToggleScreen
       />
     </EditorDrawer>
   );

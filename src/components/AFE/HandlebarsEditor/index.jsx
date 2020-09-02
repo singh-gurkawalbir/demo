@@ -17,6 +17,7 @@ export default function HandlebarsEditor(props) {
     enableAutocomplete,
     lookups = [],
     rule,
+    editorVersion,
   } = props;
   const dispatch = useDispatch();
   const {
@@ -26,6 +27,8 @@ export default function HandlebarsEditor(props) {
     error,
     autoEvaluate,
     isSampleDataLoading,
+    v1template,
+    v2template,
   } = useSelector(state => selectors.editor(state, editorId));
   const violations = useSelector(state =>
     selectors.editorViolations(state, editorId)
@@ -52,7 +55,11 @@ export default function HandlebarsEditor(props) {
     }
   }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
   const handleRuleChange = rule => {
-    dispatch(actions.editor.patch(editorId, { template: rule }));
+    if (editorVersion === 2) {
+      dispatch(actions.editor.patch(editorId, { template: rule, v2template: rule }));
+    } else {
+      dispatch(actions.editor.patch(editorId, { template: rule, v1template: rule }));
+    }
   };
 
   const handleDataChange = data => {
@@ -60,26 +67,28 @@ export default function HandlebarsEditor(props) {
   };
 
   const handleInit = useCallback(() => {
+    let template = editorVersion === 2 ? v2template : v1template;
+
+    if (!template) {
+      template = typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2);
+    }
+
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluateDelay: 500,
-        template: typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2),
+        template,
         _init_template: rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
+        v1template,
+        v2template,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [
-    dispatch,
-    editorId,
-    props.data,
-    props.isSampleDataLoading,
-    rule,
-    props.strict,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorVersion, dispatch, editorId, props.strict, props.data, props.isSampleDataLoading, rule]);
   const handlePreview = () => {
     dispatch(actions.editor.evaluateRequest(editorId));
   };
