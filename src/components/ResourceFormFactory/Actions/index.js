@@ -16,6 +16,7 @@ export const useLoadingSnackbarOnSave = props => {
   const {
     saveTerminated,
     onSave,
+    // TODO: ghost code disableSaveOnClick...we are not doing anything with this argument
     disableSaveOnClick,
     setDisableSaveOnClick,
   } = props;

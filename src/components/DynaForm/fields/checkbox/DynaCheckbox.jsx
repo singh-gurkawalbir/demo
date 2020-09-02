@@ -8,6 +8,7 @@ import FieldHelp from '../../FieldHelp';
 const useStyles = makeStyles({
   dynaLabelWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynaCheckControlLabel: {
     margin: 0,

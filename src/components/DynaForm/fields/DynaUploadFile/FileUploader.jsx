@@ -43,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(0.5),
     color: '#b1c6d7',
   },
+  fileUploaderContainer: {
+    width: '100%',
+  },
 }));
 
 function FileUploader(props) {
@@ -70,7 +73,7 @@ function FileUploader(props) {
   }, []);
 
   return (
-    <FormControl className={classProps.root}>
+    <FormControl className={clsx(classes.fileUploaderContainer, classProps.root)}>
       <div className={classProps.actionContainer}>
         <div className={clsx(classes.fileUploadLabelWrapper, classProps.labelWrapper)}>
           <FormLabel required={required}>

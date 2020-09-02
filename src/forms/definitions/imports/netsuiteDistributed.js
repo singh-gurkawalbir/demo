@@ -12,7 +12,7 @@ export default {
       delete newValues['/blobKeyPath'];
     }
 
-    const subrecords = newValues['/netsuite_da/subrecords'];
+    const subrecords = newValues['/netsuite_da/useSS2Restlets'] === 'true' ? [] : newValues['/netsuite_da/subrecords'];
     let mapping = newValues['/netsuite_da/mapping'];
 
     if (subrecords) {
@@ -124,6 +124,9 @@ export default {
         },
       ] },
     settings: { fieldId: 'settings' },
+    'netsuite_da.useSS2Restlets': {
+      fieldId: 'netsuite_da.useSS2Restlets',
+    },
   },
   layout: {
     type: 'collapse',
@@ -162,7 +165,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

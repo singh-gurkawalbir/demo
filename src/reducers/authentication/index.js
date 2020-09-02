@@ -17,16 +17,28 @@ export default function (state = defaultState, action) {
     };
   }
 
+  const {type, showAuthError} = action;
+
   return produce(state, draft => {
-    switch (action.type) {
+    switch (type) {
       case actionTypes.INIT_SESSION:
+
+        delete draft.showAuthError;
+        draft.authenticated = false;
+        draft.commStatus = COMM_STATES.LOADING;
+        delete draft.loggedOut;
+        break;
+
       case actionTypes.AUTH_REQUEST:
+        if (showAuthError) { draft.showAuthError = true; }
+        delete draft.failure;
         draft.authenticated = false;
         draft.commStatus = COMM_STATES.LOADING;
         delete draft.loggedOut;
         break;
 
       case actionTypes.AUTH_SUCCESSFUL:
+        delete draft.showAuthError;
         draft.authenticated = true;
         draft.initialized = true;
         draft.commStatus = COMM_STATES.SUCCESS;
@@ -71,6 +83,11 @@ export default function (state = defaultState, action) {
 // #region Selectors
 export const selectors = {};
 
+selectors.isAuthLoading = state => state?.commStatus === COMM_STATES.LOADING;
+
+selectors.isAuthenticating = state => selectors.isAuthLoading(state) && state?.authenticated === false;
+// show auth error when user is logged in
+selectors.showAuthError = state => state?.showAuthError;
 selectors.showSessionStatus = state => {
   const { sessionExpired, warning } = state;
 
