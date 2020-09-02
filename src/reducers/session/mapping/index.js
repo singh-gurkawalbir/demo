@@ -173,26 +173,23 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.SAVE:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'requested';
         }
-        draft.mapping.saveStatus = 'requested';
         break;
       case actionTypes.MAPPING.SAVE_COMPLETE:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'completed';
+          draft.mapping.validationErrMsg = undefined;
+          draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
+          draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
         }
-        draft.mapping.saveStatus = 'completed';
-        draft.mapping.validationErrMsg = undefined;
-        draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
-        draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
         break;
       case actionTypes.MAPPING.SAVE_FAILED:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          draft.mapping.saveStatus = 'failed';
+          draft.mapping.validationErrMsg = undefined;
         }
-        draft.mapping.saveStatus = 'failed';
-        draft.mapping.validationErrMsg = undefined;
         break;
       case actionTypes.MAPPING.PREVIEW_REQUESTED:
         if (draft.mapping.preview) {
@@ -202,27 +199,24 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.PREVIEW_RECEIVED:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          draft.mapping.preview.data = value;
+          draft.mapping.preview.status = 'received';
         }
-        draft.mapping.preview.data = value;
-        draft.mapping.preview.status = 'received';
         break;
       case actionTypes.MAPPING.PREVIEW_FAILED:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          delete draft.mapping.preview.data;
+          draft.mapping.preview.status = 'error';
         }
-        delete draft.mapping.preview.data;
-        draft.mapping.preview.status = 'error';
         break;
       case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:
         draft.mapping.isNSAssistantFormLoaded = value;
         break;
       case actionTypes.MAPPING.UPDATE_LIST:
-        if (!draft.mapping) {
-          break;
+        if (draft.mapping) {
+          draft.mapping.mappings = mappings;
         }
-        draft.mapping.mappings = mappings;
         break;
       case actionTypes.MAPPING.CLEAR:
         delete draft.mapping;

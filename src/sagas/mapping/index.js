@@ -1,4 +1,4 @@
-import { call, takeEvery, put, select, takeLatest, all } from 'redux-saga/effects';
+import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
 import actionTypes from '../../actions/types';
@@ -135,11 +135,17 @@ export function* mappingInit({
   subRecordMappingId,
 }) {
   /** Flow Preview data & metadata needs to be loaded before generating mapping list */
-  yield call(fetchRequiredMappingData, {
-    flowId,
-    importId,
-    subRecordMappingId,
+  const { cancelInit } = yield race({
+    fetchData: call(fetchRequiredMappingData, {
+      flowId,
+      importId,
+      subRecordMappingId,
+    }),
+    cancelInit: take(action =>
+      action.type === actionTypes.MAPPING.CLEAR),
   });
+
+  if (cancelInit) return;
   const importResource = yield select(selectors.resource, 'imports', importId);
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
@@ -320,12 +326,18 @@ export function* saveMappings() {
 
   yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
 
-  const resp = yield call(commitStagedChanges, {
-    resourceType: 'imports',
-    id: importId,
-    scope: SCOPES.VALUE,
-    context: { flowId },
+  const { cancelSave, resp } = yield race({
+    resp: call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    }),
+    cancelSave: take(action =>
+      action.type === actionTypes.MAPPING.CLEAR),
   });
+
+  if (cancelSave) return;
 
   if (resp && (resp.error || resp.conflict)) return yield put(actions.mapping.saveFailed());
 
@@ -424,12 +436,23 @@ export function* previewMappings() {
   };
 
   try {
-    const preview = yield call(apiCallWithRetry, {
-      path,
-      opts,
-      message: 'Loading',
+    const { cancelPreview, preview } = yield race({
+      preview: yield call(apiCallWithRetry, {
+        path,
+        opts,
+        message: 'Loading',
+      }),
+      cancelPreview: take(action => {
+        console.log('action.type', action.type);
+
+        return action.type === actionTypes.MAPPING.CLEAR;
+      }),
     });
 
+    console.log('cancelPreview', cancelPreview);
+    if (cancelPreview) return;
+
+    console.log('preview', preview);
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
       if (
         preview?.data?.returnedObjects?.mappingErrors[0]?.error
