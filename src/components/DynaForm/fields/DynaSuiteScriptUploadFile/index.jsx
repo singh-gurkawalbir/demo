@@ -1,9 +1,9 @@
-import { FormContext } from 'react-forms-processor/dist';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import useFormContext from '../../../Form/FormContext';
 
 const uploadFileType = 'csv';
 
@@ -13,11 +13,13 @@ function DynaSuiteScriptUploadFile(props) {
     maxSize,
     resourceId,
     resourceType,
-    formContext,
     onFieldChange,
     placeholder,
     persistData = false,
+    formKey,
   } = props;
+
+  const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
@@ -93,11 +95,4 @@ function DynaSuiteScriptUploadFile(props) {
     />
   );
 }
-
-const DynaSuiteScriptUploadFileWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaSuiteScriptUploadFile {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaSuiteScriptUploadFileWithFormContext;
+export default DynaSuiteScriptUploadFile;

@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
-import { FormFragment } from 'react-forms-processor/dist';
 import { makeStyles } from '@material-ui/core/styles';
+import FormFragment from '../../Form/FormFragment';
 import CollapsedComponents from './CollapsedComponents';
 import ColumnComponents from './ColumnComponents';
 import {
-  TabIAComponent,
   TabComponentSimple,
   TabComponentWithoutSave,
+  TabIAComponent,
   TabComponentWithoutSaveVertical,
   SuiteScriptTabIACompleteSave,
 } from './TabComponent';
@@ -33,7 +33,8 @@ const useStyles = makeStyles({
     marginBottom: 6,
   },
 });
-const getCorrespondingFieldMap = (fields, fieldMap) =>
+
+export const getCorrespondingFieldMap = (fields, fieldMap) =>
   fields.map(field => {
     const transformedFieldValue = fieldMap[field];
 
@@ -47,24 +48,34 @@ const getCorrespondingFieldMap = (fields, fieldMap) =>
     return { key: field, ...transformedFieldValue };
   });
 
+const FormFragmentWithDefaultFields = ({ formKey, fields, fieldMap }) => {
+  const classes = useStyles();
+  const defaultFields = useMemo(
+    () => getCorrespondingFieldMap(fields, fieldMap),
+    [fields, fieldMap]
+  );
+
+  return (
+    <FormFragment
+      className={classes.child}
+      formKey={formKey}
+      defaultFields={defaultFields}
+    />
+  );
+};
+
 export default function FormGenerator(props) {
   const classes = useStyles();
-  const {layout, fieldMap} = props || {};
-
-  const { fields, containers, type } = layout || {};
-
-  const defaultFields = useMemo(() => {
-    if (!fields || !fieldMap) return null;
-
-    return getCorrespondingFieldMap(fields, fieldMap);
-  }, [fieldMap, fields]);
+  const {layout, fieldMap, formKey} = props || {};
 
   if (!layout || !fieldMap) return null;
 
+  const { fields, containers, type } = layout;
   const fieldsComponent = fields && (
-    <FormFragment
-      className={classes.child}
-      defaultFields={defaultFields}
+    <FormFragmentWithDefaultFields
+      formKey={formKey}
+      fields={fields}
+      fieldMap={fieldMap}
     />
   );
   let ConvertedContainer;

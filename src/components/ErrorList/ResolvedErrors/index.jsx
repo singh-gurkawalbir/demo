@@ -11,12 +11,21 @@ import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
   search: {
-    width: '300px',
+    width: '250px',
     paddingTop: theme.spacing(1),
     float: 'left',
+    '& > div:first-child': {
+      background: theme.palette.common.white,
+    },
   },
   hide: {
     display: 'none',
+  },
+  header: {
+    paddingBottom: theme.spacing(3),
+    display: 'inline-flex',
+    justifyContent: 'space-between',
+    width: '68%',
   },
 }));
 const defaultFilter = {
@@ -48,12 +57,14 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
         </SpinnerWrapper>
       ) : (
         <>
-          {
+          <div className={classes.header}>
+            <div className={classes.search}>
+              <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
+            </div>
+            {
             !!resolvedErrors.length &&
             <ErrorActions flowId={flowId} resourceId={resourceId} isResolved />
           }
-          <div className={classes.search}>
-            <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}

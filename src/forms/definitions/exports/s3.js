@@ -238,9 +238,17 @@ export default {
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
-
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+        {
+          field: 'file.type',
+          is: ['xml'],
+        },
+      ],
     },
-
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
     },
@@ -277,13 +285,9 @@ export default {
       id: 'file.decompressFiles',
       type: 'checkbox',
       label: 'Decompress files',
-      visibleWhenAll: [
+      visibleWhen: [
         {
           field: 'outputMode',
-          is: ['records'],
-        },
-        {
-          field: 'file.output',
           is: ['records'],
         },
       ],

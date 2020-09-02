@@ -14,14 +14,6 @@ export default {
         { _id: { $ne: r._id } },
       ];
 
-      if (r._connectorId) {
-        // For IA connection, borrowconcurrency from integrations belonging to same IA  of its type.
-        expression.push({_connectorId: r._connectorId});
-      } else {
-        // For DIY connection, borrowconcurrency from other diy integrations.
-        expression.push({ _connectorId: { $exists: false } });
-      }
-
       if (RDBMS_TYPES.includes(r.type)) {
         expression.push({ 'rdbms.type': r.type });
       } else {
@@ -820,12 +812,6 @@ export default {
     type: 'text',
     label: 'Base URI',
     required: true,
-    requiredWhen: [
-      {
-        field: 'http.auth.type',
-        is: ['cookie'],
-      },
-    ],
   },
   'http.disableStrictSSL': {
     type: 'checkbox',
@@ -1263,11 +1249,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'Non-standard API rate limiter',
+    label: 'Nonstandard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate limit errors',
+    label: 'HTTP status code for rate-limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1276,17 +1262,16 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate limit errors in HTTP response body',
+    label: 'Path to rate-limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Rate limit error values',
+    label: 'Rate-limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Wait time in between HTTP requests',
-    endAdornment: 'milliseconds',
+    label: 'Wait time between HTTP requests',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1424,14 +1409,17 @@ export default {
   'ftp.userDirectoryIsRoot': {
     type: 'checkbox',
     label: 'User directory is root',
+    defaultValue: r => !!(r?.ftp?.userDirectoryIsRoot),
   },
   'ftp.useImplicitFtps': {
     type: 'checkbox',
     label: 'Use implicit ftps',
+    defaultValue: r => !!(r?.ftp?.useImplicitFtps),
   },
   'ftp.requireSocketReUse': {
     type: 'checkbox',
     label: 'Require socket reuse',
+    defaultValue: r => !!(r?.ftp?.requireSocketReUse),
   },
   'ftp.usePgp': {
     type: 'checkbox',
@@ -1836,7 +1824,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'Fail status code',
+    label: 'HTTP status code for rate-limit errors',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1851,7 +1839,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'Fail path',
+    label: 'Path to rate-limit errors in HTTP response body',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1868,11 +1856,11 @@ export default {
         is: [true],
       },
     ],
-    label: 'Fail values',
+    label: 'Rate-limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
-    label: 'Limit',
+    label: 'Wait time between HTTP requests',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',

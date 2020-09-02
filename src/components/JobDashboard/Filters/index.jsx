@@ -9,15 +9,16 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
-import { selectors } from '../../reducers';
-import actions from '../../actions';
-import ArrowLeftIcon from '../icons/ArrowLeftIcon';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
-import RefreshIcon from '../icons/RefreshIcon';
-import RunFlowButton from '../RunFlowButton';
-import CeligoSelect from '../CeligoSelect';
-import IconTextButton from '../IconTextButton';
-import FlowSelector from './FlowSelector';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../icons/ArrowRightIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
+import RunFlowButton from '../../RunFlowButton';
+import CeligoSelect from '../../CeligoSelect';
+import IconTextButton from '../../IconTextButton';
+import FlowSelector from '../FlowSelector';
+import DateRangeSelector from './DateRangeFilter';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -99,6 +100,7 @@ function Filters({
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
+    dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
   // #endregion
   const { rowsPerPage } = paging;
@@ -128,6 +130,11 @@ function Filters({
     },
     [currentPage, patchFilter]
   );
+
+  const handleDateRangeChange = useCallback(range => {
+    patchFilter('dateRange', range);
+  }, [patchFilter]);
+
   const handleRefreshClick = useCallback(() => {
     dispatch(actions.job.clear());
     patchFilter('currentPage', 0);
@@ -206,6 +213,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
+        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"

@@ -1,17 +1,14 @@
-import { FormContext } from 'react-forms-processor/dist';
-import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Typography from '@material-ui/core/Typography';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import FormGenerator from '..';
-import {
-  isExpansionPanelErrored,
-  isAnyExpansionPanelFieldVisible,
-  isExpansionPanelRequired,
-} from '../../../../forms/utils';
+import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,7 +21,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function CollapsedComponents(props) {
   const classes = useStyles();
-  const { containers, fieldMap, resource } = props;
+  const { containers, fieldMap, formKey, resourceType, resourceId } = props;
+
+  const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId);
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
@@ -32,21 +31,17 @@ export default function CollapsedComponents(props) {
       const header = typeof label === 'function' ? label(resource) : label;
 
       return (
-        // eslint-disable-next-line react/no-array-index-key
-        <FormContext.Consumer key={index}>
-          {form => (
-            // eslint-disable-next-line react/no-array-index-key
-            <ExpansionPannelExpandOnInValidState
-              collapsed={collapsed}
-              index={index}
-              layout={rest}
-              formState={form}
-              classes={classes}
-              header={header}
-              fieldMap={fieldMap}
-            />
-          )}
-        </FormContext.Consumer>
+        <ExpansionPannelExpandOnInValidState
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
+          collapsed={collapsed}
+          index={index}
+          layout={rest}
+          classes={classes}
+          header={header}
+          fieldMap={fieldMap}
+          formKey={formKey}
+        />
       );
     });
 
@@ -54,25 +49,27 @@ export default function CollapsedComponents(props) {
 }
 
 const ExpansionPannelExpandOnInValidState = props => {
-  const {
-    collapsed,
-    layout,
-    formState: form,
-    classes,
-    header,
-    fieldMap,
-  } = props;
+  const { collapsed, layout, classes, header, fieldMap, formKey } = props;
   const [shouldExpand, setShouldExpand] = useState(!collapsed);
   const [expandOnce, setExpandOnce] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [componentLoaded, setComponentLoaded] = useState(false);
-  const isPanelErrored = isExpansionPanelErrored(
-    { layout, fieldMap },
-    form.fields
+  const isPanelErrored = useSelector(state =>
+    selectors.isExpansionPanelErroredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
   );
-  const isPanelRequired = isExpansionPanelRequired(
-    { layout, fieldMap },
-    form.fields
+  const isAnyExpansionPanelFieldVisible = useSelector(state =>
+    selectors.isAnyFieldVisibleForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+
+  const isPanelRequired = useSelector(state =>
+    selectors.isExpansionPanelRequiredForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
   );
 
   useEffect(() => {
@@ -81,19 +78,12 @@ const ExpansionPannelExpandOnInValidState = props => {
       setExpandOnce(true);
     }
   }, [expandOnce, isPanelErrored, isPanelRequired]);
-  useEffect(() => {
-    setComponentLoaded(true);
+
+  const toggleExpansionPanel = useCallback(() => {
+    setShouldExpand(expand => !expand);
   }, []);
 
-  // we need to let the component mount and the field state settle before determing if they need to be removed
-  useEffect(() => {
-    if (componentLoaded) {
-      if (isAnyExpansionPanelFieldVisible({ layout, fieldMap }, form.fields)) setVisible(true);
-      else setVisible(false);
-    }
-  }, [componentLoaded, fieldMap, form.fields, layout]);
-
-  if (!visible) return null;
+  if (!isAnyExpansionPanelFieldVisible) return null;
 
   return (
     <div className={classes.child}>
@@ -102,7 +92,7 @@ const ExpansionPannelExpandOnInValidState = props => {
         expanded={shouldExpand}>
         <ExpansionPanelSummary
           data-test={header}
-          onClick={() => setShouldExpand(expand => !expand)}
+          onClick={toggleExpansionPanel}
           expandIcon={<ExpandMoreIcon />}>
           <Typography className={classes.expPanelTitle}>{header}</Typography>
         </ExpansionPanelSummary>

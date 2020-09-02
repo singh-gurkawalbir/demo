@@ -35,6 +35,11 @@ import PageContent from './PageContent';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    background: 'blue',
+    '& > .MuiSnackbarContent-message': {
+      maxHeight: 300,
+      overflow: 'auto',
+    },
   },
 });
 
@@ -47,6 +52,9 @@ const useSnackbarStyles = makeStyles({
     '& div > span > svg': {
       color: colors.celigoAccent2,
     },
+  },
+  snackbarContent: {
+    background: 'yellow',
   },
   variantSuccess: {
     backgroundColor: colors.celigoWhite,
@@ -74,41 +82,37 @@ const useSnackbarStyles = makeStyles({
     '& div > span > svg': {
       color: colors.celigoError,
     },
-    '& .MuiSnackbarContent-message': {
-      gridTemplateColumns: 'auto, 1fr',
-    },
   },
   message: {
-    marginLeft: 30,
-    overflow: 'auto',
+    marginLeft: 40,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
-    maxHeight: 300,
     '& > svg': {
       position: 'fixed',
       left: 16,
-      top: '50%',
-      transform: 'translateY(-50%)',
+      top: '47%',
+      transform: 'translateY(-47%)',
     },
   },
 
 });
 
-function NonSigninHeaderComponents(props) {
+function NonSigninHeaderComponents() {
   return (
     <>
-      <CeligoAppBar {...props} />
-      <AppErroredModal {...props} />
-      <AlertDialog {...props} />
-      <CeligoDrawer {...props} />
+      <CeligoAppBar />
+      <AppErroredModal />
+      <AlertDialog />
+      <CeligoDrawer />
     </>
   );
 }
 
+const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
   <Switch>
     <Route path={getRoutePath('/signin')} component={Signin} />
-    <Route path={[getRoutePath('/*'), getRoutePath('/')]} component={PageContent} />
+    <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
 
@@ -152,7 +156,12 @@ export default function App() {
         <DndProvider backend={HTML5Backend}>
           <Fragment key={reloadCount}>
             <ConfirmDialogProvider>
-              <SnackbarProvider classes={snackbarClasses} maxSnack={3}>
+              <SnackbarProvider
+                classes={snackbarClasses} maxSnack={3} ContentProps={{
+                  classes: {
+                    root: classes.root,
+                  },
+                }}>
                 <FontStager />
                 <CssBaseline />
                 <BrowserRouter>

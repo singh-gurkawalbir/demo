@@ -1,14 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   statusContainer: {
-    background: theme.palette.secondary.lightest,
-    marginRight: theme.spacing(1),
-    padding: theme.spacing(1),
+    background: fade(theme.palette.secondary.lightest, 0.7),
+    color: theme.palette.secondary.main,
     fontSize: 12,
+    display: 'flex',
+    lineHeight: '16px',
+    padding: theme.spacing(0.5, 1),
+    borderRadius: 2,
+    marginRight: `${theme.spacing(4)}px !important`,
   },
 }));
 
@@ -27,7 +31,7 @@ export default function ErrorActionStatus({ flowId, resourceId }) {
 
   return (
     <span className={classes.statusContainer}>
-      Retries: {retryCount}, Resolves: {resolveCount}
+      Retries: {retryCount} Resolves: {resolveCount}
     </span>
   );
 }

@@ -13,6 +13,13 @@ export function* getNetsuiteOrSalesforceMeta({
   commMetaPath,
   addInfo,
 }) {
+  // check if status is set to requested, if not trigger a action to set status = request
+  const {status} = yield select(selectors.metadataOptionsAndResources, {connectionId,
+    commMetaPath});
+
+  if (status !== 'requested') {
+    yield put(actions.metadata.setRequestStatus(connectionId, commMetaPath));
+  }
   let path = `/${commMetaPath}`;
 
   if (addInfo) {

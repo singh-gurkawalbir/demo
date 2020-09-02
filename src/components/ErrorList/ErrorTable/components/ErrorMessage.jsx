@@ -3,13 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() => ({
   message: {
-    overflow: 'auto',
-    maxHeight: 100,
+    wordBreak: 'break-word',
   },
 }));
 
 export default function ErrorMessage({ message }) {
   const classes = useStyles();
 
-  return <div className={classes.message}>{message}</div>;
+  return <div className={classes.message} >{message}</div>;
 }

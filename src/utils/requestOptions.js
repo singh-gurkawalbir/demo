@@ -107,6 +107,13 @@ export default function getRequestOptions(
                 qs.push(`_flowId_in[${index}]=${encodeURIComponent(flowId)}`);
               });
             }
+          } else if (k === 'dateRange') {
+            const {startDate, endDate} = filters[k]?.[0] || {};
+
+            if (startDate && endDate) {
+              qs.push(`createdAt_gte=${startDate.valueOf()}`);
+              qs.push(`createdAt_lte=${endDate.valueOf()}`);
+            }
           } else {
             qs.push(
               `${

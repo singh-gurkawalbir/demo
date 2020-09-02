@@ -111,7 +111,6 @@ export default {
   getFormattedValue: (value, formVal) => {
     const { generate, extract, lookup } = value;
     const settings = {};
-    let conditionalLookup;
 
     settings.generate = generate;
 
@@ -246,26 +245,12 @@ export default {
         formVal.conditionalWhen === 'lookup_empty'
       ) {
         settings.conditional.lookupName = formVal.conditionalLookupName;
-
-        if (formVal.lookups) {
-          const tempLookUp = formVal.lookups.find(
-            l => l.name === formVal.conditionalLookupName
-          );
-
-          if (
-            tempLookUp &&
-            (!updatedLookup || updatedLookup.name !== tempLookUp.name)
-          ) {
-            conditionalLookup = tempLookUp;
-          }
-        }
       }
     }
 
     return {
       settings,
       lookup: updatedLookup,
-      conditionalLookup,
     };
   },
 };

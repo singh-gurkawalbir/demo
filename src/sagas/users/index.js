@@ -404,6 +404,8 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     } else {
       yield put(actions.resource.requestCollection('integrations'));
       yield put(actions.resource.requestCollection('transfers'));
+      yield put(actions.resource.requestCollection('tiles'));
+      yield put(actions.resource.requestCollection('connections'));
     }
   } else {
     yield put(

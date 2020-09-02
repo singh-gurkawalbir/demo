@@ -23,6 +23,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const resourceTypeInput = {
+  name: 'resourceType',
+  id: 'resourceType',
+};
+
 export function ResourceTypeFilter(props) {
   const classes = useStyles();
   const {
@@ -83,10 +88,7 @@ export function ResourceTypeFilter(props) {
       <CeligoSelect
         value={filters.resourceType}
         onChange={onChange}
-        inputProps={{
-          name: 'resourceType',
-          id: 'resourceType',
-        }}>
+        inputProps={resourceTypeInput}>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select resource type
         </MenuItem>
@@ -103,6 +105,11 @@ export function ResourceTypeFilter(props) {
     </FormControl>
   );
 }
+
+const resourceIdInput = {
+  name: '_resourceId',
+  id: '_resourceId',
+};
 
 export function ResourceIdFilter(props) {
   const {
@@ -149,10 +156,7 @@ export function ResourceIdFilter(props) {
   return (
     <FormControl className={classes.formControl}>
       <CeligoSelect
-        inputProps={{
-          name: '_resourceId',
-          id: '_resourceId',
-        }}
+        inputProps={resourceIdInput}
         variant="filled"
         className={classes.select}
         value={filters._resourceId}

@@ -15,6 +15,7 @@ import {
 import jsonUtil from '../../../../../../utils/json';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 export default function ConnectionDrawer({
   connectorId,
@@ -125,6 +126,10 @@ export default function ConnectionDrawer({
       setAccount(null);
     }
   }, [account, confirmDialog, handleConnectionSubmit, linkedConnectionId, linkedConnectionName]);
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+
+  });
 
   return (
     <RightDrawer
@@ -135,10 +140,14 @@ export default function ConnectionDrawer({
       width="medium"
       onClose={handleDrawerClose}>
       <div >
-        <DynaForm
-          fieldMeta={fieldMeta}
-          render>
+        <>
+          <DynaForm
+            formKey={formKey}
+            fieldMeta={fieldMeta}
+           />
           <DynaSubmit
+            formKey={formKey}
+
             onClick={handleAccountSubmit}
             color="primary"
             variant="outlined">
@@ -147,7 +156,7 @@ export default function ConnectionDrawer({
           <Button onClick={handleDrawerClose} variant="text" color="primary">
             Cancel
           </Button>
-        </DynaForm>
+        </>
         {connection && (
         <ResourceSetupDrawer
           resourceId={connection.newId}

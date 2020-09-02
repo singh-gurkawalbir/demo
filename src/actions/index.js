@@ -27,6 +27,61 @@ function action(type, payload = {}) {
   return { type, ...payload };
 }
 
+// #region this form specific source code, please be careful when making changes to the interface
+const form = {
+  init: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.INIT, { formKey, formSpecificProps }),
+  clear: formKey => action(actionTypes.FORM.CLEAR, { formKey }),
+  formUpdate: (formKey, formSpecificProps) =>
+    action(actionTypes.FORM.UPDATE, { formKey, formSpecificProps }),
+  showFormValidations: formKey =>
+    action(actionTypes.FORM.UPDATE, {
+      formKey,
+      formSpecificProps: { showValidationBeforeTouched: true },
+    }),
+  registerField: formKey => fieldProps =>
+    action(actionTypes.FORM.FIELD.REGISTER, { formKey, fieldProps }),
+  fieldChange: formKey => (id, value, skipFieldTouched) =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_CHANGE, {
+      formKey,
+      fieldProps: { id, value, skipFieldTouched },
+    }),
+  fieldBlur: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_BLUR, {
+      formKey,
+      fieldProps: { id },
+    }),
+  fieldFocus: formKey => id =>
+    action(actionTypes.FORM.FIELD.ON_FIELD_FOCUS, {
+      formKey,
+      fieldProps: { id },
+    }),
+  forceFieldState: formKey => (
+    id,
+    { visible,
+      disabled,
+      required,
+      isValid,
+      errorMessages}
+  ) =>
+    action(actionTypes.FORM.FIELD.FORCE_STATE, {
+      formKey,
+      fieldProps: {
+        id,
+        visible,
+        disabled,
+        required,
+        isValid,
+        errorMessages,
+      },
+    }),
+  clearForceFieldState: formKey => id =>
+    action(actionTypes.FORM.FIELD.CLEAR_FORCE_STATE, {
+      formKey,
+      fieldProps: { id },
+    }),
+};
+// #endregion
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
   request: (email, password) =>
@@ -450,6 +505,11 @@ const metadata = {
     action(actionTypes.METADATA.ASSISTANT_PREVIEW_RESET, {
       resourceId,
     }),
+  setRequestStatus: (connectionId, commMetaPath) =>
+    action(actionTypes.METADATA.SET_REQUEST_STATUS, {
+      connectionId,
+      commMetaPath,
+    }),
 };
 const fileDefinitions = {
   preBuilt: {
@@ -553,14 +613,15 @@ const integrationApp = {
             .CLEAR_COLLAPSE_STATUS,
           { integrationId, flowId }
         ),
-      updateLookup: (integrationId, flowId, id, lookups) =>
+      updateLookup: (integrationId, flowId, id, oldValue, newValue) =>
         action(
           actionTypes.INTEGRATION_APPS.SETTINGS.CATEGORY_MAPPINGS.UPDATE_LOOKUP,
           {
             integrationId,
             flowId,
             id,
-            lookups,
+            oldValue,
+            newValue,
           }
         ),
       setVisibility: (integrationId, flowId, id, value) =>
@@ -1302,14 +1363,16 @@ const editor = {
 // #endregion
 // #region Mapping actions
 const mapping = {
-  init: ({ flowId, resourceId, subRecordMappingId}) =>
-    action(actionTypes.MAPPING.INIT, {flowId, resourceId, subRecordMappingId}),
+  init: ({ flowId, importId, subRecordMappingId}) =>
+    action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
-  updateLookup: lookups =>
-    action(actionTypes.MAPPING.UPDATE_LOOKUP, { lookups }),
+  addLookup: ({value, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
+  updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
+    action(actionTypes.MAPPING.UPDATE_LOOKUP, { oldValue, newValue, isConditionalLookup }),
   patchSettings: (key, value) =>
     action(actionTypes.MAPPING.PATCH_SETTINGS, { key, value }),
   setVisibility: value =>
@@ -1317,7 +1380,7 @@ const mapping = {
   patchIncompleteGenerates: (key, value) =>
     action(actionTypes.MAPPING.PATCH_INCOMPLETE_GENERATES, { key, value}),
   delete: key => action(actionTypes.MAPPING.DELETE, { key }),
-  save: context => action(actionTypes.MAPPING.SAVE, { context }),
+  save: () => action(actionTypes.MAPPING.SAVE),
   saveFailed: () => action(actionTypes.MAPPING.SAVE_FAILED, { }),
   saveComplete: () => action(actionTypes.MAPPING.SAVE_COMPLETE, { }),
   requestPreview: () => action(actionTypes.MAPPING.PREVIEW_REQUESTED, { }),
@@ -1386,11 +1449,6 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.CLEAR_INIT_DATA, {
       resourceId,
       resourceType,
-    }),
-  showFormValidations: (resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS, {
-      resourceType,
-      resourceId,
     }),
   submit: (
     resourceType,
@@ -1909,6 +1967,7 @@ const editorSampleData = {
 };
 
 export default {
+  form,
   postFeedback,
   app,
   toggleBanner,

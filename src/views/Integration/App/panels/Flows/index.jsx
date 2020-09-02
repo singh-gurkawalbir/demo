@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Route,
   NavLink,
@@ -17,9 +17,12 @@ import CategoryMappingDrawer from './CategoryMappingDrawer';
 import AddCategoryMappingDrawer from './CategoryMappingDrawer/AddCategory';
 import VariationMappingDrawer from './CategoryMappingDrawer/VariationMapping';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
-import MappingDrawer from '../../../common/MappingDrawer';
 import actions from '../../../../../actions';
 import { FormStateManager } from '../../../../../components/ResourceFormFactory';
+import { generateNewId } from '../../../../../utils/resource';
+import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
+import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
+import MappingDrawer from '../../../../MappingDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -59,14 +62,38 @@ export const useActiveTab = () => {
 
   return {externalTabState, setExternalTabState, index: 0 };
 };
+
+export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
+  const actionButtons = useMemo(() => actions.map(action => ({
+    ...actionProps,
+    id: action?.id,
+    mode: 'primary',
+  })), [actions, actionProps]);
+
+  if (!actions || !actions.length) { return null; }
+
+  return (
+    <GenerateButtons
+      fieldMap={fieldMap}
+      actions={actionButtons}
+      consolidatedActions={consolidatedActions}
+
+/>
+  );
+};
 export const IAFormStateManager = props => {
   const dispatch = useDispatch();
-  const { integrationId, flowId, sectionId } = props;
-  const allProps = {
+  const [formKey] = useState(generateNewId());
+  const { integrationId, flowId, sectionId, fieldMeta } = props;
+  const allProps = useMemo(() => ({
     ...props,
     resourceType: 'integrations',
     resourceId: integrationId,
-  };
+  }), [integrationId, props]);
+
+  const allActionProps = useMemo(() => ({
+    ...allProps, formKey,
+  }), [allProps, formKey]);
 
   useEffect(() => {
     dispatch(
@@ -84,7 +111,15 @@ export const IAFormStateManager = props => {
     };
   }, [dispatch, flowId, integrationId, sectionId]);
 
-  return <FormStateManager {...allProps} isIAForm />;
+  return (
+    <>
+      <FormStateManager {...allProps} formKey={formKey} />
+      <ActionsPanel
+        {...fieldMeta}
+        actionProps={allActionProps}
+      />
+    </>
+  );
 };
 
 function FlowList({ integrationId, storeId }) {
@@ -114,8 +149,8 @@ function FlowList({ integrationId, storeId }) {
       />
       <MappingDrawer
         integrationId={integrationId}
-        storeId={storeId}
-        sectionId={sectionId}
+        // storeId={storeId}
+        // sectionId={sectionId}
       />
       <CategoryMappingDrawer
         integrationId={integrationId}

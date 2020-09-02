@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconTextButton from '../IconTextButton';
@@ -8,13 +9,24 @@ import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   label: {
     textAlign: 'center',
   },
   arrow: {
     paddingLeft: '0px',
     paddingRight: '0px',
+  },
+  resultsLabel: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  selectRowsPage: {
+    paddingTop: 5,
+    marginLeft: 5,
+  },
+  labelLeft: {
+    color: theme.palette.secondary.main,
   },
 }));
 
@@ -79,18 +91,23 @@ export default function Pagination(props) {
   return (
     <div className={className}>
       {rowsPerPageOptions.length > 1 ? (
-        <Select
-          value={rowsPerPage}
-          IconComponent={ArrowDownIcon}
-          disableUnderline
-          displayEmpty
-          onChange={onChangeRowsPerPage}>
-          {rowsPerPageOptions.map(opt => (
-            <MenuItem key={opt} value={opt}>
-              {opt}
-            </MenuItem>
-          ))}
-        </Select>
+
+        <div className={classes.resultsLabel}>
+          <Typography className={classes.labelLeft}>Results per page:</Typography>
+          <Select
+            value={rowsPerPage}
+            IconComponent={ArrowDownIcon}
+            disableUnderline
+            className={classes.selectRowsPage}
+            displayEmpty
+            onChange={onChangeRowsPerPage}>
+            {rowsPerPageOptions.map(opt => (
+              <MenuItem key={opt} value={opt}>
+                {opt}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
       ) : null}
 
       <IconTextButton

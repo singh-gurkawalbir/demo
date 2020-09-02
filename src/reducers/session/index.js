@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import form, {selectors as fromForm} from './form';
 import stage, { selectors as fromStage } from './stage';
 import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
@@ -35,6 +36,7 @@ import recycleBin, { selectors as fromRecycleBin } from './recycleBin';
 import { genSelectors } from '../util';
 
 export default combineReducers({
+  form,
   recycleBin,
   stage,
   filters,
@@ -73,6 +75,7 @@ export default combineReducers({
 // #region PUBLIC SELECTORS
 export const selectors = {};
 const subSelectors = {
+  form: fromForm,
   stage: fromStage,
   filters: fromFilters,
   editors: fromEditors,

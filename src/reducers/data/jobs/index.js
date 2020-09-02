@@ -89,6 +89,12 @@ export default (state = DEFAULT_STATE, action) => {
   if (type === actionTypes.JOB.ERROR.CLEAR) {
     return { ...state, errors: [], retryObjects: {} };
   }
+  if (type === actionTypes.JOB.REQUEST_COLLECTION) {
+    return {
+      ...state,
+      status: 'loading',
+    };
+  }
   if (type === actionTypes.JOB.RECEIVED_COLLECTION) {
     const { flowJobs, bulkRetryJobs } = parseJobs(collection || []);
 
@@ -96,6 +102,7 @@ export default (state = DEFAULT_STATE, action) => {
       ...state,
       flowJobs,
       bulkRetryJobs,
+      status: undefined,
     };
   }
   if (type === actionTypes.JOB.RECEIVED_FAMILY) {
@@ -897,5 +904,7 @@ selectors.jobErrorRetryObject = (state, retryId) => {
 
   return state.retryObjects[retryId];
 };
+
+selectors.isFlowJobsCollectionLoading = state => state?.status === 'loading';
 
 // #endregion

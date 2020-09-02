@@ -8,6 +8,7 @@ import NotificationToaster from '../../components/NotificationToaster';
 import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -82,6 +83,10 @@ export default function ChangeEmail({ show, onClose }) {
       });
     }
   }, [success, message, enqueueSnackbar, onClose]);
+  const formKey = useFormInitWithPermissions({
+
+    fieldMeta: changeEmailFieldMeta,
+  });
 
   return (
     <ModalDialog show={show} onClose={onClose}>
@@ -93,14 +98,17 @@ export default function ChangeEmail({ show, onClose }) {
       )}
       {!success && (
         <div className={classes.container}>
-          <DynaForm fieldMeta={changeEmailFieldMeta}>
-            <DynaSubmit
-              data-test="changeEmail"
-              id="changeEmail"
-              onClick={handleEmailChangeClick}>
-              Change email
-            </DynaSubmit>
-          </DynaForm>
+          <DynaForm
+
+            formKey={formKey}
+            fieldMeta={changeEmailFieldMeta} />
+          <DynaSubmit
+            formKey={formKey}
+            data-test="changeEmail"
+            id="changeEmail"
+            onClick={handleEmailChangeClick}>
+            Change email
+          </DynaSubmit>
         </div>
       )}
     </ModalDialog>
