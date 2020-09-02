@@ -443,9 +443,26 @@ export function* previewMappings() {
   }
 }
 
+export function* validateMappings() {
+  const {
+    mappings,
+    lookups,
+    validationErrMsg,
+  } = yield select(selectors.mapping);
+  const {
+    isSuccess,
+    errMessage,
+  } = mappingUtil.validateMappings(mappings, lookups);
+  const newValidationErrMsg = isSuccess ? undefined : errMessage;
+
+  if (newValidationErrMsg !== validationErrMsg) {
+    yield put(actions.mapping.setValidationMsg(newValidationErrMsg));
+  }
+}
+
 export function* checkForIncompleteSFGenerateWhilePatch({ field, value = '' }) {
   if (value.indexOf('_child_') === -1) {
-    return;
+    return yield call(validateMappings);
   }
   const {
     mappings,
@@ -524,5 +541,9 @@ export const mappingSagas = [
   takeLatest(actionTypes.MAPPING.REFRESH_GENERATES, refreshGenerates),
   takeLatest(actionTypes.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
-
+  takeLatest([
+    actionTypes.MAPPING.DELETE,
+    actionTypes.MAPPING.UPDATE_LOOKUP,
+    actionTypes.MAPPING.PATCH_SETTINGS,
+  ], validateMappings),
 ];
