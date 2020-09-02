@@ -1,16 +1,20 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import ShowMoreDrawer from '../drawer/ShowMore';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     overflowX: 'auto',
   },
-});
+  messageContainer: {
+    padding: theme.spacing(3),
+  },
+}));
 
 export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {
   const classes = useStyles();
@@ -27,12 +31,19 @@ export default function AuditLogTable({ resourceType, resourceId, filters, optio
 
   return (
     <div className={classes.root}>
-      <ResourceTable
-        resources={auditLogs}
-        resourceType="auditLogs"
-        filterKey={filterKey}
-        actionProps={{ resourceDetails }}
-      />
+      {totalCount > 0
+        ? (
+          <ResourceTable
+            resources={auditLogs}
+            resourceType="auditLogs"
+            filterKey={filterKey}
+            actionProps={{ resourceDetails }}
+          />
+        ) : (
+          <Typography className={classes.messageContainer}>
+            No logs are present
+          </Typography>
+        )}
 
       <ShowMoreDrawer
         filterKey={filterKey}
