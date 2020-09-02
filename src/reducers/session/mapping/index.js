@@ -250,7 +250,9 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.SET_VALIDATION_MSG:
-        draft.mapping.validationErrMsg = value;
+        if (draft.mapping) {
+          draft.mapping.validationErrMsg = value;
+        }
         break;
       default:
     }
