@@ -141,8 +141,7 @@ export function* mappingInit({
       importId,
       subRecordMappingId,
     }),
-    cancelInit: take(action =>
-      action.type === actionTypes.MAPPING.CLEAR),
+    cancelInit: take(actionTypes.MAPPING.CLEAR),
   });
 
   if (cancelInit) return;
@@ -333,8 +332,7 @@ export function* saveMappings() {
       scope: SCOPES.VALUE,
       context: { flowId },
     }),
-    cancelSave: take(action =>
-      action.type === actionTypes.MAPPING.CLEAR),
+    cancelSave: take(actionTypes.MAPPING.CLEAR),
   });
 
   if (cancelSave) return;
@@ -437,22 +435,16 @@ export function* previewMappings() {
 
   try {
     const { cancelPreview, preview } = yield race({
-      preview: yield call(apiCallWithRetry, {
+      preview: call(apiCallWithRetry, {
         path,
         opts,
         message: 'Loading',
       }),
-      cancelPreview: take(action => {
-        console.log('action.type', action.type);
-
-        return action.type === actionTypes.MAPPING.CLEAR;
-      }),
+      cancelPreview: take(actionTypes.MAPPING.CLEAR),
     });
 
-    console.log('cancelPreview', cancelPreview);
     if (cancelPreview) return;
 
-    console.log('preview', preview);
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
       if (
         preview?.data?.returnedObjects?.mappingErrors[0]?.error
