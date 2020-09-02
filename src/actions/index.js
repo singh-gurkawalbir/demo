@@ -1398,6 +1398,8 @@ const mapping = {
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
+  setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
+
 };
 
 const searchCriteria = {

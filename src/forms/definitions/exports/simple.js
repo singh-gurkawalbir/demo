@@ -108,11 +108,19 @@ export default {
   },
   fieldMap: {
     common: { formId: 'common' },
+    outputMode: {
+      id: 'outputMode',
+      type: 'text',
+      label: 'Parse files being transferred',
+      defaultValue: 'records',
+      visible: false,
+    },
     'file.type': {
       id: 'file.type',
       name: '/file/type',
       type: 'select',
       label: 'File type',
+      required: true,
       defaultValue: r => (r && r.file && r.file.type) || '',
       options: [
         {
@@ -193,6 +201,7 @@ export default {
             label: 'How would you like to parse the file?',
             type: 'indent',
             fields: [
+              'outputMode',
               'file.type',
               'uploadFile',
             ],
