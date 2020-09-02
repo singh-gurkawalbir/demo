@@ -51,10 +51,9 @@ export default {
     visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
-  assistantHelper: {
-    id: 'assistantHelper',
-    type: 'assistanthelper',
-    label: 'Assistant helper',
+  semiassistantoperationselect: {
+    id: 'semiassistantoperationselect',
+    type: 'semiassistantoperationselect',
   },
   asynchronous: {
     type: 'checkbox',

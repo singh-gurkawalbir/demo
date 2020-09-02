@@ -109,24 +109,38 @@ export function selectOptions({
   return [];
 }
 
-export function exportHelperOptions(endpoints = [], parent = {key: []}) {
+export function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
   let options = [];
+  let endpointName;
 
   endpoints.forEach(ep => {
     if (ep.folder) {
-      // options.push({
-      //   subHeader: ep.title,
-      // });
-      options = options.concat(exportHelperOptions(ep.children, {title: parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title, key: [...parent.key, ep.key]}));
+      options = options.concat(semiAssistantOperationOptions(ep.children, {title: parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title, key: [...parent.key, ep.key]}));
     } else {
+      endpointName = ep.name;
+      if (!endpointName) {
+        endpointName = parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title;
+      }
       options.push({
-        label: parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title,
-        value: parent ? [...parent.key, ep.key].join('###') : ep.key,
+        label: endpointName,
+        value: parent ? [...parent.key, ep.key].join('.') : ep.key,
       });
     }
   });
 
   return options;
+}
+
+export function semiAssistantExportOperationOptions(assistantData) {
+  let options = [];
+
+  assistantData?.export?.endpoints.forEach(ep => {
+    options = options.concat(semiAssistantOperationOptions(ep.children, {key: [ep.key]}));
+  });
+
+  return [{
+    items: options,
+  }];
 }
 
 export function deepObjectExtend(target, source) {
@@ -142,8 +156,9 @@ export function deepObjectExtend(target, source) {
   return target;
 }
 
-export function getHttpConfig(assistantData, endPointKey) {
-  const keys = endPointKey.split('###');
+export function semiAssistantExportConfig(assistantData, operationId) {
+  console.log('operationId', operationId);
+  const keys = operationId.split('.');
   let toReturn = {};
   let node = deepClone(assistantData.export);
 
@@ -169,6 +184,12 @@ export function getHttpConfig(assistantData, endPointKey) {
   if (toReturn?.doesNotSupportPaging) {
     delete toReturn.http.paging;
   }
+
+  if (!toReturn.type) {
+    toReturn.type = 'all';
+  }
+
+  delete toReturn.ui;
 
   return toReturn;
 }
