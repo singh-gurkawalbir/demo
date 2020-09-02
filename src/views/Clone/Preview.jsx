@@ -241,14 +241,6 @@ export default function ClonePreview(props) {
           : `Clone - ${resource ? resource.name : ''}`,
         visible: !isIAIntegration,
       },
-      tag: {
-        id: 'tag',
-        name: 'tag',
-        type: 'text',
-        label: 'Tag',
-        defaultValue: `Clone - ${resource ? resource.name : ''}`,
-        visible: isIAIntegration,
-      },
       environment: {
         id: 'environment',
         name: 'environment',
@@ -265,24 +257,6 @@ export default function ClonePreview(props) {
           },
         ],
         defaultValue: preferences.environment,
-      },
-      integration: {
-        id: 'integration',
-        name: 'integration',
-        type: 'select',
-        label: 'Integration',
-        required: true,
-        refreshOptionsOnChangesTo: ['environment'],
-        options: [
-          {
-            items: integrations
-              .filter(
-                i => !!i.sandbox === (preferences.environment === 'sandbox')
-              )
-              .map(i => ({ label: i.name, value: i._id }))
-              .concat([{ label: 'Standalone Integration', value: 'none' }]),
-          },
-        ],
       },
       description: {
         id: 'description',
@@ -311,24 +285,7 @@ export default function ClonePreview(props) {
       },
     },
     layout: {
-      fields:
-        resourceType === 'flows'
-          ? [
-            'name',
-            'environment',
-            'integration',
-            'description',
-            'message',
-            'components',
-          ]
-          : [
-            'name',
-            'tag',
-            'environment',
-            'description',
-            'message',
-            'components',
-          ],
+      fields: [],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -349,9 +306,56 @@ export default function ClonePreview(props) {
       return null;
     },
   };
+
+  if (resourceType === 'flows') {
+    fieldMeta.fieldMap.integration = {
+      id: 'integration',
+      name: 'integration',
+      type: 'select',
+      label: 'Integration',
+      required: true,
+      refreshOptionsOnChangesTo: ['environment'],
+      options: [
+        {
+          items: integrations
+            .filter(
+              i => !!i.sandbox === (preferences.environment === 'sandbox')
+            )
+            .map(i => ({ label: i.name, value: i._id }))
+            .concat([{ label: 'Standalone Integration', value: 'none' }]),
+        },
+      ],
+    };
+    fieldMeta.layout.fields = [
+      'name',
+      'environment',
+      'integration',
+      'description',
+      'message',
+      'components',
+    ];
+  } else {
+    fieldMeta.fieldMap.tag = {
+      id: 'tag',
+      name: 'tag',
+      type: 'text',
+      label: 'Tag',
+      defaultValue: `Clone - ${resource ? resource.name : ''}`,
+      visible: isIAIntegration,
+    };
+    fieldMeta.layout.fields = [
+      'name',
+      'tag',
+      'environment',
+      'description',
+      'message',
+      'components',
+    ];
+  }
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
+    remount: components,
   });
 
   if (!components || isEmpty(components)) {
@@ -453,6 +457,7 @@ export default function ClonePreview(props) {
               formKey={formKey}
               fieldMeta={fieldMeta} />
             <DynaSubmit
+              formKey={formKey}
               ignoreFormTouchedCheck
               disabled={cloneRequested}
               data-test="clone"
