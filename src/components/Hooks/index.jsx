@@ -5,7 +5,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import {
   importHooksList,
-  importSuiteScriptHooksList,
+  getImportSuiteScriptHooksList,
   isValidHook,
   isValidSuiteScriptHook,
 } from '../../utils/hooks';
@@ -83,7 +83,7 @@ export default function Hooks(props) {
       const selectedHook = {};
       let isInvalidHook = false;
       const suiteScriptHooksList =
-        resourceType === 'exports' ? ['preSend'] : importSuiteScriptHooksList;
+        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList;
 
       suiteScriptHooksList.forEach(suiteScriptHook => {
         const value = values[`suiteScript-${suiteScriptHook}`];
