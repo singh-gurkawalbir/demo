@@ -73,13 +73,9 @@ export default function TransformEditor(props) {
 
   useEffect(() => {
     // if the editor is being used in the toggle AFE, editor init should happen only once
-    if (isToggleScreen) {
-      if (!processor) {
-        handleInit();
-      }
-    } else {
-      handleInit();
-    }
+    if (isToggleScreen && processor) return;
+    handleInit();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isToggleScreen, handleInit]);
 

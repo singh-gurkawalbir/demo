@@ -61,13 +61,9 @@ export default function FilterEditor(props) {
   useEffect(() => {
     // if the editor is being used in the toggle AFE, editor init should happen only once
     // TODO: we can remove isToggleScreen flag and implement this logic for all cases instead
-    if (isToggleScreen) {
-      if (!processor) {
-        handleInit();
-      }
-    } else {
-      handleInit();
-    }
+    if (isToggleScreen && processor) return;
+    handleInit();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isToggleScreen, handleInit]);
 

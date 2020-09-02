@@ -80,13 +80,9 @@ export default function JavaScriptEditor(props) {
 
   useEffect(() => {
     // if the editor is being used in the toggle AFE, editor init should happen only once
-    if (isToggleScreen) {
-      if (!processor) {
-        handleInit();
-      }
-    } else {
-      handleInit();
-    }
+    if (isToggleScreen && processor) return;
+    handleInit();
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleInit, isToggleScreen]);
   const parsedData = result ? result.data : '';

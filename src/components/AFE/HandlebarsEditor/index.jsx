@@ -67,13 +67,17 @@ export default function HandlebarsEditor(props) {
   };
 
   const handleInit = useCallback(() => {
-    const initTempate = editorVersion === 2 ? v2template : v1template;
+    let template = editorVersion === 2 ? v2template : v1template;
+
+    if (!template) {
+      template = typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2);
+    }
 
     dispatch(
       actions.editor.init(editorId, 'handlebars', {
         strict: props.strict,
         autoEvaluateDelay: 500,
-        template: initTempate || (typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2)),
+        template,
         _init_template: rule,
         data: props.data,
         isSampleDataLoading: props.isSampleDataLoading,
