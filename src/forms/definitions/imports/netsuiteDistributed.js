@@ -176,7 +176,7 @@ export default {
 
     if (fieldId === 'netsuite_da.internalIdLookup.expression') {
       return {
-        disableFetch: !(recordTypeField && recordTypeField.value),
+        disableFetch: !(recordTypeField?.value),
         commMetaPath: recordTypeField
           ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes/${recordTypeField.value}/searchFilters?includeJoinFilters=true`
           : '',
@@ -186,14 +186,14 @@ export default {
 
     if (fieldId === 'netsuite_da.subrecords') {
       return {
-        recordType: recordTypeField && recordTypeField.value,
+        recordType: recordTypeField?.value,
       };
     }
 
     if (fieldId === 'netsuite_da.operation') {
       return {
-        recordType: recordTypeField && recordTypeField.value,
-        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes`,
+        recordType: recordTypeField?.value,
+        commMetaPath: recordTypeField ? `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes` : '',
       };
     }
 
