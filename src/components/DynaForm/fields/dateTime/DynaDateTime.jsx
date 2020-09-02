@@ -12,12 +12,24 @@ import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
-import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
     flexDirection: 'row !important',
     display: 'flex',
+  },
+  dateTimeWrapper: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  fieldWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    '&:first-child': {
+      marginRight: theme.spacing(1),
+    },
   },
   dynaDateCalendarBtn: {
     padding: 0,
@@ -31,7 +43,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
+  const { id, onFieldChange, value = '', disabled, resourceContext } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -81,53 +93,59 @@ export default function DateTimePicker(props) {
 
   return (
     <>
-      <div className={classes.dynaDateTimeLabelWrapper}>
-        <FormLabel>{label}</FormLabel>
-        <FieldHelp {...props} />
-      </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-        <DatePicker
-          disabled={disabled}
-          variant="inline"
-          format={finalDateFormat}
-          value={dateValue}
-          label="Date"
-          onChange={setDateValue}
-          onKeyDown={e => {
-          // this is specifically for qa to inject their date time string
-          // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
+      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
+        <div className={classes.dateTimeWrapper}>
+          <div className={classes.fieldWrapper}>
+            <FormLabel>Start date</FormLabel>
+            <DatePicker
+              disabled={disabled}
+              variant="inline"
+              inputVariant="filled"
+              disableToolbar
+              format={finalDateFormat}
+              value={dateValue}
+              fullWidth
+              onChange={setDateValue}
+              onKeyDown={e => {
+              // this is specifically for qa to inject their date time string
+              // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
+                e.preventDefault();
+              }}
       />
+          </div>
+          <div className={classes.fieldWrapper}>
+            <FormLabel>Start time</FormLabel>
+            <TimePicker
+              disabled={disabled}
+              variant="inline"
+              inputVariant="filled"
+              fullWidth
+              format={finalTimeFormat}
+              value={dateValue}
+              onChange={setDateValue}
+              onKeyDown={e => {
+                // this is specifically for qa to inject their date time string
+                // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
 
-        <TimePicker
-          disabled={disabled}
-          variant="inline"
-          label="Time"
-          format={finalTimeFormat}
-          value={dateValue}
-          onChange={setDateValue}
-          onKeyDown={e => {
-            // this is specifically for qa to inject their date time string
-            // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
+                e.preventDefault();
+              }}
       />
-        <ErroredMessageComponent {...props} />
+          </div>
+          <ErroredMessageComponent {...props} />
+        </div>
       </MuiPickersUtilsProvider>
     </>
   );
