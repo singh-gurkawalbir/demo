@@ -57,7 +57,10 @@ export default {
       fieldId: 'netsuite_da.subrecords',
       refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
     },
-    'netsuite_da.operation': { fieldId: 'netsuite_da.operation' },
+    'netsuite_da.operation': {
+      fieldId: 'netsuite_da.operation',
+      refreshOptionsOnChangesTo: ['netsuite_da.recordType'],
+    },
     'netsuite.file.internalId': { fieldId: 'netsuite.file.internalId' },
     'netsuite.file.name': { fieldId: 'netsuite.file.name' },
     'netsuite.file.fileType': { fieldId: 'netsuite.file.fileType' },
@@ -167,11 +170,11 @@ export default {
     ],
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'netsuite_da.internalIdLookup.expression') {
-      const recordTypeField = fields.find(
-        field => field.id === 'netsuite_da.recordType'
-      );
+    const recordTypeField = fields.find(
+      field => field.id === 'netsuite_da.recordType'
+    );
 
+    if (fieldId === 'netsuite_da.internalIdLookup.expression') {
       return {
         disableFetch: !(recordTypeField && recordTypeField.value),
         commMetaPath: recordTypeField
@@ -182,12 +185,15 @@ export default {
     }
 
     if (fieldId === 'netsuite_da.subrecords') {
-      const recordTypeField = fields.find(
-        field => field.id === 'netsuite_da.recordType'
-      );
-
       return {
         recordType: recordTypeField && recordTypeField.value,
+      };
+    }
+
+    if (fieldId === 'netsuite_da.operation') {
+      return {
+        recordType: recordTypeField && recordTypeField.value,
+        commMetaPath: `netsuite/metadata/suitescript/connections/${recordTypeField.connectionId}/recordTypes`,
       };
     }
 
