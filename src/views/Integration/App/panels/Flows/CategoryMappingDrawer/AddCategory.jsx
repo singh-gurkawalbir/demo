@@ -224,6 +224,7 @@ function AddCategoryMappingDrawer({ integrationId, parentUrl }) {
             className={classes.addCategoryDrawerForm} />
           <div className={classes.addCategoryDrawerFormActions}>
             <DynaSubmit
+              formKey={formKey}
               data-test="addCategory"
               onClick={handleSave}>
               Add Category
