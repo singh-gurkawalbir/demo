@@ -34,7 +34,6 @@ import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import StatusCircle from '../../components/StatusCircle';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
@@ -457,7 +456,7 @@ function FlowBuilder() {
 
     return (
       <div className={classes.actions}>
-        {!isProduction() && isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
+        {isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
         <IconButton
           disabled={isNewFlow}
           className={classes.chartsIcon}

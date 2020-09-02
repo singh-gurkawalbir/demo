@@ -5,7 +5,6 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import Filters from './Filters';
 import JobTable from './JobTable';
-import ChartsDrawer from './ChartsDrawer';
 import actionTypes from '../../actions/types';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
 import CommStatus from '../CommStatus';
@@ -389,7 +388,6 @@ export default function JobDashboard({
         autoClearOnComplete
         commStatusHandler={handleCommsStatus}
       />
-      <ChartsDrawer integrationId={integrationId} />
       <Filters
         filterKey={filterKey}
         integrationId={integrationId}
