@@ -190,17 +190,17 @@ export default function DynaTypeableSelect(props) {
     filterType: option.filterType,
   }));
 
-  const [value, setValue] = useState(propValue || '');
+  const [value, setValue] = useState(propValue);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocusIn = useCallback(() => {
     if (!isFocused) { setIsFocused(true); }
   }, [isFocused]);
   const handleFocusOut = useCallback(() => {
+    if (isFocused) { setIsFocused(false); }
     if (onTouch) {
       onTouch(id);
     }
-    if (isFocused) { setIsFocused(false); }
   }, [id, isFocused, onTouch]);
 
   useEffect(() => {
