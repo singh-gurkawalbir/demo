@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SavingMask = () => (
+export const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
     <Spinner color="primary" />
@@ -93,7 +93,6 @@ export const SuiteScriptForm = props => {
     </>
   );
 };
-
 export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id, integrationAppName}) {
   const classes = useStyles();
   const sections = useSelectorMemo(selectors.makeSuiteScriptIASections, integrationId, ssLinkedConnectionId);
