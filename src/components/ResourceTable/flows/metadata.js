@@ -11,6 +11,7 @@ import OnOffCell from './cells/OnOffCell';
 import DateCell from './cells/DateCell';
 import RunCell from './cells/RunCell';
 import ErrorsCell from './cells/ErrorCell';
+import StatusCell from './cells/StatusCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
@@ -57,7 +58,7 @@ export default {
       },
       {
         heading: 'Last run',
-        value: r => <DateCell date={r.lastExecutedAt} />,
+        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {

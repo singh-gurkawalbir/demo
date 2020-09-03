@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
+import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -97,6 +98,16 @@ export default function FlowsPanel({ integrationId, childId }) {
     }
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero, status]);
 
+  useEffect(() => {
+    if (!isUserInErrMgtTwoDotZero) return;
+
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+
+    return () => {
+      dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+    };
+  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
+
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
@@ -127,6 +138,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       )}
       <MappingDrawerRoute integrationId={integrationId} />
       <ScheduleDrawer />
+      <QueuedJobsDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
         {permission.create && !isIntegrationApp && (

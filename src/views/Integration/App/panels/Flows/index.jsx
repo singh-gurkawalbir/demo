@@ -23,6 +23,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
+import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -142,6 +143,7 @@ function FlowList({ integrationId, storeId }) {
   return (
     <LoadResources required resources="flows,exports">
       <ScheduleDrawer />
+      <QueuedJobsDrawer />
       <SettingsDrawer
         integrationId={integrationId}
         storeId={storeId}

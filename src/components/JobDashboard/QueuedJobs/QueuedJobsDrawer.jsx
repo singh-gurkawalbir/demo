@@ -199,7 +199,7 @@ export default function QueuedJobsDrawer() {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/flows/:flowId/queuedJobs`}>
+    <Route exact path={[`${match.url}/flows/:flowId/queuedJobs`, `${match.url}/:flowId/queuedJobs`]}>
       <LoadResources required resources="flows,exports,imports,connections">
         <QueuedJobs parentUrl={match.url} />
       </LoadResources>
