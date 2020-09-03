@@ -186,11 +186,11 @@ export default function DynaTypeableSelect(props) {
   const ref = useRef(null);
   const suggestions = options.map(option => ({
     label: option[labelName],
-    value: option[valueName],
+    value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
   }));
 
-  const [value, setValue] = useState(propValue);
+  const [value, setValue] = useState(propValue?.toString());
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocusIn = useCallback(() => {
@@ -242,12 +242,16 @@ export default function DynaTypeableSelect(props) {
   };
 
   const selectedValue =
-    !isFocused && suggestions.find(suggestionItem => suggestionItem.value?.toString() === value?.toString());
+    !isFocused && suggestions.find(suggestionItem => suggestionItem.value === value);
   const inputVal =
     (!isFocused && selectedValue && selectedValue.label) || value;
   const customStyles = SelectStyle(useTheme());
-  const filterOption = (options, rawInput) => options.label?.toLowerCase().indexOf(rawInput?.toString().toLowerCase()) !== -1 ||
-      options.value?.toString().toLowerCase().indexOf(rawInput?.toString().toLowerCase()) !== -1;
+  const filterOption = (options, rawInput) => {
+    if (!options.label || !options.value) return false;
+    const input = rawInput?.toString().toLowerCase();
+
+    return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
+  };
 
   return (
     <FormControl
