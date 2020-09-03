@@ -226,12 +226,8 @@ export default function DynaTypeableSelect(props) {
   };
 
   useEffect(() => {
-    if (!isFocused && propValue !== value) {
-      // check if entered value is a part of suggestions
-      const selectedObj = suggestions.find(o => o.label === value);
-      const val = selectedObj ? selectedObj.value : value;
-
-      if (onBlur) onBlur(id, val);
+    if (!isFocused && propValue !== value && onBlur) {
+      onBlur(id, value);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, value, isFocused, propValue]);
@@ -246,12 +242,12 @@ export default function DynaTypeableSelect(props) {
   };
 
   const selectedValue =
-    !isFocused && suggestions.find(o => o.value === value);
+    !isFocused && suggestions.find(suggestionItem => suggestionItem.value?.toString() === value?.toString());
   const inputVal =
     (!isFocused && selectedValue && selectedValue.label) || value;
   const customStyles = SelectStyle(useTheme());
-  const filterOption = (options, rawInput) => options?.label?.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1 ||
-    options?.value?.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
+  const filterOption = (options, rawInput) => options.label?.toLowerCase().indexOf(rawInput?.toString().toLowerCase()) !== -1 ||
+      options.value?.toString().toLowerCase().indexOf(rawInput?.toString().toLowerCase()) !== -1;
 
   return (
     <FormControl
