@@ -1575,34 +1575,6 @@ selectors.integrationAppSectionMetadata = (
   return selectedSection;
 };
 
-selectors.suiteScriptIASectionMetadata = (
-  state,
-  integrationId,
-  ssLinkedConnectionId,
-  section,
-) => {
-  if (!state) {
-    return emptyObject;
-  }
-
-  const integrationResource = selectors.suiteScriptIASettings(
-    state,
-    integrationId,
-    ssLinkedConnectionId
-  );
-  const {sections = [] } =
-    integrationResource || {};
-  const allSections = sections;
-
-  const selectedSection =
-    allSections.find(
-      sec =>
-        getTitleIdFromSection(sec) === section
-    ) || {};
-
-  return selectedSection;
-};
-
 selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   if (!state) return emptyObject;
   const integrationResource =
@@ -3973,34 +3945,49 @@ selectors.getScriptContext = createSelector(
 );
 
 // #region suiteScript
-selectors.suiteScriptIAFlowSections = (state, id, ssLinkedConnectionId) => {
-  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.makeSuiteScriptIAFlowSections = () => {
+  const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
-  return sections.map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
-  }));
+  return createSelector(
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
+
+    meta => {
+      const {sections = []} = meta;
+
+      return sections.map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+        id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
+      }));
+    }
+  );
 };
 
-selectors.suiteScriptIASections = (state, id, ssLinkedConnectionId) => {
-  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.makeSuiteScriptIASections = () => {
+  const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
-  const {general } = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+  return createSelector(
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
 
-  let selectedGeneral = general;
+    metaSections => {
+      const {general, sections = [] } = metaSections;
 
-  if (Array.isArray(general)) {
-    selectedGeneral = general.find(s => s.title === 'General');
-  }
+      let selectedGeneral = general;
 
-  return (selectedGeneral
-    ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
-      ...sections] : sections).map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
-  }));
+      if (Array.isArray(general)) {
+        selectedGeneral = general.find(s => s.title === 'General');
+      }
+
+      return (selectedGeneral
+        ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
+          ...sections] : sections).map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+        id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
+      }));
+    }
+
+  );
 };
 
 selectors.suiteScriptResourceStatus = (
@@ -4097,11 +4084,16 @@ selectors.suiteScriptResourceData = (
   return data;
 };
 
+// TODO: deprecate this function and rely on the cached selector
+
+selectors.suiteScriptIASettings = selectors.makeSuiteScriptIASettings();
+
 selectors.suiteScriptFlowSettings = (state, id, ssLinkedConnectionId, section) => {
   if (!state) return emptyObject;
 
   const integrationResource =
-    selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
+  // // TODO: deprecate this function and rely on the cached selector
+    selectors.suiteScriptIASettings(state?.data?.suiteScript, id, ssLinkedConnectionId) || emptyObject;
   const { sections = []} = integrationResource || {};
   let requiredFlows = [];
   const allSections = sections;
