@@ -34,7 +34,6 @@ import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import StatusCircle from '../../components/StatusCircle';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
@@ -207,7 +206,7 @@ function FlowBuilder() {
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const {
     data: flowErrorsMap,
@@ -457,7 +456,7 @@ function FlowBuilder() {
 
     return (
       <div className={classes.actions}>
-        {!isProduction() && isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
+        {isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
         <IconButton
           disabled={isNewFlow}
           className={classes.chartsIcon}

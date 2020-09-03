@@ -10,6 +10,7 @@ export default function UrlEditor(props) {
     data,
     disabled,
     isSampleDataLoading = false,
+    editorVersion,
   } = props;
 
   return (
@@ -26,6 +27,7 @@ export default function UrlEditor(props) {
       resultMode="text"
       enableAutocomplete
       isSampleDataLoading={isSampleDataLoading}
+      editorVersion={editorVersion}
     />
   );
 }

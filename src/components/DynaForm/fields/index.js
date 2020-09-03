@@ -114,6 +114,7 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -152,6 +153,7 @@ export default {
   csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
+  netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,

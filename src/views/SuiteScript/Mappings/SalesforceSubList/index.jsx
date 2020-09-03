@@ -11,6 +11,7 @@ import ModalDialog from '../../../../components/ModalDialog';
 const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynatreeAddBtn: {
     minWidth: 'unset',

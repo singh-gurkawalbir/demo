@@ -69,29 +69,33 @@ export default function PreviewInfo(props) {
     disabled,
   } = props;
   const classes = useStyles(props);
-  // ShowSampleDataStatus Fn shows Preview Status
-  const sampleDataStatus = useMemo(() => {
-    if (resourceSampleData.status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
-    if (resourceSampleData.status === 'received') return <Typography variant="body2"> Success! </Typography>;
-  }, [resourceSampleData.status]);
-  // showSampleDataOverview Fn Used to show Preview Info
-  const sampleDataOverview = useMemo(() => {
+  const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
-    if (status === 'error') {
-      const errorCount = error.errors && error.errors.length;
+    if (status === 'requested') return <Typography variant="body2"> Testing </Typography>;
 
+    if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
+
+    const errorCount = error?.errors?.length || 0;
+
+    return (
+      <ErroredMessageComponent
+        errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
+      />
+    );
+  }, [resourceSampleData]);
+
+  const sampleDataOverview = useMemo(() => {
+    if (resourceSampleData.status === 'error') {
       return (
-        <ErroredMessageComponent
-          errorMessages={`You have ${errorCount} ${
-            errorCount > 1 ? 'errors' : 'error'
-          }`}
-        />
+        <Typography variant="body2">
+          0 Pages, 0 Records
+        </Typography>
       );
     }
 
-    if (status === 'received') {
+    if (resourceSampleData.status === 'received') {
       // TODO @Raghu:  Needs to be updated when number of records are handled
       return (
         <Typography variant="body2">
@@ -99,7 +103,7 @@ export default function PreviewInfo(props) {
         </Typography>
       );
     }
-  }, [panelType, previewStageDataList, resourceSampleData]);
+  }, [panelType, previewStageDataList, resourceSampleData.status]);
 
   return (
     <div className={classes.previewContainer}>

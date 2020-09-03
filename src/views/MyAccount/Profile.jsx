@@ -217,19 +217,12 @@ export default function ProfileComponent() {
         defaultValue: preferences && preferences.timeFormat,
         options: timeFormatList,
       },
-      layout: {
-        fields: [
-          'name',
-          'email',
-          'password',
-          'company',
-          'role',
-          'phone',
-          'timezone',
-          'dateFormat',
-          'timeFormat',
-          'developer',
-        ],
+      developer: {
+        id: 'developer',
+        name: 'developer',
+        type: 'checkbox',
+        label: 'Developer Mode',
+        defaultValue: preferences && preferences.developer,
       },
     },
     layout: {

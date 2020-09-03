@@ -125,7 +125,7 @@ export default function SettingsDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/:flowId/settings`}>
+    <Route path={`${match.url}/:flowId/settings`}>
       <LoadResources required resources="exports,imports,flows,connections">
         <SettingsDrawer {...props} parentUrl={match.url} />
       </LoadResources>

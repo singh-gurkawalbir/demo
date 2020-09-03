@@ -78,7 +78,7 @@ function OAuthButton(props) {
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
+  const { handleSubmitForm, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave: handleSaveAndAuthorizeConnection,
     resourceType,
@@ -144,11 +144,11 @@ function OAuthButton(props) {
     <DynaAction
       {...rest}
       resourceType={resourceType}
-      disabled={disabled || disableSave}
+      disabled={disabled || isSaving}
       className={classes.actionButton}
       ignoreFormTouchedCheck
       onClick={saveAndAuthorizeWhenScopesArePresent}>
-      {disableSave ? 'Authorizing' : label || 'Save & authorize'}
+      {isSaving ? 'Authorizing' : label || 'Save & authorize'}
     </DynaAction>
   );
 }
