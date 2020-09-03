@@ -4,14 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
-  TimePicker,
+  KeyboardDatePicker,
+  KeyboardTimePicker,
 } from '@material-ui/pickers';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
+import FieldHelp from '../../FieldHelp';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
@@ -40,10 +43,32 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  keyBoardDateTimeWrapper: {
+    '& .MuiIconButton-root': {
+      padding: 0,
+      marginRight: theme.spacing(1),
+      backgroundColor: 'transparent',
+    },
+    '& .MuiInputBase-input': {
+      padding: 0,
+      height: 38,
+      paddingLeft: 15,
+    },
+  },
+  inputDateTime: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, onFieldChange, value = '', disabled, resourceContext } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -93,19 +118,23 @@ export default function DateTimePicker(props) {
 
   return (
     <>
+      <div className={classes.dynaDateTimeLabelWrapper}>
+        <FormLabel>{label}</FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
         <div className={classes.dateTimeWrapper}>
           <div className={classes.fieldWrapper}>
-            <FormLabel>Start date</FormLabel>
-            <DatePicker
+            <KeyboardDatePicker
               disabled={disabled}
               variant="inline"
-              inputVariant="filled"
               disableToolbar
+              className={classes.keyBoardDateTimeWrapper}
               format={finalDateFormat}
               value={dateValue}
               fullWidth
               onChange={setDateValue}
+              InputProps={{ className: classes.inputDateTime }}
               onKeyDown={e => {
               // this is specifically for qa to inject their date time string
               // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -118,18 +147,20 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
+              keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
+
       />
           </div>
           <div className={classes.fieldWrapper}>
-            <FormLabel>Start time</FormLabel>
-            <TimePicker
+            <KeyboardTimePicker
               disabled={disabled}
               variant="inline"
-              inputVariant="filled"
               fullWidth
+              className={classes.keyBoardDateTimeWrapper}
               format={finalTimeFormat}
               value={dateValue}
               onChange={setDateValue}
+              InputProps={{ className: classes.inputDateTime }}
               onKeyDown={e => {
                 // this is specifically for qa to inject their date time string
                 // they should alter the input dom to add a qa attribute prior to injection for date time
@@ -142,10 +173,11 @@ export default function DateTimePicker(props) {
 
                 e.preventDefault();
               }}
+              keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
       />
           </div>
-          <ErroredMessageComponent {...props} />
         </div>
+        <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
     </>
   );
