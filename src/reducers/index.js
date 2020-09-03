@@ -3807,7 +3807,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (resource.type === 'delta') {
+      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
