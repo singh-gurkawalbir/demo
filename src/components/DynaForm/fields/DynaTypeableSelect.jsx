@@ -166,7 +166,7 @@ export default function DynaTypeableSelect(props) {
   const {
     id,
     disabled,
-    value = '',
+    value: propValue = '',
     placeholder,
     endAdornment,
     onBlur,
@@ -177,7 +177,6 @@ export default function DynaTypeableSelect(props) {
     isValid,
     TextComponent,
     onTouch,
-    // hideDropdownOnChange = false,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
@@ -191,13 +190,8 @@ export default function DynaTypeableSelect(props) {
     filterType: option.filterType,
   }));
 
-  const [inputState, setInputState] = useState({
-    inputValue: value || '',
-    filter: false,
-  });
+  const [value, setValue] = useState(propValue || '');
   const [isFocused, setIsFocused] = useState(false);
-
-  const { filter, inputValue } = inputState;
 
   const handleFocusIn = useCallback(() => {
     if (!isFocused) { setIsFocused(true); }
@@ -225,44 +219,39 @@ export default function DynaTypeableSelect(props) {
   const handleChange = newObj => {
     const newVal = newObj.value;
 
-    setInputState({ ...inputState, inputValue: newVal });
+    setValue(newVal);
     setIsFocused(false);
 
     // if (hideDropdownOnChange) { setShowDropdown(false); }
   };
 
   useEffect(() => {
-    if (!isFocused && value !== inputValue) {
+    if (!isFocused && propValue !== value) {
       // check if entered value is a part of suggestions
-      const selectedObj = suggestions.find(o => o.label === inputValue);
-      const val = selectedObj ? selectedObj.value : inputValue;
+      const selectedObj = suggestions.find(o => o.label === value);
+      const val = selectedObj ? selectedObj.value : value;
 
       if (onBlur) onBlur(id, val);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, inputValue, isFocused, value]);
+  }, [id, value, isFocused, propValue]);
 
   const handleTextChange = (id, val) => {
-    setInputState({ filter: true, inputValue: val });
+    setValue(val);
     onBlur(id, val);
   };
 
   const handleInputChange = (newVal, event) => {
-    if (event.action === 'input-change') setInputState({ filter: true, inputValue: newVal });
+    if (event.action === 'input-change') setValue(newVal);
   };
 
   const selectedValue =
-    !isFocused && suggestions.find(o => o.value === inputValue);
+    !isFocused && suggestions.find(o => o.value === value);
   const inputVal =
-    (!isFocused && selectedValue && selectedValue.label) || inputValue;
+    (!isFocused && selectedValue && selectedValue.label) || value;
   const customStyles = SelectStyle(useTheme());
-  const filterOption = (options, rawInput) => {
-    if (filter) {
-      return options.label.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
-    }
-
-    return true;
-  };
+  const filterOption = (options, rawInput) => options?.label?.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1 ||
+    options?.value?.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
 
   return (
     <FormControl
