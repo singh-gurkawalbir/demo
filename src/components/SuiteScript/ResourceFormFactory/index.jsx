@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import formFactory from '../../../forms/formFactory';
 import { FormStateManager } from '../../ResourceFormFactory';
 import SuiteScriptActionsPanel from './SuiteScriptActionsPanel';
+import { generateNewId } from '../../../utils/resource';
 
 export const ResourceFormFactory = props => {
   const {
@@ -104,14 +105,18 @@ export const ResourceFormFactory = props => {
   );
 };
 
-const SuiteScriptFormComponent = props => (
+const SuiteScriptFormComponent = props => {
+  const [formKey] = useState(generateNewId());
 
-  <>
-    <ResourceFormFactory {...props} />
+  return (
 
-    <SuiteScriptActionsPanel {...props} />
+    <>
+      <ResourceFormFactory formKey={formKey} {...props} />
 
-  </>
-);
+      <SuiteScriptActionsPanel formKey={formKey} {...props} />
+
+    </>
+  );
+};
 
 export default SuiteScriptFormComponent;
