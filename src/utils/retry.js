@@ -1,4 +1,4 @@
-export default function retry(fn, retriesLeft = 3, interval = 100) {
+export default function retry(fn, retriesLeft = 5, interval = 100) {
   const rl = Math.min(10, Math.floor(Number.isNaN(+retriesLeft) ? 0 : +retriesLeft));
 
   return new Promise((resolve, reject) => {
