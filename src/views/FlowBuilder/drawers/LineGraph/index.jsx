@@ -7,8 +7,8 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
-import DynaMultiSelect from './MultiSelect';
-import FlowCharts from './FlowCharts';
+import FlowCharts from '../../../../components/LineGraph/Flow';
+import DynaMultiSelect from '../../../../components/LineGraph/MultiSelect';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {

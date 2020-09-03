@@ -14,7 +14,7 @@ import {
 import * as d3 from 'd3';
 import { sortBy } from 'lodash';
 import { makeStyles, Typography } from '@material-ui/core';
-import PanelHeader from '../../../../components/PanelHeader';
+import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
@@ -24,15 +24,15 @@ import {
   getLineColor,
   getAxisLabelPosition,
   getLegend,
-} from '../../../../utils/flowMetrics';
-import { selectors } from '../../../../reducers';
-import actions from '../../../../actions';
-import Spinner from '../../../../components/Spinner';
-import SpinnerWrapper from '../../../../components/SpinnerWrapper';
-import RequiredIcon from '../../../../components/icons/RequiredIcon';
-import OptionalIcon from '../../../../components/icons/OptionalIcon';
-import ConditionalIcon from '../../../../components/icons/ConditionalIcon';
-import PreferredIcon from '../../../../components/icons/PreferredIcon';
+} from '../../../utils/flowMetrics';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import Spinner from '../../Spinner';
+import SpinnerWrapper from '../../SpinnerWrapper';
+import RequiredIcon from '../../icons/RequiredIcon';
+import OptionalIcon from '../../icons/OptionalIcon';
+import ConditionalIcon from '../../icons/ConditionalIcon';
+import PreferredIcon from '../../icons/PreferredIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
