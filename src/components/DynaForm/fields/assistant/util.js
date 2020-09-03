@@ -157,7 +157,6 @@ export function deepObjectExtend(target, source) {
 }
 
 export function semiAssistantExportConfig(assistantData, operationId) {
-  console.log('operationId', operationId);
   const keys = operationId.split('.');
   let toReturn = {};
   let node = deepClone(assistantData.export);
