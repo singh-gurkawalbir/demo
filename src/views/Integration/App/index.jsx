@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Redirect, generatePath, Link, useHistory } from 'react-router-dom';
+import { Redirect, generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Select, MenuItem } from '@material-ui/core';
 import { selectors } from '../../../reducers';
@@ -113,6 +113,7 @@ export default function IntegrationApp(props) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
@@ -129,6 +130,17 @@ export default function IntegrationApp(props) {
     selectors.shouldRedirect(state, integrationId)
   );
   const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const queryParams = new URLSearchParams(location.search);
+  const flowJobId = queryParams.get('_flowJobId');
+  const jobFlowId = useSelector(state => {
+    const job = selectors.flowJob(state, { jobId: flowJobId, includeAll: true });
+
+    return job && job._flowId;
+  }
+  );
+  const searchParamchildId = useSelector(state =>
+    selectors.integrationAppChildIdOfFlow(state, integrationId, jobFlowId)
+  );
 
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
@@ -261,8 +273,13 @@ export default function IntegrationApp(props) {
       return (
         <Redirect
           push={false}
-          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultStoreId}/${tab ||
-            'flows'}`)}
+          to={
+            {
+              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamchildId || defaultStoreId}/${tab ||
+            'flows'}`),
+              search: location.search,
+            }
+          }
         />
       );
     }

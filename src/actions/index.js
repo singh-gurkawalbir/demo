@@ -1345,24 +1345,25 @@ const cancelTask = () => action(actionTypes.CANCEL_TASK, {});
 // #region Editor actions
 const editor = {
   init: (id, processor, options) =>
-    action(actionTypes.EDITOR_INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes.EDITOR_CHANGE_LAYOUT, { id }),
-  patch: (id, patch) => action(actionTypes.EDITOR_PATCH, { id, patch }),
-  reset: id => action(actionTypes.EDITOR_RESET, { id }),
+    action(actionTypes.EDITOR.INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id }),
+  patch: (id, patch) => action(actionTypes.EDITOR.PATCH, { id, patch }),
+  reset: id => action(actionTypes.EDITOR.RESET, { id }),
+  clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
   updateHelperFunctions: helperFunctions =>
-    action(actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
+    action(actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
   refreshHelperFunctions: () =>
-    action(actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes.EDITOR_EVALUATE_REQUEST, { id }),
+    action(actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS),
+  evaluateRequest: id => action(actionTypes.EDITOR.EVALUATE_REQUEST, { id }),
   validateFailure: (id, violations) =>
-    action(actionTypes.EDITOR_VALIDATE_FAILURE, { id, violations }),
+    action(actionTypes.EDITOR.VALIDATE_FAILURE, { id, violations }),
   evaluateFailure: (id, error) =>
-    action(actionTypes.EDITOR_EVALUATE_FAILURE, { id, error }),
+    action(actionTypes.EDITOR.EVALUATE_FAILURE, { id, error }),
   evaluateResponse: (id, result) =>
-    action(actionTypes.EDITOR_EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes.EDITOR_SAVE, { id, context }),
-  saveFailed: id => action(actionTypes.EDITOR_SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes.EDITOR_SAVE_COMPLETE, { id }),
+    action(actionTypes.EDITOR.EVALUATE_RESPONSE, { id, result }),
+  save: (id, context) => action(actionTypes.EDITOR.SAVE, { id, context }),
+  saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions
@@ -1398,6 +1399,8 @@ const mapping = {
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
+  setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
+
 };
 
 const searchCriteria = {

@@ -1,5 +1,4 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Download from '../commonActions/Download';
@@ -9,6 +8,7 @@ import Detach from './actions/Detach';
 import Edit from './actions/Edit';
 import NameCell from './cells/NameCell';
 import OnOffCell from './cells/OnOffCell';
+import DateCell from './cells/DateCell';
 import RunCell from './cells/RunCell';
 import ErrorsCell from './cells/ErrorCell';
 import ScheduleCell from './cells/ScheduleCell';
@@ -52,12 +52,12 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} />,
+        value: r => <DateCell date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
         heading: 'Last run',
-        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
+        value: r => <DateCell date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {
