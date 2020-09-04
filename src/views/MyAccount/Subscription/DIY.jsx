@@ -6,7 +6,7 @@ import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(3, 1, 0, 1),
+    margin: theme.spacing(0, 1),
     overflowX: 'auto',
   },
   transferButton: {
