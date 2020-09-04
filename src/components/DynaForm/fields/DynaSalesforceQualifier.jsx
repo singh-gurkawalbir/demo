@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaSalesforceQualifierWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   textField: {
     width: '100%',

@@ -415,6 +415,7 @@ export default {
 
     return _data;
   },
+  'suitescript-bundle-status': data => data,
   default: data =>
     data &&
     Array.isArray(data) &&

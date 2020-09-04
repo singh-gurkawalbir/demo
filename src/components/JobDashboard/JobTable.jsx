@@ -177,7 +177,7 @@ function JobTable({
     // this drawer and not the child retry drawer.
     // if (match.isExact) setShowErrorDialogFor({});
     /** Dirty fix, I don't see a better option. */
-    if (history?.location?.pathname?.endsWith('dashboard/viewErrors')) {
+    if (history?.location?.pathname?.endsWith(isFlowBuilderView ? '/viewErrors' : 'dashboard/viewErrors')) {
       setShowErrorDialogFor({});
     }
   }

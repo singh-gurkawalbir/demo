@@ -1,4 +1,7 @@
 import { call, put, takeEvery, select } from 'redux-saga/effects';
+import * as d3 from 'd3';
+import mean from 'lodash/mean';
+import compact from 'lodash/compact';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -8,9 +11,8 @@ import {
   getFlowMetricsAttQuery,
   parseFlowMetricsJson,
 } from '../../utils/flowMetrics';
-import { invokeProcessor } from '../editor';
 
-function* requestMetric({query}) {
+function* requestMetric({query, isAtt}) {
   let csvResponse;
   const path = '/stats/tsdb';
 
@@ -23,45 +25,62 @@ function* requestMetric({query}) {
       },
       message: 'Loading',
     });
+    const json = d3.csvParse(csvResponse);
 
-    if (csvResponse) {
-      const json = yield call(invokeProcessor, {
-        processor: 'csvParser',
-        body: {
-          rules: {
-            columnDelimiter: ',',
-            hasHeaderRow: true,
-            trimSpaces: true,
-            rowsToSkip: 0,
-          },
-          data: csvResponse,
-          options: { includeEmptyValues: true },
-        },
-      });
+    const flows = json.reduce((acc, cur) => {
+      const item = acc.find(i => i.time === cur.time);
 
-      return json;
-    }
+      if (item) {
+        if (isAtt) {
+          item.attValues.push(Math.floor(cur.averageTimeTaken) || 0);
+          item.averageTimeTaken = mean(compact(item.attValues));
+        } else {
+          item.success += (+cur.success || 0);
+          item.error += (+cur.error || 0);
+          item.ignored += (+cur.ignored || 0);
+        }
+      } else {
+        acc.push({
+          ...cur,
+          ...(!isAtt && { success: +cur.success || 0 }),
+          ...(!isAtt && { error: +cur.error || 0 }),
+          ...(!isAtt && { ignored: +cur.ignored || 0 }),
+          ...(isAtt && { averageTimeTaken: Math.floor(cur.averageTimeTaken) || 0 }),
+          ...(isAtt && { attValues: [Math.floor(cur.averageTimeTaken) || 0] }),
+          resourceId: cur.flowId,
+          type: 'flow',
+        });
+      }
+
+      return acc;
+    }, []);
+
+    return [...json, ...flows];
   } catch (e) {
-    return undefined;
+    return [];
   }
 }
 
 export function* requestFlowMetrics({ flowId, filters }) {
-  const user = yield select(selectors.userProfile);
-  const seiQuery = getFlowMetricsQuery(flowId, user._id, filters);
-  const attQuery = getFlowMetricsAttQuery(flowId, user._id, filters);
+  const userId = yield select(selectors.ownerUserId);
+  const seiQuery = getFlowMetricsQuery(flowId, userId, filters);
+  const attQuery = getFlowMetricsAttQuery(flowId, userId, filters);
 
   try {
     const seiData = yield call(requestMetric, {query: seiQuery});
-    const attData = yield call(requestMetric, {query: attQuery});
-    let data = [];
+    const attData = yield call(requestMetric, {query: attQuery, isAtt: true});
 
-    if (seiData && seiData.data) {
-      data = [...data, ...seiData.data];
-    }
-    if (attData && attData.data) {
-      data = [...data, ...attData.data];
-    }
+    const data = seiData.reduce((acc, cur) => {
+      const item = attData.find(i => i.time === cur.time && i.resourceId === cur.resourceId);
+
+      acc.push({
+        ...cur,
+        ...(item && {averageTimeTaken: Math.floor(item.averageTimeTaken) || 0}),
+        ...(!item && {averageTimeTaken: 0}),
+      });
+
+      return acc;
+    }, []);
 
     const parsedJson = parseFlowMetricsJson(data);
 

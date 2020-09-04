@@ -399,12 +399,6 @@ selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.de
 
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
 
-selectors.isAuthLoading = state => (
-  state &&
-    state.auth &&
-    state.auth.commStatus === COMM_STATES.LOADING
-);
-
 selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
 selectors.isUserLoggedOut = state => !!(state && state.auth && state.auth.loggedOut);
@@ -2687,7 +2681,7 @@ selectors.isDataReady = (state, resource) => (
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
-export function isResourceCollectionLoading(state, resourceName) {
+selectors.isResourceCollectionLoading = (state, resourceName) => {
   // Incase of transfers as we make two API calls for fetching
   // transfers and invited transfers, checking for both the keys
   if (resourceName === 'transfers') {
@@ -2697,7 +2691,7 @@ export function isResourceCollectionLoading(state, resourceName) {
   }
 
   return fromComms.isLoading(state?.comms, commKeyGen(`/${resourceName}`, 'GET'));
-}
+};
 
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't

@@ -84,8 +84,8 @@ const form = {
 // #endregion
 const auth = {
   requestReducer: () => action(actionTypes.AUTH_REQUEST_REDUCER),
-  request: (email, password) =>
-    action(actionTypes.AUTH_REQUEST, { email, password }),
+  request: (email, password, showAuthError) =>
+    action(actionTypes.AUTH_REQUEST, { email, password, showAuthError}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
@@ -509,6 +509,10 @@ const metadata = {
     action(actionTypes.METADATA.SET_REQUEST_STATUS, {
       connectionId,
       commMetaPath,
+    }),
+  getBundleInstallStatus: connectionId =>
+    action(actionTypes.METADATA.BUNDLE_INSTALL_STATUS, {
+      connectionId,
     }),
 };
 const fileDefinitions = {
@@ -1394,6 +1398,8 @@ const mapping = {
   updateMappings: mappings => action(actionTypes.MAPPING.UPDATE_LIST, { mappings }),
   clear: () => action(actionTypes.MAPPING.CLEAR, {}),
   shiftOrder: (key, shiftIndex) => action(actionTypes.MAPPING.SHIFT_ORDER, { key, shiftIndex }),
+  setValidationMsg: value => action(actionTypes.MAPPING.SET_VALIDATION_MSG, { value }),
+
 };
 
 const searchCriteria = {
@@ -1494,6 +1500,10 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
+  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleVersion, bundleUrl, resourceType, resourceId}),
+  hideBundleInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, {resourceType, resourceId}),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN_TOKEN_DISPLAY, { id }),

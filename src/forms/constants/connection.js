@@ -104,6 +104,7 @@ export default {
     'concurexpense',
     'concurinvoice',
     'g2',
+    'shipengine',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

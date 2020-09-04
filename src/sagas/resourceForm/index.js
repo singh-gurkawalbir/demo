@@ -298,7 +298,6 @@ export function* submitFormValues({
   resourceId,
   values,
   match,
-  isGenerate,
 }) {
   let formValues = { ...values };
   const isNewIA = yield call(newIAFrameWorkPayload, {
@@ -425,8 +424,6 @@ export function* submitFormValues({
       resourceType: type,
       id: resourceId,
       scope: SCOPES.VALUE,
-      // is Generate ghost code
-      isGenerate,
     });
 
     if (resp && (resp.error || resp.conflict)) {

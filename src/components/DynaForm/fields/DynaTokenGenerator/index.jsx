@@ -34,13 +34,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function GenerateTokenButton(props) {
-  const { handleRequestToken, disabled, label, id, resourceId } = props;
+  const { handleRequestToken, disabled, label, id, resourceId, formKey} = props;
   const tokenRequestLoading = useSelector(state =>
     selectors.tokenRequestLoading(state, resourceId)
   );
 
   return (
     <DynaSubmit
+      formKey={formKey}
       data-test={id}
       disabled={disabled || tokenRequestLoading}
       isValid
