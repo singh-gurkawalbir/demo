@@ -1015,7 +1015,7 @@ export default {
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
-      useFirstRowSupported: importResource.adaptorType === 'SalesforceImport',
+      useFirstRowSupported: importResource.adaptorType !== 'SalesforceImport',
       importResource,
       exportResource,
     });
