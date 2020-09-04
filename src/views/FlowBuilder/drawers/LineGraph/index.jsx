@@ -58,9 +58,6 @@ export default function LineGraphDrawer({ flowId }) {
     return [];
   }, [latestJob]);
 
-  console.log('Rendered.............', customPresets);
-  console.log('Rendered lastjob.............', latestJob);
-
   useEffect(() => {
     if (!latestJobDetails || !latestJobDetails.status) {
       dispatch(actions.errorManager.integrationLatestJobs.request({ integrationId }));
