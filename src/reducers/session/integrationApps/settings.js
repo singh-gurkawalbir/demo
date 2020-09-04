@@ -104,7 +104,7 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitFailed;
-
+        draft[key].saveStatus = 'saving';
         draft[key].submitComplete = false;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA:
@@ -170,13 +170,13 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitFailed;
-
+        delete draft[key].saveStatus;
         draft[key].submitComplete = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitComplete;
-
+        delete draft[key].saveStatus;
         draft[key].submitFailed = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
