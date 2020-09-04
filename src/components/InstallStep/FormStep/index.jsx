@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import DrawerTitleBar from '../../drawer/TitleBar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -19,14 +20,7 @@ const useStyles = makeStyles(theme => ({
 export default function FormStep({ integrationId, formMeta, title, formSubmitHandler, formCloseHandler }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+
   const handleSubmit = useCallback(
     formVal => {
       dispatch(
@@ -45,6 +39,8 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       actions.integrationApp.installer.updateStep(integrationId, '', 'failed')
     );
   }, [dispatch, integrationId]);
+
+  const formKey = useFormInitWithPermissions({fieldMeta: formMeta});
 
   return (
   // TODO: @ashu, this needs to be reverted to use RightDrawer,
@@ -73,13 +69,12 @@ export default function FormStep({ integrationId, formMeta, title, formSubmitHan
       }}
       >
       <DrawerTitleBar title={title} onClose={formCloseHandler || onClose} />
-      <DynaForm fieldMeta={formMeta} formState={formState}>
-        <DynaSubmit
-          onClick={formSubmitHandler || handleSubmit}
-          showCustomFormValidations={showCustomFormValidations}>
-          Submit
-        </DynaSubmit>
-      </DynaForm>
+      <DynaForm fieldMeta={formMeta} formKey={formKey} />
+      <DynaSubmit
+        formKey={formKey}
+        onClick={formSubmitHandler || handleSubmit}>
+        Submit
+      </DynaSubmit>
     </Drawer>
   );
 }

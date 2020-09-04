@@ -1,198 +1,26 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import { selectors } from '../../reducers';
-import resourceConstants from '../../forms/constants/connection';
 import formFactory from '../../forms/formFactory';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import { selectors } from '../../reducers';
 import DynaForm from '../DynaForm';
-import consolidatedActions from './Actions';
-import { getResourceSubType, multiStepSaveResourceTypes } from '../../utils/resource';
 import Spinner from '../Spinner';
 import SpinnerWrapper from '../SpinnerWrapper';
 
-const mapStateToProps = (state, { resourceType, resourceId }) => {
-  const formState = selectors.resourceFormState(
-    state,
-    resourceType,
-    resourceId
-  );
-  const { merged: resource } = selectors.resourceData(
-    state,
-    resourceType,
-    resourceId
-  );
-  const connection = selectors.resource(
-    state,
-    'connections',
-    resource && resource._connectionId
-  );
-  const { patch: allPatches } = selectors.stagedResource(
-    state,
-    resourceId,
-    'meta'
-  );
-  const lastPatchtimestamp =
-    allPatches &&
-    allPatches[allPatches.length - 1] &&
-    allPatches[allPatches.length - 1].timestamp;
+const Form = props => {
+  const { fieldMeta } = props;
+  const formKey = useFormInitWithPermissions({
+    ...props,
+    fieldMeta,
+  });
 
-  return {
-    formState,
-    resource,
-    lastPatchtimestamp,
-    connection,
-    /* If we return the assistantMetadata as object, it is causing infinite loop when used as a dependency in useEffect */
-  };
+  return <DynaForm {...props} formKey={formKey} />;
 };
 
-const mapDispatchToProps = dispatch => ({
-  handleInitForm: (resourceType, resourceId, isNew, flowId, integrationId) => {
-    const skipCommit =
-      isNew &&
-      [
-        'imports',
-        'exports',
-        'connections',
-        'pageGenerator',
-        'pageProcessor',
-      ].includes(resourceType);
-
-    dispatch(
-      actions.resourceForm.init(
-        resourceType,
-        resourceId,
-        isNew,
-        skipCommit,
-        flowId,
-        [],
-        integrationId,
-      )
-    );
-  },
-
-  handleClearResourceForm: (resourceType, resourceId) => {
-    dispatch(actions.resourceForm.clear(resourceType, resourceId));
-  },
-});
-const getConnectionType = resource => {
-  const { assistant, type } = getResourceSubType(resource);
-
-  if (assistant) return assistant;
-
-  return type;
-};
-/**
- * We use primary and secondary actions to differentiate two sets of buttons we use for forms
- * primary - save, save&close, cancel
- * secondary - test, validate, ...other sort of actions
- * TODO @Surya: Revisit this once form refactor is done
- */
-const ActionButtons = ({actions, formProps, proceedOnChange}) => {
-  const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
-  const primaryActions = [];
-  const secondaryActions = [];
-
-  if (actions.length) {
-    actions.forEach(action => {
-      const Action = consolidatedActions[action.id];
-      let actionProps = {};
-
-      /**
-      * Passes a global state for disable functionality for actions except 'cancel'
-      * used to manage disable states across buttons
-      * Ex: when save is clicked , save&close gets disabled
-      * In these cases, individual actions are recommended to use this disable prop to update
-      * rather than a local state
-      */
-      if (action.id !== 'cancel') {
-        actionProps = {
-          disableSaveOnClick,
-          setDisableSaveOnClick,
-        };
-      }
-      // remove form disabled prop...
-      // they dont necessary apply to action button
-      const { disabled, ...rest } = formProps;
-      const actionContainer = (
-        <Action
-          key={action.id}
-          dataTest={action.id}
-          proceedOnChange={proceedOnChange}
-          {...rest}
-          {...action}
-          {...actionProps}
-      />
-      );
-
-      if (action.mode === 'secondary') {
-        secondaryActions.push(actionContainer);
-      } else {
-        primaryActions.push(actionContainer);
-      }
-    });
-  } else {
-    return null;
-  }
-
-  return (
-    <>
-      <div> {primaryActions} </div>
-      <div> { secondaryActions }</div>
-    </>
-  );
-};
-
-export function ActionsFactory({ variant = 'edit', ...props }) {
-  const { resource, resourceType, isNew } = props;
-  const { actions, fieldMap = {} } = props.fieldMeta;
-  const connectionType = getConnectionType(resource);
-  const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
-  // Any extra actions other than Save, Cancel which needs to be separated goes here
-  const secondaryActions = ['test', 'validate'];
-
-  const actionButtons = useMemo(() => {
-    // if props has defined actions return it
-    if (actions) return actions;
-    let actionButtons;
-
-    // When action button metadata isn't provided we infer the action buttons.
-    if (resourceType === 'connections' && !isNew) {
-      if (resourceConstants.OAUTH_APPLICATIONS.includes(connectionType)) {
-        actionButtons = ['oauth', 'cancel'];
-      } else {
-        actionButtons = ['testandsave', 'testsaveandclose', 'cancel', 'test'];
-      }
-    } else if (!isNew || (isNew && !isMultiStepSaveResource)) {
-      actionButtons = ['save', 'saveandclose', 'cancel'];
-    } else {
-      actionButtons = ['saveandclose', 'cancel'];
-    }
-
-    return actionButtons.map(id => ({
-      id,
-      mode: secondaryActions.includes(id) ? 'secondary' : 'primary',
-    }));
-  }, [actions, connectionType, isNew, resourceType, isMultiStepSaveResource, secondaryActions]);
-
-  // this prop allows child components to know that the form contains only a single field
-  // and the form should proceed to auto submit on field change
-  // the field type should implement proper onChange logic
-  // as required, this currently only applies to new connection form
-  const proceedOnChange = (variant === 'edit' && resourceType === 'connections' && isNew && Object.keys(fieldMap).length === 1);
-
-  if (variant === 'view') {
-    return <DynaForm {...props} />;
-  }
-
-  return (
-    <DynaForm proceedOnChange={proceedOnChange} {...props} autoFocus isResourceForm>
-      {!proceedOnChange && <ActionButtons actions={actionButtons} formProps={props} />}
-    </DynaForm>
-  );
-}
-
-export const FormStateManager = props => {
-  const { formState, fieldMeta, onSubmitComplete } = props;
+export const FormStateManager = ({ formState, onSubmitComplete, ...props }) => {
+  const { fieldMeta } = props;
   // once the form successfully completes submission (could be async)
   // we call the parents callback so it can perform some action.
 
@@ -222,30 +50,53 @@ export const FormStateManager = props => {
     );
   }
 
-  return (
-    <ActionsFactory
-      onCancel={remountForm}
-      {...props}
-      {...formState}
-      key={count}
-    />
-  );
+  return <Form {...props} {...formState} key={count} />;
 };
 
 export const ResourceFormFactory = props => {
-  const {
+  const { resourceType, resourceId, isNew, flowId, integrationId } = props;
+  const formState = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, resourceId)
+  );
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
     resourceType,
-    formState,
-    handleInitForm,
-    handleClearResourceForm,
-    resource,
-    resourceId,
-    isNew,
-    lastPatchtimestamp,
-    flowId,
-    connection,
-    integrationId,
-  } = props;
+    resourceId
+  ).merged;
+  const connection = useSelector(state =>
+    selectors.resource(state, 'connections', resource && resource._connectionId)
+  );
+  const dispatch = useDispatch();
+  const handleInitForm = useCallback(
+    (resourceType, resourceId, isNew, flowId) => {
+      const skipCommit =
+        isNew &&
+        [
+          'imports',
+          'exports',
+          'connections',
+          'pageGenerator',
+          'pageProcessor',
+        ].includes(resourceType);
+
+      dispatch(
+        actions.resourceForm.init(
+          resourceType,
+          resourceId,
+          isNew,
+          skipCommit,
+          flowId
+        )
+      );
+    },
+    [dispatch]
+  );
+  const handleClearResourceForm = useCallback(
+    (resourceType, resourceId) => {
+      dispatch(actions.resourceForm.clear(resourceType, resourceId));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     handleInitForm(resourceType, resourceId, isNew, flowId, integrationId);
@@ -256,7 +107,6 @@ export const ResourceFormFactory = props => {
     handleClearResourceForm,
     handleInitForm,
     isNew,
-    lastPatchtimestamp,
     resourceId,
     resourceType,
     integrationId,
@@ -278,6 +128,7 @@ export const ResourceFormFactory = props => {
   return (
     <FormStateManager
       {...props}
+      formState={formState}
       fieldMeta={fieldMeta}
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}
@@ -285,7 +136,4 @@ export const ResourceFormFactory = props => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResourceFormFactory);
+export default ResourceFormFactory;

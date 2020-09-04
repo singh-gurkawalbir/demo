@@ -5,17 +5,20 @@ import { Chip } from '@material-ui/core';
 import CalendarIcon from '../../../../icons/CalendarIcon';
 import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default function ScheduleCell({flowId, name}) {
   const history = useHistory();
-  const allowSchedule = useSelector(state =>
-    selectors.flowAllowsScheduling(state, flowId)
-  );
+  const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const type = useSelector(state => selectors.flowType(state, flowId));
 
-  if (!allowSchedule && type !== 'Scheduled') {
-    return <Chip size="small" label={type} />;
+  if (!allowSchedule) {
+    if (type !== 'Scheduled') {
+      return <Chip size="small" label={type} />;
+    }
+
+    return null;
   }
 
   return (

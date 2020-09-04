@@ -5,11 +5,12 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
-import { ActionsFactory } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
+import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
+import { FormStateManager } from '../../../../../../../components/ResourceFormFactory';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -44,6 +45,19 @@ const SavingMask = () => (
   </Loader>
 );
 
+const SettingsForm = props => {
+  const {formKey, fieldMeta, ...rest} = props;
+
+  return (
+    <>
+      <FormStateManager {...props} formKey={formKey} />
+      <ActionsPanel
+        {...fieldMeta}
+        actionProps={{...rest, formKey }}
+  />
+    </>
+  );
+};
 export const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
@@ -71,7 +85,7 @@ export const SuiteScriptForm = props => {
   return (
     <>
       {status === 'saving' && <SavingMask />}
-      <ActionsFactory
+      <SettingsForm
         key={count}
         {...props}
     />

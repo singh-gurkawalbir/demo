@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
 import { Grid, Typography } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -17,6 +17,7 @@ import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import InfoIconButton from '../../components/InfoIconButton';
 import useConfirmDialog from '../../components/ConfirmDialog';
@@ -89,14 +90,6 @@ export default function ClonePreview(props) {
   const resource =
     useSelector(state => selectors.resource(state, resourceType, resourceId)) ||
     {};
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
   const isIAIntegration =
     !!(resourceType === 'integrations' && resource._connectorId);
   const { createdComponents } =
@@ -233,16 +226,7 @@ export default function ClonePreview(props) {
     }
   }, [createdComponents, dispatch, props.history, resourceId, resourceType]);
 
-  if (!components || isEmpty(components)) {
-    return (
-      <Loader open>
-        <Typography variant="h4">Loading</Typography>
-        <Spinner color="primary" />
-      </Loader>
-    );
-  }
-
-  const { objects = [] } = components;
+  const { objects = [] } = components || {};
   const fieldMeta = {
     fieldMap: {
       name: {
@@ -256,14 +240,6 @@ export default function ClonePreview(props) {
           ? resource && resource.name
           : `Clone - ${resource ? resource.name : ''}`,
         visible: !isIAIntegration,
-      },
-      tag: {
-        id: 'tag',
-        name: 'tag',
-        type: 'text',
-        label: 'Tag',
-        defaultValue: `Clone - ${resource ? resource.name : ''}`,
-        visible: isIAIntegration,
       },
       environment: {
         id: 'environment',
@@ -281,24 +257,6 @@ export default function ClonePreview(props) {
           },
         ],
         defaultValue: preferences.environment,
-      },
-      integration: {
-        id: 'integration',
-        name: 'integration',
-        type: 'select',
-        label: 'Integration',
-        required: true,
-        refreshOptionsOnChangesTo: ['environment'],
-        options: [
-          {
-            items: integrations
-              .filter(
-                i => !!i.sandbox === (preferences.environment === 'sandbox')
-              )
-              .map(i => ({ label: i.name, value: i._id }))
-              .concat([{ label: 'Standalone Integration', value: 'none' }]),
-          },
-        ],
       },
       description: {
         id: 'description',
@@ -327,24 +285,7 @@ export default function ClonePreview(props) {
       },
     },
     layout: {
-      fields:
-        resourceType === 'flows'
-          ? [
-            'name',
-            'environment',
-            'integration',
-            'description',
-            'message',
-            'components',
-          ]
-          : [
-            'name',
-            'tag',
-            'environment',
-            'description',
-            'message',
-            'components',
-          ],
+      fields: [],
     },
     optionsHandler: (fieldId, fields) => {
       if (fieldId === 'integration') {
@@ -365,6 +306,76 @@ export default function ClonePreview(props) {
       return null;
     },
   };
+
+  if (resourceType === 'flows') {
+    fieldMeta.fieldMap.integration = {
+      id: 'integration',
+      name: 'integration',
+      type: 'select',
+      label: 'Integration',
+      required: true,
+      refreshOptionsOnChangesTo: ['environment'],
+      options: [
+        {
+          items: integrations
+            .filter(
+              i => !!i.sandbox === (preferences.environment === 'sandbox')
+            )
+            .map(i => ({ label: i.name, value: i._id }))
+            .concat([{ label: 'Standalone Integration', value: 'none' }]),
+        },
+      ],
+    };
+    fieldMeta.layout.fields = [
+      'name',
+      'environment',
+      'integration',
+      'description',
+      'message',
+      'components',
+    ];
+  } else {
+    fieldMeta.fieldMap.tag = {
+      id: 'tag',
+      name: 'tag',
+      type: 'text',
+      label: 'Tag',
+      defaultValue: `Clone - ${resource ? resource.name : ''}`,
+      visible: isIAIntegration,
+    };
+    fieldMeta.layout.fields = [
+      'name',
+      'tag',
+      'environment',
+      'description',
+      'message',
+      'components',
+    ];
+  }
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+    remount: components,
+  });
+
+  if (!components || isEmpty(components)) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
+
+  if (!components || isEmpty(components)) {
+    return (
+      <Loader open>
+        <Typography variant="h4">Loading Clone Preview</Typography>
+        <Spinner color="primary" />
+      </Loader>
+    );
+  }
+
   const clone = ({ name, environment, integration, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
@@ -443,18 +454,16 @@ export default function ClonePreview(props) {
         <Grid container>
           <Grid className={classes.componentPadding} item xs={12}>
             <DynaForm
-              formState={formState}
-              fieldMeta={fieldMeta}
-              optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit
-                ignoreFormTouchedCheck
-                showCustomFormValidations={showCustomFormValidations}
-                disabled={cloneRequested}
-                data-test="clone"
-                onClick={clone}>
-                {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
-              </DynaSubmit>
-            </DynaForm>
+              formKey={formKey}
+              fieldMeta={fieldMeta} />
+            <DynaSubmit
+              formKey={formKey}
+              ignoreFormTouchedCheck
+              disabled={cloneRequested}
+              data-test="clone"
+              onClick={clone}>
+              {`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`}
+            </DynaSubmit>
           </Grid>
         </Grid>
       </>

@@ -16,19 +16,19 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
   },
 }));
-export default function PreviewPanel({resourceId, subRecordMappingId, disabled}) {
+export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const previewData = useSelector(state => selectors.mapping(state).preview?.data);
-  const recordType = useSelector(state => selectors.mappingNSRecordType(state, resourceId, subRecordMappingId));
+  const recordType = useSelector(state => selectors.mappingNSRecordType(state, importId, subRecordMappingId));
   const importResource = useSelector(state =>
-    selectors.resource(state, 'imports', resourceId)
+    selectors.resource(state, 'imports', importId)
   );
   const {_connectionId: connectionId} = importResource;
 
   const salesforcelayoutId = useSelector(state => {
     if (importResource.adaptorType === 'SalesforceImport') {
-      const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, resourceId);
+      const salesforceMasterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(state, importId);
 
       if (salesforceMasterRecordTypeInfo?.data) {
         const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
@@ -40,10 +40,10 @@ export default function PreviewPanel({resourceId, subRecordMappingId, disabled})
     }
   });
   const mappingPreviewType = useSelector(state =>
-    selectors.mappingPreviewType(state, resourceId)
+    selectors.mappingPreviewType(state, importId)
   );
   const httpAssistantPreviewObj = useSelector(state =>
-    selectors.mappingHttpAssistantPreviewData(state, resourceId)
+    selectors.mappingHttpAssistantPreviewData(state, importId)
   );
   const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
   const salesforceNetsuitePreviewData = useMemo(() => {

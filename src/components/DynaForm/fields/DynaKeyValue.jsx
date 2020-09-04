@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
+    width: '100%',
   },
 
   rowContainer: {
@@ -71,9 +72,8 @@ export function KeyValueComponent(props) {
   const [isKey, setIsKey] = useState(true);
 
   useEffect(() => {
-    if (value) {
-      setValues(value);
-    }
+    // value can be empty/undefined also, so updating the state with the same
+    setValues(value || []);
   }, [value]);
 
   const handleDelete = row => () => {
@@ -108,7 +108,15 @@ export function KeyValueComponent(props) {
     onUpdate(removedEmptyValues);
   };
 
-  const tableData = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
+  const tableData = useMemo(() => {
+    const tableArr = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
+
+    // insert an empty row for auto suggest to show options on click
+    tableArr.push({ extract: '', generate: ''});
+
+    return tableArr;
+  }, [values]);
+
   const handleKeyUpdate = row => event => {
     const { value } = event.target;
 
@@ -139,7 +147,7 @@ export function KeyValueComponent(props) {
                 value={r[keyName]}
                 id={`${keyName}-${r.row}`}
                 data-test={`${keyName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={keyName}
                 variant="filled"
                 onFieldChange={(_, _value) =>
@@ -171,7 +179,7 @@ export function KeyValueComponent(props) {
                 value={r[valueName]}
                 id={`${valueName}-${r.row}`}
                 data-test={`${valueName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={valueName}
                 variant="filled"
                 labelName={suggestValueConfig.labelName}
@@ -209,37 +217,6 @@ export function KeyValueComponent(props) {
           </div>
         ))}
       </>
-      <div key="new" className={classes.rowContainer}>
-        <TextField
-          disabled={disabled}
-          fullWidth
-          value=""
-          id={`new-${keyName}`}
-          data-test={`new-${keyName}`}
-          placeholder={keyName}
-          variant="filled"
-          onChange={handleKeyUpdate()}
-          className={clsx(classes.dynaField, classes.dynaKeyField)}
-        />
-
-        <TextField
-          disabled={disabled}
-          fullWidth
-          value=""
-          id={`new-${valueName}`}
-          data-test={`new-${valueName}`}
-          placeholder={valueName}
-          variant="filled"
-          onChange={handleValueUpdate()}
-          className={clsx(classes.dynaField, classes.dynaValueField)}
-        />
-
-        {showDelete && (
-          <ActionButton data-test="deleteKeyValue" aria-label="delete" disabled>
-            <TrashIcon />
-          </ActionButton>
-        )}
-      </div>
     </FormControl>
   );
 }

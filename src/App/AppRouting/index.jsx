@@ -2,12 +2,12 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
+import CloneSetup from '../../views/Clone/Setup';
 import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
 import MarketplaceList from '../../views/MarketplaceList';
-import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
@@ -140,6 +140,7 @@ export default function AppRouting() {
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/integrations/:integrationId/flowBuilder/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/flowBuilder/:flowId'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId/child/:childId/dataLoader/:flowId'),
           getRoutePath('/integrationapps/:integrationAppName/:integrationId/dataLoader/:flowId'),
           getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId/dataLoader/:flowId'),
           getRoutePath('/integrations/:integrationId/dataLoader/:flowId'),

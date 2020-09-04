@@ -77,12 +77,12 @@ export default function RunDashboardActions({ flowId }) {
       label: 'Download diagnostics',
       disabled: !validDashboardActions.includes('downloadDiagnostics'),
     },
-    {
-      Icon: DownloadIntegrationIcon,
-      action: 'downloadFiles',
-      label: 'Download files',
-      disabled: !validDashboardActions.includes('downloadFiles'),
-    },
+    ...(
+      validDashboardActions.includes('downloadFiles') ? [{
+        Icon: DownloadIntegrationIcon,
+        action: 'downloadFiles',
+        label: 'Download files',
+      }] : []),
   ], [validDashboardActions]);
 
   const handleRefresh = useCallback(() => {

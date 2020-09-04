@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { emptyObject } from '../../../utils/constants';
-import { parseTiles, parseJobs } from './util';
+import { parseTiles, parseJobs, getJobDuration } from './util';
 import { generateUniqueFlowId } from '../../../utils/suiteScript';
 
 const emptyList = [];
@@ -73,6 +73,8 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RECEIVED:
         {
           const { job } = action;
+
+          job.duration = getJobDuration(job);
           const jobIndex = state.jobs?.findIndex(
             j => j._id === job._id && j.type === job.type
           );
@@ -192,6 +194,21 @@ export default (
                 draft[ssLinkedConnectionId].flows = [];
               }
 
+              // remove disabled/deleted flows from the state
+              draft[ssLinkedConnectionId].flows = draft[ssLinkedConnectionId].flows.filter(flow => {
+                // only check for the current integration flows
+                if (flow._integrationId !== integrationId) { return true; }
+
+                const index = collection.findIndex(f => {
+                  const ssFlowId = generateUniqueFlowId(f._id, f.type);
+
+                  return f.type === flow.type && ssFlowId === flow._id;
+                });
+
+                return index !== -1;
+              });
+
+              // add new flows and update existing ones to the state
               collection.forEach(flow => {
                 const flowId = generateUniqueFlowId(flow._id, flow.type);
                 const index = draft[ssLinkedConnectionId].flows.findIndex(

@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import {
   makeStyles,
@@ -9,15 +10,17 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
-import { selectors } from '../../reducers';
-import actions from '../../actions';
-import ArrowLeftIcon from '../icons/ArrowLeftIcon';
-import ArrowRightIcon from '../icons/ArrowRightIcon';
-import RefreshIcon from '../icons/RefreshIcon';
-import RunFlowButton from '../RunFlowButton';
-import CeligoSelect from '../CeligoSelect';
-import IconTextButton from '../IconTextButton';
-import FlowSelector from './FlowSelector';
+import { selectors } from '../../../reducers';
+import actions from '../../../actions';
+import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
+import ArrowRightIcon from '../../icons/ArrowRightIcon';
+import RefreshIcon from '../../icons/RefreshIcon';
+import RunFlowButton from '../../RunFlowButton';
+import CeligoSelect from '../../CeligoSelect';
+import IconTextButton from '../../IconTextButton';
+import FlowSelector from '../FlowSelector';
+import DateRangeSelector from './DateRangeFilter';
+import GraphIcon from '../../icons/GraphIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -88,6 +91,8 @@ function Filters({
   disableActions = true,
 }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const dispatch = useDispatch();
   // #region data-layer selectors
   const { paging = {}, totalJobs = 0 } = useSelector(state =>
@@ -99,6 +104,7 @@ function Filters({
     status = 'all',
     hideEmpty = false,
     currentPage = 0,
+    dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
   // #endregion
   const { rowsPerPage } = paging;
@@ -122,12 +128,30 @@ function Filters({
     },
     [dispatch, filterKey]
   );
+  const pushOrReplaceHistory = useCallback(
+    to => {
+      if (match.isExact) {
+        history.push(to);
+      } else {
+        history.replace(to);
+      }
+    },
+    [history, match.isExact]
+  );
+  const handleLineGraphsClick = useCallback(() => {
+    pushOrReplaceHistory(`${match.url}/charts`);
+  }, [match.url, pushOrReplaceHistory]);
   const handlePageChange = useCallback(
     offset => () => {
       patchFilter('currentPage', currentPage + offset);
     },
     [currentPage, patchFilter]
   );
+
+  const handleDateRangeChange = useCallback(range => {
+    patchFilter('dateRange', range);
+  }, [patchFilter]);
+
   const handleRefreshClick = useCallback(() => {
     dispatch(actions.job.clear());
     patchFilter('currentPage', 0);
@@ -206,6 +230,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
+        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
@@ -225,6 +250,13 @@ function Filters({
 
         <div className={classes.rightActionContainer}>
 
+          <IconButton
+            className={classes.chartsIcon}
+            data-test="charts"
+            onClick={handleLineGraphsClick}
+            >
+            <GraphIcon />
+          </IconButton>
           <IconTextButton onClick={handleRefreshClick}>
             <RefreshIcon /> Refresh
           </IconTextButton>

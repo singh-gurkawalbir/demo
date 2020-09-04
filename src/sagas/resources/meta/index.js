@@ -1,4 +1,4 @@
-import { call, put, race, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, race, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
@@ -8,11 +8,33 @@ import getRequestOptions from '../../../utils/requestOptions';
 import { isJsonString } from '../../../utils/string';
 import { apiCallWithRetry } from '../../index';
 
+const parseErrorMessage = error => {
+  // Handling error statuses in  between 400 and 500 to show customized error
+  if (error.status === 403 || error.status === 401) {
+    return;
+  }
+
+  if (error.status >= 400 && error.status < 500) {
+    const parsedError = isJsonString(error.message)
+      ? JSON.parse(error.message)
+      : error.message;
+
+    return parsedError;
+  }
+};
+
 export function* getNetsuiteOrSalesforceMeta({
   connectionId,
   commMetaPath,
   addInfo,
 }) {
+  // check if status is set to requested, if not trigger a action to set status = request
+  const {status} = yield select(selectors.metadataOptionsAndResources, {connectionId,
+    commMetaPath});
+
+  if (status !== 'requested') {
+    yield put(actions.metadata.setRequestStatus(connectionId, commMetaPath));
+  }
   let path = `/${commMetaPath}`;
 
   if (addInfo) {
@@ -83,24 +105,54 @@ export function* getNetsuiteOrSalesforceMeta({
 
     return metadata;
   } catch (error) {
-    // Handling error statuses in  between 400 and 500 to show customized error
-    if (error.status === 403 || error.status === 401) {
-      return;
-    }
+    const parsedError = parseErrorMessage(error);
 
-    if (error.status >= 400 && error.status < 500) {
-      const parsedError = isJsonString(error.message)
-        ? JSON.parse(error.message)
-        : error.message;
+    yield put(
+      actions.metadata.receivedError(
+        parsedError && parsedError[0] && parsedError[0].message,
+        connectionId,
+        commMetaPath
+      )
+    );
+  }
+}
 
-      yield put(
-        actions.metadata.receivedError(
-          parsedError && parsedError[0] && parsedError[0].message,
-          connectionId,
-          commMetaPath
-        )
-      );
+export function* getNetsuiteOrSalesforceBundleInstallStatus({connectionId}) {
+  const commMetaPath = `connections/${connectionId}/distributedApps`;
+  const path = `/${commMetaPath}`;
+
+  yield put(actions.metadata.setRequestStatus(connectionId, commMetaPath));
+
+  try {
+    const bundleInstallResponse = yield call(apiCallWithRetry, {
+      path,
+      opts: {},
+      hidden: true,
+    });
+
+    if (bundleInstallResponse?.errors) {
+      yield put(actions.metadata.receivedError(
+        bundleInstallResponse.errors[0]?.message,
+        connectionId,
+        commMetaPath,
+      ));
+    } else {
+      yield put(actions.metadata.receivedCollection(
+        bundleInstallResponse,
+        connectionId,
+        commMetaPath,
+      ));
     }
+  } catch (error) {
+    const parsedError = parseErrorMessage(error);
+
+    yield put(
+      actions.metadata.receivedError(
+        parsedError && parsedError[0] && parsedError[0].message,
+        connectionId,
+        commMetaPath
+      )
+    );
   }
 }
 
@@ -161,4 +213,5 @@ export default [
   takeEvery(actionTypes.METADATA.REQUEST, getNetsuiteOrSalesforceMeta),
   takeEvery(actionTypes.METADATA.REFRESH, getNetsuiteOrSalesforceMetaTakeLatestPerAction),
   takeEvery(actionTypes.METADATA.ASSISTANT_REQUEST, requestAssistantMetadata),
+  takeLatest(actionTypes.METADATA.BUNDLE_INSTALL_STATUS, getNetsuiteOrSalesforceBundleInstallStatus),
 ];

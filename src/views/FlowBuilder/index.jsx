@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -38,6 +38,7 @@ import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
+import MappingDrawerRoute from '../MappingDrawer';
 import GraphIcon from '../../components/icons/GraphIcon';
 
 const bottomDrawerMin = 41;
@@ -162,7 +163,22 @@ const useStyles = makeStyles(theme => ({
       background: 'none',
     },
   },
+  flowToggle: {
+
+    '& > div:first-child': {
+      padding: '8px 0px',
+    },
+  },
 }));
+
+const tooltipSchedule = {
+  title: 'Schedule',
+  placement: 'bottom',
+};
+const tooltipSettings = {
+  title: 'Settings',
+  placement: 'bottom',
+};
 
 function FlowBuilder() {
   const match = useRouteMatch();
@@ -188,12 +204,10 @@ function FlowBuilder() {
     flowId
   ).merged;
   const { pageProcessors = [], pageGenerators = [] } = flow;
-  const flowDetails = useSelector(
-    state => selectors.flowDetails(state, flowId),
-    shallowEqual
-  );
+  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
+  const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const {
     data: flowErrorsMap,
@@ -218,6 +232,19 @@ function FlowBuilder() {
   );
   const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
+  const calcCanvasStyle = useMemo(() => ({
+    height: `calc(${(4 - bottomDrawerSize) *
+            25}vh - ${theme.appBarHeight +
+            theme.pageBarHeight +
+            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
+  }), [bottomDrawerSize, theme.appBarHeight, theme.pageBarHeight]);
+
+  const calcBottomDrawerStyle = useMemo(() => ({
+    bottom: bottomDrawerSize
+      ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
+      : bottomDrawerMin + theme.spacing(3),
+  }), [bottomDrawerSize, theme]);
+
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -398,6 +425,189 @@ function FlowBuilder() {
     [dispatch, integrationId]
   );
 
+  const calcPageBarTitle = useMemo(() => (
+    <EditableText
+      disabled={isViewMode}
+      text={flow.name}
+            // multiline
+      defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
+      onChange={handleTitleChange}
+      inputClassName={
+              drawerOpened
+                ? classes.editableTextInputShift
+                : classes.editableTextInput
+            }
+          />
+  ), [classes.editableTextInput, classes.editableTextInputShift, drawerOpened, flow.name, flowId, handleTitleChange, isNewFlow, isViewMode]);
+
+  const calcPageBarSubtitle = useMemo(() => (
+    <div className={classes.subtitle}>
+      Last saved:{' '}
+      {isNewFlow ? (
+        'Never'
+      ) : (
+        <CeligoTimeAgo date={flow.lastModified} />
+      )}
+      {isUserInErrMgtTwoDotZero && <LastRun />}
+    </div>
+  ), [classes.subtitle, flow.lastModified, isNewFlow, isUserInErrMgtTwoDotZero]);
+
+  const pageBarChildren = useMemo(() => {
+    const excludes = ['mapping', 'detach', 'audit', 'schedule'];
+
+    return (
+      <div className={classes.actions}>
+        {!isProduction() && isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
+        <IconButton
+          disabled={isNewFlow}
+          className={classes.chartsIcon}
+          data-test="charts"
+          onClick={handleDrawerClick('charts')}>
+          <GraphIcon />
+        </IconButton>
+        )}
+        {!isDataLoaderFlow && (
+        <div className={clsx(classes.chartsIcon, classes.flowToggle)}>
+          <FlowToggle
+            integrationId={integrationId}
+            resource={flowDetails}
+            disabled={isNewFlow || isMonitorLevelAccess}
+            isConnector={isIAType}
+            data-test="switchFlowOnOff"
+        />
+        </div>
+        )}
+
+        <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
+        {allowSchedule && (
+        <IconButtonWithTooltip
+          tooltipProps={tooltipSchedule}
+          disabled={isNewFlow}
+          data-test="scheduleFlow"
+          onClick={handleDrawerClick('schedule')}>
+          <CalendarIcon />
+        </IconButtonWithTooltip>
+        )}
+        <IconButtonWithTooltip
+          tooltipProps={tooltipSettings}
+          disabled={isNewFlow}
+          onClick={handleDrawerClick('settings')}
+          data-test="flowSettings">
+          <SettingsIcon />
+        </IconButtonWithTooltip>
+
+        {!isIAType && (
+        <FlowEllipsisMenu
+          flowId={flowId}
+          exclude={excludes}
+        />
+        )}
+        <div className={classes.divider} />
+        <IconButton onClick={handleExitClick} size="small">
+          <CloseIcon />
+        </IconButton>
+      </div>
+    );
+  },
+  [allowSchedule, classes.actions, classes.chartsIcon, classes.flowToggle, classes.divider, flowDetails, flowId, handleDrawerClick, handleExitClick, handleRunStart, integrationId, isDataLoaderFlow, isIAType, isMonitorLevelAccess, isNewFlow, isUserInErrMgtTwoDotZero]);
+
+  const pageBar = useMemo(() => (
+    <CeligoPageBar
+      title={calcPageBarTitle}
+      subtitle={calcPageBarSubtitle}
+      infoText={flow.description}>
+      {totalErrors ? (
+        <span className={classes.errorStatus}>
+          <StatusCircle variant="error" size="small" />
+          {totalErrors} errors
+        </span>
+      ) : null}
+      {pageBarChildren}
+    </CeligoPageBar>
+  ), [calcPageBarTitle, calcPageBarSubtitle, flow.description, totalErrors, classes.errorStatus, pageBarChildren]);
+
+  const pgs = useMemo(() => (
+    <div className={classes.generatorContainer}>
+      {pageGenerators.map((pg, i) => (
+        <PageGenerator
+          {...pg}
+          onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
+          onErrors={handleErrors(pg._exportId)}
+          flowId={flowId}
+          integrationId={integrationId}
+          openErrorCount={
+                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
+                  }
+          key={
+                    pg._exportId ||
+                    pg._connectionId ||
+                    `${pg.application}${pg.webhookOnly}`
+                  }
+          index={i}
+          isViewMode={isViewMode || isFreeFlow}
+          isLast={pageGenerators.length === i + 1}
+          onMove={handleMovePG}
+                />
+      ))}
+      {!pageGenerators.length && (
+      <AppBlock
+        integrationId={integrationId}
+        className={classes.newPG}
+        isViewMode={isViewMode || isFreeFlow}
+        onBlockClick={handleAddGenerator}
+        blockType="newPG"
+                />
+      )}
+    </div>
+  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleErrors, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
+
+  const pps = useMemo(() => (
+    <div className={classes.processorContainer}>
+      {pageProcessors.map((pp, i) => (
+        <PageProcessor
+          {...pp}
+          onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
+          onErrors={handleErrors(pp._importId || pp._exportId)}
+          flowId={flowId}
+          integrationId={integrationId}
+          openErrorCount={
+                    (flowErrorsMap &&
+                      flowErrorsMap[pp._importId || pp._exportId]) ||
+                    0
+                  }
+          key={
+                    pp._importId ||
+                    pp._exportId ||
+                    pp._connectionId ||
+                    `${pp.application}-${i}`
+                  }
+          index={i}
+          isViewMode={isViewMode || isFreeFlow}
+          isMonitorLevelAccess={isMonitorLevelAccess}
+          isLast={pageProcessors.length === i + 1}
+          onMove={handleMovePP}
+                />
+      ))}
+      {!pageProcessors.length && showAddPageProcessor && (
+      <AppBlock
+        className={classes.newPP}
+        integrationId={integrationId}
+        isViewMode={isViewMode || isFreeFlow}
+        onBlockClick={handleAddProcessor}
+        blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
+                />
+      )}
+      {!showAddPageProcessor &&
+                isDataLoaderFlow &&
+                pageProcessors.length === 0 && (
+                  <Typography variant="h5" className={classes.dataLoaderHelp}>
+                    You can add a destination application once you complete the
+                    configuration of your data loader.
+                  </Typography>
+      )}
+    </div>
+  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleErrors, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
+
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
 
@@ -480,108 +690,12 @@ function FlowBuilder() {
       <QueuedJobsDrawer />
 
       <ErrorDetailsDrawer flowId={flowId} />
-
-      <CeligoPageBar
-        title={(
-          <EditableText
-            disabled={isViewMode}
-            text={flow.name}
-            // multiline
-            defaultText={isNewFlow ? 'New flow' : `Unnamed (id:${flowId})`}
-            onChange={handleTitleChange}
-            inputClassName={
-              drawerOpened
-                ? classes.editableTextInputShift
-                : classes.editableTextInput
-            }
-          />
-        )}
-        subtitle={(
-          <div className={classes.subtitle}>
-            Last saved:{' '}
-            {isNewFlow ? (
-              'Never'
-            ) : (
-              <CeligoTimeAgo date={flow.lastModified} />
-            )}
-            {isUserInErrMgtTwoDotZero && <LastRun />}
-          </div>
-        )}
-        infoText={flow.description}>
-        {totalErrors ? (
-          <span className={classes.errorStatus}>
-            <StatusCircle variant="error" size="small" />
-            {totalErrors} errors
-          </span>
-        ) : null}
-        <div className={classes.actions}>
-          {!isProduction() && isUserInErrMgtTwoDotZero && flowDetails && flowDetails.lastExecutedAt && (
-            <IconButton
-              disabled={isNewFlow}
-              className={classes.chartsIcon}
-              data-test="charts"
-              onClick={handleDrawerClick('charts')}>
-              <GraphIcon />
-            </IconButton>
-          )}
-          {!isDataLoaderFlow && (
-            <div className={classes.chartsIcon}>
-              <FlowToggle
-                integrationId={integrationId}
-                resource={flowDetails}
-                disabled={isNewFlow || isMonitorLevelAccess}
-                isConnector={isIAType}
-                data-test="switchFlowOnOff"
-            />
-            </div>
-          )}
-
-          <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
-          {flowDetails && flowDetails.showScheduleIcon && (
-            <IconButtonWithTooltip
-              tooltipProps={{
-                title: 'Schedule',
-                placement: 'bottom',
-              }}
-              disabled={isNewFlow}
-              data-test="scheduleFlow"
-              onClick={handleDrawerClick('schedule')}>
-              <CalendarIcon />
-            </IconButtonWithTooltip>
-          )}
-          <IconButtonWithTooltip
-            tooltipProps={{
-              title: 'Settings',
-              placement: 'bottom',
-            }}
-            disabled={isNewFlow}
-            onClick={handleDrawerClick('settings')}
-            data-test="flowSettings">
-            <SettingsIcon />
-          </IconButtonWithTooltip>
-
-          {!isIAType && (
-            <FlowEllipsisMenu
-              flowId={flowId}
-              exclude={['mapping', 'detach', 'audit', 'schedule']}
-            />
-          )}
-          <div className={classes.divider} />
-          <IconButton onClick={handleExitClick} size="small">
-            <CloseIcon />
-          </IconButton>
-        </div>
-      </CeligoPageBar>
+      {pageBar}
       <div
         className={clsx(classes.canvasContainer, {
           [classes.canvasShift]: drawerOpened,
         })}
-        style={{
-          height: `calc(${(4 - bottomDrawerSize) *
-            25}vh - ${theme.appBarHeight +
-            theme.pageBarHeight +
-            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
-        }}>
+        style={calcCanvasStyle}>
         <div className={classes.canvas}>
           {/* CANVAS START */}
           <div
@@ -602,39 +716,7 @@ function FlowBuilder() {
                 </IconButton>
               )}
             </Typography>
-
-            <div className={classes.generatorContainer}>
-              {pageGenerators.map((pg, i) => (
-                <PageGenerator
-                  {...pg}
-                  onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-                  onErrors={handleErrors(pg._exportId)}
-                  flowId={flowId}
-                  integrationId={integrationId}
-                  openErrorCount={
-                    (flowErrorsMap && flowErrorsMap[pg._exportId]) || 0
-                  }
-                  key={
-                    pg._exportId ||
-                    pg._connectionId ||
-                    `${pg.application}${pg.webhookOnly}`
-                  }
-                  index={i}
-                  isViewMode={isViewMode || isFreeFlow}
-                  isLast={pageGenerators.length === i + 1}
-                  onMove={handleMovePG}
-                />
-              ))}
-              {!pageGenerators.length && (
-                <AppBlock
-                  integrationId={integrationId}
-                  className={classes.newPG}
-                  isViewMode={isViewMode || isFreeFlow}
-                  onBlockClick={handleAddGenerator}
-                  blockType="newPG"
-                />
-              )}
-            </div>
+            {pgs}
           </div>
           <div className={classes.processorRoot}>
             <Typography
@@ -655,60 +737,13 @@ function FlowBuilder() {
                 </IconButton>
               )}
             </Typography>
-            <div className={classes.processorContainer}>
-              {pageProcessors.map((pp, i) => (
-                <PageProcessor
-                  {...pp}
-                  onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-                  onErrors={handleErrors(pp._importId || pp._exportId)}
-                  flowId={flowId}
-                  integrationId={integrationId}
-                  openErrorCount={
-                    (flowErrorsMap &&
-                      flowErrorsMap[pp._importId || pp._exportId]) ||
-                    0
-                  }
-                  key={
-                    pp._importId ||
-                    pp._exportId ||
-                    pp._connectionId ||
-                    `${pp.application}-${i}`
-                  }
-                  index={i}
-                  isViewMode={isViewMode || isFreeFlow}
-                  isMonitorLevelAccess={isMonitorLevelAccess}
-                  isLast={pageProcessors.length === i + 1}
-                  onMove={handleMovePP}
-                />
-              ))}
-              {!pageProcessors.length && showAddPageProcessor && (
-                <AppBlock
-                  className={classes.newPP}
-                  integrationId={integrationId}
-                  isViewMode={isViewMode || isFreeFlow}
-                  onBlockClick={handleAddProcessor}
-                  blockType={isDataLoaderFlow ? 'newImport' : 'newPP'}
-                />
-              )}
-              {!showAddPageProcessor &&
-                isDataLoaderFlow &&
-                pageProcessors.length === 0 && (
-                  <Typography variant="h5" className={classes.dataLoaderHelp}>
-                    You can add a destination application once you complete the
-                    configuration of your data loader.
-                  </Typography>
-              )}
-            </div>
+            {pps}
           </div>
         </div>
         {bottomDrawerSize < 3 && (
           <div
             className={classes.fabContainer}
-            style={{
-              bottom: bottomDrawerSize
-                ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
-                : bottomDrawerMin + theme.spacing(3),
-            }}
+            style={calcBottomDrawerStyle}
           />
         )}
 
@@ -720,6 +755,9 @@ function FlowBuilder() {
         setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
+      />
+      <MappingDrawerRoute
+        integrationId={integrationId}
       />
     </LoadResources>
   );

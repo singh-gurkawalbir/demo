@@ -18,6 +18,7 @@ import CodeEditor from '../../../../CodeEditor';
 import actions from '../../../../../actions';
 import Spinner from '../../../../Spinner';
 import ActionButton from '../../../../ActionButton';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import ButtonGroup from '../../../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
@@ -165,10 +166,17 @@ function EditListItemModal(props) {
       ],
     },
   };
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    optionsHandler,
+  });
 
   return (
-    <DynaForm optionsHandler={optionsHandler} fieldMeta={fieldMeta}>
+    <>
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+
       <DynaSubmit
+        formKey={formKey}
         onClick={values => {
           const { childRelationship, ...rest } = values;
           const updatedValue = {
@@ -186,7 +194,7 @@ function EditListItemModal(props) {
         Add selected
       </DynaSubmit>
       <Button variant="text" color="primary" onClick={handleClose}>Cancel</Button>
-    </DynaForm>
+    </>
   );
 }
 

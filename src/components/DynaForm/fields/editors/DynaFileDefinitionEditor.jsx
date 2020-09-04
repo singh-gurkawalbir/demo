@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormContext } from 'react-forms-processor/dist';
 import FileDefinitionEditorDrawer from '../../../AFE/FileDefinitionEditor/Drawer';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -11,6 +10,7 @@ import {
   FILE_GENERATOR,
   FILE_PARSER,
 } from '../../../AFE/FileDefinitionEditor/constants';
+import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
 import { safeParse } from '../../../../utils/string';
 import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
@@ -68,13 +68,15 @@ function DynaFileDefinitionEditor(props) {
     resourceId,
     resourceType,
     onFieldChange,
-    formContext,
     fileDefinitionResourcePath,
     userDefinitionId,
     options = {},
     value,
     disabled,
+    formKey,
   } = props;
+
+  const formContext = useFormContext(formKey);
   const { format, definitionId } = options;
   const resourcePath = extractResourcePath(value, fileDefinitionResourcePath);
   const [isRuleChanged, setIsRuleChanged] = useState(false);
@@ -198,10 +200,4 @@ function DynaFileDefinitionEditor(props) {
   );
 }
 
-const DynaFileDefinitionEditorWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaFileDefinitionEditor {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaFileDefinitionEditorWithFormContext;
+export default DynaFileDefinitionEditor;

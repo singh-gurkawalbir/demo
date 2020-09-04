@@ -1,59 +1,47 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import isEqual from 'lodash/isEqual';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import { Drawer } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import { useRouteMatch, useHistory, Redirect, Switch, Route } from 'react-router-dom';
 import {selectors} from '../../../reducers';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import DrawerTitleBar from '../../drawer/TitleBar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import RightDrawer from '../../drawer/Right';
 
 const emptySet = {};
 const emptyObject = {};
-const useStyles = makeStyles(theme => ({
-  drawerPaper: {
-    marginTop: theme.appBarHeight,
-    width: 824,
-    border: 'solid 1px',
-    borderColor: theme.palette.secondary.lightest,
-    boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  content: {
-    overflow: 'auto',
-    padding: theme.spacing(3),
-    paddingTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    '& > div:first-child': {
-      height: 'calc(100vh - 180px)',
-    },
-  },
-}));
 
 /**
  *
  * disabled property set to true in case of monitor level access
  */
 
-export default function MappingSettings({
-  onClose,
-  mappingKey,
-  open,
+function MappingSettings({
   disabled,
-  importId,
-  flowId,
-  subRecordMappingId,
+  mappingKey,
   isCategoryMapping,
   ...categoryMappingOpts
 }) {
+  const history = useHistory();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
-  const classes = useStyles();
+
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
+  const {importId, flowId, subRecordMappingId} = useSelector(state => {
+    if (isCategoryMapping) {
+      const {importId, flowId} = categoryMappingOpts;
+
+      return {importId, flowId};
+    }
+
+    return selectors.mapping(state);
+  }, shallowEqual);
+
   const {value, lookups} = useSelector(state => {
     if (isCategoryMapping) {
       const {mappings, lookups} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
@@ -61,10 +49,11 @@ export default function MappingSettings({
       return {value: mappings[mappingIndex], lookups};
     }
     const { mappings, lookups } = selectors.mapping(state);
-    const value = mappings.find(({key}) => key === mappingKey) || emptyObject;
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
 
     return {value, lookups};
   }, shallowEqual);
+
   const generateFields = useSelector(state => {
     if (isCategoryMapping) {
       const {fields: generateFields} = selectors.categoryMappingGenerateFields(state, integrationId, flowId, {
@@ -75,24 +64,20 @@ export default function MappingSettings({
     }
 
     return selectors.mappingGenerates(state, importId, subRecordMappingId);
-  }
+  });
 
-  );
   const extractFields = useSelector(state => {
     if (isCategoryMapping) {
       return selectors.categoryMappingMetadata(state, integrationId, flowId).extractsMetadata;
     }
 
     return selectors.mappingExtracts(state, importId, flowId, subRecordMappingId);
-  }
+  });
 
-  );
   const nsRecordType = useSelector(state =>
     selectors.mappingNSRecordType(state, importId, subRecordMappingId)
   );
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
+
   const importResource = useSelector(state =>
     selectors.resource(state, 'imports', importId)
   );
@@ -123,24 +108,38 @@ export default function MappingSettings({
     return disabled || (isNotEditable && !fieldMap.useAsAnInitializeValue);
   }, [disabled, fieldMeta, value]);
 
-  // TODO(Aditya): copied from MappingRow. Talk to Ashok over simlification of ths
-  const updateLookup = useCallback((lookupOps = []) => {
-    let lookupsTmp = [...lookups];
+  const hadleClose = useCallback(
+    () => {
+      history.goBack();
+    },
+    [history],
+  );
+  const patchSettings = useCallback(settings => {
+    if (isCategoryMapping) {
+      dispatch(
+        actions.integrationApp.settings.categoryMappings.patchSettings(
+          integrationId,
+          flowId,
+          editorId,
+          mappingIndex,
+          settings
+        )
+      );
+    } else {
+      dispatch(actions.mapping.patchSettings(mappingKey, settings));
+    }
 
-    // Here lookupOPs will be an array of lookups and actions. Lookups can be added and delted simultaneously from settings.
-    lookupOps.forEach(({ isDelete, obj }) => {
-      if (isDelete) {
-        lookupsTmp = lookupsTmp.filter(lookup => lookup.name !== obj.name);
-      } else {
-        const index = lookupsTmp.findIndex(lookup => lookup.name === obj.name);
+    hadleClose();
+  }, [dispatch, editorId, flowId, hadleClose, integrationId, isCategoryMapping, mappingIndex, mappingKey]);
 
-        if (index !== -1) {
-          lookupsTmp[index] = obj;
-        } else {
-          lookupsTmp.push(obj);
-        }
+  const handleLookupUpdate = useCallback((oldLookup, newLookup) => {
+    if (oldLookup && newLookup) {
+      const {isConditionalLookup, ..._oldLookup} = oldLookup;
+
+      if (isEqual(_oldLookup, newLookup)) {
+        return;
       }
-    });
+    }
 
     if (isCategoryMapping) {
       dispatch(
@@ -148,41 +147,14 @@ export default function MappingSettings({
           integrationId,
           flowId,
           editorId,
-          lookupsTmp
+          oldLookup,
+          newLookup
         )
       );
     } else {
-      dispatch(actions.mapping.updateLookup(lookupsTmp));
+      dispatch(actions.mapping.updateLookup({oldValue: oldLookup, newValue: newLookup, isConditionalLookup: false}));
     }
-  }, [dispatch, editorId, flowId, integrationId, isCategoryMapping, lookups]);
-  const patchCategoryMappingSettings = useCallback(settings => {
-    dispatch(
-      actions.integrationApp.settings.categoryMappings.patchSettings(
-        integrationId,
-        flowId,
-        editorId,
-        mappingIndex,
-        settings
-      )
-    );
-  }, [dispatch, editorId, flowId, integrationId, mappingIndex]);
-  const patchMappingSettings = useCallback(settings => {
-    dispatch(actions.mapping.patchSettings(mappingKey, settings));
-  }, [dispatch, mappingKey]);
-  const handleLookupUpdate = useCallback((oldLookup, newLookup, conditionalLookup) => {
-    const lookupObj = [];
-
-    if (newLookup) {
-      lookupObj.push({ isDelete: false, obj: newLookup });
-    } else if (oldLookup) {
-      // When user tries to reconfigure setting and tries to remove lookup, delete existing lookup
-      lookupObj.push({ isDelete: true, obj: oldLookup });
-    }
-    if (conditionalLookup) {
-      lookupObj.push({ isDelete: false, obj: conditionalLookup });
-    }
-    updateLookup(lookupObj);
-  }, [updateLookup]);
+  }, [dispatch, editorId, flowId, integrationId, isCategoryMapping]);
   const handleSubmit = useCallback(
     formVal => {
       const oldLookupValue = lookupName && lookups.find(lookup => lookup.name === lookupName);
@@ -190,7 +162,6 @@ export default function MappingSettings({
         settings,
         lookup: updatedLookup,
         errorMessage,
-        conditionalLookup,
       } = ApplicationMappingSettings.getFormattedValue(
         { generate, extract, lookup: oldLookupValue },
         formVal
@@ -204,53 +175,115 @@ export default function MappingSettings({
 
         return;
       }
-      handleLookupUpdate(oldLookupValue, updatedLookup, conditionalLookup);
-      if (isCategoryMapping) {
-        patchCategoryMappingSettings(settings);
-      } else {
-        patchMappingSettings(settings);
-      }
-      onClose();
+      handleLookupUpdate(oldLookupValue, updatedLookup);
+      patchSettings(settings);
     },
-    [enquesnackbar, extract, generate, handleLookupUpdate, isCategoryMapping, lookupName, lookups, onClose, patchCategoryMappingSettings, patchMappingSettings]
+    [enquesnackbar, extract, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
   );
 
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
-    <Drawer
-      anchor="right"
-      open={open}
-      classes={{
-        paper: classes.drawerPaper,
-      }}>
-      <DrawerTitleBar onClose={onClose} title="Settings" />
-      <div className={classes.content}>
-        <DynaForm
-          disabled={disabled}
-          fieldMeta={fieldMeta}
-          optionsHandler={fieldMeta.optionsHandler}
-          formState={formState}>
-          <DynaSubmit
-            disabled={disableSave}
-            id="fieldMappingSettingsSave"
-            showCustomFormValidations={showCustomFormValidations}
-            onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-          <Button
-            data-test="fieldMappingSettingsCancel"
-            onClick={onClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </DynaForm>
-      </div>
-    </Drawer>
+    <>
+      <DynaForm
+        formKey={formKey}
+        fieldMeta={fieldMeta} />
+      <DynaSubmit
+        formKey={formKey}
+        disabled={disableSave}
+        id="fieldMappingSettingsSave"
+        onClick={handleSubmit}>
+        Save
+      </DynaSubmit>
+      <Button
+        data-test="fieldMappingSettingsCancel"
+        onClick={hadleClose}
+        variant="text"
+        color="primary">
+        Cancel
+      </Button>
+    </>
+  );
+}
+
+function MappingSettingsWrapper(props) {
+  const match = useRouteMatch();
+
+  const { mappingKey } = match.params;
+  const isSettingsConfigured = useSelector(state => {
+    const {mappings} = selectors.mapping(state);
+    const value = mappings?.find(({key}) => key === mappingKey) || emptyObject;
+
+    return !!value?.generate;
+  });
+
+  if (!isSettingsConfigured) {
+    return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
+  }
+
+  return (
+    <MappingSettings
+      {...props}
+      mappingKey={mappingKey}
+    />
+  );
+}
+function CategoryMappingSettingsWrapper(props) {
+  const { integrationId, flowId, importId} = props;
+  const match = useRouteMatch();
+  const { editorId, mappingIndex } = match.params;
+  const isSettingsConfigured = useSelector(state => {
+    const {mappings} = selectors.categoryMappingsForSection(state, integrationId, flowId, editorId);
+
+    return !!mappings?.[mappingIndex]?.generate;
+  });
+
+  if (!isSettingsConfigured) {
+    return <Redirect push={false} to={`${match.url.substr(0, match.url.indexOf('/settings'))}`} />;
+  }
+
+  return (
+    <MappingSettings
+      {...props}
+      isCategoryMapping
+      integrationId={integrationId}
+      flowId={flowId}
+      importId={importId}
+      editorId={editorId}
+      mappingIndex={mappingIndex}
+    />
+  );
+}
+export default function SettingsDrawer(props) {
+  const match = useRouteMatch();
+
+  return (
+    <RightDrawer
+      hideBackButton
+      path={[
+        'settings/:mappingKey',
+        'settings/category/:editorId/:mappingIndex',
+      ]}
+      title="Settings"
+      height="tall"
+    >
+      <Switch>
+        <Route
+          path={`${match.url}/settings/category/:editorId/:mappingIndex`}>
+          <CategoryMappingSettingsWrapper
+            {...props} />
+        </Route>
+        <Route
+          path={`${match.url}/settings/:mappingKey`}>
+          <MappingSettingsWrapper
+            {...props} />
+        </Route>
+
+      </Switch>
+    </RightDrawer>
   );
 }

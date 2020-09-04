@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Drawer, IconButton, Tabs, Tab } from '@material-ui/core';
+import { Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../../../actions';
+import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
-import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
-import WarningIcon from '../../../../components/icons/WarningIcon';
+import ArrowUpIcon from '../../../../components/icons/ArrowUpIcon';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
+import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import DebugIcon from '../../../../components/icons/DebugIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
-import CloseIcon from '../../../../components/icons/CloseIcon';
+import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
 import RunDashboardV2Panel from './panels/Dashboard/RunDashboardV2Panel';
 import AuditPanel from './panels/Audit';
-import actions from '../../../../actions';
-import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -122,7 +122,7 @@ export default function BottomDrawer({
     selectors.isAnyFlowConnectionOffline(state, flow._id)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));

@@ -11,6 +11,9 @@ import {
   RESOURCE_TYPE_PLURAL_TO_SINGULAR,
   RESOURCE_TYPE_SINGULAR_TO_LABEL,
 } from '../../constants/resource';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
+import { generateNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   resourceFormWrapper: {
@@ -36,6 +39,7 @@ export default function AddOrSelect(props) {
     onClose,
   } = props;
   const classes = useStyles();
+  const [newFormId] = useState(generateNewId());
   const [useNew, setUseNew] = useState(true);
   const resourceName = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
   const resourceLabel =
@@ -100,6 +104,11 @@ export default function AddOrSelect(props) {
     onSubmitComplete(formVal[resourceName], true);
   };
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
+
   return (
     <LoadResources resources={resourceType}>
       <div className={classes.resourceFormWrapper}>
@@ -123,24 +132,32 @@ export default function AddOrSelect(props) {
         {/* div wrapping is imp. since child component is reusable component and it inherits parent top parent. Validate before removing */}
         <div>
           {useNew ? (
-            <ResourceFormWithStatusPanel
-              heightOffset="250"
-              occupyFullWidth
-              editMode={false}
-              resourceType={resourceType}
-              resourceId={resourceId}
-              submitButtonLabel="Save & close"
-              cancelButtonLabel="Cancel"
-              onSubmitComplete={handleSubmitComplete}
-              connectionType={connectionType}
-              onCancel={onClose}
+            <>
+              <ResourceFormWithStatusPanel
+                formKey={newFormId}
+                heightOffset="250"
+                occupyFullWidth
+                resourceType={resourceType}
+                resourceId={resourceId}
+                onSubmitComplete={handleSubmitComplete}
             />
+              <ResourceFormActionsPanel
+                formKey={newFormId}
+                resourceType={resourceType}
+                resourceId={resourceId}
+                submitButtonLabel="Save & close"
+                cancelButtonLabel="Cancel"
+                onSubmitComplete={handleSubmitComplete}
+                connectionType={connectionType}
+                onCancel={onClose} />
+            </>
           ) : (
-            <DynaForm
-              fieldMeta={fieldMeta}
-              optionsHandler={fieldMeta.optionsHandler}>
-              <DynaSubmit onClick={handleSubmit}>Done</DynaSubmit>
-            </DynaForm>
+            <>
+              <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+              <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+                Done
+              </DynaSubmit>
+            </>
           )}
         </div>
       </div>

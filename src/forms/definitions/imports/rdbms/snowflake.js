@@ -104,13 +104,14 @@ export default {
       options: [
         {
           items: [
-            { label: 'Use BULK INSERT', value: 'BULK INSERT' },
+            { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
-            { label: 'Use Merge SQLQuery', value: 'MERGE' },
+            { label: 'Use MERGE SQL Query', value: 'MERGE' },
           ],
         },
       ],
     },
+    dataMappings: { formId: 'dataMappings' },
   },
   layout: {
     type: 'collapse',
@@ -118,7 +119,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['common', 'modelMetadata'],
+        fields: ['common', 'dataMappings', 'modelMetadata'],
       },
       {
         collapsed: true,

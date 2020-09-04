@@ -247,7 +247,7 @@ export const isOldFlowSchema = ({
   _importId,
 }) => (!pageGenerators && _exportId) || (!pageProcessors && _importId);
 
-export function getFirstExportFromFlow(flow, exports) {
+export function getFirstExportFromFlow(flow, exports = []) {
   const exportId =
     flow.pageGenerators && flow.pageGenerators.length
       ? flow.pageGenerators[0]._exportId
@@ -278,7 +278,7 @@ export function isRealtimeFlow(flow, exports) {
   return isRealtimeExport(exp);
 }
 
-export function hasBatchExport(flow, exports) {
+export function hasBatchExport(flow, exports = []) {
   const exp = getFirstExportFromFlow(flow, exports);
 
   if (isOldFlowSchema(flow)) {

@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   loaderSObject: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   loaderSObjectText: {
     marginRight: theme.spacing(2),
@@ -40,13 +41,12 @@ export default function DynaSalesforceLookupFilters(props) {
     connectionId,
     data,
     options = {},
-    opts = {},
     onFieldChange,
     editorId,
   } = props;
   let modifiedData = Array.isArray(data) ? data.map(wrapSpecialChars) : data;
 
-  if (opts.isGroupedSampleData && Array.isArray(data)) {
+  if (Array.isArray(data)) {
     modifiedData = modifiedData.concat(
       modifiedData.map(i => ({ name: `*.${i.name}`, id: `*.${i.id}` }))
     );

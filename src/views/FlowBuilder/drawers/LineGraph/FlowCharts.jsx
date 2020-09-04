@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -18,9 +18,11 @@ import PanelHeader from '../../../../components/PanelHeader';
 import {
   getLabel,
   getAxisLabel,
+  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
+  getAxisLabelPosition,
   getLegend,
 } from '../../../../utils/flowMetrics';
 import { selectors } from '../../../../reducers';
@@ -110,11 +112,14 @@ const DataIcon = ({index}) => {
 
 const Chart = ({ id, flowId, range, selectedResources }) => {
   const classes = useStyles();
+  const [opacity, setOpacity] = useState({});
+  let mouseHoverTimer;
   const { data = [] } =
-    useSelector(state => selectors.flowMetricsData(state, flowId, id)) || {};
+    useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
   const flowResources = useSelector(state =>
     selectors.flowResources(state, flowId)
   );
+
   const { startDate, endDate } = range;
 
   let dateTimeFormat;
@@ -135,24 +140,20 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
-  const valueTicks = getTicks(domainRange, range, true);
   const flowData = {};
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r || d.flowId === r);
-      // Add Zero data for ticks
-      valueTicks.forEach(tick => {
-        if (!flowData[r].find(d => d.timeInMills === tick)) {
-          flowData[r].push({timeInMills: tick, time: new Date(tick).toISOString(), [`${r}-value`]: 0});
-        }
-      });
+      flowData[r] = data.filter(d => d.resourceId === r);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
 
   const getResourceName = name => {
-    const resourceId = name.replace(/-value/, '');
+    if (!name || typeof name !== 'string') {
+      return name || '';
+    }
+    const resourceId = name.split('-')[0];
     let modifiedName = resourceId;
     const resource = flowResources.find(r => r._id === resourceId);
 
@@ -163,6 +164,31 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
     return modifiedName;
   };
 
+  const handleMouseEnter = e => {
+    const id = e?.target?.id;
+
+    if (!id || typeof id !== 'string') {
+      return false;
+    }
+    const resourceId = id.split('-')[0];
+
+    if (resourceId) {
+      mouseHoverTimer = setTimeout(() => {
+        const object = selectedResources.reduce((acc, cur) => {
+          acc[cur] = resourceId === cur ? 1 : 0.2;
+
+          return acc;
+        }, {});
+
+        setOpacity(object);
+      }, 10);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(mouseHoverTimer);
+    setOpacity({});
+  };
   const CustomLegend = props => {
     const classes = useStyles();
     const { payload } = props;
@@ -175,8 +201,10 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
               <DataIcon index={index} color={entry.payload.stroke} />
               <span
                 className={clsx(classes.legendText, classes[`${(index % 8) + 1}Color`])}
-                // eslint-disable-next-line react/no-array-index-key
-                key={entry.dataKey + index}>
+                key={entry.value}
+                id={entry.value}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}>
                 {getResourceName(entry.value)}
               </span>
             </>
@@ -214,7 +242,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           <p className="label">{`${moment(label).format(dateTimeFormat)}`} </p>
           {payload.map(
             p => (
-              p && !!p.value && <p key={p.dataKey}> {`${getResourceName(p.name)}: ${p.value}`} </p>
+              p && !!p.value && <p key={p.name}> {`${getResourceName(p.name)}: ${p.value}`} </p>
             ))}
         </div>
       );
@@ -241,6 +269,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             scale="time"
             type="number"
             ticks={ticks}
+            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -249,24 +278,24 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: 'insideLeft',
-              textAnchor: 'middle',
+              position: getAxisLabelPosition(id),
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
 
           <Tooltip content={<CustomTooltip />} />
-          <Legend align="center" content={<CustomLegend />} />
+          <Legend content={<CustomLegend />} />
           {selectedResources.map((r, i) => (
             <Line
-              key={r}
-              dataKey={`${r}-value`}
-              name={r}
+              key={`${r}-${id}`}
+              dataKey={id}
+              name={`${r}-${id}`}
               data={flowData[r]}
               yAxisId={id}
               dot={false}
               activeDot={<CustomizedDot idx={i} />}
               strokeWidth="2"
+              strokeOpacity={opacity[r] || 1}
               legendType={getLegend(i)}
               stroke={getLineColor(i)}
             />
@@ -300,12 +329,12 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error Occured</Typography>;
+    return <Typography>Error occured</Typography>;
   }
 
   return (
     <div className={classes.root}>
-      {['success', 'error', 'ignored', 'averageTimeTaken'].map(m => (
+      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

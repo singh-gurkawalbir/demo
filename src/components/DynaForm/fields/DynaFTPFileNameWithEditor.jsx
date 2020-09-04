@@ -15,12 +15,13 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent',
   },
   dynaRowWrapper: {
+    display: 'flex',
     flexDirection: 'row !important',
   },
 }));
 
 export default function DynaFTPFileNameWithEditor(props) {
-  const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false} = props;
+  const {editorTitle, id, flowId, resourceId, resourceType, value, onFieldChange, disableEditorV2 = false, formKey} = props;
   const classes = useStyles();
   const handleOpenDrawer = usePushRightDrawer(id);
   const handleSave = useCallback((shouldCommit, editorValues) => {
@@ -35,6 +36,7 @@ export default function DynaFTPFileNameWithEditor(props) {
     <>
       <div>
         <DynaEditorWithFlowSampleData
+          formKey={formKey}
           title={editorTitle}
           fieldId={id}
           onSave={handleSave}

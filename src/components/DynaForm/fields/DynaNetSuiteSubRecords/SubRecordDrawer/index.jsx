@@ -1,17 +1,18 @@
-import React, { useState, useCallback } from 'react';
-import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
-import { Route, useHistory, useRouteMatch } from 'react-router-dom';
+import { Button, Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, Button } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
-import DrawerTitleBar from '../../../../drawer/TitleBar';
+import clsx from 'clsx';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import DynaForm from '../../..';
-import DynaSubmit from '../../../DynaSubmit';
 import actions from '../../../../../actions';
-import getFormFieldMetadata from './util';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { selectors } from '../../../../../reducers';
+import { SCOPES } from '../../../../../sagas/resourceForm';
+import DrawerTitleBar from '../../../../drawer/TitleBar';
+import DynaSubmit from '../../../DynaSubmit';
+import getFormFieldMetadata from './util';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: 'calc(100% - 56px)',
     padding: '0px !important',
   },
+  dynaSubmit: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 function SubRecordDrawer(props) {
@@ -60,9 +64,6 @@ function SubRecordDrawer(props) {
       })
       .data.find(record => record.value === recordType)
   );
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
   const recordTypeLabel = recordTypeObj && recordTypeObj.label;
   const subrecordFields =
     recordTypeObj &&
@@ -90,11 +91,6 @@ function SubRecordDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
   const handleSubmit = useCallback(
     formValues => {
       const jsonPathFieldId = `jsonPath_${formValues.fieldId.replace(
@@ -151,6 +147,9 @@ function SubRecordDrawer(props) {
       subrecords,
     ]
   );
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+  });
 
   return (
     <Drawer
@@ -168,14 +167,16 @@ function SubRecordDrawer(props) {
       <div className={classes.container}>
         <div className={classes.content}>
           {fieldMeta && (
-            <DynaForm
-              // disabled={disabled}
-              className={classes.subRecordDynaForm}
-              fieldMeta={fieldMeta}
-              formState={formState}>
+            <>
+              <DynaForm
+                formKey={formKey}
+                fieldMeta={fieldMeta}
+                className={classes.subRecordDynaForm}
+              />
               <DynaSubmit
+                formKey={formKey}
                 data-test="save-subrecord"
-                showCustomFormValidations={showCustomFormValidations}
+                className={classes.dynaSubmit}
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
@@ -186,7 +187,7 @@ function SubRecordDrawer(props) {
                 onClick={handleClose}>
                 Cancel
               </Button>
-            </DynaForm>
+            </>
           )}
         </div>
       </div>

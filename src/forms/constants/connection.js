@@ -104,8 +104,7 @@ export default {
     'concurexpense',
     'concurinvoice',
     'g2',
-    'myobadvanced',
-    'lexbizz',
+    'shipengine',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -177,6 +176,7 @@ export default {
     'bigquery',
     'financialforce',
     'zendesksell',
+    'microsoftdynamics365financeandoperation',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',
@@ -212,5 +212,7 @@ export default {
     'azureactivedirectory',
     'outreach',
     'slack',
+    'myobadvanced',
+    'lexbizz',
   ],
 };

@@ -98,7 +98,7 @@ import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import DynaDataURITemplate from './DynaDataURITemplate';
 import DynaConcurrencyIdLockTemplate from './DynaConcurrencyIdLockTemplate';
 import DynaNameWithEditor from './DynaNameWithEditor';
-import DynaSelectLookup from './DynaSelectLookup';
+import DynaSelectConditionalLookup from './DynaSelectConditionalLookup';
 import DynaURI from './DynaURI';
 import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 import DynaSelectWithInput from './DynaSelectWithInput';
@@ -113,6 +113,7 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -151,6 +152,7 @@ export default {
   csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
+  netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
@@ -230,7 +232,7 @@ export default {
   concurrencyidlocktemplate: DynaConcurrencyIdLockTemplate,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   namewitheditor: DynaNameWithEditor,
-  selectlookup: DynaSelectLookup,
+  selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
   selectwithinput: DynaSelectWithInput,
   jsonresourcepath: DynaJsonResourcePath,

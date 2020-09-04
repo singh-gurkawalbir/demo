@@ -1,23 +1,21 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { IconButton, makeStyles, Typography } from '@material-ui/core';
 import clsx from 'clsx';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  useLocation,
-  generatePath,
-  useHistory,
-  matchPath,
+  matchPath, useHistory, useLocation,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Typography, IconButton } from '@material-ui/core';
-import LoadResources from '../../LoadResources';
-import { isNewId, multiStepSaveResourceTypes } from '../../../utils/resource';
-import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import Close from '../../icons/CloseIcon';
-import Back from '../../icons/BackArrowIcon';
-import ApplicationImg from '../../icons/ApplicationImg';
-import ResourceFormWithStatusPanel from '../../ResourceFormWithStatusPanel';
-import getRoutePath from '../../../utils/routePaths';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
+import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import ApplicationImg from '../../../icons/ApplicationImg';
+import Back from '../../../icons/BackArrowIcon';
+import Close from '../../../icons/CloseIcon';
+import LoadResources from '../../../LoadResources';
+import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
+import ResourceFormActionsPanel from './ResourceFormActionsPanel';
+import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
 
 const DRAWER_PATH = '/:operation(add|edit)/:resourceType/:id';
 const isNestedDrawer = url => !!matchPath(url, {
@@ -93,7 +91,7 @@ const useStyles = makeStyles(theme => ({
   },
 
 }));
-const determineRequiredResources = type => {
+const useDetermineRequiredResources = type => useMemo(() => {
   const resourceType = [];
 
   // Handling virtual resources types Page processor and Page generators
@@ -113,7 +111,7 @@ const determineRequiredResources = type => {
   if (resourceType.includes('exports') || resourceType.includes('imports')) return [...resourceType, 'connections'];
 
   return resourceType;
-};
+}, [type]);
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'pageGenerator') {
@@ -149,10 +147,11 @@ const useRedirectionToParentRoute = (resourceType, id) => {
 };
 
 export default function Panel(props) {
-  const { onClose, occupyFullWidth, flowId } = props;
+  const { onClose, occupyFullWidth, flowId, integrationId } = props;
+  const [newId] = useState(generateNewId());
+
   const location = useLocation();
   const dispatch = useDispatch();
-  const history = useHistory();
   const match = useRouteMatch();
   const { id, resourceType, operation } = match.params;
   const isNew = operation === 'add';
@@ -163,21 +162,13 @@ export default function Panel(props) {
     occupyFullWidth,
     match,
   });
-  const skipFormClose = useSelector(
-    state => selectors.resourceFormState(state, resourceType, id).skipClose
-  );
-  const newResourceId = useSelector(state =>
-    selectors.createdResourceId(state, id)
-  );
+
   const resourceLabel = useSelector(state =>
     selectors.getCustomResourceLabel(state, {
       resourceId: id,
       resourceType,
       flowId,
     })
-  );
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, id)
   );
   const abortAndClose = useCallback(() => {
     dispatch(actions.resourceForm.submitAborted(resourceType, id));
@@ -192,168 +183,16 @@ export default function Panel(props) {
   const stagedProcessor = useSelector(state =>
     selectors.stagedResource(state, id)
   );
-  const applicationType = useSelector(state => {
-    const stagedResource = selectors.stagedResource(state, id);
-
-    if (!resource && (!stagedResource || !stagedResource.patch)) {
-      return '';
-    }
-
-    function getStagedValue(key) {
-      const result =
-        stagedResource &&
-        stagedResource.patch &&
-        stagedResource.patch.find(p => p.op === 'replace' && p.path === key);
-
-      return result && result.value;
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = resourceType === 'connections'
-      ? getStagedValue('type') || resource?.type
-      : getStagedValue('/adaptorType') || resource?.adaptorType;
-    const assistant = getStagedValue('/assistant') || resource?.assistant;
-
-    if (adaptorType === 'WebhookExport') {
-      return (
-        getStagedValue('/webhook/provider') ||
-        (resource && resource.webhook && resource.webhook.provider)
-      );
-    }
-    // For Data Loader cases, there is no image.
-    if (getStagedValue('/type') === 'simple' || resource?.type === 'simple') {
-      return '';
-    }
-
-    if (adaptorType?.toUpperCase().startsWith('RDBMS')) {
-      const connection = resourceType === 'connections' ? resource
-        : selectors.resource(
-          state,
-          'connections',
-          getStagedValue('/_connectionId') || (resource && resource._connectionId)
-        );
-
-      return connection && connection.rdbms && connection.rdbms.type;
-    }
-
-    return assistant || adaptorType;
-  });
+  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
   const submitButtonLabel = isNew && isMultiStepSaveResource ? 'Next' : 'Save & close';
   const submitButtonColor = isNew && isMultiStepSaveResource ? 'primary' : 'secondary';
-
-  const lookupProcessorResourceType = useCallback(() => {
-    if (!stagedProcessor || !stagedProcessor.patch) {
-      // TODO: we need a better pattern for logging warnings. We need a common util method
-      // which logs these warning only if the build is dev... if build is prod, these
-      // console.warn/logs should not even be bundled by webpack...
-      // eslint-disable-next-line
-      return console.warn(
-        'No patch-set available to determine new Page Processor resourceType.'
-      );
-    }
-
-    // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
-    const adaptorType = stagedProcessor.patch.find(
-      p => p.op === 'replace' && p.path === '/adaptorType'
-    );
-
-    // console.log(`adaptorType-${id}`, adaptorType);
-
-    if (!adaptorType || !adaptorType.value) {
-      // eslint-disable-next-line
-      console.warn(
-        'No replace operation against /adaptorType found in the patch-set.'
-      );
-    }
-
-    return adaptorType.value.includes('Export') ? 'exports' : 'imports';
-  }, [stagedProcessor]);
-
-  const getEditUrl = useCallback(id => {
-    // console.log(location);
-    const segments = location.pathname.split('/');
-    const { length } = segments;
-
-    segments[length - 1] = id;
-    segments[length - 3] = 'edit';
-
-    if (resourceType === 'pageGenerator') {
-      segments[length - 2] = 'exports';
-    } else if (resourceType === 'pageProcessor') {
-      segments[length - 2] = lookupProcessorResourceType();
-    }
-
-    const url = segments.join('/');
-
-    return url;
-  }, [location.pathname, lookupProcessorResourceType, resourceType]);
-
-  function handleSubmitComplete() {
-    if (isNew) {
-      // The following block of logic is used specifically for pageProcessor
-      // and pageGenerator forms. These forms allow a user to choose an
-      // existing resource. In this case we dont have any more work to do,
-      // we just need to match the temp 'new-xxx' id with the one the user
-      // selected.
-
-      if (resourceType === 'integrations') {
-        return history.replace(
-          getRoutePath(`/${resourceType}/${newResourceId}/flows`)
-        );
-      }
-
-      const resourceIdPatch = stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/resourceId'
-      );
-      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
-
-      if (isMultiStepSaveResource) {
-        if (!resourceId) {
-          return history.replace(getEditUrl(id));
-        }
-      }
-      // this is NOT a case where a user selected an existing resource,
-      // so move to step 2 of the form...
-
-      dispatch(actions.resource.created(resourceId, id));
-      // Incase of a resource with single step save, when skipFormClose is passed
-      // redirect to the updated URL with new resourceId as we do incase of edit - check else part
-      if (skipFormClose && !isMultiStepSaveResource) {
-        return history.replace(
-          generatePath(match.path, {
-            id: newResourceId || id,
-            resourceType,
-            operation,
-          })
-        );
-      }
-      // In other cases , close the drawer
-      onClose();
-    } else {
-      // Form should re render with created new Id
-      // Below code just replaces url with created Id and form re initializes
-      if (skipFormClose) {
-        history.replace(
-          generatePath(match.path, {
-            id: newResourceId || id,
-            resourceType,
-            operation,
-          })
-        );
-
-        return;
-      }
-
-      onClose();
-    }
-  }
-
+  const handleSubmitComplete = useHandleSubmitCompleteFn(resourceType, id, onClose);
   const showApplicationLogo =
     ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
-  const requiredResources = determineRequiredResources(resourceType);
+  const requiredResources = useDetermineRequiredResources(resourceType);
   const title = useMemo(
     () =>
       getTitle({
@@ -365,9 +204,9 @@ export default function Panel(props) {
     [id, location.search, resourceLabel, resourceType]
   );
   const [showNotificationToaster, setShowNotificationToaster] = useState(false);
-  const onCloseNotificationToaster = () => {
+  const onCloseNotificationToaster = useCallback(() => {
     setShowNotificationToaster(false);
-  };
+  }, []);
 
   // will be patching useTechAdaptorForm for assistants if export/import is not supported
   // based on this value, will be showing banner on the new export/import creation
@@ -382,6 +221,18 @@ export default function Panel(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
+  const variant = match.isExact ? 'edit' : 'view';
+
+  // useTraceUpdate({
+  //   variant,
+  //   isNew,
+  //   resourceType,
+  //   flowId,
+  //   integrationId,
+  //   handleSubmitComplete,
+  //   showNotificationToaster,
+  //   onCloseNotificationToaster,
+  // });
 
   return (
     <>
@@ -417,20 +268,30 @@ export default function Panel(props) {
         </div>
         <LoadResources required resources={requiredResources}>
           <ResourceFormWithStatusPanel
+            formKey={newId}
             className={classes.resourceFormWrapper}
-            variant={match.isExact ? 'edit' : 'view'}
+            variant={variant}
             isNew={isNew}
             resourceType={resourceType}
             resourceId={id}
+            flowId={flowId}
+            integrationId={integrationId}
             isFlowBuilderView={!!flowId}
+            onSubmitComplete={handleSubmitComplete}
+            showNotificationToaster={showNotificationToaster}
+            onCloseNotificationToaster={onCloseNotificationToaster}
+          />
+          <ResourceFormActionsPanel
+            formKey={newId}
+            isNew={isNew}
+            resourceType={resourceType}
+            resourceId={id}
+            flowId={flowId}
+            integrationId={integrationId}
             cancelButtonLabel="Cancel"
             submitButtonLabel={submitButtonLabel}
             submitButtonColor={submitButtonColor}
-            onSubmitComplete={handleSubmitComplete}
             onCancel={abortAndClose}
-            showNotificationToaster={showNotificationToaster}
-            onCloseNotificationToaster={onCloseNotificationToaster}
-            {...props}
           />
         </LoadResources>
       </div>
