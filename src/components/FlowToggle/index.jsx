@@ -10,7 +10,7 @@ import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import Spinner from '../Spinner';
 
 const useStyles = makeStyles({
-  spinerFlowToggle: {
+  spinnerFlowToggle: {
     padding: '0 !important',
   },
 });
@@ -112,7 +112,7 @@ export default function FlowToggle({
   };
 
   return onOffInProgressStatus ? (
-    <Spinner size={20} color="primary" className={classes.spinerFlowToggle} />
+    <Spinner size={20} color="primary" className={classes.spinnerFlowToggle} />
   ) : (
     <Tooltip title="Off/On" placement="bottom">
       <div>
