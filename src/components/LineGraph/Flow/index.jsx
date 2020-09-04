@@ -268,6 +268,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             scale="time"
             type="number"
             ticks={ticks}
+            allowDuplicatedCategory={false}
             interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
