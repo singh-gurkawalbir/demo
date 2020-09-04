@@ -35,7 +35,7 @@ export default function StatusCell({
     }
   });
 
-  if (!job || job.status === 'completed') {
+  if (!job || ['completed', 'canceled'].includes(job.status)) {
     return <CeligoTimeAgo date={date} />;
   }
   const isJobInQueuedStatus =

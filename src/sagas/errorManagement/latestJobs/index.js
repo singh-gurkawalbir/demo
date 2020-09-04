@@ -13,7 +13,6 @@ function* requestLatestJobs({ integrationId }) {
       hidden: true,
     });
 
-    // yield call(notifyErrorListOnUpdate, { flowId, newFlowErrors: flowOpenErrors});
     yield put(
       actions.errorManager.integrationLatestJobs.received({
         integrationId,
@@ -21,7 +20,11 @@ function* requestLatestJobs({ integrationId }) {
       })
     );
   } catch (error) {
-    // console.log(1, error);
+    yield put(
+      actions.errorManager.integrationLatestJobs.error({
+        integrationId,
+      })
+    );
   }
 }
 
@@ -41,6 +44,10 @@ function* startPollingForLatestJobs({ integrationId }) {
 }
 
 export default [
+  takeLatest(
+    actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.REQUEST,
+    requestLatestJobs
+  ),
   takeLatest(
     actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.REQUEST_FOR_POLL,
     startPollingForLatestJobs

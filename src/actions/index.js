@@ -1673,6 +1673,10 @@ const errorManager = {
         integrationId,
         latestJobs,
       }),
+    error: ({integrationId}) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.ERROR, {
+        integrationId,
+      }),
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },

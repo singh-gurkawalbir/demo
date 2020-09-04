@@ -33,6 +33,7 @@ import RequiredIcon from '../../icons/RequiredIcon';
 import OptionalIcon from '../../icons/OptionalIcon';
 import ConditionalIcon from '../../icons/ConditionalIcon';
 import PreferredIcon from '../../icons/PreferredIcon';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -116,9 +117,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
-  const flowResources = useSelector(state =>
-    selectors.flowResources(state, flowId)
-  );
+  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
 
   const { startDate, endDate } = range;
 

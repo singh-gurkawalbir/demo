@@ -29,6 +29,7 @@ import {
   getNextDataFlows,
   getIAFlowSettings,
   getFlowDetails,
+  getFlowResources,
   getFlowReferencesForResource,
 } from '../utils/flows';
 import {
@@ -4295,82 +4296,13 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   return isRetryInProgress || isResolveInProgress;
 };
 
-selectors.flowResources = (state, flowId) => {
-  const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
-
-  resources.push({ _id: flowId, name: 'Flow-level' });
-
-  if (!flow) {
-    return resources;
-  }
-
-  if (flow._exportId) {
-    const exportDoc = fromData.resource(
-      state && state.data,
-      'exports',
-      flow._exportId
-    );
-
-    if (exportDoc) {
-      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
-    }
-  }
-
-  if (flow._importId) {
-    const importDoc = fromData.resource(
-      state && state.data,
-      'imports',
-      flow._importId
-    );
-
-    if (importDoc) {
-      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
-    }
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length) {
-    flow.pageGenerators.forEach(pg => {
-      const exportDoc = fromData.resource(
-        state && state.data,
-        'exports',
-        pg._exportId
-      );
-
-      if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
-      }
-    });
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp.type === 'import' && pp._importId) {
-        const importDoc = fromData.resource(
-          state && state.data,
-          'imports',
-          pp._importId
-        );
-
-        if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
-        }
-      } else if (pp.type === 'export' && pp._exportId) {
-        const exportDoc = fromData.resource(
-          state && state.data,
-          'exports',
-          pp._exportId
-        );
-
-        if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
-        }
-      }
-    });
-  }
-
-  return resources;
-};
+selectors.mkflowResources = () => createSelector(
+  state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (_, flowId) => flowId,
+  (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
+);
 
 selectors.redirectUrlToResourceListingPage = (
   state,
