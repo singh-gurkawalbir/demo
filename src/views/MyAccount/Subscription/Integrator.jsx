@@ -10,7 +10,7 @@ import DrawerTitleBar from '../../../components/drawer/TitleBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(0, 1),
+    margin: theme.spacing(2, 1),
     overflowX: 'auto',
   },
   transferButton: {
