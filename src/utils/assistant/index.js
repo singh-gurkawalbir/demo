@@ -1498,7 +1498,10 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   if (operationDetails.parameters && operationDetails.parameters.length > 0) {
     operationDetails.parameters.forEach((p, index) => {
       if (p.in !== 'query') {
-        if (url1Info && url1Info.urlParts && url1Info.urlParts[index]) {
+        /**
+         * IO-16945, check if the urlMatch has path (:_XYZ) parameters
+         */
+        if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
@@ -1507,7 +1510,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           } else {
             pathParams[p.id] = url1Info.urlParts[index];
           }
-        } else if (url2Info && url2Info.urlParts && url2Info.urlParts[index]) {
+        } else if (url2Info?.urlMatch?.indexOf(':_') > 0 && url2Info?.urlParts && url2Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url2Info.urlParts[index]
               .replace(/{/g, '')
