@@ -366,7 +366,7 @@ export default {
     'The access token of your Pitney Bowes account.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
-    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://try.lexbizz.com/isv.',
+    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://isv.lexbizz.app.',
   'lexbizz.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.endpointVersion':
@@ -381,7 +381,7 @@ export default {
     'Please enter locale of your lexbizz account.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
-      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be try.myobadvanced.com/isv.',
+      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be demo.myobadvanced.com.',
   'myobadvanced.connection.http.unencrypted.endpointName':
       'Please enter endpoint name of your MYOB Advanced account.',
   'myobadvanced.connection.http.unencrypted.endpointVersion':
