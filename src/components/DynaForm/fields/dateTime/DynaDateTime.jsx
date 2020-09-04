@@ -4,20 +4,35 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
-  TimePicker,
+  KeyboardDatePicker,
+  KeyboardTimePicker,
 } from '@material-ui/pickers';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
     flexDirection: 'row !important',
     display: 'flex',
+  },
+  dateTimeWrapper: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  fieldWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    '&:first-child': {
+      marginRight: theme.spacing(1),
+    },
   },
   dynaDateCalendarBtn: {
     padding: 0,
@@ -26,6 +41,28 @@ const useStyles = makeStyles(theme => ({
       '& > span': {
         color: theme.palette.primary.main,
       },
+    },
+  },
+  keyBoardDateTimeWrapper: {
+    '& .MuiIconButton-root': {
+      padding: 0,
+      marginRight: theme.spacing(1),
+      backgroundColor: 'transparent',
+    },
+    '& .MuiInputBase-input': {
+      padding: 0,
+      height: 38,
+      paddingLeft: 15,
+    },
+  },
+  inputDateTime: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
     },
   },
 }));
@@ -85,48 +122,61 @@ export default function DateTimePicker(props) {
         <FormLabel>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-        <DatePicker
-          disabled={disabled}
-          variant="inline"
-          format={finalDateFormat}
-          value={dateValue}
-          label="Date"
-          onChange={setDateValue}
-          onKeyDown={e => {
-          // this is specifically for qa to inject their date time string
-          // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
+      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
+        <div className={classes.dateTimeWrapper}>
+          <div className={classes.fieldWrapper}>
+            <KeyboardDatePicker
+              disabled={disabled}
+              variant="inline"
+              disableToolbar
+              className={classes.keyBoardDateTimeWrapper}
+              format={finalDateFormat}
+              value={dateValue}
+              fullWidth
+              onChange={setDateValue}
+              InputProps={{ className: classes.inputDateTime }}
+              onKeyDown={e => {
+              // this is specifically for qa to inject their date time string
+              // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
+                e.preventDefault();
+              }}
+              keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
+
       />
+          </div>
+          <div className={classes.fieldWrapper}>
+            <KeyboardTimePicker
+              disabled={disabled}
+              variant="inline"
+              fullWidth
+              className={classes.keyBoardDateTimeWrapper}
+              format={finalTimeFormat}
+              value={dateValue}
+              onChange={setDateValue}
+              InputProps={{ className: classes.inputDateTime }}
+              onKeyDown={e => {
+                // this is specifically for qa to inject their date time string
+                // they should alter the input dom to add a qa attribute prior to injection for date time
+                if (e.target.hasAttribute('qa')) return;
 
-        <TimePicker
-          disabled={disabled}
-          variant="inline"
-          label="Time"
-          format={finalTimeFormat}
-          value={dateValue}
-          onChange={setDateValue}
-          onKeyDown={e => {
-            // this is specifically for qa to inject their date time string
-            // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
+                e.preventDefault();
+              }}
+              onKeyPress={e => {
+                if (e.target.hasAttribute('qa')) return;
 
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
+                e.preventDefault();
+              }}
+              keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
       />
+          </div>
+        </div>
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
     </>

@@ -13,6 +13,7 @@ import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import ButtonGroup from '../../../../components/ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -200,28 +201,30 @@ export default function SettingsDrawer({
         <DynaForm
           formKey={formKey}
           fieldMeta={fieldMeta} />
-        <DynaSubmit
-          formKey={formKey}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          data-test="saveFlowSettings"
-          onClick={validateAndSubmit()}
-          disabled={disableSave}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          formKey={formKey}
-          resourceType={resourceType}
-          resourceId={resourceId}
-          data-test="saveAndCloseFlowSettings"
-          onClick={validateAndSubmit(true)}
-          disabled={disableSave}
-          color="secondary">
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button onClick={handleClose} variant="text" color="primary">
-          Cancel
-        </Button>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            data-test="saveFlowSettings"
+            onClick={validateAndSubmit()}
+            disabled={disableSave}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            formKey={formKey}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            data-test="saveAndCloseFlowSettings"
+            onClick={validateAndSubmit(true)}
+            disabled={disableSave}
+            color="secondary">
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button onClick={handleClose} variant="text" color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
       </div>
     </RightDrawer>
   );
