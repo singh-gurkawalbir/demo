@@ -172,7 +172,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           data={flows}
           filterKey={filterKey}
           {...flowTableMeta}
-          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows' }}
+          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
         />
       </LoadResources>
     </div>

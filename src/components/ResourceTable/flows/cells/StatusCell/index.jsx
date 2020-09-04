@@ -3,8 +3,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import DateCell from '../DateCell';
 import { JOB_UI_STATUS } from '../../../../JobDashboard/util';
+import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,7 +36,7 @@ export default function StatusCell({
   });
 
   if (!job || job.status === 'completed') {
-    return <DateCell date={date} />;
+    return <CeligoTimeAgo date={date} />;
   }
   const isJobInQueuedStatus =
     (job.status === 'queued' ||

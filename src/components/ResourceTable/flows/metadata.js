@@ -8,13 +8,13 @@ import Detach from './actions/Detach';
 import Edit from './actions/Edit';
 import NameCell from './cells/NameCell';
 import OnOffCell from './cells/OnOffCell';
-import DateCell from './cells/DateCell';
 import RunCell from './cells/RunCell';
 import ErrorsCell from './cells/ErrorCell';
 import StatusCell from './cells/StatusCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: (empty, actionProps) => {
@@ -53,7 +53,7 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => <DateCell date={r.lastModified} />,
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {
@@ -76,6 +76,11 @@ export default {
         },
       },
     ];
+
+    // Currently Errors column is not supported for EM1.0
+    if (!actionProps || !actionProps.isUserInErrMgtTwoDotZero) {
+      columns = columns.filter(column => column.heading !== 'Errors');
+    }
 
     if (actionProps.isIntegrationApp) {
       columns.push(

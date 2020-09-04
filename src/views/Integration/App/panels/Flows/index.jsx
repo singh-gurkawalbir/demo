@@ -137,6 +137,9 @@ function FlowList({ integrationId, storeId }) {
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
 
@@ -177,7 +180,7 @@ function FlowList({ integrationId, storeId }) {
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
-        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
         />
     </LoadResources>
   );
