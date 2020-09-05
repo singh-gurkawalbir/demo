@@ -3495,7 +3495,7 @@ selectors.transferListWithMetadata = state => {
         let { name } = i;
 
         if (i._id === 'none') {
-          name = 'Standalone Flows';
+          name = 'Standalone flows';
         }
 
         name = name || i._id;

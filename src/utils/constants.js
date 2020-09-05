@@ -33,7 +33,7 @@ export const TILE_STATUS = Object.freeze({
 });
 export const STANDALONE_INTEGRATION = Object.freeze({
   id: 'none',
-  name: 'Standalone Flows',
+  name: 'Standalone flows',
 });
 export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
