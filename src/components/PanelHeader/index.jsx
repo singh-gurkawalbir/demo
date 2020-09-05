@@ -5,7 +5,7 @@ import InfoIconButton from '../InfoIconButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(2, 1),
     display: 'flex',
     justifyContent: 'space-between',
   },

@@ -41,7 +41,7 @@ export default function DynaUserPassword(props) {
   }, []);
 
   return (
-    <FormControl>
+    <FormControl className={classes.field}>
       <div className={classes.formWrapper}>
         <FormLabel htmlFor={id}>{label}</FormLabel>
         <FieldHelp {...props} />

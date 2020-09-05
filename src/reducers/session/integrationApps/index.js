@@ -26,7 +26,7 @@ const subSelectors = {
   addStore: fromAddStore,
   settings: fromSettings,
   addon: fromAddon,
-  clonse: fromClone,
+  clone: fromClone,
 };
 
 genSelectors(selectors, subSelectors);
