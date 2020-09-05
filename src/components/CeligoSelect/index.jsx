@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
@@ -72,7 +72,6 @@ const DoneButton = ({className, onClick}) => (
 );
 
 function CeligoSelect({ className, children, ...props }) {
-  const {multiple} = props;
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const openSelect = useCallback(() => {
@@ -83,9 +82,6 @@ function CeligoSelect({ className, children, ...props }) {
       setOpen(false);
     }, []
   );
-  const ref = useRef(null);
-  const paperProp = useRef(null);
-
   const handleSelectClose = useCallback(() => {
     closeSelect();
   }, [closeSelect]);
@@ -93,7 +89,7 @@ function CeligoSelect({ className, children, ...props }) {
   /** In case open property is overriden by parent, openSelect and closeSelect functionality will not work.
       The same is to be taken care by parent component
   */
-  const showDoneBtn = !props.open && multiple;
+  const showDoneBtn = !props.open && props.multiple;
 
   const MenuComponent = useCallback(
     ({children, ...props}) => (
@@ -112,14 +108,12 @@ function CeligoSelect({ className, children, ...props }) {
 
   const MenuProps = useMemo(() => ({
     PaperProps: {
-      ref: paperProp,
       style: {
         maxHeight: 252,
         width: 250,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
-
       },
       component: MenuComponent,
     },
@@ -133,8 +127,6 @@ function CeligoSelect({ className, children, ...props }) {
 
   return (
     <Select
-      labelId="demo-customized-select-label"
-      ref={ref}
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
       open={open}
@@ -145,7 +137,6 @@ function CeligoSelect({ className, children, ...props }) {
       {...props}
       >
       {children}
-
     </Select>
   );
 }
