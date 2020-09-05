@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
@@ -70,12 +70,103 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const SelectStyle = theme => ({
+  option: (provided, state) => ({
+    ...provided,
+    color: state.isSelected
+      ? theme.palette.secondary.main
+      : theme.palette.secondary.light,
+    backgroundColor:
+          state.isSelected || state.isFocused
+            ? theme.palette.background.paper2
+            : theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    minHeight: 38,
+    wordBreak: 'break-word',
+    '&:active': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.secondary.light,
+    },
+  }),
+  control: () => ({
+    width: '100%',
+    height: 38,
+    border: '1px solid',
+    padding: '4px 7px',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: '2px',
+    backgroundColor: theme.palette.background.paper,
+    alignItems: 'center',
+    cursor: 'default',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    minHeight: '38px',
+    position: 'relative',
+    boxSizing: 'borderBox',
+    transition: 'all 100ms ease 0s',
+    outline: '0px !important',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+  }),
+  menu: () => ({
+    zIndex: 2,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    position: 'absolute',
+    backgroundColor: theme.palette.background.paper,
+    width: '100%',
+    boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+  }),
+  input: () => ({
+    color: theme.palette.secondary.light,
+  }),
+  placeholder: () => ({
+    color: theme.palette.secondary.light,
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  menuList: () => ({
+    padding: '0px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+  }),
+  group: () => ({
+    padding: '0px',
+  }),
+  groupHeading: () => ({
+    textAlign: 'center',
+    fontSize: '12px',
+    padding: '5px',
+    borderBottom: '1px solid',
+    borderColor: theme.palette.divider,
+    background: theme.palette.secondary.lightest,
+    color: theme.palette.text.secondary,
+  }),
+  dropdownIndicator: () => ({
+    color: theme.palette.secondary.light,
+    padding: '8px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: fade(theme.palette.secondary.light, 0.8),
+    },
+  }),
+  singleValue: (provided, state) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+    const color = theme.palette.secondary.light;
 
+    return { ...provided, opacity, transition, color };
+  },
+});
 export default function DynaTypeableSelect(props) {
   const {
     id,
     disabled,
-    value,
+    value: propValue = '',
     placeholder,
     endAdornment,
     onBlur,
@@ -85,189 +176,81 @@ export default function DynaTypeableSelect(props) {
     options = [],
     isValid,
     TextComponent,
-    // triggered when field is touched.
-    triggerBlurOnTouch = false,
-    hideDropdownOnChange = false,
+    onTouch,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
   } = props;
+  const classes = useStyles();
   const ref = useRef(null);
   const suggestions = options.map(option => ({
     label: option[labelName],
-    value: option[valueName],
+    value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
   }));
-  const [inputState, setInputState] = useState({
-    inputValue: value || '',
-    isFocus: false,
-    filter: false,
-  });
-  const [showDropdown, setShowDropdown] = useState(false);
-  const { filter, inputValue, isFocus } = inputState;
-  // close clicked inside in component
-  const handleClickInside = event => {
-    if (
-      showDropdown === false &&
-      !disabled &&
-      ref.current &&
-      ref.current.contains(event.target)
-    ) {
-      setShowDropdown(true);
+
+  const [value, setValue] = useState(propValue?.toString());
+  const [isFocused, setIsFocused] = useState(false);
+
+  const handleFocusIn = useCallback(() => {
+    if (!isFocused) { setIsFocused(true); }
+  }, [isFocused]);
+  const handleFocusOut = useCallback(() => {
+    if (isFocused) { setIsFocused(false); }
+    if (onTouch) {
+      onTouch(id);
     }
-  };
+  }, [id, isFocused, onTouch]);
 
   useEffect(() => {
+    const div = ref.current;
+
     // Bind the event listener
-    document.addEventListener('click', handleClickInside, true);
+    div.addEventListener('focusin', handleFocusIn, true);
+    div.addEventListener('focusout', handleFocusOut, true);
 
     return () => {
       // Unbind the event listener on clean up
-      document.removeEventListener('click', handleClickInside, true);
+      div.removeEventListener('focusin', handleFocusIn, true);
+      div.removeEventListener('focusout', handleFocusOut, true);
     };
-  });
+  }, [handleFocusIn, handleFocusOut]);
   const handleChange = newObj => {
     const newVal = newObj.value;
 
-    setInputState({ ...inputState, inputValue: newVal });
+    setValue(newVal);
+    setIsFocused(false);
 
-    if (onBlur) onBlur(id, newVal);
-    if (hideDropdownOnChange) { setShowDropdown(false); }
+    // if (hideDropdownOnChange) { setShowDropdown(false); }
   };
 
-  const handleBlur = () => {
-    setShowDropdown(false);
-
-    if (value === inputValue && !triggerBlurOnTouch) {
-      return;
+  useEffect(() => {
+    if (!isFocused && propValue !== value && onBlur) {
+      onBlur(id, value);
     }
-
-    // check if entered value is a part of suggestions
-    const selectedObj = suggestions.find(o => o.label === inputValue);
-    const val = selectedObj ? selectedObj.value : inputValue;
-
-    if (onBlur) onBlur(id, val);
-    setInputState({ ...inputState, isFocus: false });
-  };
-
-  // const handleFocus = () => {
-  //   setInputState({ ...inputState, isFocus: false });
-  // };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value, isFocused, propValue]);
 
   const handleTextChange = (id, val) => {
-    setInputState({ filter: true, isFocus: true, inputValue: val });
+    setValue(val);
     onBlur(id, val);
   };
 
   const handleInputChange = (newVal, event) => {
-    if (event.action === 'input-change') setInputState({ filter: true, isFocus: true, inputValue: newVal });
+    if (event.action === 'input-change') setValue(newVal);
   };
 
   const selectedValue =
-    !isFocus && suggestions.find(o => o.value === inputValue);
+    !isFocused && suggestions.find(suggestionItem => suggestionItem.value === value);
   const inputVal =
-    (!isFocus && selectedValue && selectedValue.label) || inputValue;
-  const classes = useStyles();
-  const theme = useTheme();
-  const customStyles = {
-    option: (provided, state) => ({
-      ...provided,
-      color: state.isSelected
-        ? theme.palette.secondary.main
-        : theme.palette.secondary.light,
-      backgroundColor:
-        state.isSelected || state.isFocused
-          ? theme.palette.background.paper2
-          : theme.palette.background.paper,
-      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-      minHeight: 38,
-      wordBreak: 'break-word',
-      '&:active': {
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.secondary.light,
-      },
-    }),
-    control: () => ({
-      width: '100%',
-      height: 38,
-      border: '1px solid',
-      padding: '4px 7px',
-      borderColor: theme.palette.secondary.lightest,
-      borderRadius: '2px',
-      backgroundColor: theme.palette.background.paper,
-      alignItems: 'center',
-      cursor: 'default',
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      minHeight: '38px',
-      position: 'relative',
-      boxSizing: 'borderBox',
-      transition: 'all 100ms ease 0s',
-      outline: '0px !important',
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      },
-    }),
-    menu: () => ({
-      zIndex: 2,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      width: '100%',
-      boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
-      borderRadius: theme.spacing(0, 0, 0.5, 0.5),
-    }),
-    input: () => ({
-      color: theme.palette.secondary.light,
-    }),
-    placeholder: () => ({
-      color: theme.palette.secondary.light,
-    }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-    menuList: () => ({
-      padding: '0px',
-      maxHeight: '300px',
-      overflowY: 'auto',
-    }),
-    group: () => ({
-      padding: '0px',
-    }),
-    groupHeading: () => ({
-      textAlign: 'center',
-      fontSize: '12px',
-      padding: '5px',
-      borderBottom: '1px solid',
-      borderColor: theme.palette.divider,
-      background: theme.palette.secondary.lightest,
-      color: theme.palette.text.secondary,
-    }),
-    dropdownIndicator: () => ({
-      color: theme.palette.secondary.light,
-      padding: '8px',
-      cursor: 'pointer',
-      '&:hover': {
-        color: fade(theme.palette.secondary.light, 0.8),
-      },
-    }),
-    singleValue: (provided, state) => {
-      const opacity = state.isDisabled ? 0.5 : 1;
-      const transition = 'opacity 300ms';
-      const color = theme.palette.secondary.light;
-
-      return { ...provided, opacity, transition, color };
-    },
-  };
+    (!isFocused && selectedValue && selectedValue.label) || value;
+  const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
-    if (filter) {
-      return options.label.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
-    }
+    if (!options.label || !options.value) return false;
+    const input = rawInput?.toString().toLowerCase();
 
-    return true;
+    return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
   };
 
   return (
@@ -276,7 +259,7 @@ export default function DynaTypeableSelect(props) {
       error={!isValid}
       disabled={disabled}
       className={classes.root}>
-      {showDropdown && (
+      {isFocused && (
         <Select
           id={id}
           data-test={id}
@@ -289,9 +272,7 @@ export default function DynaTypeableSelect(props) {
           placeholder={placeholder || ''}
           onInputChange={handleInputChange}
           onChange={handleChange}
-          onBlur={handleBlur}
           styles={customStyles}
-          // onFocus={handleFocus}
           autoFocus
           openOnFocus
           components={components}
@@ -300,7 +281,7 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!showDropdown &&
+      {!isFocused &&
         (TextComponent ? (
           <TextComponent
             {...props}

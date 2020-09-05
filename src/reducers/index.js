@@ -4916,8 +4916,6 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
   return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
 };
 
-selectors.mapping = state => fromSession.mapping(state && state.session);
-
 selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);
 
