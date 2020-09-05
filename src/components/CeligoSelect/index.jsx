@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import Select from '@material-ui/core/Select';
@@ -9,8 +9,15 @@ import ArrowDownIcon from '../icons/ArrowDownIcon';
 const useStyles = makeStyles(theme => ({
   doneButton: {
     width: '100%',
-    height: theme.spacing(6),
-    border: 0,
+    minHeight: 42,
+    margin: 0,
+    padding: 0,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  selectMenu: {
+    diaplay: 'flex',
+    flexDirection: 'column',
   },
   select: {
     display: 'flex !important',
@@ -52,11 +59,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const DoneButton = ({className, onClick}) => (
+  <Button
+    id="select-close"
+    data-test="closeSelect"
+    variant="outlined"
+    color="secondary"
+    onClick={onClick}
+    className={className}>
+    Done
+  </Button>
+);
+
 function CeligoSelect({ className, children, ...props }) {
-  const {multiple, onChange} = props;
+  const {multiple} = props;
   const [open, setOpen] = useState(false);
   const classes = useStyles();
-  const isSelectOverriden = !!props.open;
   const openSelect = useCallback(() => {
     setOpen(true);
   }, []);
@@ -65,39 +83,70 @@ function CeligoSelect({ className, children, ...props }) {
       setOpen(false);
     }, []
   );
-  const handleOnChange = useCallback((evt, _item) => {
-    if (_item?.props?.id === 'close-select') {
-      closeSelect();
+  const ref = useRef(null);
+  const paperProp = useRef(null);
 
-      return;
-    }
-    onChange(evt);
-  }, [closeSelect, onChange]);
+  const handleSelectClose = useCallback(() => {
+    closeSelect();
+  }, [closeSelect]);
+
+  /** In case open property is overriden by parent, openSelect and closeSelect functionality will not work.
+      The same is to be taken care by parent component
+  */
+  const showDoneBtn = !props.open && multiple;
+
+  const MenuComponent = useCallback(
+    ({children, ...props}) => (
+      <div {...props}>
+        {children}
+        {showDoneBtn && (
+          <DoneButton
+            className={classes.doneButton}
+            onClick={handleSelectClose} />
+        )}
+      </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const MenuProps = useMemo(() => ({
+    PaperProps: {
+      ref: paperProp,
+      style: {
+        maxHeight: 252,
+        width: 250,
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+
+      },
+      component: MenuComponent,
+    },
+    MenuListProps: {
+      style: {
+        overflowY: 'auto',
+      },
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), []);
 
   return (
     <Select
+      labelId="demo-customized-select-label"
+      ref={ref}
       IconComponent={ArrowDownIcon}
       className={clsx(classes.select, className)}
       open={open}
       onOpen={openSelect}
       onClose={closeSelect}
+      classes={{selectMenu: classes.selectMenu}}
+      MenuProps={MenuProps}
       {...props}
-      // in case open property is overriden by parent onChange handler to be directly called for parent
-      onChange={isSelectOverriden ? onChange : handleOnChange}
       >
       {children}
-      {multiple && (
-        <Button
-          id="close-select"
-          data-test="closeSelect"
-          variant="outlined"
-          color="secondary"
-          className={classes.doneButton}>
-          Done
-        </Button>
-      )}
+
     </Select>
   );
 }
-
 export default CeligoSelect;
