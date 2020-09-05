@@ -96,7 +96,7 @@ export default function DrawerTitleBar({
           </IconButton>
           )}
           {title ||
-            `${addCategory ? 'Add category: ' : 'Edit Mappings:'} ${
+            `${addCategory ? 'Add category: ' : 'Edit mappings:'} ${
               flowName.length > 40
                 ? `${flowName.substring(0, 40 - 3)}...`
                 : flowName

@@ -55,7 +55,7 @@ export default function DynaTextFtpPort(props) {
   );
 
   return (
-    <FormControl>
+    <FormControl className={classes.dynaTextFtpFiedWrapper}>
       <div>
         <FormLabel htmlFor={id} error={!isValid}>
           {label}
