@@ -1,5 +1,4 @@
 import React from 'react';
-import CeligoTimeAgo from '../../CeligoTimeAgo';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Download from '../commonActions/Download';
@@ -11,9 +10,11 @@ import NameCell from './cells/NameCell';
 import OnOffCell from './cells/OnOffCell';
 import RunCell from './cells/RunCell';
 import ErrorsCell from './cells/ErrorCell';
+import StatusCell from './cells/StatusCell';
 import ScheduleCell from './cells/ScheduleCell';
 import MappingCell from './cells/MappingCell';
 import SettingsCell from './cells/SettingsCell';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: (empty, actionProps) => {
@@ -57,7 +58,7 @@ export default {
       },
       {
         heading: 'Last run',
-        value: r => <CeligoTimeAgo date={r.lastExecutedAt} />,
+        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} />,
         orderBy: 'lastExecutedAt',
       },
       {
@@ -75,6 +76,11 @@ export default {
         },
       },
     ];
+
+    // Currently Errors column is not supported for EM1.0
+    if (!actionProps || !actionProps.isUserInErrMgtTwoDotZero) {
+      columns = columns.filter(column => column.heading !== 'Errors');
+    }
 
     if (actionProps.isIntegrationApp) {
       columns.push(

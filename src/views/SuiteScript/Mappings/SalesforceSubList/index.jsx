@@ -35,14 +35,14 @@ export default function SalesforceSubListDialog() {
   const dispatch = useDispatch();
 
   const [selectedValues, setSelectedValues] = useState([]);
-  const {relationshipName, sObjectType, ssLinkedConnectionId} = useSelector(state => {
+  const {relationshipName, sObjectType, ssLinkedConnectionId, relationshipType} = useSelector(state => {
     const abcd = selectors.suiteScriptMappings(state);
     const {sfSubListExtractFieldName, ssLinkedConnectionId, integrationId, flowId} = abcd;
     const {data} = selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId});
     const childRelationshipField = data && data.find(field => field.value === sfSubListExtractFieldName);
-    const {relationshipName, childSObject: sObjectType} = childRelationshipField;
+    const {relationshipName, childSObject: sObjectType, type: relationshipType} = childRelationshipField;
 
-    return {relationshipName, sObjectType, ssLinkedConnectionId} || emptyObj;
+    return {relationshipName, sObjectType, ssLinkedConnectionId, relationshipType} || emptyObj;
   }, shallowEqual);
 
   const handleClose = useCallback(() => {
@@ -50,13 +50,16 @@ export default function SalesforceSubListDialog() {
   }, [dispatch]);
   const handleSave = useCallback(() => {
     const extractList = selectedValues.map(val => {
+      if (relationshipType === 'childFieldRelationship') {
+        return val;
+      }
       const index = val.indexOf('.');
 
       return `${val.substring(0, index)}[*].${val.substring(index + 1)}`;
     });
 
     dispatch(actions.suiteScript.mapping.patchExtractList(extractList));
-  }, [dispatch, selectedValues]);
+  }, [dispatch, relationshipType, selectedValues]);
 
   return (
     <ModalDialog show onClose={handleClose}>

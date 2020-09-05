@@ -245,6 +245,40 @@ export default {
         },
       },
     },
+    MuiPickersDay: {
+      day: {
+        borderRadius: 4,
+      },
+    },
+    MuiPickersClock: {
+      container: {
+        marginTop: 0,
+      },
+      clock: {
+        backgroundColor: colors.celigoNeutral2,
+      },
+    },
+    MuiPickersToolbar: {
+      toolbar: {
+        backgroundColor: colors.celigoWhite,
+        height: 64,
+      },
+    },
+    MuiPickersTimePickerToolbar: {
+      toolbarAmpmLeftPadding: {
+        paddingLeft: 24,
+      },
+    },
+    MuiPickersToolbarText: {
+      toolbarTxt: {
+        color: colors.celigoNeutral4,
+        fontSize: 48,
+      },
+      toolbarBtnSelected: {
+        color: colors.celigoNeutral8,
+      },
+    },
+
     MuiMenuItem: {
       root: {
         minHeight: 38,

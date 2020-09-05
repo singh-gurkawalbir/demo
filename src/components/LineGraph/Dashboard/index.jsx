@@ -2,14 +2,12 @@ import { makeStyles } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
-import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import RightDrawer from '../../drawer/Right';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import DynaMultiSelect from './MultiSelect';
+import DynaMultiSelect from '../MultiSelect';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -23,11 +21,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const flowsConfig = { type: 'flows'};
+
 export default function LineGraphDrawer({ integrationId }) {
-  const match = useRouteMatch();
-  const parentUrl = match.url;
   const classes = useStyles();
-  const history = useHistory();
   const dispatch = useDispatch();
   const [selectedResources, setSelectedResources] = useState([]);
   const [range, setRange] = useState({
@@ -44,9 +40,6 @@ export default function LineGraphDrawer({ integrationId }) {
       resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
-  const handleClose = useCallback(() => {
-    history.push(parentUrl);
-  }, [history, parentUrl]);
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
@@ -63,8 +56,8 @@ export default function LineGraphDrawer({ integrationId }) {
     []
   );
 
-  const action = useMemo(
-    () => (
+  return (
+    <div>
       <>
         <DateRangeSelector onSave={handleDateRangeChange} />
         <DynaMultiSelect
@@ -82,26 +75,12 @@ export default function LineGraphDrawer({ integrationId }) {
           onFieldChange={handleResourcesChange}
         />
       </>
-    ),
-    [flowResources, handleDateRangeChange, handleResourcesChange, selectedResources]
-  );
-
-  return (
-    <RightDrawer
-      anchor="right"
-      title="Dashboard"
-      height="tall"
-      width="full"
-      actions={action}
-      variant="permanent"
-      onClose={handleClose}
-      path="charts">
       <FlowCharts
         integrationId={integrationId}
         selectedResources={selectedResources}
         range={range}
         className={classes.scheduleContainer}
       />
-    </RightDrawer>
+    </div>
   );
 }

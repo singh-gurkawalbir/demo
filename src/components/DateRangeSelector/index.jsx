@@ -131,7 +131,8 @@ export const staticRangeHandler = {
     const definedRangeDistance = moment(definedRange.endDate).diff(moment(definedRange.startDate), 'hours');
     const rangeDistance = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
-    return definedRangeDistance === rangeDistance;
+    return definedRangeDistance === rangeDistance ||
+      (definedRange.startDate === range.startDate && definedRange.endDate === range.endDate);
   },
 };
 const useStyles = makeStyles(theme => ({
@@ -165,7 +166,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, onSave }) {
+export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
   const [selectedRanges, setSelectedRanges] = useState([
     {
       startDate:
@@ -191,11 +192,11 @@ export default function DateRangeSelector({ value, onSave }) {
   }, []);
   const dateRangeOptions = useMemo(
     () =>
-      rangeList.map(rangeItem => ({
+      [...customPresets, ...rangeList].map(rangeItem => ({
         ...staticRangeHandler,
         ...rangeItem,
       })),
-    []
+    [customPresets]
   );
 
   return (
@@ -205,7 +206,7 @@ export default function DateRangeSelector({ value, onSave }) {
         variant="outlined"
         color="secondary"
         className={classes.dateRangePopperBtn}>
-        {getDurationLabel(selectedRanges)}
+        {getDurationLabel(selectedRanges, customPresets)}
       </Button>
       <ArrowPopper
         open={!!anchorEl}

@@ -98,12 +98,17 @@ export const getInterval = range => {
   return undefined;
 };
 
-export const getDurationLabel = (ranges = []) => {
+export const getDurationLabel = (ranges = [], customPresets = []) => {
   const { startDate, endDate } = ranges[0] || {};
+  const {startDate: lastRunStartDate, endDate: lastRunEndDate} = customPresets[0]?.range() || {};
 
   if (!startDate && !endDate) { return 'Please select a range'; }
-  const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
+  if (startDate?.toISOString() === lastRunStartDate?.toISOString() &&
+    endDate?.toISOString() === lastRunEndDate?.toISOString()) {
+    return 'Last run';
+  }
 
+  const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
   const distanceInHours = formatDistanceStrict(startDate, endDate, {
     unit: 'hour',
   });

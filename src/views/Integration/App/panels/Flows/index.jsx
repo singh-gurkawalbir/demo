@@ -23,6 +23,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
+import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -136,12 +137,16 @@ function FlowList({ integrationId, storeId }) {
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
 
   return (
     <LoadResources required resources="flows,exports">
       <ScheduleDrawer />
+      <QueuedJobsDrawer />
       <SettingsDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -175,7 +180,7 @@ function FlowList({ integrationId, storeId }) {
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
-        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows' }}
+        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
         />
     </LoadResources>
   );
