@@ -139,6 +139,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   const domainRange = d3.scaleTime().domain([new Date(startDate), new Date(endDate)]);
   const ticks = getTicks(domainRange, range);
+  const domain = [new Date(startDate).getTime(), new Date(endDate).getTime()];
   const flowData = {};
 
   if (Array.isArray(data)) {
@@ -264,7 +265,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           }}>
           <XAxis
             dataKey="timeInMills"
-            domain={domainRange}
+            domain={domain}
             scale="time"
             type="number"
             ticks={ticks}

@@ -7,6 +7,7 @@ import actions from '../../../../../actions';
 import JobDashboard from '../../../../../components/JobDashboard';
 import PanelHeader from '../../../../../components/PanelHeader';
 import LoadResources from '../../../../../components/LoadResources';
+import ChartsDrawer from '../../../../../components/LineGraph/Dashboard';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,6 +23,9 @@ export default function DashboardPanel({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const filterStoreId = useSelector(
     state => selectors.filter(state, 'jobs').storeId
+  );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
   // We may not have an IA that supports children, but those who do,
@@ -42,8 +46,9 @@ export default function DashboardPanel({ integrationId, storeId }) {
     <div className={classes.root}>
       <LoadResources required resources="flows">
         <PanelHeader title="Dashboard" />
-
-        <JobDashboard integrationId={integrationId} />
+        {isUserInErrMgtTwoDotZero
+          ? <ChartsDrawer integrationId={integrationId} />
+          : <JobDashboard integrationId={integrationId} />}
       </LoadResources>
     </div>
   );

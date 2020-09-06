@@ -81,7 +81,7 @@ selectors.userNotifications = createSelector(
       } else {
         if (t.toTransfer && t.toTransfer.integrations) {
           t.toTransfer.integrations.forEach(i => {
-            name = ((i._id === 'none') ? 'Standalone Flows' : i.name) || i._id;
+            name = ((i._id === 'none') ? 'Standalone flows' : i.name) || i._id;
             if (i.tag) {
               name += ` (${i.tag})`;
             }
