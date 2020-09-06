@@ -456,9 +456,9 @@ function FlowBuilder() {
 
     return (
       <div className={classes.actions}>
-        {isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
+        {isUserInErrMgtTwoDotZero && flow && (
         <IconButton
-          disabled={isNewFlow}
+          disabled={!flow.lastExecutedAt}
           className={classes.chartsIcon}
           data-test="charts"
           onClick={handleDrawerClick('charts')}>

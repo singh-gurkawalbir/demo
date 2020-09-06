@@ -13,7 +13,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import RightDrawer from '../../drawer/Right';
 
-const emptySet = {};
+const emptySet = [];
 const emptyObject = {};
 
 /**
