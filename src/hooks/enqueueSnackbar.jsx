@@ -46,9 +46,11 @@ export default function useEnqueueSnackbar() {
             </IconButton>
           </>
         ),
-        // onClose: (event, reason) => {
-        //   handleClose && handleClose(event, reason);
-        // },
+        onClose: (event, reason) => {
+          if (reason === 'timeout') {
+            handleClose && handleClose(event, reason);
+          }
+        },
         autoHideDuration,
       }),
     [closeSnackbar, enqueueSnackbar]
