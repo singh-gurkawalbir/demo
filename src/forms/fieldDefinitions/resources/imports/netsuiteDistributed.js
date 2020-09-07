@@ -88,7 +88,7 @@ export default {
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
     // eslint-disable-next-line camelcase
-    defaultValue: r => (r?.netsuite_da?.useSS2Restlets && r?.netsuite_da?.useSS2Restlets !== 'false') ? 'true' : 'false',
+    defaultValue: r => r?.netsuite_da?.useSS2Restlets ? 'true' : 'false',
     options: [
       {
         items: [

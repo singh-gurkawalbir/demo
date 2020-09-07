@@ -1,4 +1,7 @@
-import { isArray } from 'lodash';
+import { isArray, isObject } from 'lodash';
+// eslint-disable-next-line camelcase
+import { html_beautify } from 'js-beautify';
+import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
 export function versionOptions({ assistantData }) {
@@ -104,4 +107,88 @@ export function selectOptions({
   }
 
   return [];
+}
+
+export function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
+  let options = [];
+  let endpointName;
+
+  endpoints.forEach(ep => {
+    if (ep.folder) {
+      options = options.concat(semiAssistantOperationOptions(ep.children, {title: parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title, key: [...parent.key, ep.key]}));
+    } else {
+      endpointName = ep.name;
+      if (!endpointName) {
+        endpointName = parent && parent.title ? `${parent.title} : ${ep.title}` : ep.title;
+      }
+      options.push({
+        label: endpointName,
+        value: parent ? [...parent.key, ep.key].join('.') : ep.key,
+      });
+    }
+  });
+
+  return options;
+}
+
+export function semiAssistantExportOperationOptions(assistantData) {
+  let options = [];
+
+  assistantData?.export?.endpoints.forEach(ep => {
+    options = options.concat(semiAssistantOperationOptions(ep.children, {key: [ep.key]}));
+  });
+
+  return [{
+    items: options,
+  }];
+}
+
+export function deepObjectExtend(target, source) {
+  Object.keys(source).forEach(prop => {
+    if (Object.keys(target).includes(prop) && isObject(target[prop])) {
+      deepObjectExtend(target[prop], source[prop]);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      target[prop] = source[prop];
+    }
+  });
+
+  return target;
+}
+
+export function semiAssistantExportConfig(assistantData, operationId) {
+  const keys = operationId.split('.');
+  let toReturn = {};
+  let node = deepClone(assistantData.export);
+
+  toReturn = deepObjectExtend(toReturn, node.config);
+
+  keys.forEach(key => {
+    if (node.endpoints) {
+      node = node.endpoints.find(ep => ep.key === key);
+    } else if (node.children) {
+      node = node.children.find(ep => ep.key === key);
+    }
+    toReturn = deepObjectExtend(toReturn, node.config || {});
+  });
+
+  if (toReturn?.http?.body) {
+    try {
+      toReturn.http.body = html_beautify(toReturn.http.body, { indent_size: 2});
+    } catch (ex) {
+      // ex
+    }
+  }
+
+  if (toReturn?.doesNotSupportPaging) {
+    delete toReturn.http.paging;
+  }
+
+  if (!toReturn.type) {
+    toReturn.type = 'all';
+  }
+
+  delete toReturn.ui;
+
+  return toReturn;
 }

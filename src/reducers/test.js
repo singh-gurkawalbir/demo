@@ -596,7 +596,7 @@ describe('tiles', () => {
   const standaloneTiles = [
     {
       _integrationId: 'none',
-      name: 'Standalone Flows',
+      name: 'Standalone flows',
       numError: 0,
       offlineConnections: ['conn1', 'conn2'],
       numFlows: 5,
@@ -641,7 +641,7 @@ describe('tiles', () => {
     const expected = [
       {
         _integrationId: 'none',
-        name: 'Standalone Flows',
+        name: 'Standalone flows',
         numError: 0,
         offlineConnections: ['conn1', 'conn2'],
         numFlows: 5,
@@ -854,7 +854,7 @@ describe('tiles', () => {
     const expected = [
       {
         _integrationId: 'none',
-        name: 'Standalone Flows',
+        name: 'Standalone flows',
         numError: 0,
         offlineConnections: ['conn1', 'conn2'],
         numFlows: 5,

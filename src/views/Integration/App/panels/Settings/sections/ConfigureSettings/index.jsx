@@ -7,6 +7,7 @@ import { integrationSettingsToDynaFormMetadata } from '../../../../../../../form
 import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIASettingsStateWithHandleClose';
+import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -69,6 +70,7 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId, p
     <LoadResources
       required
       resources={['flows', 'exports', 'imports', 'connections']}>
+      {formState?.saveStatus && <SavingMask />}
       <IAFormStateManager
         {...activeTabProps}
         key={storeId}

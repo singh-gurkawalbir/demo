@@ -283,14 +283,14 @@ export function* refreshHelperFunctions() {
 
 export default [
   takeEvery(
-    actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS,
+    actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS,
     refreshHelperFunctions
   ),
 
   takeLatest(
-    [actionTypes.EDITOR_INIT, actionTypes.EDITOR_PATCH],
+    [actionTypes.EDITOR.INIT, actionTypes.EDITOR.PATCH],
     autoEvaluateProcessor
   ),
-  takeLatest(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
-  takeLatest(actionTypes.EDITOR_SAVE, saveProcessor),
+  takeLatest(actionTypes.EDITOR.EVALUATE_REQUEST, evaluateProcessor),
+  takeLatest(actionTypes.EDITOR.SAVE, saveProcessor),
 ];

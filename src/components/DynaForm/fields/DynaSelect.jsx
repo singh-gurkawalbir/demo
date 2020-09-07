@@ -242,7 +242,7 @@ export default function DynaSelect(props) {
   );
   const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [classes, finalTextValue, id, items, matchMenuIndex]);
+    [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
   return (
     <div className={classes.dynaSelectWrapper}>

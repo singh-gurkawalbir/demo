@@ -65,6 +65,7 @@ export default {
   getMetaData: params => {
     const {
       value,
+      isCategoryMapping,
       importResource,
     } = params;
     const {adaptorType} = importResource;
@@ -93,6 +94,10 @@ export default {
       }
 
       default:
+    }
+
+    if (isCategoryMapping) {
+      fieldMeta = netsuiteMappingSettings.getMetaData(params);
     }
 
     const { isNotEditable } = value;
