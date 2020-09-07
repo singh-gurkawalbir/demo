@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,7 +69,24 @@ export function KeyValueComponent(props) {
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
 
-  const [values, setValues] = useState((value || [])?.map(val => ({...val, key: shortid.generate()})));
+  const addEmptyRowIfNotExist = useCallback(val => {
+    const emptyRow = val.find(_value => !_value[keyName] && !_value[valueName]);
+
+    if (emptyRow) {
+      return val;
+    }
+
+    return [...val, {key: shortid.generate()}];
+  }, [keyName, valueName]);
+  const getInitVal = useCallback(
+    () => {
+      const formattedValue = (value || []).map(val => ({...val, key: shortid.generate()}));
+
+      return addEmptyRowIfNotExist(formattedValue);
+    },
+    [addEmptyRowIfNotExist, value],
+  );
+  const [values, setValues] = useState(getInitVal());
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
   const preUpdate = useCallback(val => val.map(({key, ...rest}) => rest), []);
@@ -80,7 +97,7 @@ export function KeyValueComponent(props) {
 
     if (valueTmp[row]) {
       valueTmp.splice(row, 1);
-      setValues(valueTmp);
+      setValues(addEmptyRowIfNotExist(valueTmp));
       onUpdate(preUpdate(valueTmp));
     }
   };
@@ -100,8 +117,15 @@ export function KeyValueComponent(props) {
     const removedEmptyValues = valuesCopy.filter(
       value => value[keyName] || value[valueName]
     );
+    const lastRow = valuesCopy[valuesCopy.length - 1];
+    const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
 
-    setValues(removedEmptyValues);
+    if (isLastRowEmpty) {
+      setValues([...removedEmptyValues, lastRow]);
+    } else {
+      setValues(addEmptyRowIfNotExist(removedEmptyValues));
+    }
+
     setRowInd(
       row !== undefined && row < removedEmptyValues.length
         ? row
@@ -109,16 +133,7 @@ export function KeyValueComponent(props) {
     );
     setIsKey(field === keyName);
     onUpdate(preUpdate(removedEmptyValues));
-  }, [keyName, onUpdate, preUpdate, valueName, values]);
-
-  const tableData = useMemo(() => {
-    const tableArr = [...values];
-
-    // insert an empty row for auto suggest to show options on click
-    tableArr.push({ extract: '', generate: ''});
-
-    return tableArr;
-  }, [values]);
+  }, [addEmptyRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
 
   const handleKeyUpdate = key => event => {
     const { value } = event.target;
@@ -142,7 +157,7 @@ export function KeyValueComponent(props) {
         <FieldHelp {...props} />
       </div>
       <>
-        {tableData.map((r, index) => (
+        {values.map((r, index) => (
           <div className={classes.rowContainer} key={r.key}>
             {suggestKeyConfig && (
               <AutoSuggest
@@ -210,7 +225,7 @@ export function KeyValueComponent(props) {
 
             {showDelete && (
               <ActionButton
-                disabled={disabled}
+                disabled={disabled || (!r[keyName] && !r[valueName])}
                 id={`delete-${index}`}
                 data-test={`delete-${index}`}
                 onClick={handleDelete(r.key)}>
@@ -243,3 +258,4 @@ export default function DynaKeyValue(props) {
     </>
   );
 }
+
