@@ -216,7 +216,7 @@ export default function DynaTypeableSelect(props) {
       div.removeEventListener('focusout', handleFocusOut, true);
     };
   }, [handleFocusIn, handleFocusOut]);
-  const handleChange = newObj => {
+  const handleChange = useCallback(newObj => {
     const newVal = newObj.value;
 
     setValue(newVal);
@@ -224,16 +224,16 @@ export default function DynaTypeableSelect(props) {
     onBlur(id, newVal);
 
     // if (hideDropdownOnChange) { setShowDropdown(false); }
-  };
+  }, [id, onBlur]);
 
-  const handleTextChange = (id, val) => {
+  const handleTextChange = useCallback((id, val) => {
     setValue(val);
     onBlur(id, val);
-  };
+  }, [onBlur]);
 
-  const handleInputChange = (newVal, event) => {
+  const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') setValue(newVal);
-  };
+  }, []);
 
   const handleBlur = useCallback(
     () => {
