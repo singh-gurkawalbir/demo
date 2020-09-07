@@ -1436,6 +1436,23 @@ selectors.integrationChildren = (state, integrationId) => {
   return children;
 };
 
+selectors.mkIntegrationChildren = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  (state, integrationId) => integrationId,
+  (integrations = [], integrationId) => {
+    const children = [];
+    const integration = integrations.find(int => int._id === integrationId) || {};
+    const childIntegrations = integrations.filter(int => int._parentId === integrationId);
+
+    children.push({ value: integrationId, label: integration.name });
+    childIntegrations.forEach(ci => {
+      children.push({ value: ci._id, label: ci.name, mode: ci.mode });
+    });
+
+    return children;
+  }
+);
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = fromData.integrationAppSettings(state.data, id);
@@ -3280,6 +3297,21 @@ selectors.flowImports = (state, id) => {
 
   return getImportsFromFlow(flow, imports);
 };
+
+selectors.mkflowImportsList = () => createSelector(
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  state => state?.data?.resources?.imports,
+  (state, flowId, importId) => importId,
+  (flow, imports, importId) => {
+    if (importId) {
+      const subRecordResource = imports.find(i => i._id === importId);
+
+      return [subRecordResource];
+    }
+
+    return getImportsFromFlow(flow, imports);
+  }
+);
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
