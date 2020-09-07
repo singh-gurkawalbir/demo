@@ -122,7 +122,7 @@ export default function DynaAssistantSearchParams(props) {
       <div className={classes.dynaAssSearchParamsWrapper}>
         <div className={classes.configureLabelWrapper}>
           <FormLabel className={classes.dynaAssistantFormLabel}>
-            Configure search parameters
+            {label}
           </FormLabel>
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />

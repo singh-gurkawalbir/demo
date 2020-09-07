@@ -236,11 +236,12 @@ export function fieldMeta({ resource, assistantData }) {
               ? operationDetails.delta.defaults
               : {},
         });
-      } else if (
+      }
+      if (
         operationDetails.bodyParameters &&
         operationDetails.bodyParameters.length > 0
       ) {
-        searchParameterFields = searchParameterFieldsMeta({
+        searchParameterFields = searchParameterFields.concat(searchParameterFieldsMeta({
           label: operationDetails.bodyParametersLabel,
           paramLocation: PARAMETER_LOCATION.BODY,
           parameters: operationDetails.bodyParameters,
@@ -251,7 +252,7 @@ export function fieldMeta({ resource, assistantData }) {
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
               : {},
-        });
+        }));
       }
     }
   }
