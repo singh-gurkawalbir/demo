@@ -4,7 +4,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
+  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
@@ -12,6 +12,7 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import { getDateMask } from './DynaDateTime';
 
 const useStyles = makeStyles(theme => ({
   dynaDateLabelWrapper: {
@@ -70,10 +71,13 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-        <DatePicker
+
+        <KeyboardDatePicker
           disabled={disabled}
           variant="inline"
           format={displayFormat}
+          placeholder={displayFormat}
+          mask={getDateMask(displayFormat)}
           value={dateValue}
           label="Date"
           onChange={setDateValue}

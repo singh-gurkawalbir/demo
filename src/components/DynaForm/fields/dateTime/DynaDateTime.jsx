@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
-  TimePicker,
+  KeyboardDatePicker,
+  KeyboardTimePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
@@ -29,12 +29,73 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+export const getDateMask = dateFormat => {
+  if (!dateFormat) { return ''; }
+
+  return dateFormat.split('').map(char => {
+    if (char === 'D' || char === 'M' || char === 'Y') return '_';
+
+    return char;
+  }).join('');
+};
+
+const getTimeMask = timeMask => {
+  if (!timeMask) { return ''; }
+
+  // time format with meridian
+  if (timeMask === 'h:mm:ss a' || timeMask === 'hh:mm:ss a') {
+    return '__:__:__ _m';
+  }
+
+  // 24 hours format time
+  return '__:__:__';
+};
+
+const getDateAndTimeElements = str => {
+  const displayFormatAr = str.split(' ');
+  // date formats can be many check the profile component
+  const date = displayFormatAr?.[0];
+
+  let time = `${displayFormatAr?.[1]}`;
+
+  // if meridian is present append it to format
+  if (displayFormatAr?.[2]) {
+    time = `${displayFormatAr?.[1]} ${displayFormatAr?.[2]}`;
+  }
+
+  // these are the two possible time formats
+  if (time === 'h:mm:ss a' || time === 'hh:mm:ss a') { time = 'hh:mm:ss a'; } else if (time === 'H:mm:ss' || time === 'HH:mm:ss') { time = 'HH:mm:ss'; }
+
+  return {date, time};
+};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
+  const [timeValue, setTimeValue] = useState(value || null);
+
+  const setFormatTimeValue = dateTimeValue => {
+    if (dateTimeValue) {
+      // some dummy year dates we only care about the time
+      dateTimeValue.set('year', 2000);
+      dateTimeValue.set('month', 1);
+      dateTimeValue.set('date', 1);
+    }
+    setTimeValue(dateTimeValue);
+  };
+
+  const setFormatDateValue = dateTimeValue => {
+    if (dateTimeValue) {
+      // some dummy time we only care about the date
+      dateTimeValue.set('hour', 0);
+      dateTimeValue.set('minute', 0);
+      dateTimeValue.set('second', 0);
+    }
+    setDateValue(dateTimeValue);
+  };
   const [componentMounted, setComponentMounted] = useState(false);
   const isIAResource = useSelector(state => {
     const resource =
@@ -57,18 +118,28 @@ export default function DateTimePicker(props) {
   }
   const displayFormat = props.format || userFormat;
 
-  const displayFormatAr = displayFormat.split(' ');
-  const finalDateFormat = displayFormatAr?.[0];
-  const finalTimeFormat = `${displayFormatAr?.[1]} ${displayFormatAr?.[2]}`;
-
   useEffect(() => {
     let formattedDate = null;
+    const dataTimeValueFormatted = moment();
+
+    if (!dateValue || !timeValue) {
+      onFieldChange(id, '', !componentMounted);
+
+      return;
+    }
+
+    dataTimeValueFormatted.set('year', moment(dateValue)?.get('year') || 0);
+    dataTimeValueFormatted.set('month', moment(dateValue)?.get('month') || 0);
+    dataTimeValueFormatted.set('date', moment(dateValue)?.get('date') || 0);
+    dataTimeValueFormatted.set('hour', moment(timeValue)?.get('hour') || 0);
+    dataTimeValueFormatted.set('minute', moment(timeValue)?.get('minute') || 0);
+    dataTimeValueFormatted.set('second', moment(timeValue)?.get('second') || 0);
 
     if (isIAResource) {
-      formattedDate = dateValue && moment(dateValue).toISOString();
+      formattedDate = dataTimeValueFormatted && moment(dataTimeValueFormatted).toISOString();
     } else {
-      formattedDate = dateValue && convertUtcToTimezone(
-        moment(dateValue),
+      formattedDate = dataTimeValueFormatted && convertUtcToTimezone(
+        moment(dataTimeValueFormatted),
         dateFormat,
         timeFormat,
         timezone
@@ -77,7 +148,9 @@ export default function DateTimePicker(props) {
     onFieldChange(id, formattedDate || '', !componentMounted);
     setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateValue]);
+  }, [dateValue, timeValue]);
+
+  const { date: finalDateFormat, time: finalTimeFormat} = getDateAndTimeElements(displayFormat);
 
   return (
     <>
@@ -86,46 +159,27 @@ export default function DateTimePicker(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-        <DatePicker
+        <KeyboardDatePicker
           disabled={disabled}
           variant="inline"
           format={finalDateFormat}
+          placeholder={finalDateFormat}
+          mask={getDateMask(finalDateFormat)}
           value={dateValue}
           label="Date"
-          onChange={setDateValue}
-          onKeyDown={e => {
-          // this is specifically for qa to inject their date time string
-          // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
+          onChange={setFormatDateValue}
       />
 
-        <TimePicker
+        <KeyboardTimePicker
           disabled={disabled}
           variant="inline"
           label="Time"
+          views={['hours', 'minutes', 'seconds']}
           format={finalTimeFormat}
-          value={dateValue}
-          onChange={setDateValue}
-          onKeyDown={e => {
-            // this is specifically for qa to inject their date time string
-            // they should alter the input dom to add a qa attribute prior to injection for date time
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
-          onKeyPress={e => {
-            if (e.target.hasAttribute('qa')) return;
-
-            e.preventDefault();
-          }}
+          placeholder={finalTimeFormat}
+          mask={getTimeMask(finalTimeFormat)}
+          value={timeValue}
+          onChange={setFormatTimeValue}
       />
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
