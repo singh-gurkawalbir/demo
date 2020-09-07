@@ -227,10 +227,19 @@ export default function DynaTypeableSelect(props) {
 
   useEffect(() => {
     if (!isFocused && propValue !== value && onBlur) {
-      onBlur(id, value);
+      // check if value matches the option label
+      const selectedOpt = suggestions.find(suggestionItem => suggestionItem.label.toLowerCase() === value.toLowerCase());
+
+      if (!selectedOpt) {
+        onBlur(id, value);
+
+        return;
+      }
+      setValue(selectedOpt.value);
+      onBlur(id, selectedOpt.value);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, value, isFocused, propValue]);
+  }, [id, value, isFocused, propValue, onBlur]);
 
   const handleTextChange = (id, val) => {
     setValue(val);
