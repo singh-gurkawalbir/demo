@@ -7,17 +7,32 @@ import {
   KeyboardDatePicker,
   KeyboardTimePicker,
 } from '@material-ui/pickers';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaDateTimeLabelWrapper: {
     flexDirection: 'row !important',
     display: 'flex',
+  },
+  dateTimeWrapper: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  fieldWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    '&:first-child': {
+      marginRight: theme.spacing(1),
+    },
   },
   dynaDateCalendarBtn: {
     padding: 0,
@@ -26,6 +41,28 @@ const useStyles = makeStyles(theme => ({
       '& > span': {
         color: theme.palette.primary.main,
       },
+    },
+  },
+  keyBoardDateTimeWrapper: {
+    '& .MuiIconButton-root': {
+      padding: 0,
+      marginRight: theme.spacing(1),
+      backgroundColor: 'transparent',
+    },
+    '& .MuiInputBase-input': {
+      padding: 0,
+      height: 38,
+      paddingLeft: 15,
+    },
+  },
+  inputDateTime: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
     },
   },
 }));
@@ -158,29 +195,44 @@ export default function DateTimePicker(props) {
         <FormLabel>{label}</FormLabel>
         <FieldHelp {...props} />
       </div>
-      <MuiPickersUtilsProvider utils={MomentDateFnsUtils}>
-        <KeyboardDatePicker
-          disabled={disabled}
-          variant="inline"
-          format={finalDateFormat}
-          placeholder={finalDateFormat}
-          mask={getDateMask(finalDateFormat)}
-          value={dateValue}
-          label="Date"
-          onChange={setFormatDateValue}
-      />
+      <MuiPickersUtilsProvider utils={MomentDateFnsUtils} >
+        <div className={classes.dateTimeWrapper}>
+          <div className={classes.fieldWrapper}>
+            <KeyboardDatePicker
+              disabled={disabled}
+              variant="inline"
+              format={finalDateFormat}
+              placeholder={finalDateFormat}
+              mask={getDateMask(finalDateFormat)}
+              value={dateValue}
+              label="Date"
+              onChange={setFormatDateValue}
+              disableToolbar
+              className={classes.keyBoardDateTimeWrapper}
+              fullWidth
+              InputProps={{ className: classes.inputDateTime }}
+              keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
 
-        <KeyboardTimePicker
-          disabled={disabled}
-          variant="inline"
-          label="Time"
-          views={['hours', 'minutes', 'seconds']}
-          format={finalTimeFormat}
-          placeholder={finalTimeFormat}
-          mask={getTimeMask(finalTimeFormat)}
-          value={timeValue}
-          onChange={setFormatTimeValue}
       />
+          </div>
+          <div className={classes.fieldWrapper}>
+            <KeyboardTimePicker
+              disabled={disabled}
+              variant="inline"
+              label="Time"
+              views={['hours', 'minutes', 'seconds']}
+              format={finalTimeFormat}
+              placeholder={finalTimeFormat}
+              mask={getTimeMask(finalTimeFormat)}
+              value={timeValue}
+              onChange={setFormatTimeValue}
+              fullWidth
+              className={classes.keyBoardDateTimeWrapper}
+              InputProps={{ className: classes.inputDateTime }}
+              keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
+      />
+          </div>
+        </div>
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
     </>

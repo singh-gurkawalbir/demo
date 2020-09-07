@@ -116,6 +116,8 @@ export default {
       delete newValues['/netsuite/type'];
     }
 
+    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
+
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
         newValues['/netsuite/distributed/qualifier']
@@ -296,7 +298,7 @@ export default {
       fieldId: 'netsuite.restlet.useSS2Restlets',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
-      defaultValue: r => (r?.netsuite?.restlet?.useSS2Restlets && r?.netsuite?.restlet?.useSS2Restlets !== 'false') ? 'true' : 'false',
+      defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
       options: [
         {
           items: [

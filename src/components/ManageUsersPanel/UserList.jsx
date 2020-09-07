@@ -6,7 +6,6 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  IconButton,
   makeStyles,
 } from '@material-ui/core';
 import { selectors } from '../../reducers';
@@ -17,7 +16,6 @@ import {
   ACCOUNT_IDS,
 } from '../../utils/constants';
 import UserDetail from './UserDetail';
-import CloseIcon from '../icons/CloseIcon';
 import Help from '../Help';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RefreshableHeading from '../ResourceTable/commonCells/RefreshableHeading';
@@ -40,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function UserList({ integrationId, onEditUserClick }) {
   const classes = useStyles();
-  const [enquesnackbar, closeSnackbar] = useEnqueueSnackbar();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
   // Copied the existing logic. Todo: Refactor this selector
@@ -100,23 +98,10 @@ export default function UserList({ integrationId, onEditUserClick }) {
             vertical: 'top',
             horizontal: 'center',
           },
-          // eslint-disable-next-line react/display-name
-          action: key => (
-            <IconButton
-              data-test="closeUserListSnackbar"
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => {
-                closeSnackbar(key);
-              }}>
-              <CloseIcon />
-            </IconButton>
-          ),
         });
       }
     },
-    [closeSnackbar, enquesnackbar]
+    [enquesnackbar]
   );
   const isAccountOwner =
     permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;

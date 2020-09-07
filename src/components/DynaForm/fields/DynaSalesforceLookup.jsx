@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     float: 'right',
     marginLeft: theme.spacing(1),
   },
+  dynaTextFormControl: {
+    width: '100%',
+  },
 }));
 
 export default function DynaSalesforceLookup(props) {

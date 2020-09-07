@@ -29,6 +29,7 @@ import {
   getNextDataFlows,
   getIAFlowSettings,
   getFlowDetails,
+  getFlowResources,
   getFlowReferencesForResource,
 } from '../utils/flows';
 import {
@@ -696,12 +697,20 @@ selectors.mkFlowAllowsScheduling = () => {
       return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
-    (flow, integration, allExports) => {
+    (state, id) => {
+      const flow = resource(state?.data?.resources, 'flows', id);
+
+      if (!flow || !flow._integrationId) return false;
+
+      return selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
+    },
+    (flow, integration, allExports, isAppVersion2) => {
       if (!flow) return false;
       const isApp = flow._connectorId;
       const canSchedule = showScheduleIcon(flow, allExports);
 
-      if (!isApp) return canSchedule;
+      // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+      if (!isApp || isAppVersion2) return canSchedule;
       const flowSettings = getIAFlowSettings(integration, flow._id);
 
       return canSchedule && !!flowSettings.showSchedule;
@@ -729,8 +738,10 @@ selectors.flowSupportsMapping = (state, id) => {
   if (!flow) return false;
 
   const isApp = flow._connectorId;
+  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
 
-  if (!isApp) return true;
+  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -3466,7 +3477,7 @@ selectors.transferListWithMetadata = state => {
         let { name } = i;
 
         if (i._id === 'none') {
-          name = 'Standalone Flows';
+          name = 'Standalone flows';
         }
 
         name = name || i._id;
@@ -4287,82 +4298,13 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   return isRetryInProgress || isResolveInProgress;
 };
 
-selectors.flowResources = (state, flowId) => {
-  const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
-
-  resources.push({ _id: flowId, name: 'Flow-level' });
-
-  if (!flow) {
-    return resources;
-  }
-
-  if (flow._exportId) {
-    const exportDoc = fromData.resource(
-      state && state.data,
-      'exports',
-      flow._exportId
-    );
-
-    if (exportDoc) {
-      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
-    }
-  }
-
-  if (flow._importId) {
-    const importDoc = fromData.resource(
-      state && state.data,
-      'imports',
-      flow._importId
-    );
-
-    if (importDoc) {
-      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
-    }
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length) {
-    flow.pageGenerators.forEach(pg => {
-      const exportDoc = fromData.resource(
-        state && state.data,
-        'exports',
-        pg._exportId
-      );
-
-      if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
-      }
-    });
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp.type === 'import' && pp._importId) {
-        const importDoc = fromData.resource(
-          state && state.data,
-          'imports',
-          pp._importId
-        );
-
-        if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
-        }
-      } else if (pp.type === 'export' && pp._exportId) {
-        const exportDoc = fromData.resource(
-          state && state.data,
-          'exports',
-          pp._exportId
-        );
-
-        if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
-        }
-      }
-    });
-  }
-
-  return resources;
-};
+selectors.mkflowResources = () => createSelector(
+  state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (_, flowId) => flowId,
+  (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
+);
 
 selectors.redirectUrlToResourceListingPage = (
   state,
@@ -4983,8 +4925,6 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
 
   return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
 };
-
-selectors.mapping = state => fromSession.mapping(state && state.session);
 
 selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);

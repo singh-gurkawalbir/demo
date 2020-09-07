@@ -15,12 +15,16 @@ import DynaSubmit from '../DynaForm/DynaSubmit';
 import LoadResources from '../LoadResources';
 import getHooksMetadata from './hooksMetadata';
 import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
+import ButtonGroup from '../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   fbContDrawer: {
     width: '100%',
     overflowX: 'hidden',
     paddingTop: theme.spacing(2),
+  },
+  actionButtons: {
+    padding: theme.spacing(3, 0),
   },
 }));
 
@@ -144,24 +148,28 @@ export default function Hooks(props) {
     <LoadResources resources="scripts,stacks">
       <div className={classes.fbContDrawer}>
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test={`saveHook-${resourceId}`}
-          onClick={submitHookValues()}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          color="secondary"
-          data-test={`saveAndCloseHook-${resourceId}`}
-          onClick={submitHookValues(true)}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
-          Cancel
-        </Button>
+        <div className={classes.actionButtons}>
+          <ButtonGroup>
+            <DynaSubmit
+              formKey={formKey}
+              disabled={disableSave}
+              data-test={`saveHook-${resourceId}`}
+              onClick={submitHookValues()}>
+              {defaultLabels.saveLabel}
+            </DynaSubmit>
+            <DynaSubmit
+              formKey={formKey}
+              disabled={disableSave}
+              color="secondary"
+              data-test={`saveAndCloseHook-${resourceId}`}
+              onClick={submitHookValues(true)}>
+              {defaultLabels.saveAndCloseLabel}
+            </DynaSubmit>
+            <Button data-test={`cancelHook-${resourceId}`} onClick={onCancel}>
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </div>
       </div>
     </LoadResources>
   );

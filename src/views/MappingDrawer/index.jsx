@@ -55,7 +55,7 @@ export default function MappingDrawerRoute(props) {
         ]}
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'}
-        title="Edit Mapping"
+        title="Edit mapping"
         variant="temporary"
       >
 

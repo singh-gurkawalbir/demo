@@ -77,13 +77,15 @@ export default function PreviewInfo(props) {
 
     if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
 
-    const errorCount = error?.errors?.length || 0;
+    if (status === 'error') {
+      const errorCount = error?.errors?.length || 0;
 
-    return (
-      <ErroredMessageComponent
-        errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
-      />
-    );
+      return (
+        <ErroredMessageComponent
+          errorMessages={`${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`}
+        />
+      );
+    }
   }, [resourceSampleData]);
 
   const sampleDataOverview = useMemo(() => {
