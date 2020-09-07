@@ -240,17 +240,18 @@ export default function DynaTypeableSelect(props) {
       if (propValue !== value) {
         // check if value matches the option label
         const selectedOpt = suggestions.find(suggestionItem => suggestionItem.label.toLowerCase() === value.toLowerCase());
+        const newValue = selectedOpt ? selectedOpt.value : value;
 
-        onBlur(id, selectedOpt ? selectedOpt.value : value);
+        setValue(newValue);
+        onBlur(id, newValue);
       }
     },
     [id, onBlur, propValue, suggestions, value],
   );
 
-  const selectedValue =
-    !isFocused && suggestions.find(suggestionItem => suggestionItem.value === value);
-  const inputVal =
-    (!isFocused && selectedValue && selectedValue.label) || value;
+  const selectedValue = suggestions.find(suggestionItem => suggestionItem.value === value);
+  const inputVal = selectedValue?.label || value;
+  // (!isFocused && selectedValue && selectedValue.label) || value;
   const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
     if (!options.label || !options.value) return false;
