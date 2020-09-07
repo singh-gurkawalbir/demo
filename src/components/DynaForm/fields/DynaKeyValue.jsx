@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
 import shortid from 'shortid';
+import { isEqual } from 'lodash';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
@@ -69,11 +70,15 @@ export function KeyValueComponent(props) {
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
 
-  const addEmptyRowIfNotExist = useCallback(val => {
-    const emptyRow = val.find(_value => !(_value[keyName] || _value[valueName]));
+  const addEmptyLastRowIfNotExist = useCallback(val => {
+    const lastRow = val[val.length - 1];
 
-    if (emptyRow) {
-      return val;
+    if (lastRow) {
+      const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
+
+      if (isLastRowEmpty) {
+        return val;
+      }
     }
 
     return [...val, {key: shortid.generate()}];
@@ -82,13 +87,25 @@ export function KeyValueComponent(props) {
     () => {
       const formattedValue = (value || []).map(val => ({...val, key: shortid.generate()}));
 
-      return addEmptyRowIfNotExist(formattedValue);
+      return addEmptyLastRowIfNotExist(formattedValue);
     },
-    [addEmptyRowIfNotExist, value],
+    [addEmptyLastRowIfNotExist, value],
   );
   const [values, setValues] = useState(getInitVal());
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
+
+  useEffect(() => {
+    // set state in case of lazy loading or value changed by parent
+    const stateValue = values.filter(
+      val => val[keyName] || val[valueName]
+    ).map(({key, ...rest}) => (rest));
+
+    if (!isEqual(stateValue, (value || []))) {
+      setValues(getInitVal());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getInitVal, keyName, value, valueName]);
   const preUpdate = useCallback(val => val.map(({key, ...rest}) => rest), []);
 
   const handleDelete = key => () => {
@@ -97,7 +114,7 @@ export function KeyValueComponent(props) {
 
     if (valueTmp[row]) {
       valueTmp.splice(row, 1);
-      setValues(addEmptyRowIfNotExist(valueTmp));
+      setValues(addEmptyLastRowIfNotExist(valueTmp));
       onUpdate(preUpdate(valueTmp));
     }
   };
@@ -123,7 +140,7 @@ export function KeyValueComponent(props) {
     if (isLastRowEmpty) {
       setValues([...removedEmptyValues, lastRow]);
     } else {
-      setValues(addEmptyRowIfNotExist(removedEmptyValues));
+      setValues(addEmptyLastRowIfNotExist(removedEmptyValues));
     }
 
     setRowInd(
@@ -133,7 +150,7 @@ export function KeyValueComponent(props) {
     );
     setIsKey(field === keyName);
     onUpdate(preUpdate(removedEmptyValues));
-  }, [addEmptyRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
+  }, [addEmptyLastRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
 
   const handleKeyUpdate = key => event => {
     const { value } = event.target;
