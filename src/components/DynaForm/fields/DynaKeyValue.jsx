@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,17 +69,10 @@ export function KeyValueComponent(props) {
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
 
-  const [values, setValues] = useState([]);
+  const [values, setValues] = useState((value || [])?.map(val => ({...val, key: shortid.generate()})));
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
   const preUpdate = useCallback(val => val.map(({key, ...rest}) => rest), []);
-
-  useEffect(() => {
-    // value can be empty/undefined also, so updating the state with the same
-    if (JSON.stringify(preUpdate(values)) !== JSON.stringify(value || [])) {
-      setValues((value || [])?.map(val => ({...val, key: shortid.generate()})));
-    }
-  }, [preUpdate, value, values]);
 
   const handleDelete = key => () => {
     const valueTmp = [...values];
