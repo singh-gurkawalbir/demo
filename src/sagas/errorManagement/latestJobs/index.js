@@ -39,7 +39,7 @@ function* pollForLatestJobs({ integrationId }) {
 function* startPollingForLatestJobs({ integrationId }) {
   const watcher = yield fork(pollForLatestJobs, { integrationId });
 
-  yield take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL);
+  yield take(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL);
   yield cancel(watcher);
 }
 

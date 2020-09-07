@@ -38,6 +38,14 @@ export default function reducer(state = {}, action) {
 
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.FAILED:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+
+        if (!draft[resourceId][flowId]) {
+          draft[resourceId][flowId] = {};
+        }
+
         draft[resourceId][flowId][fieldType] = {
           status: 'failed',
         };
