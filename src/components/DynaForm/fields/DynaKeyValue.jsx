@@ -70,6 +70,9 @@ export function KeyValueComponent(props) {
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
 
+  const preUpdate = useCallback(val => val.filter(
+    val => val[keyName] || val[valueName]
+  ).map(({key, ...rest}) => (rest)), [keyName, valueName]);
   const addEmptyLastRowIfNotExist = useCallback(val => {
     const lastRow = val[val.length - 1];
 
@@ -97,16 +100,11 @@ export function KeyValueComponent(props) {
 
   useEffect(() => {
     // set state in case of lazy loading or value changed by parent
-    const stateValue = values.filter(
-      val => val[keyName] || val[valueName]
-    ).map(({key, ...rest}) => (rest));
-
-    if (!isEqual(stateValue, (value || []))) {
+    if (!isEqual(preUpdate(values), (value || []))) {
       setValues(getInitVal());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getInitVal, keyName, value, valueName]);
-  const preUpdate = useCallback(val => val.map(({key, ...rest}) => rest), []);
+  }, [getInitVal, preUpdate, value]);
 
   const handleDelete = key => () => {
     const valueTmp = [...values];
