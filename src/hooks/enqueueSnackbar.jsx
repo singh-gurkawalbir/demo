@@ -47,7 +47,7 @@ export default function useEnqueueSnackbar() {
           </>
         ),
         onClose: (event, reason) => {
-          // Possible reasons are 'maxsnack', 'clickaway', 'instructor' and 'timeout'
+          // Possible reasons are 'maxsnack', 'clickaway', 'instructed' and 'timeout'
           // We need to avoid unnecessary calling of handleClose other than timeout
           // which gets triggered on automatic close of snackbar
           if (reason === 'timeout') {
