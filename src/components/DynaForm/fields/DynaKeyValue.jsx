@@ -70,7 +70,7 @@ export function KeyValueComponent(props) {
   } = suggestionConfig;
 
   const addEmptyRowIfNotExist = useCallback(val => {
-    const emptyRow = val.find(_value => !_value[keyName] && !_value[valueName]);
+    const emptyRow = val.find(_value => !(_value[keyName] || _value[valueName]));
 
     if (emptyRow) {
       return val;
@@ -225,7 +225,7 @@ export function KeyValueComponent(props) {
 
             {showDelete && (
               <ActionButton
-                disabled={disabled || (!r[keyName] && !r[valueName])}
+                disabled={disabled || (!(r[keyName] || r[valueName]))}
                 id={`delete-${index}`}
                 data-test={`delete-${index}`}
                 onClick={handleDelete(r.key)}>
