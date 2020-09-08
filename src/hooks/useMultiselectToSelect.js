@@ -7,7 +7,7 @@ import actions from '../actions';
 // if some value is selected by the user.
 export default function useMultiselectToSelect(props) {
   const dispatch = useDispatch();
-  const { formKey, selectValue, skipFieldTouched = true, fieldId } = props;
+  const { formKey, selectValue, fieldId } = props;
   const form = useFormContext(formKey);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function useMultiselectToSelect(props) {
 
     // if selectValue is selected, then unselect all other values
     if (fieldValues?.length > 1 && fieldValues?.includes(selectValue)) {
-      dispatch(actions.form.fieldChange(formKey)(fieldId, [selectValue], skipFieldTouched));
+      dispatch(actions.form.fieldChange(formKey)(fieldId, [selectValue], true));
     }
-  }, [dispatch, fieldId, form, formKey, selectValue, skipFieldTouched]);
+  }, [dispatch, fieldId, form, formKey, selectValue]);
 }
