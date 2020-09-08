@@ -26,7 +26,7 @@ export default {
     defaultValue: r => r.description || '',
   },
   autoPurgeAt: {
-    type: 'select',
+    type: 'expirytime',
     label: 'Auto purge token',
     required: r => isNewId(r?._id) || !!r?._connectorId,
     // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),

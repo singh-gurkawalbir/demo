@@ -55,6 +55,7 @@ import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
+import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import Salesforce from './DynaSalesforceExportComponents';
@@ -165,6 +166,7 @@ export default {
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
   tokengen: DynaTokenGenerator,
+  expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
