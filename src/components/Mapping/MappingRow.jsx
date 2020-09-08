@@ -75,7 +75,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 export default function MappingRow({
-  id,
   disabled,
   onMove,
   index,
@@ -199,8 +198,7 @@ export default function MappingRow({
     <div
       ref={ref}
       style={{ opacity }}
-      className={classes.rowContainer}
-      key={id}>
+      className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
           <GripperIcon />
