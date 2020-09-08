@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
+import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -145,6 +146,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
       )}
       <MappingDrawerRoute integrationId={integrationId} />
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 

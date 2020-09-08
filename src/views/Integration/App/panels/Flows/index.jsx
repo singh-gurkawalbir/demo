@@ -23,6 +23,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
+import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -157,6 +158,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
       <CategoryMappingDrawer
         integrationId={integrationId}
         storeId={storeId}

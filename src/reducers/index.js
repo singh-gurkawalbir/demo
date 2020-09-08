@@ -1419,6 +1419,20 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   };
 };
 
+selectors.integrationAppName = () => createSelector(
+  state => state?.data?.resources.integrations,
+  (state, integrationId) => integrationId,
+  (integrations, integrationId) => {
+    const integration = integrations.find(i => i._id === integrationId);
+
+    if (integration && integration._connectorId && integration.name) {
+      return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  }
+);
+
 selectors.integrationChildren = (state, integrationId) => {
   if (!state) return null;
   const children = [];
