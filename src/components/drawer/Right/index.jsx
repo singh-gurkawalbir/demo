@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(2, 3),
-    background: theme.palette.background.default,
+    background: theme.palette.common.white,
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
