@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DynaDate(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -66,13 +66,20 @@ export default function DynaDate(props) {
 
     return !!(resource?._connectorId);
   });
+
+  const isSuiteScriptLinkedConnection = useSelector(state => {
+    const preferences = selectors.userPreferences(state);
+
+    return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
+  });
   const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
   const displayFormat = props.format || dateFormat || 'MM/DD/YYYY';
 
   useEffect(() => {
     let formattedDate = null;
 
-    if (isIAResource) {
+    // suitescript connectors expect isostring format
+    if (isIAResource || isSuiteScriptLinkedConnection) {
       formattedDate = dateValue && moment(dateValue).toISOString();
     } else {
       formattedDate = dateValue && convertUtcToTimezone(
