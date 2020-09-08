@@ -132,7 +132,8 @@ function FlowList({ integrationId, storeId }) {
       state,
       integrationId,
       sectionId,
-      storeId
+      storeId,
+      { excludeHiddenFlows: true }
     )
   );
   const flowSections = useSelector(state =>

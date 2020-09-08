@@ -1607,7 +1607,7 @@ selectors.integrationAppSectionMetadata = (
   return selectedSection;
 };
 
-selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
+selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
   if (!state) return emptyObject;
   const integrationResource =
     fromData.integrationAppSettings(state.data, id) || emptyObject;
@@ -1620,6 +1620,7 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
   let hasDescription = false;
+  let sectionFlows;
   let allSections = sections;
 
   if (supportsMultiStore) {
@@ -1645,10 +1646,12 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
 
   if (!section) {
     allSections.forEach(sec => {
-      requiredFlows.push(...map(sec.flows, '_id'));
+      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+      requiredFlows.push(...map(sectionFlows, '_id'));
     });
   } else {
-    requiredFlows = map(selectedSection.flows, '_id');
+    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+    requiredFlows = map(sectionFlows, '_id');
   }
   hasNSInternalIdLookup = some(
     selectedSection.flows,
