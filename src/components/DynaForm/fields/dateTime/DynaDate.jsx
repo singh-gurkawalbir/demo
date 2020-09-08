@@ -67,7 +67,7 @@ export default function DynaDate(props) {
     return !!(resource?._connectorId);
   });
 
-  const isSuiteScriptLinkedConnection = useSelector(state => {
+  const isSuiteScriptConnector = useSelector(state => {
     const preferences = selectors.userPreferences(state);
 
     return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
@@ -79,7 +79,7 @@ export default function DynaDate(props) {
     let formattedDate = null;
 
     // suitescript connectors expect isostring format
-    if (isIAResource || isSuiteScriptLinkedConnection) {
+    if (isIAResource || isSuiteScriptConnector) {
       formattedDate = dateValue && moment(dateValue).toISOString();
     } else {
       formattedDate = dateValue && convertUtcToTimezone(
