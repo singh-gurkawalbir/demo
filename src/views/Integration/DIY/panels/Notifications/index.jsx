@@ -8,6 +8,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useMultiselectToSelect from '../../../../../hooks/useMultiselectToSelect';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -108,6 +109,8 @@ export default function NotificationsSection({ integrationId, childId }) {
     remount: count,
     skipMonitorLevelAccessCheck: true,
   });
+
+  useMultiselectToSelect({ formKey, selectValue: _integrationId, fieldId: 'flows'});
 
   return (
     <div className={classes.root}>

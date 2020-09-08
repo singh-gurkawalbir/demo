@@ -2929,7 +2929,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   );
 
   if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
-    flows = [{ _id: _integrationId, name: '---All Flows---' }, ...flows];
+    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
 
     if (allFlowsSelected) flowValues = [_integrationId, ...flows];
   }
