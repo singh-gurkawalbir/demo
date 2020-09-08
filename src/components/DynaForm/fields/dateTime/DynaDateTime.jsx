@@ -141,7 +141,7 @@ export default function DateTimePicker(props) {
     return !!(resource?._connectorId);
   });
 
-  const isSuiteScriptLinkedConnection = useSelector(state => {
+  const isSuiteScriptConnector = useSelector(state => {
     const preferences = selectors.userPreferences(state);
 
     return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
@@ -178,7 +178,7 @@ export default function DateTimePicker(props) {
     dataTimeValueFormatted.set('minute', moment(timeValue)?.get('minute') || 0);
     dataTimeValueFormatted.set('second', moment(timeValue)?.get('second') || 0);
     // suitescript connectors expect isostring format
-    if (isIAResource || isSuiteScriptLinkedConnection) {
+    if (isIAResource || isSuiteScriptConnector) {
       formattedDate = dataTimeValueFormatted && moment(dataTimeValueFormatted).toISOString();
     } else {
       formattedDate = dataTimeValueFormatted && convertUtcToTimezone(
