@@ -22,17 +22,20 @@ export default function getFilteredErrors(errors = [], options = {}) {
   return errors.filter(errorFilter);
 }
 
-export const formatErrorDetails = error => {
-  const { occurredAt, code, message, errorId, traceKey } = error || {};
-  const content = `
-  Timestamp: ${occurredAt}
+export const formatErrorDetails = (error = {}) => {
+  const { occurredAt, code, message, errorId, traceKey, source } = error;
 
+  const content = `
+  Message: ${message}
+  
   Code: ${code}
 
-  Message:
-  ${message}
+  Source: ${source}
+  
+  Timestamp: ${occurredAt}
 
   Error ID: ${errorId}
+
   ${traceKey ? `Trace key : ${traceKey} ` : ''}
   `;
 

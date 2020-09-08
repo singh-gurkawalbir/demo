@@ -3,7 +3,7 @@ import Retry from '../actions/Retry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
 import UserName from '../components/UserName';
-import DateTimeDisplay from '../../../DateTimeDisplay';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ErrorMessage from '../components/ErrorMessage';
 
 export default {
@@ -29,7 +29,7 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => <DateTimeDisplay dateTime={r.resolvedAt} />,
+      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
     {
       heading: 'Resolved By',

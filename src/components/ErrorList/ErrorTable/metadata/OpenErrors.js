@@ -5,7 +5,7 @@ import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
 import SelectError from '../components/SelectError';
 import SelectAllErrors from '../components/SelectAllErrors';
-import DateTimeDisplay from '../../../DateTimeDisplay';
+import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ErrorMessage from '../components/ErrorMessage';
 
 export default {
@@ -31,7 +31,7 @@ export default {
     },
     {
       heading: 'Time stamp',
-      value: r => <DateTimeDisplay dateTime={r.occurredAt} />,
+      value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {
