@@ -87,7 +87,8 @@ export default function Hooks(props) {
       const selectedHook = {};
       let isInvalidHook = false;
       const suiteScriptHooksList =
-        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList;
+        // eslint-disable-next-line camelcase
+        resourceType === 'exports' ? ['preSend'] : getImportSuiteScriptHooksList(resource?.netsuite_da?.useSS2Restlets);
 
       suiteScriptHooksList.forEach(suiteScriptHook => {
         const value = values[`suiteScript-${suiteScriptHook}`];
@@ -105,7 +106,8 @@ export default function Hooks(props) {
 
       return { isInvalidHook, selectedHook };
     },
-    [resourceType]
+    [resourceType, resource?.netsuite_da?.useSS2Restlets] // eslint-disable-line camelcase
+
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
