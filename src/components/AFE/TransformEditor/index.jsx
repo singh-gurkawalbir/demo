@@ -99,6 +99,7 @@ export default function TransformEditor(props) {
           valueName={valueName}
           editorId={editorId}
           disabled={disabled}
+          hasError={!!error}
         />
       </PanelGridItem>
 
