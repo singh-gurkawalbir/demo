@@ -1092,6 +1092,7 @@ export function convertToReactFormFields({
       actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
 
       let { fieldType } = field;
+      const { type } = field;
 
       fieldDetailsMap[fieldId] = {
         id: field.id,
@@ -1106,8 +1107,14 @@ export function convertToReactFormFields({
         fieldDetailsMap[fieldId].type = 'integer';
       }
 
+      if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
+        if (['array', 'json'].includes(type)) {
+          fieldType = 'editor';
+        }
+      }
+
       if (
-        !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
+        !['checkbox', 'editor', 'multiselect', 'select', 'text', 'textarea'].includes(
           fieldType
         )
       ) {
@@ -1164,6 +1171,11 @@ export function convertToReactFormFields({
 
       if (fieldDef.readOnly) {
         fieldDef.defaultDisabled = true;
+      }
+
+      if (fieldDef.type === 'editor') {
+        fieldDef.saveMode = 'json';
+        fieldDef.mode = 'json';
       }
 
       if (fieldDef.type === 'textwithflowsuggestion') {
@@ -1301,9 +1313,11 @@ export function updateFormValues({
       });
     } else {
       if (type === 'array') {
+        if (paramLocation !== PARAMETER_LOCATION.BODY) {
         // IO-1776
-        if (value && !isArray(value)) {
-          value = value.split(',');
+          if (value && !isArray(value)) {
+            value = value.split(',');
+          }
         }
       } else if (type === 'csv') {
         if (isArray(value)) {
