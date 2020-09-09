@@ -33,6 +33,12 @@ function ResourceDrawer(props) {
   const open = !!match;
   const history = useHistory();
   const { id, resourceType } = (match && match.params) || {};
+
+  // if we pass flowId/integration id to result/status export which we open
+  // from asyncHelper, getting sampledata preview errors. As result/status export
+  // are not related to flow, not passing flowId/integrationId conitionally.
+  const isAsyncHelper = resourceType === 'asyncHelpers';
+
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
@@ -78,10 +84,12 @@ function ResourceDrawer(props) {
       {open && (
       <Route
         path={`${match.url}${DRAWER_PATH}`}>
-        <ResourceDrawer
-          flowId={flowId}
-          integrationId={integrationId}
+        {isAsyncHelper ? <ResourceDrawer /> : (
+          <ResourceDrawer
+            flowId={flowId}
+            integrationId={integrationId}
         />
+        )}
       </Route>
       )}
 
