@@ -96,7 +96,7 @@ export default function RunFlowButton({
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
-  const [fileId] = useState(`${flowId}+${shortid.generate()}`);
+  const [fileId] = useState(`${flowId}-${shortid.generate()}`);
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
