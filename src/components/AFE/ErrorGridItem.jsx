@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
   panel: { flex: '1 1 100px', minHeight: 50 },
 }));
 
+const overrides = { wrap: true };
 export default function ErrorGridItem({ error, violations }) {
   const classes = useStyles();
 
@@ -45,7 +46,7 @@ export default function ErrorGridItem({ error, violations }) {
         <div className={classes.panel}>
           <CodePanel
             readOnly
-            overrides={{ wrap: true }}
+            overrides={overrides}
             mode="text"
             name="error"
             value={errorText}

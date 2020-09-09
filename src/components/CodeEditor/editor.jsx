@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import AceEditor from 'react-ace';
+import { fade, makeStyles } from '@material-ui/core/styles';
 import ReactResizeDetector from 'react-resize-detector';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-handlebars';
@@ -17,6 +18,23 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
+const useStyles = makeStyles(theme => ({
+  editorErrorWrapper: {
+    background: `${fade(theme.palette.error.light, 0.06)} !important`,
+    border: '1px solid',
+    borderColor: theme.palette.error.dark,
+    '& > .ace_gutter': {
+      color: `${theme.palette.error.dark} !important`,
+    },
+  },
+  errorMarker: {
+    background: fade(theme.palette.error.dark, 0.3),
+    color: theme.palette.common.white,
+    position: 'relative',
+  },
+}));
+
+const editorProp = { $blockScrolling: true };
 export default function CodeEditor({
   name,
   value = '',
@@ -36,6 +54,7 @@ export default function CodeEditor({
   hasError,
   errorLine,
 }) {
+  const classes = useStyles();
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
   const [state, setState] = useState({
@@ -113,20 +132,20 @@ export default function CodeEditor({
     {
       startRow: errorLine - 1,
       endRow: errorLine,
-      className: 'error-marker',
+      className: classes.errorMarker,
       type: 'line',
       inFront: true,
-    }] : [], [errorLine]);
+    }] : [], [classes.errorMarker, errorLine]);
 
   useEffect(() => {
     if (aceEditor?.current) {
       if (hasError) {
-        aceEditor.current.editor.setStyle('ace-highlight-error');
+        aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
       } else {
-        aceEditor.current.editor.unsetStyle('ace-highlight-error');
+        aceEditor.current.editor.unsetStyle(classes.editorErrorWrapper);
       }
     }
-  }, [hasError]);
+  }, [classes.editorErrorWrapper, hasError]);
 
   return (
     <>
@@ -154,7 +173,7 @@ export default function CodeEditor({
           displayIndentGuides,
           tabSize: 2,
         }}
-        editorProps={{ $blockScrolling: true }}
+        editorProps={editorProp}
       />
 
       <ReactResizeDetector handleWidth handleHeight onResize={resize} />
