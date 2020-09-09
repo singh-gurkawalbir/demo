@@ -57,11 +57,12 @@ export function* evaluateProcessor({ id }) {
 
         if (errJSON.location) {
           errorMessage.push(`Location: ${errJSON.location}`);
-          errorLine = /<anonymous>:(\d+)/.test(errJSON.location) ? /<anonymous>:(\d+)/.exec(errJSON.location)[1] : undefined;
           try {
-            errorLine = parseInt(errorLine, 10);
+            if (/<anonymous>:(\d+)/.test(errJSON.location)) {
+              errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
+            }
           } catch (e) {
-            // empty
+            // do nothing
           }
         }
         if (errJSON.stack) {
