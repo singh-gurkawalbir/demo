@@ -1,18 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import AceEditor from 'react-ace';
 import ReactResizeDetector from 'react-resize-detector';
-import 'brace/mode/javascript';
-import 'brace/mode/handlebars';
-import 'brace/mode/json';
-import 'brace/mode/xml';
-import 'brace/mode/html';
-import 'brace/theme/monokai';
-import 'brace/theme/tomorrow';
-import 'brace/mode/sql';
-import 'brace/ext/language_tools';
-import 'brace/ext/searchbox';
-import 'brace/ext/beautify';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-handlebars';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/mode-xml';
+import 'ace-builds/src-noconflict/mode-html';
+import 'ace-builds/src-noconflict/theme-monokai';
+import 'ace-builds/src-noconflict/theme-tomorrow';
+import 'ace-builds/src-noconflict/mode-sql';
+import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/ext-searchbox';
+import 'ace-builds/src-noconflict/ext-beautify';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
@@ -33,6 +33,8 @@ export default function CodeEditor({
   enableAutocomplete,
   onChange,
   skipDelay = false,
+  hasError,
+  errorLine,
 }) {
   const aceEditor = useRef(null);
   // inputVal holds value being passed from the prop. editorVal holds current value of the editor
@@ -44,7 +46,7 @@ export default function CodeEditor({
   const theme = useSelector(state => selectors.editorTheme(state));
   const { inputVal, editorVal, typingTimeout } = state;
   const resize = useCallback(() => {
-    if (aceEditor && aceEditor.current && aceEditor.current.editor) aceEditor.current.editor.resize();
+    if (aceEditor?.current?.editor) aceEditor.current.editor.resize();
   }, []);
 
   useEffect(() => {
@@ -107,9 +109,29 @@ export default function CodeEditor({
   if (skipDelay) v = value;
   const valueAsString = typeof v === 'string' ? v : JSON.stringify(v, null, 2);
 
+  const markers = useMemo(() => errorLine ? [
+    {
+      startRow: errorLine - 1,
+      endRow: errorLine,
+      className: 'error-marker',
+      type: 'line',
+      inFront: true,
+    }] : [], [errorLine]);
+
+  useEffect(() => {
+    if (aceEditor?.current) {
+      if (hasError) {
+        aceEditor.current.editor.setStyle('ace-highlight-error');
+      } else {
+        aceEditor.current.editor.unsetStyle('ace-highlight-error');
+      }
+    }
+  }, [hasError]);
+
   return (
     <>
       <AceEditor
+        markers={markers}
         ref={aceEditor}
         name={name}
         value={valueAsString}

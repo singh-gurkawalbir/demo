@@ -53,15 +53,22 @@ export function* evaluateProcessor({ id }) {
         // Receiving errors in different formats from BE, for now added below check
         // Can remove this once backend bug gets fixed (Id: IO-17172)
         const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message}`];
+        let errorLine;
 
         if (errJSON.location) {
           errorMessage.push(`Location: ${errJSON.location}`);
+          errorLine = /<anonymous>:(\d+)/.test(errJSON.location) ? /<anonymous>:(\d+)/.exec(errJSON.location)[1] : undefined;
+          try {
+            errorLine = parseInt(errorLine, 10);
+          } catch (e) {
+            // empty
+          }
         }
         if (errJSON.stack) {
           errorMessage.push(`Stack: ${errJSON.stack}`);
         }
 
-        return yield put(actions.editor.evaluateFailure(id, errorMessage));
+        return yield put(actions.editor.evaluateFailure(id, {errorMessage, errorLine}));
       }
     }
   }

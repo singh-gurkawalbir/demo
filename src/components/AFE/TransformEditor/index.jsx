@@ -105,6 +105,7 @@ export default function TransformEditor(props) {
             overrides={{ showGutter: false }}
             onChange={handleDataChange}
             readOnly={disabled}
+            hasError={!!violations?.dataError}
             />
         )}
       </PanelGridItem>

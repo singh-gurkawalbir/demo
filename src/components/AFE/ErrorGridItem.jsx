@@ -42,13 +42,15 @@ export default function ErrorGridItem({ error, violations }) {
         <PanelTitle>
           <Typography color="error">Error</Typography>
         </PanelTitle>
-        <CodePanel
-          readOnly
-          overrides={{ wrap: true }}
-          mode="text"
-          name="error"
-          value={errorText}
+        <div className={classes.panel}>
+          <CodePanel
+            readOnly
+            overrides={{ wrap: true }}
+            mode="text"
+            name="error"
+            value={errorText}
         />
+        </div>
       </div>
     </div>
   );
