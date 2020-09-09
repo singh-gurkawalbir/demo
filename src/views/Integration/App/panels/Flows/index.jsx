@@ -127,6 +127,7 @@ export const IAFormStateManager = props => {
 function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
+  const dispatch = useDispatch();
   const { flows } = useSelector(state =>
     selectors.integrationAppFlowSettings(
       state,
@@ -144,6 +145,16 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
+
+  useEffect(() => {
+    if (!isUserInErrMgtTwoDotZero) return;
+
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+
+    return () => {
+      dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+    };
+  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   return (
     <LoadResources required resources="flows,exports">

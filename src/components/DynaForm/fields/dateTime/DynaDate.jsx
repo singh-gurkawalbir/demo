@@ -12,6 +12,7 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import { getDateMask } from './DynaDateTime';
 import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -94,13 +95,15 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
+
         <KeyboardDatePicker
-          disableToolbar
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
           variant="inline"
           fullWidth
           format={displayFormat}
+          placeholder={displayFormat}
+          mask={getDateMask(displayFormat)}
           value={dateValue}
           onChange={setDateValue}
           InputProps={{ className: classes.inputDate }}

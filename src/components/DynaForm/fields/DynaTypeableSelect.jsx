@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
@@ -184,11 +184,11 @@ export default function DynaTypeableSelect(props) {
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
-  const suggestions = options.map(option => ({
+  const suggestions = useMemo(() => options.map(option => ({
     label: option[labelName],
     value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
-  }));
+  })), [labelName, options, valueName]);
 
   const [value, setValue] = useState(propValue?.toString());
   const [isFocused, setIsFocused] = useState(false);
@@ -216,35 +216,42 @@ export default function DynaTypeableSelect(props) {
       div.removeEventListener('focusout', handleFocusOut, true);
     };
   }, [handleFocusIn, handleFocusOut]);
-  const handleChange = newObj => {
+  const handleChange = useCallback(newObj => {
     const newVal = newObj.value;
 
     setValue(newVal);
     setIsFocused(false);
+    onBlur(id, newVal);
 
     // if (hideDropdownOnChange) { setShowDropdown(false); }
-  };
+  }, [id, onBlur]);
 
-  useEffect(() => {
-    if (!isFocused && propValue !== value && onBlur) {
-      onBlur(id, value);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, value, isFocused, propValue]);
-
-  const handleTextChange = (id, val) => {
+  const handleTextChange = useCallback((id, val) => {
     setValue(val);
     onBlur(id, val);
-  };
+  }, [onBlur]);
 
-  const handleInputChange = (newVal, event) => {
+  const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') setValue(newVal);
-  };
+  }, []);
 
-  const selectedValue =
-    !isFocused && suggestions.find(suggestionItem => suggestionItem.value === value);
-  const inputVal =
-    (!isFocused && selectedValue && selectedValue.label) || value;
+  const handleBlur = useCallback(
+    () => {
+      if (propValue !== value) {
+        // check if value matches the option label
+        const selectedOpt = suggestions.find(suggestionItem => suggestionItem.label.toLowerCase() === value.toLowerCase());
+        const newValue = selectedOpt ? selectedOpt.value : value;
+
+        setValue(newValue);
+        onBlur(id, newValue);
+      }
+    },
+    [id, onBlur, propValue, suggestions, value],
+  );
+
+  const selectedValue = suggestions.find(suggestionItem => suggestionItem.value === value);
+  const inputVal = selectedValue?.label || value;
+  // (!isFocused && selectedValue && selectedValue.label) || value;
   const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
     if (!options.label || !options.value) return false;
@@ -273,6 +280,7 @@ export default function DynaTypeableSelect(props) {
           onInputChange={handleInputChange}
           onChange={handleChange}
           styles={customStyles}
+          onBlur={handleBlur}
           autoFocus
           openOnFocus
           components={components}

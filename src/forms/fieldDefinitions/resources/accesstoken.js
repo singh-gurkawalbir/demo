@@ -112,7 +112,6 @@ export default {
       r._integrationId
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -132,7 +131,6 @@ export default {
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -152,7 +150,6 @@ export default {
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -168,7 +165,6 @@ export default {
     multiselect: true,
     allowEdit: false,
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
