@@ -48,7 +48,7 @@ export default function LineGraphDrawer({ integrationId }) {
   const flowResources = useMemo(
     () =>
       resourceList.resources &&
-      resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
+      resourceList.resources.filter(flow => flow._integrationId === integrationId && !flow.disabled).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
   const handleDateRangeChange = useCallback(
