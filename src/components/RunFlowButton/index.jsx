@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, IconButton } from '@material-ui/core';
+import shortid from 'shortid';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import { selectors } from '../../reducers';
@@ -95,6 +96,7 @@ export default function RunFlowButton({
   const [showDeltaStartDateDialog, setShowDeltaStartDateDialog] = useState(
     false
   );
+  const [fileId] = useState(`${flowId}-${shortid.generate()}`);
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual
@@ -136,7 +138,7 @@ export default function RunFlowButton({
   });
   // console.log('Does DL export have run key?', hasRunKey);
   const uploadedFile = useSelector(
-    state => selectors.getUploadedFile(state, flowId),
+    state => selectors.getUploadedFile(state, fileId),
     shallowEqual
   );
   const handleRunFlow = useCallback(
@@ -175,14 +177,14 @@ export default function RunFlowButton({
 
       dispatch(
         actions.file.processFile({
-          fileId: flowId,
+          fileId,
           file,
           fileType: dataLoaderFileType,
           fileProps: { maxSize: MAX_DATA_LOADER_FILE_SIZE },
         })
       );
     },
-    [dataLoaderFileType, dispatch, flowId]
+    [dataLoaderFileType, dispatch, fileId]
   );
   const handleCloseDeltaDialog = useCallback(() => {
     setShowDeltaStartDateDialog(false);
@@ -210,7 +212,7 @@ export default function RunFlowButton({
           })
         );
         // Removes uploaded file from session as it is no longer needed once triggered flow run
-        dispatch(actions.file.reset(flowId));
+        dispatch(actions.file.reset(fileId));
 
         if (onRunStart) onRunStart();
         break;
@@ -220,13 +222,13 @@ export default function RunFlowButton({
     dataLoaderFileType,
     dispatch,
     enqueueSnackbar,
-    flowDetails.name,
     flowId,
     onRunStart,
     uploadedFile,
+    fileId,
   ]);
   const isDataLoaderFileProcessRequested =
-    isDataLoaderFlow && uploadedFile && uploadedFile.status;
+    isDataLoaderFlow && uploadedFile && uploadedFile.status !== 'error';
 
   return (
     <>

@@ -74,7 +74,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     [allFlows, childId, integrationId]
   );
   const {
-    status,
     data: integrationErrorsMap = {},
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -92,20 +91,14 @@ export default function FlowsPanel({ integrationId, childId }) {
   }, [setShowDialog]);
 
   useEffect(() => {
-    if (!status && isUserInErrMgtTwoDotZero) {
-      dispatch(
-        actions.errorManager.integrationErrors.request({ integrationId })
-      );
-    }
-  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero, status]);
-
-  useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
     dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
