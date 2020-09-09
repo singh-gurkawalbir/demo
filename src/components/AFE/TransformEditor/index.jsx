@@ -78,6 +78,15 @@ export default function TransformEditor(props) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isToggleScreen, handleInit]);
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+        _init_data: props.data,
+      }));
+    }
+  }, [data, dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
 
   const parsedData = result && result.data && result.data[0];
 

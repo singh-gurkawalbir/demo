@@ -85,6 +85,17 @@ export default function JavaScriptEditor(props) {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleInit, isToggleScreen]);
+
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+        _init_data: props.data,
+      }));
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
+
   const parsedData = result ? result.data : '';
   const logs = result && !error && !violations && result.logs;
 
