@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
-    marginTop: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
     marginRight: theme.spacing(1),
     fontSize: '12px',
   },
@@ -119,7 +120,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
-              {totalErrors} errors
+              <span>{totalErrors} errors</span>
             </span>
           </>
         ) : null}

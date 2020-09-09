@@ -95,7 +95,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
     color: theme.palette.secondary.main,
-
   },
   destinationTitle: {
     marginLeft: 100,
@@ -130,8 +129,9 @@ const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: 12,
     fontSize: '12px',
   },
   divider: {
@@ -505,7 +505,7 @@ function FlowBuilder() {
       {totalErrors ? (
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
-          {totalErrors} errors
+          <span>{totalErrors} errors</span>
         </span>
       ) : null}
       {pageBarChildren}
