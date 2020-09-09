@@ -8,7 +8,7 @@ import { selectors } from '../../../reducers';
 const useStyles = makeStyles(theme => ({
   chartsIcon: {
     padding: 0,
-    marginRight: theme.spacing(2),
+    marginRight: 12,
     '&:hover': {
       color: theme.palette.primary.main,
       background: 'none',

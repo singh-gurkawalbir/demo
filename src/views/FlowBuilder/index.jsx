@@ -155,7 +155,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   flowToggle: {
-
+    marginRight: 12,
+    marginLeft: theme.spacing(1),
     '& > div:first-child': {
       padding: '8px 0px',
     },
