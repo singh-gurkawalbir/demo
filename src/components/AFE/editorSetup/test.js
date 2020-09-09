@@ -1,8 +1,8 @@
 /* global describe, test, expect ,beforeEach */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import ace from 'brace';
+import ace from 'ace-builds/src-noconflict/ace';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import 'brace/ext/language_tools';
+import 'ace-builds/src-noconflict/ext-language_tools';
 import handlebarCompleterSetup from './editorCompleterSetup/index';
 import * as utils from './completers/completerUtils';
 import { handleBarsCompleters } from './completers';
