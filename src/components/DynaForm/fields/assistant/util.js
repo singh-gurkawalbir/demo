@@ -134,7 +134,7 @@ export function semiAssistantOperationOptions(endpoints = [], parent = {key: []}
 export function semiAssistantExportOperationOptions(assistantData) {
   let options = [];
 
-  assistantData?.export?.endpoints.forEach(ep => {
+  assistantData?.export?.endpoints?.forEach(ep => {
     options = options.concat(semiAssistantOperationOptions(ep.children, {key: [ep.key]}));
   });
 

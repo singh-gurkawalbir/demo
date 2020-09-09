@@ -35,9 +35,13 @@ export default function StatusCell({
     }
   });
 
-  if (!job || ['completed', 'canceled'].includes(job.status)) {
+  if (!job) {
     return <CeligoTimeAgo date={date} />;
   }
+  if (['completed', 'canceled', 'failed'].includes(job.status)) {
+    return <CeligoTimeAgo date={job.endedAt} />;
+  }
+
   const isJobInQueuedStatus =
     (job.status === 'queued' ||
       (job.status === 'running' && !job.doneExporting));
