@@ -404,7 +404,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.visible).toBe(true);
       });
       test('FIELD1 should continue to remain to visible even if its dependent criteria has been met', () => {
-        // this should make field1 be invisible but it will state its previous state since we have forced it
+        // this should make field1 be invisible but it will hold its previous visible state since we have forced it
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD2', 'some other value')
@@ -413,19 +413,24 @@ describe('reducer expression test cases', () => {
 
         expect(FIELD1.visible).toBe(true);
       });
-      test('FIELD1 should be invisible and its visible state computation should kick start after we clear the force computation and the dependant criteria has been met', () => {
+      test('FIELD1 should be invisible and its visible state computation should kick start after we clear the force computation', () => {
         // this should make field1 be invisible but it will state its previous state since we have forced it
         formState = forms(
           formState,
           actions.form.clearForceFieldState(formKey)('FIELD1')
         );
+        // assert visible state computation is restored back to normal
+
+        expect(formState[formKey].fields.FIELD1.visible).toBe(false);
+      });
+
+      test('FIELD1 computation should continue to work as normal', () => {
+        // lets meet its visible criteria of FIELD1 and assert its visible
         formState = forms(
           formState,
-          actions.form.fieldChange(formKey)('FIELD2', 'some other value1')
+          actions.form.fieldChange(formKey)('FIELD2', 'standard')
         );
-        const { FIELD1 } = formState[formKey].fields;
-
-        expect(FIELD1.visible).toBe(false);
+        expect(formState[formKey].fields.FIELD1.visible).toBe(true);
       });
     });
 
