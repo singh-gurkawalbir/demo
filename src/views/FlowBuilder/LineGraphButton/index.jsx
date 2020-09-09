@@ -9,10 +9,15 @@ const useStyles = makeStyles(theme => ({
   chartsIcon: {
     padding: 0,
     marginRight: 12,
+    color: theme.palette.secondary.main,
     '&:hover': {
-      color: theme.palette.primary.main,
       background: 'none',
+      color: theme.palette.primary.main,
     },
+  },
+  iconGraph: {
+
+    width: 28,
   },
 }));
 
@@ -37,7 +42,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
       className={classes.chartsIcon}
       data-test="charts"
       onClick={onClickHandler('charts')}>
-      <GraphIcon />
+      <GraphIcon className={classes.iconGraph} />
     </IconButton>
   );
 }
