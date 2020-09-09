@@ -81,7 +81,7 @@ export function* evaluateProcessor({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.evaluateFailure(id, e.message));
+    return yield put(actions.editor.evaluateFailure(id, {errorMessage: e.message}));
   }
 
   return yield put(actions.editor.evaluateResponse(id, finalResult));
