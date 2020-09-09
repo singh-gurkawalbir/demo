@@ -314,7 +314,7 @@ const getResourceFormAssets = ({
 
             meta = meta.salesforce;
           } else if (
-            resource &&
+            resource && resource.assistant !== 'openair' &&
             (resource.useParentForm !== undefined
               ? !resource.useParentForm && resource.assistant
               : resource.assistant) && !resource.useTechAdaptorForm

@@ -87,7 +87,7 @@ export default function DrawerTitleBar({
         )}
       </div>
       <IconButton
-        data-test="closeFlowSchedule"
+        data-test="closeRightDrawer"
         aria-label="Close"
         className={classes.closeButtonTitleBar}
         onClick={handleClick}>

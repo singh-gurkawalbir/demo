@@ -30,9 +30,10 @@ export default function TransformEditor(props) {
     optionalSaveParams,
     resourceId,
     layout = 'column',
+    isToggleScreen,
   } = props;
   const classes = useStyles();
-  const { data, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, result, error, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -71,8 +72,21 @@ export default function TransformEditor(props) {
   );
 
   useEffect(() => {
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    if (isToggleScreen && processor) return;
     handleInit();
-  }, [handleInit]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isToggleScreen, handleInit]);
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+        _init_data: props.data,
+      }));
+    }
+  }, [data, dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
 
   const parsedData = result && result.data && result.data[0];
 

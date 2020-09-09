@@ -75,7 +75,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 export default function MappingRow({
-  id,
   disabled,
   onMove,
   index,
@@ -172,12 +171,22 @@ export default function MappingRow({
   },
   [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
   );
+
   const handleExtractBlur = useCallback((_id, value) => {
     handleBlur('extract', value);
   }, [handleBlur]);
+
   const handleGenerateBlur = useCallback((_id, value) => {
     handleBlur('generate', value);
   }, [handleBlur]);
+
+  const handleFieldTouch = useCallback(() => {
+    if (!lastModifiedRowKey || lastModifiedRowKey !== mappingKey) {
+      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
+
+      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
+    }
+  }, [dispatch, lastModifiedRowKey, mappingKey]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.mapping.delete(mappingKey));
@@ -189,8 +198,7 @@ export default function MappingRow({
     <div
       ref={ref}
       style={{ opacity }}
-      className={classes.rowContainer}
-      key={id}>
+      className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
           <GripperIcon />
@@ -209,7 +217,7 @@ export default function MappingRow({
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
             onBlur={handleExtractBlur}
-            triggerBlurOnTouch
+            onTouch={handleFieldTouch}
           />
 
           {(isSubRecordMapping || isNotEditable) && (
@@ -233,7 +241,7 @@ export default function MappingRow({
             options={generateFields}
             disabled={isSubRecordMapping || isRequired || disabled}
             onBlur={handleGenerateBlur}
-            triggerBlurOnTouch
+            onTouch={handleFieldTouch}
           />
           {(isSubRecordMapping || isRequired) && (
             <Tooltip

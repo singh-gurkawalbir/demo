@@ -165,7 +165,7 @@ export default function Integration(props) {
     integrationsFilterConfig
   ).resources;
 
-  const pageTitle = name || 'Standalone integration';
+  const pageTitle = name || 'Standalone flows';
 
   const childIntegration = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);

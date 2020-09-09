@@ -10,7 +10,7 @@ const isEveryUnit = val => val?.includes('*') && !(val?.includes('/'));
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;
   //* (sec) *(min) *(hour) *(week) *(day) *(month)
-  const splitVal = value && value.split(' ');
+  const splitVal = useMemo(() => value && value.split(' '), [value]);
   const meta = useMemo(
     () => ({
       fieldMap: {
