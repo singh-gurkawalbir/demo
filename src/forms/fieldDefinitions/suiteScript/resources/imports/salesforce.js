@@ -54,7 +54,7 @@ export default {
     commMetaPath: r =>
       r &&
       r.import &&
-      `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.import._connectionId}/sObjectTypes/${r.import.salesforce.sObjectType}?ignoreCache=true`,
+      `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.import._connectionId}/sObjectTypes/${r.import.salesforce.sObjectType}`,
     connectionId: r => r && r.ssLinkedConnectionId,
     helpKey: 'import.salesforce.update.externalField',
   },
@@ -85,7 +85,7 @@ export default {
     commMetaPath: r =>
       r &&
       r.import &&
-      `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.import._connectionId}/sObjectTypes/${r.import.salesforce.sObjectType}?ignoreCache=true`,
+      `suitescript/connections/${r.ssLinkedConnectionId}/connections/${r.import._connectionId}/sObjectTypes/${r.import.salesforce.sObjectType}`,
     connectionId: r => r && r.ssLinkedConnectionId,
     helpKey: 'import.salesforce.upsert.externalField',
   },

@@ -53,7 +53,7 @@ export default function DynaNetSuiteUpsertField(props) {
   const items = [];
 
   flowSampleData?.forEach(field => {
-    if (flow?.export?.netsuite?.restlet?.recordType || flow?.export?.netsuite?.realtime?.recordType) {
+    if (flow?.export?.netsuite?.restlet?.recordType) {
       items.push({value: field.id, label: field.name});
     } else {
       items.push(field);
