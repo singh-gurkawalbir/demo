@@ -1681,6 +1681,8 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
   integrationErrors: {
+    requestPoll: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
     request: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
@@ -1690,7 +1692,8 @@ const errorManager = {
         integrationId,
         integrationErrors,
       }),
-
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
   flowErrorDetails: {
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>

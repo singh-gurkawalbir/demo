@@ -1,3 +1,5 @@
+import { isNewId } from '../../../utils/resource';
+
 export default {
   'http.status._exportId': {
     label: 'Status export',
@@ -73,7 +75,7 @@ export default {
   'http.submit.sameAsStatus': {
     type: 'checkbox',
     label: 'Same as check status',
-    defaultValue: true,
+    defaultValue: r => isNewId(r?._id) ? true : r?.http?.submit?.sameAsStatus,
   },
   'http.submit.transform': {
     type: 'transformrules',

@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     '& + div': {
       margin: theme.spacing(0, 3),
+      paddingLeft: 0,
     },
     '& > * div.MuiTabs-vertical': {
       marginTop: theme.spacing(-2),

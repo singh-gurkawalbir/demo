@@ -28,7 +28,8 @@ const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
-    marginTop: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
     marginRight: theme.spacing(1),
     fontSize: '12px',
   },
@@ -73,7 +74,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     [allFlows, childId, integrationId]
   );
   const {
-    status,
     data: integrationErrorsMap = {},
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
@@ -91,20 +91,14 @@ export default function FlowsPanel({ integrationId, childId }) {
   }, [setShowDialog]);
 
   useEffect(() => {
-    if (!status && isUserInErrMgtTwoDotZero) {
-      dispatch(
-        actions.errorManager.integrationErrors.request({ integrationId })
-      );
-    }
-  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero, status]);
-
-  useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
 
     dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
@@ -119,7 +113,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
-              {totalErrors} errors
+              <span>{totalErrors} errors</span>
             </span>
           </>
         ) : null}

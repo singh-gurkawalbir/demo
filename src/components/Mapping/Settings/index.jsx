@@ -12,6 +12,7 @@ import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import RightDrawer from '../../drawer/Right';
+import ButtonGroup from '../../ButtonGroup';
 
 const emptySet = [];
 const emptyObject = {};
@@ -192,20 +193,22 @@ function MappingSettings({
       <DynaForm
         formKey={formKey}
         fieldMeta={fieldMeta} />
-      <DynaSubmit
-        formKey={formKey}
-        disabled={disableSave}
-        id="fieldMappingSettingsSave"
-        onClick={handleSubmit}>
-        Save
-      </DynaSubmit>
-      <Button
-        data-test="fieldMappingSettingsCancel"
-        onClick={hadleClose}
-        variant="text"
-        color="primary">
-        Cancel
-      </Button>
+      <ButtonGroup>
+        <DynaSubmit
+          formKey={formKey}
+          disabled={disableSave}
+          id="fieldMappingSettingsSave"
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
+        <Button
+          data-test="fieldMappingSettingsCancel"
+          onClick={hadleClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </ButtonGroup>
     </>
   );
 }
