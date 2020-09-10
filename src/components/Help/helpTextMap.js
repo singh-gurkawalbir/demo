@@ -429,12 +429,12 @@ export default {
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'procurify.connection.http.procurifySubdomain': 'Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.',
   'procurify.connection.http.unencrypted.username':
-    'Please enter the Username of your Procurify Account.',
-  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
-  'procurify.connection.http.generateClientIdandSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
+    'Please enter the Username of your Procurify account.',
+  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'procurify.connection.http.generateClientIdandSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify account.',
   'procurify.connection.http.unencrypted.clientId':
-    'The client id of your Procurify account',
-  'procurify.connection.http.encrypted.clientSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
+    'Please click "Generate client id & secret" button to get Client id of your Procurify account.',
+  'procurify.connection.http.encrypted.clientSecret': 'Please click "Generate client id & secret" button to get Client secret of your Procurify account.',
   'procurify.connection.http.auth.token.token':
     'The access token of your Procurify account.',
   'strata.connection.http.unencrypted.applicationKey':

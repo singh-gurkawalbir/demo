@@ -23,6 +23,7 @@ export default {
       type: 'text',
       label: 'Subdomain',
       required: true,
+      helpKey: 'procurify.connection.http.procurifySubdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -59,19 +60,11 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    'http.generateClientIdandSecret': {
-      id: 'http.generateClientIdandSecret',
-      type: 'tokengen',
-      inputType: 'password',
-      helpKey: 'procurify.connection.http.generateClientIdandSecret',
-      label: 'Generate client id & secret',
-      defaultValue: '',
-    },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       required: true,
       type: 'text',
-      helpKey: 'procurify.connection.http.encrypted.clientId',
+      helpKey: 'procurify.connection.http.unencrypted.clientId',
       label: 'Client id',
     },
     'http.encrypted.clientSecret': {
@@ -82,6 +75,7 @@ export default {
       inputType: 'password',
       helpKey: 'procurify.connection.http.encrypted.clientSecret',
       label: 'Generate client id & secret',
+      inputboxLabel: 'Client secret',
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
