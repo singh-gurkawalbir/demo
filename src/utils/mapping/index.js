@@ -512,12 +512,12 @@ export default {
       }
     }
   },
-  getDefaultLookupActionValue: (value, lookup) => {
-    if (value && value.lookupName && lookup && !lookup.allowFailures) {
+  getDefaultLookupActionValue: (lookup = {}) => {
+    if (!lookup.allowFailures) {
       return 'disallowFailure';
     }
 
-    if (lookup && lookup.useDefaultOnMultipleMatches) {
+    if (lookup.useDefaultOnMultipleMatches) {
       return 'useDefaultOnMultipleMatches';
     }
 
