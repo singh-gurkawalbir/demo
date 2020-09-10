@@ -96,8 +96,8 @@ export default function HandlebarsEditor(props) {
   const resultTitle = useMemo(
     () =>
       autoEvaluate
-        ? 'Evaluated handlebar template'
-        : 'Click run to see your handlebar template evaluated here!',
+        ? 'Evaluated handlebars template'
+        : 'Click run to see your handlebars template evaluated here!',
     [autoEvaluate]
   );
 
