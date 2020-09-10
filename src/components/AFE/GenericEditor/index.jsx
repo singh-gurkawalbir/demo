@@ -34,6 +34,7 @@ const Editor = props => {
     disabled,
     isSampleDataLoading,
   } = props;
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -53,6 +54,7 @@ const Editor = props => {
           onChange={handleRuleChange}
           enableAutocomplete={enableAutocomplete}
           readOnly={disabled}
+          hasError={!!error}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
@@ -67,6 +69,7 @@ const Editor = props => {
             mode={dataMode}
             onChange={handleDataChange}
             readOnly={disabled}
+            hasError={!!violations?.dataError}
           />
         )}
       </PanelGridItem>
