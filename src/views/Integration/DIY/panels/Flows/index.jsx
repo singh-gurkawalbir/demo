@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     height: 'unset',
     display: 'flex',
     alignItems: 'center',
-    marginRight: theme.spacing(1),
     fontSize: '12px',
   },
   divider: {
@@ -123,7 +122,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         ) : null}
       </span>
     ),
-    [classes.divider, classes.errorStatus, totalErrors]
+    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
   );
 
   return (

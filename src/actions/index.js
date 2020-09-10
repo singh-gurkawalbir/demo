@@ -1546,7 +1546,8 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-
+  cancelLatest: ({ jobId }) =>
+    action(actionTypes.JOB.CANCEL_LATEST, { jobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
