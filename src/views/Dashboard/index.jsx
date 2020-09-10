@@ -45,19 +45,111 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Dashboard() {
+const IntegrationCeligoPageBar = () => {
   const location = useLocation();
-  const history = useHistory();
-  const classes = useStyles();
-  const match = useRouteMatch();
-  const dispatch = useDispatch();
-  const preferences = useSelector(state => selectors.userPreferences(state));
-  const ssLinkedConnections = useSelector(state =>
-    selectors.suiteScriptLinkedConnections(state)
-  );
+
   const permission = useSelector(state =>
     selectors.resourcePermissions(state, 'integrations')
   );
+
+  return (
+    <CeligoPageBar title="My integrations">
+      {permission.create && (
+      <IconTextButton
+        data-test="newIntegration"
+        component={Link}
+        to={`${location.pathname}/add/integrations/${generateNewId()}`}
+        variant="text"
+        color="primary">
+        <AddIcon />
+        Create integration
+      </IconTextButton>
+      )}
+      {permission.install && (
+      <IconTextButton
+        data-test="installZip"
+        component={Link}
+        to={`${location.pathname}/installIntegration`}
+        variant="text"
+        color="primary">
+        <ZipUpIcon />
+        Install integration
+      </IconTextButton>
+      )}
+      {/* TODO: What condition to use for download Integration */}
+      {permission.create && (
+      <IconTextButton
+        data-test="downloadIntegration"
+        component={Link}
+        to={`${location.pathname}/downloadIntegration`}
+        variant="text"
+        color="primary">
+        <ZipDownIcon />
+        Download integration
+      </IconTextButton>
+      )}
+    </CeligoPageBar>
+  );
+};
+
+const InstallZip = () => {
+  const history = useHistory();
+
+  const match = useRouteMatch();
+
+  return (
+
+    <Switch>
+      <Route path={`${match.url}/installZip`}>
+        <UploadFileDialog
+          data-test="closeGenerateTemplateZipDialog"
+          fileType="application/zip"
+          history={history}
+      // eslint-disable-next-line react/jsx-handler-names
+          onClose={history.goBack}
+    />
+      </Route>
+    </Switch>
+  );
+};
+
+const DashboardTiles = () => {
+  const classes = useStyles();
+  const preferences = useSelector(state => selectors.userPreferences(state));
+
+  const tiles = useSelector(state => selectors.tiles(state));
+  const suiteScriptLinkedTiles = useSelector(state =>
+    selectors.suiteScriptLinkedTiles(state)
+  );
+  const sortedTiles = useMemo(
+    () =>
+      sortTiles(
+        tiles.concat(suiteScriptLinkedTiles),
+        preferences.dashboard && preferences.dashboard.tilesOrder
+      ),
+    [preferences.dashboard, suiteScriptLinkedTiles, tiles]
+  );
+
+  return (
+
+    <LoadResources
+      required
+      resources="published,integrations,connections,marketplacetemplates">
+      <div className={classes.container}>
+        <DashboardCard sortedTiles={sortedTiles} />
+      </div>
+    </LoadResources>
+  );
+};
+
+// This component does not return a jsx ..it is sort of a hook
+// is there any better pattern to this
+const LoadTiles = () => {
+  const dispatch = useDispatch();
+  const ssLinkedConnections = useSelector(state =>
+    selectors.suiteScriptLinkedConnections(state)
+  );
+
   const [suiteScriptResourcesToLoad, setSuiteScriptResourcesToLoad] = useState(
     []
   );
@@ -90,83 +182,20 @@ function Dashboard() {
     );
   }, [dispatch, suiteScriptResourcesToLoad]);
 
-  const tiles = useSelector(state => selectors.tiles(state));
-  const suiteScriptLinkedTiles = useSelector(state =>
-    selectors.suiteScriptLinkedTiles(state)
-  );
-  const sortedTiles = useMemo(
-    () =>
-      sortTiles(
-        tiles.concat(suiteScriptLinkedTiles),
-        preferences.dashboard && preferences.dashboard.tilesOrder
-      ),
-    [preferences.dashboard, suiteScriptLinkedTiles, tiles]
-  );
+  return null;
+};
 
+export default function Dashboard() {
   return (
     <>
-      <Switch>
-        <Route path={`${match.url}/installZip`}>
-          <UploadFileDialog
-            data-test="closeGenerateTemplateZipDialog"
-            fileType="application/zip"
-            history={history}
-            // eslint-disable-next-line react/jsx-handler-names
-            onClose={history.goBack}
-          />
-        </Route>
-      </Switch>
-
+      <LoadTiles />
+      <InstallZip />
       <ResourceDrawer />
       <DownloadIntegrationDrawer />
       <InstallIntegrationDrawer />
       <OfflineConnectionDrawer />
-
-      <CeligoPageBar title="My integrations">
-        {permission.create && (
-          <IconTextButton
-            data-test="newIntegration"
-            component={Link}
-            to={`${location.pathname}/add/integrations/${generateNewId()}`}
-            variant="text"
-            color="primary">
-            <AddIcon />
-            Create integration
-          </IconTextButton>
-        )}
-        {permission.install && (
-          <IconTextButton
-            data-test="installZip"
-            component={Link}
-            to={`${location.pathname}/installIntegration`}
-            variant="text"
-            color="primary">
-            <ZipUpIcon />
-            Install integration
-          </IconTextButton>
-        )}
-        {/* TODO: What condition to use for download Integration */}
-        {permission.create && (
-          <IconTextButton
-            data-test="downloadIntegration"
-            component={Link}
-            to={`${location.pathname}/downloadIntegration`}
-            variant="text"
-            color="primary">
-            <ZipDownIcon />
-            Download integration
-          </IconTextButton>
-        )}
-      </CeligoPageBar>
-      <LoadResources
-        required
-        resources="published,integrations,connections,marketplacetemplates">
-        <div className={classes.container}>
-          <DashboardCard sortedTiles={sortedTiles} />
-        </div>
-      </LoadResources>
+      <IntegrationCeligoPageBar />
+      <DashboardTiles />
     </>
   );
 }
-
-export default Dashboard;
