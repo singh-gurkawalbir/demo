@@ -11,6 +11,7 @@ import {
   isArray,
   assign,
   unionBy,
+  isNumber,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -1168,6 +1169,14 @@ export function convertToReactFormFields({
         type: inputType,
         readOnly: !!field.readOnly,
       };
+
+      if (inputType === 'textwithflowsuggestion' && isNumber(fieldDef.defaultValue)) {
+        fieldDef.defaultValue = fieldDef.defaultValue.toString();
+      }
+
+      if (!fieldDef.readOnly && fieldDef.defaultValue === undefined) { // IO-12441
+        fieldDef.defaultValue = '';
+      }
 
       if (fieldDef.readOnly) {
         fieldDef.defaultDisabled = true;
