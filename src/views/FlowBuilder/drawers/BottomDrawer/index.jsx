@@ -21,6 +21,7 @@ import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
+import useBottomDrawer from './useBottomDrawer';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -82,8 +83,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
 }));
+// we use this to prevent the up and down resize buttons from passing mouse-down events
+// to the parent draggable re-sizeable tab bar. The combination of events disrupts UX.
 const preventEvent = e => {
-  console.log('stop prop');
+  // console.log('stop prop');
   e.stopPropagation();
 };
 
@@ -107,8 +110,6 @@ const connectionsFilterConfig = {
 };
 
 export default function BottomDrawer({
-  size,
-  setSize,
   flow,
   setTabValue,
   tabValue,
@@ -118,6 +119,7 @@ export default function BottomDrawer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(0);
   const [dragY, setDragY] = useState(0);
+  const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
@@ -125,7 +127,6 @@ export default function BottomDrawer({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -139,24 +140,25 @@ export default function BottomDrawer({
     return resourceIdNameMap;
   }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
-  const drawerHeight = size + (dragStart - dragY);
+  const tempDrawerHeight = drawerHeight + (dragStart - dragY);
+  const minDrawerHeight = 41;
   const maxHeight = window.innerHeight; // set maxStep to 4 to allow 100% drawer coverage.
-  const stepSize = parseInt((maxHeight - 41) / 4, 10);
+  const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
 
   const handleSizeUp = useCallback(() => {
-    if (size + stepSize >= maxHeight) return setSize(41);
+    if (drawerHeight + stepSize >= maxHeight) return setDrawerHeight(minDrawerHeight);
 
-    setSize(size + stepSize);
+    setDrawerHeight(drawerHeight + stepSize);
   },
-  [maxHeight, setSize, size, stepSize]
+  [maxHeight, setDrawerHeight, drawerHeight, stepSize]
   );
 
   const handleSizeDown = useCallback(() => {
-    if (size - stepSize < 41) return setSize(maxHeight - stepSize);
+    if (drawerHeight - stepSize < minDrawerHeight) return setDrawerHeight(maxHeight - stepSize);
 
-    setSize(size - stepSize);
+    setDrawerHeight(drawerHeight - stepSize);
   },
-  [maxHeight, setSize, size, stepSize]
+  [maxHeight, setDrawerHeight, drawerHeight, stepSize]
   );
 
   const trackMouseY = useCallback(e => {
@@ -166,34 +168,33 @@ export default function BottomDrawer({
   }, []);
 
   const handleMouseDown = useCallback(e => {
+    // console.log('dragging');
     setIsDragging(true);
     setDragStart(e.nativeEvent.clientY);
     setDragY(e.nativeEvent.clientY);
 
     window.addEventListener('mousemove', trackMouseY);
-    console.log('dragging');
   }, [trackMouseY]);
 
   const handleMouseUp = useCallback(() => {
     if (!isDragging) return;
 
+    // console.log('persist size: ', tempDrawerHeight);
     window.removeEventListener('mousemove', trackMouseY);
 
     setIsDragging(false);
-    setSize(drawerHeight);
+    setDrawerHeight(tempDrawerHeight);
     setDragStart(0);
     setDragY(0);
-
-    console.log('persist size: ', drawerHeight);
-  }, [drawerHeight, isDragging, setSize, trackMouseY]);
+  }, [tempDrawerHeight, isDragging, setDrawerHeight, trackMouseY]);
 
   const handleTabChange = useCallback(
     (event, newValue) => {
       setTabValue(newValue);
 
-      if (size < 41) setSize(41);
+      if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
-    [setSize, setTabValue, size]
+    [setDrawerHeight, setTabValue, drawerHeight]
   );
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
@@ -226,13 +227,9 @@ export default function BottomDrawer({
     () => window.removeEventListener('mousemove', trackMouseY),
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
-  const tabProps = useCallback(
-    index => ({
-      id: `tab-${index}`,
-      'aria-controls': `tabpanel-${index}`,
-    }),
-    []
-  );
+  const tabProps = index => ({
+    id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
+  });
 
   return (
     <Drawer
@@ -240,11 +237,11 @@ export default function BottomDrawer({
       classes={{
         paper: clsx(classes.drawerPaper, {
           [classes.drawerPaperShift]: drawerOpened,
-          [classes.noScroll]: size === 0,
+          [classes.noScroll]: drawerHeight === 0,
           [classes.drawerTransition]: !isDragging,
         }),
       }}
-      PaperProps={{ style: { height: drawerHeight } }}
+      PaperProps={{ style: { height: tempDrawerHeight } }}
       variant="persistent"
       anchor="bottom">
       <div

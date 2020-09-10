@@ -11,8 +11,7 @@ import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './drawers/BottomDrawer';
-// import WizardDrawer from './drawers/Wizard';
-// import RunDrawer from './drawers/Run';
+import useBottomDrawer from './drawers/BottomDrawer/useBottomDrawer';
 import ScheduleDrawer from './drawers/Schedule';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
@@ -40,7 +39,6 @@ import LastRun from './LastRun';
 import MappingDrawerRoute from '../MappingDrawer';
 import LineGraphButton from './LineGraphButton';
 
-const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -180,8 +178,7 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  // Bottom drawer is shown for existing flows and docked for new flow
-  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? bottomDrawerMin : 250);
+  const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
   const [tabValue, setTabValue] = useState(0);
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -221,11 +218,12 @@ function FlowBuilder() {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+
   const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const calcCanvasStyle = useMemo(() => ({
-    height: `calc(100vh - ${bottomDrawerSize + theme.appBarHeight + theme.pageBarHeight}px)`,
-  }), [bottomDrawerSize, theme.appBarHeight, theme.pageBarHeight]);
+    height: `calc(100vh - ${bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight}px)`,
+  }), [bottomDrawerHeight, theme.appBarHeight, theme.pageBarHeight]);
 
   const patchFlow = useCallback(
     (path, value) => {
@@ -343,8 +341,8 @@ function FlowBuilder() {
     setTabValue(0);
 
     // Raise Bottom Drawer height
-    setBottomDrawerSize(2);
-  }, []);
+    setBottomDrawerHeight(500);
+  }, [setBottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);
@@ -720,8 +718,6 @@ function FlowBuilder() {
       </div>
       <BottomDrawer
         flow={flow}
-        size={bottomDrawerSize}
-        setSize={setBottomDrawerSize}
         tabValue={tabValue}
         setTabValue={setTabValue}
       />
