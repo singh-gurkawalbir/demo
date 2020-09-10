@@ -1,7 +1,5 @@
-import { Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { makeStyles, Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
@@ -25,22 +23,17 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 
 const useStyles = makeStyles(theme => ({
-  drawer: {
-    // none needed so far.
-  },
   drawerPaper: {
     marginLeft: theme.drawerWidthMinimized,
     padding: theme.spacing(0),
-    transition: theme.transitions.create(['height', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
   },
   drawerPaperShift: {
     marginLeft: theme.drawerWidth,
+  },
+  drawerTransition: {
     transition: theme.transitions.create(['height', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
+      duration: theme.transitions.duration.leavingScreen,
     }),
   },
   actionsContainer: {
@@ -56,6 +49,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    cursor: 'ns-resize',
   },
   tabPanel: {
     overflow: 'auto',
@@ -88,6 +82,10 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
 }));
+const preventEvent = e => {
+  console.log('stop prop');
+  e.stopPropagation();
+};
 
 function TabPanel({ children, value, index, classes }) {
   const hidden = value !== index;
@@ -117,6 +115,9 @@ export default function BottomDrawer({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
+  const [dragY, setDragY] = useState(0);
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flow._id)
@@ -138,22 +139,59 @@ export default function BottomDrawer({
     return resourceIdNameMap;
   }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
-  const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
-  const handleSizeChange = useCallback(
-    direction => () => {
-      if (size === maxStep && direction === 1) return setSize(0);
+  const drawerHeight = size + (dragStart - dragY);
+  const maxHeight = window.innerHeight; // set maxStep to 4 to allow 100% drawer coverage.
+  const stepSize = parseInt((maxHeight - 41) / 4, 10);
 
-      if (size === 0 && direction === -1) return setSize(maxStep);
+  const handleSizeUp = useCallback(() => {
+    if (size + stepSize >= maxHeight) return setSize(41);
 
-      setSize(size + direction);
-    },
-    [setSize, size]
+    setSize(size + stepSize);
+  },
+  [maxHeight, setSize, size, stepSize]
   );
+
+  const handleSizeDown = useCallback(() => {
+    if (size - stepSize < 41) return setSize(maxHeight - stepSize);
+
+    setSize(size - stepSize);
+  },
+  [maxHeight, setSize, size, stepSize]
+  );
+
+  const trackMouseY = useCallback(e => {
+    if (e.movementY === 0) return; // skip x axis movement
+
+    setDragY(e.clientY);
+  }, []);
+
+  const handleMouseDown = useCallback(e => {
+    setIsDragging(true);
+    setDragStart(e.nativeEvent.clientY);
+    setDragY(e.nativeEvent.clientY);
+
+    window.addEventListener('mousemove', trackMouseY);
+    console.log('dragging');
+  }, [trackMouseY]);
+
+  const handleMouseUp = useCallback(() => {
+    if (!isDragging) return;
+
+    window.removeEventListener('mousemove', trackMouseY);
+
+    setIsDragging(false);
+    setSize(drawerHeight);
+    setDragStart(0);
+    setDragY(0);
+
+    console.log('persist size: ', drawerHeight);
+  }, [drawerHeight, isDragging, setSize, trackMouseY]);
+
   const handleTabChange = useCallback(
     (event, newValue) => {
       setTabValue(newValue);
 
-      if (size === 0) setSize(1);
+      if (size < 41) setSize(41);
     },
     [setSize, setTabValue, size]
   );
@@ -183,6 +221,11 @@ export default function BottomDrawer({
     }
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
+  useEffect(() =>
+    // force removal of mousemove event listener on component unmount.
+    () => window.removeEventListener('mousemove', trackMouseY),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
   const tabProps = useCallback(
     index => ({
       id: `tab-${index}`,
@@ -191,22 +234,24 @@ export default function BottomDrawer({
     []
   );
 
-  // TODO @Raghu: For all the components used below , cant we just pass flowId rather than the whole flow object
-  // Go through each and update the components
   return (
     <Drawer
       open
-      className={classes.drawer}
       classes={{
         paper: clsx(classes.drawerPaper, {
           [classes.drawerPaperShift]: drawerOpened,
           [classes.noScroll]: size === 0,
+          [classes.drawerTransition]: !isDragging,
         }),
       }}
-      PaperProps={{ style: { height: size ? `${size * 25}%` : '41px' } }}
+      PaperProps={{ style: { height: drawerHeight } }}
       variant="persistent"
       anchor="bottom">
-      <div className={classes.tabBar}>
+      <div
+        className={classes.tabBar}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseUp}
+        onMouseUp={handleMouseUp}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
@@ -260,13 +305,15 @@ export default function BottomDrawer({
           <IconButton
             data-test="increaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={handleSizeChange(1)}>
+            onMouseDown={preventEvent}
+            onClick={handleSizeUp}>
             <ArrowUpIcon />
           </IconButton>
           <IconButton
             data-test="decreaseFlowBuilderBottomDrawer"
             size="small"
-            onClick={handleSizeChange(-1)}>
+            onMouseDown={preventEvent}
+            onClick={handleSizeDown}>
             <ArrowDownIcon />
           </IconButton>
         </div>

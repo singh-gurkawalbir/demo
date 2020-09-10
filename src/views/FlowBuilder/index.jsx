@@ -181,7 +181,7 @@ function FlowBuilder() {
   const theme = useTheme();
   const dispatch = useDispatch();
   // Bottom drawer is shown for existing flows and docked for new flow
-  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
+  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? bottomDrawerMin : 250);
   const [tabValue, setTabValue] = useState(0);
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -224,17 +224,8 @@ function FlowBuilder() {
   const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const calcCanvasStyle = useMemo(() => ({
-    height: `calc(${(4 - bottomDrawerSize) *
-            25}vh - ${theme.appBarHeight +
-            theme.pageBarHeight +
-            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
+    height: `calc(100vh - ${bottomDrawerSize + theme.appBarHeight + theme.pageBarHeight}px)`,
   }), [bottomDrawerSize, theme.appBarHeight, theme.pageBarHeight]);
-
-  const calcBottomDrawerStyle = useMemo(() => ({
-    bottom: bottomDrawerSize
-      ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
-      : bottomDrawerMin + theme.spacing(3),
-  }), [bottomDrawerSize, theme]);
 
   const patchFlow = useCallback(
     (path, value) => {
@@ -725,13 +716,6 @@ function FlowBuilder() {
             {pps}
           </div>
         </div>
-        {bottomDrawerSize < 3 && (
-          <div
-            className={classes.fabContainer}
-            style={calcBottomDrawerStyle}
-          />
-        )}
-
         {/* CANVAS END */}
       </div>
       <BottomDrawer
