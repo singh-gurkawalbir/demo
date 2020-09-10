@@ -77,7 +77,7 @@ export default function DrawerTitleBar({
   ).resources;
   const connectionName = connectionsResourceList.find(
     c => c._id === connectionId
-  ).name;
+  )?.name;
   const handleConnectionChange = useCallback(
     (id, value) => {
       onConnChange(value);
@@ -107,6 +107,7 @@ export default function DrawerTitleBar({
           id="queuedJobs_connection"
           className={classes.dynaSelect}
           value={connectionId}
+          skipDefault
           onFieldChange={handleConnectionChange}
           options={[
             { items: connections.map(c => ({ label: c.name, value: c.id })) },

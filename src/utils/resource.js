@@ -122,6 +122,7 @@ export const adaptorTypeMap = {
   WebhookExport: 'webhook',
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
+  SimpleExport: 'file',
 };
 
 export const multiStepSaveResourceTypes = [

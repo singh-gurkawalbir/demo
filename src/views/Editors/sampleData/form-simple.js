@@ -5,7 +5,7 @@ const sampleData = {
       name: 'url',
       type: 'relativeuri',
       helpText: 'example of a custom input.',
-      label: 'some url with handlebar support.',
+      label: 'some url with handlebars support.',
     },
     A: {
       id: 'A',

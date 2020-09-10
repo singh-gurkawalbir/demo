@@ -63,6 +63,7 @@ const useStyles = makeStyles(theme => ({
   cardAction: {
     position: 'absolute',
     bottom: 10,
+    paddingLeft: 0,
   },
 }));
 
