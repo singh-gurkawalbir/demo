@@ -111,6 +111,7 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={overrides}
             onChange={handleDataChange}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>

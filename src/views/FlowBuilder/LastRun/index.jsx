@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   flexContainer: {
     display: 'flex',
+    alignItems: 'center',
   },
   icon: {
     height: theme.spacing(2),

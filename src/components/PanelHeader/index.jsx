@@ -11,6 +11,10 @@ const useStyles = makeStyles(theme => ({
   },
   infoIcon: {
     color: theme.palette.text.hint,
+    marginTop: -2,
+  },
+  panelHeaderTitle: {
+    display: 'flex',
   },
 }));
 
@@ -19,7 +23,7 @@ export default function PanelHeader({ title, children, infoText, className }) {
 
   return (
     <div className={clsx(classes.root, className)}>
-      <Typography variant="h4">
+      <Typography variant="h4" className={classes.panelHeaderTitle}>
         {title}
         {infoText && (
           <InfoIconButton info={infoText} className={classes.infoIcon} />

@@ -27,6 +27,8 @@ export default function CodePanel({
   enableAutocomplete,
   overrides,
   skipDelay,
+  errorLine,
+  hasError,
 }) {
   const config = {
     ...defaults.global,
@@ -60,6 +62,8 @@ export default function CodePanel({
       wrap={config.wrap}
       onChange={onChange}
       skipDelay={skipDelay}
+      errorLine={errorLine}
+      hasError={hasError}
     />
   );
 }
