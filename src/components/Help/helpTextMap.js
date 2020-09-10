@@ -1246,7 +1246,7 @@ export default {
   'export.file.compressionFormat':
     "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'export.file.csv.columnDelimiter':
-    'Unfortunately, integrator.io is not smart enough (yet) to dynamically determine the column delimiter in a CSV file, so we recommend that you tell us exactly which character is being used to separate column values.  For example: comma, pipe, tab, etc...  If you cannot easily see the character being used in a sample file, try opening the file with a text editor like Textpad or notepad, and then hopefully it will be obvious.',
+    'Either select a common character from the list or enter your own freeform value with multiple characters allowed – such as <b>||</b> – in this field, depending on how the columns are uniformly separated in your sample CSV file. The default value is <b>Comma (,)</b> simply by convention; integrator.io does not dynamically determine the column delimiter for you.',
   'export.file.csv.rowDelimiter':
     "The character, or set of characters used to identify the end of a row. If this field is left blank then integrator.io will attempt to identify the row delimiter itself. Some common row delimiters are: '\n', '\r\n', '\r'",
   'export.file.csv.keyColumns':
