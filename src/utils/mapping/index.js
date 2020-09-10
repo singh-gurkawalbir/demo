@@ -803,6 +803,10 @@ export default {
 
       case adaptorTypeMap.DynamodbImport:
         return 'DynamoDB';
+      case adaptorTypeMap.WebhookExport:
+        return 'Webhook';
+      case adaptorTypeMap.SimpleExport:
+        return 'File';
       default:
     }
   },
