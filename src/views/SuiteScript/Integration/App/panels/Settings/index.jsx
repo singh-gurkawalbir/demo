@@ -1,8 +1,7 @@
 import { Divider, List, ListItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { isEqual } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   NavLink,
@@ -18,6 +17,7 @@ import Spinner from '../../../../../../components/Spinner';
 import { selectors } from '../../../../../../reducers';
 import inferErrorMessage from '../../../../../../utils/inferErrorMessage';
 import ConfigureSettings from './sections/ConfigureSettings';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 export const LoadSettingsMetadata = ({ssLinkedConnectionId,
   integrationId, children }) => {
@@ -92,22 +92,20 @@ function SettingsPanelComponent({
   const match = useRouteMatch();
   const {integrationAppName} = match?.params;
 
-  const availableSections = useSelector(state => {
-    const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
+  const allSections = useSelectorMemo(selectors.makeSuiteScriptIASections, integrationId, ssLinkedConnectionId);
 
-    return sections.reduce((newArray, s) => {
-      if (!!s.fields || !!s.sections?.length) {
-        newArray.push({
-          path: s.titleId,
-          label: s.title,
-          Section: 'FlowsConfiguration',
-          id: s.id,
-        });
-      }
+  const availableSections = useMemo(() => allSections.reduce((newArray, s) => {
+    if (!!s.fields || !!s.sections?.length) {
+      newArray.push({
+        path: s.titleId,
+        label: s.title,
+        Section: 'FlowsConfiguration',
+        id: s.id,
+      });
+    }
 
-      return newArray;
-    }, []);
-  }, isEqual);
+    return newArray;
+  }, []), [allSections]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

@@ -2,17 +2,13 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import {
   makeStyles,
-  Dialog,
-  DialogContent,
-  IconButton,
   Button,
-  DialogTitle,
-  Divider,
-  Typography,
+
 } from '@material-ui/core';
-import CloseIcon from '../../../../../icons/CloseIcon';
+
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
+import ModalDialog from '../../../../../ModalDialog';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -43,28 +39,17 @@ export default function UploadFileDialog(props) {
   };
 
   return (
-    <Dialog open onClose={onClose} aria-labelledby="upload-file-dialog">
-      <DialogTitle
-        id="upload-file-dialog"
-        className={classes.title}
-        disableTypography>
-        <Typography variant="h6">
-          Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
-        </Typography>
-        <IconButton
-          aria-label="Close"
-          onClick={onClose}
-          data-test="showUploadFileDialogModal"
-          className={classes.closeButton}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <Divider variant="middle" />
-      <DialogContent>
+    <ModalDialog show onClose={onClose} aria-labelledby="upload-file-dialog">
+      <div>
+        Upload {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
+      </div>
+
+      <div>
         <label htmlFor="fileUpload">
           <Button
             data-test="selectFile"
-            variant="contained"
+            variant="outlined"
+            color="secondary"
             component="span"
             className={classes.uploadButton}>
             Select {MODEL_PLURAL_TO_LABEL[resourceType]} {type} File
@@ -78,7 +63,7 @@ export default function UploadFileDialog(props) {
             onChange={handleUploadFileChange}
           />
         </label>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalDialog>
   );
 }

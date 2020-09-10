@@ -37,6 +37,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(3),
     lineHeight: 0,
   },
+  saveBtnProfile: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 const dateFormats = [{ value: 'MM/DD/YYYY', label: '12/31/1900' },
@@ -261,6 +264,7 @@ export default function ProfileComponent() {
         formKey={formKey}
         showCustomFormValidations={showCustomFormValidations}
         onClick={submitHandler()}
+        className={classes.saveBtnProfile}
         disabled={disableSave}>
         {defaultLabels.saveLabel}
       </DynaSubmit>

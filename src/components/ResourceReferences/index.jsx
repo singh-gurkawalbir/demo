@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResourceReferences(onClose, resourceType, resourceId, title) {
+export default function ResourceReferences({ onClose, resourceType, resourceId, title }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const resourceReferences = useSelector(state =>

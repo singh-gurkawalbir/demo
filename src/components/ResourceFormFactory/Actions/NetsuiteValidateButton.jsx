@@ -29,7 +29,10 @@ const NetsuiteValidateButton = props => {
   const { fields, disabled: formDisabled, value } = useFormContext(formKey) || {};
   const { disabled = formDisabled } = props;
   const onFieldChange = useCallback(
-    field => dispatch(actions.form.fieldChange(formKey)(field)),
+    (fieldId, value, skipFieldTouched) =>
+      dispatch(
+        actions.form.fieldChange(formKey)(fieldId, value, skipFieldTouched)
+      ),
     [dispatch, formKey]
   );
   const registerField = useCallback(
@@ -69,23 +72,16 @@ const NetsuiteValidateButton = props => {
     if (fieldsIsVisible) {
       if (status === 'success') {
         // enable save button
-        onFieldChange(id, 'false');
+        onFieldChange(id, 'false', true);
       } else if (status === 'error') {
         if (message) {
           enquesnackbar({ message, variant: 'error' });
           // disable save button
-          onFieldChange(id, 'true');
+          onFieldChange(id, 'true', true);
         }
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    status,
-    id,
-    fieldsIsVisible,
-    enquesnackbar,
-    message,
-  ]);
+  }, [status, id, fieldsIsVisible, enquesnackbar, message, onFieldChange]);
 
   useEffect(() => {
     // name does not really matter since this is an action button

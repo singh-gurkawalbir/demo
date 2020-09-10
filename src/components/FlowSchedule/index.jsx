@@ -15,6 +15,7 @@ import {
   getScheduleStartMinute,
   getScheduleVal, setValues,
 } from './util';
+import ButtonGroup from '../ButtonGroup';
 
 export default function FlowSchedule({
   flow,
@@ -149,26 +150,27 @@ export default function FlowSchedule({
         formKey={formKey}
         fieldMeta={fieldMeta}
         />
-      <DynaSubmit
-        formKey={formKey}
-        onClick={handleValidateAndSubmit()}
-        color="primary"
-        data-test="saveFlowSchedule"
-        disabled={disableSave}>
-        {defaultLabels.saveLabel}
-      </DynaSubmit>
-      <DynaSubmit
-        formKey={formKey}
-        onClick={handleValidateAndSubmit(true)}
-        color="secondary"
-        data-test="saveAndCloseFlowSchedule"
-        disabled={disableSave}>
-        {defaultLabels.saveAndCloseLabel}
-      </DynaSubmit>
-      <Button onClick={onClose} variant="text" color="primary">
-        Cancel
-      </Button>
-
+      <ButtonGroup>
+        <DynaSubmit
+          formKey={formKey}
+          onClick={handleValidateAndSubmit()}
+          color="primary"
+          data-test="saveFlowSchedule"
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          formKey={formKey}
+          onClick={handleValidateAndSubmit(true)}
+          color="secondary"
+          data-test="saveAndCloseFlowSchedule"
+          disabled={disableSave}>
+          {defaultLabels.saveAndCloseLabel}
+        </DynaSubmit>
+        <Button onClick={onClose} variant="text" color="primary">
+          Cancel
+        </Button>
+      </ButtonGroup>
     </div>
   );
 }
