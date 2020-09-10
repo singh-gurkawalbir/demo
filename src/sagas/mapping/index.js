@@ -231,7 +231,6 @@ export function* mappingInit({
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({
         ...m,
-        rowIdentifier: 0,
         key: shortid.generate(),
       })),
       lookups,
