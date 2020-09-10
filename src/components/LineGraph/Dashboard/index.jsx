@@ -4,6 +4,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import RefreshIcon from '../../icons/RefreshIcon';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -26,6 +27,7 @@ export default function LineGraphDrawer({ integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [selectedResources, setSelectedResources] = useState([]);
+  const [refresh, setRefresh] = useState();
   const [range, setRange] = useState({
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
@@ -40,6 +42,9 @@ export default function LineGraphDrawer({ integrationId }) {
       resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
+  const handleRefreshClick = useCallback(() => {
+    setRefresh(new Date().getTime());
+  }, []);
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
@@ -59,6 +64,7 @@ export default function LineGraphDrawer({ integrationId }) {
   return (
     <div>
       <>
+        <RefreshIcon className={classes.refreshIcon} onClick={handleRefreshClick} />
         <DateRangeSelector onSave={handleDateRangeChange} />
         <DynaMultiSelect
           name="flowResources"
@@ -79,6 +85,7 @@ export default function LineGraphDrawer({ integrationId }) {
         integrationId={integrationId}
         selectedResources={selectedResources}
         range={range}
+        refresh={refresh}
         className={classes.scheduleContainer}
       />
     </div>

@@ -10,6 +10,7 @@ import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
 import DynaMultiSelect from '../../../../components/LineGraph/MultiSelect';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import RefreshIcon from '../../../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -74,6 +75,9 @@ export default function LineGraphDrawer({ flowId }) {
     },
     [dispatch, flowId]
   );
+  const handleRefresh = useCallback(() => {
+    dispatch(actions.flowMetrics.clear(flowId));
+  }, [dispatch, flowId]);
   const handleResourcesChange = useCallback(
     (id, val) => {
       setSelectedResources(val);
@@ -84,6 +88,7 @@ export default function LineGraphDrawer({ flowId }) {
   const action = useMemo(
     () => (
       <>
+        <RefreshIcon onClick={handleRefresh} />
         <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
         <DynaMultiSelect
           name="flowResources"
@@ -101,7 +106,7 @@ export default function LineGraphDrawer({ flowId }) {
         />
       </>
     ),
-    [flowResources, handleDateRangeChange, handleResourcesChange, selectedResources, customPresets]
+    [handleRefresh, handleDateRangeChange, customPresets, selectedResources, flowResources, handleResourcesChange]
   );
 
   return (
