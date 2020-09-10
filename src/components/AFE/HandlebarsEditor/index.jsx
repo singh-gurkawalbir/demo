@@ -115,7 +115,7 @@ export default function HandlebarsEditor(props) {
       resultMode={resultMode}
       layout={layout}
       templateClassName={templateClassName}
-      ruleTitle="Type your handlebar template here"
+      ruleTitle="Type your handlebars template here"
       dataTitle="Resources available in your template."
       resultTitle={resultTitle}
       violations={violations}
