@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import useTraceUpdate from 'use-trace-update';
 import LoadResources from '../LoadResources';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -43,6 +44,8 @@ export default function JobDashboard({
     },
     [dispatch]
   );
+
+  useTraceUpdate({jobs, integration, userPermissionsOnIntegration });
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
   }, [dispatch]);
