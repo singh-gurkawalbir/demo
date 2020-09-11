@@ -250,6 +250,7 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   // clear the store
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
+  yield put(actions.auth.abortAllSagas());
 }
 
 export function* signInWithGoogle({ returnTo }) {

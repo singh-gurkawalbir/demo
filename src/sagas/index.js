@@ -7,6 +7,7 @@ import {
   select,
   race,
   delay,
+  spawn,
   cancelled,
 } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
@@ -113,7 +114,7 @@ export function* apiCallWithRetry(args) {
   }
 }
 
-export default function* rootSaga() {
+function* rootSaga() {
   yield createRequestInstance({
     driver: createDriver(window.fetch, {
       // AbortController Not supported in IE installed this polyfill package
@@ -163,4 +164,22 @@ export default function* rootSaga() {
     ...exportDataSagas,
     ...editorSampleData,
   ]);
+}
+// this saga basically restarts the root saga
+export default function* rootSagaWithLogout() {
+  // when i see ABORT_ALL_SAGAS i cancel all existing sagas
+  // ABORT_ALL_SAGAS is the last action dispatched during logout
+  const {logout} = yield race({
+    mainSaga: call(rootSaga),
+    logout: take(actionsTypes.ABORT_ALL_SAGAS),
+
+  });
+
+  if (logout) {
+    // over here i clean up the redux state
+    yield put(actions.auth.clearStore());
+
+    // restart this saga over here
+    yield spawn(rootSagaWithLogout);
+  }
 }
