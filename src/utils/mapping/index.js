@@ -805,6 +805,8 @@ export default {
         return 'DynamoDB';
       case adaptorTypeMap.WebhookExport:
         return 'Webhook';
+      case adaptorTypeMap.SimpleExport:
+        return 'File';
       default:
     }
   },

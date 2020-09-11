@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
   panelHeaderReadme: {
     paddingRight: 0,
   },
+  editReadmebutton: {
+    marginRight: -20,
+  },
 }));
 
 export default function ReadmeSection({ integrationId }) {
@@ -52,7 +55,7 @@ export default function ReadmeSection({ integrationId }) {
     <>
       <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
         <IconTextButton
-          // className={classes.button}
+          className={classes.editReadmebutton}
           data-test="form-editor-action"
           variant="text"
           disabled={!canEditIntegration}
