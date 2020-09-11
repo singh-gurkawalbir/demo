@@ -3284,21 +3284,21 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
   };
 };
 
-selectors.flowJobConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-  const connections = [];
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-    ignoreBorrowedConnections: true,
-  });
+selectors.flowJobConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, flowId) => {
+    const flow = selectors.resource(state, 'flows', flowId);
 
-  connectionIds.forEach(c => {
-    const conn = selectors.resource(state, 'connections', c);
+    const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
+      ignoreBorrowedConnections: true,
+    });
 
-    connections.push({ id: conn._id, name: conn.name });
-  });
+    console.log('connectionIds', connectionIds);
 
-  return connections;
-};
+    return connectionIds;
+  },
+  (connections, connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+);
 
 selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
   let connectionIdsToRegister = [];

@@ -63,7 +63,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
     return {
       canCreate: !!permission.create,
-      canAattach: !!permission.attach,
+      canAttach: !!permission.attach,
       canEdit: !!permission.edit,
     };
   },
