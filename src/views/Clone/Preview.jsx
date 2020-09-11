@@ -137,7 +137,7 @@ export default function ClonePreview(props) {
   ];
 
   useEffect(() => {
-    if (isIAIntegration) {
+    if (isIAIntegration || resourceType === 'integrations') {
       if (isCloned) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
@@ -157,7 +157,7 @@ export default function ClonePreview(props) {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
                   props.history.push(
                     getRoutePath(
-                      `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+                      `${resourceType === 'integrations' ? '' : '/clone'}/${resourceType}/${integrationId}/setup`
                     )
                   );
                 },
@@ -167,7 +167,7 @@ export default function ClonePreview(props) {
         } else {
           props.history.push(
             getRoutePath(
-              `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+              `${resourceType === 'integrations' ? '' : '/clone'}/${resourceType}/${integrationId}/setup`
             )
           );
         }
@@ -189,6 +189,7 @@ export default function ClonePreview(props) {
     confirmDialog,
     sandbox,
     preferences.environment,
+    resourceType,
   ]);
 
   useEffect(() => {
@@ -380,7 +381,7 @@ export default function ClonePreview(props) {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
-    if (isIAIntegration) {
+    if (isIAIntegration || resourceType === 'integrations') {
       dispatch(
         actions.template.installStepsReceived(
           [],

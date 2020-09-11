@@ -50,7 +50,7 @@ export function* createComponents({ resourceType, resourceId }) {
           name: data.name,
           tag: data.tag,
           _integrationId: data._integrationId,
-          newTemplateInstaller: data.newTemplateInstaller,
+          newTemplateInstaller: data.newTemplateInstaller || (resourceType === 'integrations'),
         },
       },
       message: 'Cloning...',

@@ -2597,8 +2597,7 @@ selectors.tiles = state => {
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
     } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
+      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (t.offlineConnections && t.offlineConnections.length > 0) {

@@ -266,9 +266,15 @@ export default function ConnectorInstallation(props) {
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
-          props.history.push(
-            getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
-          );
+          if (_connectorId) {
+            props.history.push(
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
+            );
+          } else {
+            props.history.push(
+              getRoutePath(`/integrations/${integrationId}/flows`)
+            );
+          }
         } else {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
@@ -278,6 +284,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch,
     mode,
+    _connectorId,
     integrationAppName,
     integrationId,
     isSetupComplete,
@@ -289,7 +296,7 @@ export default function ConnectorInstallation(props) {
     parentId,
     integrationInstallSteps]);
 
-  if (!installSteps || !_connectorId) {
+  if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
   }
 

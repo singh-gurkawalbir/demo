@@ -500,7 +500,7 @@ selectors.integrationAppSettings = (state, id) => {
   if (!state) return null;
   const integration = selectors.resource(state, 'integrations', id);
 
-  if (!integration || !integration._connectorId) {
+  if (!integration) {
     return null;
   }
 
