@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   importMappingButtonGroup: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
-    padding: '16px 8px 8px 0px',
+    padding: theme.spacing(2, 1, 1, 0),
     display: 'block',
     '& > button': {
       marginLeft: theme.spacing(1),
