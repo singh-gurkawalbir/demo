@@ -26,6 +26,8 @@ export function* fetchRequiredMappingData({
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
+  const {status: generateStatus} = yield select(selectors.getImportSampleData, importId, subRecordMappingObj);
+
   yield all([
     call(requestFlowSampleData, {
       flowId,
@@ -33,7 +35,7 @@ export function* fetchRequiredMappingData({
       resourceType: 'imports',
       stage: 'importMappingExtract',
     }),
-    call(requestImportSampleData, {
+    generateStatus !== 'received' && call(requestImportSampleData, {
       resourceId: importId,
       options: subRecordMappingObj,
     }),
@@ -115,7 +117,7 @@ export function* refreshGenerates({ isInit = false }) {
       }
     }
     /** fetup SF mapping assistant metadata ends */
-  } else {
+  } else if (!isInit) {
     const opts = {};
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
@@ -124,7 +126,7 @@ export function* refreshGenerates({ isInit = false }) {
     yield put(actions.importSampleData.request(
       importId,
       opts,
-      !isInit
+      true
     )
     );
   }

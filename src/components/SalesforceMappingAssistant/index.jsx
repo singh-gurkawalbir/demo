@@ -1,8 +1,7 @@
 import Frame from 'react-frame-component';
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
-import actions from '../../actions';
 import { generateLayoutColumns } from './util';
 import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
@@ -15,7 +14,6 @@ export default function SalesforceMappingAssistant({
   data,
   onFieldClick,
 }) {
-  const dispatch = useDispatch();
   const [editLayoutSections, setEditLayoutSections] = useState();
   const layout = useSelector(
     state => {
@@ -38,17 +36,6 @@ export default function SalesforceMappingAssistant({
       return left.editLayoutSections.length === right.editLayoutSections.length;
     }
   );
-
-  useEffect(() => {
-    if (connectionId && sObjectType && layoutId) {
-      dispatch(
-        actions.metadata.request(
-          connectionId,
-          `salesforce/metadata/connections/${connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${layoutId}`
-        )
-      );
-    }
-  }, [dispatch, connectionId, sObjectType, layoutId]);
 
   useEffect(() => {
     if (layout && layout.editLayoutSections) {
