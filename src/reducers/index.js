@@ -3293,8 +3293,6 @@ selectors.flowJobConnections = () => createSelector(
       ignoreBorrowedConnections: true,
     });
 
-    console.log('connectionIds', connectionIds);
-
     return connectionIds;
   },
   (connections, connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
