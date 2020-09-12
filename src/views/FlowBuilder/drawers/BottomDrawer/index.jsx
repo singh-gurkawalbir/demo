@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { makeStyles, Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
+import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
@@ -116,6 +116,7 @@ export default function BottomDrawer({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const theme = useTheme();
   const [isDragging, setIsDragging] = useState(false);
   const [dragEnd, setDragEnd] = useState(false);
   const [startY, setStartY] = useState(0);
@@ -143,11 +144,11 @@ export default function BottomDrawer({
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
   const tempDrawerHeight = drawerHeight + (startY - dragY);
   const minDrawerHeight = 41;
-  const maxHeight = window.innerHeight; // set maxStep to 4 to allow 100% drawer coverage.
+  const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight;
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
 
   const handleSizeUp = useCallback(() => {
-    if (drawerHeight + stepSize >= maxHeight) return setDrawerHeight(minDrawerHeight);
+    if (drawerHeight + stepSize >= maxHeight) return setDrawerHeight(maxHeight);
 
     setDrawerHeight(drawerHeight + stepSize);
   },
@@ -155,11 +156,11 @@ export default function BottomDrawer({
   );
 
   const handleSizeDown = useCallback(() => {
-    if (drawerHeight - stepSize < minDrawerHeight) return setDrawerHeight(maxHeight - stepSize);
+    if (drawerHeight - stepSize < minDrawerHeight) return setDrawerHeight(minDrawerHeight);
 
     setDrawerHeight(drawerHeight - stepSize);
   },
-  [maxHeight, setDrawerHeight, drawerHeight, stepSize]
+  [setDrawerHeight, drawerHeight, stepSize]
   );
 
   const handleDragEnd = useCallback(() => setDragEnd(true), []);
