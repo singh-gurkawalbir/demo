@@ -10,6 +10,7 @@ import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaMultiSelect from '../MultiSelect';
 import ButtonGroup from '../../ButtonGroup';
+import IconTextButton from '../../IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -76,7 +77,10 @@ export default function LineGraphDrawer({ integrationId }) {
     <div className={classes.linegraphContainer}>
       <div className={classes.linegraphActions}>
         <ButtonGroup>
-          <RefreshIcon onClick={handleRefreshClick}>Refresh</RefreshIcon>
+          <IconTextButton onClick={handleRefreshClick}>
+            <RefreshIcon /> Refresh
+          </IconTextButton>
+
           <DateRangeSelector onSave={handleDateRangeChange} />
           <DynaMultiSelect
             name="flowResources"

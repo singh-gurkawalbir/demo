@@ -11,6 +11,7 @@ import FlowCharts from '../../../../components/LineGraph/Flow';
 import DynaMultiSelect from '../../../../components/LineGraph/MultiSelect';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import IconTextButton from '../../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -88,7 +89,9 @@ export default function LineGraphDrawer({ flowId }) {
   const action = useMemo(
     () => (
       <>
-        <RefreshIcon onClick={handleRefresh} />
+        <IconTextButton onClick={handleRefresh}>
+          <RefreshIcon /> Refresh
+        </IconTextButton>
         <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
         <DynaMultiSelect
           name="flowResources"
