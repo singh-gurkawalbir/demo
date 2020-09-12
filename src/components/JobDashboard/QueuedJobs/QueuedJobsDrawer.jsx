@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import { Button, Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
@@ -98,12 +98,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function QueuedJobs({ connectionId, onConnectionsChange}) {
+function QueuedJobs({ connectionId}) {
   const classes = useStyles();
-  const match = useRouteMatch();
-  const { flowId } = match.params;
   const dispatch = useDispatch();
-  const connections = useSelectorMemo(selectors.flowJobConnections, flowId);
   const connectionJobs = useSelector(state =>
     selectors.queuedJobs(state, connectionId)
   );
@@ -114,11 +111,6 @@ function QueuedJobs({ connectionId, onConnectionsChange}) {
       return connection ? connection.queueSize : 0;
     }
   );
-
-  useEffect(() => {
-    onConnectionsChange(connections);
-  },
-  [connections, onConnectionsChange]);
 
   useEffect(() => {
     if (connectionId) {
@@ -161,15 +153,19 @@ function QueuedJobs({ connectionId, onConnectionsChange}) {
     </>
   );
 }
+
 const connectionsFilterConfig = {
   type: 'connections',
 };
+const paths = ['flows/:flowId/queuedJobs', ':flowId/queuedJobs'];
+
 export default function QueuedJobsDrawer() {
+  const location = useLocation();
   const match = useRouteMatch();
   const history = useHistory();
-  const [connections, setConnections] = useState([]);
   const [connectionId, setConnectionId] = useState();
-
+  const matchedPath = paths.find(p => matchPath(location.pathname, {path: `${match.path}/${p}`}));
+  const { params: { flowId } = {} } = matchPath(location.pathname, {path: `${match.path}/${matchedPath}`}) || {};
   const connectionsResourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectionsFilterConfig
@@ -177,6 +173,7 @@ export default function QueuedJobsDrawer() {
   const connectionName = connectionsResourceList.find(
     c => c._id === connectionId
   )?.name;
+  const connections = useSelectorMemo(selectors.flowJobConnections, flowId);
 
   const handleConnectionChange = useCallback(
     (id, value) => {
@@ -185,13 +182,11 @@ export default function QueuedJobsDrawer() {
     [setConnectionId]
   );
 
-  const handleConnectionsChange = useCallback(connections => {
-    setConnections(connections);
-    if (!connectionId && connections.length) {
-      setConnectionId(connections[0]?.id);
+  useEffect(() => {
+    if (connections.length && !connectionId) {
+      setConnectionId(connections[0].id);
     }
-  }, [connectionId]);
-
+  }, [connectionId, connections]);
   const handleClose = useCallback(() => {
     history.push(match.url);
   }, [history, match.url]);
@@ -223,8 +218,8 @@ export default function QueuedJobsDrawer() {
         actions={action}
         variant="permanent"
         onClose={handleClose}
-        path={['flows/:flowId/queuedJobs', ':flowId/queuedJobs']}>
-        <QueuedJobs connectionId={connectionId} onConnectionsChange={handleConnectionsChange} />
+        path={paths}>
+        <QueuedJobs connectionId={connectionId} />
       </RightDrawer>
     </LoadResources>
   );
