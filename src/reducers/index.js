@@ -3295,7 +3295,7 @@ selectors.flowJobConnections = () => createSelector(
 
     return connectionIds;
   },
-  (connections, connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+  (connections = [], connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
 );
 
 selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
