@@ -117,7 +117,8 @@ export default function BottomDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(0);
+  const [dragEnd, setDragEnd] = useState(false);
+  const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -140,7 +141,7 @@ export default function BottomDrawer({
     return resourceIdNameMap;
   }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
-  const tempDrawerHeight = drawerHeight + (dragStart - dragY);
+  const tempDrawerHeight = drawerHeight + (startY - dragY);
   const minDrawerHeight = 41;
   const maxHeight = window.innerHeight; // set maxStep to 4 to allow 100% drawer coverage.
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
@@ -161,6 +162,8 @@ export default function BottomDrawer({
   [maxHeight, setDrawerHeight, drawerHeight, stepSize]
   );
 
+  const handleDragEnd = useCallback(() => setDragEnd(true), []);
+
   const trackMouseY = useCallback(e => {
     if (e.movementY === 0) return; // skip x axis movement
 
@@ -170,23 +173,12 @@ export default function BottomDrawer({
   const handleMouseDown = useCallback(e => {
     // console.log('dragging');
     setIsDragging(true);
-    setDragStart(e.nativeEvent.clientY);
+    setStartY(e.nativeEvent.clientY);
     setDragY(e.nativeEvent.clientY);
 
+    window.addEventListener('mouseup', handleDragEnd);
     window.addEventListener('mousemove', trackMouseY);
-  }, [trackMouseY]);
-
-  const handleMouseUp = useCallback(() => {
-    if (!isDragging) return;
-
-    // console.log('persist size: ', tempDrawerHeight);
-    window.removeEventListener('mousemove', trackMouseY);
-
-    setIsDragging(false);
-    setDrawerHeight(tempDrawerHeight);
-    setDragStart(0);
-    setDragY(0);
-  }, [tempDrawerHeight, isDragging, setDrawerHeight, trackMouseY]);
+  }, [trackMouseY, handleDragEnd]);
 
   const handleTabChange = useCallback(
     (event, newValue) => {
@@ -222,11 +214,21 @@ export default function BottomDrawer({
     }
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
-  useEffect(() =>
-    // force removal of mousemove event listener on component unmount.
-    () => window.removeEventListener('mousemove', trackMouseY),
+  useEffect(() => {
+    if (isDragging && dragEnd) {
+      // console.log('drag end: ', tempDrawerHeight);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('mousemove', trackMouseY);
+
+      setIsDragging(false);
+      setDragEnd(false);
+      setDrawerHeight(tempDrawerHeight);
+      setStartY(0);
+      setDragY(0);
+    }
+  },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  []);
+  [dragEnd]);
   const tabProps = index => ({
     id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
   });
@@ -246,9 +248,7 @@ export default function BottomDrawer({
       anchor="bottom">
       <div
         className={classes.tabBar}
-        onMouseDown={handleMouseDown}
-        onMouseLeave={handleMouseUp}
-        onMouseUp={handleMouseUp}>
+        onMouseDown={handleMouseDown}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
