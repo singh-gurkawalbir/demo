@@ -96,8 +96,8 @@ export default function HandlebarsEditor(props) {
   const resultTitle = useMemo(
     () =>
       autoEvaluate
-        ? 'Evaluated handlebar template'
-        : 'Click run to see your handlebar template evaluated here!',
+        ? 'Evaluated handlebars template'
+        : 'Click run to see your handlebars template evaluated here!',
     [autoEvaluate]
   );
 
@@ -115,7 +115,7 @@ export default function HandlebarsEditor(props) {
       resultMode={resultMode}
       layout={layout}
       templateClassName={templateClassName}
-      ruleTitle="Type your handlebar template here"
+      ruleTitle="Type your handlebars template here"
       dataTitle="Resources available in your template."
       resultTitle={resultTitle}
       violations={violations}

@@ -9,6 +9,7 @@ import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaMultiSelect from '../MultiSelect';
+import ButtonGroup from '../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -19,6 +20,16 @@ const useStyles = makeStyles(theme => ({
     '& > div': {
       padding: theme.spacing(3, 0),
     },
+  },
+  linegraphActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingRight: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    marginBottom: theme.spacing(0),
+  },
+  linegraphContainer: {
+    marginTop: theme.spacing(-5),
   },
 }));
 const flowsConfig = { type: 'flows'};
@@ -39,7 +50,7 @@ export default function LineGraphDrawer({ integrationId }) {
   const flowResources = useMemo(
     () =>
       resourceList.resources &&
-      resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
+      resourceList.resources.filter(flow => flow._integrationId === integrationId && !flow.disabled).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
   const handleRefreshClick = useCallback(() => {
@@ -62,25 +73,27 @@ export default function LineGraphDrawer({ integrationId }) {
   );
 
   return (
-    <div>
-      <>
-        <RefreshIcon className={classes.refreshIcon} onClick={handleRefreshClick} />
-        <DateRangeSelector onSave={handleDateRangeChange} />
-        <DynaMultiSelect
-          name="flowResources"
-          value={selectedResources}
-          placeholder="Please select up to 8 flows"
-          options={[
-            {
-              items: flowResources.map(r => ({
-                value: r._id,
-                label: r.name || r.id,
-              })),
-            },
-          ]}
-          onFieldChange={handleResourcesChange}
+    <div className={classes.linegraphContainer}>
+      <div className={classes.linegraphActions}>
+        <ButtonGroup>
+          <RefreshIcon onClick={handleRefreshClick}>Refresh</RefreshIcon>
+          <DateRangeSelector onSave={handleDateRangeChange} />
+          <DynaMultiSelect
+            name="flowResources"
+            value={selectedResources}
+            placeholder="Please select up to 8 flows"
+            options={[
+              {
+                items: flowResources.map(r => ({
+                  value: r._id,
+                  label: r.name || r.id,
+                })),
+              },
+            ]}
+            onFieldChange={handleResourcesChange}
         />
-      </>
+        </ButtonGroup>
+      </div>
       <FlowCharts
         integrationId={integrationId}
         selectedResources={selectedResources}

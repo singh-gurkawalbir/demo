@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     minWidth: 70,
+    maxWidth: '50%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

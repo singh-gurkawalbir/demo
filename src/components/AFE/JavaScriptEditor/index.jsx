@@ -38,7 +38,7 @@ export default function JavaScriptEditor(props) {
     isToggleScreen,
   } = props;
   const classes = useStyles(props);
-  const { data, result, error, isSampleDataLoading, processor } = useSelector(state =>
+  const { data, result, error, errorLine, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -106,6 +106,8 @@ export default function JavaScriptEditor(props) {
           disabled={disabled}
           editorId={editorId}
           insertStubKey={insertStubKey}
+          errorLine={errorLine}
+          hasError={!!error}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
@@ -120,6 +122,7 @@ export default function JavaScriptEditor(props) {
             mode="json"
             readOnly={disabled}
             onChange={handleDataChange}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>

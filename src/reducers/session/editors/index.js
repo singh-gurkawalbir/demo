@@ -60,6 +60,7 @@ export default function reducer(state = {}, action) {
         draft[id].lastChange = Date.now();
         delete draft[id].violations;
         delete draft[id].error;
+        delete draft[id].errorLine;
         delete draft[id].result;
 
         break;
@@ -82,6 +83,7 @@ export default function reducer(state = {}, action) {
         draft[id].result = result;
         draft[id].status = 'received';
         delete draft[id].error;
+        delete draft[id].errorLine;
         delete draft[id].violations;
         break;
       }
@@ -93,7 +95,8 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes.EDITOR.EVALUATE_FAILURE: {
-        draft[id].error = error;
+        draft[id].error = error?.errorMessage;
+        draft[id].errorLine = error?.errorLine;
         draft[id].status = 'error';
         break;
       }

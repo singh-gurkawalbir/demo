@@ -282,7 +282,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
           margin={{
             top: 5,
             right: 30,
-            left: 20,
+            left: 40,
             bottom: 5,
           }}>
           <XAxis
@@ -301,6 +301,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
+              offset: -20,
               position: getAxisLabelPosition(id),
             }}
             domain={[() => 0, dataMax => dataMax + 10]}

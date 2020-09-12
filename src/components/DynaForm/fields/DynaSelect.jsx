@@ -164,6 +164,7 @@ export default function DynaSelect(props) {
     required,
     className,
     label,
+    skipDefault = false,
     onFieldChange,
     skipSort,
   } = props;
@@ -216,7 +217,9 @@ export default function DynaSelect(props) {
       value: '',
     };
 
-    items = [defaultItem, ...items];
+    if (!skipDefault) {
+      items = [defaultItem, ...items];
+    }
 
     return items;
   }, [isSubHeader, skipSort, options, placeholder]);
