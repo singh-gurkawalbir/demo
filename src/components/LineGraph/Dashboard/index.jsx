@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
 import { selectors } from '../../../reducers';
@@ -8,7 +8,7 @@ import RefreshIcon from '../../icons/RefreshIcon';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import DynaMultiSelect from '../MultiSelect';
+import DynaMultiSelect from '../SelectResource';
 import ButtonGroup from '../../ButtonGroup';
 import IconTextButton from '../../IconTextButton';
 
@@ -38,12 +38,14 @@ const flowsConfig = { type: 'flows'};
 export default function LineGraphDrawer({ integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [selectedResources, setSelectedResources] = useState([]);
   const [refresh, setRefresh] = useState();
   const [range, setRange] = useState({
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
   });
+  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || []);
+
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsConfig
@@ -65,10 +67,16 @@ export default function LineGraphDrawer({ integrationId }) {
     [dispatch, integrationId]
   );
   const handleResourcesChange = useCallback(
-    (id, val) => {
-      if (val.length < 9) {
-        setSelectedResources(val);
-      }
+    val => {
+      setSelectedResources(val);
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [integrationId]: val,
+          },
+        })
+      );
     },
     []
   );
@@ -83,18 +91,10 @@ export default function LineGraphDrawer({ integrationId }) {
 
           <DateRangeSelector onSave={handleDateRangeChange} />
           <DynaMultiSelect
-            name="flowResources"
-            value={selectedResources}
-            placeholder="Please select up to 8 flows"
-            options={[
-              {
-                items: flowResources.map(r => ({
-                  value: r._id,
-                  label: r.name || r.id,
-                })),
-              },
-            ]}
-            onFieldChange={handleResourcesChange}
+            integrationId={integrationId}
+            selectedResources={selectedResources}
+            flowResources={flowResources}
+            onSave={handleResourcesChange}
         />
         </ButtonGroup>
       </div>

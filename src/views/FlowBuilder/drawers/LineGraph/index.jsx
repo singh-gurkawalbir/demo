@@ -4,11 +4,12 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
+import util from '../../../../utils/array';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
-import DynaMultiSelect from '../../../../components/LineGraph/MultiSelect';
+import DynaMultiSelect from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
@@ -79,9 +80,13 @@ export default function LineGraphDrawer({ flowId }) {
   const handleRefresh = useCallback(() => {
     dispatch(actions.flowMetrics.clear(flowId));
   }, [dispatch, flowId]);
+
   const handleResourcesChange = useCallback(
-    (id, val) => {
-      setSelectedResources(val);
+    val => {
+      if (!util.areArraysEqual(val, selectedResources, {ignoreOrder: true})) {
+        dispatch(actions.flowMetrics.clear(flowId));
+        setSelectedResources(val);
+      }
     },
     []
   );
@@ -94,18 +99,10 @@ export default function LineGraphDrawer({ flowId }) {
         </IconTextButton>
         <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
         <DynaMultiSelect
-          name="flowResources"
-          value={selectedResources}
-          placeholder="Please select resources"
-          options={[
-            {
-              items: flowResources.map(r => ({
-                value: r._id,
-                label: r.name || r.id,
-              })),
-            },
-          ]}
-          onFieldChange={handleResourcesChange}
+          selectedResources={selectedResources}
+          flowResources={flowResources}
+          isFlow
+          onSave={handleResourcesChange}
         />
       </>
     ),
