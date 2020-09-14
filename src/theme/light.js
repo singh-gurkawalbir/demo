@@ -209,11 +209,11 @@ export default {
     },
     MuiTooltip: {
       tooltip: {
-        backgroundColor: colors.celigoWhite,
+        backgroundColor: colors.celigoNeutral7,
         fontFamily: 'source sans pro',
-        color: colors.celigoNeutral8,
+        color: colors.celigoWhite,
         border: '1px solid',
-        borderColor: colors.celigoNeutral3,
+        borderColor: colors.celigoNeutral7,
       },
       tooltipPlacementBottom: {
         margin: '0 !important',
@@ -228,7 +228,7 @@ export default {
           position: 'absolute',
           borderLeft: '7px solid transparent',
           borderRight: '7px solid transparent',
-          borderBottom: `7px solid ${colors.celigoNeutral3}`,
+          borderBottom: `7px solid ${colors.celigoNeutral7}`,
         },
         '&:after': {
           top: -5,
@@ -241,10 +241,44 @@ export default {
           position: 'absolute',
           borderLeft: '6px solid transparent',
           borderRight: '6px solid transparent',
-          borderBottom: `6px solid ${colors.celigoWhite}`,
+          borderBottom: `6px solid ${colors.celigoNeutral7}`,
         },
       },
     },
+    MuiPickersDay: {
+      day: {
+        borderRadius: 4,
+      },
+    },
+    MuiPickersClock: {
+      container: {
+        marginTop: 0,
+      },
+      clock: {
+        backgroundColor: colors.celigoNeutral2,
+      },
+    },
+    MuiPickersToolbar: {
+      toolbar: {
+        backgroundColor: colors.celigoWhite,
+        height: 64,
+      },
+    },
+    MuiPickersTimePickerToolbar: {
+      toolbarAmpmLeftPadding: {
+        paddingLeft: 24,
+      },
+    },
+    MuiPickersToolbarText: {
+      toolbarTxt: {
+        color: colors.celigoNeutral4,
+        fontSize: 48,
+      },
+      toolbarBtnSelected: {
+        color: colors.celigoNeutral8,
+      },
+    },
+
     MuiMenuItem: {
       root: {
         minHeight: 38,
@@ -619,6 +653,7 @@ export default {
         },
       },
       content: {
+        paddingTop: 3,
         margin: 0,
         '&.Mui-expanded': {
           margin: 0,
@@ -626,7 +661,7 @@ export default {
       },
       expandIcon: {
         padding: 0,
-        margin: [[-4, 4, 0, 0]],
+        margin: [[0, 4, 0, 0]],
       },
     },
     MuiChip: {

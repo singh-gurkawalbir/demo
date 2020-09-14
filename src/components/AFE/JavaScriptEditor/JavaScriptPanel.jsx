@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 const scriptFilterConfig = { type: 'scripts' };
 
 export default function JavaScriptPanel(props) {
-  const { editorId, disabled, insertStubKey } = props;
+  const { editorId, disabled, insertStubKey, errorLine, hasError } = props;
   const classes = useStyles(props);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const {
@@ -188,6 +188,8 @@ export default function JavaScriptPanel(props) {
               value={code}
               mode="javascript"
               onChange={handleCodeChange}
+              errorLine={errorLine}
+              hasError={hasError}
             />
           )}
         </div>

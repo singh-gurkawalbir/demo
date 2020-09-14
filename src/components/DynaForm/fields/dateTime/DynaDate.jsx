@@ -4,7 +4,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
+  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
@@ -12,6 +12,8 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import { getDateMask } from './DynaDateTime';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaDateLabelWrapper: {
@@ -25,6 +27,29 @@ const useStyles = makeStyles(theme => ({
       '& > span': {
         color: theme.palette.primary.main,
       },
+    },
+  },
+  keyBoardDateWrapper: {
+
+    '& .MuiIconButton-root': {
+      padding: 0,
+      marginRight: theme.spacing(1),
+      backgroundColor: 'transparent',
+    },
+    '& .MuiInputBase-input': {
+      padding: 0,
+      height: 38,
+      paddingLeft: 15,
+    },
+  },
+  inputDate: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
     },
   },
 }));
@@ -70,14 +95,20 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-        <DatePicker
+
+        <KeyboardDatePicker
           disabled={disabled}
+          className={classes.keyBoardDateWrapper}
           variant="inline"
+          fullWidth
           format={displayFormat}
+          placeholder={displayFormat}
+          mask={getDateMask(displayFormat)}
           value={dateValue}
-          label="Date"
           onChange={setDateValue}
-      />
+          InputProps={{ className: classes.inputDate }}
+          keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
+          />
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
     </>

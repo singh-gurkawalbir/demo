@@ -57,6 +57,11 @@ export default function fields(state = {}, action) {
         getNextStateFromFields(draft[formKey]);
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_CHANGE:
+        // If field state isnt present just return
+        if (!fieldsRef[id]) {
+          // eslint-disable-next-line no-console
+          return console.warn('Field ID not there', id);
+        }
         if (!skipFieldTouched) {
           // updated field touched state
           fieldsRef[id].touched = true;
@@ -76,6 +81,10 @@ export default function fields(state = {}, action) {
         break;
 
       case actionTypes.FORM.FIELD.FORCE_STATE:
+        if (!fieldsRef[id]) {
+          // eslint-disable-next-line no-console
+          return console.warn('Field ID not there', id);
+        }
         Object.keys(fieldStateProps)
           .filter(key => isBoolean(fieldStateProps[key]))
           .forEach(key => {
@@ -95,9 +104,17 @@ export default function fields(state = {}, action) {
         break;
 
       case actionTypes.FORM.FIELD.CLEAR_FORCE_STATE:
+        if (!fieldsRef[id]) {
+          // eslint-disable-next-line no-console
+          return console.warn('Field ID not there', id);
+        }
         delete fieldsRef[id].forceComputation;
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
+        if (!fieldsRef[id]) {
+          // eslint-disable-next-line no-console
+          return console.warn('Field ID not there', id);
+        }
         fieldsRef[id].touched = true;
 
         fieldsRef[id].touched = true;
