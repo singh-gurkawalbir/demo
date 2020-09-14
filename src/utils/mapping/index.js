@@ -512,12 +512,12 @@ export default {
       }
     }
   },
-  getDefaultLookupActionValue: (value, lookup) => {
-    if (value && value.lookupName && lookup && !lookup.allowFailures) {
+  getDefaultLookupActionValue: (lookup = {}) => {
+    if (!lookup.allowFailures) {
       return 'disallowFailure';
     }
 
-    if (lookup && lookup.useDefaultOnMultipleMatches) {
+    if (lookup.useDefaultOnMultipleMatches) {
       return 'useDefaultOnMultipleMatches';
     }
 
@@ -803,6 +803,10 @@ export default {
 
       case adaptorTypeMap.DynamodbImport:
         return 'DynamoDB';
+      case adaptorTypeMap.WebhookExport:
+        return 'Webhook';
+      case adaptorTypeMap.SimpleExport:
+        return 'File';
       default:
     }
   },

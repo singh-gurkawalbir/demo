@@ -150,6 +150,7 @@ export default function CodeEditor({
   return (
     <>
       <AceEditor
+        wrapEnabled
         markers={markers}
         ref={aceEditor}
         name={name}
