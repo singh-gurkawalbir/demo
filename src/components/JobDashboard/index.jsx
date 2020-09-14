@@ -45,7 +45,6 @@ export default function JobDashboard({
     [dispatch]
   );
 
-  useTraceUpdate({jobs, integration, userPermissionsOnIntegration });
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
   }, [dispatch]);
