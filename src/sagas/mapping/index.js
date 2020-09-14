@@ -26,7 +26,7 @@ export function* fetchRequiredMappingData({
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
-  const {status: generateStatus} = yield select(selectors.getImportSampleData, importId, subRecordMappingObj);
+  const {status: generateStatus} = (yield select(selectors.getImportSampleData, importId, subRecordMappingObj)) || {};
 
   yield all([
     call(requestFlowSampleData, {
