@@ -54,7 +54,8 @@ import { suiteScriptSagas } from './suiteScript';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
-import latestJobsSagas from './errorManagement/latestJobs';
+import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
+import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
@@ -159,7 +160,8 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
-    ...latestJobsSagas,
+    ...latestIntegrationJobsSagas,
+    ...latestFlowJobsSagas,
     ...errorRetrySagas,
     ...customSettingsSagas,
     ...exportDataSagas,

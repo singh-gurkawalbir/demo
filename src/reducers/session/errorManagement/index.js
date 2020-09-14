@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import openErrors, { selectors as fromOpenErrors } from './openErrors';
 import errorDetails, { selectors as fromErrorDetails } from './errorDetails';
-import latestJobDetails, { selectors as fromLatestJobs } from './latestJobs';
+import latestJobDetails, { selectors as fromLatestJobs } from './latestJobs/integrations';
 import getFilteredErrors from '../../../utils/errorManagement';
 import retryData, { selectors as fromRetryData } from './retryData';
 import { genSelectors } from '../../util';
