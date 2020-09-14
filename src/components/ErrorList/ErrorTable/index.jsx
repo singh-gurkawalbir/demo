@@ -18,6 +18,9 @@ const useStyles = makeStyles(() => ({
     top: 100,
     textAlign: 'center',
   },
+  errorDetailsTable: {
+    wordBreak: 'break-word',
+  },
 }));
 const rowsPerPageOptions = [10, 25, 50];
 const DEFAULT_ROWS_PER_PAGE = 50;
@@ -69,6 +72,7 @@ export default function ErrorTable(props) {
           />
           <CeligoTable
             data={errorsInCurrentPage}
+            className={classes.errorDetailsTable}
             filterKey={filterKey}
             {...metadata[errorType]}
             actionProps={actionProps}
