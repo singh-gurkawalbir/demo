@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
@@ -22,6 +23,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
+  const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
+
+  return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
+};
 
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
@@ -46,11 +53,28 @@ export default function LineGraphDrawer({ flowId }) {
 
   const customPresets = useMemo(() => {
     if (latestJob) {
+      const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
+      const endDate = getRoundedDate(latestJob.endedAt ? new Date(latestJob.endedAt) : new Date(), 1);
+
+      // we aggregate data per hour when range is greater than 4 hours or run period is more than 7 days ago,
+      // so the actual flow start and end may miss the aggregate window.
+      // hence add -1 and +1 hour to actual flow run range
+      if (moment().diff(moment(startDate), 'days') > 7 ||
+       moment(endDate).diff(moment(startDate), 'hours') > 4) {
+        startDate.setHours(startDate.getHours() - 1);
+        endDate.setHours(endDate.getHours() + 1);
+      } else {
+        // Add -1 and +1 minute range if flow run is less than 4 hours and in last 7 days
+
+        startDate.setMinutes(startDate.getMinutes() - 2);
+        endDate.setMinutes(endDate.getMinutes() + 2);
+      }
+
       return [{
         label: 'Last run',
         range: () => ({
-          startDate: new Date(latestJob.createdAt),
-          endDate: latestJob.endedAt ? new Date(latestJob.endedAt) : new Date(),
+          startDate,
+          endDate,
         }),
       }];
     }

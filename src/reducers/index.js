@@ -4851,7 +4851,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
   const adaptorType = resourceType === 'connections'
-    ? getStagedValue('type') || resourceObj?.type
+    ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
