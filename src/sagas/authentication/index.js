@@ -175,6 +175,14 @@ export function* getCSRFTokenBackend() {
   return _csrf;
 }
 
+export function* setLastLoggedInLocalStorage() {
+  const profile = yield call(
+    getResource,
+    actions.user.profile.request('Retrieving user\'s Profile')
+  );
+
+  localStorage.setItem('latestUser', profile?._id);
+}
 export function* auth({ email, password }) {
   try {
     // replace credentials in the request body
@@ -190,9 +198,9 @@ export function* auth({ email, password }) {
     const isExpired = yield select(selectors.isSessionExpired);
 
     yield call(setCSRFToken, apiAuthentications._csrf);
-    yield put(actions.auth.complete());
 
-    localStorage.setItem('latestUser', email);
+    yield call(setLastLoggedInLocalStorage);
+    yield put(actions.auth.complete());
 
     yield call(retrieveAppInitializationResources);
 

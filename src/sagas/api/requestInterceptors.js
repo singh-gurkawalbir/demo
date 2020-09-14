@@ -16,18 +16,19 @@ import { isJsonString } from '../../utils/string';
 const tryCount = 3;
 
 function* isCurrentProfileDifferent() {
-  const currentEmail = yield select(selectors.userProfileEmail);
+  const currentProfile = yield select(selectors.userProfile);
+  const currentUserId = currentProfile?._id;
   // for browsers without this local state variable skip the check
 
-  const latestUser = localStorage.getItem('latestUser');
+  const latestUserId = localStorage.getItem('latestUser');
 
-  if (!latestUser || !currentEmail) { return false; }
+  if (!latestUserId || !currentUserId) { return false; }
 
   // only when its defined do you attempt to compare
-  return currentEmail !== latestUser;
+  return currentUserId !== latestUserId;
 }
 
-export function* isCurrentUseAndLatestUserTheSame() {
+export function* isCurrentUserAndLatestUserTheSame() {
   // check the current userProfile is different from the latest user profile
   const isProfileDiff = yield call(isCurrentProfileDifferent);
   const isUserAuthenticated = yield select(selectors.isAuthenticated);
@@ -35,7 +36,7 @@ export function* isCurrentUseAndLatestUserTheSame() {
   // When user is not authenticated we have to skip these
   // checks for network calls during authentication process
   if (isProfileDiff && isUserAuthenticated) {
-    yield call(unauthenticateAndDeleteProfile);
+    yield put(actions.auth.userAlreadyLoggedIn());
 
     return false;
   }
@@ -46,7 +47,7 @@ export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
 
-  const shouldMakeRequest = yield call(isCurrentUseAndLatestUserTheSame);
+  const shouldMakeRequest = yield call(isCurrentUserAndLatestUserTheSame);
 
   if (!shouldMakeRequest) { return null; }
 

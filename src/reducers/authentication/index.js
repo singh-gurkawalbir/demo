@@ -24,6 +24,7 @@ export default function (state = defaultState, action) {
         draft.authenticated = false;
         draft.commStatus = COMM_STATES.LOADING;
         delete draft.loggedOut;
+        delete draft.userLoggedInDifferentTab;
         break;
 
       case actionTypes.AUTH_SUCCESSFUL:
@@ -51,7 +52,9 @@ export default function (state = defaultState, action) {
       case actionTypes.DEFAULT_ACCOUNT_SET:
         draft.defaultAccountSet = true;
         break;
-
+      case actionTypes.AUTH_USER_ALREADY_LOGGED_IN:
+        draft.userLoggedInDifferentTab = true;
+        break;
       case actionTypes.AUTH_TIMESTAMP:
         draft.authTimestamp = Date.now();
         delete draft.warning;

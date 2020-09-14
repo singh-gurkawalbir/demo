@@ -6,7 +6,7 @@ import {
   onRequestSaga,
   onSuccessSaga,
   onErrorSaga,
-  isCurrentUseAndLatestUserTheSame,
+  isCurrentUserAndLatestUserTheSame,
 } from './requestInterceptors';
 import {
   APIException,
@@ -92,7 +92,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(call(isCurrentUseAndLatestUserTheSame));
+      expect(saga.next().value).toEqual(call(isCurrentUserAndLatestUserTheSame));
 
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, method));
       // defaults to a api request action with
@@ -111,7 +111,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(call(isCurrentUseAndLatestUserTheSame));
+      expect(saga.next().value).toEqual(call(isCurrentUserAndLatestUserTheSame));
 
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, method));
 
@@ -129,7 +129,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(call(isCurrentUseAndLatestUserTheSame));
+      expect(saga.next().value).toEqual(call(isCurrentUserAndLatestUserTheSame));
 
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, method));
 
@@ -146,7 +146,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(call(isCurrentUseAndLatestUserTheSame));
+      expect(saga.next().value).toEqual(call(isCurrentUserAndLatestUserTheSame));
 
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
@@ -189,7 +189,7 @@ describe('request interceptors...testing the various stages of an api request on
       const request = { url: path, args };
       const saga = onRequestSaga(request);
 
-      expect(saga.next().value).toEqual(call(isCurrentUseAndLatestUserTheSame));
+      expect(saga.next().value).toEqual(call(isCurrentUserAndLatestUserTheSame));
       expect(saga.next(true).value).toEqual(select(selectors.resourceStatus, path, 'POST'));
 
       expect(saga.next({ retryCount: 0 }).value).toEqual(
