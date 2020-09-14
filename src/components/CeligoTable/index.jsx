@@ -65,6 +65,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function CeligoTable({
   columns,
+  onRowOver,
+  onRowOut,
   rowActions,
   data = [],
   onSelectChange,
@@ -162,6 +164,14 @@ export default function CeligoTable({
     setSelectedAction(component);
   }, []);
 
+  const handleMouseOver = rowData => () => {
+    onRowOver(rowData, dispatch);
+  };
+
+  const handleMouseOut = rowData => () => {
+    onRowOut(rowData, dispatch);
+  };
+
   return (
     <div className={clsx(className)}>
       {selectedAction}
@@ -232,7 +242,12 @@ export default function CeligoTable({
         </TableHead>
         <TableBody>
           {data.map(rowData => (
-            <TableRow hover key={rowData.key || rowData._id} className={classes.row}>
+            <TableRow
+              onMouseOver={onRowOver && handleMouseOver(rowData)}
+              onFocus={onRowOver && handleMouseOver(rowData)}
+              onMouseOut={onRowOut && handleMouseOut(rowData)}
+              onBlur={onRowOut && handleMouseOut(rowData)}
+              hover key={rowData.key || rowData._id} className={classes.row}>
               {selectableRows && (
                 <TableCell>
                   {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
