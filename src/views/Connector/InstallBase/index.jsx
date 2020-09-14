@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3, 3, 12, 3),
   },
 }));
-const connectorLicenseFilterConfig = { type: 'connectorLicenses' };
+const connectorLicenseFilterConfig = { type: 'connectorLicenses', ignoreEnvironmentFilter: true };
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
   searchBy: ['email', '_integrationId', 'name', 'version', 'environment'],
@@ -39,6 +39,7 @@ export default function InstallBase(props) {
   const connectorInstallBaseConfig = useMemo(
     () => ({
       type: 'connectorInstallBase',
+      ignoreEnvironmentFilter: true,
       ...defaultFilter,
       ...filter,
     }),

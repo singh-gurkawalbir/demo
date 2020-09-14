@@ -34,16 +34,13 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     width: 1,
-    height: 30,
+    height: 18,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
   },
-  inlineFlexContainer: {
-    display: 'inline-flex',
-    '&>*': {
-      margin: 'auto',
-      paddingRight: theme.spacing(1),
-    },
+  flowsPanelWithStatus: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -112,8 +109,8 @@ export default function FlowsPanel({ integrationId, childId }) {
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
     () => (
-      <div className={classes.inlineFlexContainer}>
-        <span className="">Integration flows</span>
+      <span className={classes.flowsPanelWithStatus}>
+        Integration flows
         {totalErrors ? (
           <>
             <span className={classes.divider} />
@@ -123,9 +120,9 @@ export default function FlowsPanel({ integrationId, childId }) {
             </span>
           </>
         ) : null}
-      </div>
+      </span>
     ),
-    [classes.divider, classes.errorStatus, classes.inlineFlexContainer, totalErrors]
+    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
   );
 
   return (
