@@ -86,6 +86,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(5),
   },
+  code: {
+    wordBreak: 'break-word',
+  },
 }));
 
 function JobErrorTable({
@@ -581,10 +584,12 @@ function JobErrorTable({
                   {
                     heading: 'Code',
                     align: 'center',
-                    value: r => r.code,
+                    width: '20%',
+                    value: r => r.code && (<span className={classes.code}>{r.code}</span>),
                   },
                   {
                     heading: 'Message',
+                    width: '30%',
                     value: r => (
                       <JobErrorMessage
                         message={r.message}
@@ -595,6 +600,7 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Time',
+                    width: '15%',
                     value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {
