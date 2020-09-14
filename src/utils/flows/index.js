@@ -550,6 +550,63 @@ export function getIAFlowSettings(integration, flowId) {
   return allFlows.find(flow => flow._id === flowId) || emptyObject;
 }
 
+export function getFlowResources(flows, exports, imports, flowId) {
+  const resources = [];
+  const flow = (flows || []).find(f => f._id === flowId);
+
+  resources.push({ _id: flowId, name: 'Flow-level' });
+
+  if (!flow) {
+    return resources;
+  }
+
+  if (flow._exportId) {
+    const exportDoc = exports.find(e => e._id === flow._exportId);
+
+    if (exportDoc) {
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+    }
+  }
+
+  if (flow._importId) {
+    const importDoc = imports.find(e => e._id === flow._importId);
+
+    if (importDoc) {
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+    }
+  }
+
+  if (flow.pageGenerators && flow.pageGenerators.length) {
+    flow.pageGenerators.forEach(pg => {
+      const exportDoc = exports.find(e => e._id === pg._exportId);
+
+      if (exportDoc) {
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
+      }
+    });
+  }
+
+  if (flow.pageProcessors && flow.pageProcessors.length) {
+    flow.pageProcessors.forEach(pp => {
+      if (pp.type === 'import' && pp._importId) {
+        const importDoc = imports.find(e => e._id === pp._importId);
+
+        if (importDoc) {
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
+        }
+      } else if (pp.type === 'export' && pp._exportId) {
+        const exportDoc = exports.find(e => e._id === pp._exportId);
+
+        if (exportDoc) {
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
+        }
+      }
+    });
+  }
+
+  return resources;
+}
+
 // TODO: The object returned from this selector needs to be overhauled.
 // It is shared between IA and DIY flows,
 // yet its impossible to know which works for each flow type. For example,

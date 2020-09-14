@@ -108,9 +108,10 @@ export function parseJobs(jobs) {
 }
 
 export function parseJobFamily(job) {
-  const { children, ...rest } = job;
+  const { children, _flowId, ...rest } = job;
   const updatedJob = {
     ...DEFAULT_JOB_PROPS,
+    _flowId,
     ...rest,
   };
 
@@ -119,6 +120,7 @@ export function parseJobFamily(job) {
       .filter(childJob => childJob !== null)
       .map(childJob => ({
         ...DEFAULT_JOB_PROPS,
+        _flowId,
         ...childJob,
       }));
   }

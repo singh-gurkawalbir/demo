@@ -63,12 +63,12 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
-    if (newResourceId) {
+    if (newResourceId && !isStandalone) {
       dispatch(
         actions.connection.requestRegister([newResourceId], _integrationId)
       );
     }
-  }, [dispatch, _integrationId, newResourceId]);
+  }, [dispatch, _integrationId, newResourceId, isStandalone]);
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(_integrationId));
@@ -101,17 +101,19 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                 setTempId(newId);
                 history.push(`${location.pathname}/add/connections/${newId}`);
 
-                const patchSet = [
-                  {
-                    op: 'add',
-                    path: '/_integrationId',
-                    value: _integrationId,
-                  },
-                ];
+                if (!isStandalone) {
+                  const patchSet = [
+                    {
+                      op: 'add',
+                      path: '/_integrationId',
+                      value: _integrationId,
+                    },
+                  ];
 
-                dispatch(
-                  actions.resource.patchStaged(newId, patchSet, 'value')
-                );
+                  dispatch(
+                    actions.resource.patchStaged(newId, patchSet, 'value')
+                  );
+                }
               }}>
               <AddIcon /> Create connection
             </IconTextButton>

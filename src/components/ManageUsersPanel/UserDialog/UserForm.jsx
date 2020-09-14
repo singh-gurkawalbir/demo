@@ -12,15 +12,15 @@ import {
 import LoadResources from '../../LoadResources';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import ButtonGroup from '../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  actions: {
-    textAlign: 'right',
-    padding: theme.spacing(0.5),
-  },
-  actionButton: {
+  factionButton: {
     marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(2),
+    marginLeft: theme.spacing(1),
+  },
+  btnGroupInviteUser: {
+    paddingLeft: theme.spacing(1),
   },
 }));
 const integrationsFilterConfig = {
@@ -185,24 +185,22 @@ export default function UserForm({
       <DynaForm
         formKey={formKey}
         fieldMeta={fieldMeta} />
-      <div className={classes.actions}>
+      <ButtonGroup className={classes.btnGroupInviteUser}>
         <DynaSubmit
           formKey={formKey}
           disabled={disableSave}
           data-test="submitUserForm"
-          className={classes.actionButton}
           onClick={onSaveClick}>
           {disableSave ? 'Saving...' : 'Save'}
         </DynaSubmit>
         <Button
           data-test="cancelUserForm"
           onClick={onCancelClick}
-          className={classes.actionButton}
           variant="text"
           color="primary">
           Cancel
         </Button>
-      </div>
+      </ButtonGroup>
     </LoadResources>
   );
 }

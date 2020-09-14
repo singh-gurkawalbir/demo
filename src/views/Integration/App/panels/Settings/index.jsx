@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     padding: theme.spacing(0, 3, 3, 0),
     overflowX: 'auto',
+    overflow: 'visible',
   },
   listItem: {
     color: theme.palette.secondary.main,

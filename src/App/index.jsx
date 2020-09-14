@@ -53,9 +53,6 @@ const useSnackbarStyles = makeStyles({
       color: colors.celigoAccent2,
     },
   },
-  snackbarContent: {
-    background: 'yellow',
-  },
   variantSuccess: {
     backgroundColor: colors.celigoWhite,
     '&:before': {

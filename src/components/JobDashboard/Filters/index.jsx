@@ -124,6 +124,7 @@ function Filters({
     },
     [dispatch, filterKey]
   );
+
   const handlePageChange = useCallback(
     offset => () => {
       patchFilter('currentPage', currentPage + offset);

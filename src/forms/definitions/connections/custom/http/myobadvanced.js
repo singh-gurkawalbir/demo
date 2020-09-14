@@ -3,14 +3,14 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'cookie') {
-      retValues['/http/baseURI'] = `${formValues['/instanceURI']}/entity/${
+      retValues['/http/baseURI'] = `https://${formValues['/instanceURI']}/entity/${
         formValues['/http/unencrypted/endpointName']
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
       retValues['/http/ping/method'] = 'GET';
       retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
-      retValues['/http/auth/cookie/uri'] = `${
+      retValues['/http/auth/cookie/uri'] = `https://${
         formValues['/instanceURI']
       }/entity/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
@@ -28,17 +28,17 @@ export default {
       delete retValues['/http/_iClientId'];
       retValues['/http/auth/oauth'] = undefined;
     } else {
-      retValues['/http/baseURI'] = `${
+      retValues['/http/baseURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
-      retValues['/http/auth/oauth/authURI'] = `${
+      retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/authorize`;
-      retValues['/http/auth/oauth/tokenURI'] = `${
+      }/identity/connect/authorize`;
+      retValues['/http/auth/oauth/tokenURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/token`;
+      }/identity/connect/token`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
       delete retValues['/http/auth/cookie/successStatusCode'];

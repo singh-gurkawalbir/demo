@@ -212,7 +212,7 @@ describe('retry util', () => {
       // should not reach here
       throw new Error('unreachable');
     }).catch(ex => {
-      expect(c).toEqual(3);
+      expect(c).toEqual(5);
       expect(ex.message).toEqual('fail');
     });
   });

@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
+import shortid from 'shortid';
+import { isEqual } from 'lodash';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import TrashIcon from '../../icons/TrashIcon';
 import AutoSuggest from './DynaAutoSuggest';
@@ -12,6 +14,7 @@ import FieldHelp from '../FieldHelp';
 const useStyles = makeStyles(theme => ({
   container: {
     marginTop: theme.spacing(1),
+    width: '100%',
   },
 
   rowContainer: {
@@ -66,37 +69,77 @@ export function KeyValueComponent(props) {
     keyConfig: suggestKeyConfig,
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
-  const [values, setValues] = useState([]);
+
+  const preUpdate = useCallback(val => val.filter(
+    val => val[keyName] || val[valueName]
+  ).map(({key, ...rest}) => (rest)), [keyName, valueName]);
+  const addEmptyLastRowIfNotExist = useCallback(val => {
+    const lastRow = val[val.length - 1];
+
+    if (lastRow) {
+      const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
+
+      if (isLastRowEmpty) {
+        return val;
+      }
+    }
+
+    return [...val, {key: shortid.generate()}];
+  }, [keyName, valueName]);
+  const getInitVal = useCallback(
+    () => {
+      const formattedValue = (value || []).map(val => ({...val, key: shortid.generate()}));
+
+      return addEmptyLastRowIfNotExist(formattedValue);
+    },
+    [addEmptyLastRowIfNotExist, value],
+  );
+  const [values, setValues] = useState(getInitVal());
   const [rowInd, setRowInd] = useState(0);
   const [isKey, setIsKey] = useState(true);
 
   useEffect(() => {
-    // value can be empty/undefined also, so updating the state with the same
-    setValues(value || []);
-  }, [value]);
+    // set state in case of lazy loading or value changed by parent
+    if (!isEqual(preUpdate(values), (value || []))) {
+      setValues(getInitVal());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getInitVal, preUpdate, value]);
 
-  const handleDelete = row => () => {
+  const handleDelete = key => () => {
     const valueTmp = [...values];
+    const row = valueTmp.findIndex(item => item.key === key);
 
     if (valueTmp[row]) {
       valueTmp.splice(row, 1);
-      setValues(valueTmp);
-      onUpdate(valueTmp);
+      setValues(addEmptyLastRowIfNotExist(valueTmp));
+      onUpdate(preUpdate(valueTmp));
     }
   };
 
-  const handleUpdate = (row, value, field) => {
-    if (row !== undefined) {
-      values[row][field] = value;
+  const handleUpdate = useCallback((key, value, field) => {
+    const valuesCopy = [...values];
+    let row;
+
+    if (key) {
+      row = values.findIndex(item => item.key === key);
+
+      valuesCopy[row][field] = value;
     } else {
-      values.push({ [field]: value });
+      valuesCopy.push({ [field]: value, key: shortid.generate() });
     }
 
-    const removedEmptyValues = values.filter(
+    const removedEmptyValues = valuesCopy.filter(
       value => value[keyName] || value[valueName]
     );
+    const lastRow = valuesCopy[valuesCopy.length - 1];
+    const isLastRowEmpty = !(lastRow[keyName] || lastRow[valueName]);
 
-    setValues(removedEmptyValues);
+    if (isLastRowEmpty) {
+      setValues([...removedEmptyValues, lastRow]);
+    } else {
+      setValues(addEmptyLastRowIfNotExist(removedEmptyValues));
+    }
 
     setRowInd(
       row !== undefined && row < removedEmptyValues.length
@@ -104,28 +147,19 @@ export function KeyValueComponent(props) {
         : removedEmptyValues.length - 1
     );
     setIsKey(field === keyName);
-    onUpdate(removedEmptyValues);
-  };
+    onUpdate(preUpdate(removedEmptyValues));
+  }, [addEmptyLastRowIfNotExist, keyName, onUpdate, preUpdate, valueName, values]);
 
-  const tableData = useMemo(() => {
-    const tableArr = Array.isArray(values) ? values.map((r, n) => ({ ...r, row: n })) : [];
-
-    // insert an empty row for auto suggest to show options on click
-    tableArr.push({ extract: '', generate: ''});
-
-    return tableArr;
-  }, [values]);
-
-  const handleKeyUpdate = row => event => {
+  const handleKeyUpdate = key => event => {
     const { value } = event.target;
 
-    handleUpdate(row, value, keyName);
+    handleUpdate(key, value, keyName);
   };
 
-  const handleValueUpdate = row => event => {
+  const handleValueUpdate = key => event => {
     const { value } = event.target;
 
-    handleUpdate(row, value, valueName);
+    handleUpdate(key, value, valueName);
   };
 
   return (
@@ -138,19 +172,19 @@ export function KeyValueComponent(props) {
         <FieldHelp {...props} />
       </div>
       <>
-        {tableData.map(r => (
-          <div className={classes.rowContainer} key={r.row}>
+        {values.map((r, index) => (
+          <div className={classes.rowContainer} key={r.key}>
             {suggestKeyConfig && (
               <AutoSuggest
                 disabled={disabled}
                 value={r[keyName]}
-                id={`${keyName}-${r.row}`}
-                data-test={`${keyName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                id={`${keyName}-${index}`}
+                data-test={`${keyName}-${index}`}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={keyName}
                 variant="filled"
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, keyName)}
+                  handleUpdate(r.key, _value, keyName)}
                 labelName={suggestKeyConfig.labelName}
                 valueName={suggestKeyConfig.valueName}
                 options={{ suggestions: suggestKeyConfig.suggestions }}
@@ -160,14 +194,14 @@ export function KeyValueComponent(props) {
             {!suggestKeyConfig && (
               <TextField
                 disabled={disabled}
-                autoFocus={r.row === rowInd && isKey}
+                autoFocus={index === rowInd && isKey}
                 defaultValue={r[keyName]}
-                id={`${keyName}-${r.row}`}
-                data-test={`${keyName}-${r.row}`}
+                id={`${keyName}-${index}`}
+                data-test={`${keyName}-${index}`}
                 placeholder={keyName}
                 variant="filled"
                 fullWidth
-                onChange={handleKeyUpdate(r.row)}
+                onChange={handleKeyUpdate(r.key)}
                 className={clsx(classes.dynaField, classes.dynaKeyField)}
               />
             )}
@@ -176,15 +210,15 @@ export function KeyValueComponent(props) {
               <AutoSuggest
                 disabled={disabled}
                 value={r[valueName]}
-                id={`${valueName}-${r.row}`}
-                data-test={`${valueName}-${r.row}`}
-                autoFocus={r.row === rowInd && isKey}
+                id={`${valueName}-${index}`}
+                data-test={`${valueName}-${index}`}
+                // autoFocus={r.row === rowInd && isKey}
                 placeholder={valueName}
                 variant="filled"
                 labelName={suggestValueConfig.labelName}
                 valueName={suggestValueConfig.valueName}
                 onFieldChange={(_, _value) =>
-                  handleUpdate(r.row, _value, valueName)}
+                  handleUpdate(r.key, _value, valueName)}
                 options={{ suggestions: suggestValueConfig.suggestions }}
                 fullWidth
               />
@@ -192,24 +226,24 @@ export function KeyValueComponent(props) {
             {!suggestValueConfig && (
               <TextField
                 disabled={disabled}
-                autoFocus={r.row === rowInd && !isKey}
-                id={`${valueName}-${r.row}`}
-                data-test={`${valueName}-${r.row}`}
+                autoFocus={index === rowInd && !isKey}
+                id={`${valueName}-${index}`}
+                data-test={`${valueName}-${index}`}
                 defaultValue={r[valueName]}
                 placeholder={valueName}
                 variant="filled"
                 fullWidth
-                onChange={handleValueUpdate(r.row)}
+                onChange={handleValueUpdate(r.key)}
                 className={clsx(classes.dynaField, classes.dynaValueField)}
               />
             )}
 
             {showDelete && (
               <ActionButton
-                disabled={disabled}
-                id={`delete-${r.row}`}
-                data-test={`delete-${r.row}`}
-                onClick={handleDelete(r.row)}>
+                disabled={disabled || (!(r[keyName] || r[valueName]))}
+                id={`delete-${index}`}
+                data-test={`delete-${index}`}
+                onClick={handleDelete(r.key)}>
                 <TrashIcon />
               </ActionButton>
             )}
@@ -219,7 +253,6 @@ export function KeyValueComponent(props) {
     </FormControl>
   );
 }
-
 export default function DynaKeyValue(props) {
   const { id, onFieldChange } = props;
   const onUpdate = values => {
@@ -240,3 +273,4 @@ export default function DynaKeyValue(props) {
     </>
   );
 }
+

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { isString } from 'lodash';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import FormLabel from '@material-ui/core/FormLabel';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -11,6 +11,7 @@ import Spinner from '../../../Spinner';
 import { wrapSpecialChars } from '../../../../utils/jsonPaths';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import SpinnerWrapper from '../../../SpinnerWrapper';
 
 /**
  * TODO: Azhar to check and update the button styles
@@ -106,12 +107,10 @@ export default function DynaNetSuiteLookupFilters(props) {
 
   if (!filters) {
     return (
-      <div className={classes.loading}>
-        <Typography className={classes.heading}>
-          Loading
-        </Typography>
-        <Spinner size={24} />
-      </div>
+      <SpinnerWrapper>
+        <Spinner color="primary" />
+      </SpinnerWrapper>
+
     );
   }
 

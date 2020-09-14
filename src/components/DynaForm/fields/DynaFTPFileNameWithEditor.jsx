@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent',
   },
   dynaRowWrapper: {
+    display: 'flex',
     flexDirection: 'row !important',
   },
 }));

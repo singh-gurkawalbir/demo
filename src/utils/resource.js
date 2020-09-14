@@ -122,6 +122,7 @@ export const adaptorTypeMap = {
   WebhookExport: 'webhook',
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
+  SimpleExport: 'file',
 };
 
 export const multiStepSaveResourceTypes = [
@@ -314,13 +315,16 @@ export function salesforceExportSelectOptions(data, fieldName) {
 /*
  * Given a resource, returns true if it is File Export / Import
  * FTP / S3 / DataLoader
+ * Note: DataLoader has an adaptorType 'SimpleExport' added recently
+ * Update this util once we make changes through out the application replacing type with adaptorType
  */
 export function isFileAdaptor(resource) {
   if (!resource) return false;
 
-  return resource.adaptorType
-    ? ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType])
-    : resource.type === 'simple';
+  return (
+    ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType]) ||
+      resource.type === 'simple'
+  );
 }
 
 export const generateNewId = () => `new-${shortid.generate()}`;

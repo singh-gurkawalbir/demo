@@ -36,10 +36,10 @@ const getSampleSnowflakeTemplate = (sampleData, eFields, isInsert) => {
         eFields[0].id
       }}})`;
     } else {
-      toReturn = `${'merge into target_table using source_table on target_table.id = source_table.{{data.0.'}${
+      toReturn = `${'MERGE into target_table using source_table on target_table.id = source_table.data.0.'}${
         eFields[0].id
-      }}} when matched then 
-      update set target_table.description = source_table.{{data.0.${eFields[0].id}}}`;
+      } when matched then 
+      update set target_table.description = source_table.data.0.${eFields[0].id}`;
     }
   } else if (eFields && eFields.length > 0) {
     if (isInsert) {
@@ -47,10 +47,10 @@ const getSampleSnowflakeTemplate = (sampleData, eFields, isInsert) => {
         eFields[0].id
       }}})`;
     } else {
-      toReturn = `${'merge into target_table using source_table on target_table.id = source_table.{{data.'}${
+      toReturn = `${'MERGE into target_table using source_table on target_table.id = source_table.data.'}${
         eFields[0].id
-      }}} when matched then 
-      update set target_table.description = source_table.{{data.${eFields[0].id}}}`;
+      } when matched then 
+      update set target_table.description = source_table.data.${eFields[0].id}`;
     }
   }
 

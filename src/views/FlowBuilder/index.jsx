@@ -34,12 +34,11 @@ import FlowEllipsisMenu from '../../components/FlowEllipsisMenu';
 import StatusCircle from '../../components/StatusCircle';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
-import { isProduction } from '../../forms/utils';
 import IconButtonWithTooltip from '../../components/IconButtonWithTooltip';
 import CeligoTimeAgo from '../../components/CeligoTimeAgo';
 import LastRun from './LastRun';
 import MappingDrawerRoute from '../MappingDrawer';
-import GraphIcon from '../../components/icons/GraphIcon';
+import LineGraphButton from './LineGraphButton';
 
 const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
@@ -96,7 +95,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(0.5),
     justifyContent: 'center',
     color: theme.palette.secondary.main,
-
   },
   destinationTitle: {
     marginLeft: 100,
@@ -131,8 +129,9 @@ const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: 12,
     fontSize: '12px',
   },
   divider: {
@@ -155,16 +154,9 @@ const useStyles = makeStyles(theme => ({
   subtitle: {
     display: 'flex',
   },
-  chartsIcon: {
-    padding: 0,
-    marginRight: theme.spacing(2),
-    '&:hover': {
-      color: theme.palette.primary.main,
-      background: 'none',
-    },
-  },
   flowToggle: {
-
+    marginRight: 12,
+    marginLeft: theme.spacing(1),
     '& > div:first-child': {
       padding: '8px 0px',
     },
@@ -207,7 +199,7 @@ function FlowBuilder() {
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const {
     data: flowErrorsMap,
@@ -457,14 +449,8 @@ function FlowBuilder() {
 
     return (
       <div className={classes.actions}>
-        {!isProduction() && isUserInErrMgtTwoDotZero && flow && flow.lastExecutedAt && (
-        <IconButton
-          disabled={isNewFlow}
-          className={classes.chartsIcon}
-          data-test="charts"
-          onClick={handleDrawerClick('charts')}>
-          <GraphIcon />
-        </IconButton>
+        {isUserInErrMgtTwoDotZero && (
+          <LineGraphButton flowId={flowId} onClickHandler={handleDrawerClick} />
         )}
         {!isDataLoaderFlow && (
         <div className={clsx(classes.chartsIcon, classes.flowToggle)}>
@@ -519,7 +505,7 @@ function FlowBuilder() {
       {totalErrors ? (
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
-          {totalErrors} errors
+          <span>{totalErrors} errors</span>
         </span>
       ) : null}
       {pageBarChildren}

@@ -366,7 +366,7 @@ export default {
     'The access token of your Pitney Bowes account.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
-    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://try.lexbizz.com/isv.',
+    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://isv.lexbizz.app.',
   'lexbizz.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.endpointVersion':
@@ -381,7 +381,7 @@ export default {
     'Please enter locale of your lexbizz account.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
-      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be try.myobadvanced.com/isv.',
+      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be demo.myobadvanced.com.',
   'myobadvanced.connection.http.unencrypted.endpointName':
       'Please enter endpoint name of your MYOB Advanced account.',
   'myobadvanced.connection.http.unencrypted.endpointVersion':
@@ -515,6 +515,8 @@ export default {
     'Please enter your Access Secret here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API Secret safe. This can be obtained by reaching out to Ware2Go support team.',
   'ware2go.connection.http.unencrypted.merchantId':
     'Please enter your Merchant Id here. This can be obtained by reaching out to Ware2Go support team.',
+  'ware2go.connection.http.unencrypted.username': 'Please enter the username of your Ware2Go account here.',
+  'ware2go.connection.http.unencrypted.password': 'Please enter the password of your Ware2Go account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.',
   'messagemedia.connection.http.auth.basic.username':
     'Please enter your API User. Navigate to Merchant view on left hand side and click on API keys section to find API User.',
   'messagemedia.connection.http.auth.basic.password':
@@ -604,6 +606,10 @@ export default {
   'sapbydesign.connection.http.unencrypted.username': 'Please enter the Username of your SAP ByDesign account.',
   'sapbydesign.connection.http.encrypted.password': 'Please enter the Password of your SAP ByDesign account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
   'microsoftbuisnesscentral.connection.http.unencrypted.environmentName': 'Enter your Microsoft Dynamics 365 Business Central\'s environment.<br>Steps to get the environment name:<br> 1. Log in to the Business Central Admin Center.<br>  2. Click on Environment available at the left side.<br>  3. Copy the Environment Name available on the list.',
+  'precisely.http._iClientId': 'Save your API key and secret of Prcisely account in iClient for an added layer of security.',
+  'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
+  'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
+  if you're using a production account, you'll find your API keys under the 'API Management' page.`,
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -774,7 +780,7 @@ export default {
     "The password associated with your service account. Sometimes service providers have other names for this field such as 'secret key', or 'API key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your password safe.",
   'connection.http.auth.token.token':
     "The authentication token provided to you from the service provider. Some service providers use other names for this value such as 'bearer token', or 'secret key', etc.  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your token safe. In some cases, a service may have a token request process, or tokens that expire after a given time. Use the refresh fields to instruct integrator.io on how to request and extract the token form the response.",
-  'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that hold the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
+  'connection.http.auth.token.location': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
   'connection.http.auth.token.headerName': 'By default, integrator.io sends all authentication type info in the authorization HTTP header field. If the API you are connecting to requires a different HTTP header, use this field to provide an override.',
   'connection.http.auth.token.scheme': 'By default, integrator.io follows the HTTP specs for authentication scheme names (for example: Bearer, OAuth, MAC). If the API you are connecting to doesn\'t follow the specs exactly, use this field to provide an override.',
   'connection.http.auth.token.paramName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
@@ -787,9 +793,9 @@ export default {
   'connection.http.auth.token.refreshTokenPath':
     'If the service being connected to supports requests to obtain or refresh existing tokens, use this field to indicate to integrator.io what path to use against the HTTP response to extract the new token.  If no value is found at this path then the token request is considered a failure.',
   'connection.http.auth.token.refreshHeaders':
-    "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}} with a complete path matching the connection field.",
+    "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
   'connection.http.auth.token.refreshToken':
-    'This field is used if you have a refresh token that can be used in refresh expired auth tokens.  You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.token.refreshToken}}}.  Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
+    'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. Please note also that there are multiple layers of protection in place (including AES 256 encryption) to keep your refresh token safe.',
   'connection.http.rateLimit.failStatusCode': 'Use this field only if your service uses custom rate limit implementations that rely on status codes other than 429, or throttles errors in the HTTP body. HTTP specifications expect rate limit responses to return a 429 status code.',
   'connection.http.rateLimit.failPath': 'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
   'connection.http.rateLimit.failValues': 'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
@@ -806,7 +812,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use Bulk Insert” to insert multiple records. When you use BULK INSERT option, you must complete field mapping. Use “Use Merge SQLQuery” when you want to insert, update, and delete values in a table based on whether or not the records meet certain condition (i.e matching clauses). You define the Merge command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. You define the query command in Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -1095,7 +1101,7 @@ export default {
   'export.rest.successValues':
     'This field indicates the value(s) that represents the success of an HTTP response. For example, 0 or 0,2,3.\nThis field is used in unison with the Success Path field. The value found in the HTTP response at the path specified in Success Path is compared against the provided list of success values. If there is an exact case-sensitive match of any of the specified values, the request is considered successful.',
   'export.rest.postBody':
-    "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebar templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
+    "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebars templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
   'export.rest.pagingMethod':
     "Some APIs offer paging functionality in order to limit each of their responses to a manageable size if the total set of resources is large. The following paging methods are supported by integrator.io. Choose 'Next Page URL' if the API returns a link to the next page within the response body. Choose 'Page Argument' if the API uses a query string parameter to paginate the results. Choose 'Relative URI' if the same endpoint should be hit repeatedly until no more data is returned. Choose Link header if the API points to subsequent pages in the Link header of the API response. Choose 'Skip Argument' if the API uses a query string parameter to indicate the record offset for the next page request. Finally, choose Token if the API responds with a token that should be used to fetch the next page.The export will automatically calculate the amount to skip and integrator.io will add this parameter to the relativeURI for each subsequent page request. Note that typically these services also support an optional 'take' or 'pageSize' query string parameter to control how many records are returned in each page; integrator.io will not set or modify this parameter.",
   'export.rest.nextPagePath':
@@ -1411,7 +1417,7 @@ export default {
   'import.netsuite_da.internalIdLookup.expression': 'Use this field to define a lookup that integrator.io will use to determine if a record already exists in NetSuite or not. For example, if you are importing contact records and you have a unique email for each contact, then you can use this field to define a lookup to see if any contacts with the same email already exists in NetSuite. If needed, you can also define more complex lookups using AND and OR. For example, if you are importing item records you can define a lookup to see if any items exist with a specific itemid (i.e. sku) AND also belong to a specific vendor (i.e. because maybe sku by itself is not guaranteed to be unique, but sku plus vendor always is unique).',
   'import.netsuite.recordTypeId':
     'Unique id associated with the recordType selected',
-  'import.netsuite_da.operation': 'Please select \'Add\' if you are only importing new records into NetSuite. Please select \'Update\' if you are only importing changes to existing records in NetSuite. Please select \'Add or Update\' if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field.',
+  'import.netsuite_da.operation': 'Please select <b>Add</b> if you are only importing new records into NetSuite.</br></br> Please select <b>Update</b> if you are only importing changes to existing records in NetSuite.</br></br>Please select <b>Add or update</b> if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field. </br></br><b>Attach and Detach</b> can be used to define or remove a relationship between two records. For example, a Contact record can be associated with a Partner record, or an Opportunity record can be associated with a Customer record. You can also use the Attach/Detach operations to attach or detach a file to, or from, a record. Any file that is in the NetSuite file cabinet, for example a MS Word or Excel file or a PDF can be attached to any record other than a custom record.',
   'import.netsuite.retryUpdateAsAdd':
     'Boolean value if set, on failure of any record update on NS, it will be retried as a add operation',
   'import.netsuite.customFieldMetadata':
@@ -1461,7 +1467,7 @@ export default {
   'import.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response our platform can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'import.http.batchSize':
-    "The HTTP adaptor supports batch and single resource endpoints. If left blank, this field defaults to 1 (non-batch endpoint). Use this field only if you are using an API endpoint that supports batch record processing. There may also be limits to the number of resources an API allows you to act on in a single HTTP request. Refer to their documentation for acceptable limits. Note that your 'body' field will need to have a handlebar template that can iterate over the set of resources provided in the data property of the model used to populate the template.",
+    "The HTTP adaptor supports batch and single resource endpoints. If left blank, this field defaults to 1 (non-batch endpoint). Use this field only if you are using an API endpoint that supports batch record processing. There may also be limits to the number of resources an API allows you to act on in a single HTTP request. Refer to their documentation for acceptable limits. Note that your 'body' field will need to have a handlebars template that can iterate over the set of resources provided in the data property of the model used to populate the template.",
   'import.http.ignoreLookupName':
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the lookup that will be used to test for the existence of a resource.',
   'import.http.ignoreExtract':
@@ -1682,6 +1688,8 @@ export default {
     'If the files you are exporting are in a compressed format then please set this field to true.',
   'export.netsuite.apiType': '',
   'export.netsuite.api.type': 'NetSuite supports two different API types: RESTlet and Web Services. The RESTlet API is recommended because it is newer, more user friendly, and much easier to get started with. It also supports greater levels of concurrency when using just a regular NetSuite license (i.e. a license that does not have NetSuite\'s SuiteCloud Plus enabled), and the RESTlet API enables more advanced capabilities like the ability to define a preSend hook in NetSuite using SuiteScript, or to support more performant and robust \'Once\' type exports. The Web Services API is a good fit when you\'ve purchased a NetSuite SuiteCloud Plus license and you also need to export very large amounts of data. The Web Services API is the only option available if you cannot install our integrator.io bundle in your NetSuite account. To completely maximize the amount of data that can be exported from a single NetSuite license you would use a combination of both RESTlet and Web Services API based exports.',
+  'export.netsuite.restlet.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your export for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>.',
+  'import.netsuite_da.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your import for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>',
   'export.netsuite.recordType':
     'Use this field to specify the NetSuite record type you would like to export. You can choose any standard record type (i.e. customer, sales order, journal entry) or any custom record type that has been defined in your NetSuite account. Please note that this list of record types is dependent on the permissions associated with the NetSuite connection being used. Also, if you add any new custom record types to your NetSuite account, or if there are any changes to the permissions associated with the connection being used, then you can use the refresh icon to regenerate the list.',
   'export.netsuite.sublists':
@@ -1771,7 +1779,7 @@ export default {
   'import.rest.composite.create.method':
     'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use POST method for creating new records. But some endpoints might be using PUT method for the same.',
   'import.rest.composite.create.body':
-    'Click this button to specify Handlebar expression which will be evaluated and the result is used as Http Request body while importing.',
+    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
   'import.rest.composite.create.successPath':
     "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
   'import.rest.composite.create.successValues':
@@ -1783,7 +1791,7 @@ export default {
   'import.rest.composite.update.method':
     'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use PUT method for updating existing records. But some endpoints might be using POST method for the same.',
   'import.rest.composite.update.body':
-    'Click this button to specify Handlebar expression which will be evaluated and the result is used as Http Request body while importing.',
+    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
   'import.rest.composite.update.successPath':
     "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
   'import.rest.composite.update.successValues':
@@ -1844,11 +1852,11 @@ export default {
   'import.failFields':
     '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
   'import.function':
-    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>`,
+    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">handlebars Helper Guide</a>`,
   'import.field':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'import.expression':
-    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+    'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
   'jobErrors.helpSummary':
     'You can view the error source, code and message, as well as when the error occurred. Hover over each error to click the … Actions to access the record where the error occurred and make any necessary changes. Once you’ve tracked down and resolved your error, resolve it from the Actions or button toolbar. You can also retry errors, such as something due to an intermittent connection failure. If you have a lot of errors, you’ll want to download them into a csv, then mark them resolved or retried, and upload your processed errors.',
   'connection.useSFTP': '',
@@ -1875,11 +1883,11 @@ export default {
   'connection.http.auth.oauth.tokenURI':
     'integrator.io retrieves the access token from this URL.',
   'connection.http.auth.oauth.scopeDelimiter':
-    'Provide the non-space delimiter API provider uses to delimit scopes.',
+    'Enter the non-space scope delimiter used by your API provider.',
   'connection.http.auth.oauth.authURI':
     'This is the authorization code retrieval endpoint on the API provider’s authorization server.',
   'connection.generic.http.auth.oauth.scope':
-    'These are the scopes of access granted to authorization server requests. Use a comma (,) to separate values.',
+    'List the scopes to grant access to authorization server requests. Separate multiple scopes with a space character, unless you are providing an alternative delimiter, below.',
   'connection.http.auth.oauth.scope':
     'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
   'connection.http.auth.oauth.accessTokenHeaders': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
@@ -2078,7 +2086,7 @@ export default {
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
-    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+    'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
   'mapping.standardAction':
     '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
   'mapping.lookupAction':
@@ -2099,7 +2107,7 @@ export default {
   'mapping.generateDateTimezone':
     'If the import field is of type date, this field represents the time zone of the field on the import system.',
   'mapping.functions':
-    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">Handlebar Helper Guide</a>`,
+    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">handlebars Helper Guide</a>`,
   'mapping.immutable':
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
   'mapping.lookup.mode':

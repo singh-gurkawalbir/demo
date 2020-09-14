@@ -376,6 +376,15 @@ export default {
           picklistValues: field.picklistValues,
           updateable: field.updateable,
         });
+        if (field.referenceTo?.length) {
+          _data.push({
+            value: `_child_${field.relationshipName}`,
+            label: `${field.relationshipName} : Fields...`,
+            type: 'childFieldRelationship',
+            childSObject: field.referenceTo[0],
+            relationshipName: field.relationshipName,
+          });
+        }
       });
     }
 
@@ -415,6 +424,7 @@ export default {
 
     return _data;
   },
+  'suitescript-bundle-status': data => data,
   default: data =>
     data &&
     Array.isArray(data) &&
