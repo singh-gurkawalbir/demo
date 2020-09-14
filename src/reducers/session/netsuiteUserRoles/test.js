@@ -25,7 +25,9 @@ describe('netsuiteUser roles reducer ', () => {
       actions.resource.connections.netsuite.requestUserRoles(connectionId)
     );
 
-    expect(state).toEqual({ [connectionId]: {} });
+    expect(state).toEqual({ [connectionId]: {
+      isInvokedDuringFormInit: false,
+    } });
   });
 
   test('should persist userRoles in state on received action', () => {
@@ -60,7 +62,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: { status: 'error', message: 'Failed to retrieve' },
+      [connectionId]: { isInvokedDuringFormInit: false, status: 'error', message: 'Failed to retrieve' },
     });
   });
   test('should clear the the message and the status on a failed request for netsuiteUserRoles', () => {
@@ -78,7 +80,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: { status: 'error', message: 'Failed to retrieve' },
+      [connectionId]: {isInvokedDuringFormInit: false, message: 'Failed to retrieve', status: 'error' },
     });
 
     state = reducer(

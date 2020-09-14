@@ -43,11 +43,11 @@ const NetsuiteValidateButton = props => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
     dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
+      actions.resource.connections.netsuite.requestUserRoles(resourceId, values, false)
     );
   };
 
-  const { status, message } = useSelector(state =>
+  const { status, message, isInvokedDuringFormInit } = useSelector(state =>
     selectors.netsuiteUserRoles(state, resourceId) || {}
   );
   const isValidatingNetsuiteUserRoles = useSelector(state =>
@@ -62,7 +62,7 @@ const NetsuiteValidateButton = props => {
   useEffect(() => {
     if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
-        actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
+        actions.resource.connections.netsuite.requestUserRoles(resourceId, null, true)
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,7 +122,7 @@ const NetsuiteValidateButton = props => {
       onClick={() => {
         handleValidate(trim(value));
       }}>
-      {isValidatingNetsuiteUserRoles ? 'Testing' : 'Test Connection'}
+      {(isValidatingNetsuiteUserRoles && !isInvokedDuringFormInit) ? 'Testing' : 'Test Connection'}
     </Button>
   );
 };
