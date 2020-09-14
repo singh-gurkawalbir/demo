@@ -3,7 +3,6 @@ import { JOB_STATUS } from '../../../utils/constants';
 import { selectors } from '../../../reducers';
 
 export default function FlowStepName({ job }) {
-  console.log(job);
   const exportName = useSelector(state => {
     const exportObj = selectors.resource(state, 'exports', job._exportId);
 
@@ -15,6 +14,6 @@ export default function FlowStepName({ job }) {
   }
 
   // Incase of Old flows , we show Export/Import instead of names as they don't exist for old resources
-  // Referred to EM 1.0 for this behaviour
+  // Referred to EM 1.0 Jobs for this behaviour
   return job.name || (job._exportId ? 'Export' : 'Import');
 }
