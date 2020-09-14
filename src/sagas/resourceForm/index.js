@@ -175,7 +175,10 @@ export function* createFormValuesPatchSet({
       });
 
       // stock preSave handler present...
-      finalValues = preSave(values, resource, {iClients});
+      finalValues = {...preSave(values, resource, {iClients})};
+      if (!finalValues['/_borrowConcurrencyFromConnectionId']) {
+        finalValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
     }
   }
 
