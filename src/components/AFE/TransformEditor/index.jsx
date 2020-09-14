@@ -99,6 +99,7 @@ export default function TransformEditor(props) {
           valueName={valueName}
           editorId={editorId}
           disabled={disabled}
+          hasError={!!error}
         />
       </PanelGridItem>
 
@@ -114,6 +115,7 @@ export default function TransformEditor(props) {
             overrides={{ showGutter: false }}
             onChange={handleDataChange}
             readOnly={disabled}
+            hasError={!!violations?.dataError}
             />
         )}
       </PanelGridItem>

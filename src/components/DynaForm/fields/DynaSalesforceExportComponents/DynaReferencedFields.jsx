@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
   refrencedFieldWrapper: {
     flexDirection: 'row !important',
     alignItems: 'flex-start',
+    display: 'flex',
   },
   editIconRefrencedField: {
     marginLeft: theme.spacing(1),

@@ -1546,7 +1546,8 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-
+  cancelLatest: ({ jobId }) =>
+    action(actionTypes.JOB.CANCEL_LATEST, { jobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
@@ -1681,6 +1682,8 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
   integrationErrors: {
+    requestPoll: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
     request: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
@@ -1690,7 +1693,8 @@ const errorManager = {
         integrationId,
         integrationErrors,
       }),
-
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
   flowErrorDetails: {
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>

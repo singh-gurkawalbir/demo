@@ -10,6 +10,7 @@ import { SavingMask } from '../../../../../SuiteScript/Integration/App/panels/Se
 const useStyles = makeStyles(theme => ({
   configureform: {
     padding: theme.spacing(2, 3),
+    overflow: 'visible',
     minHeight: 250,
     '& + div': {
       padding: theme.spacing(2, 0),

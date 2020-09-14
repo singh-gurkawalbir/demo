@@ -30,15 +30,15 @@ export default {
     } else {
       retValues['/http/baseURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/entity/${formValues['/http/unencrypted/endpointName']}/${
+      }/entity/${formValues['/http/unencrypted/endpointName']}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/authorize`;
+      }/identity/connect/authorize`;
       retValues['/http/auth/oauth/tokenURI'] = `https://${
         formValues['/oauth/instanceURI']
-      }/AcumaticaERP/identity/connect/token`;
+      }/identity/connect/token`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
       delete retValues['/http/auth/cookie/successStatusCode'];

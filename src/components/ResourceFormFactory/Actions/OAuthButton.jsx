@@ -55,6 +55,9 @@ function OAuthButton(props) {
         newValues['/salesforce/_iClientId'] =
           iClients && iClients[0] && iClients[0]._id;
       }
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
 
       dispatch(
         actions.resource.connections.saveAndAuthorize(resourceId, newValues)
