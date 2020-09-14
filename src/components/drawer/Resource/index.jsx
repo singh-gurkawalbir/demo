@@ -37,6 +37,8 @@ function ResourceDrawer(props) {
   // if we pass flowId/integration id to result/status export which we open
   // from asyncHelper, getting sampledata preview errors. As result/status export
   // are not related to flow, not passing flowId/integrationId conitionally.
+  // TODO: This code need to be revisited as there might be othercases as well where
+  // flowId need not to be passed.
   const isAsyncHelper = resourceType === 'asyncHelpers';
 
   const handleClose = useCallback(() => {
