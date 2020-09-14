@@ -217,11 +217,11 @@ export function* mappingInit({
   } else {
     formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      getRawMappings:false,
+      getRawMappings: false,
       isGroupedSampleData,
       netsuiteRecordType: options.recordType,
       options,
-      exportResource
+      exportResource,
     });
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }

@@ -813,7 +813,7 @@ export default {
   getSubRecordRecordTypeAndJsonPath: (importResource, subRecordMappingId) => {
     const rawMapping = mappingUtil.getMappingFromResource({
       importResource,
-      getRawMappings: true
+      getRawMappings: true,
     });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
@@ -835,7 +835,7 @@ export default {
   ) => {
     const rawMapping = mappingUtil.getMappingFromResource({
       importResource,
-      getRawMappings: true
+      getRawMappings: true,
     });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
@@ -867,7 +867,7 @@ export default {
   }) => {
     const mapping = mappingUtil.getMappingFromResource({
       importResource: resource,
-      getRawMappings: true
+      getRawMappings: true,
     });
     const subRecordParent = getSubRecordMapping(mapping, subRecordMappingId);
 
@@ -882,9 +882,9 @@ export default {
     isGroupedSampleData,
     netsuiteRecordType,
     options = {},
-    exportResource
+    exportResource,
   }
-    
+
   ) => {
     if (!importResource) {
       return;
