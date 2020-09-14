@@ -192,6 +192,8 @@ export function* auth({ email, password }) {
     yield call(setCSRFToken, apiAuthentications._csrf);
     yield put(actions.auth.complete());
 
+    localStorage.setItem('latestUser', email);
+
     yield call(retrieveAppInitializationResources);
 
     if (isExpired) {

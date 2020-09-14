@@ -15,9 +15,41 @@ import { isJsonString } from '../../utils/string';
 
 const tryCount = 3;
 
+function* isCurrentProfileDifferent() {
+  const currentEmail = yield select(selectors.userProfileEmail);
+  // for browsers without this local state variable skip the check
+
+  const latestUser = localStorage.getItem('latestUser');
+
+  if (!latestUser || !currentEmail) { return false; }
+
+  // only when its defined do you attempt to compare
+  return currentEmail !== latestUser;
+}
+
+export function* isCurrentUseAndLatestUserTheSame() {
+  // check the current userProfile is different from the latest user profile
+  const isProfileDiff = yield call(isCurrentProfileDifferent);
+  const isUserAuthenticated = yield select(selectors.isAuthenticated);
+
+  // When user is not authenticated we have to skip these
+  // checks for network calls during authentication process
+  if (isProfileDiff && isUserAuthenticated) {
+    yield call(unauthenticateAndDeleteProfile);
+
+    return false;
+  }
+
+  return true;
+}
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
+
+  const shouldMakeRequest = yield call(isCurrentUseAndLatestUserTheSame);
+
+  if (!shouldMakeRequest) { return null; }
+
   const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
   // check if you are retrying ...if you are not retrying make a brand new request
