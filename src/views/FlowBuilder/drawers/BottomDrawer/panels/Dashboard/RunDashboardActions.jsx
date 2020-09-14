@@ -99,7 +99,7 @@ export default function RunDashboardActions({ flowId }) {
           label: 'Cancel run',
           onClick: () => {
             cancellableJobIds
-              .forEach(jobId => dispatch(actions.job.cancel({ jobId })));
+              .forEach(jobId => dispatch(actions.job.cancelLatest({ jobId })));
           },
         },
         {

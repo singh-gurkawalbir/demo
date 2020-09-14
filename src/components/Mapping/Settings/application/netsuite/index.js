@@ -363,8 +363,7 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
-            'disallowFailure',
+            mappingUtil.getDefaultLookupActionValue(lookup),
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           refreshOptionsOnChangesTo: ['lookup.mode'],
@@ -679,6 +678,9 @@ export default {
 
       fieldMeta.fieldMap['lookup.mapList'].commMetaPath = commMetaPath;
       fieldMeta.fieldMap['lookup.mapList'].connectionId = connectionId;
+      if (generateFieldType === 'select') { // applicable only for 'select'
+        fieldMeta.fieldMap['lookup.mapList'].preferMapValueAsNum = true;
+      }
       fieldMeta.fieldMap['conditional.lookupName'].staticLookupCommMetaPath = commMetaPath;
       // changing metadata for hardcodedDefault and lookupDefault
       ['hardcodedDefault', 'lookupDefault'].forEach(metaKey => {

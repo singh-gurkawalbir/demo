@@ -13,6 +13,9 @@ export default {
     }
 
     const subrecords = newValues['/netsuite_da/useSS2Restlets'] === 'true' ? [] : newValues['/netsuite_da/subrecords'];
+
+    const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';
+
     let mapping = newValues['/netsuite_da/mapping'];
 
     if (subrecords) {
@@ -23,6 +26,7 @@ export default {
       ...newValues,
       '/netsuite_da/subrecords': undefined,
       '/netsuite_da/mapping': mapping,
+      '/netsuite_da/useSS2Restlets': useSS2RestletsValue,
     };
   },
   fieldMap: {

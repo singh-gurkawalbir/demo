@@ -5,14 +5,19 @@ import { useSelector } from 'react-redux';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { selectors } from '../../../../../reducers';
 import getRoutePath from '../../../../../utils/routePaths';
+import StatusCircle from '../../../../StatusCircle';
 
 const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 300,
     wordWrap: 'break-word',
   },
-  errorLink: {
-    color: theme.palette.error.main,
+  errorStatus: {
+    justifyContent: 'center',
+    height: 'unset',
+    marginTop: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    fontSize: '14px',
   },
 }));
 
@@ -69,7 +74,10 @@ export default function RunCell({
 
   return (
     <div className={classes.root}>
-      <Link className={classes.errorLink} to={flowBuilderTo}>{data}</Link>
+      <span className={classes.errorStatus}>
+        <StatusCircle variant="error" size="small" />
+        <Link to={flowBuilderTo}>{data} errors</Link>
+      </span>
     </div>
   );
 }

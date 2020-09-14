@@ -21,10 +21,10 @@ export default function reducer(state = {}, action) {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.EDITOR_UPDATE_HELPER_FUNCTIONS:
+      case actionTypes.EDITOR.UPDATE_HELPER_FUNCTIONS:
         draft.helperFunctions = helperFunctions;
         break;
-      case actionTypes.EDITOR_INIT: {
+      case actionTypes.EDITOR.INIT: {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
         const saveStatus = draft[id] && draft[id].saveStatus;
@@ -47,7 +47,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.EDITOR_CHANGE_LAYOUT: {
+      case actionTypes.EDITOR.CHANGE_LAYOUT: {
         const initChangeIdentifier =
           (draft[id] && draft[id].initChangeIdentifier) || 0;
 
@@ -55,54 +55,63 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes.EDITOR_RESET: {
+      case actionTypes.EDITOR.RESET: {
         Object.assign(draft[id], draft[id].defaultOptions);
         draft[id].lastChange = Date.now();
         delete draft[id].violations;
         delete draft[id].error;
+        delete draft[id].errorLine;
         delete draft[id].result;
 
         break;
       }
 
-      case actionTypes.EDITOR_PATCH: {
+      case actionTypes.EDITOR.CLEAR: {
+        delete draft[id];
+
+        break;
+      }
+
+      case actionTypes.EDITOR.PATCH: {
         Object.assign(draft[id], deepClone(patch));
         draft[id].lastChange = Date.now();
         draft[id].status = 'requested';
         break;
       }
 
-      case actionTypes.EDITOR_EVALUATE_RESPONSE: {
+      case actionTypes.EDITOR.EVALUATE_RESPONSE: {
         draft[id].result = result;
         draft[id].status = 'received';
         delete draft[id].error;
+        delete draft[id].errorLine;
         delete draft[id].violations;
         break;
       }
 
-      case actionTypes.EDITOR_VALIDATE_FAILURE: {
+      case actionTypes.EDITOR.VALIDATE_FAILURE: {
         draft[id].violations = violations;
         draft[id].status = 'error';
         break;
       }
 
-      case actionTypes.EDITOR_EVALUATE_FAILURE: {
-        draft[id].error = error;
+      case actionTypes.EDITOR.EVALUATE_FAILURE: {
+        draft[id].error = error?.errorMessage;
+        draft[id].errorLine = error?.errorLine;
         draft[id].status = 'error';
         break;
       }
 
-      case actionTypes.EDITOR_SAVE: {
+      case actionTypes.EDITOR.SAVE: {
         draft[id].saveStatus = 'requested';
         break;
       }
 
-      case actionTypes.EDITOR_SAVE_FAILED: {
+      case actionTypes.EDITOR.SAVE_FAILED: {
         draft[id].saveStatus = 'failed';
         break;
       }
 
-      case actionTypes.EDITOR_SAVE_COMPLETE: {
+      case actionTypes.EDITOR.SAVE_COMPLETE: {
         const editor = draft[id];
 
         editor.saveStatus = 'completed';

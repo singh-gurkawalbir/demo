@@ -69,7 +69,7 @@ export default function ErrorDrawer({
   if (childJobId) {
     job = flowJob?.children?.find(j => j._id === childJobId);
   }
-  const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
+  const updatedIntegrationName = integrationName === null ? 'Standalone flows' : `${integrationName}`;
   let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
 
   if (job?.name) title += ` > ${job.name}`;

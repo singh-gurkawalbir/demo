@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 function updateStatus(state, flowId, status) {
@@ -42,12 +43,15 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.flowMetricsData = (state, flowId) => {
-  if (!state || !state[flowId]) {
-    return null;
-  }
+selectors.flowMetricsData = createSelector(
+  state => state,
+  (_, flowId) => flowId,
+  (state, flowId) => {
+    if (!state || !state[flowId]) {
+      return null;
+    }
 
-  return state[flowId];
-};
+    return state[flowId];
+  });
 
 // #endregion

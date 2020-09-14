@@ -5,10 +5,12 @@ import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import { IAFormStateManager, useActiveTab } from '../../Flows';
+import { SavingMask } from '../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
     padding: theme.spacing(2, 3),
+    overflow: 'visible',
     minHeight: 250,
     '& + div': {
       padding: theme.spacing(2, 0),
@@ -53,17 +55,21 @@ export default function GeneralPanel({ integrationId, storeId }) {
     <div>
       <PanelHeader title="General" />
       {hasGeneralSettings && (
-      <IAFormStateManager
-        {...activeTabProps}
-        key={storeId}
-        fieldMeta={translatedMeta}
-        integrationId={integrationId}
-        isIAForm
-        className={classes.configureform}
-        storeId={storeId}
-        formState={formState}
-        orientation="horizontal"
+      <>
+        {formState?.saveStatus && <SavingMask />}
+
+        <IAFormStateManager
+          {...activeTabProps}
+          key={storeId}
+          fieldMeta={translatedMeta}
+          integrationId={integrationId}
+          isIAForm
+          className={classes.configureform}
+          storeId={storeId}
+          formState={formState}
+          orientation="horizontal"
           />
+      </>
       )}
     </div>
   );

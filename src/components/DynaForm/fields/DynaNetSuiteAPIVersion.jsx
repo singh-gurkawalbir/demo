@@ -54,7 +54,7 @@ export default function DynaNetSuiteAPIVersion(props) {
   }
 
   useEffect(() => {
-    if (!data || refreshBundleInstalledInfo) {
+    if ((!data || refreshBundleInstalledInfo) && !isOffline) {
       dispatch(actions.metadata.getBundleInstallStatus(connectionId));
       setRefreshBundleInstalledInfo(false);
     }

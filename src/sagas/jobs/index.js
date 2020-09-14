@@ -248,6 +248,21 @@ export function* cancelJob({ jobId }) {
   }
 }
 
+// TODO: @Raghu Remove this once we have the latest Jobs API implementation inplace
+export function* cancelLatestJob({ jobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return true;
+  }
+  yield call(getJobFamily, { jobId });
+}
+
 export function* resolveCommit({ jobs = [] }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT);
   const { path, opts } = requestOptions;
@@ -666,6 +681,7 @@ export const jobSagas = [
   ),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
+  takeEvery(actionTypes.JOB.CANCEL_LATEST, cancelLatestJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
   takeEvery(actionTypes.JOB.RETRY_SELECTED, retrySelected),

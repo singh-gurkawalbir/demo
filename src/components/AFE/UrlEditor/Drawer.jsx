@@ -10,19 +10,21 @@ export default function UrlEditorDrawer(props) {
     lookups = [],
     data,
     disabled,
+    editorVersion,
     ...rest
   } = props;
 
   return (
     <AFE2EditorDrawer
       id={id}
+      editorVersion={editorVersion}
       {...rest}
       disabled={disabled}
       showFullScreen>
       <UrlEditor
         lookups={lookups}
         disabled={disabled}
-        // editorId={id}
+        editorVersion={editorVersion}
         rule={rule}
         data={data}
         isSampleDataLoading={isSampleDataLoading}
