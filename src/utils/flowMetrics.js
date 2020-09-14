@@ -186,7 +186,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
-  const startDateFromToday = moment(start).diff(moment(), 'days');
+  const startDateFromToday = moment().diff(moment(start), 'days');
 
   /*
     Last 1 hour: minute granularity
@@ -252,7 +252,7 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
-  const startDateFromToday = moment(start).diff(moment(), 'days');
+  const startDateFromToday = moment().diff(moment(start), 'days');
 
   /*
     Last 1 hour: minute granularity

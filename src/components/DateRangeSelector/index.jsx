@@ -190,6 +190,14 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const handleDateRangeSelection = useCallback(range => {
+    if (range.startDate.getTime() === range.endDate.getTime()) {
+      setSelectedRanges([{...range, startDate: startOfDay(range.startDate), endDate: endOfDay(range.endDate)}]);
+    } else {
+      setSelectedRanges([range]);
+    }
+  }, []);
   const dateRangeOptions = useMemo(
     () =>
       [...customPresets, ...rangeList].map(rangeItem => ({
@@ -218,7 +226,7 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
             <DateRangePicker
               staticRanges={dateRangeOptions}
               showSelectionPreview
-              onChange={item => setSelectedRanges([item.selection])}
+              onChange={item => handleDateRangeSelection(item.selection)}
               moveRangeOnFirstSelection={false}
               months={2}
               className={classes.child}
