@@ -167,7 +167,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
-  const [selectedRanges, setSelectedRanges] = useState([
+  const [initalValue, setInitialValue] = useState([
     {
       startDate:
         value && value.startDate
@@ -177,18 +177,33 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
       key: 'selection',
     },
   ]);
+  const [selectedRanges, setSelectedRanges] = useState(initalValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const toggleClick = useCallback(event => {
+    if (anchorEl) {
+      setSelectedRanges(initalValue);
+    }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, []);
+  }, [anchorEl, initalValue]);
+
   const handleSave = useCallback(() => {
+    setInitialValue(selectedRanges);
     onSave && onSave(selectedRanges);
     setAnchorEl(null);
   }, [onSave, selectedRanges]);
 
   const handleClose = useCallback(() => {
+    setSelectedRanges(initalValue);
     setAnchorEl(null);
+  }, [initalValue]);
+
+  const handleDateRangeSelection = useCallback(range => {
+    if (range.startDate.getTime() === range.endDate.getTime()) {
+      setSelectedRanges([{...range, startDate: startOfDay(range.startDate), endDate: endOfDay(range.endDate)}]);
+    } else {
+      setSelectedRanges([range]);
+    }
   }, []);
   const dateRangeOptions = useMemo(
     () =>
@@ -218,7 +233,7 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
             <DateRangePicker
               staticRanges={dateRangeOptions}
               showSelectionPreview
-              onChange={item => setSelectedRanges([item.selection])}
+              onChange={item => handleDateRangeSelection(item.selection)}
               moveRangeOnFirstSelection={false}
               months={2}
               className={classes.child}
