@@ -78,6 +78,15 @@ function* requestLatestJobs({ flowId }) {
       )
     );
     yield put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
+    if (latestFlowJobs.length > 1) {
+      // Only incase of multiple PGs
+      const inProgressJobs = yield select(selectors.getInProgressLatestJobs, flowId);
+
+      if (inProgressJobs.length) {
+        yield delay(10 * 1000);
+        yield call(requestLatestJobs, { flowId});
+      }
+    }
   } catch (error) {
     // handle errors
   }

@@ -44,7 +44,7 @@ export default function LastRun({ flowId }) {
   });
 
   const lastExecutedJob = useSelector(state => {
-    const jobs = selectors.flowJobs(state);
+    const jobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return jobs.find(job => !!job.lastExecutedAt);
   }, shallowEqual);

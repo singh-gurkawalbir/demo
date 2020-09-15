@@ -21,9 +21,6 @@ export default (state = {}, action) => {
         }
         draft[flowId].status = 'requested';
         break;
-      // case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.FAILED:
-      //   draft[flowId].status = 'failed';
-      //   break;
       case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED:
         draft[flowId].status = 'received';
         draft[flowId].data = latestJobs;
