@@ -114,7 +114,7 @@ export default function SelectResource(props) {
                 <FormControl component="fieldset" className={classes.formControl}>
                   {!isFlow && (
                   <FormLabel component="legend" className={classes.heading}>
-                    Please select up to 8 flows
+                    Select up to 8 flows
                   </FormLabel>
                   )}
                   <FormGroup className={classes.formGroup}>
