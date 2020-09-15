@@ -16,7 +16,7 @@ export default {
     },
     {
       heading: 'Success',
-      value: r => r.numSuccess,
+      value: r => (r.type === 'export' && r.numSuccess === 0) ? 'N/A' : r.numSuccess,
     },
     {
       heading: 'Ignored',
@@ -25,7 +25,7 @@ export default {
     { heading: 'Errors', value: r => <ErrorLink job={r} /> },
     {
       heading: 'Pages',
-      value: r => r.numPagesProcessed,
+      value: r => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,
     },
     {
       heading: 'Duration',

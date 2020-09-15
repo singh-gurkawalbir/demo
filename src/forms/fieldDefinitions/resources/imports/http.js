@@ -325,7 +325,7 @@ export default {
   'http.batchSize': {
     type: 'text',
     label: 'Batch size limit',
-    defaultValue: 1,
+    defaultValue: r => r?.http?.batchSize || 1,
     validWhen: {
       matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },

@@ -20,7 +20,7 @@ export default {
     },
     {
       heading: 'Expires on',
-      value: r => <ExpiresOn date={r.expires} />,
+      value: r => <ExpiresOn date={r && r.license && r.license.expires} />,
       orderBy: 'license.expires',
     },
     {

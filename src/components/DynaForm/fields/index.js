@@ -40,6 +40,7 @@ import DynaNSSavedSearch from './DynaNSSavedSearch';
 import DynaNSWSSavedSearch from './DynaNSWSSavedSearch';
 import DynaAssistantOptions from './assistant/DynaAssistantOptions';
 import DynaAssistantSearchParams from './assistant/DynaAssistantSearchParams';
+import DynaSemiAssistantOperationSelect from './assistant/DynaSemiAssistantOperationSelect';
 import DynaLabelValueElement from './DynaLabelValueElement';
 import DynaWebHookSampleData from './DynaWebHookSampleData';
 import DynaXmlParse from './editors/DynaXmlParse';
@@ -114,6 +115,7 @@ import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
+import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -152,6 +154,7 @@ export default {
   csvgenerate: DynaCsvGenerate,
   xmlparse: DynaXmlParse,
   refreshableselect: DynaRefreshableSelect,
+  netsuiteapiversion: DynaNetSuiteAPIVersion,
   transformeditor: DynaTransformEditor,
   ftpport: DynaTextFtpPort,
   uploadfile: DynaUploadFile,
@@ -171,6 +174,7 @@ export default {
   webhooksampledata: DynaWebHookSampleData,
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
+  semiassistantoperationselect: DynaSemiAssistantOperationSelect,
   keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,

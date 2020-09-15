@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   loaderSObject: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   loaderSObjectText: {
     marginRight: theme.spacing(2),

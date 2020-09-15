@@ -1,8 +1,16 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
+import { isNewId } from '../../../../../utils/resource';
 
 const visibleWhen = [{ field: 'V0_json', is: ['false'] }];
 
-export default function getForm(options) {
+export default function getForm(options, resourceId) {
+  let defaultParser = 'false';
+
+  // parsers should be set to automatic if the export was created in ampersand
+  if ((!isNewId(resourceId) && !options?.V0_json && options?.V0_json !== false) || options?.V0_json) {
+    defaultParser = 'true';
+  }
+
   return {
     fieldMap: {
       resourcePath: {
@@ -25,7 +33,7 @@ export default function getForm(options) {
         type: 'radiogroup',
         label: 'Parse strategy',
         helpKey: 'parser.xml.V0_json',
-        defaultValue: options?.V0_json ? 'true' : 'false',
+        defaultValue: defaultParser,
         options: [
           {
             items: [

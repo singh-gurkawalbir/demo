@@ -7,6 +7,7 @@ import DynaText from './DynaText';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   field: {
     width: '100%',

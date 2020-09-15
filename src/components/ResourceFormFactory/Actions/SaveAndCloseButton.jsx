@@ -1,6 +1,7 @@
 import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
@@ -18,7 +19,6 @@ const SaveButton = props => {
     resourceType,
     resourceId,
     classes,
-    match,
     disabled = false,
     isGenerate = false,
     skipCloseOnSave = false,
@@ -27,17 +27,25 @@ const SaveButton = props => {
     submitButtonColor = 'secondary',
     setDisableSaveOnClick,
   } = props;
+
+  const match = useRouteMatch();
+
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
   const onSave = useCallback(
     values => {
+      const newValues = { ...values };
+
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
       dispatch(
         actions.resourceForm.submit(
           resourceType,
           resourceId,
-          values,
+          newValues,
           match,
           skipCloseOnSave,
           isGenerate,

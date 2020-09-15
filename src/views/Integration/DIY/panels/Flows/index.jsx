@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
+import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,15 +28,19 @@ const useStyles = makeStyles(theme => ({
   errorStatus: {
     justifyContent: 'center',
     height: 'unset',
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
     fontSize: '12px',
   },
   divider: {
     width: 1,
-    height: 30,
+    height: 18,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: 5,
+  },
+  flowsPanelWithStatus: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -72,11 +77,10 @@ export default function FlowsPanel({ integrationId, childId }) {
     [allFlows, childId, integrationId]
   );
   const {
-    status,
     data: integrationErrorsMap = {},
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isUserInErrMgtTwoDotZero(state)
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   let totalErrors = 0;
 
@@ -90,31 +94,35 @@ export default function FlowsPanel({ integrationId, childId }) {
   }, [setShowDialog]);
 
   useEffect(() => {
-    if (!status && isUserInErrMgtTwoDotZero) {
-      dispatch(
-        actions.errorManager.integrationErrors.request({ integrationId })
-      );
-    }
-  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero, status]);
+    if (!isUserInErrMgtTwoDotZero) return;
+
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
+
+    return () => {
+      dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
+    };
+  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
     () => (
-      <span>
+      <span className={classes.flowsPanelWithStatus}>
         Integration flows
         {totalErrors ? (
           <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
-              {totalErrors} errors
+              <span>{totalErrors} errors</span>
             </span>
           </>
         ) : null}
       </span>
     ),
-    [classes.divider, classes.errorStatus, totalErrors]
+    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
   );
 
   return (
@@ -127,6 +135,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       )}
       <MappingDrawerRoute integrationId={integrationId} />
       <ScheduleDrawer />
+      <QueuedJobsDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
         {permission.create && !isIntegrationApp && (
@@ -160,7 +169,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           data={flows}
           filterKey={filterKey}
           {...flowTableMeta}
-          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows' }}
+          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
         />
       </LoadResources>
     </div>

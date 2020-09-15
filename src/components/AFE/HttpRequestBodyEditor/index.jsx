@@ -11,6 +11,7 @@ export default function HttpRequestBodyEditor(props) {
     data,
     lookups,
     isSampleDataLoading = false,
+    editorVersion,
   } = props;
   const mode = contentType || 'json';
 
@@ -28,6 +29,7 @@ export default function HttpRequestBodyEditor(props) {
       resultMode={mode}
       enableAutocomplete
       isSampleDataLoading={isSampleDataLoading}
+      editorVersion={editorVersion}
     />
   );
 }
