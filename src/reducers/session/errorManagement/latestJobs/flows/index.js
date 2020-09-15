@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../../actions/types';
+import { parseJobFamily } from '../../../../data/jobs/util';
 
 const defaultObject = {};
 
@@ -7,36 +8,38 @@ export default (state = {}, action) => {
   const {
     type,
     flowId,
-    // jobId,
     latestJobs,
+    job,
   } = action;
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST: {
+      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST:
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
         draft[flowId].status = 'requested';
         break;
-      }
-      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.FAILED: {
-        if (!draft[flowId]) {
-          draft[flowId] = {};
-        }
-        draft[flowId].status = 'failed';
-        break;
-      }
-      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED: {
+      // case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.FAILED:
+      //   draft[flowId].status = 'failed';
+      //   break;
+      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED:
         draft[flowId].status = 'received';
         draft[flowId].data = latestJobs;
         break;
-      }
-      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY: {
+      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY:
         // Update the job with the family response
-        break;
-      }
+        if (draft[flowId]?.data) {
+          const index = draft[flowId].data.findIndex(flowJob => flowJob._id === job._id);
 
+          draft[flowId].data[index] = parseJobFamily(job);
+        }
+        break;
+      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR:
+        if (draft[flowId]) {
+          delete draft[flowId];
+        }
+        break;
       default:
     }
   });
@@ -44,8 +47,14 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.latestJobs = (state, flowId) => {
+selectors.latestFlowJobsList = (state, flowId) => {
   if (!state || !flowId || !state[flowId]) return defaultObject;
 
+  // const additionalProps = {
+  //   uiStatus: job.status,
+  //   duration: getJobDuration(job),
+  //   doneExporting: !!job.doneExporting,
+  //   numPagesProcessed: 0,
+  // };
   return state[flowId];
 };

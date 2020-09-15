@@ -8,28 +8,21 @@ import PanelLoader from '../../PanelLoader';
 
 export default function RunDashboardV2({ flowId, integrationId }) {
   const dispatch = useDispatch();
-  const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
-  const flowJobs = useSelector(state => selectors.flowJobs(state));
-  const areFlowJobsLoading = useSelector(state => selectors.areFlowJobsLoading(state, { integrationId, flowId }));
+  const latestFlowJobs = useSelector(state => selectors.flowDashboardJobs(state, flowId));
 
   useEffect(() => {
-    if (flowJobs.length === 0 && flowId) {
-      dispatch(
-        actions.job.requestLatestJobs({
-          integrationId,
-          flowId,
-        })
-      );
-    }
-  }, [dispatch, integrationId, flowId, flowJobs.length]);
+    dispatch(actions.errorManager.latestFlowJobs.request({ flowId }));
+  }, [dispatch, integrationId, flowId]);
 
   useEffect(() =>
     () => dispatch(actions.job.clear()),
   [dispatch]);
 
-  if (areFlowJobsLoading) {
+  if (latestFlowJobs?.status === 'requested') {
     return <PanelLoader />;
   }
 
-  return (<CeligoTable data={latestJobs} {...metadata} />);
+  return (
+    <CeligoTable data={latestFlowJobs.data} {...metadata} />
+  );
 }

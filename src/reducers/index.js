@@ -41,7 +41,6 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
-  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -73,7 +72,6 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getRequestOptions from '../utils/requestOptions';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3182,52 +3180,20 @@ selectors.flowJobs = (state, options = {}) => {
   });
 };
 
-selectors.latestFlowJobs = createSelector(
-  state => selectors.flowJobs(state),
-  jobList => {
-    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
-    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+selectors.flowDashboardJobs = (state, flowId) => {
+  const latestFlowJobs = selectors.latestFlowJobsList(state, flowId);
+  const dashboardSteps = [];
 
-    // If there are any in progress jobs too, show them with queued jobs if exist
-    if (inProgressJobs.length) {
-      return [...queuedJobs, ...inProgressJobs];
+  latestFlowJobs?.data?.forEach(latestJob => {
+    if (latestJob.children?.length) {
+      latestJob.children.forEach(job => dashboardSteps.push(job));
     }
-    // show queued jobs if exist
-    if (queuedJobs.length) {
-      return queuedJobs;
-    }
-
-    // If there are no in progress / queued jobs, show the latest job
-    // TODO : Discuss on this use case on what to show
-    return jobList[0] ? [jobList[0]] : emptySet;
   });
 
-selectors.flowDashboardDetails = createSelector(
-  state => selectors.latestFlowJobs(state),
-  latestJobs => {
-    if (!latestJobs.length) return emptySet;
-
-    const childJobDetails = [];
-
-    latestJobs.forEach(job => {
-      if (job.status === JOB_STATUS.QUEUED) {
-        childJobDetails.push(job);
-      } else if (job.children?.length) {
-        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
-      }
-    });
-
-    return childJobDetails;
-  });
-
-selectors.areFlowJobsLoading = (state, filters = {}) => {
-  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
-    filters,
-  }) || {};
-
-  const commKey = commKeyGen(path, opts.method);
-
-  return fromComms.isLoading(state.comms, commKey);
+  return {
+    status: latestFlowJobs?.status,
+    data: dashboardSteps,
+  };
 };
 
 selectors.flowJob = (state, ops = {}) => {

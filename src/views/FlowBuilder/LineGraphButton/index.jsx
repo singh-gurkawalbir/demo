@@ -29,7 +29,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
     flowId
   ).merged;
   const flowJobExists = useSelector(state => {
-    const latestJobs = selectors.latestFlowJobs(state) || [];
+    const latestJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return !!latestJobs.find(job => job._flowId === flowId);
   });

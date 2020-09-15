@@ -1681,6 +1681,28 @@ const errorManager = {
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
+  latestFlowJobs: {
+    request: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST, {
+        flowId,
+      }),
+    received: ({flowId, latestJobs}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
+        flowId, latestJobs,
+      }),
+    requestJobFamily: ({ flowId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
+        flowId, jobId,
+      }),
+    receivedJobFamily: ({ flowId, job}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
+        flowId, job,
+      }),
+    clear: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {
+        flowId,
+      }),
+  },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
