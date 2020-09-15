@@ -3384,17 +3384,12 @@ selectors.isAnyFlowConnectionOffline = (state, flowId) => {
   return connectionList.some(c => c.offline);
 };
 
-selectors.flowConnectionList = (state, flow) => {
+selectors.flowConnectionList = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
   const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
-};
-
-selectors.flowConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  return selectors.flowConnectionList(state, flow);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {

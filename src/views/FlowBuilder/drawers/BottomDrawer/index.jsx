@@ -110,21 +110,20 @@ const connectionsFilterConfig = {
 };
 
 export default function BottomDrawer({
-  flow,
+  flowId,
   setTabValue,
   tabValue,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragEnd, setDragEnd] = useState(false);
+  const [isDragging, setIsDragging] = useState(null);
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
-    selectors.isAnyFlowConnectionOffline(state, flow._id)
+    selectors.isAnyFlowConnectionOffline(state, flowId)
   );
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
@@ -142,10 +141,13 @@ export default function BottomDrawer({
     return resourceIdNameMap;
   }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
-  const tempDrawerHeight = drawerHeight + (startY - dragY);
   const minDrawerHeight = 41;
-  const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight;
+  const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
   const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
+
+  let tempDrawerHeight = drawerHeight + (startY - dragY);
+
+  if (tempDrawerHeight > maxHeight) tempDrawerHeight = maxHeight;
 
   const handleSizeUp = useCallback(() => {
     if (drawerHeight + stepSize >= maxHeight) return setDrawerHeight(maxHeight);
@@ -163,7 +165,7 @@ export default function BottomDrawer({
   [setDrawerHeight, drawerHeight, stepSize]
   );
 
-  const handleDragEnd = useCallback(() => setDragEnd(true), []);
+  const handleDragEnd = useCallback(() => setIsDragging(false), []);
 
   const trackMouseY = useCallback(e => {
     if (e.movementY === 0) return; // skip x axis movement
@@ -172,7 +174,6 @@ export default function BottomDrawer({
   }, []);
 
   const handleMouseDown = useCallback(e => {
-    // console.log('dragging');
     setIsDragging(true);
     setStartY(e.nativeEvent.clientY);
     setDragY(e.nativeEvent.clientY);
@@ -216,35 +217,47 @@ export default function BottomDrawer({
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
   useEffect(() => {
-    if (isDragging && dragEnd) {
+    if (isDragging === false) {
       // console.log('drag end: ', tempDrawerHeight);
       window.removeEventListener('mouseup', handleDragEnd);
       window.removeEventListener('mousemove', trackMouseY);
 
       setIsDragging(false);
-      setDragEnd(false);
-      setDrawerHeight(tempDrawerHeight);
+
+      if (drawerHeight !== tempDrawerHeight) {
+        setDrawerHeight(tempDrawerHeight);
+      }
       setStartY(0);
       setDragY(0);
     }
   },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [dragEnd]);
+  [isDragging]);
+
   const tabProps = index => ({
     id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
   });
 
+  const drawerClasses = useMemo(() => ({ paper: clsx(classes.drawerPaper, {
+    [classes.drawerPaperShift]: drawerOpened,
+    [classes.noScroll]: drawerHeight === 0,
+    [classes.drawerTransition]: !isDragging,
+  })}), [
+    classes.drawerPaper,
+    classes.drawerPaperShift,
+    classes.drawerTransition,
+    classes.noScroll,
+    drawerHeight, drawerOpened, isDragging,
+  ]);
+  const drawerPaperProps = useMemo(() =>
+    ({ style: { height: tempDrawerHeight } }),
+  [tempDrawerHeight]);
+
   return (
     <Drawer
       open
-      classes={{
-        paper: clsx(classes.drawerPaper, {
-          [classes.drawerPaperShift]: drawerOpened,
-          [classes.noScroll]: drawerHeight === 0,
-          [classes.drawerTransition]: !isDragging,
-        }),
-      }}
-      PaperProps={{ style: { height: tempDrawerHeight } }}
+      classes={drawerClasses}
+      PaperProps={drawerPaperProps}
       variant="persistent"
       anchor="bottom">
       <div
@@ -297,7 +310,7 @@ export default function BottomDrawer({
         </Tabs>
         {
          isUserInErrMgtTwoDotZero && tabValue === 0 &&
-         <RunDashboardActions flowId={flow._id} />
+         <RunDashboardActions flowId={flowId} />
         }
         <div className={classes.actionsContainer}>
           <IconButton
@@ -319,14 +332,14 @@ export default function BottomDrawer({
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
-            ? <RunDashboardV2Panel flow={flow} />
-            : <RunDashboardPanel flow={flow} />}
+            ? <RunDashboardV2Panel flowId={flowId} />
+            : <RunDashboardPanel flowId={flowId} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>
-          <ConnectionPanel flow={flow} />
+          <ConnectionPanel flowId={flowId} />
         </TabPanel>
         <TabPanel value={tabValue} index={2} classes={classes}>
-          <AuditPanel flow={flow} />
+          <AuditPanel flowId={flowId} />
         </TabPanel>
         {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(

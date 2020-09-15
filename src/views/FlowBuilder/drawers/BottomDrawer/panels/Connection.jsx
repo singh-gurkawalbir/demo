@@ -16,12 +16,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConnectionPanel({ flow }) {
-  const { _integrationId: integrationId } = flow;
+export default function ConnectionPanel({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)._integrationId);
   const flowConnections = useSelector(state =>
-    selectors.flowConnectionList(state, flow)
+    selectors.flowConnectionList(state, flowId)
   );
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
