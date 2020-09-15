@@ -80,6 +80,7 @@ export default {
       retValues['/test'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
+      retValues['/delta/dateField'] = retValues['/delta/dateField'] && Array.isArray(retValues['/delta/dateField']) ? retValues['/delta/dateField'].join(',') : retValues['/delta/dateField'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
@@ -188,7 +189,8 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date field',
+      label: 'Date field(s)',
+      multiselect: true,
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
@@ -196,6 +198,7 @@ export default {
       refreshOptionsOnChangesTo: ['salesforce.soql', 'delta.dateField'],
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
+      defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
