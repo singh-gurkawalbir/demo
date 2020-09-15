@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Select from 'react-select';
 import { makeStyles, useTheme, fade } from '@material-ui/core/styles';
 import { FormControl } from '@material-ui/core';
@@ -70,12 +70,103 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+const SelectStyle = theme => ({
+  option: (provided, state) => ({
+    ...provided,
+    color: state.isSelected
+      ? theme.palette.secondary.main
+      : theme.palette.secondary.light,
+    backgroundColor:
+          state.isSelected || state.isFocused
+            ? theme.palette.background.paper2
+            : theme.palette.background.paper,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    minHeight: 38,
+    wordBreak: 'break-word',
+    '&:active': {
+      backgroundColor: theme.palette.background.paper,
+      color: theme.palette.secondary.light,
+    },
+  }),
+  control: () => ({
+    width: '100%',
+    height: 38,
+    border: '1px solid',
+    padding: '4px 7px',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: '2px',
+    backgroundColor: theme.palette.background.paper,
+    alignItems: 'center',
+    cursor: 'default',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    minHeight: '38px',
+    position: 'relative',
+    boxSizing: 'borderBox',
+    transition: 'all 100ms ease 0s',
+    outline: '0px !important',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+  }),
+  menu: () => ({
+    zIndex: 2,
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    position: 'absolute',
+    backgroundColor: theme.palette.background.paper,
+    width: '100%',
+    boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
+    borderRadius: theme.spacing(0, 0, 0.5, 0.5),
+  }),
+  input: () => ({
+    color: theme.palette.secondary.light,
+  }),
+  placeholder: () => ({
+    color: theme.palette.secondary.light,
+  }),
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  menuList: () => ({
+    padding: '0px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+  }),
+  group: () => ({
+    padding: '0px',
+  }),
+  groupHeading: () => ({
+    textAlign: 'center',
+    fontSize: '12px',
+    padding: '5px',
+    borderBottom: '1px solid',
+    borderColor: theme.palette.divider,
+    background: theme.palette.secondary.lightest,
+    color: theme.palette.text.secondary,
+  }),
+  dropdownIndicator: () => ({
+    color: theme.palette.secondary.light,
+    padding: '8px',
+    cursor: 'pointer',
+    '&:hover': {
+      color: fade(theme.palette.secondary.light, 0.8),
+    },
+  }),
+  singleValue: (provided, state) => {
+    const opacity = state.isDisabled ? 0.5 : 1;
+    const transition = 'opacity 300ms';
+    const color = theme.palette.secondary.light;
 
+    return { ...provided, opacity, transition, color };
+  },
+});
 export default function DynaTypeableSelect(props) {
   const {
     id,
     disabled,
-    value,
+    value: propValue = '',
     placeholder,
     endAdornment,
     onBlur,
@@ -85,189 +176,94 @@ export default function DynaTypeableSelect(props) {
     options = [],
     isValid,
     TextComponent,
-    // triggered when field is touched.
-    triggerBlurOnTouch = false,
-    hideDropdownOnChange = false,
+    onTouch,
     components = {
       DropdownIndicator: () => null,
       IndicatorSeparator: () => null,
     },
   } = props;
+  const classes = useStyles();
   const ref = useRef(null);
-  const suggestions = options.map(option => ({
+  const suggestions = useMemo(() => options.map(option => ({
     label: option[labelName],
-    value: option[valueName],
+    value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
-  }));
-  const [inputState, setInputState] = useState({
-    inputValue: value || '',
-    isFocus: false,
-    filter: false,
-  });
-  const [showDropdown, setShowDropdown] = useState(false);
-  const { filter, inputValue, isFocus } = inputState;
-  // close clicked inside in component
-  const handleClickInside = event => {
-    if (
-      showDropdown === false &&
-      !disabled &&
-      ref.current &&
-      ref.current.contains(event.target)
-    ) {
-      setShowDropdown(true);
+  })), [labelName, options, valueName]);
+
+  const [value, setValue] = useState(propValue?.toString());
+  const [isFocused, setIsFocused] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleFocusIn = useCallback(() => {
+    if (!isFocused) { setIsFocused(true); }
+  }, [isFocused]);
+  const handleFocusOut = useCallback(() => {
+    if (isFocused) { setIsFocused(false); }
+    if (onTouch) {
+      onTouch(id);
     }
-  };
+  }, [id, isFocused, onTouch]);
 
   useEffect(() => {
+    const div = ref.current;
+
     // Bind the event listener
-    document.addEventListener('click', handleClickInside, true);
+    div.addEventListener('focusin', handleFocusIn, true);
+    div.addEventListener('focusout', handleFocusOut, true);
 
     return () => {
       // Unbind the event listener on clean up
-      document.removeEventListener('click', handleClickInside, true);
+      div.removeEventListener('focusin', handleFocusIn, true);
+      div.removeEventListener('focusout', handleFocusOut, true);
     };
-  });
-  const handleChange = newObj => {
+  }, [handleFocusIn, handleFocusOut]);
+  const handleChange = useCallback(newObj => {
     const newVal = newObj.value;
 
-    setInputState({ ...inputState, inputValue: newVal });
+    setValue(newVal);
+    setIsFocused(false);
+    setIsTyping(false);
+    onBlur(id, newVal);
 
-    if (onBlur) onBlur(id, newVal);
-    if (hideDropdownOnChange) { setShowDropdown(false); }
-  };
+    // if (hideDropdownOnChange) { setShowDropdown(false); }
+  }, [id, onBlur]);
 
-  const handleBlur = () => {
-    setShowDropdown(false);
-
-    if (value === inputValue && !triggerBlurOnTouch) {
-      return;
-    }
-
-    // check if entered value is a part of suggestions
-    const selectedObj = suggestions.find(o => o.label === inputValue);
-    const val = selectedObj ? selectedObj.value : inputValue;
-
-    if (onBlur) onBlur(id, val);
-    setInputState({ ...inputState, isFocus: false });
-  };
-
-  // const handleFocus = () => {
-  //   setInputState({ ...inputState, isFocus: false });
-  // };
-
-  const handleTextChange = (id, val) => {
-    setInputState({ filter: true, isFocus: true, inputValue: val });
+  const handleTextChange = useCallback((id, val) => {
+    setValue(val);
     onBlur(id, val);
-  };
+  }, [onBlur]);
 
-  const handleInputChange = (newVal, event) => {
-    if (event.action === 'input-change') setInputState({ filter: true, isFocus: true, inputValue: newVal });
-  };
-
-  const selectedValue =
-    !isFocus && suggestions.find(o => o.value === inputValue);
-  const inputVal =
-    (!isFocus && selectedValue && selectedValue.label) || inputValue;
-  const classes = useStyles();
-  const theme = useTheme();
-  const customStyles = {
-    option: (provided, state) => ({
-      ...provided,
-      color: state.isSelected
-        ? theme.palette.secondary.main
-        : theme.palette.secondary.light,
-      backgroundColor:
-        state.isSelected || state.isFocused
-          ? theme.palette.background.paper2
-          : theme.palette.background.paper,
-      borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-      minHeight: 38,
-      wordBreak: 'break-word',
-      '&:active': {
-        backgroundColor: theme.palette.background.paper,
-        color: theme.palette.secondary.light,
-      },
-    }),
-    control: () => ({
-      width: '100%',
-      height: 38,
-      border: '1px solid',
-      padding: '4px 7px',
-      borderColor: theme.palette.secondary.lightest,
-      borderRadius: '2px',
-      backgroundColor: theme.palette.background.paper,
-      alignItems: 'center',
-      cursor: 'default',
-      display: 'flex',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      minHeight: '38px',
-      position: 'relative',
-      boxSizing: 'borderBox',
-      transition: 'all 100ms ease 0s',
-      outline: '0px !important',
-      '&:hover': {
-        borderColor: theme.palette.primary.main,
-      },
-    }),
-    menu: () => ({
-      zIndex: 2,
-      border: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      width: '100%',
-      boxShadow: '0px 3px 5px rgba(0,0,0,0.2)',
-      borderRadius: theme.spacing(0, 0, 0.5, 0.5),
-    }),
-    input: () => ({
-      color: theme.palette.secondary.light,
-    }),
-    placeholder: () => ({
-      color: theme.palette.secondary.light,
-    }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-    menuList: () => ({
-      padding: '0px',
-      maxHeight: '300px',
-      overflowY: 'auto',
-    }),
-    group: () => ({
-      padding: '0px',
-    }),
-    groupHeading: () => ({
-      textAlign: 'center',
-      fontSize: '12px',
-      padding: '5px',
-      borderBottom: '1px solid',
-      borderColor: theme.palette.divider,
-      background: theme.palette.secondary.lightest,
-      color: theme.palette.text.secondary,
-    }),
-    dropdownIndicator: () => ({
-      color: theme.palette.secondary.light,
-      padding: '8px',
-      cursor: 'pointer',
-      '&:hover': {
-        color: fade(theme.palette.secondary.light, 0.8),
-      },
-    }),
-    singleValue: (provided, state) => {
-      const opacity = state.isDisabled ? 0.5 : 1;
-      const transition = 'opacity 300ms';
-      const color = theme.palette.secondary.light;
-
-      return { ...provided, opacity, transition, color };
-    },
-  };
-  const filterOption = (options, rawInput) => {
-    if (filter) {
-      return options.label.toLowerCase().indexOf(rawInput.toLowerCase()) !== -1;
+  const handleInputChange = useCallback((newVal, event) => {
+    if (event.action === 'input-change') {
+      setValue(newVal);
+      setIsTyping(true);
     }
+  }, []);
 
-    return true;
+  const handleBlur = useCallback(
+    () => {
+      if (propValue !== value) {
+        // check if value matches the option label
+        const selectedOpt = suggestions.find(suggestionItem => suggestionItem.label.toLowerCase() === value.toLowerCase());
+        const newValue = selectedOpt ? selectedOpt.value : value;
+
+        setValue(newValue);
+        onBlur(id, newValue);
+        setIsTyping(false);
+      }
+    },
+    [id, onBlur, propValue, suggestions, value],
+  );
+
+  const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
+  // Dont resolve to value while user is typing
+  const inputVal = (!isTyping && selectedValue?.label) || value;
+  const customStyles = SelectStyle(useTheme());
+  const filterOption = (options, rawInput) => {
+    if (!options.label || !options.value) return false;
+    const input = rawInput?.toString().toLowerCase();
+
+    return options.label.toLowerCase().includes(input) || options.value.toLowerCase().includes(input);
   };
 
   return (
@@ -276,7 +272,7 @@ export default function DynaTypeableSelect(props) {
       error={!isValid}
       disabled={disabled}
       className={classes.root}>
-      {showDropdown && (
+      {isFocused && (
         <Select
           id={id}
           data-test={id}
@@ -289,9 +285,8 @@ export default function DynaTypeableSelect(props) {
           placeholder={placeholder || ''}
           onInputChange={handleInputChange}
           onChange={handleChange}
-          onBlur={handleBlur}
           styles={customStyles}
-          // onFocus={handleFocus}
+          onBlur={handleBlur}
           autoFocus
           openOnFocus
           components={components}
@@ -300,7 +295,7 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!showDropdown &&
+      {!isFocused &&
         (TextComponent ? (
           <TextComponent
             {...props}

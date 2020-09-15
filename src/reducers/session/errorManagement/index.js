@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import openErrors, { selectors as fromOpenErrors } from './openErrors';
 import errorDetails, { selectors as fromErrorDetails } from './errorDetails';
+import latestJobDetails, { selectors as fromLatestJobs } from './latestJobs';
 import getFilteredErrors from '../../../utils/errorManagement';
 import retryData, { selectors as fromRetryData } from './retryData';
 import { genSelectors } from '../../util';
@@ -8,6 +9,7 @@ import { genSelectors } from '../../util';
 export default combineReducers({
   openErrors,
   errorDetails,
+  latestJobDetails,
   retryData,
 });
 
@@ -16,6 +18,7 @@ const subSelectors = {
   openErrors: fromOpenErrors,
   errorDetails: fromErrorDetails,
   retryData: fromRetryData,
+  latestJobDetails: fromLatestJobs,
 };
 
 genSelectors(selectors, subSelectors);

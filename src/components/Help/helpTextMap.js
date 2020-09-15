@@ -366,7 +366,7 @@ export default {
     'The access token of your Pitney Bowes account.',
   'lexbizz.connection.http.auth.type': 'Please select Authentication Type.',
   'lexbizz.connection.instanceURI':
-    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://try.lexbizz.com/isv.',
+    'Please enter URL of your instance with lexbizz. For example, https://isv.lexbizz.app/entity/Default/18.200.001, then the Instance URI would be https://isv.lexbizz.app.',
   'lexbizz.connection.http.unencrypted.endpointName':
     'Please enter endpoint name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.endpointVersion':
@@ -381,7 +381,7 @@ export default {
     'Please enter locale of your lexbizz account.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
   'myobadvanced.connection.instanceURI':
-      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be try.myobadvanced.com/isv.',
+      'Please enter URL of your instance with MYOB Advanced. For example, https://demo.myobadvanced.com/entity/Default/18.200.001, then the Instance URI would be demo.myobadvanced.com.',
   'myobadvanced.connection.http.unencrypted.endpointName':
       'Please enter endpoint name of your MYOB Advanced account.',
   'myobadvanced.connection.http.unencrypted.endpointVersion':
@@ -812,7 +812,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use MERGE SQL Query” when you want to insert, update, and delete values in a table based on whether or not the records meet certain condition (i.e matching clauses). You define the Merge command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. You define the query command in Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -1101,7 +1101,7 @@ export default {
   'export.rest.successValues':
     'This field indicates the value(s) that represents the success of an HTTP response. For example, 0 or 0,2,3.\nThis field is used in unison with the Success Path field. The value found in the HTTP response at the path specified in Success Path is compared against the provided list of success values. If there is an exact case-sensitive match of any of the specified values, the request is considered successful.',
   'export.rest.postBody':
-    "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebar templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
+    "Most HTTP/REST exports utilize GET requests that do not have an HTTP body. In some cases, such as RPC style API's an HTTP body is necessary to convey the details of the export request. If this is the case for the application you are integrating with, this field allows you to configure the content of the HTTP request body. Note that the integrator.io platform support handlebars templates to aid in the construction of the HTTP body. It is also possible to use helper method and field placeholders to pull-in and manipulate data passed into the export, or from the connection object itself. This button with launch an editor to make the process of constructing (and testing) your body templates easier.",
   'export.rest.pagingMethod':
     "Some APIs offer paging functionality in order to limit each of their responses to a manageable size if the total set of resources is large. The following paging methods are supported by integrator.io. Choose 'Next Page URL' if the API returns a link to the next page within the response body. Choose 'Page Argument' if the API uses a query string parameter to paginate the results. Choose 'Relative URI' if the same endpoint should be hit repeatedly until no more data is returned. Choose Link header if the API points to subsequent pages in the Link header of the API response. Choose 'Skip Argument' if the API uses a query string parameter to indicate the record offset for the next page request. Finally, choose Token if the API responds with a token that should be used to fetch the next page.The export will automatically calculate the amount to skip and integrator.io will add this parameter to the relativeURI for each subsequent page request. Note that typically these services also support an optional 'take' or 'pageSize' query string parameter to control how many records are returned in each page; integrator.io will not set or modify this parameter.",
   'export.rest.nextPagePath':
@@ -1417,7 +1417,7 @@ export default {
   'import.netsuite_da.internalIdLookup.expression': 'Use this field to define a lookup that integrator.io will use to determine if a record already exists in NetSuite or not. For example, if you are importing contact records and you have a unique email for each contact, then you can use this field to define a lookup to see if any contacts with the same email already exists in NetSuite. If needed, you can also define more complex lookups using AND and OR. For example, if you are importing item records you can define a lookup to see if any items exist with a specific itemid (i.e. sku) AND also belong to a specific vendor (i.e. because maybe sku by itself is not guaranteed to be unique, but sku plus vendor always is unique).',
   'import.netsuite.recordTypeId':
     'Unique id associated with the recordType selected',
-  'import.netsuite_da.operation': 'Please select \'Add\' if you are only importing new records into NetSuite. Please select \'Update\' if you are only importing changes to existing records in NetSuite. Please select \'Add or Update\' if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field.',
+  'import.netsuite_da.operation': 'Please select <b>Add</b> if you are only importing new records into NetSuite.</br></br> Please select <b>Update</b> if you are only importing changes to existing records in NetSuite.</br></br>Please select <b>Add or update</b> if you want your import to be more dynamic such that (1) if an existing record is found in NetSuite then that record will be updated, or (2) if an existing record cannot be found in NetSuite then a new record will be created. When using just \'Add\' it is definitely a best practice to make sure you have some sort of protection in place against duplicate records. Probably the easiest way to add this protection is to use the \'Ignore Existing Records\' field. </br></br><b>Attach and Detach</b> can be used to define or remove a relationship between two records. For example, a Contact record can be associated with a Partner record, or an Opportunity record can be associated with a Customer record. You can also use the Attach/Detach operations to attach or detach a file to, or from, a record. Any file that is in the NetSuite file cabinet, for example a MS Word or Excel file or a PDF can be attached to any record other than a custom record.',
   'import.netsuite.retryUpdateAsAdd':
     'Boolean value if set, on failure of any record update on NS, it will be retried as a add operation',
   'import.netsuite.customFieldMetadata':
@@ -1467,7 +1467,7 @@ export default {
   'import.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response our platform can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
   'import.http.batchSize':
-    "The HTTP adaptor supports batch and single resource endpoints. If left blank, this field defaults to 1 (non-batch endpoint). Use this field only if you are using an API endpoint that supports batch record processing. There may also be limits to the number of resources an API allows you to act on in a single HTTP request. Refer to their documentation for acceptable limits. Note that your 'body' field will need to have a handlebar template that can iterate over the set of resources provided in the data property of the model used to populate the template.",
+    "The HTTP adaptor supports batch and single resource endpoints. If left blank, this field defaults to 1 (non-batch endpoint). Use this field only if you are using an API endpoint that supports batch record processing. There may also be limits to the number of resources an API allows you to act on in a single HTTP request. Refer to their documentation for acceptable limits. Note that your 'body' field will need to have a handlebars template that can iterate over the set of resources provided in the data property of the model used to populate the template.",
   'import.http.ignoreLookupName':
     'If this import has either the ignoreMissing (update) or ignoreExisting (create) flags set to true, this field is used to identify the lookup that will be used to test for the existence of a resource.',
   'import.http.ignoreExtract':
@@ -1779,7 +1779,7 @@ export default {
   'import.rest.composite.create.method':
     'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use POST method for creating new records. But some endpoints might be using PUT method for the same.',
   'import.rest.composite.create.body':
-    'Click this button to specify Handlebar expression which will be evaluated and the result is used as Http Request body while importing.',
+    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
   'import.rest.composite.create.successPath':
     "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
   'import.rest.composite.create.successValues':
@@ -1791,7 +1791,7 @@ export default {
   'import.rest.composite.update.method':
     'Choose the HTTP method to use for requesting the endpoint. Most of the endpoints use PUT method for updating existing records. But some endpoints might be using POST method for the same.',
   'import.rest.composite.update.body':
-    'Click this button to specify Handlebar expression which will be evaluated and the result is used as Http Request body while importing.',
+    'Click this button to specify handlebars expression which will be evaluated and the result is used as Http Request body while importing.',
   'import.rest.composite.update.successPath':
     "There are some APIs out there (i.e. Slack) that will return a 200 HTTP status code even if an HTTP request fails. These APIs instead use a field in the HTTP response body to identify success vs fail. For these APIs, this option field 'Success Path' can be used to specify the JSON path for the field in the response body that should be used to determine if an HTTP request was successful. For example, if you are working with Slack's API you would set this field to: 'ok'.",
   'import.rest.composite.update.successValues':
@@ -1852,11 +1852,11 @@ export default {
   'import.failFields':
     '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. \n\n<b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
   'import.function':
-    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">Handlebar Helper Guide</a>`,
+    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/115004695128-Handlebar-Helpers-Reference-Guide">handlebars Helper Guide</a>`,
   'import.field':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'import.expression':
-    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+    'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
   'jobErrors.helpSummary':
     'You can view the error source, code and message, as well as when the error occurred. Hover over each error to click the … Actions to access the record where the error occurred and make any necessary changes. Once you’ve tracked down and resolved your error, resolve it from the Actions or button toolbar. You can also retry errors, such as something due to an intermittent connection failure. If you have a lot of errors, you’ll want to download them into a csv, then mark them resolved or retried, and upload your processed errors.',
   'connection.useSFTP': '',
@@ -2086,7 +2086,7 @@ export default {
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
-    'This field represents your complete handlebar expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
+    'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
   'mapping.standardAction':
     '<b>Use Empty String as Default Value:</b> Please select this field if you want to use ‘’(i.e. the empty string) as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Null as Default Value:</b> Please select this field if you want to use ‘null’ as the default lookup value. This value will be used if your lookup does not find anything. <br /><b>Use Custom Default Value:</b> This holds the default value to be set for the extract field.',
   'mapping.lookupAction':
@@ -2107,7 +2107,7 @@ export default {
   'mapping.generateDateTimezone':
     'If the import field is of type date, this field represents the time zone of the field on the import system.',
   'mapping.functions':
-    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">Handlebar Helper Guide</a>`,
+    `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">handlebars Helper Guide</a>`,
   'mapping.immutable':
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
   'mapping.lookup.mode':

@@ -33,7 +33,7 @@ export const TILE_STATUS = Object.freeze({
 });
 export const STANDALONE_INTEGRATION = Object.freeze({
   id: 'none',
-  name: 'Standalone Flows',
+  name: 'Standalone flows',
 });
 export const INTEGRATION_MODES = Object.freeze({
   INSTALL: 'install',
@@ -390,7 +390,12 @@ export const USAGE_TIER_HOURS = {
   heavy: 4000,
   custom: 10000,
 };
-export const HELP_CENTER_BASE_URL = '/zendesk/sso?return_to=https://docs.celigo.com';
+/**
+ * Zendesk SSO is enabled for production only and the user must have an integrator.io/eu.integrator.io
+ * account to access help center. So redirect user to integrator.io when he try to access help center from
+ * the non-production domains.
+ */
+export const HELP_CENTER_BASE_URL = `${['integrator.io', 'eu.integrator.io'].includes(window.document.location.hostname.replace('www.', '')) ? '' : 'https://integrator.io'}/zendesk/sso?return_to=https://docs.celigo.com`;
 export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =

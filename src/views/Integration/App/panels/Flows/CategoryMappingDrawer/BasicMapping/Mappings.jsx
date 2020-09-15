@@ -472,6 +472,7 @@ export default function ImportMapping(props) {
         disabled={disabled}
         integrationId={integrationId}
         flowId={flowId}
+        sectionId={sectionId}
         importId={options.importId}
         editorId={editorId}
       />

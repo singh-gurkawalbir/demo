@@ -35,9 +35,10 @@ export default function JavaScriptEditor(props) {
     optionalSaveParams,
     layout = 'compact',
     resultMode = 'json',
+    isToggleScreen,
   } = props;
   const classes = useStyles(props);
-  const { data, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, result, error, errorLine, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -78,8 +79,23 @@ export default function JavaScriptEditor(props) {
   ]);
 
   useEffect(() => {
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    if (isToggleScreen && processor) return;
     handleInit();
-  }, [handleInit]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleInit, isToggleScreen]);
+
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+        _init_data: props.data,
+      }));
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
+
   const parsedData = result ? result.data : '';
   const logs = result && !error && !violations && result.logs;
 
@@ -90,6 +106,8 @@ export default function JavaScriptEditor(props) {
           disabled={disabled}
           editorId={editorId}
           insertStubKey={insertStubKey}
+          errorLine={errorLine}
+          hasError={!!error}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data">
@@ -104,6 +122,7 @@ export default function JavaScriptEditor(props) {
             mode="json"
             readOnly={disabled}
             onChange={handleDataChange}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>

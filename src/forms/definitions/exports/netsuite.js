@@ -71,6 +71,7 @@ export default {
       newValues['/type'] = newValues['/restlet/type'];
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
+
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
@@ -115,6 +116,8 @@ export default {
       newValues['/type'] = 'blob';
       delete newValues['/netsuite/type'];
     }
+
+    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
 
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
@@ -296,7 +299,7 @@ export default {
       fieldId: 'netsuite.restlet.useSS2Restlets',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
-      defaultValue: r => (r?.netsuite?.restlet?.useSS2Restlets && r?.netsuite?.restlet?.useSS2Restlets !== 'false') ? 'true' : 'false',
+      defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
       options: [
         {
           items: [

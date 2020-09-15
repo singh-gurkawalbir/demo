@@ -13,7 +13,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const prefixRegexp = '.*{{((?!(}|{)).)*$';
 const getMatchingText = (value = '', textInsertPosition) => {
-  const inpValue = value.substring(0, textInsertPosition);
+  const inpValue = value?.substring(0, textInsertPosition) || '';
   const startIndexOfBraces = inpValue.lastIndexOf('{{');
   const matchedString = inpValue.substring(startIndexOfBraces + 2);
 

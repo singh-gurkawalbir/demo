@@ -37,20 +37,22 @@ export default {
     ],
   },
   'netsuite_da.operation': {
-    type: 'radiogroupforresetfields',
+    type: 'netsuiteimportoperation',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
     ],
     label: 'Operation',
     required: true,
+    filterKey: 'suitescript-recordTypes',
+    connectionId: r => r?._connectionId,
     visibleWhen: [
       {
         field: 'inputMode',
         is: ['records'],
       },
     ],
-    options: [
+    selectOptions: [
       {
         items: [
           { label: 'Add', value: 'add' },
@@ -88,7 +90,7 @@ export default {
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
     // eslint-disable-next-line camelcase
-    defaultValue: r => (r?.netsuite_da?.useSS2Restlets && r?.netsuite_da?.useSS2Restlets !== 'false') ? 'true' : 'false',
+    defaultValue: r => r?.netsuite_da?.useSS2Restlets ? 'true' : 'false',
     options: [
       {
         items: [

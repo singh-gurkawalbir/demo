@@ -24,7 +24,7 @@ export default combineReducers({
 
 export const selectors = {};
 const subSelectors = {
-  resourceFrom: fromResourceForm,
+  resourceForm: fromResourceForm,
   iaForm: fromIAForm,
   flows: fromFlows,
   featureCheck: fromFeatureCheck,
