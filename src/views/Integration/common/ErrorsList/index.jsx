@@ -8,7 +8,7 @@ import RightDrawer from '../../../../components/drawer/Right';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
-import getRoutePath from '../../../../utils/routePaths';
+import { flowbuilderUrl } from '../../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,18 +43,12 @@ const metadata = {
           integrationId
         );
         const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-        const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
-        let flowBuilderTo;
-
-        if (integration._connectorId) {
-          if (childId) {
-            flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
-          } else {
-            flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
-          }
-        } else {
-          flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
-        }
+        const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {
+          isIntegrationApp: !!integration._connectorId,
+          childId,
+          isDataLoader,
+          appName,
+        });
 
         const handleErrorClick = useCallback(() => {
           history.push(`${flowBuilderTo}/errors/${id}`);
