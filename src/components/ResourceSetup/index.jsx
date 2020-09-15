@@ -9,6 +9,7 @@ import DrawerTitleBar from '../drawer/TitleBar';
 import ResourceFormWithStatusPanel from '../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from '../drawer/Resource/Panel/ResourceFormActionsPanel';
 import { generateNewId } from '../../utils/resource';
+import ResourceDrawer from '../drawer/Resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -59,6 +60,8 @@ export default function ResourceSetupDrawer(props) {
         }}
         >
         <DrawerTitleBar title={title} onClose={onClose} />
+        <ResourceDrawer />
+
         <div>
           {addOrSelect ? (
             <AddOrSelect {...props} />
