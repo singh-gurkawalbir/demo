@@ -320,6 +320,7 @@ function JobDetail({
             userPermissionsOnIntegration={userPermissionsOnIntegration}
             onViewErrorsClick={onViewErrorsClick}
             integrationName={integrationName}
+            isFlowBuilderView={isFlowBuilderView}
           />
         ))}
     </>
