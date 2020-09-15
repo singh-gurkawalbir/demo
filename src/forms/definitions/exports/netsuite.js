@@ -358,7 +358,6 @@ export default {
       label: 'Date field',
       type: 'refreshableselect',
       required: true,
-      defaultValue: r => r && r.delta && r.delta.dateField,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
       filterKey: 'webservices-dateField',
