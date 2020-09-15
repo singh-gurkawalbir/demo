@@ -17,4 +17,5 @@ const styles = {
 <div style={styles}>
    <TrialExpireNotification content="Your free trial expires in 15 days. xpi res in 15 days Your free trial expires in 15 days. xpi res in 15 days " />
 </div>
+
 ```

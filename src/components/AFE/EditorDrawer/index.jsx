@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   wrapper: {
+    display: 'flex',
     '& Button': {
       marginRight: theme.spacing(2),
     },

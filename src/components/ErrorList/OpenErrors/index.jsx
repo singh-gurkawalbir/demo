@@ -11,12 +11,19 @@ import SpinnerWrapper from '../../SpinnerWrapper';
 import useErrorTableConfig from '../ErrorTable/hooks/useErrorTableConfig';
 
 const useStyles = makeStyles(theme => ({
-  search: {
+  openErrorsKeywordSearch: {
     width: '250px',
     float: 'left',
     '& > div:first-child': {
       background: theme.palette.common.white,
+      '& > div[class*="inputRoot"]': {
+        width: '100%',
+        '& > input': {
+          width: '100%',
+        },
+      },
     },
+
   },
   hide: {
     display: 'none',
@@ -57,7 +64,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
       ) : (
         <>
           <div className={classes.header}>
-            <div className={classes.search}>
+            <div className={classes.openErrorsKeywordSearch}>
               <KeywordSearch filterKey={filterKey} defaultFilter={defaultFilter} />
             </div>
             {
