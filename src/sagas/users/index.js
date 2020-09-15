@@ -27,7 +27,7 @@ export function* changePassword({ updatedPassword }) {
       actions.api.complete(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        'Password changed'
+        'Password changed.'
       )
     );
   } catch (e) {
@@ -189,7 +189,7 @@ export function* changeEmail({ updatedEmail }) {
       actions.api.complete(
         changeEmailParams.path,
         changeEmailParams.opts.method,
-        'Verification link sent to new email address'
+        'Verification link sent to new email address.'
       )
     );
   } catch (e) {
