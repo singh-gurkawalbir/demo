@@ -114,6 +114,7 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 
 export default {
@@ -227,6 +228,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuiteimportoperation: DynaNetSuiteImportOperation,
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
