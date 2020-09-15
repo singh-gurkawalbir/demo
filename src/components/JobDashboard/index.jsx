@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
 import LoadResources from '../LoadResources';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
