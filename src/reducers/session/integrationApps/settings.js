@@ -291,7 +291,7 @@ export default (state = {}, action) => {
               options: {
                 ...additionalOptions,
                 isVariationMapping,
-              }
+              },
             });
           const initChangeIdentifier =
             (draft[cKey] &&
