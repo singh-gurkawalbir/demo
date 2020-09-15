@@ -37,20 +37,22 @@ export default {
     ],
   },
   'netsuite_da.operation': {
-    type: 'radiogroupforresetfields',
+    type: 'netsuiteimportoperation',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
     ],
     label: 'Operation',
     required: true,
+    filterKey: 'suitescript-recordTypes',
+    connectionId: r => r?._connectionId,
     visibleWhen: [
       {
         field: 'inputMode',
         is: ['records'],
       },
     ],
-    options: [
+    selectOptions: [
       {
         items: [
           { label: 'Add', value: 'add' },
