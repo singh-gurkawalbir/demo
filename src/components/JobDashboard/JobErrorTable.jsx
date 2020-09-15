@@ -579,12 +579,13 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Source',
-                    value: r => r.source,
+                    width: '15%',
+                    value: r => r.source && (<span className={classes.code}>{r.source}</span>),
                   },
                   {
                     heading: 'Code',
-                    align: 'center',
-                    width: '20%',
+                    align: 'left',
+                    width: '15%',
                     value: r => r.code && (<span className={classes.code}>{r.code}</span>),
                   },
                   {
