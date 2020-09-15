@@ -58,7 +58,6 @@ export default {
         newValues['/test'] = undefined;
         delete newValues['/test/limit'];
         delete newValues['/once/booleanField'];
-        newValues['/delta/dateField'] = newValues['/delta/dateField'] && newValues['/delta/dateField'].join(',');
       } else if (newValues['/type'] === 'once') {
         newValues['/delta'] = undefined;
         newValues['/test'] = undefined;
@@ -72,7 +71,6 @@ export default {
       newValues['/type'] = newValues['/restlet/type'];
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
-      newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'] && Array.isArray(newValues['/restlet/delta/dateField']) ? newValues['/restlet/delta/dateField'].join(',') : newValues['/restlet/delta/dateField'];
 
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
       delete newValues['/restlet/type'];
@@ -357,11 +355,10 @@ export default {
     },
     'delta.dateField': {
       id: 'delta.dateField',
-      label: 'Date field(s)',
+      label: 'Date field',
       type: 'refreshableselect',
       required: true,
-      defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
-      multiselect: true,
+      defaultValue: r => r && r.delta && r.delta.dateField,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
       filterKey: 'webservices-dateField',
@@ -462,15 +459,14 @@ export default {
     },
     'restlet.delta.dateField': {
       id: 'restlet.delta.dateField',
-      label: 'Date field(s)',
+      label: 'Date field',
       type: 'refreshableselect',
-      multiselect: true,
       helpKey: 'export.delta.dateField',
       filterKey: 'suitescript-dateField',
       required: true,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
-      defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
+      defaultValue: r => r && r.delta && r.delta.dateField,
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.restlet.recordType', isNot: [''] },

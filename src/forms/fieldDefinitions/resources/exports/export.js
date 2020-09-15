@@ -411,7 +411,7 @@ export default {
   // #region delta
   'delta.dateField': {
     type: 'text',
-    label: 'Date field(s)',
+    label: 'Date field',
     required: true,
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
