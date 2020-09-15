@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector(props) {
+export default function SelectResource(props) {
   const { flowResources = [], selectedResources = [], onSave, isFlow } = props;
   const [checked, setChecked] = useState(selectedResources);
   const [anchorEl, setAnchorEl] = useState(null);
