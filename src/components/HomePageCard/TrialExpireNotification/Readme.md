@@ -14,8 +14,18 @@ const styles = {
     position: 'relative',
    
 };
-<div style={styles}>
-   <TrialExpireNotification content="Your free trial expires in 15 days. xpi res in 15 days Your free trial expires in 15 days. xpi res in 15 days " />
+const wrapper = {
+    display: 'flex',
+    justifyContent: 'space-between',
+
+};
+<div style={wrapper}>
+    <div style={styles}>
+    <TrialExpireNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " single  />
+    </div>
+    <div style={styles}>
+    <TrialExpireNotification content="Your free trial expired on Jan 10th, 2020 (60 days). Contact sales to upgrade your app. " />
+    </div>
 </div>
 
 ```

@@ -245,10 +245,14 @@ export default {
     label: 'File has header',
     defaultValue: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xlsx'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },

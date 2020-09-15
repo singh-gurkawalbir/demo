@@ -11,6 +11,7 @@ import {
   isArray,
   assign,
   unionBy,
+  isNumber,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -1092,6 +1093,7 @@ export function convertToReactFormFields({
       actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
 
       let { fieldType } = field;
+      const { type } = field;
 
       fieldDetailsMap[fieldId] = {
         id: field.id,
@@ -1106,8 +1108,14 @@ export function convertToReactFormFields({
         fieldDetailsMap[fieldId].type = 'integer';
       }
 
+      if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
+        if (['array', 'json'].includes(type)) {
+          fieldType = 'editor';
+        }
+      }
+
       if (
-        !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
+        !['checkbox', 'editor', 'multiselect', 'select', 'text', 'textarea'].includes(
           fieldType
         )
       ) {
@@ -1162,8 +1170,21 @@ export function convertToReactFormFields({
         readOnly: !!field.readOnly,
       };
 
+      if (inputType === 'textwithflowsuggestion' && isNumber(fieldDef.defaultValue)) {
+        fieldDef.defaultValue = fieldDef.defaultValue.toString();
+      }
+
+      if (!fieldDef.readOnly && fieldDef.defaultValue === undefined) { // IO-12441
+        fieldDef.defaultValue = '';
+      }
+
       if (fieldDef.readOnly) {
         fieldDef.defaultDisabled = true;
+      }
+
+      if (fieldDef.type === 'editor') {
+        fieldDef.saveMode = 'json';
+        fieldDef.mode = 'json';
       }
 
       if (fieldDef.type === 'textwithflowsuggestion') {
@@ -1301,9 +1322,11 @@ export function updateFormValues({
       });
     } else {
       if (type === 'array') {
+        if (paramLocation !== PARAMETER_LOCATION.BODY) {
         // IO-1776
-        if (value && !isArray(value)) {
-          value = value.split(',');
+          if (value && !isArray(value)) {
+            value = value.split(',');
+          }
         }
       } else if (type === 'csv') {
         if (isArray(value)) {
@@ -1498,7 +1521,10 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   if (operationDetails.parameters && operationDetails.parameters.length > 0) {
     operationDetails.parameters.forEach((p, index) => {
       if (p.in !== 'query') {
-        if (url1Info && url1Info.urlParts && url1Info.urlParts[index]) {
+        /**
+         * IO-16945, check if the urlMatch has path (:_XYZ) parameters
+         */
+        if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
@@ -1507,7 +1533,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           } else {
             pathParams[p.id] = url1Info.urlParts[index];
           }
-        } else if (url2Info && url2Info.urlParts && url2Info.urlParts[index]) {
+        } else if (url2Info?.urlMatch?.indexOf(':_') > 0 && url2Info?.urlParts && url2Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url2Info.urlParts[index]
               .replace(/{/g, '')

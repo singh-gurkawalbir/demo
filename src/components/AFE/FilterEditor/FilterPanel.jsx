@@ -141,7 +141,7 @@ export default function FilterPanel({
     setShowOperandSettingsFor({ rule, rhs });
   };
 
-  const updateUIForLHSRule = ({ rule = {} }) => {
+  const updateUIForLHSRule = ({ name, rule = {} }) => {
     function updateUIForValue(rule) {
       if (
         rule.$el.find('.rule-filter-container input[name=value]').length === 0
@@ -156,12 +156,12 @@ export default function FilterPanel({
         );
 
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
-          valueField.val(rulesState[ruleId].data.lhs.value).trigger('change');
+          valueField.val(rulesState[ruleId].data.lhs.value).trigger('input');
         }
 
         valueField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
+          .off('input')
+          .on('input', () => handleFilterRulesChange());
       }
     }
 
@@ -183,12 +183,12 @@ export default function FilterPanel({
         if (rulesState[ruleId].data && rulesState[ruleId].data.lhs) {
           expressionField
             .val(JSON.stringify(rulesState[ruleId].data.lhs.expression))
-            .trigger('change');
+            .trigger('input');
         }
 
         expressionField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
+          .off('input')
+          .on('input', () => handleFilterRulesChange());
       }
     }
 
@@ -202,7 +202,7 @@ export default function FilterPanel({
         );
       rule.$el
         .find('.rule-filter-container img.settings-icon')
-        .unbind('click')
+        .off('click')
         .on('click', () => {
           showOperandSettings({ rule });
         });
@@ -210,13 +210,13 @@ export default function FilterPanel({
 
     rule.$el
       .find('.rule-filter-container')
-      .unbind('mouseover')
+      .off('mouseover')
       .on('mouseover', () => {
         rule.$el.find('.rule-filter-container img.settings-icon').show();
       });
     rule.$el
       .find('.rule-filter-container')
-      .unbind('mouseout')
+      .off('mouseout')
       .on('mouseout', () => {
         rule.$el.find('.rule-filter-container img.settings-icon').hide();
       });
@@ -237,6 +237,12 @@ export default function FilterPanel({
         updateUIForExpression(rule);
       }
     }
+
+    const valueField = rule.$el.find(`[name=${name}]`);
+
+    valueField
+      .off('input')
+      .on('input', () => handleFilterRulesChange());
   };
 
   const updateUIForRHSRule = ({ name, rule = {} }) => {
@@ -268,7 +274,7 @@ export default function FilterPanel({
           });
         }
 
-        field.unbind('change').on('change', () => handleFilterRulesChange());
+        field.off('change').on('change', () => handleFilterRulesChange());
       }
     }
 
@@ -291,12 +297,12 @@ export default function FilterPanel({
         if (rulesState[ruleId].data && rulesState[ruleId].data.rhs) {
           expressionField
             .val(JSON.stringify(rulesState[ruleId].data.rhs.expression))
-            .trigger('change');
+            .trigger('input');
         }
 
         expressionField
-          .unbind('change')
-          .on('change', () => handleFilterRulesChange());
+          .off('input')
+          .on('input', () => handleFilterRulesChange());
       }
     }
 
@@ -309,9 +315,11 @@ export default function FilterPanel({
       const filterType = rulesState[ruleId].data.rhs.type;
 
       if (filterType === 'value') {
-        if (!rule.$el.find(`[name=${name}]`).is(':visible')) {
-          rule.$el.find(`[name=${name}]`).show();
-          rule.$el.find(`[name=${name}]`).val('');
+        const valueField = rule.$el.find(`[name=${name}]`);
+
+        if (!valueField.is(':visible')) {
+          valueField.show();
+          valueField.val('');
         }
       } else if (filterType === 'field') {
         rule.$el.find(`[name=${name}]`).hide();
@@ -497,12 +505,12 @@ export default function FilterPanel({
 
           rule.$el
             .find('.rule-value-container')
-            .unbind('mouseover')
+            .off('mouseover')
             .on('mouseover', () => {
               rule.$el.find('.rule-value-container img.settings-icon').show();
               rule.$el
                 .find('.rule-value-container img.settings-icon')
-                .unbind('click')
+                .off('click')
                 .on('click', () => {
                   if (rulesState[ruleId].data.rhs.type === 'field') {
                     const rhsField = rule.$el
@@ -521,7 +529,7 @@ export default function FilterPanel({
             });
           rule.$el
             .find('.rule-value-container')
-            .unbind('mouseout')
+            .off('mouseout')
             .on('mouseout', () => {
               rule.$el.find('.rule-value-container img.settings-icon').hide();
             });
@@ -707,7 +715,7 @@ export default function FilterPanel({
         rules,
       });
       qbContainer
-        .unbind('rulesChanged.queryBuilder')
+        .off('rulesChanged.queryBuilder')
         .on('rulesChanged.queryBuilder', () => {
           handleFilterRulesChange();
         });
