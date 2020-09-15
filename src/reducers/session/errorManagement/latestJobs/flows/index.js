@@ -1,6 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../../../actions/types';
 import { parseJobFamily } from '../../../../data/jobs/util';
+import { JOB_STATUS } from '../../../../../utils/constants';
 
 const defaultObject = {};
 
@@ -50,11 +51,14 @@ export const selectors = {};
 selectors.latestFlowJobsList = (state, flowId) => {
   if (!state || !flowId || !state[flowId]) return defaultObject;
 
-  // const additionalProps = {
-  //   uiStatus: job.status,
-  //   duration: getJobDuration(job),
-  //   doneExporting: !!job.doneExporting,
-  //   numPagesProcessed: 0,
-  // };
   return state[flowId];
+};
+
+selectors.getInProgressLatestJobs = (state, flowId) => {
+  if (!state || !flowId || !state[flowId]) return [];
+  const jobsList = state[flowId].data;
+
+  return jobsList.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
+    job.status
+  )).map(job => job._id);
 };

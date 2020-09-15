@@ -1698,6 +1698,11 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
         flowId, job,
       }),
+    requestInProgressJobsPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL, {
+        flowId,
+      }),
+    noInProgressJobs: () => action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS),
     clear: ({ flowId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {
         flowId,
