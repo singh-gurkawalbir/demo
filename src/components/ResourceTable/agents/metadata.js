@@ -28,20 +28,22 @@ export default {
       value: r => <OnlineStatus offline={r.offline} />,
     },
     {
+      heading: 'Last heartbeat',
+      value: r => <CeligoTimeAgo date={r.lastHeartbeatAt} />,
+      orderBy: 'lastHeartbeatAt',
+    },
+    {
       heading: 'Last updated',
-      width: '150px', // minimum width to prevent heading to wrap.
       value: r => <CeligoTimeAgo date={r.lastModified} />,
       orderBy: 'lastModified',
     },
 
     {
       heading: 'Install',
-      width: '175px',
       value: r => getAgentDownloadInstaller(r),
     },
     {
       heading: 'Access token',
-      width: '285px',
       value: r => <AgentToken agentId={r._id} />,
     },
   ],
