@@ -32,7 +32,7 @@ const getSampleSnowflakeTemplate = (sampleData, eFields, isInsert) => {
 
   if (eFields && eFields.length > 0) {
     if (isInsert) {
-      toReturn = `${'Insert into Employee(id) Values({{data.0.'}${
+      toReturn = `${'Insert into Employee(id) Values({{data.'}${
         eFields[0].id
       }}})`;
     } else {
