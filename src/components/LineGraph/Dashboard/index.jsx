@@ -8,7 +8,7 @@ import RefreshIcon from '../../icons/RefreshIcon';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import DynaMultiSelect from '../SelectResource';
+import SelectResource from '../SelectResource';
 import ButtonGroup from '../../ButtonGroup';
 import IconTextButton from '../../IconTextButton';
 
@@ -90,7 +90,7 @@ export default function LineGraphDrawer({ integrationId }) {
           </IconTextButton>
 
           <DateRangeSelector onSave={handleDateRangeChange} />
-          <DynaMultiSelect
+          <SelectResource
             integrationId={integrationId}
             selectedResources={selectedResources}
             flowResources={flowResources}

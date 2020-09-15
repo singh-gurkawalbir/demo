@@ -10,7 +10,7 @@ import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
-import DynaMultiSelect from '../../../../components/LineGraph/SelectResource';
+import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
@@ -122,7 +122,7 @@ export default function LineGraphDrawer({ flowId }) {
           <RefreshIcon /> Refresh
         </IconTextButton>
         <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
-        <DynaMultiSelect
+        <SelectResource
           selectedResources={selectedResources}
           flowResources={flowResources}
           isFlow
