@@ -41,6 +41,7 @@ import {
   STANDALONE_INTEGRATION,
   ACCOUNT_IDS,
   SUITESCRIPT_CONNECTORS,
+  JOB_STATUS,
 } from '../utils/constants';
 import { LICENSE_EXPIRED } from '../utils/messageStore';
 import { changePasswordParams, changeEmailParams } from '../sagas/api/apiPaths';
@@ -72,6 +73,7 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import { getJobDuration } from './data/jobs/util';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3182,11 +3184,53 @@ selectors.flowJobs = (state, options = {}) => {
 
 selectors.flowDashboardJobs = (state, flowId) => {
   const latestFlowJobs = selectors.latestFlowJobsList(state, flowId);
+  const resourceMap = fromData.resourceDetailsMap(state?.data);
   const dashboardSteps = [];
 
-  latestFlowJobs?.data?.forEach(latestJob => {
-    if (latestJob.children?.length) {
-      latestJob.children.forEach(job => dashboardSteps.push(job));
+  latestFlowJobs?.data?.forEach(parentJob => {
+    const additionalProps = {
+      doneExporting: !!parentJob.doneExporting,
+      numPagesProcessed: 0,
+    };
+
+    if (!additionalProps.doneExporting) {
+      if (
+        [
+          JOB_STATUS.COMPLETED,
+          JOB_STATUS.CANCELED,
+          JOB_STATUS.FAILED,
+        ].includes(parentJob.status)
+      ) {
+        additionalProps.doneExporting = true;
+      }
+    }
+    if (parentJob.children?.length) {
+      parentJob.children.forEach(cJob => {
+        const additionalChildProps = {
+          uiStatus: cJob.status,
+          duration: getJobDuration(cJob),
+          name: cJob._exportId
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+        };
+
+        if (cJob.type === 'import') {
+          if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
+            additionalChildProps.percentComplete = Math.floor(
+              (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
+            );
+          } else {
+            additionalChildProps.percentComplete = 0;
+          }
+
+          additionalProps.numPagesProcessed += parseInt(
+            cJob.numPagesProcessed,
+            10
+          );
+        }
+
+        dashboardSteps.push({ ...cJob, ...additionalChildProps });
+      });
     }
   });
 
