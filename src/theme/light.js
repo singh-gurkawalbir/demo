@@ -653,6 +653,7 @@ export default {
         },
       },
       content: {
+        paddingTop: 3,
         margin: 0,
         '&.Mui-expanded': {
           margin: 0,
@@ -660,7 +661,7 @@ export default {
       },
       expandIcon: {
         padding: 0,
-        margin: [[-4, 4, 0, 0]],
+        margin: [[0, 4, 0, 0]],
       },
     },
     MuiChip: {

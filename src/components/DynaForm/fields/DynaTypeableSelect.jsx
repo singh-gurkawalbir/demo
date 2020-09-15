@@ -192,6 +192,7 @@ export default function DynaTypeableSelect(props) {
 
   const [value, setValue] = useState(propValue?.toString());
   const [isFocused, setIsFocused] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const handleFocusIn = useCallback(() => {
     if (!isFocused) { setIsFocused(true); }
@@ -221,6 +222,7 @@ export default function DynaTypeableSelect(props) {
 
     setValue(newVal);
     setIsFocused(false);
+    setIsTyping(false);
     onBlur(id, newVal);
 
     // if (hideDropdownOnChange) { setShowDropdown(false); }
@@ -232,7 +234,10 @@ export default function DynaTypeableSelect(props) {
   }, [onBlur]);
 
   const handleInputChange = useCallback((newVal, event) => {
-    if (event.action === 'input-change') setValue(newVal);
+    if (event.action === 'input-change') {
+      setValue(newVal);
+      setIsTyping(true);
+    }
   }, []);
 
   const handleBlur = useCallback(
@@ -244,14 +249,15 @@ export default function DynaTypeableSelect(props) {
 
         setValue(newValue);
         onBlur(id, newValue);
+        setIsTyping(false);
       }
     },
     [id, onBlur, propValue, suggestions, value],
   );
 
-  const selectedValue = suggestions.find(suggestionItem => suggestionItem.value === value);
-  const inputVal = selectedValue?.label || value;
-  // (!isFocused && selectedValue && selectedValue.label) || value;
+  const selectedValue = !isTyping && suggestions.find(suggestionItem => suggestionItem.value === value);
+  // Dont resolve to value while user is typing
+  const inputVal = (!isTyping && selectedValue?.label) || value;
   const customStyles = SelectStyle(useTheme());
   const filterOption = (options, rawInput) => {
     if (!options.label || !options.value) return false;

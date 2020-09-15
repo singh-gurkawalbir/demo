@@ -26,6 +26,8 @@ export function* fetchRequiredMappingData({
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
+  const {status: generateStatus} = (yield select(selectors.getImportSampleData, importId, subRecordMappingObj)) || {};
+
   yield all([
     call(requestFlowSampleData, {
       flowId,
@@ -33,7 +35,7 @@ export function* fetchRequiredMappingData({
       resourceType: 'imports',
       stage: 'importMappingExtract',
     }),
-    call(requestImportSampleData, {
+    generateStatus !== 'received' && call(requestImportSampleData, {
       resourceId: importId,
       options: subRecordMappingObj,
     }),
@@ -101,21 +103,23 @@ export function* refreshGenerates({ isInit = false }) {
       !isInit
     ));
 
-    /** fetup SF mapping assistant metadata begins */
-    const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, importId);
+    if (!isInit) {
+      /** fetup SF mapping assistant metadata begins */
+      const salesforceMasterRecordTypeInfo = yield select(selectors.getSalesforceMasterRecordTypeInfo, importId);
 
-    if (salesforceMasterRecordTypeInfo?.data) {
-      const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
+      if (salesforceMasterRecordTypeInfo?.data) {
+        const {recordTypeId, searchLayoutable} = salesforceMasterRecordTypeInfo.data;
 
-      if (searchLayoutable) {
-        yield put(actions.metadata.request(_connectionId,
-          `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${recordTypeId}`,
-          {refreshCache: !isInit}
-        ));
+        if (searchLayoutable) {
+          yield put(actions.metadata.request(_connectionId,
+            `salesforce/metadata/connections/${_connectionId}/sObjectTypes/${sObjectType}/layouts?recordTypeId=${recordTypeId}`,
+            {refreshCache: true}
+          ));
+        }
       }
+      /** fetup SF mapping assistant metadata ends */
     }
-    /** fetup SF mapping assistant metadata ends */
-  } else {
+  } else if (!isInit) {
     const opts = {};
 
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType) && subRecordMappingId) {
@@ -124,7 +128,7 @@ export function* refreshGenerates({ isInit = false }) {
     yield put(actions.importSampleData.request(
       importId,
       opts,
-      !isInit
+      true
     )
     );
   }
@@ -231,7 +235,6 @@ export function* mappingInit({
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({
         ...m,
-        rowIdentifier: 0,
         key: shortid.generate(),
       })),
       lookups,

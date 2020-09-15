@@ -24,10 +24,15 @@ export default {
       width: '40%',
       value: r => <ErrorMessage message={r.message} />,
     },
-    { heading: 'Source', value: r => r.source },
+    {
+      heading: 'Source',
+      value: r => r.source,
+      width: '15%',
+    },
     {
       heading: 'Code',
       value: r => r.code,
+      width: '15%',
     },
     {
       heading: 'Time stamp',

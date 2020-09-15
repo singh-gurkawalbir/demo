@@ -3790,7 +3790,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (resource.type === 'delta') {
+      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
@@ -4851,7 +4851,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
   const adaptorType = resourceType === 'connections'
-    ? getStagedValue('type') || resourceObj?.type
+    ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
