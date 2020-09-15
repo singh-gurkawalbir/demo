@@ -6,17 +6,27 @@ import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
 import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
+import DatabaseMapping from './DatabaseMapping';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
+  const isDatabaseImport = useSelector(state => {
+    const importResource = selectors.resource(state, 'imports', importId);
+
+    return !!['RDBMSImport', 'DynamodbImport'].includes(importResource.adaptorType);
+  });
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
+
+  if (isDatabaseImport) {
+    return null;
+  }
 
   return (
     <Mapping
@@ -58,7 +68,6 @@ export default function MappingDrawerRoute(props) {
         title="Edit mapping"
         variant="temporary"
       >
-
         <Switch>
           <Route
             path={[
@@ -80,6 +89,13 @@ export default function MappingDrawerRoute(props) {
           </Route>
         </Switch>
       </RightDrawer>
+      <Route
+        path={`${match.url}/queryBuilder/:flowId/:importId/view`}>
+        <DatabaseMapping
+          integrationId={integrationId}
+          {...props}
+          />
+      </Route>
     </LoadResources>
   );
 }

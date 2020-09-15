@@ -1,53 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
-import clsx from 'clsx';
 import { cloneDeep } from 'lodash';
-import { Button, FormLabel, FormHelperText } from '@material-ui/core';
-import { adaptorTypeMap } from '../../../utils/resource';
-import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
-import DynaLookupEditor from './DynaLookupEditor';
-import { getDefaultData } from '../../../utils/sampleData';
-import getJSONPaths, { getUnionObject } from '../../../utils/jsonPaths';
-import sqlUtil from '../../../utils/sql';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import FieldHelp from '../FieldHelp';
-import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import { adaptorTypeMap } from '../../../../utils/resource';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
+import { getDefaultData } from '../../../../utils/sampleData';
+import getJSONPaths, { getUnionObject } from '../../../../utils/jsonPaths';
+import sqlUtil from '../../../../utils/sql';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import DynaLookupEditor from '../DynaLookupEditor';
 
-const useStyles = makeStyles(theme => ({
-  sqlContainer: {
-    width: '100%',
-  },
-  sqlBtn: {
-    maxWidth: 100,
-  },
-  sqlLabel: {
-    marginBottom: 6,
-  },
-  sqlLabelWrapper: {
-    display: 'flex',
-  },
-  errorBtn: {
-    borderColor: theme.palette.error.dark,
-    color: theme.palette.error.dark,
-    '&:hover': {
-      borderColor: theme.palette.error.main,
-      color: theme.palette.error.main,
-    },
-  },
-}));
-
-export default function DynaSQLQueryBuilder(props) {
-  const classes = useStyles();
+export default function SQLQueryBuilderWrapper(props) {
   const {
     id,
     onFieldChange,
     options = {},
     disabled,
     value,
-    label,
     title,
     ruleTitle,
     arrayIndex,
@@ -55,9 +25,6 @@ export default function DynaSQLQueryBuilder(props) {
     flowId,
     resourceType,
     hideDefaultData,
-    required,
-    isValid,
-    errorMessages,
   } = props;
   const {
     lookups: lookupObj,
@@ -69,7 +36,6 @@ export default function DynaSQLQueryBuilder(props) {
   const lookupFieldId = lookupObj && lookupObj.fieldId;
   const lookups = (lookupObj && lookupObj.data) || [];
   const dispatch = useDispatch();
-  const handleOpenDrawer = usePushRightDrawer(id);
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
     extractFieldsLoaded: false,
@@ -261,39 +227,22 @@ export default function DynaSQLQueryBuilder(props) {
 
   return (
     <>
-      <div className={classes.sqlContainer}>
-        <SqlQueryBuilderEditorDrawer
-          key={changeIdentifier}
-          title={title}
-          id={`${resourceId}-${id}`}
-          rule={parsedRule}
-          lookups={lookups}
-          sampleData={formattedSampleData}
-          defaultData={formattedDefaultData}
-          onFieldChange={onFieldChange}
-          onSave={handleSave}
-          action={lookupField}
-          disabled={disabled}
-          showDefaultData={!hideDefaultData}
-          ruleTitle={ruleTitle}
-          path={id}
+      <SqlQueryBuilderEditorDrawer
+        key={changeIdentifier}
+        title={title}
+        id={`${resourceId}-${id}`}
+        rule={parsedRule}
+        lookups={lookups}
+        sampleData={formattedSampleData}
+        defaultData={formattedDefaultData}
+        onFieldChange={onFieldChange}
+        onSave={handleSave}
+        action={lookupField}
+        disabled={disabled}
+        showDefaultData={!hideDefaultData}
+        ruleTitle={ruleTitle}
+        path={id}
           />
-
-        <div className={classes.sqlLabelWrapper}>
-          <FormLabel className={classes.sqlLabel} required={required}>{label}</FormLabel>
-          <FieldHelp {...props} />
-        </div>
-        <Button
-          className={clsx(classes.sqlBtn, { [classes.errorBtn]: !isValid})}
-          data-test={id}
-          variant="outlined"
-          color="secondary"
-          onClick={handleOpenDrawer}>
-          Launch
-        </Button>
-        {!isValid && <FormHelperText error>{errorMessages}</FormHelperText>}
-
-      </div>
     </>
   );
 }

@@ -47,6 +47,15 @@ export default function SelectImport() {
   );
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
+  const getMappingUrl = _impId => {
+    if (imports.find(({adaptorType, _id}) => _id === _impId && ['RDBMSImport', 'DynamodbImport'].includes(adaptorType))) {
+      const url = match.url.replace('/mapping', '/queryBuilder');
+
+      return importId ? `${url}/view` : `${url}/${_impId}/view`;
+    }
+
+    return importId ? `${match.url}/view` : `${match.url}/${_impId}/view`;
+  };
 
   useEffect(() => {
     if (imports) {
@@ -64,7 +73,6 @@ export default function SelectImport() {
           }));
         }
       });
-
       if (srImports) {
         setSubrecordImports(srImports);
       } else if (imports.length === 1) {
@@ -81,7 +89,7 @@ export default function SelectImport() {
   // If there is only one import then we can safely
   // take the user to the mapping of that import
   if (selectedImportId) {
-    return <Redirect push={false} to={importId ? `${match.url}/view` : `${match.url}/${selectedImportId}/view`} />;
+    return <Redirect push={false} to={getMappingUrl(selectedImportId)} />;
   }
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
@@ -112,7 +120,7 @@ export default function SelectImport() {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={importId ? `${match.url}/view` : `${match.url}/${i._id}/view`}>
+            to={getMappingUrl(i._id)}>
             <Typography variant="h6" color="primary">
               {i.name || i._id}
             </Typography>
