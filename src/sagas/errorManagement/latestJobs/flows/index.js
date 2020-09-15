@@ -49,6 +49,7 @@ export function* startPollingForInProgressJobs({ flowId }) {
 
   yield take([
     actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR,
+    actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL,
     actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST,
     actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS,
   ]);
@@ -92,17 +93,36 @@ function* requestLatestJobs({ flowId }) {
   }
 }
 
+// TODO: @Raghu Remove this once we have the latest Jobs API implementation inplace
+export function* cancelJob({ jobId }) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+  } catch (error) {
+    return true;
+  }
+}
+
+function* cancelLatestJobs({ flowId, jobIds = [] }) {
+  yield all(jobIds.map(jobId => call(cancelJob, { jobId })));
+  yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
+}
+
 export default [
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST,
     requestLatestJobs
   ),
   takeLatest(
-    actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY,
-    getJobFamily
-  ),
-  takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL,
     startPollingForInProgressJobs
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL,
+    cancelLatestJobs
   ),
 ];

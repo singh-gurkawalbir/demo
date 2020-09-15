@@ -93,8 +93,7 @@ export default function RunDashboardActions({ flowId }) {
         {
           label: 'Cancel run',
           onClick: () => {
-            cancellableJobIds
-              .forEach(jobId => dispatch(actions.job.cancelLatest({ jobId })));
+            dispatch(actions.errorManager.latestFlowJobs.cancelLatestJobs({flowId, jobIds: cancellableJobIds }));
           },
         },
         {
@@ -103,7 +102,7 @@ export default function RunDashboardActions({ flowId }) {
         },
       ],
     });
-  }, [dispatch, confirmDialog, cancellableJobIds]);
+  }, [dispatch, confirmDialog, cancellableJobIds, flowId]);
 
   const handleDownloadDiagnostics = useCallback(() => {
     latestJobs
