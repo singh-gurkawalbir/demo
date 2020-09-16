@@ -41,11 +41,9 @@ export default {
     arrayIndex: 0,
     label: 'Query builder',
     title: 'SQL Query Builder',
-    refreshOptionsOnChangesTo: [
-      'rdbms.lookups',
-      'rdbms.queryType',
-      'modelMetadata',
-    ],
+    lookupFieldId: 'rdbms.lookups',
+    queryTypeField: 'rdbms.queryType',
+    modelMetadataFieldId: 'modelMetadata',
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -71,6 +69,9 @@ export default {
     type: 'sqlquerybuilder',
     label: 'Query builder for insert',
     title: 'SQL Query Builder',
+    lookupFieldId: 'rdbms.lookups',
+    modelMetadataFieldId: 'modelMetadata',
+    queryTypeField: 'rdbms.queryType',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
       'rdbms.queryType',
@@ -88,6 +89,9 @@ export default {
     type: 'sqlquerybuilder',
     label: 'Query builder for update',
     title: 'SQL Query Builder',
+    lookupFieldId: 'rdbms.lookups',
+    modelMetadataFieldId: 'modelMetadata',
+    queryTypeField: 'rdbms.queryType',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
       'rdbms.queryType',

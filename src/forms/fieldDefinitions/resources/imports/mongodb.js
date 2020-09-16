@@ -71,7 +71,7 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Document builder',
-    refreshOptionsOnChangesTo: ['mongodb.method'],
+    queryTypeField: 'mongodb.method',
     title: 'MongoDB document builder',
     ruleTitle:
       'Template (use handlebars expressions to map fields from your export data)',
@@ -87,8 +87,8 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Document builder',
-    refreshOptionsOnChangesTo: ['mongodb.method'],
     title: 'MongoDB document builder',
+    queryTypeField: 'mongodb.method',
     ruleTitle:
       'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [

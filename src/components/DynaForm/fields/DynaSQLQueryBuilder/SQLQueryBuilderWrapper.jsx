@@ -25,16 +25,16 @@ export default function SQLQueryBuilderWrapper(props) {
     flowId,
     resourceType,
     hideDefaultData,
-  } = props;
-  const {
-    lookups: lookupObj,
+    lookups,
+    lookupFieldId,
     modelMetadata,
     modelMetadataFieldId,
     queryType,
+  } = props;
+  const {
     method,
   } = options;
-  const lookupFieldId = lookupObj && lookupObj.fieldId;
-  const lookups = (lookupObj && lookupObj.data) || [];
+
   const dispatch = useDispatch();
   const [dataState, setDataState] = useState({
     sampleDataLoaded: false,
@@ -112,7 +112,7 @@ export default function SQLQueryBuilderWrapper(props) {
   );
   const rdbmsSubType = connection?.rdbms?.type;
   let parsedRule =
-    typeof arrayIndex === 'number' && Array.isArray(value)
+    typeof arrayIndex !== 'undefined' && Array.isArray(value)
       ? value[arrayIndex]
       : value;
 
@@ -182,17 +182,6 @@ export default function SQLQueryBuilderWrapper(props) {
     if (shouldCommit) {
       const { template, defaultData } = editorValues;
 
-      if (typeof arrayIndex === 'number' && Array.isArray(value)) {
-        // save to array at position arrayIndex
-        const valueTmp = value;
-
-        valueTmp[arrayIndex] = template;
-        onFieldChange(id, valueTmp);
-      } else {
-        // save to field
-        onFieldChange(id, template);
-      }
-
       if (modelMetadataFieldId && !hideDefaultData) {
         let parsedDefaultData;
 
@@ -205,6 +194,16 @@ export default function SQLQueryBuilderWrapper(props) {
         } catch (e) {
           // do nothing
         }
+      }
+      if (typeof arrayIndex !== 'undefined' && Array.isArray(value)) {
+        // save to array at position arrayIndex
+        const valueTmp = value;
+
+        valueTmp[arrayIndex] = template;
+        onFieldChange(id, valueTmp);
+      } else {
+        // save to field
+        onFieldChange(id, template);
       }
     }
   };

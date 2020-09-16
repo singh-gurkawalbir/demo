@@ -5,6 +5,7 @@ import { Button, FormLabel, FormHelperText } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
 import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 import SQLQueryBuilderWrapper from './SQLQueryBuilderWrapper';
+import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   sqlContainer: {
@@ -37,14 +38,24 @@ export default function DynaSQLQueryBuilder(props) {
     required,
     isValid,
     errorMessages,
+    lookupFieldId,
+    modelMetadataFieldId,
+    queryTypeField,
   } = props;
   const handleOpenDrawer = usePushRightDrawer(id);
+  const {value: formValue} = useFormContext(props.formKey);
+  const lookups = lookupFieldId && formValue[`/${lookupFieldId.replace('.', '/')}`];
+  const modelMetadata = modelMetadataFieldId && formValue[`/${modelMetadataFieldId.replace('.', '/')}`];
+  const queryType = queryTypeField && formValue[`/${queryTypeField.replace('.', '/')}`];
 
   return (
     <>
       <div className={classes.sqlContainer}>
         <SQLQueryBuilderWrapper
           {...props}
+          lookups={lookups}
+          modelMetadata={modelMetadata}
+          queryType={queryType}
         />
 
         <div className={classes.sqlLabelWrapper}>

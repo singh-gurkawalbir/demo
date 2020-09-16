@@ -7,6 +7,7 @@ import Mapping from '../../components/Mapping';
 import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
 import DatabaseMapping from './DatabaseMapping';
+import SelectQueryType from './DatabaseMapping/SelectQueryType';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
@@ -15,7 +16,7 @@ const MappingWrapper = ({integrationId}) => {
   const isDatabaseImport = useSelector(state => {
     const importResource = selectors.resource(state, 'imports', importId);
 
-    return !!['RDBMSImport', 'DynamodbImport'].includes(importResource.adaptorType);
+    return !!['RDBMSImport', 'DynamodbImport', 'MongodbImport'].includes(importResource.adaptorType);
   });
 
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
@@ -89,8 +90,19 @@ export default function MappingDrawerRoute(props) {
           </Route>
         </Switch>
       </RightDrawer>
+      <RightDrawer
+        height="tall"
+        width="default"
+        title="Select Query Type"
+        variant="temporary"
+        exact
+        hideBackButton
+        path={['queryBuilder/:flowId/:importId']}
+      >
+        <SelectQueryType />
+      </RightDrawer>
       <Route
-        path={`${match.url}/queryBuilder/:flowId/:importId/view`}>
+        path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
         <DatabaseMapping
           integrationId={integrationId}
           {...props}

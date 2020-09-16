@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -47,15 +47,15 @@ export default function SelectImport() {
   );
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
-  const getMappingUrl = _impId => {
+  const getMappingUrl = useCallback(_impId => {
     if (imports.find(({adaptorType, _id}) => _id === _impId && ['RDBMSImport', 'DynamodbImport'].includes(adaptorType))) {
       const url = match.url.replace('/mapping', '/queryBuilder');
 
-      return importId ? `${url}/view` : `${url}/${_impId}/view`;
+      return importId ? url : `${url}/${_impId}`;
     }
 
     return importId ? `${match.url}/view` : `${match.url}/${_impId}/view`;
-  };
+  }, [importId, imports, match.url]);
 
   useEffect(() => {
     if (imports) {
