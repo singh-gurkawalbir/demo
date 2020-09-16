@@ -243,7 +243,6 @@ export default function CeligoTable({
         <TableBody>
           {data.map(rowData => (
             <TableRow
-              data
               onMouseOver={onRowOver && handleMouseOver(rowData)}
               onFocus={onRowOver && handleMouseOver(rowData)}
               onMouseOut={onRowOut && handleMouseOut(rowData)}
