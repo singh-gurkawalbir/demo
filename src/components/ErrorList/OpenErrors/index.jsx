@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     float: 'left',
     '& > div:first-child': {
       background: theme.palette.common.white,
-      '& > div[class*="inputRoot"]': {
+      '& > div[class*="MuiInputBase-root"]': {
         width: '100%',
         '& > input': {
           width: '100%',
