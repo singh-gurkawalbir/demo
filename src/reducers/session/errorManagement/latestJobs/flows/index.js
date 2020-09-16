@@ -21,10 +21,23 @@ export default (state = {}, action) => {
         }
         draft[flowId].status = 'requested';
         break;
-      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED:
+      case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED: {
         draft[flowId].status = 'received';
-        draft[flowId].data = latestJobs;
+        const jobChildrenMap = {};
+
+        (draft[flowId].data || []).forEach(prevJob => {
+          if (prevJob?.children?.length) {
+            jobChildrenMap[prevJob._id] = prevJob.children;
+          }
+        });
+        draft[flowId].data = [];
+        // retains children till family call gives latest children jobs
+        latestJobs.forEach(latestJob => {
+          draft[flowId].data.push({ ...latestJob, children: (jobChildrenMap[latestJob._id] || {})});
+        });
+
         break;
+      }
       case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY:
         // Update the job with the family response
         if (draft[flowId]?.data) {
