@@ -1680,9 +1680,10 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
   latestFlowJobs: {
-    request: ({ flowId }) =>
+    request: ({ flowId, refresh = false }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST, {
         flowId,
+        refresh,
       }),
     received: ({flowId, latestJobs}) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
@@ -1700,7 +1701,7 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL, {
         flowId,
       }),
-    noInProgressJobs: () => 
+    noInProgressJobs: () =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS),
     clear: ({ flowId }) =>
       action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {

@@ -81,7 +81,7 @@ export default function RunDashboardActions({ flowId }) {
   ], [validDashboardActions]);
 
   const handleRefresh = useCallback(() => {
-    dispatch(actions.errorManager.latestFlowJobs.request({ flowId }));
+    dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
   }, [dispatch, flowId]);
 
   const handleCancel = useCallback(() => {

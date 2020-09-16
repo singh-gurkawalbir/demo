@@ -9,6 +9,7 @@ export default (state = {}, action) => {
   const {
     type,
     flowId,
+    refresh = false,
     latestJobs,
     job,
   } = action;
@@ -19,7 +20,7 @@ export default (state = {}, action) => {
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
-        draft[flowId].status = 'requested';
+        draft[flowId].status = refresh ? 'refresh' : 'request';
         break;
       case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED: {
         draft[flowId].status = 'received';
@@ -32,7 +33,7 @@ export default (state = {}, action) => {
         });
         draft[flowId].data = [];
         // retains children till family call gives latest children jobs
-        latestJobs.forEach(latestJob => {
+        latestJobs?.forEach(latestJob => {
           draft[flowId].data.push({ ...latestJob, children: (jobChildrenMap[latestJob._id] || {})});
         });
 
@@ -42,8 +43,13 @@ export default (state = {}, action) => {
         // Update the job with the family response
         if (draft[flowId]?.data) {
           const index = draft[flowId].data.findIndex(flowJob => flowJob._id === job._id);
+          const parsedJobFamily = parseJobFamily(job);
 
-          draft[flowId].data[index] = parseJobFamily(job);
+          // to retain __lastPageGeneratorJob property on the job
+          if (draft[flowId].data[index]?.__lastPageGeneratorJob) {
+            parsedJobFamily.__lastPageGeneratorJob = true;
+          }
+          draft[flowId].data[index] = parsedJobFamily;
         }
         break;
       case actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR:

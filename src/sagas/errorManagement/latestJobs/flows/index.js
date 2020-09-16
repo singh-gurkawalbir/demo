@@ -4,7 +4,26 @@ import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 import getRequestOptions from '../../../../utils/requestOptions';
 import { selectors } from '../../../../reducers';
+import { JOB_STATUS } from '../../../../utils/constants';
 
+const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];
+const INPROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
+
+export function* refreshForMultipleFlowJobs({ flowId, job, latestJobs }) {
+  const exportChildJob = job.children?.find(cJob => cJob?.type === 'export') || {};
+  const prevStateOfJob = latestJobs.find(prevJob => prevJob._id === job._id) || {};
+  const prevStateOfExportChildJob = prevStateOfJob.children?.find(cJob => cJob?.type === 'export') || {};
+
+  // if the export job is not completed or this job is the last pg job, no need to refresh
+  if (!FINISHED_JOB_STATUSES.includes(exportChildJob.status) || prevStateOfJob.__lastPageGeneratorJob) {
+    return;
+  }
+  // if export job is finished and previously in progress,
+  // then request as we can assume one more job is to be running for another PG
+  if (INPROGRESS_JOB_STATUSES.includes(prevStateOfExportChildJob.status)) {
+    yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
+  }
+}
 export function* getJobFamily({ flowId, jobId }) {
   const requestOptions = getRequestOptions(
     actionTypes.JOB.REQUEST_FAMILY, { resourceId: jobId }
@@ -13,8 +32,10 @@ export function* getJobFamily({ flowId, jobId }) {
 
   try {
     const job = yield call(apiCallWithRetry, { path, opts });
+    const latestJobsState = yield select(selectors.latestFlowJobsList, flowId) || {};
 
     yield put(actions.errorManager.latestFlowJobs.receivedJobFamily({flowId, job }));
+    yield call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: latestJobsState.data || []});
   } catch (error) {
     //  handle errors
   }
@@ -79,15 +100,6 @@ function* requestLatestJobs({ flowId }) {
       )
     );
     yield put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
-    if (latestFlowJobs.length > 1) {
-      // Only incase of multiple PGs
-      const inProgressJobs = yield select(selectors.getInProgressLatestJobs, flowId);
-
-      if (inProgressJobs.length) {
-        yield delay(10 * 1000);
-        yield call(requestLatestJobs, { flowId});
-      }
-    }
   } catch (error) {
     // handle errors
   }
