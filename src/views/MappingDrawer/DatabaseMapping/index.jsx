@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { shallowEqual, useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { isEqual } from 'date-fns';
 import SQLQueryBuilderWrapper from '../../../components/DynaForm/fields/DynaSQLQueryBuilder/SQLQueryBuilderWrapper';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../../sagas/resourceForm';
-import actions from '../../../actions';
 
 const emptySet = {};
 const SQLQueryBuilder = props => {
   const {flowId, importId, index, disabled} = props;
-  const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
 
@@ -34,41 +30,22 @@ const SQLQueryBuilder = props => {
     };
   }, shallowEqual);
 
-  const [lookups, setLookups] = useState(options.lookups);
-  const [modelMetadata, setModelMetadata] = useState(options.modelMetadata);
-  const handleSave = useCallback((_id, val) => {
+  const [lookups, setLookups] = useState(options.lookups || []);
+  const handleLookupUpdate = useCallback((_id, val) => {
     if (_id === options.lookupFieldId) {
       setLookups(val);
     }
-    if (_id === options.modelMetadataFieldId) {
-      setModelMetadata(val);
-    } else {
-      const patchSet = [{
-        op: 'replace',
-        path: '/rdbms/query',
-        value: val,
-      }];
+  }, [options.lookupFieldId]);
 
-      if (isEqual(options.lookups, lookups)) {
-        patchSet.push({
-          op: 'replace',
-          path: '/rdbms/lookups',
-          value: lookups,
-        });
-      }
-      if (isEqual(options.modelMetadata, modelMetadata)) {
-        patchSet.push({
-          op: 'replace',
-          path: '/modelMetadata',
-          value: modelMetadata,
-        });
-      }
-      dispatch(
-        actions.resource.patchStaged(importId, patchSet, SCOPES.VALUE)
-      );
-      dispatch(actions.resource.commitStaged('imports', importId, 'value'));
-    }
-  }, [dispatch, importId, lookups, modelMetadata, options.lookupFieldId, options.lookups, options.modelMetadata, options.modelMetadataFieldId]);
+  const optionalSaveParams = useMemo(() => ({
+    processorKey: 'databaseMapping',
+    resourceId: importId,
+    resourceType: 'imports',
+    queryIndex: index,
+    query: value,
+  }),
+  [importId, index, value]
+  );
 
   useEffect(() => {
     history.replace(`${match.url}/${id}`);
@@ -78,7 +55,7 @@ const SQLQueryBuilder = props => {
   return (
     <SQLQueryBuilderWrapper
       id={id}
-      onFieldChange={handleSave}
+      onFieldChange={handleLookupUpdate}
       disabled={disabled}
       value={value}
       title="SQL Query Builder"
@@ -89,7 +66,8 @@ const SQLQueryBuilder = props => {
       resourceType="imports"
       {...options}
       lookups={lookups}
-      modelMetadata={modelMetadata}
+      optionalSaveParams={optionalSaveParams}
+      patchOnSave
 
     />
   );
@@ -109,7 +87,6 @@ export default function DatabaseMapping({integrationId}) {
   if (!isDatabaseImport) {
     return null;
   }
-  console.log('index', index);
 
   return (
     <SQLQueryBuilder

@@ -30,6 +30,9 @@ export default function SQLQueryBuilderWrapper(props) {
     modelMetadata,
     modelMetadataFieldId,
     queryType,
+    optionalSaveParams,
+    patchOnSave,
+
   } = props;
   const {
     method,
@@ -88,69 +91,68 @@ export default function SQLQueryBuilderWrapper(props) {
     selectors.resource(state, 'connections', connectionId)
   );
   const rdbmsSubType = connection?.rdbms?.type;
-  let parsedRule =
-    typeof arrayIndex !== 'undefined' && Array.isArray(value)
+  const parsedRule = useMemo(() => {
+    const _parsedRule = typeof arrayIndex !== 'undefined' && Array.isArray(value)
       ? value[arrayIndex]
       : value;
 
-  if (sampleData && extractFields && !parsedRule) {
-    const extractPaths = getJSONPaths(extractFields, null, {
-      wrapSpecialChars: true,
-    });
+    if (sampleData && extractFields && !_parsedRule) {
+      const extractPaths = getJSONPaths(extractFields, null, {
+        wrapSpecialChars: true,
+      });
 
-    if (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.MongodbImport) {
-      parsedRule = sqlUtil.getSampleMongoDbTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'insertMany'
-      );
-    } else if (
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.DynamodbImport
-    ) {
-      parsedRule = sqlUtil.getSampleDynamodbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'putItem'
-      );
-    } else if (
-      adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.RDBMSImport && rdbmsSubType === 'snowflake'
-    ) {
-      parsedRule = sqlUtil.getSampleSnowflakeTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    } else {
-      parsedRule = sqlUtil.getSampleSQLTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    }
-  }
-
-  let defaultData = {};
-  let formattedDefaultData;
-
-  if (modelMetadata) {
-    formattedDefaultData = JSON.stringify({ data: modelMetadata }, null, 2);
-  } else {
-    if (sampleData) {
-      if (
-        Array.isArray(sampleData) &&
-        !!sampleData.length &&
-        typeof sampleData[0] === 'object'
+      if (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.MongodbImport) {
+        return sqlUtil.getSampleMongoDbTemplate(
+          sampleData,
+          extractPaths,
+          queryType === 'insertMany'
+        );
+      } if (
+        adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.DynamodbImport
       ) {
-        defaultData = cloneDeep(getUnionObject(sampleData));
-      } else defaultData = cloneDeep(sampleData);
+        return sqlUtil.getSampleDynamodbTemplate(
+          sampleData,
+          extractPaths,
+          method === 'putItem'
+        );
+      } if (
+        adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.RDBMSImport && rdbmsSubType === 'snowflake'
+      ) {
+        return sqlUtil.getSampleSnowflakeTemplate(
+          sampleData,
+          extractPaths,
+          queryType === 'INSERT'
+        );
+      }
+
+      return sqlUtil.getSampleSQLTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
     }
 
-    formattedDefaultData = JSON.stringify(
+    return _parsedRule;
+  }, [arrayIndex, extractFields, method, queryType, rdbmsSubType, resourceAdapterType, sampleData, value]);
+
+  const formattedDefaultData = useMemo(() => {
+    if (modelMetadata) {
+      return JSON.stringify({ data: modelMetadata }, null, 2);
+    }
+    let defaultData = {};
+
+    if (Array.isArray(sampleData) && sampleData.length && typeof sampleData[0] === 'object') {
+      defaultData = cloneDeep(getUnionObject(sampleData));
+    } else if (sampleData) {
+      defaultData = cloneDeep(sampleData);
+    }
+
+    return JSON.stringify(
       { data: getDefaultData(defaultData) },
       null,
       2
     );
-  }
+  }, [modelMetadata, sampleData]);
 
   // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
@@ -218,6 +220,8 @@ export default function SQLQueryBuilderWrapper(props) {
         ruleTitle={ruleTitle}
         path={id}
         isSampleDataLoading={flowDataStatus === 'requested'}
+        optionalSaveParams={optionalSaveParams}
+        patchOnSave={patchOnSave}
         />
     </>
   );

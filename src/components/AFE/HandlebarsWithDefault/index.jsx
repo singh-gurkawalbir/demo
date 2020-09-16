@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isEqual } from 'lodash';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import * as completers from '../editorSetup/completers';
@@ -16,9 +17,9 @@ export default function HandlebarsWithDefaults(props) {
     templateClassName,
     resultTitle,
     disabled,
-    lookups = [],
+    optionalSaveParams,
   } = props;
-  const { template, sampleData, defaultData, result, error, isSampleDataLoading } = useSelector(
+  const { template, sampleData, defaultData, result, error, isSampleDataLoading, lookups } = useSelector(
     state => selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -27,10 +28,11 @@ export default function HandlebarsWithDefaults(props) {
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
-  const _lookups = Array.isArray(lookups) ? lookups : [];
 
-  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+  useEffect(() => {
+    completers.handleBarsCompleters.setLookupCompleter(lookups || []);
+  }, [lookups]);
   useEffect(() => {
     if (!violations) {
       const jsonData = JSON.stringify(
@@ -60,11 +62,23 @@ export default function HandlebarsWithDefaults(props) {
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
         isSampleDataLoading: props.isSampleDataLoading,
+        lookups: props.lookups,
+        optionalSaveParams,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch, editorId, props.defaultData, props.isSampleDataLoading, props.rule, props.sampleData, props.strict]);
+  }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict]);
+
+  useEffect(() => {
+    if (!isEqual(props.lookups, lookups)) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          lookups: props.lookups,
+        })
+      );
+    }
+  }, [dispatch, editorId, isSampleDataLoading, lookups, props.isSampleDataLoading, props.lookups]);
 
   useEffect(() => {
     if (props.isSampleDataLoading !== isSampleDataLoading) {

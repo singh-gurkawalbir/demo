@@ -13,6 +13,7 @@ export default function SqlQueryBuilderEditor(props) {
     defaultData,
     showDefaultData = true,
     isSampleDataLoading = false,
+    optionalSaveParams,
   } = props;
 
   return (
@@ -34,6 +35,7 @@ export default function SqlQueryBuilderEditor(props) {
       resultTitle="Preview"
       showDefaultData={showDefaultData}
       isSampleDataLoading={isSampleDataLoading}
+      optionalSaveParams={optionalSaveParams}
     />
   );
 }

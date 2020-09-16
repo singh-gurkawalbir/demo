@@ -13,6 +13,7 @@ export default function SqlQueryBuilderEditorDrawer(props) {
     disabled,
     showDefaultData,
     isSampleDataLoading,
+    optionalSaveParams,
     dataTest = 'sqlQueryBuilder',
     ...rest
   } = props;
@@ -33,6 +34,7 @@ export default function SqlQueryBuilderEditorDrawer(props) {
         editorId={id}
         showDefaultData={showDefaultData}
         isSampleDataLoading={isSampleDataLoading}
+        optionalSaveParams={optionalSaveParams}
       />
     </EditorDrawer>
   );
