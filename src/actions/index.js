@@ -121,6 +121,8 @@ const api = {
 };
 // #region Resource Actions
 const connection = {
+  setActive: connectionId => action(actionTypes.CONNECTION.ACTIVE_SET, { connectionId }),
+
   requestRegister: (connectionIds, integrationId) =>
     action(actionTypes.CONNECTION.REGISTER_REQUEST, {
       connectionIds,
