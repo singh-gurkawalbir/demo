@@ -718,7 +718,7 @@ function FlowBuilder() {
         {/* CANVAS END */}
       </div>
       <BottomDrawer
-        flow={flow}
+        flowId={flowId}
         tabValue={tabValue}
         setTabValue={setTabValue}
       />
