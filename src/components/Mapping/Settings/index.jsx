@@ -1,5 +1,6 @@
 import isEqual from 'lodash/isEqual';
 import React, { useMemo, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -14,6 +15,11 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import RightDrawer from '../../drawer/Right';
 import ButtonGroup from '../../ButtonGroup';
 
+const useStyles = makeStyles({
+  mappingSettingDynaform: {
+    minHeight: 'calc(100% - 24px)',
+  },
+});
 const emptySet = [];
 const emptyObject = {};
 
@@ -29,6 +35,7 @@ function MappingSettings({
   ...categoryMappingOpts
 }) {
   const history = useHistory();
+  const classes = useStyles();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
 
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -192,6 +199,7 @@ function MappingSettings({
     <>
       <DynaForm
         formKey={formKey}
+        className={classes.mappingSettingDynaform}
         fieldMeta={fieldMeta} />
       <ButtonGroup>
         <DynaSubmit
