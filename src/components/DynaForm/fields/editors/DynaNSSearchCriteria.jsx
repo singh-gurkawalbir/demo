@@ -4,8 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { selectors } from '../../../../reducers';
+// import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+// import { selectors } from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
@@ -45,7 +45,7 @@ export default function DynaNSSearchCriteria(props) {
     setShowEditor(!showEditor);
   };
 
-  const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
+  // const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
   const onFetch = useCallback(shouldRefreshCache => {
     dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
@@ -68,12 +68,15 @@ export default function DynaNSSearchCriteria(props) {
           title="Additional search criteria"
           id={`searchCriteria-${id}-${resourceId}`}
           value={value}
-          fieldOptions={{
-            fields: savedSearches,
-            status,
-            valueName: 'value',
-            labelName: 'label',
-          }}
+          // fieldOptions={{
+          //   fields: savedSearches,
+          //   status,
+          //   valueName: 'value',
+          //   labelName: 'label',
+          // }}
+          connectionId={connectionId}
+          commMetaPath={commMetaPath}
+          filterKey={filterKey}
           onSave={handleSave}
           onRefresh={onFetch}
           onClose={handleEditorClick}
