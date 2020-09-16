@@ -363,8 +363,7 @@ export default {
           name: 'lookupAction',
           type: 'radiogroup',
           defaultValue:
-            mappingUtil.getDefaultLookupActionValue(value, lookup) ||
-            'disallowFailure',
+            mappingUtil.getDefaultLookupActionValue(lookup),
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
           refreshOptionsOnChangesTo: ['lookup.mode'],

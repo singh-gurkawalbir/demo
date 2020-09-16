@@ -697,12 +697,20 @@ selectors.mkFlowAllowsScheduling = () => {
       return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
-    (flow, integration, allExports) => {
+    (state, id) => {
+      const flow = resource(state?.data?.resources, 'flows', id);
+
+      if (!flow || !flow._integrationId) return false;
+
+      return selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
+    },
+    (flow, integration, allExports, isAppVersion2) => {
       if (!flow) return false;
       const isApp = flow._connectorId;
       const canSchedule = showScheduleIcon(flow, allExports);
 
-      if (!isApp) return canSchedule;
+      // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+      if (!isApp || isAppVersion2) return canSchedule;
       const flowSettings = getIAFlowSettings(integration, flow._id);
 
       return canSchedule && !!flowSettings.showSchedule;
@@ -730,8 +738,10 @@ selectors.flowSupportsMapping = (state, id) => {
   if (!flow) return false;
 
   const isApp = flow._connectorId;
+  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
 
-  if (!isApp) return true;
+  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -3780,7 +3790,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (resource.type === 'delta') {
+      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
@@ -4841,7 +4851,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
   const adaptorType = resourceType === 'connections'
-    ? getStagedValue('type') || resourceObj?.type
+    ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 

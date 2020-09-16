@@ -89,6 +89,7 @@ export default function XmlParseEditor(props) {
           mode="xml"
           onChange={handleDataChange}
           readOnly={disabled}
+          hasError={!!violations?.dataError}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">

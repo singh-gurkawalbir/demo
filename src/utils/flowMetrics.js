@@ -102,7 +102,7 @@ export const getDurationLabel = (ranges = [], customPresets = []) => {
   const { startDate, endDate } = ranges[0] || {};
   const {startDate: lastRunStartDate, endDate: lastRunEndDate} = customPresets[0]?.range() || {};
 
-  if (!startDate && !endDate) { return 'Please select a range'; }
+  if (!startDate && !endDate) { return 'Select date range'; }
   if (startDate?.toISOString() === lastRunStartDate?.toISOString() &&
     endDate?.toISOString() === lastRunEndDate?.toISOString()) {
     return 'Last run';
@@ -186,7 +186,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
-  const startDateFromToday = moment(start).diff(moment(), 'days');
+  const startDateFromToday = moment().diff(moment(start), 'days');
 
   /*
     Last 1 hour: minute granularity
@@ -252,7 +252,7 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
-  const startDateFromToday = moment(start).diff(moment(), 'days');
+  const startDateFromToday = moment().diff(moment(start), 'days');
 
   /*
     Last 1 hour: minute granularity

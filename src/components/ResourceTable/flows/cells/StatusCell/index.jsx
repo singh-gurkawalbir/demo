@@ -34,10 +34,17 @@ export default function StatusCell({
       return latestFlowJobs.find(job => job._flowId === flowId);
     }
   });
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
 
-  if (!job || ['completed', 'canceled'].includes(job.status)) {
+  if (!job || !isUserInErrMgtTwoDotZero) {
     return <CeligoTimeAgo date={date} />;
   }
+  if (['completed', 'canceled', 'failed'].includes(job.status)) {
+    return <CeligoTimeAgo date={job.endedAt} />;
+  }
+
   const isJobInQueuedStatus =
     (job.status === 'queued' ||
       (job.status === 'running' && !job.doneExporting));

@@ -30,8 +30,10 @@ export default (
         if (!draft.application[connectionId]) {
           draft.application[connectionId] = {};
         }
-
-        draft.application[connectionId][key] = { status: 'requested' };
+        if (!draft.application[connectionId][key]) {
+          draft.application[connectionId][key] = {};
+        }
+        draft.application[connectionId][key].status = 'requested';
         break;
       case actionTypes.METADATA.ASSISTANT_PREVIEW_REQUESTED:
         if (!draft.preview[resourceId]) {

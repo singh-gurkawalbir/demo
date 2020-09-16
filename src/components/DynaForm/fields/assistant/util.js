@@ -1,6 +1,5 @@
 import { isArray, isObject } from 'lodash';
-// eslint-disable-next-line camelcase
-import { html_beautify } from 'js-beautify';
+import format from 'xml-formatter';
 import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
@@ -134,7 +133,7 @@ export function semiAssistantOperationOptions(endpoints = [], parent = {key: []}
 export function semiAssistantExportOperationOptions(assistantData) {
   let options = [];
 
-  assistantData?.export?.endpoints.forEach(ep => {
+  assistantData?.export?.endpoints?.forEach(ep => {
     options = options.concat(semiAssistantOperationOptions(ep.children, {key: [ep.key]}));
   });
 
@@ -174,7 +173,7 @@ export function semiAssistantExportConfig(assistantData, operationId) {
 
   if (toReturn?.http?.body) {
     try {
-      toReturn.http.body = html_beautify(toReturn.http.body, { indent_size: 2});
+      toReturn.http.body = format(toReturn.http.body);
     } catch (ex) {
       // ex
     }

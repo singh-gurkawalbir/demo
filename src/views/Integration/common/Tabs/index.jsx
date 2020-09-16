@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    padding: theme.spacing(3, 2),
+    padding: theme.spacing(1, 2),
     overflow: 'visible',
   },
   tab: {

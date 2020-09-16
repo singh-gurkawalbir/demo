@@ -49,8 +49,13 @@ const TestButton = props => {
   const dispatch = useDispatch();
   const handleTestConnection = useCallback(
     values => {
+      const newValues = { ...values };
+
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
       setIsTesting(true);
-      dispatch(actions.resource.connections.test(resourceId, values));
+      dispatch(actions.resource.connections.test(resourceId, newValues));
     },
     [dispatch, resourceId]
   );

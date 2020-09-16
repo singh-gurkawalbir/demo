@@ -66,12 +66,59 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const FIXED_TIME_FORMAT = 'hh:mm:ss a';
+
+export const FIXED_DATE_FORMAT = 'MM/DD/YYYY';
+export const getDateMask = dateFormat => {
+  if (!dateFormat) { return ''; }
+
+  return dateFormat.split('').map(char => {
+    if (char === 'D' || char === 'M' || char === 'Y') return '_';
+
+    return char;
+  }).join('');
+};
+
+const getTimeMask = timeMask => {
+  if (!timeMask) { return ''; }
+
+  // time format with meridian
+  if (timeMask === 'h:mm:ss a' || timeMask === 'hh:mm:ss a') {
+    return '__:__:__ _m';
+  }
+
+  // 24 hours format time
+  return '__:__:__';
+};
+
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
+  const [timeValue, setTimeValue] = useState(value || null);
+
+  const setFormatTimeValue = dateTimeValue => {
+    if (dateTimeValue) {
+      // some dummy year dates we only care about the time
+      dateTimeValue.set('year', 2000);
+      dateTimeValue.set('month', 1);
+      dateTimeValue.set('date', 1);
+    }
+    setTimeValue(dateTimeValue);
+  };
+
+  const setFormatDateValue = dateTimeValue => {
+    if (dateTimeValue) {
+      // some dummy time we only care about the date
+      dateTimeValue.set('hour', 0);
+      dateTimeValue.set('minute', 0);
+      dateTimeValue.set('second', 0);
+    }
+    setDateValue(dateTimeValue);
+  };
   const [componentMounted, setComponentMounted] = useState(false);
   const isIAResource = useSelector(state => {
     const resource =
@@ -81,31 +128,28 @@ export default function DateTimePicker(props) {
   });
   const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
 
-  let userFormat;
-
-  if (dateFormat) {
-    if (timeFormat) {
-      userFormat = `${dateFormat} ${timeFormat}`;
-    } else {
-      userFormat = `${dateFormat} h:mm:ss a`;
-    }
-  } else {
-    userFormat = 'MM/DD/YYYY h:mm:ss a';
-  }
-  const displayFormat = props.format || userFormat;
-
-  const displayFormatAr = displayFormat.split(' ');
-  const finalDateFormat = displayFormatAr?.[0];
-  const finalTimeFormat = `${displayFormatAr?.[1]} ${displayFormatAr?.[2]}`;
-
   useEffect(() => {
     let formattedDate = null;
+    const dataTimeValueFormatted = moment();
+
+    if (!dateValue || !timeValue) {
+      onFieldChange(id, '', !componentMounted);
+
+      return;
+    }
+
+    dataTimeValueFormatted.set('year', moment(dateValue)?.get('year') || 0);
+    dataTimeValueFormatted.set('month', moment(dateValue)?.get('month') || 0);
+    dataTimeValueFormatted.set('date', moment(dateValue)?.get('date') || 0);
+    dataTimeValueFormatted.set('hour', moment(timeValue)?.get('hour') || 0);
+    dataTimeValueFormatted.set('minute', moment(timeValue)?.get('minute') || 0);
+    dataTimeValueFormatted.set('second', moment(timeValue)?.get('second') || 0);
 
     if (isIAResource) {
-      formattedDate = dateValue && moment(dateValue).toISOString();
+      formattedDate = dataTimeValueFormatted && moment(dataTimeValueFormatted).toISOString();
     } else {
-      formattedDate = dateValue && convertUtcToTimezone(
-        moment(dateValue),
+      formattedDate = dataTimeValueFormatted && convertUtcToTimezone(
+        moment(dataTimeValueFormatted),
         dateFormat,
         timeFormat,
         timezone
@@ -114,7 +158,7 @@ export default function DateTimePicker(props) {
     onFieldChange(id, formattedDate || '', !componentMounted);
     setComponentMounted(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dateValue]);
+  }, [dateValue, timeValue]);
 
   return (
     <>
@@ -128,25 +172,16 @@ export default function DateTimePicker(props) {
             <KeyboardDatePicker
               disabled={disabled}
               variant="inline"
+              format={FIXED_DATE_FORMAT}
+              placeholder={FIXED_DATE_FORMAT}
+              mask={getDateMask(FIXED_DATE_FORMAT)}
+              value={dateValue}
+              label="Date"
+              onChange={setFormatDateValue}
               disableToolbar
               className={classes.keyBoardDateTimeWrapper}
-              format={finalDateFormat}
-              value={dateValue}
               fullWidth
-              onChange={setDateValue}
               InputProps={{ className: classes.inputDateTime }}
-              onKeyDown={e => {
-              // this is specifically for qa to inject their date time string
-              // they should alter the input dom to add a qa attribute prior to injection for date time
-                if (e.target.hasAttribute('qa')) return;
-
-                e.preventDefault();
-              }}
-              onKeyPress={e => {
-                if (e.target.hasAttribute('qa')) return;
-
-                e.preventDefault();
-              }}
               keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
 
       />
@@ -155,24 +190,16 @@ export default function DateTimePicker(props) {
             <KeyboardTimePicker
               disabled={disabled}
               variant="inline"
+              label="Time"
+              views={['hours', 'minutes', 'seconds']}
+              format={FIXED_TIME_FORMAT}
+              placeholder={FIXED_TIME_FORMAT}
+              mask={getTimeMask(FIXED_TIME_FORMAT)}
+              value={timeValue}
+              onChange={setFormatTimeValue}
               fullWidth
               className={classes.keyBoardDateTimeWrapper}
-              format={finalTimeFormat}
-              value={dateValue}
-              onChange={setDateValue}
               InputProps={{ className: classes.inputDateTime }}
-              onKeyDown={e => {
-                // this is specifically for qa to inject their date time string
-                // they should alter the input dom to add a qa attribute prior to injection for date time
-                if (e.target.hasAttribute('qa')) return;
-
-                e.preventDefault();
-              }}
-              onKeyPress={e => {
-                if (e.target.hasAttribute('qa')) return;
-
-                e.preventDefault();
-              }}
               keyboardIcon={<AccessTimeIcon className={classes.iconWrapper} />}
       />
           </div>
