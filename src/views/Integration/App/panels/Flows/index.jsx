@@ -148,9 +148,11 @@ function FlowList({ integrationId, storeId }) {
     if (!isUserInErrMgtTwoDotZero) return;
 
     dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 

@@ -102,7 +102,7 @@ export const getDurationLabel = (ranges = [], customPresets = []) => {
   const { startDate, endDate } = ranges[0] || {};
   const {startDate: lastRunStartDate, endDate: lastRunEndDate} = customPresets[0]?.range() || {};
 
-  if (!startDate && !endDate) { return 'Please select a range'; }
+  if (!startDate && !endDate) { return 'Select date range'; }
   if (startDate?.toISOString() === lastRunStartDate?.toISOString() &&
     endDate?.toISOString() === lastRunEndDate?.toISOString()) {
     return 'Last run';
