@@ -1554,6 +1554,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               numPagesProcessed: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1567,6 +1568,7 @@ describe('flowJobs selector', () => {
               numPagesProcessed: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               percentComplete: 0,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1580,6 +1582,7 @@ describe('flowJobs selector', () => {
               numPagesProcessed: 0,
               uiStatus: JOB_STATUS.RUNNING,
               percentComplete: 0,
+              _integrationId: 'i1',
             },
           ],
         },
@@ -1614,6 +1617,7 @@ describe('flowJobs selector', () => {
               uiStatus: JOB_STATUS.COMPLETED,
               numPagesGenerated: 0,
               numPagesProcessed: 0,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1630,6 +1634,7 @@ describe('flowJobs selector', () => {
               numPagesGenerated: 0,
               percentComplete: 70,
               retriable: true,
+              _integrationId: 'i1',
               retries: [
                 {
                   status: JOB_STATUS.QUEUED,
@@ -1683,6 +1688,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.EXPORT,
@@ -1695,6 +1701,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1708,6 +1715,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1721,6 +1729,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.CANCELED,
+              _integrationId: 'i1',
             },
           ],
         },
@@ -1955,6 +1964,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1969,6 +1979,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -1983,6 +1994,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.RUNNING,
+              _integrationId: 'i1',
             },
           ],
         },
@@ -2017,6 +2029,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2033,6 +2046,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 70,
               uiStatus: JOB_STATUS.RETRYING,
+              _integrationId: 'i1',
               retries: [
                 {
                   status: JOB_STATUS.COMPLETED,
@@ -2087,6 +2101,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.EXPORT,
@@ -2099,6 +2114,7 @@ describe('flowJobs selector', () => {
               numResolved: 0,
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2113,6 +2129,7 @@ describe('flowJobs selector', () => {
               numPagesProcessed: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.RETRYING,
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2127,6 +2144,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               percentComplete: 0,
               uiStatus: JOB_STATUS.RETRYING,
+              _integrationId: 'i1',
             },
           ],
         },
@@ -2361,6 +2379,7 @@ describe('flowJobs selector', () => {
               numPagesProcessed: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2375,6 +2394,7 @@ describe('flowJobs selector', () => {
               uiStatus: JOB_STATUS.COMPLETED,
               percentComplete: 0,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2389,6 +2409,7 @@ describe('flowJobs selector', () => {
               uiStatus: JOB_STATUS.RUNNING,
               percentComplete: 0,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
           ],
         },
@@ -2425,6 +2446,7 @@ describe('flowJobs selector', () => {
               numPagesGenerated: 0,
               numPagesProcessed: 0,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2442,6 +2464,7 @@ describe('flowJobs selector', () => {
               percentComplete: 70,
               retriable: true,
               _flowId: 'f1',
+              _integrationId: 'i1',
               retries: [
                 {
                   status: JOB_STATUS.QUEUED,
@@ -2498,6 +2521,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.EXPORT,
@@ -2511,6 +2535,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2525,6 +2550,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2539,6 +2565,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.CANCELED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
           ],
         },
@@ -2787,6 +2814,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2802,6 +2830,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2817,6 +2846,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.RUNNING,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
           ],
         },
@@ -2853,6 +2883,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2870,6 +2901,7 @@ describe('flowJobs selector', () => {
               percentComplete: 70,
               uiStatus: JOB_STATUS.RETRYING,
               _flowId: 'f1',
+              _integrationId: 'i1',
               retries: [
                 {
                   status: JOB_STATUS.COMPLETED,
@@ -2927,6 +2959,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.EXPORT,
@@ -2940,6 +2973,7 @@ describe('flowJobs selector', () => {
               numSuccess: 0,
               uiStatus: JOB_STATUS.COMPLETED,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2955,6 +2989,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.RETRYING,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
             {
               type: JOB_TYPES.IMPORT,
@@ -2970,6 +3005,7 @@ describe('flowJobs selector', () => {
               percentComplete: 0,
               uiStatus: JOB_STATUS.RETRYING,
               _flowId: 'f1',
+              _integrationId: 'i1',
             },
           ],
         },

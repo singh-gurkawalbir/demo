@@ -12,7 +12,7 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
-import { getDateMask } from './DynaDateTime';
+import { getDateMask, FIXED_DATE_FORMAT } from './DynaDateTime';
 import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -53,6 +53,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
 export default function DynaDate(props) {
   const classes = useStyles();
   const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
@@ -67,7 +68,6 @@ export default function DynaDate(props) {
     return !!(resource?._connectorId);
   });
   const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const displayFormat = props.format || dateFormat || 'MM/DD/YYYY';
 
   useEffect(() => {
     let formattedDate = null;
@@ -101,9 +101,9 @@ export default function DynaDate(props) {
           className={classes.keyBoardDateWrapper}
           variant="inline"
           fullWidth
-          format={displayFormat}
-          placeholder={displayFormat}
-          mask={getDateMask(displayFormat)}
+          format={FIXED_DATE_FORMAT}
+          placeholder={FIXED_DATE_FORMAT}
+          mask={getDateMask(FIXED_DATE_FORMAT)}
           value={dateValue}
           onChange={setDateValue}
           InputProps={{ className: classes.inputDate }}
