@@ -15,11 +15,14 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import RightDrawer from '../../drawer/Right';
 import ButtonGroup from '../../ButtonGroup';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   mappingSettingDynaform: {
-    minHeight: 'calc(100% - 24px)',
+    minHeight: 'calc(100% - 48px)',
   },
-});
+  mappingSettingsActions: {
+    paddingTop: theme.spacing(2),
+  },
+}));
 const emptySet = [];
 const emptyObject = {};
 
@@ -201,7 +204,7 @@ function MappingSettings({
         formKey={formKey}
         className={classes.mappingSettingDynaform}
         fieldMeta={fieldMeta} />
-      <ButtonGroup>
+      <ButtonGroup className={classes.mappingSettingsActions}>
         <DynaSubmit
           formKey={formKey}
           disabled={disableSave}
