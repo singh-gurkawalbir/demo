@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
@@ -820,6 +820,20 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
+function* startPollingForQueuedJobs({ connectionId }) {
+  const watcher = yield fork(requestQueuedJobs, { connectionId });
+
+  yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
+function* startPollingForConnectionStatus({ integrationId }) {
+  const watcher = yield fork(refreshConnectionStatus, { integrationId });
+
+  yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
 export function* cancelQueuedJob({ jobId }) {
   const path = `/jobs/${jobId}/cancel`;
 
@@ -859,6 +873,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeLatest(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, startPollingForQueuedJobs),
+  takeLatest(actionTypes.CONNECTION.STATUS_REQUEST_POLL, startPollingForConnectionStatus),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),

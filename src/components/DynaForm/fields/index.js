@@ -55,6 +55,7 @@ import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
+import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import Salesforce from './DynaSalesforceExportComponents';
@@ -114,6 +115,7 @@ import DynaSuiteScriptUploadFile from './DynaSuiteScriptUploadFile';
 import DynaFTPFileNameWithEditor from './DynaFTPFileNameWithEditor';
 import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
+import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 
 export default {
@@ -165,6 +167,7 @@ export default {
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
   tokengen: DynaTokenGenerator,
+  expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
@@ -227,6 +230,7 @@ export default {
   skipRetries: DynaSkipRetries,
   transformrules: DynaTransformRules,
   netsuiteexporttype: DynaNetsuiteExportType,
+  netsuiteimportoperation: DynaNetSuiteImportOperation,
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
