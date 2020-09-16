@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -17,6 +17,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import StatusCircle from '../../../../../components/StatusCircle';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
+import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -51,7 +52,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const [showDialog, setShowDialog] = useState(false);
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
-  const flowsFilterConfig = { ...flowFilter, type: 'flows' };
+  const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
   const isIntegrationApp = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', integrationId);
 
@@ -61,9 +62,17 @@ export default function FlowsPanel({ integrationId, childId }) {
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
-  const permission = useSelector(state =>
-    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
-  );
+  const { canCreate, canAttach, canEdit } = useSelector(state => {
+    const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
+
+    return {
+      canCreate: !!permission.create,
+      canAttach: !!permission.attach,
+      canEdit: !!permission.edit,
+    };
+  },
+  shallowEqual);
+
   const flows = useMemo(
     () =>
       allFlows &&
@@ -134,11 +143,12 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
       )}
       <MappingDrawerRoute integrationId={integrationId} />
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        {permission.create && !isIntegrationApp && (
+        {canCreate && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="flowBuilder/new"
@@ -146,7 +156,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             <AddIcon /> Create flow
           </IconTextButton>
         )}
-        {permission.attach && !isStandalone && !isIntegrationApp && (
+        {canAttach && !isStandalone && !isIntegrationApp && (
           <IconTextButton
             onClick={() => setShowDialog(true)}
             data-test="attachFlow">
@@ -154,7 +164,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </IconTextButton>
         )}
         {/* check if this condition is correct */}
-        {permission.edit && !isIntegrationApp && (
+        {canEdit && !isIntegrationApp && (
           <IconTextButton
             component={Link}
             to="dataLoader/new"

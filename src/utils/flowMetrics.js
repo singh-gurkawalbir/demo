@@ -4,6 +4,7 @@ import addDays from 'date-fns/addDays';
 import isSameDay from 'date-fns/isSameDay';
 import moment from 'moment';
 import * as d3 from 'd3';
+import { endOfDay } from 'date-fns';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
@@ -117,6 +118,15 @@ export const getDurationLabel = (ranges = [], customPresets = []) => {
   });
   const startOfToday = startOfDay(new Date());
   const startOfYesterday = startOfDay(addDays(new Date(), -1));
+  const endOfYesterday = endOfDay(addDays(new Date(), -1));
+
+  if (startDate.getTime() === startOfYesterday.getTime() && endDate.getTime() === endOfYesterday.getTime()) {
+    return 'Yesterday';
+  }
+
+  if (!isSameDay(new Date(), endDate)) {
+    return 'Custom';
+  }
 
   switch (distance) {
     case '0 days':
@@ -129,12 +139,6 @@ export const getDurationLabel = (ranges = [], customPresets = []) => {
     case '1 day':
       if (startDate.toISOString() === startOfToday.toISOString()) {
         return 'Today';
-      }
-      if (startDate.toISOString() === startOfYesterday.toISOString()) {
-        return 'Yesterday';
-      }
-      if (distanceInHours === '12 hours') {
-        return 'Last 12 hours';
       }
       if (
         distanceInHours === '24 hours' &&
