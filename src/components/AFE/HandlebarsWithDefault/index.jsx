@@ -18,6 +18,7 @@ export default function HandlebarsWithDefaults(props) {
     resultTitle,
     disabled,
     optionalSaveParams,
+    sampleRule,
   } = props;
   const { template, sampleData, defaultData, result, error, isSampleDataLoading, lookups } = useSelector(
     state => selectors.editor(state, editorId)
@@ -57,7 +58,7 @@ export default function HandlebarsWithDefaults(props) {
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
         autoEvaluateDelay: 300,
-        template: props.rule,
+        template: props.rule || sampleRule,
         _init_template: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
@@ -68,10 +69,10 @@ export default function HandlebarsWithDefaults(props) {
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict]);
+  }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict, sampleRule]);
 
   useEffect(() => {
-    if (!isEqual(props.lookups, lookups)) {
+    if (props.lookups && !isEqual(props.lookups, lookups)) {
       dispatch(
         actions.editor.patch(editorId, {
           lookups: props.lookups,
@@ -81,14 +82,24 @@ export default function HandlebarsWithDefaults(props) {
   }, [dispatch, editorId, isSampleDataLoading, lookups, props.isSampleDataLoading, props.lookups]);
 
   useEffect(() => {
-    if (props.isSampleDataLoading !== isSampleDataLoading) {
+    if (props.lookups && !isEqual(props.lookups, lookups)) {
       dispatch(
         actions.editor.patch(editorId, {
-          isSampleDataLoading: props.isSampleDataLoading,
+          lookups: props.lookups,
         })
       );
     }
-  }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
+  }, [dispatch, editorId, lookups, props.lookups]);
+
+  useEffect(() => {
+    if (template === undefined && sampleRule) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          template: sampleRule,
+        })
+      );
+    }
+  }, [dispatch, editorId, sampleRule, template]);
 
   return (
     <Editor

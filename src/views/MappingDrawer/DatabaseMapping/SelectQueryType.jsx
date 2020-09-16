@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback } from 'react';
+import React, {Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -39,16 +39,11 @@ export default function SelectQueryType() {
     },
     (left, right) => left && right && left.length === right.length
   );
-  const getMappingUrl = useCallback(queryType => {
-    const index = queryTypes.indexOf(queryType);
-
-    return `${match.url}/${index}/view`;
-  }, [match.url, queryTypes]);
 
   // If there is only one query type then we can safely
   // take the user to the query builder relating to that Query Type
   if (queryTypes.length === 1) {
-    return <Redirect push={false} to={getMappingUrl(queryTypes[0])} />;
+    return <Redirect push={false} to={`${match.url}/0/view`} />;
   }
 
   // Finally, render a table of imports to choose from...
@@ -57,13 +52,13 @@ export default function SelectQueryType() {
       {/* <Typography className={classes.text} variant="h5">
         Select the Query Type.
       </Typography> */}
-      {queryTypes.map(i => (
+      {queryTypes.map((i, index) => (
         <Fragment key={i}>
           <Button
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={getMappingUrl(i)}>
+            to={`${match.url}/${index}/view`}>
             <Typography variant="h6" color="primary">
               {i}
             </Typography>

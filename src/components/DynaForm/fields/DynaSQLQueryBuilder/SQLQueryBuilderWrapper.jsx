@@ -91,12 +91,13 @@ export default function SQLQueryBuilderWrapper(props) {
     selectors.resource(state, 'connections', connectionId)
   );
   const rdbmsSubType = connection?.rdbms?.type;
-  const parsedRule = useMemo(() => {
-    const _parsedRule = typeof arrayIndex !== 'undefined' && Array.isArray(value)
-      ? value[arrayIndex]
-      : value;
+  const parsedRule = useMemo(() => typeof arrayIndex !== 'undefined' && Array.isArray(value)
+    ? value[arrayIndex]
+    : value,
+  [arrayIndex, value]);
 
-    if (sampleData && extractFields && !_parsedRule) {
+  const sampleRule = useMemo(() => {
+    if (sampleData && extractFields) {
       const extractPaths = getJSONPaths(extractFields, null, {
         wrapSpecialChars: true,
       });
@@ -131,9 +132,7 @@ export default function SQLQueryBuilderWrapper(props) {
         queryType === 'INSERT'
       );
     }
-
-    return _parsedRule;
-  }, [arrayIndex, extractFields, method, queryType, rdbmsSubType, resourceAdapterType, sampleData, value]);
+  }, [extractFields, method, queryType, rdbmsSubType, resourceAdapterType, sampleData]);
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
@@ -209,6 +208,7 @@ export default function SQLQueryBuilderWrapper(props) {
         title={title}
         id={`${resourceId}-${id}`}
         rule={parsedRule}
+        sampleRule={sampleRule}
         lookups={lookups}
         sampleData={formattedSampleData}
         defaultData={formattedDefaultData}
