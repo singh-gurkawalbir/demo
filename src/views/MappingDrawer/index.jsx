@@ -97,7 +97,7 @@ export default function MappingDrawerRoute(props) {
         variant="temporary"
         exact
         hideBackButton
-        path={['queryBuilder/:flowId/:importId']}
+        path="queryBuilder/:flowId/:importId"
       >
         <SelectQueryType />
       </RightDrawer>

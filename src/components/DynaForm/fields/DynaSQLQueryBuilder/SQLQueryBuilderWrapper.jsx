@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { adaptorTypeMap } from '../../../../utils/resource';
@@ -36,28 +36,22 @@ export default function SQLQueryBuilderWrapper(props) {
   } = options;
 
   const dispatch = useDispatch();
-  const [dataState, setDataState] = useState({
-    sampleDataLoaded: false,
-    extractFieldsLoaded: false,
-    changeIdentifier: 0,
-  });
   const { merged: resourceData } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'imports',
     resourceId
   );
   const { adaptorType: resourceAdapterType, _connectionId: connectionId} = resourceData;
-  const { sampleDataLoaded, extractFieldsLoaded, changeIdentifier } = dataState;
-  const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+  const {data: sampleData, status: flowDataStatus} = useSelector(state =>
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'flowInput',
     })
   );
-  const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
+  const {data: extractFields } = useSelector(state =>
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
@@ -66,9 +60,6 @@ export default function SQLQueryBuilderWrapper(props) {
   );
 
   useEffect(() => {
-    // Request for sample data only incase of flow context
-    // TODO : @Raghu Do we show default data in stand alone context?
-    // What type of sample data is expected in case of Page generators
     if (flowId && !sampleData) {
       dispatch(
         actions.flowData.requestSampleData(
@@ -80,20 +71,6 @@ export default function SQLQueryBuilderWrapper(props) {
       );
     }
   }, [dispatch, flowId, resourceId, resourceType, sampleData]);
-
-  if (sampleData && !sampleDataLoaded) {
-    setDataState({
-      ...dataState,
-      sampleDataLoaded: true,
-      changeIdentifier: changeIdentifier + 1,
-    });
-  } else if (extractFields && !extractFieldsLoaded) {
-    setDataState({
-      ...dataState,
-      extractFieldsLoaded: true,
-      changeIdentifier: changeIdentifier + 1,
-    });
-  }
 
   useEffect(() => {
     if (flowId && !extractFields) {
@@ -178,7 +155,7 @@ export default function SQLQueryBuilderWrapper(props) {
   // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
   const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
 
-  const handleSave = (shouldCommit, editorValues) => {
+  const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
       const { template, defaultData } = editorValues;
 
@@ -206,28 +183,27 @@ export default function SQLQueryBuilderWrapper(props) {
         onFieldChange(id, template);
       }
     }
-  };
+  }, [arrayIndex, hideDefaultData, id, modelMetadataFieldId, onFieldChange, value]);
 
-  let lookupField;
-
-  if (lookupFieldId) {
-    lookupField = (
-      <DynaLookupEditor
-        id={lookupFieldId}
-        label="Manage lookups"
-        value={lookups}
-        onFieldChange={onFieldChange}
-        flowId={flowId}
-        resourceType={resourceType}
-        resourceId={resourceId}
-      />
-    );
-  }
+  const lookupField = useMemo(() => {
+    if (lookupFieldId) {
+      return (
+        <DynaLookupEditor
+          id={lookupFieldId}
+          label="Manage lookups"
+          value={lookups}
+          onFieldChange={onFieldChange}
+          flowId={flowId}
+          resourceType={resourceType}
+          resourceId={resourceId}
+/>
+      );
+    }
+  }, [flowId, lookupFieldId, lookups, onFieldChange, resourceId, resourceType]);
 
   return (
     <>
       <SqlQueryBuilderEditorDrawer
-        key={changeIdentifier}
         title={title}
         id={`${resourceId}-${id}`}
         rule={parsedRule}
@@ -241,7 +217,8 @@ export default function SQLQueryBuilderWrapper(props) {
         showDefaultData={!hideDefaultData}
         ruleTitle={ruleTitle}
         path={id}
-          />
+        isSampleDataLoading={flowDataStatus === 'requested'}
+        />
     </>
   );
 }

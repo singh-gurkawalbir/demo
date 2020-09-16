@@ -18,7 +18,7 @@ export default function HandlebarsWithDefaults(props) {
     disabled,
     lookups = [],
   } = props;
-  const { template, sampleData, defaultData, result, error } = useSelector(
+  const { template, sampleData, defaultData, result, error, isSampleDataLoading } = useSelector(
     state => selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -59,18 +59,22 @@ export default function HandlebarsWithDefaults(props) {
         _init_template: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
+        isSampleDataLoading: props.isSampleDataLoading,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [
-    dispatch,
-    editorId,
-    props.defaultData,
-    props.rule,
-    props.sampleData,
-    props.strict,
-  ]);
+  }, [dispatch, editorId, props.defaultData, props.isSampleDataLoading, props.rule, props.sampleData, props.strict]);
+
+  useEffect(() => {
+    if (props.isSampleDataLoading !== isSampleDataLoading) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          isSampleDataLoading: props.isSampleDataLoading,
+        })
+      );
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
 
   return (
     <Editor
@@ -94,6 +98,7 @@ export default function HandlebarsWithDefaults(props) {
       result={result ? result.data : ''}
       error={error}
       enableAutocomplete
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }

@@ -12,6 +12,7 @@ export default function SqlQueryBuilderEditor(props) {
     sampleData,
     defaultData,
     showDefaultData = true,
+    isSampleDataLoading = false,
   } = props;
 
   return (
@@ -32,6 +33,7 @@ export default function SqlQueryBuilderEditor(props) {
       ruleTitle={ruleTitle || 'Template'}
       resultTitle="Preview"
       showDefaultData={showDefaultData}
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }
