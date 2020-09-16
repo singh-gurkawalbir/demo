@@ -144,14 +144,10 @@ export default function SearchCriteriaEditor(props) {
                   key={`operator-${initChangeIdentifier}-${r.rowIdentifier}`}
                   id={`operator-${r.index}`}
                   value={r.operator}
-                  // options={operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value))}
                   options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
                   labelName="name"
                   valueName="value"
                   disabled={disabled}
-                  onBlur={(id, _value) => {
-                    handleFieldUpdate(r.index, _value, 'operator');
-                  }}
                   onFieldChange={(id, _value) => {
                     handleFieldUpdate(r.index, _value, 'operator');
                   }}

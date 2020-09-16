@@ -4,8 +4,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../actions';
-// import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-// import { selectors } from '../../../../reducers';
 import SearchCriteriaDialog from '../../../AFE/SearchCriteria/Dialog';
 import FieldHelp from '../../FieldHelp';
 
@@ -44,8 +42,6 @@ export default function DynaNSSearchCriteria(props) {
   const handleEditorClick = () => {
     setShowEditor(!showEditor);
   };
-
-  // const { data: savedSearches, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
 
   const onFetch = useCallback(shouldRefreshCache => {
     dispatch(actions.metadata.request(connectionId, commMetaPath, { refreshCache: shouldRefreshCache }));
