@@ -22,11 +22,11 @@ export default {
       width: '30%',
       value: r => <ErrorMessage message={r.message} />,
     },
-    { heading: 'Source', value: r => r.source },
     {
       heading: 'Code',
       value: r => r.code,
     },
+    { heading: 'Source', value: r => r.source },
     {
       heading: 'Time stamp',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,

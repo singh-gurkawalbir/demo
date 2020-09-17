@@ -25,13 +25,13 @@ export default {
       value: r => <ErrorMessage message={r.message} />,
     },
     {
-      heading: 'Source',
-      value: r => r.source,
+      heading: 'Code',
+      value: r => r.code,
       width: '15%',
     },
     {
-      heading: 'Code',
-      value: r => r.code,
+      heading: 'Source',
+      value: r => r.source,
       width: '15%',
     },
     {
