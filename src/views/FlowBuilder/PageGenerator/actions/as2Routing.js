@@ -8,6 +8,7 @@ import ModalDialog from '../../../../components/ModalDialog';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../components/LoadResources';
+import ButtonGroup from '../../../../components/ButtonGroup';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
@@ -53,14 +54,19 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
       const patchSet = [
         {
           op: 'replace',
-          path: '/as2/contentBasedFlowRouter',
-          value: value.contentBasedFlowRouter,
+          path: '/as2/contentBasedFlowRouter/_scriptId',
+          value: value.contentBasedFlowRouter._scriptId,
+        },
+        {
+          op: 'replace',
+          path: '/as2/contentBasedFlowRouter/function',
+          value: value.contentBasedFlowRouter.function,
         },
       ];
 
-      dispatch(actions.resource.patchStaged(connectionId, patchSet, 'value'));
+      // using PATCH call here as other fields on the connection doc are not impacted
       dispatch(
-        actions.resource.commitStaged('connections', connectionId, 'value')
+        actions.resource.patch('connections', connectionId, patchSet)
       );
     },
     [dispatch, connectionId]
@@ -78,6 +84,7 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
       path: `/connections/${connectionId}`,
+      method: 'PATCH',
       disabled: isViewMode,
       onSave: handleSubmit,
       onClose,
@@ -89,25 +96,28 @@ function As2RoutingDialog({ isViewMode, resource, open, onClose }) {
       <div>AS2 connection routing rules</div>
       <LoadResources required resources="scripts">
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          data-test={`as2routing-${connectionId}`}
-          onClick={submitHandler()}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          disabled={disableSave}
-          color="secondary"
-          data-test={`as2routingsaveclose-${connectionId}`}
-          onClick={submitHandler(true)}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button
-          data-test={`cancelAs2routing-${connectionId}`}
-          onClick={onClose}>
-          Cancel
-        </Button>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test={`as2routing-${connectionId}`}
+            onClick={submitHandler()}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            color="secondary"
+            data-test={`as2routingsaveclose-${connectionId}`}
+            onClick={submitHandler(true)}>
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button
+            data-test={`cancelAs2routing-${connectionId}`}
+            onClick={onClose}>
+            Cancel
+          </Button>
+        </ButtonGroup>
       </LoadResources>
     </ModalDialog>
   );
