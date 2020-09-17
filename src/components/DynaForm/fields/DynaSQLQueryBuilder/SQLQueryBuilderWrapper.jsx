@@ -11,24 +11,16 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import DynaLookupEditor from '../DynaLookupEditor';
 
 const emptyObject = {};
+const ruleTitle = 'Template (use handlebars expressions to map fields from your export data)';
 const getEditorTitle = adaptorType => {
   if (adaptorType === 'MongodbImport') {
-    return {
-      defaultTitle: 'MongoDB document builder',
-      ruleTitle: 'Template (use handlebars expressions to map fields from your export data)',
-    };
+    return 'MongoDB document builder';
   }
   if (adaptorType === 'DynamodbImport') {
-    return {
-      defaultTitle: 'DynamoDB Query Builder',
-      ruleTitle: 'Template (use handlebars expressions to map fields from your export data)',
-    };
+    return 'DynamoDB Query Builder';
   }
   if (adaptorType === 'RDBMSImport') {
-    return {
-      defaultTitle: 'SQL Query Builder',
-      ruleTitle: '',
-    };
+    return 'SQL Query Builder';
   }
 
   return emptyObject;
@@ -109,7 +101,7 @@ export default function SQLQueryBuilderWrapper(props) {
     ? value[arrayIndex]
     : value,
   [arrayIndex, value]);
-  const {defaultTitle, ruleTitle} = useMemo(() => getEditorTitle(adaptorType), [adaptorType]);
+  const defaultTitle = getEditorTitle(adaptorType);
   const sampleRule = useMemo(() => {
     if (sampleData && extractFields) {
       const extractPaths = getJSONPaths(extractFields, null, {
