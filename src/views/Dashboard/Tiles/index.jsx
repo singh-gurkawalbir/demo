@@ -24,9 +24,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DashboardTiles = () => {
+export default function DashboardTiles() {
   const classes = useStyles();
-  const preferences = useSelector(state => selectors.userPreferences(state));
+  const tilesOrder = useSelector(
+    state => selectors.userPreferences(state)?.dashboard?.tilesOrder);
 
   const tiles = useSelector(state => selectors.tiles(state));
   const suiteScriptLinkedTiles = useSelector(state =>
@@ -36,9 +37,9 @@ const DashboardTiles = () => {
     () =>
       sortTiles(
         tiles.concat(suiteScriptLinkedTiles),
-        preferences.dashboard && preferences.dashboard.tilesOrder
+        tilesOrder
       ),
-    [preferences.dashboard, suiteScriptLinkedTiles, tiles]
+    [tilesOrder, suiteScriptLinkedTiles, tiles]
   );
 
   return (
@@ -51,6 +52,4 @@ const DashboardTiles = () => {
       </div>
     </LoadResources>
   );
-};
-
-export default DashboardTiles;
+}
