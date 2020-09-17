@@ -19,6 +19,8 @@ export default function AttachFlows({ onClose, integrationId }) {
   const flows = useMemo(() => allFlows.filter(f => !f._integrationId), [
     allFlows,
   ]);
+  const hasFlows = !!flows.length;
+
   const [selected, setSelected] = useState({});
   const handleSelectChange = flows => {
     setSelected(flows);
@@ -66,33 +68,37 @@ export default function AttachFlows({ onClose, integrationId }) {
   return (
     <ModalDialog show maxWidth={false} onClose={onClose}>
       <div>Attach flows</div>
-      <div>
-        <LoadResources
-          required
-          resources="flows, connections, exports, imports">
-          <CeligoTable
-            data={flows}
-            onSelectChange={handleSelectChange}
-            {...metadata}
-            selectableRows
+      {hasFlows ? (
+        <>
+          <div>
+            <LoadResources
+              required
+              resources="flows, connections, exports, imports">
+              <CeligoTable
+                data={flows}
+                onSelectChange={handleSelectChange}
+                {...metadata}
+                selectableRows
           />
-        </LoadResources>
-      </div>
-      <div>
-        <Button
-          data-test="attachFlows"
-          onClick={handleAttachFlowsClick}
-          variant="outlined"
-          color="primary">
-          Attach
-        </Button>
-        <Button
-          variant="text"
-          color="primary"
-          onClick={onClose}>
-          Cancel
-        </Button>
-      </div>
+            </LoadResources>
+          </div>
+          <div>
+            <Button
+              data-test="attachFlows"
+              onClick={handleAttachFlowsClick}
+              variant="outlined"
+              color="primary">
+              Attach
+            </Button>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={onClose}>
+              Cancel
+            </Button>
+          </div>
+        </>
+      ) : <div>No flows found</div>}
     </ModalDialog>
   );
 }

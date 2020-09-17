@@ -54,7 +54,7 @@ export default function DynaWebHookSampleData(props) {
   const generateSampleData = useCallback(() => {
     if (!options.webHookUrl) {
       return enqueueSnackbar({
-        message: 'Webhook url is mandatory',
+        message: 'Webhook url is mandatory.',
         variant: 'error',
       });
     }

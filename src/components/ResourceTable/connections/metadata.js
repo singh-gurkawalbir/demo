@@ -15,6 +15,7 @@ import DownloadDebugLogs from './actions/DownloadDebugLogs';
 import RefreshMetadata from './actions/RefreshMetadata';
 import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
+import actions from '../../../actions';
 
 export default {
   columns: (r, actionProps) => {
@@ -63,6 +64,8 @@ export default {
 
     return columns;
   },
+  onRowOver: (r, dispatch) => dispatch(actions.connection.setActive(r._id)),
+  onRowOut: (r, dispatch) => dispatch(actions.connection.setActive()),
   rowActions: (r, actionProps) => {
     let actionsToReturn = [];
 

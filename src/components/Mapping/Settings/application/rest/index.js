@@ -18,7 +18,8 @@ export default {
   }) => {
     const {generate, lookupName} = value;
     const {_connectionId: connectionId, name: resourceName, adaptorType, _id: resourceId } = importResource;
-    const isComposite = !!(adaptorType === 'NetSuiteDistributedImport' && importResource.netsuite_da?.operation === 'addupdate');
+
+    const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
     const isGroupedSampleData = Array.isArray(extractFields);
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 

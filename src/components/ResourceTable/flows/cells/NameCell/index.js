@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles, Chip } from '@material-ui/core';
-import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { selectors } from '../../../../../reducers';
 import InfoIconButton from '../../../../InfoIconButton';
-import getRoutePath from '../../../../../utils/routePaths';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { flowbuilderUrl } from '../../../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,37 +36,11 @@ export default function NameCell({
   childId,
 }) {
   const classes = useStyles();
-  const isDataLoader = useSelector(state =>
-    selectors.isDataLoader(state, flowId)
-  );
-  // TODO: All this logic should be in a selector: selectors.integrationAppName(state, id)
-  const appName = useSelector(state => {
-    if (!isIntegrationApp) return;
+  const isDataLoader = useSelector(state => selectors.isDataLoader(state, flowId));
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
 
-    const integration = selectors.resource(
-      state,
-      'integrations',
-      integrationId
-    );
-
-    if (integration && integration.name) {
-      return getIntegrationAppUrlName(integration.name);
-    }
-  });
   const flowName = name || `Unnamed (id: ${flowId})`;
-  const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
-
-  let flowBuilderTo;
-
-  if (isIntegrationApp) {
-    if (childId) {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
-    } else {
-      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
-    }
-  } else {
-    flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
-  }
+  const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName, isDataLoader});
 
   return (
     <div className={classes.root}>
