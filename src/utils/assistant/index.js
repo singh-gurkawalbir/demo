@@ -1688,6 +1688,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     lookupType,
     ignoreExisting = false,
     ignoreMissing = false,
+    lookups = [],
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
@@ -1711,7 +1712,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   };
   const importDoc = {
     ...importDefaults[adaptorType],
-    lookups: [],
+    lookups: isArray(lookups) ? lookups : [],
   };
 
   if (adaptorType === 'rest') {
