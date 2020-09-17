@@ -112,9 +112,9 @@ export function* requestLicenseUpgrade() {
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
-export function* requestLicenseUpdate({ actionType }) {
+export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
-    actionType,
+    actionType, connectorId, licenseId,
   });
   let response;
 
