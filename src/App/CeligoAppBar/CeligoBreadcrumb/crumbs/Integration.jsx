@@ -9,7 +9,7 @@ export default function IntegrationCrumb({ integrationId }) {
   );
 
   if (integrationId === 'none') {
-    return 'Standalone Integrations';
+    return 'Standalone flows';
   }
 
   // we dont want to "require" integrations resources to be loaded to prevent

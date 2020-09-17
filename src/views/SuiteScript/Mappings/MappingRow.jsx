@@ -102,7 +102,7 @@ export default function MappingRow(props) {
     key,
     extract,
     generate,
-    hardCodedValueTmp,
+    hardCodedValue,
   } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
@@ -166,6 +166,8 @@ export default function MappingRow(props) {
     [patchSettings, key]
   );
 
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+
   // generateFields and extractFields are passed as an array of field names
   return (
     <div
@@ -185,7 +187,7 @@ export default function MappingRow(props) {
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
-            value={extract || hardCodedValueTmp}
+            value={extractValue}
             options={extractFields || emptySet}
             disabled={disabled}
             onBlur={handleBlur('extract')}

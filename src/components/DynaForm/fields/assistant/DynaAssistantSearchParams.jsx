@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { isEmpty } from 'lodash';
+import { isEmpty, isArray, isObject } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -57,11 +57,30 @@ const SearchParamsModal = props => {
     onClose();
   }
 
+  const validationHandler = field => {
+    if (field?.id && fieldDetailsMap[field.id]) {
+      if (field.value) {
+        if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
+          if (fieldDetailsMap[field.id].type === 'array') {
+            if (!isArray(field.value)) {
+              return 'Must be an array.';
+            }
+          } else if (fieldDetailsMap[field.id].type === 'json') {
+            if (!isObject(field.value) || isArray(field.value)) {
+              return 'Must be an object.';
+            }
+          }
+        }
+      }
+    }
+  };
+
   const formKey = useFormInitWithPermissions({
     fieldMeta: {
       fieldMap,
       layout,
     },
+    validationHandler,
   });
 
   return (
@@ -122,7 +141,7 @@ export default function DynaAssistantSearchParams(props) {
       <div className={classes.dynaAssSearchParamsWrapper}>
         <div className={classes.configureLabelWrapper}>
           <FormLabel className={classes.dynaAssistantFormLabel}>
-            Configure search parameters
+            {label}
           </FormLabel>
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />

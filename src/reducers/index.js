@@ -29,6 +29,7 @@ import {
   getNextDataFlows,
   getIAFlowSettings,
   getFlowDetails,
+  getFlowResources,
   getFlowReferencesForResource,
 } from '../utils/flows';
 import {
@@ -398,12 +399,7 @@ selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authen
 selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.defaultAccountSet);
 
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
-
-selectors.isAuthLoading = state => (
-  state &&
-    state.auth &&
-    state.auth.commStatus === COMM_STATES.LOADING
-);
+selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
 selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
@@ -702,12 +698,20 @@ selectors.mkFlowAllowsScheduling = () => {
       return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
-    (flow, integration, allExports) => {
+    (state, id) => {
+      const flow = resource(state?.data?.resources, 'flows', id);
+
+      if (!flow || !flow._integrationId) return false;
+
+      return selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
+    },
+    (flow, integration, allExports, isAppVersion2) => {
       if (!flow) return false;
       const isApp = flow._connectorId;
       const canSchedule = showScheduleIcon(flow, allExports);
 
-      if (!isApp) return canSchedule;
+      // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+      if (!isApp || isAppVersion2) return canSchedule;
       const flowSettings = getIAFlowSettings(integration, flow._id);
 
       return canSchedule && !!flowSettings.showSchedule;
@@ -735,8 +739,10 @@ selectors.flowSupportsMapping = (state, id) => {
   if (!flow) return false;
 
   const isApp = flow._connectorId;
+  const isAppVersion2 = selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
 
-  if (!isApp) return true;
+  // For IA2.0, 'showMapping' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return true;
 
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
@@ -1424,6 +1430,20 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   };
 };
 
+selectors.integrationAppName = () => createSelector(
+  state => state?.data?.resources.integrations,
+  (state, integrationId) => integrationId,
+  (integrations, integrationId) => {
+    const integration = integrations.find(i => i._id === integrationId);
+
+    if (integration && integration._connectorId && integration.name) {
+      return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  }
+);
+
 selectors.integrationChildren = (state, integrationId) => {
   if (!state) return null;
   const children = [];
@@ -1440,6 +1460,23 @@ selectors.integrationChildren = (state, integrationId) => {
 
   return children;
 };
+
+selectors.mkIntegrationChildren = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  (state, integrationId) => integrationId,
+  (integrations = [], integrationId) => {
+    const children = [];
+    const integration = integrations.find(int => int._id === integrationId) || {};
+    const childIntegrations = integrations.filter(int => int._parentId === integrationId);
+
+    children.push({ value: integrationId, label: integration.name });
+    childIntegrations.forEach(ci => {
+      children.push({ value: ci._id, label: ci.name, mode: ci.mode });
+    });
+
+    return children;
+  }
+);
 
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
@@ -1581,35 +1618,7 @@ selectors.integrationAppSectionMetadata = (
   return selectedSection;
 };
 
-selectors.suiteScriptIASectionMetadata = (
-  state,
-  integrationId,
-  ssLinkedConnectionId,
-  section,
-) => {
-  if (!state) {
-    return emptyObject;
-  }
-
-  const integrationResource = selectors.suiteScriptIASettings(
-    state,
-    integrationId,
-    ssLinkedConnectionId
-  );
-  const {sections = [] } =
-    integrationResource || {};
-  const allSections = sections;
-
-  const selectedSection =
-    allSections.find(
-      sec =>
-        getTitleIdFromSection(sec) === section
-    ) || {};
-
-  return selectedSection;
-};
-
-selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
+selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
   if (!state) return emptyObject;
   const integrationResource =
     fromData.integrationAppSettings(state.data, id) || emptyObject;
@@ -1622,6 +1631,7 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
   let hasDescription = false;
+  let sectionFlows;
   let allSections = sections;
 
   if (supportsMultiStore) {
@@ -1647,10 +1657,12 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
 
   if (!section) {
     allSections.forEach(sec => {
-      requiredFlows.push(...map(sec.flows, '_id'));
+      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+      requiredFlows.push(...map(sectionFlows, '_id'));
     });
   } else {
-    requiredFlows = map(selectedSection.flows, '_id');
+    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+    requiredFlows = map(sectionFlows, '_id');
   }
   hasNSInternalIdLookup = some(
     selectedSection.flows,
@@ -2687,7 +2699,7 @@ selectors.isDataReady = (state, resource) => (
 
 // Below selector will take resourceName as argument and returns
 // true if resource is Loading.
-export function isResourceCollectionLoading(state, resourceName) {
+selectors.isResourceCollectionLoading = (state, resourceName) => {
   // Incase of transfers as we make two API calls for fetching
   // transfers and invited transfers, checking for both the keys
   if (resourceName === 'transfers') {
@@ -2697,7 +2709,7 @@ export function isResourceCollectionLoading(state, resourceName) {
   }
 
   return fromComms.isLoading(state?.comms, commKeyGen(`/${resourceName}`, 'GET'));
-}
+};
 
 // the keys for the comm's reducers require a forward slash before
 // the resource name where as the keys for the data reducer don't
@@ -3273,21 +3285,19 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
   };
 };
 
-selectors.flowJobConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-  const connections = [];
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-    ignoreBorrowedConnections: true,
-  });
+selectors.flowJobConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, flowId) => {
+    const flow = selectors.resource(state, 'flows', flowId);
 
-  connectionIds.forEach(c => {
-    const conn = selectors.resource(state, 'connections', c);
+    const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
+      ignoreBorrowedConnections: true,
+    });
 
-    connections.push({ id: conn._id, name: conn.name });
-  });
-
-  return connections;
-};
+    return connectionIds;
+  },
+  (connections = [], connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+);
 
 selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
   let connectionIdsToRegister = [];
@@ -3313,6 +3323,21 @@ selectors.flowImports = (state, id) => {
 
   return getImportsFromFlow(flow, imports);
 };
+
+selectors.mkflowImportsList = () => createSelector(
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  state => state?.data?.resources?.imports,
+  (state, flowId, importId) => importId,
+  (flow, imports, importId) => {
+    if (importId) {
+      const subRecordResource = imports.find(i => i._id === importId);
+
+      return [subRecordResource];
+    }
+
+    return getImportsFromFlow(flow, imports);
+  }
+);
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
@@ -3407,17 +3432,12 @@ selectors.isAnyFlowConnectionOffline = (state, flowId) => {
   return connectionList.some(c => c.offline);
 };
 
-selectors.flowConnectionList = (state, flow) => {
+selectors.flowConnectionList = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
   const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
-};
-
-selectors.flowConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  return selectors.flowConnectionList(state, flow);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
@@ -3500,7 +3520,7 @@ selectors.transferListWithMetadata = state => {
         let { name } = i;
 
         if (i._id === 'none') {
-          name = 'Standalone Flows';
+          name = 'Standalone flows';
         }
 
         name = name || i._id;
@@ -3813,7 +3833,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (resource.type === 'delta') {
+      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
@@ -3979,34 +3999,49 @@ selectors.getScriptContext = createSelector(
 );
 
 // #region suiteScript
-selectors.suiteScriptIAFlowSections = (state, id, ssLinkedConnectionId) => {
-  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.makeSuiteScriptIAFlowSections = () => {
+  const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
-  return sections.map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
-  }));
+  return createSelector(
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
+
+    meta => {
+      const {sections = []} = meta;
+
+      return sections.map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+        id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
+      }));
+    }
+  );
 };
 
-selectors.suiteScriptIASections = (state, id, ssLinkedConnectionId) => {
-  const {sections = []} = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+selectors.makeSuiteScriptIASections = () => {
+  const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
-  const {general } = selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId);
+  return createSelector(
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
 
-  let selectedGeneral = general;
+    metaSections => {
+      const {general, sections = [] } = metaSections;
 
-  if (Array.isArray(general)) {
-    selectedGeneral = general.find(s => s.title === 'General');
-  }
+      let selectedGeneral = general;
 
-  return (selectedGeneral
-    ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
-      ...sections] : sections).map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-    id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
-  }));
+      if (Array.isArray(general)) {
+        selectedGeneral = general.find(s => s.title === 'General');
+      }
+
+      return (selectedGeneral
+        ? [{...selectedGeneral, id: 'genSettings', title: 'General'},
+          ...sections] : sections).map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+        id: sec?.id?.charAt(0)?.toLowerCase() + sec?.id?.slice(1),
+      }));
+    }
+
+  );
 };
 
 selectors.suiteScriptResourceStatus = (
@@ -4103,11 +4138,16 @@ selectors.suiteScriptResourceData = (
   return data;
 };
 
+// TODO: deprecate this function and rely on the cached selector
+
+selectors.suiteScriptIASettings = selectors.makeSuiteScriptIASettings();
+
 selectors.suiteScriptFlowSettings = (state, id, ssLinkedConnectionId, section) => {
   if (!state) return emptyObject;
 
   const integrationResource =
-    selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
+  // // TODO: deprecate this function and rely on the cached selector
+    selectors.suiteScriptIASettings(state?.data?.suiteScript, id, ssLinkedConnectionId) || emptyObject;
   const { sections = []} = integrationResource || {};
   let requiredFlows = [];
   const allSections = sections;
@@ -4301,82 +4341,13 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   return isRetryInProgress || isResolveInProgress;
 };
 
-selectors.flowResources = (state, flowId) => {
-  const resources = [];
-  const flow = fromData.resource(state && state.data, 'flows', flowId);
-
-  resources.push({ _id: flowId, name: 'Flow-level' });
-
-  if (!flow) {
-    return resources;
-  }
-
-  if (flow._exportId) {
-    const exportDoc = fromData.resource(
-      state && state.data,
-      'exports',
-      flow._exportId
-    );
-
-    if (exportDoc) {
-      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
-    }
-  }
-
-  if (flow._importId) {
-    const importDoc = fromData.resource(
-      state && state.data,
-      'imports',
-      flow._importId
-    );
-
-    if (importDoc) {
-      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
-    }
-  }
-
-  if (flow.pageGenerators && flow.pageGenerators.length) {
-    flow.pageGenerators.forEach(pg => {
-      const exportDoc = fromData.resource(
-        state && state.data,
-        'exports',
-        pg._exportId
-      );
-
-      if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
-      }
-    });
-  }
-
-  if (flow.pageProcessors && flow.pageProcessors.length) {
-    flow.pageProcessors.forEach(pp => {
-      if (pp.type === 'import' && pp._importId) {
-        const importDoc = fromData.resource(
-          state && state.data,
-          'imports',
-          pp._importId
-        );
-
-        if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
-        }
-      } else if (pp.type === 'export' && pp._exportId) {
-        const exportDoc = fromData.resource(
-          state && state.data,
-          'exports',
-          pp._exportId
-        );
-
-        if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
-        }
-      }
-    });
-  }
-
-  return resources;
-};
+selectors.mkflowResources = () => createSelector(
+  state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (_, flowId) => flowId,
+  (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
+);
 
 selectors.redirectUrlToResourceListingPage = (
   state,
@@ -4923,7 +4894,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
   const adaptorType = resourceType === 'connections'
-    ? getStagedValue('type') || resourceObj?.type
+    ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
@@ -4997,8 +4968,6 @@ selectors.mappingImportSampleDataSupported = (state, importId) => {
 
   return isAssistant || ['NetSuiteImport', 'NetSuiteDistributedImport', 'SalesforceImport'].includes(adaptorType);
 };
-
-selectors.mapping = state => fromSession.mapping(state && state.session);
 
 selectors.mappingSubRecordAndJSONPath = (state, importId, subRecordMappingId) => {
   const importResource = selectors.resource(state, 'imports', importId);

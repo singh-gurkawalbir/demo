@@ -20,6 +20,8 @@ export default {
       subRecordConfig: item.subRecordConfig,
       doesNotSupportUpdate: item.doesNotSupportUpdate,
       doesNotSupportCreate: item.doesNotSupportCreate,
+      doesNotSupportSearch: item.doesNotSupportSearch,
+      doesNotSupportDelete: item.doesNotSupportDelete,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
@@ -75,6 +77,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
   'suitescript-itemCustomNumberColumn': data =>
     data
@@ -376,6 +379,15 @@ export default {
           picklistValues: field.picklistValues,
           updateable: field.updateable,
         });
+        if (field.referenceTo?.length) {
+          _data.push({
+            value: `_child_${field.relationshipName}`,
+            label: `${field.relationshipName} : Fields...`,
+            type: 'childFieldRelationship',
+            childSObject: field.referenceTo[0],
+            relationshipName: field.relationshipName,
+          });
+        }
       });
     }
 
@@ -415,6 +427,7 @@ export default {
 
     return _data;
   },
+  'suitescript-bundle-status': data => data,
   default: data =>
     data &&
     Array.isArray(data) &&

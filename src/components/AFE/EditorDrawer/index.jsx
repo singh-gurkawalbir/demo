@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   wrapper: {
+    display: 'flex',
     '& Button': {
       marginRight: theme.spacing(2),
     },
@@ -203,7 +204,7 @@ export default function EditorDrawer(props) {
       title={title}
       variant="temporary"
       actions={drawerActions}
-      onClose={handleClose} >
+      onClose={handleCancelClick} >
       {
         cloneElement(children?.length ? children[activeEditorIndex] : children, {
           layout,

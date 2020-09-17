@@ -112,7 +112,6 @@ describe('Mapping', () => {
           {key: expect.anything(), generate: 'xyz3'},
         ],
         lastModifiedRowKey: expect.anything(),
-        validationErrMsg: expect.anything(),
       },
     };
     const newState = reducer(initialState, actions.mapping.patchField('generate', 'new', 'xyz3'));
@@ -186,7 +185,6 @@ describe('Mapping', () => {
           {key: expect.anything(), extract: 'xyz3'},
         ],
         lastModifiedRowKey: expect.anything(),
-        validationErrMsg: expect.anything(),
       },
     };
     const newState = reducer(initialState, actions.mapping.patchField('extract', 'new', 'xyz3'));
@@ -327,7 +325,6 @@ describe('Mapping', () => {
           {key: 'key2', generate: 'xyz2', extract: 'xyz'},
         ],
         lastModifiedRowKey: 'key1',
-        validationErrMsg: expect.anything(),
       },
     };
     const settings = { extract: null};

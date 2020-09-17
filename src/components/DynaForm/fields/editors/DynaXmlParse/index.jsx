@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */ // V0_json is a schema field. cant change.
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { makeStyles, Button, FormLabel } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 import XmlParseEditorDrawer from '../../../../AFE/XmlParseEditor/Drawer';
 import DynaForm from '../../..';
 import DynaUploadFile from '../../DynaUploadFile';
@@ -10,7 +11,7 @@ import FieldHelp from '../../../FieldHelp';
 import getForm from './formMeta';
 import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import { generateNewId } from '../../../../../utils/resource';
+import { generateNewId, isNewId } from '../../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
 
 const getParserValue = ({
@@ -107,6 +108,7 @@ export default function DynaXmlParse({
   uploadSampleDataFieldName,
 }) {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [formKey, setFormKey] = useState(1);
   const handleOpenDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
@@ -116,24 +118,46 @@ export default function DynaXmlParse({
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-  const [form, setForm] = useState(getForm(options));
+  const [form, setForm] = useState(getForm(options, resourceId));
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
     selectors.fileSampleData(state, { resourceId, resourceType, fileType: 'xml'}));
 
-  const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
-    // console.log(shouldCommit, editorValues);
+  useEffect(() => {
+    // corrupted export without parsers object (possibly created in Ampersand). Set the default strategy as 'Automatic'
+    if (!isNewId(resourceId) && !currentOptions.V0_json && currentOptions.V0_json !== false) {
+      const patch = [
+        {
+          op: 'replace',
+          path: '/parsers',
+          value:
+            {
+              type: 'xml',
+              version: 1,
+              rules: {
+                V0_json: true,
+                stripNewLineChars: false,
+                trimSpaces: false,
+              },
+            },
 
+        }];
+
+      dispatch(actions.resource.patchStaged(resourceId, patch, 'value'));
+    }
+  }, [currentOptions, dispatch, resourceId]);
+
+  const handleEditorSave = useCallback((shouldCommit, editorValues = {}) => {
     if (shouldCommit) {
       const parsersValue = getParserValue(editorValues);
 
       setCurrentOptions(getInitOptions(parsersValue));
 
-      setForm(getForm(editorValues));
+      setForm(getForm(editorValues, resourceId));
       setFormKey(formKey + 1);
       onFieldChange(id, parsersValue);
     }
-  }, [formKey, getInitOptions, id, onFieldChange]);
+  }, [formKey, getInitOptions, id, onFieldChange, resourceId]);
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {

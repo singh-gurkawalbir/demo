@@ -165,7 +165,7 @@ export default function Integration(props) {
     integrationsFilterConfig
   ).resources;
 
-  const pageTitle = name || 'Standalone integration';
+  const pageTitle = name || 'Standalone flows';
 
   const childIntegration = useSelector(state => {
     const id = selectors.getChildIntegrationId(state, integrationId);
@@ -189,10 +189,9 @@ export default function Integration(props) {
       canDelete: permission.delete,
     };
   }, shallowEqual);
-  const children = useSelector(
-    state => selectors.integrationChildren(state, integrationId),
-    shallowEqual
-  );
+
+  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+
   const currentChildMode = useSelector(state => {
     const integration = selectors.resource(state, 'integrations', childId);
 

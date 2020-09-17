@@ -24,9 +24,9 @@ const useStyles = makeStyles({
 });
 const overrides = { showGutter: false };
 export default function FilterEditor(props) {
-  const { editorId, disabled, layout = 'column', optionalSaveParams } = props;
+  const { editorId, disabled, layout = 'column', optionalSaveParams, isToggleScreen } = props;
   const classes = useStyles(props);
-  const { data, lastValidData, result, error, isSampleDataLoading } = useSelector(state =>
+  const { data, rule, lastValidData, result, error, isSampleDataLoading, processor } = useSelector(state =>
     selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -59,8 +59,22 @@ export default function FilterEditor(props) {
   );
 
   useEffect(() => {
+    // if the editor is being used in the toggle AFE, editor init should happen only once
+    // TODO: we can remove isToggleScreen flag and implement this logic for all cases instead
+    if (isToggleScreen && processor) return;
     handleInit();
-  }, [handleInit]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isToggleScreen, handleInit]);
+
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+      }));
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
 
   let outputMessage = '';
 
@@ -80,7 +94,7 @@ export default function FilterEditor(props) {
           key={editorId}
           editorId={editorId}
           data={lastValidData || data}
-          rule={props.rule}
+          rule={rule || props.rule}
           disabled={disabled}
         />
       </PanelGridItem>
@@ -97,6 +111,7 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={overrides}
             onChange={handleDataChange}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>
@@ -113,7 +128,7 @@ export default function FilterEditor(props) {
       </PanelGridItem>
 
       <ErrorGridItem
-        error={error?.message}
+        error={error}
         violations={violations}
       />
     </PanelGrid>

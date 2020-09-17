@@ -88,6 +88,7 @@ function TabComponent(props) {
                 fieldMap={fieldMap}
                 label={label}
                 tabType={type}
+                formKey={rest?.formKey}
 
               />
 )}

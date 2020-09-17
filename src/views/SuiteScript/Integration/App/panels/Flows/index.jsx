@@ -11,6 +11,7 @@ import { selectors } from '../../../../../../reducers';
 import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 import { LoadSettingsMetadata } from '../Settings';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,9 +53,8 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
     )
   );
 
-  const flowSections = useSelector(state =>
-    selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId)
-  );
+  const flowSections = useSelectorMemo(selectors.makeSuiteScriptIAFlowSections, integrationId, ssLinkedConnectionId);
+
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
 
@@ -79,9 +79,7 @@ function FlowPanel({ integrationId, ssLinkedConnectionId }) {
   const match = useRouteMatch();
   const classes = useStyles();
 
-  const flowSections = useSelector(state =>
-    selectors.suiteScriptIAFlowSections(state, integrationId, ssLinkedConnectionId)
-  );
+  const flowSections = useSelectorMemo(selectors.makeSuiteScriptIAFlowSections, integrationId, ssLinkedConnectionId);
 
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

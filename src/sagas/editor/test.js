@@ -148,7 +148,7 @@ describe('evaluateProcessor saga', () => {
 
       if (!invalidCase.skipEvaluate) {
         expect(putEffect).toEqual(
-          put(actions.editor.evaluateFailure(id, invalidCase.expectedResult))
+          put(actions.editor.evaluateFailure(id, {errorMessage: invalidCase.expectedResult}))
         );
       }
 

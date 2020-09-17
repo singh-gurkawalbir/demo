@@ -54,12 +54,18 @@ export default (state = {}, action) => {
         draft.queuedJobs = { ...draft.queuedJobs, [connectionId]: queuedJobs };
         break;
 
+      case actionTypes.CONNECTION.ACTIVE_SET:
+        draft.activeConnection = connectionId;
+        break;
+
       default:
     }
   });
 };
 
 export const selectors = {};
+
+selectors.activeConnection = state => state?.activeConnection;
 
 selectors.debugLogs = state => {
   if (!state || !state.debugLogs) {

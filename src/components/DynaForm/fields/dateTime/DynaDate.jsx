@@ -4,7 +4,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
   MuiPickersUtilsProvider,
-  DatePicker,
+  KeyboardDatePicker,
 } from '@material-ui/pickers';
 import {FormLabel} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
@@ -12,10 +12,13 @@ import ErroredMessageComponent from '../ErroredMessageComponent';
 import { selectors } from '../../../../reducers';
 import { convertUtcToTimezone } from '../../../../utils/date';
 import FieldHelp from '../../FieldHelp';
+import { getDateMask, FIXED_DATE_FORMAT } from './DynaDateTime';
+import CalendarIcon from '../../../icons/CalendarIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaDateLabelWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynaDateCalendarBtn: {
     padding: 0,
@@ -26,7 +29,31 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  keyBoardDateWrapper: {
+
+    '& .MuiIconButton-root': {
+      padding: 0,
+      marginRight: theme.spacing(1),
+      backgroundColor: 'transparent',
+    },
+    '& .MuiInputBase-input': {
+      padding: 0,
+      height: 38,
+      paddingLeft: 15,
+    },
+  },
+  inputDate: {
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+  },
+  iconWrapper: {
+    '&:hover': {
+      color: theme.palette.primary.main,
+      backgroundColor: 'transparent',
+    },
+  },
 }));
+
 export default function DynaDate(props) {
   const classes = useStyles();
   const { id, label, onFieldChange, value = '', disabled, resourceContext } = props;
@@ -41,7 +68,6 @@ export default function DynaDate(props) {
     return !!(resource?._connectorId);
   });
   const { dateFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const displayFormat = props.format || dateFormat || 'MM/DD/YYYY';
 
   useEffect(() => {
     let formattedDate = null;
@@ -69,14 +95,20 @@ export default function DynaDate(props) {
         <FieldHelp {...props} />
       </div>
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
-        <DatePicker
+
+        <KeyboardDatePicker
           disabled={disabled}
+          className={classes.keyBoardDateWrapper}
           variant="inline"
-          format={displayFormat}
+          fullWidth
+          format={FIXED_DATE_FORMAT}
+          placeholder={FIXED_DATE_FORMAT}
+          mask={getDateMask(FIXED_DATE_FORMAT)}
           value={dateValue}
-          label="Date"
           onChange={setDateValue}
-      />
+          InputProps={{ className: classes.inputDate }}
+          keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
+          />
         <ErroredMessageComponent {...props} />
       </MuiPickersUtilsProvider>
     </>

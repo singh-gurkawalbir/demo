@@ -10,6 +10,7 @@ import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 const useStyles = makeStyles(theme => ({
   dynaAPIWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   children: {
     flex: 1,
@@ -28,7 +29,7 @@ export default function DynaApiIdentifier(props) {
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'URL copied to clipboard.' }), [enquesnackbar]);
 
   return (
     <div className={classes.dynaAPIWrapper}>

@@ -389,6 +389,9 @@ export default {
           el !== 'hardcodedDefault' &&
           el !== 'hardcodedCheckbox'
       );
+      if (generateFieldType === 'select') { // applicable only for 'select'
+        fieldMeta.fieldMap['lookup.mapList'].preferMapValueAsNum = true;
+      }
     } else if (generateFieldType === 'checkbox') {
       delete fieldMeta.fieldMap.hardcodedAction;
       delete fieldMeta.fieldMap.hardcodedDefault;

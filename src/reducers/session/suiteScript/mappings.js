@@ -82,24 +82,16 @@ export default (state = {}, action) => {
 
           objCopy.rowIdentifier += 1;
 
-          let inputValue = value;
-
           if (field === 'extract') {
-            if (inputValue.indexOf('"') === 0) {
-              if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
+            if (value.indexOf('"') === 0) {
               delete objCopy.extract;
-              objCopy.hardCodedValue = inputValue.substr(
-                1,
-                inputValue.length - 2
-              );
-              objCopy.hardCodedValueTmp = inputValue;
+              objCopy.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete objCopy.hardCodedValue;
-              delete objCopy.hardCodedValueTmp;
-              objCopy.extract = inputValue;
+              objCopy.extract = value;
             }
           } else {
-            objCopy[field] = inputValue;
+            objCopy[field] = value;
 
             // if (
             //   !mappingUtil.isCsvOrXlsxResource(draft.mappings.resource) &&
@@ -119,12 +111,16 @@ export default (state = {}, action) => {
           draft.mappings.lastModifiedRowKey = objCopy.key;
         } else if (value) {
           const newKey = shortid.generate();
-
-          draft.mappings.mappings.push({
-            [field]: value,
-            rowIdentifier: 0,
+          const newRow = {
             key: newKey,
-          });
+          };
+
+          if (field === 'extract' && value.indexOf('"') === 0) {
+            newRow.hardCodedValue = value.replace(/(^")|("$)/g, '');
+          } else {
+            newRow[field] = value;
+          }
+          draft.mappings.mappings.push(newRow);
           draft.mappings.lastModifiedRowKey = newKey;
         }
 
@@ -168,9 +164,6 @@ export default (state = {}, action) => {
           valueTmp.rowIdentifier += 1;
 
           if ('hardCodedValue' in valueTmp) {
-            // wrap anything expect '' and null ,
-
-            if (valueTmp.hardCodedValue && valueTmp.hardCodedValue.length) valueTmp.hardCodedValueTmp = `"${valueTmp.hardCodedValue}"`;
             delete valueTmp.extract;
           }
 

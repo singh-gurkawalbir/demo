@@ -104,9 +104,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'Use BULK INSERT', value: 'BULK INSERT' },
+            { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
-            { label: 'Use Merge SQLQuery', value: 'MERGE' },
+            { label: 'Use SQL QUERY once per page of data', value: 'MERGE' },
           ],
         },
       ],

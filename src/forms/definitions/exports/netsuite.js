@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { isProduction } from '../../utils';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -70,6 +71,7 @@ export default {
       newValues['/type'] = newValues['/restlet/type'];
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
+
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
@@ -114,6 +116,8 @@ export default {
       newValues['/type'] = 'blob';
       delete newValues['/netsuite/type'];
     }
+
+    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
 
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
@@ -190,7 +194,6 @@ export default {
       name: 'apiType',
       type: 'radiogroup',
       label: 'NetSuite API type',
-      required: true,
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -291,6 +294,28 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
         { field: 'outputMode', is: ['records'] },
       ],
+    },
+    'netsuite.restlet.useSS2Restlets': {
+      fieldId: 'netsuite.restlet.useSS2Restlets',
+      type: 'netsuiteapiversion',
+      label: 'NetSuite API version',
+      defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
+      options: [
+        {
+          items: [
+            { label: 'SuiteScript 1.0', value: 'false' },
+            { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+          ],
+        },
+      ],
+      visible: !isProduction(),
+      visibleWhenAll: !isProduction()
+        ? [{ field: 'netsuite.api.type', is: ['restlet'] }, { field: 'netsuite.execution.type', is: ['scheduled'] },
+          { field: 'outputMode', is: ['records'] }] : [],
+      isNew: r => isNewId(r._id),
+      connectionId: r => r?._connectionId,
+      resourceType: 'exports',
+      resourceId: r => r?._id,
     },
     'netsuite.restlet.criteria': {
       fieldId: 'netsuite.restlet.criteria',
@@ -520,7 +545,6 @@ export default {
               return 'What would you like to export?';
             },
             fields: [
-              'netsuite.api.type',
               'distributed',
               'restlet',
               'search',
@@ -547,15 +571,34 @@ export default {
           {
             collapsed: true,
             label: 'Advanced',
-            fields: [
-              'netsuite.blob.purgeFileAfterExport',
-              'dataURITemplate',
-              'netsuite.distributed.skipExportFieldId',
-              'netsuite.distributed.forceReload',
-              'pageSize',
-              'netsuite.restlet.batchSize',
-              'skipRetries',
-              'apiIdentifier',
+            containers: [
+              {
+                fields: [
+                  'netsuite.api.type',
+                ],
+              },
+              {
+                type: 'indent',
+                containers: [
+                  {
+                    fields: [
+                      'netsuite.restlet.useSS2Restlets',
+                    ],
+                  },
+                ],
+              },
+              {
+                fields: [
+                  'netsuite.blob.purgeFileAfterExport',
+                  'dataURITemplate',
+                  'netsuite.distributed.skipExportFieldId',
+                  'netsuite.distributed.forceReload',
+                  'pageSize',
+                  'netsuite.restlet.batchSize',
+                  'skipRetries',
+                  'apiIdentifier',
+                ],
+              },
             ],
           },
         ],

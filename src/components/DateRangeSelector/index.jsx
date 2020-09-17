@@ -131,7 +131,8 @@ export const staticRangeHandler = {
     const definedRangeDistance = moment(definedRange.endDate).diff(moment(definedRange.startDate), 'hours');
     const rangeDistance = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
-    return definedRangeDistance === rangeDistance;
+    return definedRangeDistance === rangeDistance ||
+      (definedRange.startDate === range.startDate && definedRange.endDate === range.endDate);
   },
 };
 const useStyles = makeStyles(theme => ({
@@ -165,8 +166,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, onSave }) {
-  const [selectedRanges, setSelectedRanges] = useState([
+export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
+  const [initalValue, setInitialValue] = useState([
     {
       startDate:
         value && value.startDate
@@ -176,26 +177,41 @@ export default function DateRangeSelector({ value, onSave }) {
       key: 'selection',
     },
   ]);
+  const [selectedRanges, setSelectedRanges] = useState(initalValue);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const toggleClick = useCallback(event => {
+    if (anchorEl) {
+      setSelectedRanges(initalValue);
+    }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, []);
+  }, [anchorEl, initalValue]);
+
   const handleSave = useCallback(() => {
+    setInitialValue(selectedRanges);
     onSave && onSave(selectedRanges);
     setAnchorEl(null);
   }, [onSave, selectedRanges]);
 
   const handleClose = useCallback(() => {
+    setSelectedRanges(initalValue);
     setAnchorEl(null);
+  }, [initalValue]);
+
+  const handleDateRangeSelection = useCallback(range => {
+    if (range.startDate.getTime() === range.endDate.getTime()) {
+      setSelectedRanges([{...range, startDate: startOfDay(range.startDate), endDate: endOfDay(range.endDate)}]);
+    } else {
+      setSelectedRanges([range]);
+    }
   }, []);
   const dateRangeOptions = useMemo(
     () =>
-      rangeList.map(rangeItem => ({
+      [...customPresets, ...rangeList].map(rangeItem => ({
         ...staticRangeHandler,
         ...rangeItem,
       })),
-    []
+    [customPresets]
   );
 
   return (
@@ -205,7 +221,7 @@ export default function DateRangeSelector({ value, onSave }) {
         variant="outlined"
         color="secondary"
         className={classes.dateRangePopperBtn}>
-        {getDurationLabel(selectedRanges)}
+        {getDurationLabel(selectedRanges, customPresets)}
       </Button>
       <ArrowPopper
         open={!!anchorEl}
@@ -217,7 +233,7 @@ export default function DateRangeSelector({ value, onSave }) {
             <DateRangePicker
               staticRanges={dateRangeOptions}
               showSelectionPreview
-              onChange={item => setSelectedRanges([item.selection])}
+              onChange={item => handleDateRangeSelection(item.selection)}
               moveRangeOnFirstSelection={false}
               months={2}
               className={classes.child}

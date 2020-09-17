@@ -58,7 +58,9 @@ export default function SearchCriteriaDialog(props) {
     onRefresh,
     width = '80vw',
     height = '50vh',
-    fieldOptions = {},
+    connectionId,
+    commMetaPath,
+    filterKey,
   } = props;
   const classes = useStyles();
   const [fullScreen, setFullScreeen] = useState(false);
@@ -118,7 +120,9 @@ export default function SearchCriteriaDialog(props) {
           value={value}
           disabled={disabled}
           onRefresh={onRefresh}
-          fieldOptions={fieldOptions}
+          connectionId={connectionId}
+          commMetaPath={commMetaPath}
+          filterKey={filterKey}
         />
       </DialogContent>
       <DialogActions className={classes.actions}>

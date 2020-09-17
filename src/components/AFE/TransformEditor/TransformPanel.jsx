@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { KeyValueComponent } from '../../DynaForm/fields/DynaKeyValue';
@@ -13,11 +13,13 @@ import { isJsonString } from '../../../utils/string';
 const useStyles = makeStyles(theme => ({
   container: {
     paddingLeft: theme.spacing(1),
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: props => props.hasError ? `${fade(theme.palette.error.light, 0.06)} !important` : theme.palette.background.default,
+    border: props => props.hasError && '1px solid',
+    borderColor: props => props.hasError && theme.palette.error.dark,
     height: '100%',
     overflowY: 'auto',
     width: '100%',
-    marginTop: theme.spacing(1),
+    paddingTop: theme.spacing(1),
   },
   input: {
     flex: '1 1 auto',

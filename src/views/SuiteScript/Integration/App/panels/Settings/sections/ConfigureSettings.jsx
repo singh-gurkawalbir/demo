@@ -11,6 +11,7 @@ import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
 import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
 import { FormStateManager } from '../../../../../../../components/ResourceFormFactory';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SavingMask = () => (
+export const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
     <Spinner color="primary" />
@@ -92,14 +93,11 @@ export const SuiteScriptForm = props => {
     </>
   );
 };
-
 export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id, integrationAppName}) {
   const classes = useStyles();
-  const section = useSelector(state => {
-    const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
+  const sections = useSelectorMemo(selectors.makeSuiteScriptIASections, integrationId, ssLinkedConnectionId);
 
-    return sections.find(s => s.titleId === sectionId);
-  }, shallowEqual);
+  const section = sections.find(s => s.titleId === sectionId);
 
   const translatedMeta = useMemo(
     () => integrationSettingsToDynaFormMetadata(

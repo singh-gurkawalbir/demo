@@ -1,4 +1,4 @@
-export default [
+export const operators = [
   { name: 'After', value: 'after' },
   { name: 'all of', value: 'allof' },
   { name: 'any', value: 'any' },
@@ -38,3 +38,23 @@ export default [
   { name: 'starts with', value: 'startswith' },
   { name: 'within', value: 'within' },
 ];
+export const operatorsByFieldType = {
+  checkbox: ['is'],
+  text: ['contains', 'doesnotcontain', 'doesnotstartwith', 'equalto', 'haskeywords', 'is', 'isempty', 'isnot', 'isnotempty', 'startswith'],
+  date: ['after', 'before', 'isempty', 'isnotempty', 'notafter', 'notbefore', 'noton', 'notonorafter', 'notonorbefore', 'notwithin', 'on', 'onorafter', 'onorbefore', 'within'],
+  select: ['anyof', 'noneof'],
+  currency: ['between', 'equalto', 'greaterthan', 'greaterthanorequalto', 'isempty', 'isnotempty', 'lessthan', 'lessthanorequalto', 'notbetween', 'notequalto', 'notgreaterthan', 'notgreaterthanorequalto', 'notlessthan', 'notlessthanorequalto'],
+  multiselect: ['allof', 'anyof', 'noneof', 'notallof'],
+};
+
+operatorsByFieldType.ccnumber = operatorsByFieldType.checkbox;
+operatorsByFieldType.textarea = operatorsByFieldType.text;
+operatorsByFieldType.phone = operatorsByFieldType.text;
+operatorsByFieldType.email = operatorsByFieldType.text;
+operatorsByFieldType.inlinehtml = operatorsByFieldType.text;
+operatorsByFieldType.image = operatorsByFieldType.text;
+operatorsByFieldType.url = operatorsByFieldType.text;
+operatorsByFieldType.datetime = operatorsByFieldType.date;
+operatorsByFieldType.datetimetz = operatorsByFieldType.date;
+operatorsByFieldType.integer = operatorsByFieldType.currency;
+operatorsByFieldType.float = operatorsByFieldType.currency;
