@@ -6,7 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem, FormControlLabel, Checkbox } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -128,6 +128,7 @@ function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
   const dispatch = useDispatch();
+  const [hideInactive, setHideInactive] = useState(false);
   const { flows } = useSelector(state =>
     selectors.integrationAppFlowSettings(
       state,
@@ -137,6 +138,8 @@ function FlowList({ integrationId, storeId }) {
       { excludeHiddenFlows: true }
     )
   );
+
+  console.log('flows', flows);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
@@ -145,6 +148,10 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
+  const handleHideInactive = useCallback(e => {
+    setHideInactive(e.target.checked);
+  }, []);
+  const filteredFlows = useMemo(() => flows.filter(f => hideInactive ? !f.disabled : true), [hideInactive, flows]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -191,9 +198,15 @@ function FlowList({ integrationId, storeId }) {
         sectionId={sectionId}
         // flowId={flowId}
       />
-      <PanelHeader title={`${section?.title} flows`} />
+      <PanelHeader title={`${section?.title} flows`} >
+        <FormControlLabel
+          control={
+            <Checkbox name="hideInactive" checked={hideInactive} onClick={handleHideInactive} />
+          }
+          label="Hide inactive flows" />
+      </PanelHeader>
       <CeligoTable
-        data={flows}
+        data={filteredFlows}
         filterKey={filterKey}
         {...flowTableMeta}
         actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}

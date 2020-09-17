@@ -5,7 +5,7 @@ import RunDashboardV2 from '../../../../../../components/JobDashboard/RunDashboa
 
 export default function RunDashboardV2Panel({ flowId }) {
   const integrationId = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)._integrationId || 'none');
+    selectors.resource(state, 'flows', flowId)?._integrationId || 'none');
 
   return (
     <RunDashboardV2
