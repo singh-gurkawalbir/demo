@@ -11,8 +11,7 @@ import LoadResources from '../../components/LoadResources';
 import ResourceDrawer from '../../components/drawer/Resource';
 import AddIcon from '../../components/icons/AddIcon';
 import BottomDrawer from './drawers/BottomDrawer';
-// import WizardDrawer from './drawers/Wizard';
-// import RunDrawer from './drawers/Run';
+import useBottomDrawer from './drawers/BottomDrawer/useBottomDrawer';
 import ScheduleDrawer from './drawers/Schedule';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SettingsDrawer from './drawers/Settings';
@@ -40,7 +39,6 @@ import LastRun from './LastRun';
 import MappingDrawerRoute from '../MappingDrawer';
 import LineGraphButton from './LineGraphButton';
 
-const bottomDrawerMin = 41;
 const useStyles = makeStyles(theme => ({
   actions: {
     display: 'flex',
@@ -181,8 +179,7 @@ function FlowBuilder() {
   const classes = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
-  // Bottom drawer is shown for existing flows and docked for new flow
-  const [bottomDrawerSize, setBottomDrawerSize] = useState(isNewFlow ? 0 : 1);
+  const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
   const [tabValue, setTabValue] = useState(0);
   // #region Selectors
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -222,20 +219,12 @@ function FlowBuilder() {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+
   const isViewMode = isMonitorLevelAccess || isIAType;
   // #endregion
   const calcCanvasStyle = useMemo(() => ({
-    height: `calc(${(4 - bottomDrawerSize) *
-            25}vh - ${theme.appBarHeight +
-            theme.pageBarHeight +
-            (bottomDrawerSize ? 0 : bottomDrawerMin)}px)`,
-  }), [bottomDrawerSize, theme.appBarHeight, theme.pageBarHeight]);
-
-  const calcBottomDrawerStyle = useMemo(() => ({
-    bottom: bottomDrawerSize
-      ? `calc(${bottomDrawerSize * 25}vh + ${theme.spacing(3)}px)`
-      : bottomDrawerMin + theme.spacing(3),
-  }), [bottomDrawerSize, theme]);
+    height: `calc(100vh - ${bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight}px)`,
+  }), [bottomDrawerHeight, theme.appBarHeight, theme.pageBarHeight]);
 
   const patchFlow = useCallback(
     (path, value) => {
@@ -353,8 +342,8 @@ function FlowBuilder() {
     setTabValue(0);
 
     // Raise Bottom Drawer height
-    setBottomDrawerSize(2);
-  }, []);
+    setBottomDrawerHeight(500);
+  }, [setBottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);
@@ -726,19 +715,10 @@ function FlowBuilder() {
             {pps}
           </div>
         </div>
-        {bottomDrawerSize < 3 && (
-          <div
-            className={classes.fabContainer}
-            style={calcBottomDrawerStyle}
-          />
-        )}
-
         {/* CANVAS END */}
       </div>
       <BottomDrawer
-        flow={flow}
-        size={bottomDrawerSize}
-        setSize={setBottomDrawerSize}
+        flowId={flowId}
         tabValue={tabValue}
         setTabValue={setTabValue}
       />

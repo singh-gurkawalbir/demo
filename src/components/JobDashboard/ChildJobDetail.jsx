@@ -70,6 +70,7 @@ export default function ChildJobDetail({
   userPermissionsOnIntegration,
   onViewErrorsClick,
   integrationName,
+  isFlowBuilderView,
 }) {
   const isJobInProgress = [
     JOB_STATUS.QUEUED,
@@ -159,6 +160,7 @@ export default function ChildJobDetail({
           job={job}
           userPermissionsOnIntegration={userPermissionsOnIntegration}
           integrationName={integrationName}
+          isFlowBuilderView={isFlowBuilderView}
         />
       </TableCell>
     </TableRow>

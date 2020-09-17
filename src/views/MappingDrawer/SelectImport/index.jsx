@@ -1,9 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, Fragment, useMemo } from 'react';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { selectors } from '../../../reducers';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getNetSuiteSubrecordImports } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -29,22 +29,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function SelectImport() {
   const match = useRouteMatch();
-  const {flowId, importId} = match.params;
-
+  const { flowId, importId } = match.params;
   const classes = useStyles();
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const imports = useSelector(
-    state => {
-      if (importId) {
-        const subRecordResource = selectors.resource(state, 'imports', importId);
-
-        return [subRecordResource];
-      }
-
-      return selectors.flowImports(state, flowId);
-    },
-    (left, right) => left && right && left.length === right.length
+  const { merged: flow = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
   );
+  const flowImports = useSelectorMemo(selectors.mkflowImportsList, flowId, importId);
+  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
 

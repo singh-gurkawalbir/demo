@@ -106,18 +106,31 @@ const TestAndSaveButton = props => {
   } = props;
   const dispatch = useDispatch();
   const handleSaveForm = useCallback(
-    values =>
+    values => {
+      const newValues = { ...values };
+
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
       dispatch(actions.resourceForm.submit(
         resourceType,
         resourceId,
-        values,
+        newValues,
         null,
         skipCloseOnSave
-      )),
+      ));
+    },
     [dispatch, resourceId, resourceType, skipCloseOnSave]
   );
-  const handleTestConnection = useCallback(values =>
-    dispatch(actions.resource.connections.test(resourceId, values)), [dispatch, resourceId]);
+  const handleTestConnection = useCallback(values => {
+    const newValues = { ...values };
+
+    if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+      newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+    }
+    dispatch(actions.resource.connections.test(resourceId, newValues));
+  }, [dispatch, resourceId]);
+
   const testClear = useCallback(
     () => dispatch(actions.resource.connections.testClear(resourceId, true)),
     [dispatch, resourceId]

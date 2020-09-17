@@ -115,10 +115,12 @@ const useStyles = makeStyles(theme => ({
   bubble: {
     position: 'absolute',
     fill: theme.palette.secondary.lightest,
-    // border: 'solid 1px lightBlue',
   },
   bubbleBG: {
     fill: 'white',
+  },
+  bubbleActive: {
+    fill: theme.palette.primary.main,
   },
   appLogoContainer: {
     marginTop: theme.spacing(1),
@@ -203,6 +205,13 @@ function AppBlock({
   const [isTruncated, setIsTruncated] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
   const isNew = blockType.startsWith('new');
+  const isActive = useSelector(state => {
+    const activeConn = selectors.activeConnection(state);
+
+    if (!activeConn) return false;
+
+    return activeConn === resource._id || activeConn === resource._connectionId;
+  });
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -339,7 +348,9 @@ function AppBlock({
           <BubbleSvg
             height={blockHeight}
             width={blockWidth}
-            classes={{ bubble: classes.bubble, bubbleBG: classes.bubbleBG }}
+            classes={{ bubble: clsx(classes.bubble, {[classes.bubbleActive]: isActive}),
+              bubbleBG: classes.bubbleBG,
+            }}
           />
         </div>
         <div className={classes.sideActionContainer}>
