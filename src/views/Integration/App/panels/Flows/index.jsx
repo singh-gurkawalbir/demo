@@ -139,7 +139,6 @@ function FlowList({ integrationId, storeId }) {
     )
   );
 
-  console.log('flows', flows);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
