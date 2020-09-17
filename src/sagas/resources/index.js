@@ -128,15 +128,6 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     resourceType = resourceType.split('/').pop();
   }
 
-  // #region Temp Data loader code
-  // For consistency, we normalize the client code to use the new pageProcessor and pageGenerator fields
-  // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
-  // only support the older interface, so we need to convert back before we make the PUT/POST API call.
-  // this complete code block can be removed once the BE DL code uses the new flow interface fields.
-  let resourceIsDataLoaderFlow = false;
-
-  // #endregion
-
   let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
@@ -184,6 +175,13 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     path = `/integrations/${merged.integrationId}/connections`;
   }
 
+  // #region Temp Data loader code
+  // For consistency, we normalize the client code to use the new pageProcessor and pageGenerator fields
+  // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
+  // only support the older interface, so we need to convert back before we make the PUT/POST API call.
+  // this complete code block can be removed once the BE DL code uses the new flow interface fields.
+  let resourceIsDataLoaderFlow = false;
+
   if (resourceType === 'flows') {
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
@@ -211,6 +209,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
 
     delete merged.flowConvertedToNewSchema;
   }
+  // #endregion
 
   try {
     updated = yield call(apiCallWithRetry, {
