@@ -8,8 +8,10 @@ import TrashIcon from '../../icons/TrashIcon';
 import RefreshIcon from '../../icons/RefreshIcon';
 import ActionButton from '../../ActionButton';
 import DynaTypeableSelect from '../../DynaForm/fields/DynaTypeableSelect';
-import operators from './operators';
+import DynaSelect from '../../DynaForm/fields/DynaSelect';
+import {operators, operatorsByFieldType} from './operators';
 import Spinner from '../../Spinner';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -51,13 +53,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SearchCriteriaEditor(props) {
-  const { editorId, disabled, value, onRefresh, fieldOptions = {} } = props;
-  const {
-    fields = [],
-    status,
-    valueName: fieldValueName,
-    labelName: fieldLabelName,
-  } = fieldOptions;
+  const { editorId, disabled, value, onRefresh, connectionId, commMetaPath, filterKey } = props;
+  const { data: fields, status } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, filterKey);
   const classes = useStyles();
   const dispatch = useDispatch();
   const { searchCriteria = [], initChangeIdentifier = 0 } = useSelector(state =>
@@ -80,14 +77,19 @@ export default function SearchCriteriaEditor(props) {
     dispatch(actions.searchCriteria.delete(editorId, row));
   };
 
+  const fieldType = useCallback(fieldId =>
+    fields?.find(f => f.value === fieldId)?.type,
+  [fields]);
+
   const tableData = useMemo(
     () =>
       [...(searchCriteria || []), {}].map((obj, index) => ({
         ...obj,
         field: obj.join ? [obj.join, obj.field].join('.') : obj.field,
+        fieldType: fieldType(obj.join ? [obj.join, obj.field].join('.') : obj.field),
         index,
       })),
-    [searchCriteria]
+    [fieldType, searchCriteria]
   );
   const handleRefresh = useCallback(() => {
     if (onRefresh) {
@@ -123,8 +125,8 @@ export default function SearchCriteriaEditor(props) {
                 <DynaTypeableSelect
                   key={`field-${initChangeIdentifier}-${r.rowIdentifier}`}
                   id={`field-${r.index}`}
-                  labelName={fieldLabelName}
-                  valueName={fieldValueName}
+                  labelName="label"
+                  valueName="value"
                   data-test={`field-${r.index}`}
                   value={r.field}
                   options={fields}
@@ -138,15 +140,15 @@ export default function SearchCriteriaEditor(props) {
                 className={clsx(classes.childHeader, {
                   [classes.disabled]: disabled,
                 })}>
-                <DynaTypeableSelect
+                <DynaSelect
                   key={`operator-${initChangeIdentifier}-${r.rowIdentifier}`}
                   id={`operator-${r.index}`}
                   value={r.operator}
-                  options={operators}
+                  options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
                   labelName="name"
                   valueName="value"
                   disabled={disabled}
-                  onBlur={(id, _value) => {
+                  onFieldChange={(id, _value) => {
                     handleFieldUpdate(r.index, _value, 'operator');
                   }}
                 />

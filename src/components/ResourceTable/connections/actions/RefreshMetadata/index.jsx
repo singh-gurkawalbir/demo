@@ -62,7 +62,7 @@ export default {
       if (!isConnectionOffline) refreshMetadata();
       else {
         enqueueSnackbar({
-          message: 'Connection is offline',
+          message: 'Connection is offline.',
           variant: 'error',
         });
       }
