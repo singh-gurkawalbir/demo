@@ -26,7 +26,8 @@ export const formatErrorDetails = (error = {}) => {
   const { occurredAt, code, message, errorId, traceKey, source } = error;
 
   const content = `
-  Message: ${message}
+  Message: 
+  ${message}
   
   Code: ${code}
 
