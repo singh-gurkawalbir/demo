@@ -23,7 +23,6 @@ import {
   getXAxisFormat,
   getTicks,
   getLineColor,
-  getAxisLabelPosition,
   getLegend,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
@@ -302,7 +301,8 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
               value: getAxisLabel(id),
               angle: -90,
               offset: -20,
-              position: getAxisLabelPosition(id),
+              position: 'insideLeft',
+              style: { textAnchor: 'middle' },
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
