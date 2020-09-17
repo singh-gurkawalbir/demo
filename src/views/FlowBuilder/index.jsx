@@ -590,6 +590,7 @@ function FlowBuilder() {
 
     return () => {
       dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+      dispatch(actions.errorManager.latestFlowJobs.clear({ flowId }));
     };
   }, [
     dispatch,

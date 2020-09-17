@@ -17,10 +17,6 @@ export default function RunDashboardV2({ flowId }) {
     dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
   }, [dispatch, flowId]);
 
-  useEffect(() =>
-    () => dispatch(actions.errorManager.latestFlowJobs.clear({ flowId })),
-  [dispatch, flowId]);
-
   if (latestFlowJobs?.status === 'refresh') {
     // Only when the dashboard is entirely refreshed , show loading
     // it can be updated in between to get latest job status in which case, no need to show loader
