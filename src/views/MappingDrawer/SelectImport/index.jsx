@@ -7,6 +7,18 @@ import { selectors } from '../../../reducers';
 import { getNetSuiteSubrecordImports } from '../../../utils/resource';
 import { isImportMappingAvailable } from '../../../utils/flows';
 
+const isQueryBuilderSupported = importResource => {
+  const {adaptorType} = importResource;
+
+  if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {
+    return true;
+  }
+  if (adaptorType === 'RDBMSImport' && !importResource.rdbms.queryType.find(q => ['BULK INSERT', 'MERGE'].includes(q))) {
+    return true;
+  }
+
+  return false;
+};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -44,14 +56,16 @@ export default function SelectImport() {
 
       const flowImports = selectors.flowImports(state, flowId);
 
-      return flowImports.filter(i => isImportMappingAvailable(i));
+      return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
     },
     (left, right) => left && right && left.length === right.length
   );
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = useCallback(_impId => {
-    if (imports.find(({adaptorType, _id}) => _id === _impId && ['RDBMSImport', 'DynamodbImport', 'MongodbImport'].includes(adaptorType))) {
+    const importResource = imports.find(({_id}) => _id === _impId);
+
+    if (isQueryBuilderSupported(importResource)) {
       const url = match.url.replace('/mapping', '/queryBuilder');
 
       return importId ? url : `${url}/${_impId}`;

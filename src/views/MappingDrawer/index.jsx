@@ -13,21 +13,11 @@ const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
-  const isDatabaseImport = useSelector(state => {
-    const importResource = selectors.resource(state, 'imports', importId);
-
-    return !!['RDBMSImport', 'DynamodbImport', 'MongodbImport'].includes(importResource.adaptorType);
-  });
-
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-
-  if (isDatabaseImport) {
-    return null;
-  }
 
   return (
     <Mapping
@@ -59,6 +49,7 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         hideBackButton
         path={[
+          'databaseMapping/:flowId/:importId/view',
           'mapping/:flowId/:importId/:subRecordMappingId/view',
           'mapping/:flowId/:importId/view',
           'mapping/:flowId/:importId',
@@ -97,8 +88,7 @@ export default function MappingDrawerRoute(props) {
         variant="temporary"
         exact
         hideBackButton
-        path="queryBuilder/:flowId/:importId"
-      >
+        path="queryBuilder/:flowId/:importId">
         <SelectQueryType />
       </RightDrawer>
       <Route

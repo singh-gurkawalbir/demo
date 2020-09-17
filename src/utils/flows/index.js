@@ -2,7 +2,7 @@ import produce from 'immer';
 import { keys } from 'lodash';
 import mappingUtil from '../mapping';
 import {
-  // adaptorTypeMap,
+  adaptorTypeMap,
   isBlobTypeResource,
   isValidResourceReference,
   isFileAdaptor,
@@ -191,17 +191,17 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-  const { file = {} } = importResource;
-  // const { adaptorType, rdbms = {}, file = {} } = importResource;
-  // const appType = adaptorTypeMap[adaptorType];
+  const { adaptorType, rdbms = {}, file = {} } = importResource;
+  const appType = adaptorTypeMap[adaptorType];
 
   // For File Adaptor XML Imports, no support for import mapping
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
+  // if apptype is mongodb then mapping should not be shown
+  if (appType === 'mongodb') return false;
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
-  // TODO: Is this condition required
-  // if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
-  //   return true;
-  // }
+  if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
+    return false;
+  }
 
   // for other app types mapping should be shown
   return true;
