@@ -19,6 +19,9 @@ export default {
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+        if (r.assistant) {
+          expression.push({ assistant: r.assistant });
+        }
 
         if (r.type === 'netsuite') {
           expression.push({
