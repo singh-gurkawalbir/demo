@@ -15,7 +15,7 @@ import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
-import RunDashboardV2Panel from './panels/Dashboard/RunDashboardV2Panel';
+import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
 import AuditPanel from './panels/Audit';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
@@ -332,7 +332,7 @@ export default function BottomDrawer({
       <>
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
-            ? <RunDashboardV2Panel flowId={flowId} />
+            ? <RunDashboardV2 flowId={flowId} />
             : <RunDashboardPanel flowId={flowId} />}
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>

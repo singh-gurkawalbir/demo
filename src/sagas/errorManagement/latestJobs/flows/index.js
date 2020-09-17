@@ -105,7 +105,6 @@ function* requestLatestJobs({ flowId }) {
   }
 }
 
-// TODO: @Raghu Remove this once we have the latest Jobs API implementation inplace
 export function* cancelJob({ jobId }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
