@@ -18,6 +18,7 @@ export default function Actions({
   flowId,
   resourceId,
   onClose,
+  mode = 'view',
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -64,7 +65,7 @@ export default function Actions({
     if (onClose) onClose();
   }, [dispatch, flowId, onClose, resourceId, retryId, retryData]);
 
-  if (retryId) {
+  if (mode === 'edit') {
     return (
       <div className={classes.action}>
         <Button variant="outlined" color="primary" onClick={handleSaveAndRetry}>
