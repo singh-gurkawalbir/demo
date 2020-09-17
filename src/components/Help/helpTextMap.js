@@ -607,6 +607,12 @@ export default {
   'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
   'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
   if you're using a production account, you'll find your API keys under the 'API Management' page.`,
+  'jiraserver.connection.http.baseURI':
+    'Please enter the base URI for Jira Server. For example, http://localhost:8080/rest/api/2/customFields, if this is your endpoint URL. The Base URL would be http://localhost:8080/.',
+  'jiraserver.connection.http.auth.basic.username':
+    'Please enter the username of your Jira Server account.',
+  'jiraserver.connection.http.auth.basic.password':
+    'Please enter the password of your Jira Server account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
