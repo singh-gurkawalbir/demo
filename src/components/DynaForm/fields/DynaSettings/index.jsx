@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Typography, ExpansionPanelSummary, ExpansionPanelDetails, ExpansionPanel } from '@material-ui/core';
@@ -8,8 +8,6 @@ import RawView from './RawView';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useIntegration from '../../../../hooks/useIntegration';
 import FormBuilderButton from '../../../FormBuilderButton';
-import { generateNewId } from '../../../../utils/resource';
-import useFormContext from '../../../Form/FormContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,7 +42,6 @@ export default function DynaSettings(props) {
   const { resourceType, resourceId } = resourceContext;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
-  const [secondaryFormKey] = useState(generateNewId());
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -70,13 +67,7 @@ export default function DynaSettings(props) {
 
   // TODO: @Surya revisit this implementation of settings form
   // directly register field states
-  const { value, isValid} = useFormContext(secondaryFormKey) || {};
 
-  useEffect(() => {
-    if (hasSettingsForm) {
-      handleSettingFormChange(value, isValid);
-    }
-  }, [handleSettingFormChange, hasSettingsForm, isValid, value]);
   const handleExpandClick = useCallback(() => {
     // HACK! to overcome event bubbling.
     // We don't want child views affecting the panel state.
@@ -97,7 +88,7 @@ export default function DynaSettings(props) {
     if (hasSettingsForm) {
       return (
         <FormView
-          formKey={secondaryFormKey}
+          onFormChange={handleSettingFormChange}
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}

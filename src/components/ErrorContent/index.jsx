@@ -12,6 +12,14 @@ const useStyles = makeStyles({
     maxWidth: 500,
     paddingLeft: 12,
     wordBreak: 'break-word',
+    '& > * ': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+    },
+    '& > * *': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+    },
   },
 });
 
