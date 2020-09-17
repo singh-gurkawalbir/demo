@@ -41,7 +41,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, optio
           />
         ) : (
           <Typography className={classes.messageContainer}>
-            No logs are present
+            You don&apos;t have any logs.
           </Typography>
         )}
 
