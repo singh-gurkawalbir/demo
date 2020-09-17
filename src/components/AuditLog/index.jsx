@@ -88,7 +88,7 @@ class AuditLog extends Component {
               resourceId={resourceId}
               resourceDetails={resourceDetails}
               filters={filters}
-              options={{ storeId }}
+              storeId={storeId}
               onClick={onClick}
             />
           </div>

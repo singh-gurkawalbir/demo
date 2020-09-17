@@ -64,18 +64,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyObj = {};
+const emptySet = [];
+
 export default function CeligoTable({
   columns,
   onRowOver,
   onRowOut,
   rowActions,
-  data = [],
+  data = emptySet,
   onSelectChange,
   selectableRows,
   isSelectableRow,
   filterKey,
   className,
-  actionProps = {},
+  actionProps = emptyObj,
 }) {
   const history = useHistory();
   const classes = useStyles();
