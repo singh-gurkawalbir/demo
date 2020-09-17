@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { getNetSuiteSubrecordImports } from '../../../utils/resource';
+import { isImportMappingAvailable } from '../../../utils/flows';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,7 +42,9 @@ export default function SelectImport() {
         return [subRecordResource];
       }
 
-      return selectors.flowImports(state, flowId);
+      const flowImports = selectors.flowImports(state, flowId);
+
+      return flowImports.filter(i => isImportMappingAvailable(i));
     },
     (left, right) => left && right && left.length === right.length
   );
