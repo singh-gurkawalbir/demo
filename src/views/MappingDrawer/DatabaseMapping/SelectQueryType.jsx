@@ -35,14 +35,22 @@ export default function SelectQueryType() {
     state => {
       const importResource = selectors.resource(state, 'imports', importId);
 
-      return importResource.rdbms?.queryType;
+      if (importResource.adaptorType === 'RDBMSImport') {
+        return importResource.rdbms?.queryType;
+      }
+      if (importResource.adaptorType === 'MongodbImport') {
+        return [importResource.mongodb.method];
+      }
+      if (importResource.adaptorType === 'DynamodbImport') {
+        return [importResource.dynamodb.method];
+      }
     },
     (left, right) => left && right && left.length === right.length
   );
 
   // If there is only one query type then we can safely
   // take the user to the query builder relating to that Query Type
-  if (queryTypes.length === 1) {
+  if (queryTypes?.length === 1) {
     return <Redirect push={false} to={`${match.url}/0/view`} />;
   }
 
@@ -52,7 +60,7 @@ export default function SelectQueryType() {
       {/* <Typography className={classes.text} variant="h5">
         Select the Query Type.
       </Typography> */}
-      {queryTypes.map((i, index) => (
+      {queryTypes?.map((i, index) => (
         <Fragment key={i}>
           <Button
             data-key="mapping"

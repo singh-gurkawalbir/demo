@@ -44,9 +44,6 @@ export default {
       arrayIndex: 0,
       label: 'Query builder',
       required: true,
-      title: 'SQL Query Builder',
-      lookupFieldId: 'rdbms.lookups',
-      modelMetadataFieldId: 'modelMetadata',
       visibleWhen: [
         {
           field: 'rdbms.queryType',

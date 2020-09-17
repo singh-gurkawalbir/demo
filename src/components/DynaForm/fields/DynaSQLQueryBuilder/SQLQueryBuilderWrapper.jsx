@@ -1,7 +1,6 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
-import { adaptorTypeMap } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
@@ -11,40 +10,55 @@ import sqlUtil from '../../../../utils/sql';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import DynaLookupEditor from '../DynaLookupEditor';
 
+const emptyObject = {};
+const getEditorTitle = adaptorType => {
+  if (adaptorType === 'MongodbImport') {
+    return {
+      defaultTitle: 'MongoDB document builder',
+      ruleTitle: 'Template (use handlebars expressions to map fields from your export data)',
+    };
+  }
+  if (adaptorType === 'DynamodbImport') {
+    return {
+      defaultTitle: 'DynamoDB Query Builder',
+      ruleTitle: 'Template (use handlebars expressions to map fields from your export data)',
+    };
+  }
+  if (adaptorType === 'RDBMSImport') {
+    return {
+      defaultTitle: 'SQL Query Builder',
+      ruleTitle: '',
+    };
+  }
+
+  return emptyObject;
+};
 export default function SQLQueryBuilderWrapper(props) {
   const {
     id,
     onFieldChange,
-    options = {},
     disabled,
     value,
-    title,
-    ruleTitle,
     arrayIndex,
     resourceId,
     flowId,
     resourceType,
     hideDefaultData,
     lookups,
-    lookupFieldId,
     modelMetadata,
-    modelMetadataFieldId,
     queryType,
     optionalSaveParams,
     patchOnSave,
-
-  } = props;
-  const {
     method,
-  } = options;
-
+    title,
+  } = props;
   const dispatch = useDispatch();
   const { merged: resourceData } = useSelectorMemo(
     selectors.makeResourceDataSelector,
     'imports',
     resourceId
   );
-  const { adaptorType: resourceAdapterType, _connectionId: connectionId} = resourceData;
+  const { adaptorType, _connectionId: connectionId} = resourceData;
   const {data: sampleData, status: flowDataStatus} = useSelector(state =>
     selectors.getSampleDataContext(state, {
       flowId,
@@ -95,21 +109,21 @@ export default function SQLQueryBuilderWrapper(props) {
     ? value[arrayIndex]
     : value,
   [arrayIndex, value]);
-
+  const {defaultTitle, ruleTitle} = useMemo(() => getEditorTitle(adaptorType), [adaptorType]);
   const sampleRule = useMemo(() => {
     if (sampleData && extractFields) {
       const extractPaths = getJSONPaths(extractFields, null, {
         wrapSpecialChars: true,
       });
 
-      if (adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.MongodbImport) {
+      if (adaptorType === 'MongodbImport') {
         return sqlUtil.getSampleMongoDbTemplate(
           sampleData,
           extractPaths,
-          queryType === 'insertMany'
+          method === 'insertMany'
         );
       } if (
-        adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.DynamodbImport
+        adaptorType === 'DynamodbImport'
       ) {
         return sqlUtil.getSampleDynamodbTemplate(
           sampleData,
@@ -117,7 +131,7 @@ export default function SQLQueryBuilderWrapper(props) {
           method === 'putItem'
         );
       } if (
-        adaptorTypeMap[resourceAdapterType] === adaptorTypeMap.RDBMSImport && rdbmsSubType === 'snowflake'
+        adaptorType === 'RDBMSImport' && rdbmsSubType === 'snowflake'
       ) {
         return sqlUtil.getSampleSnowflakeTemplate(
           sampleData,
@@ -132,7 +146,7 @@ export default function SQLQueryBuilderWrapper(props) {
         queryType === 'INSERT'
       );
     }
-  }, [extractFields, method, queryType, rdbmsSubType, resourceAdapterType, sampleData]);
+  }, [adaptorType, extractFields, method, queryType, rdbmsSubType, sampleData]);
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
@@ -160,17 +174,16 @@ export default function SQLQueryBuilderWrapper(props) {
     if (shouldCommit) {
       const { template, defaultData } = editorValues;
 
-      if (modelMetadataFieldId && !hideDefaultData) {
+      if (adaptorType === 'RDBMSImport') {
         let parsedDefaultData;
 
         try {
           parsedDefaultData = JSON.parse(defaultData);
 
           if (parsedDefaultData.data) {
-            onFieldChange(modelMetadataFieldId, parsedDefaultData.data);
+            onFieldChange('modelMetadata', parsedDefaultData.data);
           }
-        } catch (e) {
-          // do nothing
+        } catch (e) { // do nothing }
         }
       }
       if (typeof arrayIndex !== 'undefined' && Array.isArray(value)) {
@@ -184,13 +197,13 @@ export default function SQLQueryBuilderWrapper(props) {
         onFieldChange(id, template);
       }
     }
-  }, [arrayIndex, hideDefaultData, id, modelMetadataFieldId, onFieldChange, value]);
+  }, [adaptorType, arrayIndex, id, onFieldChange, value]);
 
   const lookupField = useMemo(() => {
-    if (lookupFieldId) {
+    if (adaptorType === 'RDBMSImport') {
       return (
         <DynaLookupEditor
-          id={lookupFieldId}
+          id="rdbms.lookups"
           label="Manage lookups"
           value={lookups}
           onFieldChange={onFieldChange}
@@ -200,12 +213,12 @@ export default function SQLQueryBuilderWrapper(props) {
 />
       );
     }
-  }, [flowId, lookupFieldId, lookups, onFieldChange, resourceId, resourceType]);
+  }, [adaptorType, flowId, lookups, onFieldChange, resourceId, resourceType]);
 
   return (
     <>
       <SqlQueryBuilderEditorDrawer
-        title={title}
+        title={title || defaultTitle}
         id={`${resourceId}-${id}`}
         rule={parsedRule}
         sampleRule={sampleRule}

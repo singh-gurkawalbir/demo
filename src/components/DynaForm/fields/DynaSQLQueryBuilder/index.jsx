@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { Button, FormLabel, FormHelperText } from '@material-ui/core';
 import FieldHelp from '../../FieldHelp';
+import { selectors } from '../../../../reducers';
 import usePushRightDrawer from '../../../../hooks/usePushRightDrawer';
 import SQLQueryBuilderWrapper from './SQLQueryBuilderWrapper';
 import useFormContext from '../../../Form/FormContext';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   sqlContainer: {
@@ -38,24 +40,42 @@ export default function DynaSQLQueryBuilder(props) {
     required,
     isValid,
     errorMessages,
-    lookupFieldId,
-    modelMetadataFieldId,
-    queryTypeField,
+    resourceId,
   } = props;
   const handleOpenDrawer = usePushRightDrawer(id);
   const {value: formValue} = useFormContext(props.formKey);
-  const lookups = lookupFieldId && formValue[`/${lookupFieldId.replace('.', '/')}`];
-  const modelMetadata = modelMetadataFieldId && formValue[`/${modelMetadataFieldId.replace('.', '/')}`];
-  const queryType = queryTypeField && formValue[`/${queryTypeField.replace('.', '/')}`];
+  const { merged: resourceData } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'imports',
+    resourceId
+  );
+  const { adaptorType} = resourceData;
+  const options = useMemo(() => {
+    if (adaptorType === 'RDBMSImport') {
+      return {
+        lookups: formValue['/rdbms/lookups'],
+        modelMetadata: formValue['/modelMetadata'],
+        queryType: formValue['/rdbms/queryType'],
+      };
+    }
+    if (adaptorType === 'MongodbImport') {
+      return {
+        method: formValue['/mongodb/method'],
+      };
+    }
+    if (adaptorType === 'DynamodbImport') {
+      return {
+        method: formValue['/dynamodb/method'],
+      };
+    }
+  }, [adaptorType, formValue]);
 
   return (
     <>
       <div className={classes.sqlContainer}>
         <SQLQueryBuilderWrapper
           {...props}
-          lookups={lookups}
-          modelMetadata={modelMetadata}
-          queryType={queryType}
+          {...options}
         />
 
         <div className={classes.sqlLabelWrapper}>

@@ -71,10 +71,6 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Document builder',
-    queryTypeField: 'mongodb.method',
-    title: 'MongoDB document builder',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -87,10 +83,6 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Document builder',
-    title: 'MongoDB document builder',
-    queryTypeField: 'mongodb.method',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -104,8 +96,6 @@ export default {
     hideDefaultData: true,
     label: 'Filter builder',
     title: 'MongoDB filter builder',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',

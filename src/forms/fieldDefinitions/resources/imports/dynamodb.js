@@ -63,10 +63,7 @@ export default {
     type: 'sqlquerybuilder',
     arrayIndex: 0,
     hideDefaultData: true,
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     label: 'Query builder',
-    title: 'DynamoDB Query Builder',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
     visibleWhen: [
       {

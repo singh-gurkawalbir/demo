@@ -6,36 +6,49 @@ export default {
       lookups,
       optionalSaveParams = {},
     } = editor;
-    const { resourceId, resourceType, queryIndex, query } = optionalSaveParams || {};
-    const patches = [
-      {
+    const { adaptorType, resourceId, resourceType, queryIndex, query, method } = optionalSaveParams || {};
+    const patches = [];
+
+    if (adaptorType === 'MongodbImport') {
+      patches.push({
+        op: 'replace',
+        path: method === 'insertMany' ? '/mongodb/document' : '/mongodb/update',
+        value: template,
+      });
+    } else if (adaptorType === 'DynamodbImport' && method === 'putItem') {
+      patches.push({
+        op: 'replace',
+        path: '/dynamodb/itemDocument',
+        value: template,
+      });
+    } else if (adaptorType === 'RDBMSImport') {
+      const modifiedQuery = [...query];
+
+      modifiedQuery[queryIndex] = template;
+      patches.push({
+        op: 'replace',
+        path: '/rdbms/query',
+        value: modifiedQuery,
+      });
+      patches.push({
         op: 'replace',
         path: '/rdbms/lookups',
         value: lookups,
-      },
-    ];
+      });
+      try {
+        const parsedDefaultData = JSON.parse(defaultData);
 
-    try {
-      const parsedDefaultData = JSON.parse(defaultData);
-
-      if (parsedDefaultData.data) {
-        patches.push({
-          op: 'replace',
-          path: '/modelMetadata',
-          value: parsedDefaultData.data,
-        });
+        if (parsedDefaultData.data) {
+          patches.push({
+            op: 'replace',
+            path: '/modelMetadata',
+            value: parsedDefaultData.data,
+          });
+        }
+      } catch (e) {
+        // do nothing
       }
-    } catch (e) {
-      // do nothing
     }
-    const modifiedQuery = [...query];
-
-    modifiedQuery[queryIndex] = template;
-    patches.push({
-      op: 'replace',
-      path: '/rdbms/query',
-      value: modifiedQuery,
-    });
 
     return {
       foregroundPatches: {

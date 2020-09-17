@@ -48,7 +48,7 @@ export default function SelectImport() {
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = useCallback(_impId => {
-    if (imports.find(({adaptorType, _id}) => _id === _impId && ['RDBMSImport', 'DynamodbImport'].includes(adaptorType))) {
+    if (imports.find(({adaptorType, _id}) => _id === _impId && ['RDBMSImport', 'DynamodbImport', 'MongodbImport'].includes(adaptorType))) {
       const url = match.url.replace('/mapping', '/queryBuilder');
 
       return importId ? url : `${url}/${_impId}`;
