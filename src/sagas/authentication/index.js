@@ -225,6 +225,7 @@ export function* initializeApp() {
       const _csrf = yield call(getCSRFTokenBackend);
 
       yield call(setCSRFToken, _csrf);
+      yield call(setLastLoggedInLocalStorage);
 
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
