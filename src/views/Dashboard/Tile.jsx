@@ -341,6 +341,4 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     </div>
   );
 }
-// Here I need to do these changes
-
 export default withRouter(Tile);
