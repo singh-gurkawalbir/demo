@@ -8,6 +8,7 @@ import {
   isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import getRoutePath from '../routePaths';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -298,6 +299,24 @@ export function isSimpleImportFlow(flow, exports) {
   const exp = getFirstExportFromFlow(flow, exports);
 
   return exp && exp.type === 'simple';
+}
+
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
+  const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+  let flowBuilderTo;
+
+  if (isIntegrationApp) {
+    if (childId) {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+    } else {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+    }
+  } else {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
+  }
+
+  return flowBuilderTo;
 }
 
 export function showScheduleIcon(flow, exports) {

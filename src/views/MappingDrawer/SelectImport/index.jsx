@@ -1,24 +1,11 @@
-import React, { useState, useEffect, Fragment, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, Fragment, useMemo, useCallback } from 'react';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import { getNetSuiteSubrecordImports } from '../../../utils/resource';
-import { isImportMappingAvailable } from '../../../utils/flows';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
 
-const isQueryBuilderSupported = importResource => {
-  const {adaptorType} = importResource;
-
-  if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {
-    return true;
-  }
-  if (adaptorType === 'RDBMSImport' && !importResource.rdbms.queryType.find(q => ['BULK INSERT', 'MERGE'].includes(q))) {
-    return true;
-  }
-
-  return false;
-};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -42,24 +29,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function SelectImport() {
   const match = useRouteMatch();
-  const {flowId, importId} = match.params;
-
+  const { flowId, importId } = match.params;
   const classes = useStyles();
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const imports = useSelector(
-    state => {
-      if (importId) {
-        const subRecordResource = selectors.resource(state, 'imports', importId);
-
-        return [subRecordResource];
-      }
-
-      const flowImports = selectors.flowImports(state, flowId);
-
-      return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
-    },
-    (left, right) => left && right && left.length === right.length
+  const { merged: flow = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
   );
+  const flowImports = useSelectorMemo(selectors.mkflowImportsList, flowId, importId);
+  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = useCallback(_impId => {
