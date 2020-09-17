@@ -135,33 +135,6 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // this complete code block can be removed once the BE DL code uses the new flow interface fields.
   let resourceIsDataLoaderFlow = false;
 
-  if (resourceType === 'flows') {
-    resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
-    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
-    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
-    // we reverse this process and convert it back to the old schema ...also we delete this flag
-
-    if (
-      resourceIsDataLoaderFlow ||
-      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
-    ) {
-      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
-        merged._exportId = merged.pageGenerators[0]._exportId;
-        delete merged.pageGenerators;
-      }
-
-      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
-        const importId = merged.pageProcessors[0]._importId;
-
-        if (importId) {
-          merged._importId = importId;
-          delete merged.pageProcessors;
-        }
-      }
-    }
-
-    delete merged.flowConvertedToNewSchema;
-  }
   // #endregion
 
   let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
@@ -209,6 +182,34 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // This is required for tile level monitor access users
   if (resourceType === 'connections' && merged.integrationId && isNew) {
     path = `/integrations/${merged.integrationId}/connections`;
+  }
+
+  if (resourceType === 'flows') {
+    resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
+    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
+    // we reverse this process and convert it back to the old schema ...also we delete this flag
+
+    if (
+      resourceIsDataLoaderFlow ||
+      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
+    ) {
+      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
+        merged._exportId = merged.pageGenerators[0]._exportId;
+        delete merged.pageGenerators;
+      }
+
+      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
+        const importId = merged.pageProcessors[0]._importId;
+
+        if (importId) {
+          merged._importId = importId;
+          delete merged.pageProcessors;
+        }
+      }
+    }
+
+    delete merged.flowConvertedToNewSchema;
   }
 
   try {
