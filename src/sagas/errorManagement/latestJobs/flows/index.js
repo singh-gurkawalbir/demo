@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 import { JOB_STATUS } from '../../../../utils/constants';
 
 const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];
-const INPROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
+const IN_PROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
 
 export function* refreshForMultipleFlowJobs({ flowId, job, latestJobs }) {
   const exportChildJob = job.children?.find(cJob => cJob?.type === 'export') || {};
@@ -20,7 +20,7 @@ export function* refreshForMultipleFlowJobs({ flowId, job, latestJobs }) {
   }
   // if export job is finished and previously in progress,
   // then request as we can assume one more job is to be running for another PG
-  if (INPROGRESS_JOB_STATUSES.includes(prevStateOfExportChildJob.status)) {
+  if (IN_PROGRESS_JOB_STATUSES.includes(prevStateOfExportChildJob.status)) {
     yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
   }
 }
