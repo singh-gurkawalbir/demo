@@ -31,6 +31,7 @@ import {
   getFlowDetails,
   getFlowResources,
   getFlowReferencesForResource,
+  isImportMappingAvailable,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -57,6 +58,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   adaptorTypeMap,
+  isQueryBuilderSupported,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -3335,7 +3337,9 @@ selectors.mkflowImportsList = () => createSelector(
       return [subRecordResource];
     }
 
-    return getImportsFromFlow(flow, imports);
+    const flowImports = getImportsFromFlow(flow, imports);
+
+    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
   }
 );
 
