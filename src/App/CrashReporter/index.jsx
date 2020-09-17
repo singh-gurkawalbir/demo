@@ -2,8 +2,9 @@
 /* eslint-disable react/no-unused-state */
 import React from 'react';
 import { Typography, Button } from '@material-ui/core';
+import LogRocket from 'logrocket';
 import ModalDialog from '../../components/ModalDialog';
-import reportCrash from '../../utils/crash';
+// import reportCrash from '../../utils/crash';
 import getRoutePath from '../../utils/routePaths';
 
 export default class CrashReporter extends React.Component {
@@ -20,17 +21,18 @@ export default class CrashReporter extends React.Component {
     };
   }
 
-  componentDidCatch(error, errorInfo) {
-    const err = {
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      },
-      errorInfo,
-    };
+  componentDidCatch(error) {
+    LogRocket.captureException(error);
+    // const err = {
+    //   error: {
+    //     name: error.name,
+    //     message: error.message,
+    //     stack: error.stack,
+    //   },
+    //   errorInfo,
+    // };
 
-    reportCrash(err);
+    // reportCrash(err);
   }
 
   render() {

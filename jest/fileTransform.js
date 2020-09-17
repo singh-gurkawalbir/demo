@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 const path = require('path');
 const camelcase = require('camelcase');
@@ -17,6 +17,7 @@ module.exports = {
         pascalCase: true,
       });
       const componentName = `Svg${pascalCaseFilename}`;
+
       return `const React = require('react');
       module.exports = {
         __esModule: true,

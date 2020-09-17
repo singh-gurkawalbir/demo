@@ -6,6 +6,7 @@ import {
   all,
   select,
 } from 'redux-saga/effects';
+import LogRocket from 'logrocket';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
@@ -203,6 +204,16 @@ export function* auth({ email, password }) {
     yield put(actions.auth.complete());
 
     yield call(retrieveAppInitializationResources);
+    const p = yield select(selectors.userProfile);
+
+    if (p?._id) {
+      LogRocket.identify(p._id, {
+        name: p.name,
+        email: p.email,
+        company: p.company,
+        developer: !!p.developer,
+      });
+    }
 
     if (isExpired) {
       // remount the component
@@ -229,6 +240,16 @@ export function* initializeApp() {
 
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
+      const p = yield select(selectors.userProfile);
+
+      if (p?._id) {
+        LogRocket.identify(p._id, {
+          name: p.name,
+          email: p.email,
+          company: p.company,
+          developer: !!p.developer,
+        });
+      }
     } else {
       // existing session is invalid
       yield put(actions.auth.logout({ isExistingSessionInvalid: true }));

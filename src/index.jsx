@@ -5,11 +5,16 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
+import LogRocket from 'logrocket';
+import setupLogRocketReact from 'logrocket-react';
 import App from './App';
 import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
-import reportCrash from './utils/crash';
+// import reportCrash from './utils/crash';
+
+LogRocket.init('yb95vd/glad');
+setupLogRocketReact(LogRocket);
 
 const middleware = [];
 let store;
@@ -18,11 +23,12 @@ const sagaMiddleware = createSagaMiddleware({
     // eslint-disable-next-line no-console
     console.warn('saga middleware crashed on error ', error);
     store.dispatch(actions.app.errored());
-    reportCrash({ error: {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    }});
+    LogRocket.captureException(error);
+    // reportCrash({ error: {
+    //   name: error.name,
+    //   message: error.message,
+    //   stack: error.stack,
+    // }});
   },
 });
 
@@ -60,7 +66,7 @@ const composeEnhancers =
 
 store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(...middleware))
+  composeEnhancers(applyMiddleware(...middleware, LogRocket.reduxMiddleware()))
 );
 
 sagaMiddleware.run(rootSaga);
