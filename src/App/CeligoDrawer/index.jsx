@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback } from 'react';
+import React, { Fragment, useCallback, useMemo} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, matchPath } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -241,6 +241,19 @@ export default function CeligoDrawer() {
     [dispatch, expand]
   );
 
+  const listItemsMemo = useMemo(() => menuItems(
+    userProfile,
+    accessLevel,
+    integrations,
+    marketplaceConnectors),
+  [
+
+    userProfile,
+    accessLevel,
+    integrations,
+    marketplaceConnectors,
+  ]);
+
   // what is the active item? does it have a parent
   // that needs an active state as well?
   return (
@@ -291,12 +304,7 @@ export default function CeligoDrawer() {
         </div>
         <div className={classes.menuList}>
           <List className={clsx(classes.list)}>
-            {menuItems(
-              userProfile,
-              accessLevel,
-              integrations,
-              marketplaceConnectors
-            ).map(({ label, Icon, path, routeProps, children, href, component }) => (
+            {listItemsMemo.map(({ label, Icon, path, routeProps, children, href, component }) => (
               <Fragment key={label}>
                 <ListItem
                   button

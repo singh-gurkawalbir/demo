@@ -14,6 +14,7 @@ import {
   retrievingAssistantDetails,
   validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
+  setLastLoggedInLocalStorage,
   invalidateSession,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
@@ -256,6 +257,7 @@ describe('auth saga flow', () => {
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.auth.complete()));
@@ -327,6 +329,8 @@ describe('auth saga flow', () => {
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
+
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.auth.complete()));
@@ -367,6 +371,8 @@ describe('auth saga flow', () => {
     const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
+
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
 
     const effect = saga.next().value;
 
