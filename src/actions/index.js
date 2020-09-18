@@ -377,11 +377,11 @@ const resource = {
       action(actionTypes.ICLIENTS, { connectionId }),
 
     netsuite: {
-      requestUserRoles: (connectionId, values, isInvokedDuringFormInit) =>
+      requestUserRoles: (connectionId, values, hideNotificationMessage) =>
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
-          isInvokedDuringFormInit,
+          hideNotificationMessage,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {

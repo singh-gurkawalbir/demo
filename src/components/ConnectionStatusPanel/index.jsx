@@ -76,10 +76,9 @@ export default function ConnectionStatusPanel(props) {
       const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
 
       if (resource.type === 'netsuite' && !commStatus) {
-        const isValidatingNetsuiteUserRoles = selectors.isValidatingNetsuiteUserRoles(state);
-        const {status, isInvokedDuringFormInit} = selectors.netsuiteUserRoles(state, connectionId);
+        const {status, hideNotificationMessage} = selectors.netsuiteUserRoles(state, connectionId);
 
-        if (!isInvokedDuringFormInit && !isValidatingNetsuiteUserRoles) {
+        if (!hideNotificationMessage) {
           return status;
         }
       }
