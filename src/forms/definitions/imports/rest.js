@@ -34,8 +34,8 @@ export default {
           retValues['/rest/relativeURICreate'],
         ];
         retValues['/rest/requestType'] = [
-          retValues['/rest/requestTypeUpdate'],
-          retValues['/rest/requestTypeCreate'],
+          'UPDATE',
+          'CREATE',
         ];
         retValues['/rest/method'] = [
           retValues['/rest/compositeMethodUpdate'],
@@ -332,50 +332,6 @@ export default {
         return '';
       },
     },
-    'rest.requestTypeCreate': {
-      id: 'rest.requestTypeCreate',
-      type: 'select',
-      label: 'RequestType',
-      helpKey: 'rest.import.rest.requestTypeCreate',
-      required: true,
-      options: [
-        {
-          items: [
-            { label: 'CREATE', value: 'CREATE' },
-            { label: 'UPDATE', value: 'UPDATE' },
-          ],
-        },
-      ],
-      visibleWhenAll: [
-        {
-          field: 'rest.compositeType',
-          is: ['createandupdate'],
-        },
-        {
-          field: 'rest.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
-          return '';
-        }
-
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          if (r.rest.method.length > 1) {
-            return r.rest.requestType && r.rest.requestType[1];
-          }
-
-          return r.rest.requestType && r.rest.requestType[0];
-        }
-
-        return '';
-      },
-    },
     'rest.bodyCreate': {
       id: 'rest.bodyCreate',
       type: 'httprequestbody',
@@ -611,46 +567,6 @@ export default {
 
         if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
           return r.rest.relativeURI && r.rest.relativeURI[0];
-        }
-
-        return '';
-      },
-    },
-    'rest.requestTypeUpdate': {
-      id: 'rest.requestTypeUpdate',
-      type: 'select',
-      helpKey: 'rest.import.rest.requestTypeUpdate',
-      label: 'Request type',
-      options: [
-        {
-          items: [
-            { label: 'CREATE', value: 'CREATE' },
-            { label: 'UPDATE', value: 'UPDATE' },
-          ],
-        },
-      ],
-      required: true,
-      visibleWhenAll: [
-        {
-          field: 'rest.compositeType',
-          is: ['createandupdate'],
-        },
-        {
-          field: 'rest.method',
-          is: ['COMPOSITE'],
-        },
-        {
-          field: 'inputMode',
-          is: ['records'],
-        },
-      ],
-      defaultValue: r => {
-        if (!r || !r.rest || !r.rest.method) {
-          return '';
-        }
-
-        if (r.rest.method.length > 1 || r.ignoreMissing || r.ignoreExisting) {
-          return r.rest.requestType && r.rest.requestType[0];
         }
 
         return '';
@@ -975,7 +891,6 @@ export default {
             fields: [
               'rest.compositeMethodCreate',
               'rest.relativeURICreate',
-              'rest.requestTypeCreate',
               'rest.bodyCreate',
             ],
           },
@@ -995,7 +910,6 @@ export default {
             fields: [
               'rest.compositeMethodUpdate',
               'rest.relativeURIUpdate',
-              'rest.requestTypeUpdate',
               'rest.bodyUpdate',
             ],
           },

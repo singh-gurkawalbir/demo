@@ -99,7 +99,7 @@ describe('editor reducers', () => {
     );
     const failureState = reducer(
       intializedState,
-      actions.editor.evaluateFailure(id, 'someError')
+      actions.editor.evaluateFailure(id, {errorMessage: 'someError'})
     );
 
     expect(failureState[1]).toMatchObject({ error: 'someError' });

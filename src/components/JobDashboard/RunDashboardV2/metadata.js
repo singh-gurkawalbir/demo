@@ -2,7 +2,7 @@ import React from 'react';
 import ErrorLink from './ErrorLink';
 import JobStatus from '../JobStatus';
 import FlowStepName from './FlowStepName';
-import DateTimeDisplay from '../../DateTimeDisplay';
+import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
   columns: [
@@ -33,7 +33,7 @@ export default {
     },
     {
       heading: 'Completed',
-      value: r => <DateTimeDisplay dateTime={r.endedAt} />,
+      value: r => <CeligoTimeAgo date={r.endedAt} />,
     },
   ],
 };

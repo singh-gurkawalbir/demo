@@ -27,7 +27,7 @@ export function* changePassword({ updatedPassword }) {
       actions.api.complete(
         changePasswordParams.path,
         changePasswordParams.opts.method,
-        'Success!! Changed user password'
+        'Password changed.'
       )
     );
   } catch (e) {
@@ -112,9 +112,9 @@ export function* requestLicenseUpgrade() {
   yield put(actions.user.org.accounts.licenseUpgradeRequestSubmitted(response));
 }
 
-export function* requestLicenseUpdate({ actionType }) {
+export function* requestLicenseUpdate({ actionType, connectorId, licenseId }) {
   const { path, opts } = getRequestOptions(actionTypes.LICENSE_UPDATE_REQUEST, {
-    actionType,
+    actionType, connectorId, licenseId,
   });
   let response;
 
@@ -189,7 +189,7 @@ export function* changeEmail({ updatedEmail }) {
       actions.api.complete(
         changeEmailParams.path,
         changeEmailParams.opts.method,
-        'Success!! Sent user change Email setup to you email'
+        'Verification link sent to new email address.'
       )
     );
   } catch (e) {

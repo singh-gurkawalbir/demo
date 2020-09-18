@@ -26,7 +26,7 @@ export default {
     defaultValue: r => r.description || '',
   },
   autoPurgeAt: {
-    type: 'select',
+    type: 'expirytime',
     label: 'Auto purge token',
     required: r => isNewId(r?._id) || !!r?._connectorId,
     // description: r => getAutoPurgeDescription(r?._id, r?.autoPurgeAt),
@@ -112,7 +112,6 @@ export default {
       r._integrationId
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -132,7 +131,6 @@ export default {
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -152,7 +150,6 @@ export default {
         ? { _integrationId: r._integrationId }
         : { _integrationId: { $exists: false } },
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',
@@ -168,7 +165,6 @@ export default {
     multiselect: true,
     allowEdit: false,
     allowNew: false,
-    valueDelimiter: ',',
     visibleWhen: [
       {
         field: 'fullAccess',

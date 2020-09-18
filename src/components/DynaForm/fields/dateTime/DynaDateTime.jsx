@@ -67,6 +67,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const FIXED_TIME_FORMAT = 'hh:mm:ss a';
+
+export const FIXED_DATE_FORMAT = 'MM/DD/YYYY';
 export const getDateMask = dateFormat => {
   if (!dateFormat) { return ''; }
 
@@ -89,26 +92,9 @@ const getTimeMask = timeMask => {
   return '__:__:__';
 };
 
-const getDateAndTimeElements = str => {
-  const displayFormatAr = str.split(' ');
-  // date formats can be many check the profile component
-  const date = displayFormatAr?.[0];
-
-  let time = `${displayFormatAr?.[1]}`;
-
-  // if meridian is present append it to format
-  if (displayFormatAr?.[2]) {
-    time = `${displayFormatAr?.[1]} ${displayFormatAr?.[2]}`;
-  }
-
-  // these are the two possible time formats
-  if (time === 'h:mm:ss a' || time === 'hh:mm:ss a') { time = 'hh:mm:ss a'; } else if (time === 'H:mm:ss' || time === 'HH:mm:ss') { time = 'HH:mm:ss'; }
-
-  return {date, time};
-};
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext} = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -140,20 +126,13 @@ export default function DateTimePicker(props) {
 
     return !!(resource?._connectorId);
   });
+
+  const isSuiteScriptConnector = useSelector(state => {
+    const preferences = selectors.userPreferences(state);
+
+    return preferences?.ssConnectionIds?.includes(ssLinkedConnectionId);
+  });
   const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-
-  let userFormat;
-
-  if (dateFormat) {
-    if (timeFormat) {
-      userFormat = `${dateFormat} ${timeFormat}`;
-    } else {
-      userFormat = `${dateFormat} h:mm:ss a`;
-    }
-  } else {
-    userFormat = 'MM/DD/YYYY h:mm:ss a';
-  }
-  const displayFormat = props.format || userFormat;
 
   useEffect(() => {
     let formattedDate = null;
@@ -171,8 +150,8 @@ export default function DateTimePicker(props) {
     dataTimeValueFormatted.set('hour', moment(timeValue)?.get('hour') || 0);
     dataTimeValueFormatted.set('minute', moment(timeValue)?.get('minute') || 0);
     dataTimeValueFormatted.set('second', moment(timeValue)?.get('second') || 0);
-
-    if (isIAResource) {
+    // suitescript connectors expect isostring format
+    if (isIAResource || isSuiteScriptConnector) {
       formattedDate = dataTimeValueFormatted && moment(dataTimeValueFormatted).toISOString();
     } else {
       formattedDate = dataTimeValueFormatted && convertUtcToTimezone(
@@ -187,8 +166,6 @@ export default function DateTimePicker(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateValue, timeValue]);
 
-  const { date: finalDateFormat, time: finalTimeFormat} = getDateAndTimeElements(displayFormat);
-
   return (
     <>
       <div className={classes.dynaDateTimeLabelWrapper}>
@@ -201,9 +178,9 @@ export default function DateTimePicker(props) {
             <KeyboardDatePicker
               disabled={disabled}
               variant="inline"
-              format={finalDateFormat}
-              placeholder={finalDateFormat}
-              mask={getDateMask(finalDateFormat)}
+              format={FIXED_DATE_FORMAT}
+              placeholder={FIXED_DATE_FORMAT}
+              mask={getDateMask(FIXED_DATE_FORMAT)}
               value={dateValue}
               label="Date"
               onChange={setFormatDateValue}
@@ -221,9 +198,9 @@ export default function DateTimePicker(props) {
               variant="inline"
               label="Time"
               views={['hours', 'minutes', 'seconds']}
-              format={finalTimeFormat}
-              placeholder={finalTimeFormat}
-              mask={getTimeMask(finalTimeFormat)}
+              format={FIXED_TIME_FORMAT}
+              placeholder={FIXED_TIME_FORMAT}
+              mask={getTimeMask(FIXED_TIME_FORMAT)}
               value={timeValue}
               onChange={setFormatTimeValue}
               fullWidth

@@ -512,12 +512,12 @@ export default {
       }
     }
   },
-  getDefaultLookupActionValue: (value, lookup) => {
-    if (value && value.lookupName && lookup && !lookup.allowFailures) {
+  getDefaultLookupActionValue: (lookup = {}) => {
+    if (!lookup.allowFailures) {
       return 'disallowFailure';
     }
 
-    if (lookup && lookup.useDefaultOnMultipleMatches) {
+    if (lookup.useDefaultOnMultipleMatches) {
       return 'useDefaultOnMultipleMatches';
     }
 
@@ -803,6 +803,10 @@ export default {
 
       case adaptorTypeMap.DynamodbImport:
         return 'DynamoDB';
+      case adaptorTypeMap.WebhookExport:
+        return 'Webhook';
+      case adaptorTypeMap.SimpleExport:
+        return 'File';
       default:
     }
   },
@@ -1185,8 +1189,8 @@ export default {
           {id: 'celigo_nlobjDetachFromId', name: 'Detach From Internal ID'},
           {id: 'celigo_nlobjDetachedType', name: 'Detached Record Type'},
           {id: 'celigo_nlobjDetachedId', name: 'Detached Internal ID'},
-          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'attributesRole'},
-          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'attributedField'}];
+          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'Attribute Role'},
+          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'Attribute Field'}];
 
         formattedGenerateFields = formattedGenerateFields.concat(attachdetachFields);
       } else {

@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
@@ -128,42 +128,6 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     resourceType = resourceType.split('/').pop();
   }
 
-  // #region Temp Data loader code
-  // For consistency, we normalize the client code to use the new pageProcessor and pageGenerator fields
-  // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
-  // only support the older interface, so we need to convert back before we make the PUT/POST API call.
-  // this complete code block can be removed once the BE DL code uses the new flow interface fields.
-  let resourceIsDataLoaderFlow = false;
-
-  if (resourceType === 'flows') {
-    resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
-    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
-    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
-    // we reverse this process and convert it back to the old schema ...also we delete this flag
-
-    if (
-      resourceIsDataLoaderFlow ||
-      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
-    ) {
-      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
-        merged._exportId = merged.pageGenerators[0]._exportId;
-        delete merged.pageGenerators;
-      }
-
-      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
-        const importId = merged.pageProcessors[0]._importId;
-
-        if (importId) {
-          merged._importId = importId;
-          delete merged.pageProcessors;
-        }
-      }
-    }
-
-    delete merged.flowConvertedToNewSchema;
-  }
-  // #endregion
-
   let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
 
   // only updates need to check for conflicts.
@@ -210,6 +174,42 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   if (resourceType === 'connections' && merged.integrationId && isNew) {
     path = `/integrations/${merged.integrationId}/connections`;
   }
+
+  // #region Temp Data loader code
+  // For consistency, we normalize the client code to use the new pageProcessor and pageGenerator fields
+  // in favor of the old _exportId and _importId fields.  The Data loader (export type = simple) flows
+  // only support the older interface, so we need to convert back before we make the PUT/POST API call.
+  // this complete code block can be removed once the BE DL code uses the new flow interface fields.
+  let resourceIsDataLoaderFlow = false;
+
+  if (resourceType === 'flows') {
+    resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
+    // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
+    // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
+    // we reverse this process and convert it back to the old schema ...also we delete this flag
+
+    if (
+      resourceIsDataLoaderFlow ||
+      (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
+    ) {
+      if (merged.pageGenerators && merged.pageGenerators.length > 0) {
+        merged._exportId = merged.pageGenerators[0]._exportId;
+        delete merged.pageGenerators;
+      }
+
+      if (merged.pageProcessors && merged.pageProcessors.length > 0) {
+        const importId = merged.pageProcessors[0]._importId;
+
+        if (importId) {
+          merged._importId = importId;
+          delete merged.pageProcessors;
+        }
+      }
+    }
+
+    delete merged.flowConvertedToNewSchema;
+  }
+  // #endregion
 
   try {
     updated = yield call(apiCallWithRetry, {
@@ -820,6 +820,20 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
+function* startPollingForQueuedJobs({ connectionId }) {
+  const watcher = yield fork(requestQueuedJobs, { connectionId });
+
+  yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
+function* startPollingForConnectionStatus({ integrationId }) {
+  const watcher = yield fork(refreshConnectionStatus, { integrationId });
+
+  yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
 export function* cancelQueuedJob({ jobId }) {
   const path = `/jobs/${jobId}/cancel`;
 
@@ -859,6 +873,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeLatest(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, startPollingForQueuedJobs),
+  takeLatest(actionTypes.CONNECTION.STATUS_REQUEST_POLL, startPollingForConnectionStatus),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),

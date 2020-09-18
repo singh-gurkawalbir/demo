@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
 import { Tooltip } from '@material-ui/core';
 import actions from '../../actions';
-import SwitchOnOff from '../SwitchToggle';
+import CeligoSwitch from '../CeligoSwitch';
 import useConfirmDialog from '../ConfirmDialog';
 import { selectors } from '../../reducers';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -116,11 +116,12 @@ export default function FlowToggle({
   ) : (
     <Tooltip title="Off/On" placement="bottom">
       <div>
-        <SwitchOnOff
+        <CeligoSwitch
           disabled={disabled}
           on={!flow.disabled}
-          onClick={enableOrDisableFlow}
+          onChange={enableOrDisableFlow}
           data-test="switchFlowOnOff"
+          checked={!flow.disabled}
       />
       </div>
     </Tooltip>

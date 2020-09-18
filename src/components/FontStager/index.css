@@ -46,24 +46,6 @@
   font-weight: 600;
   font-style: normal;
 }
-@font-face {
-  font-family: consolas;
-  src: url('../../static/fonts/consolas.eot');
-  src: url('../../static/fonts/consolas.eot?#iefix') format('embedded-opentype'),
-       url('../../static/fonts/consolas.woff2') format('woff2'),
-       url('../../static/fonts/consolas.woff') format('woff'),
-       url('../../static/fonts/consolas.ttf') format('truetype'),
-       url('../../static/fonts/consolas.svg#consolas') format('svg');
-  font-weight: normal;
-  font-style: normal;
-
-}
-code{
-  font-family: consolas;
-  font-size: 13px;
-  line-height: normal;
-  letter-spacing: normal;
-}
 
 /*
   The purpose of defining class stages is to
@@ -127,4 +109,10 @@ a{
 .ace-tomorrow .ace_gutter-active-line,
 .ace-tomorrow .ace_marker-layer .ace_active-line{
   background-color: #D6E4ED !important;
+}
+@supports (-moz-appearance:none) {
+  .MuiTable-root {
+    border-spacing: unset !important;
+    border-collapse: unset !important;
+ }
 }

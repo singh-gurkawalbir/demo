@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(2, 3),
+    background: theme.palette.background.default,
   },
 }));
 

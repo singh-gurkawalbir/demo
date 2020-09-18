@@ -99,7 +99,9 @@ const auth = {
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
+  userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
+  abortAllSagas: () => action(actionTypes.ABORT_ALL_SAGAS),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -119,6 +121,8 @@ const api = {
 };
 // #region Resource Actions
 const connection = {
+  setActive: connectionId => action(actionTypes.CONNECTION.ACTIVE_SET, { connectionId }),
+
   requestRegister: (connectionIds, integrationId) =>
     action(actionTypes.CONNECTION.REGISTER_REQUEST, {
       connectionIds,
@@ -169,6 +173,10 @@ const connection = {
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  requestQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, {connectionId}),
+  cancelQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL, {connectionId}),
   receivedQueuedJobs: (queuedJobs, connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
       queuedJobs,
@@ -326,7 +334,10 @@ const resource = {
         resourceId,
         values,
       }),
-
+    requestStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, {integrationId}),
+    cancelStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_CANCEL_POLL, {integrationId}),
     testErrored: (resourceId, message) =>
       action(actionTypes.CONNECTION.TEST_ERRORED, {
         resourceId,
@@ -1176,8 +1187,8 @@ const user = {
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
-      requestUpdate: actionType =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
+      requestUpdate: (actionType, connectorId, licenseId) =>
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
@@ -1546,7 +1557,8 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-
+  cancelLatest: ({ jobId }) =>
+    action(actionTypes.JOB.CANCEL_LATEST, { jobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
@@ -1681,6 +1693,8 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
   integrationErrors: {
+    requestPoll: ({ integrationId }) =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
     request: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST, {
         integrationId,
@@ -1690,7 +1704,8 @@ const errorManager = {
         integrationId,
         integrationErrors,
       }),
-
+    cancelPoll: () =>
+      action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL),
   },
   flowErrorDetails: {
     request: ({ flowId, resourceId, loadMore, isResolved = false }) =>

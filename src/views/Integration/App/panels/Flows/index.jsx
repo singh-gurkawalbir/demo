@@ -23,6 +23,7 @@ import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
+import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -126,12 +127,14 @@ export const IAFormStateManager = props => {
 function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
+  const dispatch = useDispatch();
   const { flows } = useSelector(state =>
     selectors.integrationAppFlowSettings(
       state,
       integrationId,
       sectionId,
-      storeId
+      storeId,
+      { excludeHiddenFlows: true }
     )
   );
   const flowSections = useSelector(state =>
@@ -142,6 +145,18 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
+
+  useEffect(() => {
+    if (!isUserInErrMgtTwoDotZero) return;
+
+    dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
+
+    return () => {
+      dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
+    };
+  }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
   return (
     <LoadResources required resources="flows,exports">
@@ -157,6 +172,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
       <CategoryMappingDrawer
         integrationId={integrationId}
         storeId={storeId}

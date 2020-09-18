@@ -126,6 +126,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
           resourceId={resourceId}
           errorId={errorId}
           onClose={onClose}
+          mode={recordMode}
         />
       </div>
     </div>

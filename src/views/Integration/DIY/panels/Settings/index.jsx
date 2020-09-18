@@ -14,7 +14,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: theme.spacing(0, 1, 0, 1),
+    padding: theme.spacing(0, 1, 2, 1),
   },
   root: {
     backgroundColor: theme.palette.common.white,

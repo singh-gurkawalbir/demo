@@ -22,7 +22,6 @@ import {
   getXAxisFormat,
   getTicks,
   getLineColor,
-  getAxisLabelPosition,
   getLegend,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
@@ -260,7 +259,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           margin={{
             top: 5,
             right: 30,
-            left: 20,
+            left: 40,
             bottom: 5,
           }}>
           <XAxis
@@ -279,7 +278,9 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: getAxisLabelPosition(id),
+              offset: -20,
+              position: 'insideLeft',
+              style: { textAnchor: 'middle' },
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />

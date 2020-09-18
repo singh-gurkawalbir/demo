@@ -82,6 +82,7 @@ export default function CsvParseEditor(props) {
           mode="text"
           onChange={handleDataChange}
           readOnly={disabled}
+          hasError={!!violations?.dataError}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="result">
