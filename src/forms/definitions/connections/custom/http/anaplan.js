@@ -103,6 +103,7 @@ export default {
       ],
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
     },
