@@ -153,7 +153,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
 
   if (!assistant) throw new Error('Could not determine the assistant type');
 
-  if (assistant === 'procurify' && fieldId === 'http.encrypted.clientSecret') {
+  if (assistant === 'procurify' && fieldId === 'http.unencrypted.clientId') {
     assistant = 'procurifyauthenticate';
   }
 
