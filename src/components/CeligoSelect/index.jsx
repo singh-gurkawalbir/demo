@@ -82,10 +82,6 @@ function CeligoSelect({ className, children, ...props }) {
       setOpen(false);
     }, []
   );
-  const handleSelectClose = useCallback(() => {
-    closeSelect();
-  }, [closeSelect]);
-
   /** In case open property is overriden by parent, openSelect and closeSelect functionality will not work.
       The same is to be taken care by parent component
   */
@@ -98,7 +94,7 @@ function CeligoSelect({ className, children, ...props }) {
         {showDoneBtn && (
           <DoneButton
             className={classes.doneButton}
-            onClick={handleSelectClose} />
+            onClick={closeSelect} />
         )}
       </div>
     ),
