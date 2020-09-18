@@ -3216,70 +3216,71 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+selectors.flowDashboardJobs = createSelector(
+  (state, flowId) => selectors.latestFlowJobsList(state, flowId),
+  state => fromData.resourceDetailsMap(state?.data),
+  (latestFlowJobs, resourceMap) => {
+    const dashboardSteps = [];
 
-selectors.flowDashboardJobs = (state, flowId) => {
-  const latestFlowJobs = selectors.latestFlowJobsList(state, flowId);
-  const resourceMap = fromData.resourceDetailsMap(state?.data);
-  const dashboardSteps = [];
+    latestFlowJobs?.data?.forEach(parentJob => {
+      // when the job is queued
+      if (parentJob.status === JOB_STATUS.QUEUED) {
+        dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
 
-  latestFlowJobs?.data?.forEach(parentJob => {
-    // when the job is queued
-    if (parentJob.status === JOB_STATUS.QUEUED) {
-      dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-
-      return;
-    }
-    const additionalProps = {
-      doneExporting: !!parentJob.doneExporting,
-      numPagesProcessed: 0,
-    };
-
-    if (!additionalProps.doneExporting) {
-      if (
-        [
-          JOB_STATUS.COMPLETED,
-          JOB_STATUS.CANCELED,
-          JOB_STATUS.FAILED,
-        ].includes(parentJob.status)
-      ) {
-        additionalProps.doneExporting = true;
+        return;
       }
-    }
-    if (parentJob.children?.length) {
-      parentJob.children.forEach(cJob => {
-        const additionalChildProps = {
-          uiStatus: cJob.status,
-          duration: getJobDuration(cJob),
-          name: cJob._exportId
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-        };
+      const additionalProps = {
+        doneExporting: !!parentJob.doneExporting,
+        numPagesProcessed: 0,
+      };
 
-        if (cJob.type === 'import') {
-          if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
-            additionalChildProps.percentComplete = Math.floor(
-              (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
+      if (!additionalProps.doneExporting) {
+        if (
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.CANCELED,
+            JOB_STATUS.FAILED,
+          ].includes(parentJob.status)
+        ) {
+          additionalProps.doneExporting = true;
+        }
+      }
+      if (parentJob.children?.length) {
+        parentJob.children.forEach(cJob => {
+          const additionalChildProps = {
+            uiStatus: cJob.status,
+            duration: getJobDuration(cJob),
+            name: cJob._exportId
+              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          };
+
+          if (cJob.type === 'import') {
+            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
+              additionalChildProps.percentComplete = Math.floor(
+                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
+              );
+            } else {
+              additionalChildProps.percentComplete = 0;
+            }
+
+            additionalProps.numPagesProcessed += parseInt(
+              cJob.numPagesProcessed,
+              10
             );
-          } else {
-            additionalChildProps.percentComplete = 0;
           }
 
-          additionalProps.numPagesProcessed += parseInt(
-            cJob.numPagesProcessed,
-            10
-          );
-        }
+          dashboardSteps.push({ ...cJob, ...additionalChildProps });
+        });
+      }
+    });
 
-        dashboardSteps.push({ ...cJob, ...additionalChildProps });
-      });
-    }
-  });
-
-  return {
-    status: latestFlowJobs?.status,
-    data: dashboardSteps,
-  };
-};
+    return {
+      status: latestFlowJobs?.status,
+      data: dashboardSteps,
+    };
+  }
+);
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
