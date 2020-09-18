@@ -160,18 +160,7 @@ export const fieldIDsExceptClockedFields = (meta, resourceType) => {
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
     ) {
-<<<<<<< HEAD
-      acc[curr] = {
-        ...fieldMap[curr],
-        defaultDisabled: true,
-      };
-    } else {
-      acc[curr] = {
-        ...fieldMap[curr],
-      };
-=======
       acc.push(fieldMap[curr].id);
->>>>>>> 7d15a2235... critical clocked fields fix
     }
 
     return acc;

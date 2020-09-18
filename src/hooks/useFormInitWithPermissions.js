@@ -22,16 +22,6 @@ export default function useFormInitWithPermissions(props) {
   const { fieldMeta } = props;
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (disableAllFieldsExceptClocked && formKey) {
-      fieldIDsExceptClockedFields(fieldMeta, resourceType).forEach(fieldId => {
-        fieldId &&
-          dispatch(
-            actions.form.forceFieldState(formKey)(fieldId, undefined, true)
-          );
-      });
-    }
-=======
     let disableFields;
 
     if (formKey && disableAllFieldsExceptClocked) {
@@ -54,7 +44,6 @@ export default function useFormInitWithPermissions(props) {
         });
       }
     };
->>>>>>> 7d15a2235... critical clocked fields fix
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disableAllFieldsExceptClocked,
