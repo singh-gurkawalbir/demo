@@ -56,7 +56,6 @@ const useStyles = makeStyles(theme => ({
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [showExpireNotification, setShowExpireNotification] = useState(true);
   const [isTruncated, setIsTruncated] = useState(false);
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const integration = useSelector(state =>
@@ -76,13 +75,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
     return null;
   });
-  const onClose = useCallback(
-    event => {
-      event?.stopPropagation();
-      setShowExpireNotification(false);
-    },
-    []
-  );
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
@@ -330,9 +322,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             label={tile.connector && tile.connector.owner}
             />
         </Footer>{
-          tile._connectorId && licenseMessageContent && showExpireNotification && (
+          tile._connectorId && licenseMessageContent && (
           <TrialExpireNotification
-            content={licenseMessageContent} expired={expired} onClose={onClose} connectorId={tile._connectorId}
+            content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
             single />
           )

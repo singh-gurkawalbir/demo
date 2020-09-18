@@ -1,14 +1,12 @@
 import React, {useCallback, useState} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import { IconButton } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import ButtonGroup from '../../ButtonGroup';
 import WarningIcon from '../../icons/WarningIcon';
-import CloseIcon from '../../icons/CloseIcon';
 import actions from '../../../actions';
 
 const useStyles = makeStyles(theme => ({
@@ -65,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function TrialExpireNotification({ content, single, expired, onClose, connectorId, licenseId}) {
+function TrialExpireNotification({ content, single, expired, connectorId, licenseId}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
@@ -78,12 +76,6 @@ function TrialExpireNotification({ content, single, expired, onClose, connectorI
 
   return (
     <div className={classes.wrapper}>
-      <IconButton
-        data-test="closeTrialNotification"
-        className={classes.closeIconBtn}
-        onClick={onClose}>
-        <CloseIcon className={classes.closeIcon} />
-      </IconButton>
       <div className={classes.contentWrapper}>
         <WarningIcon className={clsx(classes.warningIcon, {[classes.warningIconRed]: expired})} />
         <div className={classes.content}>
