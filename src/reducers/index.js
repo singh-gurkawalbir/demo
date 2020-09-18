@@ -3223,6 +3223,12 @@ selectors.flowDashboardJobs = (state, flowId) => {
   const dashboardSteps = [];
 
   latestFlowJobs?.data?.forEach(parentJob => {
+    // when the job is queued
+    if (parentJob.status === JOB_STATUS.QUEUED) {
+      dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
+
+      return;
+    }
     const additionalProps = {
       doneExporting: !!parentJob.doneExporting,
       numPagesProcessed: 0,
