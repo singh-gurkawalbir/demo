@@ -47,6 +47,7 @@ export default {
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
       helpKey: 'bronto.connection.http.auth.token.token',

@@ -72,6 +72,7 @@ export default {
         { field: 'http.oneloginRegion', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       required: true,
       helpKey: 'onelogin.connection.http.auth.token.token',
     },
