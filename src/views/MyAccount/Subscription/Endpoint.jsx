@@ -17,6 +17,7 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
+import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,8 +69,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   heading: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(3),
+    paddingLeft: 0,
   },
   bold: {
     fontWeight: 'bold',
@@ -403,9 +403,7 @@ export default function Endpoint() {
         </NotificationToaster>
       </div>
       )}
-      <Typography variant="h4" className={classes.heading}>
-        Subscription
-      </Typography>
+      <PanelHeader title="Subscription" className={classes.heading} />
       <div className={classes.subscriptionBox}>
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
