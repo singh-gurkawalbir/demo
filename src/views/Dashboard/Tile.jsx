@@ -56,7 +56,6 @@ const useStyles = makeStyles(theme => ({
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [showExpireNotification, setShowExpireNotification] = useState(true);
   const [isTruncated, setIsTruncated] = useState(false);
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const integration = useSelector(state =>
@@ -76,13 +75,6 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
     return null;
   });
-  const onClose = useCallback(
-    event => {
-      event?.stopPropagation();
-      setShowExpireNotification(false);
-    },
-    []
-  );
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
@@ -213,14 +205,14 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   const license = tile._connectorId && licenses.find(l => l._connectorId === tile._connectorId);
   const expiresInDays = license && remainingDays(license.expires);
-  let licenseMessagecontent = '';
+  let licenseMessageContent = '';
   let expired = false;
 
   if (expiresInDays <= 0) {
     expired = true;
-    licenseMessagecontent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
   } else if (expiresInDays > 0 && expiresInDays <= 30) {
-    licenseMessagecontent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
   }
 
   // #region Drag&Drop related
@@ -330,9 +322,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             label={tile.connector && tile.connector.owner}
             />
         </Footer>{
-          tile._connectorId && licenseMessagecontent && showExpireNotification && (
+          tile._connectorId && licenseMessageContent && (
           <TrialExpireNotification
-            content={licenseMessagecontent} expired={expired} onClose={onClose} connectorId={tile._connectorId}
+            content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
             licenseId={license._id}
             single />
           )
