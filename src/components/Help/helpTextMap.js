@@ -28,9 +28,6 @@ export default {
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
   'import.rdbms.updateExtract': `This field is used to inform integrator.io on how to identify existing records, and if a record is found to not exist, it will be ignored (no operation performed for this record). integrator.io will determine if a record exists by the presence of a specific record property. Typically this would be a field that is only present on existing records such as an "ID", or "createDate". If this is your case, simply provide the field path to this property. Example: "customerId" or "dateCreated".
     Alternatively you can identify existing records by using the result of a lookup. If the lookup returned a value, then this would be an indication that the record exists. An example of this would be a lookup that maps an email from the export record to an ID from the destination App. If this is how you wish to identify an existing lookup, first define the lookup and then simply enter the lookup's name in this field.`,
-  'import.rest.requestType':
-    'Please specify whether the record is being created or updated using this field.',
-
   // definitions
   'http.connection.customScopeDelimiter': 'If your provider doesn\'t use spaces to delimit scopes, check this box and enter your provider’s custom scope delimiter.',
   'connection.salesforce.info.email': 'Your Salesforce account email.',
@@ -610,15 +607,16 @@ export default {
   'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
   'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
   if you're using a production account, you'll find your API keys under the 'API Management' page.`,
+  'jiraserver.connection.http.baseURI':
+    'Please enter the base URI for Jira Server. For example, http://localhost:8080/rest/api/2/customFields, if this is your endpoint URL. The Base URL would be http://localhost:8080/.',
+  'jiraserver.connection.http.auth.basic.username':
+    'Please enter the username of your Jira Server account.',
+  'jiraserver.connection.http.auth.basic.password':
+    'Please enter the password of your Jira Server account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
     'Please specify whether the record is being created or updated using this field.',
-  'rest.import.rest.requestTypeCreate':
-    'Please specify whether the record is being created or updated using this field.',
-  'rest.import.rest.requestTypeUpdate':
-    'Please specify whether the record is being created or updated using this field.',
-
   'agent.name':
     'Give your agent a name so that users in your integrator.io account know where it is installed and what it has access to.',
   'agent.description':

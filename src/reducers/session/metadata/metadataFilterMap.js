@@ -77,6 +77,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
   'suitescript-itemCustomNumberColumn': data =>
     data

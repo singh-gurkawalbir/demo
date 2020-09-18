@@ -1,6 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import JobDashboard from '../../../../../../components/SuiteScript/JobDashboard';
+import { selectors } from '../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -8,15 +10,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RunDashboardPanel({ ssLinkedConnectionId, flow }) {
+export default function RunDashboardPanel({ ssLinkedConnectionId, flowId }) {
   const classes = useStyles();
+  const integrationId = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)._integrationId);
 
   return (
     <div className={classes.root}>
       <JobDashboard
         ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={flow._integrationId}
-        flowId={flow._flowId}
+        integrationId={integrationId}
+        flowId={flowId}
         isFlowBuilderView
       />
     </div>

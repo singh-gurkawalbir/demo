@@ -71,6 +71,7 @@ export default {
       newValues['/type'] = newValues['/restlet/type'];
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
+
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
