@@ -113,8 +113,6 @@ export default {
     hideDefaultData: true,
     label: 'Filter builder',
     title: 'MongoDB filter builder',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',

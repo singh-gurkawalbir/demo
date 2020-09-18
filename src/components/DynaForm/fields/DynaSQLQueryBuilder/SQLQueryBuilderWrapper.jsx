@@ -17,10 +17,10 @@ const getEditorTitle = adaptorType => {
     return 'MongoDB document builder';
   }
   if (adaptorType === 'DynamodbImport') {
-    return 'DynamoDB Query Builder';
+    return 'DynamoDB query builder';
   }
   if (adaptorType === 'RDBMSImport') {
-    return 'SQL Query Builder';
+    return 'SQL query builder';
   }
 
   return emptyObject;
@@ -31,7 +31,7 @@ export default function SQLQueryBuilderWrapper(props) {
     onFieldChange,
     disabled,
     value,
-    arrayIndex,
+    querySetPos,
     resourceId,
     flowId,
     resourceType,
@@ -97,10 +97,10 @@ export default function SQLQueryBuilderWrapper(props) {
     selectors.resource(state, 'connections', connectionId)
   );
   const rdbmsSubType = connection?.rdbms?.type;
-  const parsedRule = useMemo(() => typeof arrayIndex !== 'undefined' && Array.isArray(value)
-    ? value[arrayIndex]
+  const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
+    ? value[querySetPos]
     : value,
-  [arrayIndex, value]);
+  [querySetPos, value]);
   const defaultTitle = getEditorTitle(adaptorType);
   const sampleRule = useMemo(() => {
     if (sampleData && extractFields) {
@@ -178,18 +178,18 @@ export default function SQLQueryBuilderWrapper(props) {
         } catch (e) { // do nothing }
         }
       }
-      if (typeof arrayIndex !== 'undefined' && Array.isArray(value)) {
-        // save to array at position arrayIndex
+      if (typeof querySetPos !== 'undefined' && Array.isArray(value)) {
+        // save to array at position querySetPos
         const valueTmp = value;
 
-        valueTmp[arrayIndex] = template;
+        valueTmp[querySetPos] = template;
         onFieldChange(id, valueTmp);
       } else {
         // save to field
         onFieldChange(id, template);
       }
     }
-  }, [adaptorType, arrayIndex, id, onFieldChange, value]);
+  }, [adaptorType, querySetPos, id, onFieldChange, value]);
 
   const lookupField = useMemo(() => {
     if (adaptorType === 'RDBMSImport') {

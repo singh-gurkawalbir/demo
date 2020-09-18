@@ -82,7 +82,7 @@ const SQLQueryBuilder = props => {
       value={value}
       title={title}
       ruleTitle={ruleTitle}
-      arrayIndex={index}
+      querySetPos={index}
       resourceId={importId}
       flowId={flowId}
       resourceType="imports"
