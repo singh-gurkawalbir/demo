@@ -75,7 +75,6 @@ const useStyles = makeStyles(theme => ({
 }));
 const emptyObject = {};
 export default function MappingRow({
-  id,
   disabled,
   onMove,
   index,
@@ -149,9 +148,9 @@ export default function MappingRow({
     if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
       if (mappingKey && value === '') {
         if (
-          (field === 'extract' && generate === '') ||
+          (field === 'extract' && !generate) ||
             (field === 'generate' &&
-              extract === '' &&
+              !extract &&
               !('hardCodedValue' in mapping))
         ) {
           dispatch(actions.mapping.delete(mappingKey));
@@ -194,13 +193,13 @@ export default function MappingRow({
   }, [dispatch, mappingKey]);
 
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const disableDelete = !mappingKey || isRequired || isNotEditable || disabled;
 
   return (
     <div
       ref={ref}
       style={{ opacity }}
-      className={classes.rowContainer}
-      key={id}>
+      className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
         <div className={classes.dragIcon}>
           <GripperIcon />
@@ -280,7 +279,7 @@ export default function MappingRow({
           <ActionButton
             data-test={`fieldMappingRemove-${index}`}
             aria-label="delete"
-            disabled={isRequired || isNotEditable || disabled}
+            disabled={disableDelete}
             onClick={handleDeleteClick}
             className={classes.deleteBtn}>
             <TrashIcon />

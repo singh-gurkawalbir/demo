@@ -67,6 +67,15 @@ export default function FilterEditor(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isToggleScreen, handleInit]);
 
+  useEffect(() => {
+    if (isSampleDataLoading && !props.isSampleDataLoading) {
+      dispatch(actions.editor.patch(editorId, {
+        isSampleDataLoading: false,
+        data: props.data,
+      }));
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
+
   let outputMessage = '';
 
   if (result && result.data) {
@@ -102,6 +111,7 @@ export default function FilterEditor(props) {
             mode="json"
             overrides={overrides}
             onChange={handleDataChange}
+            hasError={!!violations?.dataError}
         />
         )}
       </PanelGridItem>
@@ -118,7 +128,7 @@ export default function FilterEditor(props) {
       </PanelGridItem>
 
       <ErrorGridItem
-        error={error?.message}
+        error={error}
         violations={violations}
       />
     </PanelGrid>

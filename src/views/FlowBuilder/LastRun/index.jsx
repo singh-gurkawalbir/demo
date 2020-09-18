@@ -3,7 +3,7 @@ import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../utils/constants';
-import DateTimeDisplay from '../../../components/DateTimeDisplay';
+import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   flexContainer: {
     display: 'flex',
+    alignItems: 'center',
   },
   icon: {
     height: theme.spacing(2),
@@ -63,7 +64,7 @@ export default function LastRun() {
 
     return (
       <>
-        Last run: <DateTimeDisplay dateTime={lastRunStatus} />
+        Last run: <CeligoTimeAgo date={lastRunStatus} />
       </>
     );
   }, [lastRunStatus]);

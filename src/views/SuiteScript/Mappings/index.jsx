@@ -301,10 +301,6 @@ const SuiteScriptMapping = props => {
 
         obj.index = index;
 
-        if (obj.hardCodedValue) {
-          obj.hardCodedValueTmp = `"${obj.hardCodedValue}"`;
-        }
-
         return obj;
       }),
     [localMappings]

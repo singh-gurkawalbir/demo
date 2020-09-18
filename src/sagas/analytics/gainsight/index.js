@@ -7,9 +7,10 @@ import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants/resource';
 import { getResourceSubType } from '../../../utils/resource';
 
 export function* identifyUser() {
-  const { _id, name, email, company, createdAt } = yield select(
+  const profile = yield select(
     selectors.userProfile
-  ) || {};
+  );
+  const { _id, name, email, company, createdAt } = profile || {};
   const { defaultAShareId } = yield select(selectors.userPreferences);
   const [firstName, ...lastName] = (name || '').split(' ');
   const accountInfo = {

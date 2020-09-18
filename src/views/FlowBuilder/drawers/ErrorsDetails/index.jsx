@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../../components/drawer/Right';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerTitle from './ErrorDrawerTitle';
@@ -7,11 +7,14 @@ import ErrorDrawerAction from './ErrorDrawerAction';
 
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
+  const match = useRouteMatch();
   const [errorType, setErrorType] = useState('open');
   const handleClose = useCallback(() => {
-    history.goBack();
+    // history.goBack() doesn't work when this url is redirected from another source
+    // TODO @Raghu: Check for any other places that can fall into this case
+    history.replace(match.url);
     setTimeout(() => setErrorType('open'), 1000);
-  }, [history]);
+  }, [history, match.url]);
 
   return (
     <RightDrawer

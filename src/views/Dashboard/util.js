@@ -28,6 +28,10 @@ export function sortTiles(tiles = [], tilesOrder = []) {
   return tilesWithOrder;
 }
 
+export function isTileStatusConnectionDown(tile) {
+  return tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+}
+
 export function tileStatus(tile) {
   const { status, numError } = tile;
   let label;
@@ -41,10 +45,6 @@ export function tileStatus(tile) {
     case TILE_STATUS.UNINSTALL:
       label = 'Continue uninstall';
       variant = 'warning';
-      break;
-    case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
-      label = 'Connection down';
-      variant = 'error';
       break;
     case TILE_STATUS.HAS_ERRORS:
       label = `${numError} Error${numError > 0 ? 's' : ''}`;

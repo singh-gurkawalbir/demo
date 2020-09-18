@@ -432,14 +432,6 @@ export default function Endpoint() {
               </Typography>
               <div className={classes.subscriptionFeaturesList} >
                 <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
-                  <li className={classes.subscriptionFeatureEnabled}>
-                    {!!(licenseActionDetails?.totalNumberofEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofEndpoints)})}> {licenseActionDetails?.totalNumberofEndpoints} Endpoint apps</Typography>
-                  </li>
-                  <li>
-                    {!!(licenseActionDetails?.totalNumberofTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofTradingPartners)})}>{licenseActionDetails?.totalNumberofTradingPartners} Trading partners</Typography>
-                  </li>
                   <li>
                     {licenseActionDetails?.autopilot && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.autopilot)})}>Autopilot</Typography>
@@ -447,14 +439,6 @@ export default function Endpoint() {
                   <li>
                     {licenseActionDetails?.sandbox && (<CheckMarkIcon className={classes.enableIcon} />)}
                     <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sandbox)})}>Sandbox</Typography>
-                  </li>
-                  <li className={classes.subscriptionFeatureEnabled}>
-                    {!!(licenseActionDetails?.totalNumberofFlows) && <CheckMarkIcon className={classes.enableIcon} />}
-                    <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofFlows)})}>{licenseActionDetails?.totalNumberofFlows} Integration flows</Typography>
-                  </li>
-                  <li>
-                    {!!(licenseActionDetails?.totalNumberofAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
-                    <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofAgents)})}>{licenseActionDetails?.totalNumberofAgents} On-premise agents</Typography>
                   </li>
                   <li>
                     {licenseActionDetails?.endpoint?.apiManagement && (<CheckMarkIcon className={classes.enableIcon} />)}
@@ -514,8 +498,28 @@ export default function Endpoint() {
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
             <Typography className={classes.subscriptionHeading}>
-              Production usage
+              Production entitlements
             </Typography>
+            <div className={classes.subscriptionFeaturesList} >
+              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionEndpoints)})}> {licenseActionDetails?.endpoint?.production?.numEndpoints} endpoint apps {licenseActionDetails?.endpoint?.production?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnEndpoints} add-on endpoint apps` : ''} </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionTradingPartners)})}>{licenseActionDetails?.endpoint?.production?.numTradingPartners} trading partners {licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnTradingPartners} add-on trading partners` : ''}</Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionFlows) && <CheckMarkIcon className={classes.enableIcon} />}
+                  <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionFlows)})}>{licenseActionDetails?.endpoint?.production?.numFlows} integration flows {licenseActionDetails?.endpoint?.production?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofProductionAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofProductionAgents)})}>{licenseActionDetails?.endpoint?.production?.numAgents} on-premise agents {licenseActionDetails?.endpoint?.production?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.production?.numAddOnAgents} add-on on-premise agents` : ''}</Typography>
+                </li>
+              </ul>
+            </div>
             <Progressbar
               usedCount={numberofUsedEndpoints}
               totalCount={licenseActionDetails?.totalNumberofProductionEndpoints}
@@ -552,8 +556,30 @@ export default function Endpoint() {
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
             <Typography className={classes.subscriptionHeading}>
-              Sandbox usage
+              Sandbox entitlements
             </Typography>
+            <div className={classes.subscriptionFeaturesList} >
+              <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxEndpoints)})}> {licenseActionDetails?.endpoint?.sandbox?.numEndpoints} endpoint apps {licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints} add-on endpoint apps` : ''} </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxTradingPartners)})}>{licenseActionDetails?.endpoint?.sandbox?.numTradingPartners} trading partners {licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners
+                  } add-on trading partners` : ''}
+                  </Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIcon} />}
+                  <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxFlows)})}>{licenseActionDetails?.endpoint?.sandbox?.numFlows} integration flows {licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows} add-on integration flows` : ''}</Typography>
+                </li>
+                <li>
+                  {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxAgents)})}>{licenseActionDetails?.endpoint?.sandbox?.numAgents} on-premise agents {licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents} add-on on-premise agents` : ''} </Typography>
+                </li>
+              </ul>
+            </div>
             <Progressbar
               usedCount={numberofUsedSandboxEndpoints}
               totalCount={licenseActionDetails?.totalNumberofSandboxEndpoints}
@@ -585,7 +611,7 @@ export default function Endpoint() {
           </div>
         </div>
       </div>
-)}
+      )}
       <LoadResources required resources="connections,flows,integrations,agents" />
     </>
   );

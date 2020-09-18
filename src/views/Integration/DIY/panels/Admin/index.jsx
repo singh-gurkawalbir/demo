@@ -17,6 +17,7 @@ import ApiTokensSection from './sections/ApiTokens';
 import SubscriptionSection from './sections/Subscription';
 import UninstallSection from './sections/Uninstall';
 import { getAdminLevelTabs } from '../../../../../utils/integrationApps';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 // import ArrowRightIcon from '../../../../../components/icons/ArrowRightIcon';
 
 const useStyles = makeStyles(theme => ({
@@ -116,10 +117,7 @@ export default function AdminPanel({ integrationId, childId }) {
 
     return emptyObj;
   }, shallowEqual);
-  const children = useSelector(
-    state => selectors.integrationChildren(state, integrationId),
-    shallowEqual
-  );
+  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const sectionsToShow = getAdminLevelTabs({
     integrationId,
     children,

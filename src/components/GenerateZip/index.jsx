@@ -59,6 +59,7 @@ export default function GenerateZip({ onClose, invalid = 'invalid' }) {
           id="integration"
           className={classes.selectIntegration}
           value={selectedIntegrationId}
+          data-test="selectIntegration"
           onChange={e => setSelectedIntegrationId(e.target.value)}
           margin="dense">
           <MenuItem key={invalid} value={invalid}>

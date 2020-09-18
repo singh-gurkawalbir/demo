@@ -36,11 +36,16 @@ const SaveButton = props => {
   );
   const onSave = useCallback(
     values => {
+      const newValues = { ...values };
+
+      if (!newValues['/_borrowConcurrencyFromConnectionId']) {
+        newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
+      }
       dispatch(
         actions.resourceForm.submit(
           resourceType,
           resourceId,
-          values,
+          newValues,
           match,
           skipCloseOnSave,
           isGenerate,

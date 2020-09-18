@@ -43,6 +43,7 @@ export default function JobDashboard({
     },
     [dispatch]
   );
+
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
   }, [dispatch]);
