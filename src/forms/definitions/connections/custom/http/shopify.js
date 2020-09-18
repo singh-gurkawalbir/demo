@@ -177,6 +177,12 @@ export default {
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
         '2020-07',
       visible: r => !(r?._connectorId),
+      validWhen: {
+        matchesRegEx: {
+          pattern: '^(2020-)(01|04|07|10)$',
+          message: 'Incorrect version.',
+        },
+      },
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
