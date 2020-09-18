@@ -490,6 +490,7 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
+          {_connectorId && (
           <IconTextButton
             data-test="uninstall"
             component={Link}
@@ -499,6 +500,7 @@ export default function ConnectorInstallation(props) {
             <CloseIcon />
             Uninstall
           </IconTextButton>
+          )}
 
         </div>
       </CeligoPageBar>
