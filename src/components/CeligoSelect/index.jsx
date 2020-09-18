@@ -59,16 +59,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const DoneButton = ({className, onClick}) => (
-  <Button
-    id="select-close"
-    data-test="closeSelect"
-    variant="outlined"
-    color="secondary"
-    onClick={onClick}
-    className={className}>
-    Done
-  </Button>
+const MenuComponent = ({children, closeBtnClassName, closeSelect, ...props}) => (
+  <div {...props}>
+    {children}
+    {closeSelect && (
+    <Button
+      id="select-close"
+      data-test="closeSelect"
+      variant="outlined"
+      color="secondary"
+      onClick={closeSelect}
+      className={closeBtnClassName}>
+      Done
+    </Button>
+    )}
+  </div>
 );
 
 function CeligoSelect({ className, children, ...props }) {
@@ -82,25 +87,12 @@ function CeligoSelect({ className, children, ...props }) {
       setOpen(false);
     }, []
   );
-  /** In case open property is overriden by parent, openSelect and closeSelect functionality will not work.
-      The same is to be taken care by parent component
-  */
-  const showDoneBtn = !props.open && props.multiple;
 
-  const MenuComponent = useCallback(
-    ({children, ...props}) => (
-      <div {...props}>
-        {children}
-        {showDoneBtn && (
-          <DoneButton
-            className={classes.doneButton}
-            onClick={closeSelect} />
-        )}
-      </div>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  /** In case open property is overriden by parent, openSelect and closeSelect functionality will not work.
+      The same is to be taken care by parent component.
+      dont remove props.open unless verified.
+  */
+  const showCloseOption = !props.open && props.multiple;
 
   const MenuProps = useMemo(() => ({
     PaperProps: {
@@ -111,6 +103,8 @@ function CeligoSelect({ className, children, ...props }) {
         display: 'flex',
         flexDirection: 'column',
       },
+      closeBtnClassName: classes.doneButton,
+      closeSelect: showCloseOption && closeSelect,
       component: MenuComponent,
     },
     MenuListProps: {
