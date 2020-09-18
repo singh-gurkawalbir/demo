@@ -57,6 +57,7 @@ export default function DynaMultiSelect(props) {
     isValid,
     required,
     removeInvalidValues = false,
+    selectAllIdentifier,
   } = props;
   const classes = useStyles();
   let processedValue = value || [];
@@ -133,6 +134,14 @@ export default function DynaMultiSelect(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, optionItems, processedValue, removeInvalidValues]);
+
+  useEffect(() => {
+    // this is used to force 'multiselect' field act as a 'select' field temporarily.
+    // if selectAllIdentifier prop is passed, and user has selected that option, then we unselect all others.
+    if (selectAllIdentifier && value?.length > 1 && value?.includes(selectAllIdentifier)) {
+      onFieldChange(id, [selectAllIdentifier], true);
+    }
+  }, [id, onFieldChange, selectAllIdentifier, value]);
 
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
