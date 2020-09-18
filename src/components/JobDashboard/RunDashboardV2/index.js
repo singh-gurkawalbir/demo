@@ -5,6 +5,7 @@ import actions from '../../../actions';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 import PanelLoader from '../../PanelLoader';
+import { isNewId } from '../../../utils/resource';
 
 export default function RunDashboardV2({ flowId }) {
   const dispatch = useDispatch();
@@ -14,7 +15,9 @@ export default function RunDashboardV2({ flowId }) {
   );
 
   useEffect(() => {
-    dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
+    if (flowId && !isNewId(flowId)) {
+      dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
+    }
   }, [dispatch, flowId]);
 
   if (latestFlowJobs?.status === 'refresh') {
