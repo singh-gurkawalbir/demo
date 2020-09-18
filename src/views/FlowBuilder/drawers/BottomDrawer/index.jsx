@@ -22,6 +22,7 @@ import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
+import { isNewId } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -330,11 +331,13 @@ export default function BottomDrawer({
         </div>
       </div>
       <>
+        {flowId && !isNewId(flowId) && (
         <TabPanel value={tabValue} index={0} classes={classes}>
           { isUserInErrMgtTwoDotZero
             ? <RunDashboardV2Panel flowId={flowId} />
             : <RunDashboardPanel flowId={flowId} />}
         </TabPanel>
+        )}
         <TabPanel value={tabValue} index={1} classes={classes}>
           <ConnectionPanel flowId={flowId} />
         </TabPanel>
