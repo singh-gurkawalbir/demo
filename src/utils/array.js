@@ -46,4 +46,34 @@ export default {
 
     return isEqual(src.slice(startIndex, startIndex + target.length), target);
   },
+  areArraysEqual: (arr1, arr2, options = {}) => {
+    const { ignoreOrder = false } = options;
+
+    if (!Array.isArray(arr1) || !Array.isArray(arr2) || arr1.length !== arr2.length) {
+      return false;
+    }
+    if (!ignoreOrder) {
+      for (let i = 0; i < arr1.length; i += 1) {
+        if (arr1[i] !== arr2[i]) {
+          return false;
+        }
+      }
+    }
+    const hashMap = new Map();
+
+    arr1.forEach(item => hashMap.get(item) ? hashMap.set(item, hashMap.get(item) + 1) : hashMap.set(item, 1));
+    arr2.forEach(item => {
+      const val = hashMap.get(item);
+
+      if (!val) {
+        hashMap.set(item, 1);
+      } else if (val > 1) {
+        hashMap.set(item, val - 1);
+      } else {
+        hashMap.delete(item);
+      }
+    });
+
+    return hashMap.size === 0;
+  },
 };

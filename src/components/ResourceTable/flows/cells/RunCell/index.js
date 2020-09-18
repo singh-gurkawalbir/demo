@@ -51,7 +51,16 @@ export default function RunCell({
       return getIntegrationAppUrlName(integration.name);
     }
   });
+
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
   const handleOnRunStart = useCallback(() => {
+    if (isUserInErrMgtTwoDotZero) {
+      return false;
+    }
+
     if (isIntegrationApp) {
       if (storeId) {
         history.push(

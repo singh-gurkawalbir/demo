@@ -23,7 +23,6 @@ import {
   getXAxisFormat,
   getTicks,
   getLineColor,
-  getAxisLabelPosition,
   getLegend,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
@@ -302,7 +301,8 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
               value: getAxisLabel(id),
               angle: -90,
               offset: -20,
-              position: getAxisLabelPosition(id),
+              position: 'insideLeft',
+              style: { textAnchor: 'middle' },
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -330,7 +330,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   );
 };
 
-export default function FlowCharts({ integrationId, range, selectedResources }) {
+export default function FlowCharts({ integrationId, range, selectedResources, refresh }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
@@ -345,7 +345,7 @@ export default function FlowCharts({ integrationId, range, selectedResources }) 
     if (selectedResources.length) {
       setSendQuery(true);
     }
-  }, [selectedResources, range]);
+  }, [selectedResources, range, refresh]);
 
   useEffect(() => {
     if (sendQuery) {

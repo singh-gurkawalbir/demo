@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
+import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
@@ -127,6 +128,23 @@ export function* installScriptStep({
       hidden: true,
     }) || {};
   } catch (error) {
+    const parsedError = isJsonString(error.message)
+      ? JSON.parse(error.message)
+      : error.message;
+
+    if (parsedError?.steps) {
+      // BE can return updated steps in case of errors also, eg
+      // connectionId got updated in the installSteps but IA installer threw some error
+      yield put(
+        actions.integrationApp.installer.completedStepInstall(
+          { stepsToUpdate: parsedError.steps },
+          id
+        )
+      );
+      if (connectionId || !isEmpty(connectionDoc)) {
+        yield put(actions.resource.requestCollection('connections'));
+      }
+    }
     yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
     yield put(actions.api.failure(path, 'PUT', error.message, false));
 

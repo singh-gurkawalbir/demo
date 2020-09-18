@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
 import { AppBar, Toolbar } from '@material-ui/core';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -88,7 +87,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function CeligoAppBar() {
   const classes = useStyles();
-  const { pathname } = useLocation();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -101,7 +99,7 @@ export default function CeligoAppBar() {
             [classes.appBarShift]: drawerOpened,
           })}>
           <Toolbar className="topBar" variant="dense">
-            <CeligoBreadcrumb location={pathname} />
+            <CeligoBreadcrumb />
             <ul className={classes.topBarActions}>
               {/* <li>
                 <GlobalSearch />

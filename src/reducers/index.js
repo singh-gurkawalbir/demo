@@ -399,6 +399,7 @@ selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authen
 selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.defaultAccountSet);
 
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
+selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
 selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
@@ -1429,6 +1430,20 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   };
 };
 
+selectors.integrationAppName = () => createSelector(
+  state => state?.data?.resources.integrations,
+  (state, integrationId) => integrationId,
+  (integrations, integrationId) => {
+    const integration = integrations.find(i => i._id === integrationId);
+
+    if (integration && integration._connectorId && integration.name) {
+      return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  }
+);
+
 selectors.integrationChildren = (state, integrationId) => {
   if (!state) return null;
   const children = [];
@@ -1445,6 +1460,23 @@ selectors.integrationChildren = (state, integrationId) => {
 
   return children;
 };
+
+selectors.mkIntegrationChildren = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  (state, integrationId) => integrationId,
+  (integrations = [], integrationId) => {
+    const children = [];
+    const integration = integrations.find(int => int._id === integrationId) || {};
+    const childIntegrations = integrations.filter(int => int._parentId === integrationId);
+
+    children.push({ value: integrationId, label: integration.name });
+    childIntegrations.forEach(ci => {
+      children.push({ value: ci._id, label: ci.name, mode: ci.mode });
+    });
+
+    return children;
+  }
+);
 
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
@@ -1586,7 +1618,7 @@ selectors.integrationAppSectionMetadata = (
   return selectedSection;
 };
 
-selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
+selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
   if (!state) return emptyObject;
   const integrationResource =
     fromData.integrationAppSettings(state.data, id) || emptyObject;
@@ -1599,6 +1631,7 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
   let hasDescription = false;
+  let sectionFlows;
   let allSections = sections;
 
   if (supportsMultiStore) {
@@ -1624,10 +1657,12 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
 
   if (!section) {
     allSections.forEach(sec => {
-      requiredFlows.push(...map(sec.flows, '_id'));
+      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+      requiredFlows.push(...map(sectionFlows, '_id'));
     });
   } else {
-    requiredFlows = map(selectedSection.flows, '_id');
+    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+    requiredFlows = map(sectionFlows, '_id');
   }
   hasNSInternalIdLookup = some(
     selectedSection.flows,
@@ -3249,21 +3284,19 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
   };
 };
 
-selectors.flowJobConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-  const connections = [];
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-    ignoreBorrowedConnections: true,
-  });
+selectors.flowJobConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, flowId) => {
+    const flow = selectors.resource(state, 'flows', flowId);
 
-  connectionIds.forEach(c => {
-    const conn = selectors.resource(state, 'connections', c);
+    const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
+      ignoreBorrowedConnections: true,
+    });
 
-    connections.push({ id: conn._id, name: conn.name });
-  });
-
-  return connections;
-};
+    return connectionIds;
+  },
+  (connections = [], connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+);
 
 selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
   let connectionIdsToRegister = [];
@@ -3289,6 +3322,21 @@ selectors.flowImports = (state, id) => {
 
   return getImportsFromFlow(flow, imports);
 };
+
+selectors.mkflowImportsList = () => createSelector(
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  state => state?.data?.resources?.imports,
+  (state, flowId, importId) => importId,
+  (flow, imports, importId) => {
+    if (importId) {
+      const subRecordResource = imports.find(i => i._id === importId);
+
+      return [subRecordResource];
+    }
+
+    return getImportsFromFlow(flow, imports);
+  }
+);
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
@@ -3383,17 +3431,12 @@ selectors.isAnyFlowConnectionOffline = (state, flowId) => {
   return connectionList.some(c => c.offline);
 };
 
-selectors.flowConnectionList = (state, flow) => {
+selectors.flowConnectionList = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
   const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
-};
-
-selectors.flowConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  return selectors.flowConnectionList(state, flow);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
@@ -3789,7 +3832,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (resource.type === 'delta') {
+      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
@@ -4850,7 +4893,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
   // [{}, ..., {}, {op: "replace", path: "/adaptorType", value: "HTTPExport"}, ...]
   const adaptorType = resourceType === 'connections'
-    ? getStagedValue('type') || resourceObj?.type
+    ? getStagedValue('/type') || resourceObj?.type
     : getStagedValue('/adaptorType') || resourceObj?.adaptorType;
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 

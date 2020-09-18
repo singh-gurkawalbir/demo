@@ -20,6 +20,8 @@ export default {
       subRecordConfig: item.subRecordConfig,
       doesNotSupportUpdate: item.doesNotSupportUpdate,
       doesNotSupportCreate: item.doesNotSupportCreate,
+      doesNotSupportSearch: item.doesNotSupportSearch,
+      doesNotSupportDelete: item.doesNotSupportDelete,
     })),
   'suitescript-recordTypeDetail': data =>
     data.map(item => ({
@@ -75,6 +77,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
   'suitescript-itemCustomNumberColumn': data =>
     data

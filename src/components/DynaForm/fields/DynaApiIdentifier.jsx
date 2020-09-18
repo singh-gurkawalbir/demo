@@ -29,7 +29,7 @@ export default function DynaApiIdentifier(props) {
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'URL copied to clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'URL copied to clipboard.' }), [enquesnackbar]);
 
   return (
     <div className={classes.dynaAPIWrapper}>
