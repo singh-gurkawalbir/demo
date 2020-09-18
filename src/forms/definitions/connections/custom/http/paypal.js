@@ -85,6 +85,7 @@ export default {
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
     },
     application: {

@@ -55,6 +55,7 @@ export default {
         { field: 'http.encrypted.password', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
       helpKey: 'dunandbradstreet.connection.http.auth.token.token',

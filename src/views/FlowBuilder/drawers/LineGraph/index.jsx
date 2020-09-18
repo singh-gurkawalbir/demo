@@ -112,7 +112,7 @@ export default function LineGraphDrawer({ flowId }) {
         setSelectedResources(val);
       }
     },
-    []
+    [dispatch, flowId, selectedResources]
   );
 
   const action = useMemo(

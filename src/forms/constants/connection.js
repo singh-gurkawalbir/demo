@@ -105,6 +105,7 @@ export default {
     'concurinvoice',
     'g2',
     'shipengine',
+    'jiraserver',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

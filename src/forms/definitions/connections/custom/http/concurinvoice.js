@@ -49,6 +49,7 @@ export default {
       ],
       label: 'Generate token',
       defaultValue: '',
+      inputboxLabel: 'Token',
       required: true,
     },
     'http.auth.token.refreshToken': {

@@ -98,6 +98,7 @@ export default {
       inputType: 'password',
       resourceId: r => r._id,
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
     },
