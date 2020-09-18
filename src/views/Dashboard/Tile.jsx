@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
 import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
+import moment from 'moment';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -28,6 +29,7 @@ import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
+import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -54,6 +56,7 @@ const useStyles = makeStyles(theme => ({
 function Tile({ tile, history, onMove, onDrop, index }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [showExpireNotification, setShowExpireNotification] = useState(true);
   const [isTruncated, setIsTruncated] = useState(false);
   const numFlowsText = `${tile.numFlows} Flow${tile.numFlows === 1 ? '' : 's'}`;
   const integration = useSelector(state =>
@@ -73,6 +76,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
     return null;
   });
+  const onClose = useCallback(
+    event => {
+      event?.stopPropagation();
+      setShowExpireNotification(false);
+    },
+    []
+  );
   const accessLevel =
     tile.integration &&
     tile.integration.permissions &&
@@ -190,10 +200,28 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const handleTileClick = useCallback(
     event => {
       event.stopPropagation();
+
       history.push(getRoutePath(urlToIntegrationSettings));
     },
     [history, urlToIntegrationSettings]
   );
+  const remainingDays = date =>
+    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+  const licenses = useSelector(state =>
+    selectors.licenses(state)
+  );
+
+  const license = tile._connectorId && licenses.find(l => l._connectorId === tile._connectorId);
+  const expiresInDays = license && remainingDays(license.expires);
+  let licenseMessagecontent = '';
+  let expired = false;
+
+  if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessagecontent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessagecontent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  }
 
   // #region Drag&Drop related
   const ref = useRef(null);
@@ -301,10 +329,16 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             variant={tile._connectorId ? 'Integration app' : numFlowsText}
             label={tile.connector && tile.connector.owner}
             />
-        </Footer>
+        </Footer>{
+          tile._connectorId && licenseMessagecontent && showExpireNotification && (
+          <TrialExpireNotification
+            content={licenseMessagecontent} expired={expired} onClose={onClose} connectorId={tile._connectorId}
+            licenseId={license._id}
+            single />
+          )
+        }
       </HomePageCardContainer>
     </div>
   );
 }
-
 export default withRouter(Tile);
