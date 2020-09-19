@@ -74,7 +74,7 @@ export default function ResolvedErrors({ flowId, resourceId, show }) {
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
-            errorType="resolved"
+            errorType="resolvedErrors"
             data={resolvedErrors}
             actionProps={actionProps}
             emptyRowsLabel="No Resolved errors"

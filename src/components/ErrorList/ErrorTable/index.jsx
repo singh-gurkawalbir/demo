@@ -2,9 +2,8 @@ import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../CeligoPagination';
-import CeligoTable from '../../CeligoTable';
+import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
-import metadata from './metadata';
 
 const useStyles = makeStyles(() => ({
   tablePaginationRoot: {
@@ -70,12 +69,12 @@ export default function ErrorTable(props) {
             onChangePage={handleChangePage}
             onChangeRowsPerPage={handleChangeRowsPerPage}
           />
-          <CeligoTable
-            data={errorsInCurrentPage}
+          <ResourceTable
+            resources={errorsInCurrentPage}
             className={classes.errorDetailsTable}
-            filterKey={filterKey}
-            {...metadata[errorType]}
+            resourceType={errorType}
             actionProps={actionProps}
+            filterKey={filterKey}
           />
         </>
       ) : (

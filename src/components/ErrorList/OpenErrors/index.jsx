@@ -75,7 +75,7 @@ export default function OpenErrors({ flowId, resourceId, show }) {
           </div>
           <ErrorTable
             paginationOptions={paginationOptions}
-            errorType="open"
+            errorType="openErrors"
             data={openErrors}
             actionProps={actionProps}
             emptyRowsLabel="No open errors"

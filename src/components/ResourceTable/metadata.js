@@ -12,6 +12,8 @@ import recycleBinTTL from './recycleBinTTL/metadata';
 import templates from './templates/metadata';
 import transfers from './transfers/metadata';
 import auditLogs from './auditLog/metadata';
+import openErrors from './errorManagement/openErrors/metadata';
+import resolvedErrors from './errorManagement/resolvedErrors/metadata';
 
 const metadata = {
   agents,
@@ -27,6 +29,8 @@ const metadata = {
   templates,
   transfers,
   auditLogs,
+  openErrors,
+  resolvedErrors,
 };
 
 export default function (resourceType) {
