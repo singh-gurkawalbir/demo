@@ -45,9 +45,7 @@ export function* getInProgressJobsStatus({ flowId }) {
   const inProgressJobs = yield select(selectors.getInProgressLatestJobs, flowId);
 
   if (!inProgressJobs.length) {
-    yield put(actions.errorManager.latestFlowJobs.noInProgressJobs());
-
-    return;
+    return yield put(actions.errorManager.latestFlowJobs.noInProgressJobs());
   }
   yield all(
     inProgressJobs.map(

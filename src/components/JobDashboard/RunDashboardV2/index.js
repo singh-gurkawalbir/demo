@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import metadata from './metadata';
-import CeligoTable from '../../CeligoTable';
+import ResourceTable from '../../ResourceTable';
 import PanelLoader from '../../PanelLoader';
 import { isNewId } from '../../../utils/resource';
 
@@ -27,6 +26,6 @@ export default function RunDashboardV2({ flowId }) {
   }
 
   return (
-    <CeligoTable data={latestFlowJobs.data} {...metadata} />
+    <ResourceTable resources={latestFlowJobs.data} resourceType="latestJobs" />
   );
 }

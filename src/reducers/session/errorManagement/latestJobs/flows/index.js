@@ -26,7 +26,7 @@ export default (state = {}, action) => {
         draft[flowId].status = 'received';
         const jobChildrenMap = {};
 
-        (draft[flowId].data || []).forEach(prevJob => {
+        draft[flowId].data?.forEach(prevJob => {
           if (prevJob?.children?.length) {
             jobChildrenMap[prevJob._id] = prevJob.children;
           }
