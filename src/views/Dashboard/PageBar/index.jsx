@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import CeligoPageBar from '../../../components/CeligoPageBar';
@@ -9,12 +9,14 @@ import ZipUpIcon from '../../../components/icons/InstallIntegrationIcon';
 import IconTextButton from '../../../components/IconTextButton';
 import { generateNewId } from '../../../utils/resource';
 
-const IntegrationCeligoPageBar = () => {
+export default function IntegrationCeligoPageBar() {
   const location = useLocation();
 
-  const permission = useSelector(state =>
-    selectors.resourcePermissions(state, 'integrations')
-  );
+  const permission = useSelector(state => {
+    const {create, install} = selectors.resourcePermissions(state, 'integrations');
+
+    return {create, install};
+  }, shallowEqual);
 
   return (
     <CeligoPageBar title="My integrations">
@@ -54,6 +56,4 @@ const IntegrationCeligoPageBar = () => {
       )}
     </CeligoPageBar>
   );
-};
-
-export default IntegrationCeligoPageBar;
+}

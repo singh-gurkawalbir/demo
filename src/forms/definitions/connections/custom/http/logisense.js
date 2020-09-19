@@ -118,6 +118,7 @@ export default {
         { field: 'http.encrypted.clientId', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
     },

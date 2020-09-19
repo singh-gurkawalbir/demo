@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import LoadResources from '../../../../../components/LoadResources';
@@ -46,6 +46,13 @@ export default function ConnectionPanel({ flowId }) {
     };
   }, [dispatch, integrationId]);
 
+  const actionProps = useMemo(() => ({
+    type: 'flowBuilder',
+    resourceType: 'connections',
+    integrationId,
+    showTradingPartner,
+  }), [integrationId, showTradingPartner]);
+
   return (
     <div className={classes.root}>
       <LoadResources required resources="connections">
@@ -53,12 +60,7 @@ export default function ConnectionPanel({ flowId }) {
           data={flowConnections}
           filterKey="connections"
           {...metadata}
-          actionProps={{
-            type: 'flowBuilder',
-            resourceType: 'connections',
-            integrationId,
-            showTradingPartner,
-          }}
+          actionProps={actionProps}
         />
       </LoadResources>
     </div>

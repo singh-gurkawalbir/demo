@@ -118,6 +118,8 @@ export default function ResourceList(props) {
     };
   }, [dispatch, resourceType]);
 
+  const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
+
   return (
     <CheckPermissions
       permission={
@@ -159,7 +161,7 @@ export default function ResourceList(props) {
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
-              actionProps={{showTradingPartner}}
+              actionProps={actionProps}
             />
           )}
         </LoadResources>

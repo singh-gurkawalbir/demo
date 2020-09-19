@@ -5,7 +5,7 @@ import {
 } from '../../../../../utils/assistant';
 
 export function hiddenFieldsMeta({ values }) {
-  return ['assistant', 'adaptorType', 'assistantData'].map(fieldId => ({
+  return ['assistant', 'adaptorType', 'assistantData', 'lookups'].map(fieldId => ({
     id: `assistantMetadata.${fieldId}`,
     type: 'text',
     value: values[fieldId],
@@ -233,7 +233,7 @@ export function howToFindIdentifierFieldsMeta({
 }
 
 export function fieldMeta({ resource, assistantData }) {
-  const { assistant } = resource;
+  const { assistant, lookups } = resource;
   let { adaptorType } = resource;
 
   if (adaptorType === 'RESTImport') {
@@ -243,7 +243,7 @@ export function fieldMeta({ resource, assistantData }) {
   }
 
   const hiddenFields = hiddenFieldsMeta({
-    values: { assistant, adaptorType, assistantData },
+    values: { assistant, adaptorType, assistantData, lookups },
   });
   let basicFields = [];
   let pathParameterFields = [];

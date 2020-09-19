@@ -23,6 +23,7 @@ export default {
       type: 'text',
       label: 'Subdomain',
       required: true,
+      helpKey: 'procurify.connection.http.procurifySubdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -59,33 +60,26 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
-    'http.generateClientIdandSecret': {
-      id: 'http.generateClientIdandSecret',
-      type: 'tokengen',
-      inputType: 'password',
-      helpKey: 'procurify.connection.http.generateClientIdandSecret',
-      label: 'Generate client id & secret',
-      defaultValue: '',
-    },
     'http.unencrypted.clientId': {
       id: 'http.unencrypted.clientId',
       required: true,
-      type: 'text',
-      helpKey: 'procurify.connection.http.encrypted.clientId',
-      label: 'Client id',
-    },
-    'http.encrypted.clientSecret': {
-      id: 'http.encrypted.clientSecret',
-      required: true,
       type: 'tokengen',
-      defaultValue: '',
-      inputType: 'password',
-      helpKey: 'procurify.connection.http.encrypted.clientSecret',
-      label: 'Generate client id & secret',
+      helpKey: 'procurify.connection.http.unencrypted.clientId',
+      label: 'Generate client ID & secret',
+      inputboxLabel: 'Client ID',
       disabledWhen: [
         { field: 'http.unencrypted.username', is: [''] },
         { field: 'http.encrypted.password', is: [''] },
       ],
+    },
+    'http.encrypted.clientSecret': {
+      id: 'http.encrypted.clientSecret',
+      required: true,
+      type: 'text',
+      helpKey: 'procurify.connection.http.encrypted.clientSecret',
+      label: 'Client Secret',
+      defaultValue: '',
+      inputType: 'password',
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -97,6 +91,7 @@ export default {
         { field: 'http.encrypted.clientSecret', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
     },
     application: {
@@ -110,12 +105,28 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.procurifySubdomain',
-          'http.unencrypted.username',
-          'http.encrypted.password',
-          'http.encrypted.clientSecret',
-          'http.unencrypted.clientId',
-          'http.auth.token.token'] },
+        containers: [
+          {
+            fields: [
+              'http.procurifySubdomain',
+              'http.unencrypted.username',
+              'http.encrypted.password'],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'http.unencrypted.clientId',
+                  'http.encrypted.clientSecret'],
+              },
+            ],
+          },
+          {
+            fields: ['http.auth.token.token'],
+          },
+        ],
+      },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

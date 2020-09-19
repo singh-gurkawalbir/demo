@@ -57,6 +57,8 @@ function TokenGenerator(props) {
     connectionToken,
     handleClearToken,
     resourceId,
+    inputboxLabel,
+    label,
   } = props;
   const { fieldsToBeSetWithValues, message } = connectionToken || {};
   const classes = useStyles();
@@ -81,11 +83,11 @@ function TokenGenerator(props) {
 
   return (
     <div className={classes.dynaTokenWrapper}>
-      <div className={classes.dynaTokenField}>
-        <MaterialUiTextField {...props} disabled={false} required />
-      </div>
       <div className={classes.dynaTokenbtn}>
         <GenerateTokenButton {...props} className={classes.children} />
+      </div>
+      <div className={classes.dynaTokenField}>
+        <MaterialUiTextField {...props} label={inputboxLabel || label} disabled={false} required />
       </div>
     </div>
   );
