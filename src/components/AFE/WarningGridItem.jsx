@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 import PanelTitle from './PanelTitle';
 import CodePanel from './GenericEditor/CodePanel';
 
@@ -33,9 +32,7 @@ export default function WarningGridItem({ warning }) {
   return (
     <div className={classes.gridItem}>
       <div className={classes.flexContainer}>
-        <PanelTitle>
-          <Typography className={classes.title}>Warning</Typography>
-        </PanelTitle>
+        <PanelTitle className={classes.title} title="Warning" />
         <div className={classes.panel}>
           <CodePanel
             readOnly

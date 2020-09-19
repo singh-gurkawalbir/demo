@@ -122,7 +122,7 @@ export default function HandlebarsEditor(props) {
       violations={violations}
       rule={template}
       data={data}
-      result={result ? result.data : ''}
+      result={result?.data || ''}
       error={error}
       resultWarning={result?.warning}
       enableAutocomplete={enableAutocomplete}

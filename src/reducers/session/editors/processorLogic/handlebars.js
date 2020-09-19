@@ -1,5 +1,4 @@
 import util from '../../../../utils/json';
-import { safeParse } from '../../../../utils/string';
 
 export default {
   requestBody: editor => ({
@@ -16,17 +15,17 @@ export default {
 
     if (data) {
       if (mode === 'json') {
-        const parsedData = safeParse(data);
-
-        if (!parsedData) {
-          return {data, warning: 'Evaluated result is not valid JSON.', ...rest};
+        try {
+          JSON.parse(data);
+        } catch (e) {
+          return {data, warning: `Evaluated result is not valid JSON. ${e.message || ''}`, ...rest};
         }
       } else if (mode === 'xml') {
         const xmldoc = new DOMParser().parseFromString(data, 'text/xml');
         const parseError = xmldoc.getElementsByTagName('parsererror');
 
         if (parseError?.length) {
-          return {data, warning: 'Evaluated result is not valid XML.', ...rest};
+          return {data, warning: `Evaluated result is not valid XML. ${parseError[0].childNodes?.[1]?.textContent || ''}`, ...rest};
         }
       }
     }
