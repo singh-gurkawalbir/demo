@@ -38,6 +38,7 @@ export function* getJobFamily({ flowId, jobId }) {
     yield call(refreshForMultipleFlowJobs, {flowId, job, latestJobs: latestJobsState.data || []});
   } catch (error) {
     //  handle errors
+    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -100,6 +101,7 @@ function* requestLatestJobs({ flowId }) {
     yield put(actions.errorManager.latestFlowJobs.requestInProgressJobsPoll({ flowId }));
   } catch (error) {
     // handle errors
+    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
@@ -112,7 +114,7 @@ export function* cancelJob({ jobId }) {
   try {
     yield call(apiCallWithRetry, { path, opts });
   } catch (error) {
-    return true;
+    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 
