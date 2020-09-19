@@ -90,13 +90,13 @@ const preventEvent = e => {
   e.stopPropagation();
 };
 
-function TabPanel({ children, value, index, classes }) {
+function TabPanel({ children, value, index, className }) {
   const hidden = value !== index;
 
   return (
     <div
       role="tabpanel"
-      className={classes.tabPanel}
+      className={className}
       hidden={hidden}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
@@ -330,15 +330,15 @@ export default function BottomDrawer({
         </div>
       </div>
       <>
-        <TabPanel value={tabValue} index={0} classes={classes}>
+        <TabPanel value={tabValue} index={0} className={classes.tabPanel}>
           { isUserInErrMgtTwoDotZero
             ? <RunDashboardV2Panel flowId={flowId} />
             : <RunDashboardPanel flowId={flowId} />}
         </TabPanel>
-        <TabPanel value={tabValue} index={1} classes={classes}>
+        <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
           <ConnectionPanel flowId={flowId} />
         </TabPanel>
-        <TabPanel value={tabValue} index={2} classes={classes}>
+        <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
           <AuditPanel flowId={flowId} />
         </TabPanel>
         {connectionDebugLogs &&
@@ -349,7 +349,7 @@ export default function BottomDrawer({
                     value={tabValue}
                     key={connectionId}
                     index={cIndex + 3}
-                    classes={classes}>
+                    className={classes.tabPanel}>
                     <>
                       <div className={classes.rightActionContainer}>
                         <IconTextButton

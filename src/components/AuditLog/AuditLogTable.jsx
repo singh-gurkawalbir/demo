@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditLogTable({ resourceType, resourceId, filters, options, resourceDetails }) {
+export default function AuditLogTable({ resourceType, resourceId, filters, storeId, resourceDetails }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
@@ -26,8 +26,10 @@ export default function AuditLogTable({ resourceType, resourceId, filters, optio
       resourceType,
       resourceId,
       filters,
-      {...options, take}
+      {storeId, take}
     ));
+
+  const actionProps = useMemo(() => ({ resourceDetails }), [resourceDetails]);
 
   return (
     <div className={classes.root}>
@@ -37,7 +39,7 @@ export default function AuditLogTable({ resourceType, resourceId, filters, optio
             resources={auditLogs}
             resourceType="auditLogs"
             filterKey={filterKey}
-            actionProps={{ resourceDetails }}
+            actionProps={actionProps}
           />
         ) : (
           <Typography className={classes.messageContainer}>
