@@ -5,7 +5,7 @@ export default {
     required: true,
     type: 'refreshableselect',
     bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> to to enable Real-time export capabilities.',
+    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> to enable Real-time export capabilities.',
     visibleWhen: [{ field: 'netsuite.execution.type', is: ['distributed'] }],
     filterKey: 'suitescript-recordTypes',
     commMetaPath: r =>
