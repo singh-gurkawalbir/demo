@@ -1292,7 +1292,6 @@ export default {
   'http.unencrypted': {
     type: 'editor',
     mode: 'json',
-    required: true,
     label: 'Unencrypted',
   },
   'http.encrypted': {
