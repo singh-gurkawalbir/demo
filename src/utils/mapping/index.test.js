@@ -503,7 +503,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'NetSuiteDistributedImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: false,
       netsuiteRecordType: 'customer',
       options: {
@@ -1124,7 +1124,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'SalesforceImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: false,
       options: {
         integrationApp: {
@@ -1648,7 +1648,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'FTPImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: true,
       options: {},
       exportResource: {
@@ -1763,7 +1763,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'FTPImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: false,
       options: {},
       exportResource: {
@@ -1846,7 +1846,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'RESTImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: true,
       options: {
         assistant: {
@@ -2003,7 +2003,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'RESTImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: true,
       options: {
         assistant: {
@@ -2168,7 +2168,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'RESTImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: false,
       options: {
         assistant: {
@@ -2379,7 +2379,7 @@ describe('Mapping utils', () => {
         },
         adaptorType: 'NetSuiteDistributedImport',
       },
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData: false,
       netsuiteRecordType: 'customer',
       options: {

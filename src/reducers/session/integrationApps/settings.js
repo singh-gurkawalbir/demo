@@ -285,7 +285,7 @@ export default (state = {}, action) => {
             staged ||
             mappingUtil.getMappingFromResource({
               importResource: resourceData,
-              getRawMappings: false,
+              isFieldMapping: false,
               isGroupedSampleData,
               netsuiteRecordType,
               options: {

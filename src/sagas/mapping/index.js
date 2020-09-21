@@ -217,7 +217,7 @@ export function* mappingInit({
   } else {
     formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      getRawMappings: false,
+      isFieldMapping: false,
       isGroupedSampleData,
       netsuiteRecordType: options.recordType,
       options,
