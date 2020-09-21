@@ -3225,9 +3225,12 @@ selectors.flowDashboardJobs = createSelector(
     latestFlowJobs?.data?.forEach(parentJob => {
       // when the job is queued
       if (parentJob.status === JOB_STATUS.QUEUED) {
-        dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-
-        return;
+        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
+      }
+      if (parentJob.status === JOB_STATUS.CANCELED && !parentJob.children?.length) {
+        // In cases when job is cancelled while it is in queue, children are not yet created
+        // So show this job as the export step cancelled
+        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
       }
       const additionalProps = {
         doneExporting: !!parentJob.doneExporting,

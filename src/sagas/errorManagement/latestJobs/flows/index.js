@@ -43,7 +43,7 @@ export function* getJobFamily({ flowId, jobId }) {
 }
 
 export function* getInProgressJobsStatus({ flowId }) {
-  const inProgressJobs = yield select(selectors.getInProgressLatestJobs, flowId);
+  const inProgressJobs = yield select(selectors.getInProgressLatestJobs, flowId, true);
 
   if (!inProgressJobs.length) {
     return yield put(actions.errorManager.latestFlowJobs.noInProgressJobs());

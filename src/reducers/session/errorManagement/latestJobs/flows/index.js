@@ -70,11 +70,30 @@ selectors.latestFlowJobsList = (state, flowId) => {
   return state[flowId];
 };
 
-selectors.getInProgressLatestJobs = (state, flowId) => {
+selectors.getInProgressLatestJobs = (state, flowId, considerChildJobs = false) => {
   if (!state || !flowId || !state[flowId]) return [];
   const jobsList = state[flowId].data;
 
-  return jobsList.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING, JOB_STATUS.RETRYING].includes(
-    job.status
-  )).map(job => job._id);
+  if (!considerChildJobs) {
+    return jobsList.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
+      job.status
+    )).map(job => job._id);
+  }
+
+  const jobIds = jobsList.filter(job => {
+    const isJobInProgress = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(
+      job.status
+    );
+
+    if (isJobInProgress) return true;
+    if (job.children?.length) {
+      return job.children.some(cJob => cJob?.status === JOB_STATUS.RUNNING);
+    }
+
+    return false;
+  }).map(job => job._id);
+
+  console.log(jobIds);
+
+  return jobIds;
 };
