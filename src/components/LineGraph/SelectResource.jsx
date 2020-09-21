@@ -58,15 +58,28 @@ const useStyles = makeStyles(theme => ({
 
 export default function SelectResource(props) {
   const { flowResources = [], selectedResources = [], onSave, isFlow } = props;
+  const [initalValue, setInitialValue] = useState(selectedResources);
   const [checked, setChecked] = useState(selectedResources);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      onSave(checked);
+      setChecked(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, checked, onSave]);
+  }, [anchorEl, initalValue]);
+
+  const handleSave = useCallback(() => {
+    setInitialValue(checked);
+    onSave && onSave(checked);
+    setAnchorEl(null);
+  }, [onSave, checked]);
+
+  const handleClose = useCallback(() => {
+    setChecked(initalValue);
+    setAnchorEl(null);
+  }, [initalValue]);
 
   const buttonName = useMemo(() => {
     if (!checked || !checked.length) {
@@ -135,6 +148,14 @@ export default function SelectResource(props) {
 
                   </FormGroup>
                 </FormControl>
+              </div>
+              <div className={classes.actions}>
+                <Button variant="outlined" color="primary" onClick={handleSave}>
+                  Apply
+                </Button>
+                <Button variant="text" color="primary" onClick={handleClose}>
+                  Cancel
+                </Button>
               </div>
             </div>
           </div>
