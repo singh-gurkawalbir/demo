@@ -62,6 +62,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
   const isCloned = integration?.install?.find(step => step?.isClone);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -145,14 +148,15 @@ function Tile({ tile, history, onMove, onDrop, index }) {
 
   const handleStatusClick = useCallback(
     event => {
-      event.stopPropagation();
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+        event.stopPropagation();
         history.push(
           getRoutePath(
             `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
           )
         );
-      } else {
+      } else if (!isUserInErrMgtTwoDotZero) {
+        event.stopPropagation();
         dispatch(
           actions.patchFilter('jobs', {
             status: status.variant === 'error' ? 'error' : 'all',
@@ -175,6 +179,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     [
       dispatch,
       history,
+      isUserInErrMgtTwoDotZero,
       integrationAppTileName,
       status.variant,
       tile._connectorId,
