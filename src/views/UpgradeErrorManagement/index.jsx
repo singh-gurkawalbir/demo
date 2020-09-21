@@ -99,8 +99,21 @@ export default function UpgradeErrorManagement() {
 
         <div className={classes.footer}>
           <ButtonGroup>
-            <Button variant="outlined" color="primary" onClick={handleUpgrade} >Upgrade</Button>
-            <Button variant="text" color="primary" onClick={redirectToDashboard}>I&apos;ll do this later</Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleUpgrade}
+              data-test="EM2.0_Upgrade"
+              >
+              Upgrade
+            </Button>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={redirectToDashboard}
+              data-test="EM2.0_Later">
+              I&apos;ll do this later
+            </Button>
           </ButtonGroup>
         </div>
 
