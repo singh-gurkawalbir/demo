@@ -231,6 +231,7 @@ export function* mappingInit({
 
     return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
+  console.log('formattedMappings', formattedMappings);
   yield put(
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({
