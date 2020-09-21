@@ -1,35 +1,31 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import metadata from './metadata';
-import CeligoTable from '../../CeligoTable';
+import ResourceTable from '../../ResourceTable';
 import PanelLoader from '../../PanelLoader';
+import { isNewId } from '../../../utils/resource';
 
-export default function RunDashboardV2({ flowId, integrationId }) {
+export default function RunDashboardV2({ flowId }) {
   const dispatch = useDispatch();
-  const latestJobs = useSelector(state => selectors.flowDashboardDetails(state));
-  const flowJobs = useSelector(state => selectors.flowJobs(state));
-  const areFlowJobsLoading = useSelector(state => selectors.areFlowJobsLoading(state, { integrationId, flowId }));
+  const latestFlowJobs = useSelector(
+    state => selectors.flowDashboardJobs(state, flowId),
+    shallowEqual
+  );
 
   useEffect(() => {
-    if (flowJobs.length === 0 && flowId) {
-      dispatch(
-        actions.job.requestLatestJobs({
-          integrationId,
-          flowId,
-        })
-      );
+    if (flowId && !isNewId(flowId)) {
+      dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
     }
-  }, [dispatch, integrationId, flowId, flowJobs.length]);
+  }, [dispatch, flowId]);
 
-  useEffect(() =>
-    () => dispatch(actions.job.clear()),
-  [dispatch]);
-
-  if (areFlowJobsLoading) {
+  if (latestFlowJobs?.status === 'refresh') {
+    // Only when the dashboard is entirely refreshed , show loading
+    // it can be updated in between to get latest job status in which case, no need to show loader
     return <PanelLoader />;
   }
 
-  return (<CeligoTable data={latestJobs} {...metadata} />);
+  return (
+    <ResourceTable resources={latestFlowJobs.data} resourceType="latestJobs" />
+  );
 }

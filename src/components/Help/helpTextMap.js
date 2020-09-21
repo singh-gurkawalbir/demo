@@ -426,12 +426,12 @@ export default {
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. This can be obtained from the Settings section and API Keys subsection.',
   'procurify.connection.http.procurifySubdomain': 'Enter your Procurify subdomain. For example, in https://celigo.procurify.com/api "celigo" is the subdomain.',
   'procurify.connection.http.unencrypted.username':
-    'Please enter the Username of your Procurify Account.',
-  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify Account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
-  'procurify.connection.http.generateClientIdandSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
+    'Please enter the Username of your Procurify account.',
+  'procurify.connection.http.encrypted.password': 'Please enter password of your Procurify account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your user secret safe.',
+  'procurify.connection.http.generateClientIdandSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify account.',
   'procurify.connection.http.unencrypted.clientId':
-    'The client id of your Procurify account',
-  'procurify.connection.http.encrypted.clientSecret': 'Please click Generate "Client Id & Secret" button to get Client ID and Client Secret of your Procurify Account.',
+    'Please click "Generate client id & secret" button to get Client id of your Procurify account.',
+  'procurify.connection.http.encrypted.clientSecret': 'Please click "Generate client id & secret" button to get Client secret of your Procurify account.',
   'procurify.connection.http.auth.token.token':
     'The access token of your Procurify account.',
   'strata.connection.http.unencrypted.applicationKey':
@@ -607,6 +607,12 @@ export default {
   'microsoftdynamics365financeandoperation.connection.http.subdomain': 'Please enter the subdomain of your Microsoft Finance and Operations account. <br><b>Steps to get the organization\'s root URL: </b><br>1.Login to LCS portal<br>2.Open the project Associated to Finance and Operations.<br>3.Scroll to the right and in the Environment pane, click on the deployed topology.<br>4.Click on the Login at top right corner and click on Log on to environment after that a separate tab will open in browser and copy the URL after https:// upto .dynamics.com from search.',
   'shipengine.connection.http.auth.token.token': `Please enter the API key of your ShipEngine account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Note:</b>In your ShipEngine dashboard, if you are using a Sandbox account you'll find your API keys in the 'Sandbox' page, 
   if you're using a production account, you'll find your API keys under the 'API Management' page.`,
+  'jiraserver.connection.http.baseURI':
+    'Please enter the base URI for Jira Server. For example, http://localhost:8080/rest/api/2/customFields, if this is your endpoint URL. The Base URL would be http://localhost:8080/.',
+  'jiraserver.connection.http.auth.basic.username':
+    'Please enter the username of your Jira Server account.',
+  'jiraserver.connection.http.auth.basic.password':
+    'Please enter the password of your Jira Server account.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -1238,7 +1244,7 @@ export default {
   'export.file.compressionFormat':
     "Currently 'gzip' is the only compression format supported by integrator.io, please log a support ticket if you would like any other compression formats added.",
   'export.file.csv.columnDelimiter':
-    'Unfortunately, integrator.io is not smart enough (yet) to dynamically determine the column delimiter in a CSV file, so we recommend that you tell us exactly which character is being used to separate column values.  For example: comma, pipe, tab, etc...  If you cannot easily see the character being used in a sample file, try opening the file with a text editor like Textpad or notepad, and then hopefully it will be obvious.',
+    'Either select a common character from the list or enter your own freeform value with multiple characters allowed – such as <b>||</b> – in this field, depending on how the columns are uniformly separated in your sample CSV file. The default value is <b>Comma (,)</b> simply by convention; integrator.io does not dynamically determine the column delimiter for you.',
   'export.file.csv.rowDelimiter':
     "The character, or set of characters used to identify the end of a row. If this field is left blank then integrator.io will attempt to identify the row delimiter itself. Some common row delimiters are: '\n', '\r\n', '\r'",
   'export.file.csv.keyColumns':
@@ -1319,7 +1325,7 @@ export default {
   'flow.timezone':
     'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
   'flow._runNextFlowIds':
-    'Use this field to configure a next flow that you would like to run automatically anytime this flow completes. The next flow must be enabled, and please note that the current flow will not be blocked from running again while the next flow is in progress.',
+    'Select the flow that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.)',
   'iclient._id':
     'System generated primary unique identifier for your iClient.  For API users, this value should be used for GET and PUT requests.',
   'iclient.lastModified':
