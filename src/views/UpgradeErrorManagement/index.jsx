@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,7 @@ import CeligoPageBar from '../../components/CeligoPageBar';
 import ButtonGroup from '../../components/ButtonGroup';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
+import useConfirmDialog from '../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -24,10 +25,35 @@ const useStyles = makeStyles(theme => ({
 export default function UpgradeErrorManagement() {
   const classes = useStyles();
   const history = useHistory();
+  const { confirmDialog } = useConfirmDialog();
   const kbURL = 'https://docs.celigo.com/hc/en-us/articles/360048814732';
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+
+  const handleUpgrade = useCallback(
+    () => {
+      confirmDialog({
+        title: 'Confirm upgrade',
+        message: "Just as a reminder, you won't be able to switch the current error management platform",
+        buttons: [
+          {
+            label: 'Yes, upgrade',
+            onClick: () => {
+              // upgrade action dispatch
+            },
+          },
+          {
+            label: 'No, cancel',
+            color: 'secondary',
+          },
+        ],
+      });
+    },
+    [confirmDialog],
+  );
+
+  const handleCancel = useCallback(() => history.replace(getRoutePath('/')), [history]);
 
   useEffect(() => {
     if (isUserInErrMgtTwoDotZero) {
@@ -67,8 +93,8 @@ export default function UpgradeErrorManagement() {
 
         <div className={classes.footer}>
           <ButtonGroup>
-            <Button variant="outlined" color="primary" >Upgrade</Button>
-            <Button variant="text" color="primary">I&apos;ll do this later</Button>
+            <Button variant="outlined" color="primary" onClick={handleUpgrade} >Upgrade</Button>
+            <Button variant="text" color="primary" onClick={handleCancel}>I&apos;ll do this later</Button>
           </ButtonGroup>
         </div>
 
