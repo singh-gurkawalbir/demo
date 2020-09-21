@@ -27,12 +27,12 @@ const useStyles = makeStyles(theme => ({
 const FLOW_RUNNING_STATUS = 'In progress';
 const FLOW_IN_QUEUE_STATUS = 'Waiting in queue';
 
-export default function LastRun() {
+export default function LastRun({ flowId }) {
   const classes = useStyles();
   const [lastRunStatus, setLastRunStatus] = useState();
 
   const flowJobStatus = useSelector(state => {
-    const latestJobs = selectors.latestFlowJobs(state);
+    const latestJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     const isInProgress = latestJobs.some(job => job.status === JOB_STATUS.RUNNING);
 
@@ -44,7 +44,7 @@ export default function LastRun() {
   });
 
   const lastExecutedJob = useSelector(state => {
-    const jobs = selectors.flowJobs(state);
+    const jobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return jobs.find(job => !!job.lastExecutedAt);
   }, shallowEqual);
