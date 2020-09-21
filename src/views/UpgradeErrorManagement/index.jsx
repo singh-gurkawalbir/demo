@@ -37,6 +37,8 @@ export default function UpgradeErrorManagement() {
     return isAccountOwner && !isUserInErrMgtTwoDotZero;
   });
 
+  const redirectToDashboard = useCallback(() => history.replace(getRoutePath('/')), [history]);
+
   const handleUpgrade = useCallback(
     () => {
       confirmDialog({
@@ -47,7 +49,7 @@ export default function UpgradeErrorManagement() {
             label: 'Yes, upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
-              history.replace(getRoutePath('/'));
+              redirectToDashboard();
             },
           },
           {
@@ -57,18 +59,15 @@ export default function UpgradeErrorManagement() {
         ],
       });
     },
-    [confirmDialog, dispatch, history],
+    [confirmDialog, dispatch, redirectToDashboard],
   );
-
-  const handleCancel = useCallback(() => history.replace(getRoutePath('/')), [history]);
 
   useEffect(() => {
     if (!isMigrationPageAccessible) {
-      // This page is not accessible to EM 2.0 user.. so redirect him to dashboard page
-      history.replace(getRoutePath('/'));
+      // This page is not accessible to EM 2.0 / if not an Account owner.. so redirect him to dashboard page
+      redirectToDashboard();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMigrationPageAccessible]);
+  }, [isMigrationPageAccessible, redirectToDashboard]);
 
   return (
     <>
@@ -101,7 +100,7 @@ export default function UpgradeErrorManagement() {
         <div className={classes.footer}>
           <ButtonGroup>
             <Button variant="outlined" color="primary" onClick={handleUpgrade} >Upgrade</Button>
-            <Button variant="text" color="primary" onClick={handleCancel}>I&apos;ll do this later</Button>
+            <Button variant="text" color="primary" onClick={redirectToDashboard}>I&apos;ll do this later</Button>
           </ButtonGroup>
         </div>
 
