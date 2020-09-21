@@ -158,7 +158,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-start',
   },
   subscriptionFeaturesItems: {
-    maxWidth: '80%',
+    // maxWidth: '80%',
     flexWrap: 'wrap',
     '& li': {
       display: 'inline-flex',
@@ -168,7 +168,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   enableIcon: {
-    color: theme.palette.success.light,
+    color: theme.palette.info.main,
     marginRight: theme.spacing(0.5),
     fontSize: 20,
   },
@@ -203,6 +203,13 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.light,
     paddingLeft: theme.spacing(1),
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  // Todo Azhar for hardcoded sandbox value
+  sandboxSubscriptionBox: {
+    backgroundColor: '#f5f5f0',
+  },
+  enableIconSandbox: {
+    color: '#836A49',
   },
 }));
 
@@ -550,7 +557,7 @@ export default function Endpoint() {
         </div>
       </div>
       {licenseActionDetails?.sandbox && (
-      <div className={classes.subscriptionBox}>
+      <div className={clsx(classes.subscriptionBox, classes.sandboxSubscriptionBox)}>
         <div className={classes.subscriptionBoxInner}>
           <div className={classes.subscriptionBoxInnerLeft}>
             <Typography className={classes.subscriptionHeading}>
@@ -559,21 +566,21 @@ export default function Endpoint() {
             <div className={classes.subscriptionFeaturesList} >
               <ul className={clsx(classes.itemsList, classes.subscriptionFeaturesItems)}>
                 <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  {!!(licenseActionDetails?.totalNumberofSandboxEndpoints) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
                   <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxEndpoints)})}> {licenseActionDetails?.endpoint?.sandbox?.numEndpoints} endpoint apps {licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnEndpoints} add-on endpoint apps` : ''} </Typography>
                 </li>
                 <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  {!!(licenseActionDetails?.totalNumberofSandboxTradingPartners) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
                   <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxTradingPartners)})}>{licenseActionDetails?.endpoint?.sandbox?.numTradingPartners} trading partners {licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnTradingPartners
                   } add-on trading partners` : ''}
                   </Typography>
                 </li>
                 <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIcon} />}
+                  {!!(licenseActionDetails?.totalNumberofSandboxFlows) && <CheckMarkIcon className={classes.enableIconSandbox} />}
                   <Typography variant="h4" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxFlows)})}>{licenseActionDetails?.endpoint?.sandbox?.numFlows} integration flows {licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnFlows} add-on integration flows` : ''}</Typography>
                 </li>
                 <li>
-                  {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIcon} />)}
+                  {!!(licenseActionDetails?.totalNumberofSandboxAgents) && (<CheckMarkIcon className={classes.enableIconSandbox} />)}
                   <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.totalNumberofSandboxAgents)})}>{licenseActionDetails?.endpoint?.sandbox?.numAgents} on-premise agents {licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents > 0 ? `+ ${licenseActionDetails?.endpoint?.sandbox?.numAddOnAgents} add-on on-premise agents` : ''} </Typography>
                 </li>
               </ul>
