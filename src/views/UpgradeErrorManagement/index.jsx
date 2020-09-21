@@ -1,13 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography, Button } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import ButtonGroup from '../../components/ButtonGroup';
 import { selectors } from '../../reducers';
+import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import { USER_ACCESS_LEVELS } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -25,11 +27,15 @@ const useStyles = makeStyles(theme => ({
 export default function UpgradeErrorManagement() {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const kbURL = 'https://docs.celigo.com/hc/en-us/articles/360048814732';
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
+  const isMigrationPageAccessible = useSelector(state => {
+    const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+    const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state) === false;
+
+    return isAccountOwner && !isUserInErrMgtTwoDotZero;
+  });
 
   const handleUpgrade = useCallback(
     () => {
@@ -40,7 +46,8 @@ export default function UpgradeErrorManagement() {
           {
             label: 'Yes, upgrade',
             onClick: () => {
-              // upgrade action dispatch
+              dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
+              history.replace(getRoutePath('/'));
             },
           },
           {
@@ -50,18 +57,18 @@ export default function UpgradeErrorManagement() {
         ],
       });
     },
-    [confirmDialog],
+    [confirmDialog, dispatch, history],
   );
 
   const handleCancel = useCallback(() => history.replace(getRoutePath('/')), [history]);
 
   useEffect(() => {
-    if (isUserInErrMgtTwoDotZero) {
+    if (!isMigrationPageAccessible) {
       // This page is not accessible to EM 2.0 user.. so redirect him to dashboard page
       history.replace(getRoutePath('/'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUserInErrMgtTwoDotZero]);
+  }, [isMigrationPageAccessible]);
 
   return (
     <>
