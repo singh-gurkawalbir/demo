@@ -160,12 +160,12 @@ function Tile({ tile, history, onMove, onDrop, index }) {
         if (tile._connectorId) {
           history.push(
             getRoutePath(
-              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/flows`
+              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/dashboard`
             )
           );
         } else {
           history.push(
-            getRoutePath(`/integrations/${tile._integrationId}/flows`)
+            getRoutePath(`/integrations/${tile._integrationId}/dashboard`)
           );
         }
       }

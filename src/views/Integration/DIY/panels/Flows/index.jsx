@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -50,7 +50,6 @@ export default function FlowsPanel({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
-  const [hideInactive, setHideInactive] = useState(false);
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
@@ -78,18 +77,12 @@ export default function FlowsPanel({ integrationId, childId }) {
     () =>
       allFlows &&
       allFlows.filter(
-        f => {
-          if (hideInactive && f.disabled) {
-            return false;
-          }
-
-          return f._integrationId ===
+        f => f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
-            : (childId || integrationId));
-        }
+            : (childId || integrationId))
       ),
-    [allFlows, childId, hideInactive, integrationId]
+    [allFlows, childId, integrationId]
   );
   const {
     data: integrationErrorsMap = {},
@@ -120,9 +113,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
-  const handleHideInactive = useCallback(e => {
-    setHideInactive(e.target.checked);
-  }, []);
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
@@ -157,12 +147,6 @@ export default function FlowsPanel({ integrationId, childId }) {
       <QueuedJobsDrawer />
 
       <PanelHeader title={title} infoText={infoTextFlow}>
-        <FormControlLabel
-          control={
-            <Checkbox name="hideInactive" checked={hideInactive} onClick={handleHideInactive} />
-          }
-          label="Hide inactive flows"
-        />
         {canCreate && !isIntegrationApp && (
           <IconTextButton
             component={Link}

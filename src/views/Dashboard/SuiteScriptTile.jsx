@@ -85,12 +85,12 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
         );
       } else if (tile._connectorId) {
         history.push(
-          getRoutePath(`/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`)
+          getRoutePath(`/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/dashboard`)
         );
       } else {
         history.push(
           getRoutePath(
-            `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/flows`
+            `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}/dashboard`
           )
         );
       }
