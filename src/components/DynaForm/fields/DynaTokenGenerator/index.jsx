@@ -28,8 +28,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   dynaTokenbtn: {
-    marginTop: 26,
-    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
 }));
 
@@ -42,11 +41,13 @@ function GenerateTokenButton(props) {
   return (
     <DynaSubmit
       formKey={formKey}
+      variant="outlined"
+      color="secondary"
       data-test={id}
       disabled={disabled || tokenRequestLoading}
       isValid
       onClick={handleRequestToken(resourceId, id)}>
-      {tokenRequestLoading ? 'Generating Token...' : label}
+      {tokenRequestLoading ? 'Generating token...' : label}
     </DynaSubmit>
   );
 }
