@@ -6,7 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem} from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -137,7 +137,6 @@ function FlowList({ integrationId, storeId }) {
       { excludeHiddenFlows: true }
     )
   );
-
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );

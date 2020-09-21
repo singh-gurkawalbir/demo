@@ -77,7 +77,8 @@ export default function FlowsPanel({ integrationId, childId }) {
     () =>
       allFlows &&
       allFlows.filter(
-        f => f._integrationId ===
+        f =>
+          f._integrationId ===
           (integrationId === STANDALONE_INTEGRATION.id
             ? undefined
             : (childId || integrationId))
