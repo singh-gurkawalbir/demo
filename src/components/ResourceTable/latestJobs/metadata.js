@@ -1,7 +1,7 @@
 import React from 'react';
-import ErrorLink from './ErrorLink';
-import JobStatus from '../JobStatus';
-import FlowStepName from './FlowStepName';
+import ErrorLink from './actions/ErrorLink';
+import JobStatus from '../../JobDashboard/JobStatus';
+import FlowStepName from './actions/FlowStepName';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
