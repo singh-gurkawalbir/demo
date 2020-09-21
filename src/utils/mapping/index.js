@@ -810,8 +810,11 @@ export default {
       default:
     }
   },
-  getSubRecordRecordTypeAndJsonPath: (resourceObj, subRecordMappingId) => {
-    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+  getSubRecordRecordTypeAndJsonPath: (importResource, subRecordMappingId) => {
+    const rawMapping = mappingUtil.getMappingFromResource({
+      importResource,
+      isFieldMapping: true,
+    });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
       subRecordMappingId
@@ -824,13 +827,16 @@ export default {
     };
   },
   generateSubrecordMappingAndLookup: (
-    resourceObj,
+    importResource,
     subRecordMappingId,
     isGroupedSampleData,
     netsuiteRecordType,
     options = {}
   ) => {
-    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const rawMapping = mappingUtil.getMappingFromResource({
+      importResource,
+      isFieldMapping: true,
+    });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
       subRecordMappingId
@@ -840,7 +846,7 @@ export default {
     const formattedMappings = mappingUtil.getMappingsForApp({
       mappings: subRecordMapping,
       isGroupedSampleData,
-      resource: resourceObj,
+      resource: importResource,
       netsuiteRecordType,
       options,
     });
@@ -859,7 +865,10 @@ export default {
     subRecordMapping,
     subRecordLookups,
   }) => {
-    const mapping = mappingUtil.getMappingFromResource(resource, true);
+    const mapping = mappingUtil.getMappingFromResource({
+      importResource: resource,
+      isFieldMapping: true,
+    });
     const subRecordParent = getSubRecordMapping(mapping, subRecordMappingId);
 
     subRecordParent.mapping = subRecordMapping;
@@ -867,27 +876,29 @@ export default {
 
     return mapping;
   },
-  getMappingFromResource: (
-    resourceObj,
-    getRawMappings,
+  getMappingFromResource: ({
+    importResource,
+    isFieldMapping = false,
     isGroupedSampleData,
     netsuiteRecordType,
     options = {},
-    exportResource
+    exportResource,
+  }
+
   ) => {
-    if (!resourceObj) {
+    if (!importResource) {
       return;
     }
 
     /* TODO: With support for different application being adding up,
       path for mapping to be updated below */
     let mappings = {};
-    const { adaptorType } = resourceObj;
+    const { adaptorType } = importResource;
 
     switch (adaptorTypeMap[adaptorType]) {
       case adaptorTypeMap.NetSuiteDistributedImport:
         mappings =
-          (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
+          (importResource.netsuite_da && importResource.netsuite_da.mapping) || {};
         break;
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
@@ -897,7 +908,7 @@ export default {
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.RDBMSImport:
-        mappings = resourceObj.mapping || {};
+        mappings = importResource.mapping || {};
         break;
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:
@@ -920,12 +931,12 @@ export default {
       mappingCopy.lists = [];
     }
 
-    if (getRawMappings) return mappingCopy;
+    if (isFieldMapping) return mappingCopy;
 
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
-      resource: resourceObj,
+      resource: importResource,
       netsuiteRecordType,
       exportResource,
       options,
