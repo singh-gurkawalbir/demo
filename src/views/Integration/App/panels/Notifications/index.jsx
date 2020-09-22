@@ -64,6 +64,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
         label: 'Notify me on job error',
         defaultValue: flowValues,
         options: [{ items: flowOps }],
+        selectAllIdentifier: integrationId,
       },
     },
     layout: {

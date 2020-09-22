@@ -12,6 +12,7 @@ import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
 import retry from '../../utils/retry';
+import UpgradeEM from '../../views/UpgradeErrorManagement';
 
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
@@ -100,6 +101,11 @@ export default function AppRouting() {
         render={({ history, match }) => history.replace(
           getRoutePath(`/clone/${match.params.resourceType}/${match.params.resourceId}/preview`)
         )}
+        />
+      <Route
+        path={getRoutePath('/migrate')}
+        exact
+        component={UpgradeEM}
         />
       <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/preview')}

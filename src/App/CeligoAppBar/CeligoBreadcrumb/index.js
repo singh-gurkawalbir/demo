@@ -248,6 +248,7 @@ const routes = [
   { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
   { path: getRoutePath('/editors'), breadcrumb: 'Dev playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
+  { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
   {
     path: getRoutePath('/:resourceType'),
     breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
