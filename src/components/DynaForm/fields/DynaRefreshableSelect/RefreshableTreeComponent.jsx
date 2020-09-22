@@ -34,7 +34,7 @@ const NestedValueCheckbox = props => {
     field,
   } = props;
 
-  const value = useMemo(() => !!selectedValues.find(v => {
+  const value = useMemo(() => selectedValues.some(v => {
     if (typeof v === 'string') return v === attachedParentNode;
 
     return v.label === attachedParentNode;

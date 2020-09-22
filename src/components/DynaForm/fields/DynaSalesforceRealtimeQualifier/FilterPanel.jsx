@@ -201,6 +201,8 @@ export default function FilterPanel({
               handleFilterRulesChange();
             });
         }
+
+        // Prepend the 'Add Referenced fields' button inside query builder before group actions
         if (jQuery('[data-add=add-reference-fields]').length === 0) {
           const buttonHtml = '<div class="btn-group"><button type="button" class="btn btn-xs btn-success" data-add="add-reference-fields"><i class="glyphicon"></i>Add Reference Fields</button></div>';
 
