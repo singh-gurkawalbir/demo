@@ -29,6 +29,7 @@ export default function CodePanel({
   skipDelay,
   errorLine,
   hasError,
+  hasWarning,
 }) {
   const config = {
     ...defaults.global,
@@ -64,6 +65,7 @@ export default function CodePanel({
       skipDelay={skipDelay}
       errorLine={errorLine}
       hasError={hasError}
+      hasWarning={hasWarning}
     />
   );
 }
