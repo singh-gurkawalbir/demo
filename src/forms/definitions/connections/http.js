@@ -375,7 +375,6 @@ export default {
       id: 'http.custom.unencrypted',
       type: 'editor',
       mode: 'json',
-      required: true,
       label: 'Unencrypted',
       helpKey: 'connection.http.unencrypted',
       visibleWhen: [{ field: 'http.auth.type', is: ['custom'] }],

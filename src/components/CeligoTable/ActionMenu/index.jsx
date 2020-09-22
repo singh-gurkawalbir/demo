@@ -1,12 +1,42 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { IconButton, MenuItem, Menu, Tooltip } from '@material-ui/core';
 import EllipsisIcon from '../../icons/EllipsisHorizontalIcon';
 
+const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, rowData, component, selectAction, handleMenuClose}) => {
+  const handleActionClick = useCallback(() => {
+    selectAction(component);
+    handleMenuClose();
+  }, [component, handleMenuClose, selectAction]);
+  const hasAccess = useHasAccess({...actionProps, rowData });
+
+  if (!hasAccess) {
+    return null;
+  }
+  const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
+
+  if (disabledActionTitle) {
+    return (
+      <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
+        <div>
+          <MenuItem disabled>
+            <Icon />
+            {label}
+          </MenuItem>
+        </div>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <MenuItem key={label} onClick={handleActionClick}>
+      <Icon />
+      {label}
+    </MenuItem>
+  );
+};
 export default function ActionMenu({ rowActions, rowData, actionProps, selectAction }) {
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
-  const state = useSelector(state => state);
   const open = Boolean(anchorEl);
   const actionsPopoverId = open ? 'row-actions' : undefined;
   const handleMenuClick = useCallback(
@@ -17,41 +47,6 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
     [selectAction]
   );
   const handleMenuClose = useCallback(() => setAnchorEl(null), []);
-  const renderActionMenu = useCallback(
-    ({ label, Icon, disabledActionText, hasAccess, actionProps, rowData, component }) => {
-      const handleActionClick = () => {
-        selectAction(component);
-        handleMenuClose();
-      };
-
-      if (hasAccess && !hasAccess({ state, ...actionProps, rowData })) {
-        return;
-      }
-      const disabledActionTitle = disabledActionText?.({ state, ...actionProps, rowData });
-
-      if (disabledActionTitle) {
-        return (
-          <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
-            <div>
-              <MenuItem disabled>
-                <Icon />
-                {label}
-              </MenuItem>
-            </div>
-          </Tooltip>
-        );
-      }
-
-      return (
-        <MenuItem key={label} onClick={handleActionClick}>
-          <Icon />
-          {label}
-        </MenuItem>
-      );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectAction]
-  );
 
   const actions = useMemo(() => {
     // rowActions may or may not be a fn. Sometimes
@@ -62,10 +57,13 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
       ? rowActions(rowData, actionProps)
       : rowActions;
 
-    return meta.map(({ icon, label, disabledActionText, hasAccess, component: Action }) => ({
+    return meta.map(({ icon, label, disabledActionText, useHasAccess, component: Action }) => ({
       Icon: icon,
       disabledActionText,
-      hasAccess,
+      selectAction,
+      handleMenuClose,
+      // if its not defined return true
+      useHasAccess: useHasAccess || (() => true),
       rowData,
       actionProps,
       label:
@@ -74,7 +72,7 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
         : label,
       component: <Action {...actionProps} rowData={rowData} />,
     }));
-  }, [actionProps, rowActions, rowData]);
+  }, [actionProps, handleMenuClose, rowActions, rowData, selectAction]);
 
   if (!actions || !actions.length) return null;
 
@@ -97,7 +95,7 @@ export default function ActionMenu({ rowActions, rowData, actionProps, selectAct
         anchorEl={anchorEl}
         open={open}
         onClose={handleMenuClose}>
-        {actions.map(a => renderActionMenu(a))}
+        {actions.map(a => <Action key={a.label} {...a} />)}
       </Menu>
     </>
   );

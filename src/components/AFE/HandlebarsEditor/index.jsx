@@ -83,6 +83,7 @@ export default function HandlebarsEditor(props) {
         isSampleDataLoading: props.isSampleDataLoading,
         v1template,
         v2template,
+        mode: resultMode,
       })
     );
     // get Helper functions when the editor initializes
@@ -121,8 +122,9 @@ export default function HandlebarsEditor(props) {
       violations={violations}
       rule={template}
       data={data}
-      result={result ? result.data : ''}
+      result={result?.data || ''}
       error={error}
+      resultWarning={result?.warning}
       enableAutocomplete={enableAutocomplete}
       isSampleDataLoading={isSampleDataLoading}
     />

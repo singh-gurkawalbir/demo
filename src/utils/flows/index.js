@@ -80,7 +80,10 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
-      const mappings = mappingUtil.getMappingFromResource(resource, true);
+      const mappings = mappingUtil.getMappingFromResource({
+        importResource: resource,
+        isFieldMapping: true,
+      });
       const { fields = [], lists = [] } = mappings || {};
 
       return !!(fields.length || lists.length);
