@@ -91,7 +91,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     options: {...errorFilter, isResolved},
   }), [errorFilter, isResolved, flowId, resourceId]);
 
-  const errorObj = useSelectorMemo(selectors.mkResourceErrorsSelector, errorConfig);
+  const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;

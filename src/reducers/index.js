@@ -10,7 +10,6 @@ import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
 import { selectors as fromMarketPlace } from './data/marketPlace';
 import session, { selectors as fromSession } from './session';
-import { selectors as fromErrorDetails} from './session/errorManagement/errorDetails';
 import comms, { selectors as fromComms } from './comms';
 import { COMM_STATES, selectors as fromNetworkComms } from './comms/networkComms';
 import auth, { selectors as fromAuth } from './authentication';
@@ -5134,24 +5133,23 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
-selectors.errorDetailsState = state => state?.session?.errorManagement?.errorDetails;
+selectors.errorDetails = (state, params) => {
+  const { flowId, resourceId, options = {} } = params;
 
-selectors.mkResourceErrorsSelector = () => createSelector(
-  selectors.errorDetailsState,
-  (_1, params) => params,
-  (errorDetailsState, params) => {
-    const { flowId, resourceId, options = {} } = params;
-    const errorDetails = fromErrorDetails.getErrors(errorDetailsState, {
-      flowId,
-      resourceId,
-      errorType: options.isResolved ? 'resolved' : 'open',
-    });
+  return selectors.getErrors(state, {
+    flowId,
+    resourceId,
+    errorType: options.isResolved ? 'resolved' : 'open',
+  });
+};
 
-    return {
-      ...errorDetails,
-      errors: getFilteredErrors(errorDetails.errors, options),
-    };
-  }
+selectors.makeResourceErrorsSelector = () => createSelector(
+  selectors.errorDetails,
+  (_1, params) => params.options,
+  (errorDetails, options) => ({
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, options),
+  })
 );
 
-selectors.resourceErrors = selectors.mkResourceErrorsSelector();
+selectors.resourceErrors = selectors.makeResourceErrorsSelector();
