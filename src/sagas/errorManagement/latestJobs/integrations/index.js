@@ -1,7 +1,7 @@
 import { put, takeLatest, fork, take, call, delay, cancel } from 'redux-saga/effects';
-import actions from '../../../actions';
-import actionTypes from '../../../actions/types';
-import { apiCallWithRetry } from '../../index';
+import actions from '../../../../actions';
+import actionTypes from '../../../../actions/types';
+import { apiCallWithRetry } from '../../../index';
 
 function* requestLatestJobs({ integrationId }) {
   try {

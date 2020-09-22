@@ -14,6 +14,7 @@ import transfers from './transfers/metadata';
 import auditLogs from './auditLog/metadata';
 import openErrors from './errorManagement/openErrors/metadata';
 import resolvedErrors from './errorManagement/resolvedErrors/metadata';
+import latestJobs from './latestJobs/metadata';
 
 const metadata = {
   agents,
@@ -31,6 +32,7 @@ const metadata = {
   auditLogs,
   openErrors,
   resolvedErrors,
+  latestJobs,
 };
 
 export default function (resourceType) {

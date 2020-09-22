@@ -432,7 +432,10 @@ export function* requestProcessorData({
     hasNoRulesToProcess = true;
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
-    const mappings = mappingUtil.getMappingFromResource(resource, true);
+    const mappings = mappingUtil.getMappingFromResource({
+      importResource: resource,
+      isFieldMapping: true,
+    });
 
     // Incase of no fields/lists inside mappings , no need to make a processor call
     if (

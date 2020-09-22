@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectionPanel({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)._integrationId);
+  const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)?._integrationId);
   const flowConnections = useSelector(state =>
     selectors.flowConnectionList(state, flowId)
   );

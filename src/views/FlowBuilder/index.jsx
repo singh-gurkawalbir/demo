@@ -429,9 +429,9 @@ function FlowBuilder() {
       ) : (
         <CeligoTimeAgo date={flow.lastModified} />
       )}
-      {isUserInErrMgtTwoDotZero && <LastRun />}
+      {isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
     </div>
-  ), [classes.subtitle, flow.lastModified, isNewFlow, isUserInErrMgtTwoDotZero]);
+  ), [classes.subtitle, flow.lastModified, isNewFlow, isUserInErrMgtTwoDotZero, flowId]);
 
   const pageBarChildren = useMemo(() => {
     const excludes = ['mapping', 'detach', 'audit', 'schedule'];
@@ -590,6 +590,7 @@ function FlowBuilder() {
 
     return () => {
       dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+      dispatch(actions.errorManager.latestFlowJobs.clear({ flowId }));
     };
   }, [
     dispatch,

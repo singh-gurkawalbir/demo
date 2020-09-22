@@ -11,6 +11,7 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../utils/string';
+import { isNewId } from '../../utils/resource';
 
 export default function JobDashboard({
   integrationId,
@@ -76,7 +77,7 @@ export default function JobDashboard({
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {
-    if (jobs.length === 0) {
+    if (!isNewId(flowId) && jobs.length === 0) {
       dispatch(
         actions.job.requestCollection({
           integrationId,

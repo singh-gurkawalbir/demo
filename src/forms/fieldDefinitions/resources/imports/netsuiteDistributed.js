@@ -8,7 +8,7 @@ export default {
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
     bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> bundle to access NetSuite`s RESTlet APIs.',
+    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> to access NetSuite`s RESTlet APIs.',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
