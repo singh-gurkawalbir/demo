@@ -214,8 +214,8 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
-            connection && connection._connectionId,
-            connectionDoc
+             connection?._connectionId || connId,
+             connectionDoc
           )
         );
       } else {
@@ -519,6 +519,7 @@ export default function ConnectorInstallation(props) {
             connectionType={connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
+            addOrSelect={!_connectorId}
           />
         ))}
       {currentStep && currentStep.formMeta && (
