@@ -10,7 +10,7 @@ export default {
   // icon: r => (r.published ? UnpublishIcon : PublishIcon),
   // ToDo: Need to do changes here to render icon dynamically.
   icon: PublishIcon,
-  hasAccess: ({ rowData, resourceType }) => !(resourceType === 'templates' && !rowData.applications?.length),
+  useHasAccess: ({ rowData, resourceType }) => !(resourceType === 'templates' && !rowData.applications?.length),
   component: function TogglePublish({ resourceType, rowData = {} }) {
     const { _id: resourceId, published: isPublished } = rowData;
     const { confirmDialog } = useConfirmDialog();
