@@ -5138,7 +5138,7 @@ selectors.errorDetailsState = state => state?.session?.errorManagement?.errorDet
 
 selectors.mkResourceErrorsSelector = () => createSelector(
   selectors.errorDetailsState,
-  (state, params) => params,
+  (_1, params) => params,
   (errorDetailsState, params) => {
     const { flowId, resourceId, options = {} } = params;
     const errorDetails = fromErrorDetails.getErrors(errorDetailsState, {
