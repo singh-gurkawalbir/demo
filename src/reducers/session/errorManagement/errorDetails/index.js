@@ -171,3 +171,17 @@ selectors.errorActionsContext = (
       state[flowId][resourceId].actions[actionType]) ||
     defaultObject
 );
+
+selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorIds }) => {
+  const { errors = [] } = selectors.getErrors(state, {
+    flowId,
+    resourceId,
+    errorType: isResolved ? 'resolved' : 'open',
+  });
+
+  if (!errorIds.length) return false;
+
+  return !errors.some(
+    error => errorIds.includes(error.errorId) && !error.selected
+  );
+};

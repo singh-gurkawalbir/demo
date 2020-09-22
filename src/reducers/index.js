@@ -5154,3 +5154,4 @@ selectors.mkResourceErrorsSelector = () => createSelector(
   }
 );
 
+selectors.resourceErrors = selectors.mkResourceErrorsSelector();
