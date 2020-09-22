@@ -47,6 +47,7 @@ export default function DynaSalesforceQualifier(props) {
     flowId,
     label,
     options,
+    connectionId,
   } = props;
   const handleOpenDrawer = usePushRightDrawer(id);
 
@@ -67,7 +68,7 @@ export default function DynaSalesforceQualifier(props) {
         resourceId={resourceId}
         flowId={flowId}
         onSave={handleSave}
-          // disabled={disabled}
+        connectionId={connectionId}
         options={options}
         />
 
