@@ -14,11 +14,12 @@ import {
   startOfWeek,
   addYears,
 } from 'date-fns';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import ArrowPopper from '../ArrowPopper';
+import { getSelectedRange } from '../../utils/flowMetrics';
 
 const defineds = {
   startOfWeek: startOfWeek(new Date()),
@@ -180,12 +181,10 @@ const useStyles = makeStyles(theme => ({
 export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
   const [initalValue, setInitialValue] = useState(
     {
-      startDate:
-        value && value.startDate
-          ? new Date(value.startDate)
-          : addHours(new Date(), -24),
-      endDate: value && value.endDate ? new Date(value.endDate) : new Date(),
-      preset: 'last24hours',
+      ...getSelectedRange({preset: 'last24hours'}),
+      ...(value?.startDate && { startDate: value.startDate }),
+      ...(value?.endDate && { startDate: value.endDate }),
+      ...(value?.preset && { preset: value.preset }),
     },
   );
   const [selectedRange, setSelectedRange] = useState(initalValue);
@@ -194,9 +193,9 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
   };
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-  const presets = [...customPresets, ...rangeList]
+  const presets = useMemo(() => [...customPresets, ...rangeList]
     .map(i => ({id: i.label.replace(/\s*/g, '').toLowerCase(), label: i.label}))
-    .concat({id: 'custom', label: 'Custom'});
+    .concat({id: 'custom', label: 'Custom'}), [customPresets]);
   const toggleClick = useCallback(event => {
     if (anchorEl) {
       setSelectedRange(initalValue);
