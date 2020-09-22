@@ -189,6 +189,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     setPage(0);
   }, [dataFilter, rowsPerPage]);
 
+  // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx({ [classes.hide]: !show })}>
       <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
