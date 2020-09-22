@@ -6,6 +6,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
+import WarningGridItem from '../WarningGridItem';
 import layouts from '../layout/defaultDialogLayout';
 import PanelLoader from '../../PanelLoader';
 
@@ -26,6 +27,7 @@ const Editor = props => {
     resultMode,
     resultTitle,
     error,
+    resultWarning,
     violations,
     handleRuleChange,
     handleDataChange,
@@ -75,12 +77,17 @@ const Editor = props => {
       </PanelGridItem>
       <PanelGridItem gridArea="result">
         <PanelTitle title={resultTitle} />
-        <CodePanel name="result" value={result} mode={resultMode} readOnly />
+        <CodePanel
+          name="result" value={result} mode={resultMode} readOnly
+          hasWarning={!!resultWarning}
+          />
       </PanelGridItem>
-      {/* Hide error panel when sample data is loading */}
+      {/* Hide error/warning panel when sample data is loading */}
       {!isSampleDataLoading && (
-        <ErrorGridItem error={error} violations={violations} />
-      )}
+        (error || violations)
+          ? <ErrorGridItem error={error} violations={violations} />
+          : <WarningGridItem warning={resultWarning} />
+      ) }
     </PanelGrid>
   );
 };
