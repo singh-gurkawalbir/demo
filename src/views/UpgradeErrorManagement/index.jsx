@@ -9,7 +9,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS, ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -29,7 +29,6 @@ export default function UpgradeErrorManagement() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const kbURL = 'https://docs.celigo.com/hc/en-us/articles/360048814732';
   const isMigrationPageAccessible = useSelector(state => {
     const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
@@ -74,7 +73,7 @@ export default function UpgradeErrorManagement() {
       <CeligoPageBar title="We&apos;ve a new and enhanced way to manage errors!" />
       <Paper className={classes.upgradeContainer} elevation={0}>
         <Typography variant="body2">
-          Our new error management infrastructure gives you access <a href={`${kbURL}`} rel="noreferrer" target="_blank"> a lot of great new features</a>,
+          Our new error management infrastructure gives you access <a href={`${ERROR_MANAGEMENT_DOC_URL}`} rel="noreferrer" target="_blank"> a lot of great new features</a>,
           with many more on the way! This new error management <br /> will eventually be rolled out to all accounts.
 
           When you upgrade your account to our new error management platform:

@@ -9,6 +9,7 @@ const useStyles = makeStyles({
     display: 'flex',
     marginBottom: 20,
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
