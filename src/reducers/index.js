@@ -10,6 +10,7 @@ import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
 import { selectors as fromMarketPlace } from './data/marketPlace';
 import session, { selectors as fromSession } from './session';
+import { selectors as fromErrorDetails} from './session/errorManagement/errorDetails';
 import comms, { selectors as fromComms } from './comms';
 import { COMM_STATES, selectors as fromNetworkComms } from './comms/networkComms';
 import auth, { selectors as fromAuth } from './authentication';
@@ -74,6 +75,7 @@ import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
 import { getJobDuration } from './data/jobs/util';
+import getFilteredErrors from '../utils/errorManagement';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5131,3 +5133,24 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
 
   return emptyObject;
 };
+
+selectors.errorDetailsState = state => state?.session?.errorManagement?.errorDetails;
+
+selectors.mkResourceErrorsSelector = () => createSelector(
+  selectors.errorDetailsState,
+  (state, params) => params,
+  (errorDetailsState, params) => {
+    const { flowId, resourceId, options = {} } = params;
+    const errorDetails = fromErrorDetails.getErrors(errorDetailsState, {
+      flowId,
+      resourceId,
+      errorType: options.isResolved ? 'resolved' : 'open',
+    });
+
+    return {
+      ...errorDetails,
+      errors: getFilteredErrors(errorDetails.errors, options),
+    };
+  }
+);
+
