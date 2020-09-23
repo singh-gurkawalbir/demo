@@ -1,9 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import ace from 'ace-builds/src-noconflict/ace';
 import AceEditor from 'react-ace';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import ReactResizeDetector from 'react-resize-detector';
-import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-handlebars';
 import 'ace-builds/src-noconflict/mode-json';
@@ -16,8 +16,13 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { useSelector } from 'react-redux';
+import jsonWorkerUrl from 'ace-builds/src-noconflict/worker-json';
+import cssWorkerUrl from 'ace-builds/src-noconflict/worker-css';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
+
+ace.config.setModuleUrl('ace/mode/css_worker', cssWorkerUrl);
+ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
 
 const useStyles = makeStyles(theme => ({
   editorErrorWrapper: {
