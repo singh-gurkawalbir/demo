@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import AceEditor from 'react-ace';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import ReactResizeDetector from 'react-resize-detector';
+import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-handlebars';
 import 'ace-builds/src-noconflict/mode-json';
@@ -46,7 +47,7 @@ const editorProp = { $blockScrolling: true };
 export default function CodeEditor({
   name,
   value = '',
-  mode,
+  mode = 'text',
   readOnly,
   width,
   height,
