@@ -16,11 +16,10 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import ErrorStatus from '../ErrorStatus';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -138,14 +137,6 @@ const useStyles = makeStyles(theme => ({
     // padding: theme.spacing(2),
     // marginTop: -theme.spacing(1),
     // marginLeft: -theme.spacing(1),
-  },
-  status: {
-    justifyContent: 'center',
-    height: 'unset',
-    marginTop: theme.spacing(1),
-    '& span': {
-      fontSize: '12px',
-    },
   },
   tooltipNameFB: {
     wordWrap: 'break-word',
@@ -388,14 +379,11 @@ function AppBlock({
             ) : null}
           </div>
         </div>
-        {openErrorCount ? (
-          <Status
-            className={classes.status}
-            onClick={onErrors}
-            label={`${openErrorCount} errors`}>
-            <StatusCircle variant="error" size="small" />
-          </Status>
-        ) : null}
+        <ErrorStatus
+          count={openErrorCount}
+          isNew={isNew}
+          flowId={flowId}
+          handleStatusClick={onErrors} />
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
