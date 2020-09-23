@@ -5,7 +5,7 @@ import {
   addYears,
 } from 'date-fns';
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { DateRangePicker } from 'react-date-range';
+import { DateRangePicker } from 'react-date-range/dist';
 import { getDurationLabel } from '../../../utils/flowMetrics';
 import ArrowPopper from '../../ArrowPopper';
 import { rangeList, staticRangeHandler } from '../../DateRangeSelector';
@@ -44,7 +44,7 @@ const dateRangeOptions = rangeList.filter(({label}) =>
   ...staticRangeHandler,
   ...rangeItem,
 }));
-export default function DateRangeSelector({ value, onSave}) {
+export default function DateRangeSelector({ value, onSave, showTime = true}) {
   const [selectedRanges, setSelectedRanges] = useState();
 
   const {endDate, startDate} = value?.[0] || {};
@@ -125,6 +125,7 @@ export default function DateRangeSelector({ value, onSave}) {
             onChange={item => setSelectedRanges([item.selection])}
             moveRangeOnFirstSelection={false}
             months={2}
+            showTime={showTime}
             className={classes.child}
             ranges={finalSelectedRanges}
             direction="horizontal"

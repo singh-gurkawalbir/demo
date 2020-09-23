@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, Divider, List, ListItem, ListItemText } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
@@ -14,12 +14,12 @@ import {
   startOfWeek,
   addYears,
 } from 'date-fns';
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import ArrowPopper from '../ArrowPopper';
-import { getDurationLabel } from '../../utils/flowMetrics';
+import { getSelectedRange } from '../../utils/flowMetrics';
 
 const defineds = {
   startOfWeek: startOfWeek(new Date()),
@@ -124,6 +124,7 @@ export const rangeList = [
     }),
   },
 ];
+
 export const staticRangeHandler = {
   range: {},
   isSelected(range) {
@@ -135,13 +136,24 @@ export const staticRangeHandler = {
       (definedRange.startDate === range.startDate && definedRange.endDate === range.endDate);
   },
 };
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
   },
+  listRoot: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
   child: {
     flexBasis: '100%',
+  },
+  child1: {
+    float: 'left',
+    padding: theme.spacing(2),
+    background: theme.palette.background.paper,
   },
   dateRangePickerWrapper: {
     display: 'flex',
@@ -167,52 +179,50 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
-  const [initalValue, setInitialValue] = useState([
+  const [initalValue, setInitialValue] = useState(
     {
-      startDate:
-        value && value.startDate
-          ? new Date(value.startDate)
-          : addHours(new Date(), -24),
-      endDate: value && value.endDate ? new Date(value.endDate) : new Date(),
-      key: 'selection',
+      ...getSelectedRange({preset: 'last24hours'}),
+      ...(value?.startDate && { startDate: value.startDate }),
+      ...(value?.endDate && { startDate: value.endDate }),
+      ...(value?.preset && { preset: value.preset }),
     },
-  ]);
-  const [selectedRanges, setSelectedRanges] = useState(initalValue);
+  );
+  const [selectedRange, setSelectedRange] = useState(initalValue);
+  const handleListItemClick = (event, id) => {
+    setSelectedRange(state => ({...state, preset: id}));
+  };
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+  const presets = useMemo(() => [...customPresets, ...rangeList]
+    .map(i => ({id: i.label.replace(/\s*/g, '').toLowerCase(), label: i.label}))
+    .concat({id: 'custom', label: 'Custom'}), [customPresets]);
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      setSelectedRanges(initalValue);
+      setSelectedRange(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
   }, [anchorEl, initalValue]);
 
   const handleSave = useCallback(() => {
-    setInitialValue(selectedRanges);
-    onSave && onSave(selectedRanges);
+    if (selectedRange.preset === 'lastrun') {
+      const lastRunPreset = customPresets.find(preset => preset.label === 'Last run')?.range();
+
+      selectedRange.startDate = lastRunPreset.startDate;
+      selectedRange.endDate = lastRunPreset.endDate;
+    }
+    setInitialValue(selectedRange);
+    onSave && onSave(selectedRange);
     setAnchorEl(null);
-  }, [onSave, selectedRanges]);
+  }, [onSave, selectedRange]);
 
   const handleClose = useCallback(() => {
-    setSelectedRanges(initalValue);
+    setSelectedRange(initalValue);
     setAnchorEl(null);
   }, [initalValue]);
 
   const handleDateRangeSelection = useCallback(range => {
-    if (range.startDate.getTime() === range.endDate.getTime()) {
-      setSelectedRanges([{...range, startDate: startOfDay(range.startDate), endDate: endOfDay(range.endDate)}]);
-    } else {
-      setSelectedRanges([range]);
-    }
+    setSelectedRange({ preset: 'custom', startDate: range.startDate, endDate: range.endDate });
   }, []);
-  const dateRangeOptions = useMemo(
-    () =>
-      [...customPresets, ...rangeList].map(rangeItem => ({
-        ...staticRangeHandler,
-        ...rangeItem,
-      })),
-    [customPresets]
-  );
 
   return (
     <>
@@ -221,7 +231,7 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
         variant="outlined"
         color="secondary"
         className={classes.dateRangePopperBtn}>
-        {getDurationLabel(selectedRanges, customPresets)}
+        {presets.find(preset => preset.id === selectedRange.preset)?.label || selectedRange.preset}
       </Button>
       <ArrowPopper
         open={!!anchorEl}
@@ -230,20 +240,43 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <DateRangePicker
-              staticRanges={dateRangeOptions}
-              showSelectionPreview
-              onChange={item => handleDateRangeSelection(item.selection)}
-              moveRangeOnFirstSelection={false}
-              months={2}
-              className={classes.child}
-              ranges={selectedRanges}
-              direction="horizontal"
-              maxDate={new Date()}
-              minDate={addYears(new Date(), -1)}
-              inputRanges={[]}
-              showPreview={false}
-            />
+            <div >
+              <div className={classes.child1}>
+                <List>
+                  {presets.map((m, i) => (
+                    <div key={m.id}>
+                      {!!i && <Divider />}
+                      <ListItem
+                        button
+                        selected={selectedRange.preset === m.id}
+                        onClick={event => handleListItemClick(event, m.id)}
+                      >
+                        <ListItemText secondary={m.label} />
+                      </ListItem>
+                    </div>
+                  ))}
+
+                </List>
+              </div>
+              {selectedRange.preset === 'custom' && (
+              <div className={classes.child1}>
+                <DateRangePicker
+                  staticRanges={[]}
+                  showSelectionPreview
+                  onChange={item => handleDateRangeSelection(item.selection)}
+                  moveRangeOnFirstSelection={false}
+                  months={2}
+                  className={classes.child}
+                  ranges={[{...selectedRange, key: 'selection'}]}
+                  direction="horizontal"
+                  maxDate={new Date()}
+                  minDate={addYears(new Date(), -1)}
+                  inputRanges={[]}
+                  showPreview={false}
+                />
+              </div>
+              )}
+            </div>
             <div className={classes.actions}>
               <Button variant="outlined" color="primary" onClick={handleSave}>
                 Apply

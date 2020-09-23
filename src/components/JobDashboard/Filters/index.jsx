@@ -19,6 +19,7 @@ import CeligoSelect from '../../CeligoSelect';
 import IconTextButton from '../../IconTextButton';
 import FlowSelector from '../FlowSelector';
 import DateRangeSelector from './DateRangeFilter';
+import { getSelectedRange } from '../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -133,7 +134,7 @@ function Filters({
   );
 
   const handleDateRangeChange = useCallback(range => {
-    patchFilter('dateRange', range);
+    patchFilter('dateRange', getSelectedRange(range));
   }, [patchFilter]);
 
   const handleRefreshClick = useCallback(() => {
@@ -214,7 +215,7 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
-        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
+        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} showTime={false} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
