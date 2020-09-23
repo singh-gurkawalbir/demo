@@ -43,6 +43,15 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       tableConfig
     )
   );
+
+  const applications = [];
+
+  connections.forEach(conn => {
+    if (!(applications.includes(conn.type))) {
+      applications.push(conn.assistant || conn.type);
+    }
+  });
+
   const permission = useSelector(
     state =>
       selectors.resourcePermissions(
@@ -99,6 +108,11 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
                     op: 'add',
                     path: '/_integrationId',
                     value: integrationId,
+                  },
+                  {
+                    op: 'add',
+                    path: '/applications',
+                    value: applications,
                   },
                 ];
 
