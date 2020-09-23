@@ -93,7 +93,5 @@ selectors.getInProgressLatestJobs = (state, flowId, considerChildJobs = false) =
     return false;
   }).map(job => job._id);
 
-  console.log(jobIds);
-
   return jobIds;
 };

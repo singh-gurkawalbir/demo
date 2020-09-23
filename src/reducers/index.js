@@ -74,6 +74,7 @@ import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
 import { getJobDuration } from './data/jobs/util';
+import getFilteredErrors from '../utils/errorManagement';
 
 const emptySet = [];
 const emptyObject = {};
@@ -5131,3 +5132,24 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
 
   return emptyObject;
 };
+
+selectors.errorDetails = (state, params) => {
+  const { flowId, resourceId, options = {} } = params;
+
+  return selectors.getErrors(state, {
+    flowId,
+    resourceId,
+    errorType: options.isResolved ? 'resolved' : 'open',
+  });
+};
+
+selectors.makeResourceErrorsSelector = () => createSelector(
+  selectors.errorDetails,
+  (_1, params) => params.options,
+  (errorDetails, options) => ({
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, options),
+  })
+);
+
+selectors.resourceErrors = selectors.makeResourceErrorsSelector();

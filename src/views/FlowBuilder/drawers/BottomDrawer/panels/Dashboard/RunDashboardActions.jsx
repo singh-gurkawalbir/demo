@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import CancelIcon from '../../../../../../components/icons/CancelIcon';
@@ -21,13 +21,17 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
 }));
+const emptySet = [];
+
 export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [showDownloadFilesDialog, setShowDownloadFilesDialog] = useState(false);
 
-  const {data: latestJobs = [], status} = useSelector(state => selectors.latestFlowJobsList(state, flowId));
+  const {data: latestJobs = emptySet, status} = useSelector(
+    state => selectors.latestFlowJobsList(state, flowId),
+    shallowEqual);
   const cancellableJobIds = useMemo(() => {
     const jobIdsToCancel = latestJobs
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status))

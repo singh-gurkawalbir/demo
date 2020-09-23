@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import actions from '../../../actions';
-import { selectors } from '../../../reducers';
-import Spinner from '../../Spinner';
-import useConfirmDialog from '../../ConfirmDialog';
-import ButtonGroup from '../../ButtonGroup';
+import actions from '../../../../actions';
+import { selectors } from '../../../../reducers';
+import Spinner from '../../../Spinner';
+import useConfirmDialog from '../../../ConfirmDialog';
+import ButtonGroup from '../../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   spinnerIcon: {

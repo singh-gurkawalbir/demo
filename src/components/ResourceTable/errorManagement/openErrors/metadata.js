@@ -3,10 +3,10 @@ import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import EditRetryData from '../actions/EditRetry';
-import SelectError from '../components/SelectError';
-import SelectAllErrors from '../components/SelectAllErrors';
+import SelectError from '../cells/SelectError';
+import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import ErrorMessage from '../components/ErrorMessage';
+import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
   columns: [
