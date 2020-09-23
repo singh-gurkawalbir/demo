@@ -383,7 +383,7 @@ function AppBlock({
           count={openErrorCount}
           isNew={isNew}
           flowId={flowId}
-          handleStatusClick={onErrors} />
+          resourceId={resource?._id} />
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>
