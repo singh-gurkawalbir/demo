@@ -24,6 +24,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+export const useGetFlowOps = ({integrationId, flows}) => useMemo(() => {
+  const initialValue = integrationId !== STANDALONE_INTEGRATION.id ? [{ value: integrationId, label: 'All flows' }] : [];
+
+  return flows.reduce((finalOps, f) => {
+    finalOps.push({ value: f._id, label: f.name });
+
+    return finalOps;
+  }, initialValue);
+}, [integrationId, flows]);
+
 export default function NotificationsSection({ integrationId, childId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
@@ -41,15 +51,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = useMemo(() => {
-    const initialValue = _integrationId !== STANDALONE_INTEGRATION.id ? [{ value: _integrationId, label: 'All flows' }] : [];
-
-    return flows.reduce((finalOps, f) => {
-      finalOps.push({ value: f._id, label: f.name });
-
-      return finalOps;
-    }, initialValue);
-  }, [_integrationId, flows]);
+  const flowOps = useGetFlowOps({integrationId: _integrationId, flows});
 
   const fieldMeta = {
     fieldMap: {
