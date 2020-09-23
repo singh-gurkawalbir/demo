@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -37,12 +37,21 @@ export default function NotificationsSection({ integrationId, storeId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, integrationId, storeId)
+      selectors.notificationResources(state, integrationId, storeId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = flows.map(c => ({ value: c._id, label: c.name }));
+  const flowOps = useMemo(() => {
+    const initialValue = [{ value: integrationId, label: 'All flows' }];
+
+    return flows.reduce((finalOps, f) => {
+      finalOps.push({ value: f._id, label: f.name });
+
+      return finalOps;
+    }, initialValue);
+  }, [integrationId, flows]);
+
   const fieldMeta = {
     fieldMap: {
       connections: {

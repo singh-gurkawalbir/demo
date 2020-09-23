@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -7,6 +7,7 @@ import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
+import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
@@ -35,12 +36,21 @@ export default function NotificationsSection({ integrationId, childId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, _integrationId)
+      selectors.notificationResources(state, _integrationId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = flows.map(c => ({ value: c._id, label: c.name }));
+  const flowOps = useMemo(() => {
+    const initialValue = _integrationId !== STANDALONE_INTEGRATION.id ? [{ value: _integrationId, label: 'All flows' }] : [];
+
+    return flows.reduce((finalOps, f) => {
+      finalOps.push({ value: f._id, label: f.name });
+
+      return finalOps;
+    }, initialValue);
+  }, [_integrationId, flows]);
+
   const fieldMeta = {
     fieldMap: {
       connections: {
