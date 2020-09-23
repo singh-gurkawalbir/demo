@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-const dummyFn = () => false;
+const dummyFn = () => null;
 export const FieldComponent = props => {
   const { formKey, id, fieldId, type} = props;
   const classes = useStyles();
