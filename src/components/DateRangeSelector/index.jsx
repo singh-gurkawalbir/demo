@@ -178,7 +178,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DateRangeSelector({ value, onSave, customPresets = [] }) {
+export default function DateRangeSelector({ value, onSave, customPresets = [], showTime = true }) {
   const [initalValue, setInitialValue] = useState(
     {
       ...getSelectedRange({preset: 'last24hours'}),
@@ -269,6 +269,7 @@ export default function DateRangeSelector({ value, onSave, customPresets = [] })
                   className={classes.child}
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
+                  showTime={showTime}
                   maxDate={new Date()}
                   minDate={addYears(new Date(), -1)}
                   inputRanges={[]}
