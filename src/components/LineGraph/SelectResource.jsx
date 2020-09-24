@@ -38,6 +38,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
+    maxHeight: 380,
+    overflowY: 'auto',
   },
   actions: {
     marginTop: theme.spacing(2),

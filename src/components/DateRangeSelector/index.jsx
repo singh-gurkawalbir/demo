@@ -153,13 +153,18 @@ const useStyles = makeStyles(theme => ({
   },
   leftItems: {
     float: 'left',
-    columnCount: 2,
+  },
+  leftItemsList: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gridColumnGap: theme.spacing(2),
   },
   dateRangePickerWrapper: {
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
     background: theme.palette.background.default,
+
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -170,6 +175,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontFamily: 'source sans pro',
     fontSize: 15,
+  },
+  parentPicker: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   listBtn: {
     background: theme.palette.common.white,
@@ -200,6 +209,9 @@ const useStyles = makeStyles(theme => ({
         color: theme.palette.common.white,
       },
     },
+  },
+  rightCalendar: {
+    marginLeft: theme.spacing(2),
   },
 }));
 
@@ -265,9 +277,9 @@ export default function DateRangeSelector({ value, onSave, customPresets = [], s
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <div>
+            <div className={classes.parentPicker}>
               <div className={classes.leftItems}>
-                <List>
+                <List className={classes.leftItemsList}>
                   {presets.map((m, i) => (
                     <div key={m.id}>
                       {!!i}
@@ -285,7 +297,7 @@ export default function DateRangeSelector({ value, onSave, customPresets = [], s
                 </List>
               </div>
               {selectedRange.preset === 'custom' && (
-              <div className={classes.child1}>
+              <div className={classes.rightCalendar}>
                 <DateRangePicker
                   staticRanges={[]}
                   showSelectionPreview
