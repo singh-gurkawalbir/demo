@@ -19,9 +19,13 @@ const useStyles = makeStyles({
 });
 
 const dummyFn = () => null;
-export const FieldComponent = props => {
+
+const Renderer = props => {
   const { formKey, id, fieldId, type} = props;
   const classes = useStyles();
+
+  const fid = id || fieldId;
+
   const fieldState = useSelector(
     state => selectors.fieldState(state, formKey, id),
     shallowEqual
@@ -30,14 +34,34 @@ export const FieldComponent = props => {
     state => selectors.formParentContext(state, formKey),
     shallowEqual
   );
-  const fid = id || fieldId;
 
   const { resourceId, resourceType } = formParentContext || {};
   const context = { resourceId, resourceType };
+
   const DynaField = fields[type] || dummyFn;
+
   // get the element early on and check if its returning null
   // we had to host this earlier or else fieldState visibility is impacting it by changing the order of hooks
   const ele = DynaField({...props, ...fieldState, resourceContext: context});
+
+  return (
+    // if its returning null wrap it within divs else return null
+    ele ? (
+      <div key={fid} className={classes.wrapper}>
+        <div id={id} className={classes.fieldStyle} >
+          {ele}
+        </div>
+      </div>
+    ) : null
+  );
+};
+export const FieldComponent = props => {
+  const { formKey, id, type} = props;
+
+  const fieldState = useSelector(
+    state => selectors.fieldState(state, formKey, id),
+    shallowEqual
+  );
 
   if (!fieldState || !fieldState.visible) return null;
 
@@ -47,13 +71,7 @@ export const FieldComponent = props => {
 
   return (
   // if its returning null wrap it within divs else return null
-    ele ? (
-      <div key={fid} className={classes.wrapper}>
-        <div id={id} className={classes.fieldStyle} >
-          {ele}
-        </div>
-      </div>
-    ) : null
+    <Renderer {...props} />
   );
 };
 
