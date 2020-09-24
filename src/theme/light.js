@@ -35,7 +35,7 @@ export default {
     },
     text: {
       disabled: colors.celigoNeutral4,
-      primary: colors.celigoNeutral6,
+      primary: colors.celigoNeutral8,
       hint: colors.celigoNeutral5,
       secondary: colors.celigoNeutral7,
     },
@@ -74,7 +74,7 @@ export default {
     MuiButton: {
       root: {
         textTransform: 'unset',
-        fontFamily: 'Roboto500',
+        fontFamily: 'Roboto400',
         '&: disabled': {
           cursor: 'not-allowed',
         },
@@ -172,7 +172,7 @@ export default {
         },
       },
       textPrimary: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         '&:focus': {
           color: colors.celigoNeutral7,
         },
@@ -320,7 +320,7 @@ export default {
     },
     MuiTypography: {
       root: {
-        color: colors.celigoNeutral6,
+        color: colors.celigoNeutral8,
         fontFamily: 'Roboto400, sans-serif',
       },
       body1: {
@@ -729,12 +729,14 @@ export default {
         minWidth: 140,
         padding: '8px 12px 4px',
         textTransform: 'none',
+        fontFamily: 'source sans pro',
+        fontWeight: 'normal',
       },
-      // textColorPrimary: {
-      //   '&.Mui-selected': {
-      //   },
-      // fontWeight: 'bold',
-      // },
+      textColorPrimary: {
+        '&.Mui-selected': {
+          fontWeight: 'bold',
+        },
+      },
       labelIcon: {
         minHeight: 'unset',
       },

@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(3),
     display: 'inline-flex',
     justifyContent: 'space-between',
-    width: '68%',
+    width: '65%',
   },
   tablePaginationRoot: {
     float: 'right',

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
-    margin: theme.spacing(1),
+    margin: theme.spacing(0, 1),
   },
 }));
 const emptySet = [];
