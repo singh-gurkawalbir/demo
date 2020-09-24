@@ -32,7 +32,7 @@ export default {
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
     {
-      heading: 'Resolved By',
+      heading: 'Resolved by',
       value: r => <UserName userId={r.resolvedBy} />,
     },
   ],
