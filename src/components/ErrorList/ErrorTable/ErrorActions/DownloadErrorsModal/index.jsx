@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
 import moment from 'moment';
 import ModalDialog from '../../../../ModalDialog';
 import actions from '../../../../../actions';
@@ -29,8 +30,15 @@ const fieldMeta = {
   },
 };
 
+const useStyles = makeStyles(theme => ({
+  footer: {
+    margin: theme.spacing(1),
+  },
+}));
+
 export default function DownloadErrorsModal({flowId, resourceId, onClose, isResolved}) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
   const handleDownload = useCallback(
@@ -50,11 +58,11 @@ export default function DownloadErrorsModal({flowId, resourceId, onClose, isReso
       <div> Download errors </div>
       <div>
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <div>
+        <div className={classes.footer}>
           <ButtonGroup>
             <Button
               variant="outlined"
-              color="secondary"
+              color="primary"
               data-test="downloadErrors"
               onClick={handleDownload}>
               Download

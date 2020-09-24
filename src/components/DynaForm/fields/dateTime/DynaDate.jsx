@@ -104,6 +104,7 @@ export default function DynaDate(props) {
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
 
         <KeyboardDatePicker
+          autoOk
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
           variant="inline"
