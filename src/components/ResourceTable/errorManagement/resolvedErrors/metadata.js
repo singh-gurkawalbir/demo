@@ -28,7 +28,7 @@ export default {
     },
     { heading: 'Source', value: r => r.source },
     {
-      heading: 'Time stamp',
+      heading: 'Timestamp',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
     {
