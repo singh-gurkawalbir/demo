@@ -1,4 +1,4 @@
-import { Button, Divider, List, ListItem, ListItemText } from '@material-ui/core';
+import { Button, List, ListItem, ListItemText } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
@@ -20,6 +20,7 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
+import ButtonGroup from '../ButtonGroup';
 
 const defineds = {
   startOfWeek: startOfWeek(new Date()),
@@ -150,10 +151,9 @@ const useStyles = makeStyles(theme => ({
   child: {
     flexBasis: '100%',
   },
-  child1: {
+  leftItems: {
     float: 'left',
-    padding: theme.spacing(2),
-    background: theme.palette.background.paper,
+    columnCount: 2,
   },
   dateRangePickerWrapper: {
     display: 'flex',
@@ -162,7 +162,6 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.default,
   },
   actions: {
-    paddingBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
   },
   dateRangePopperBtn: {
@@ -171,6 +170,13 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontFamily: 'source sans pro',
     fontSize: 15,
+  },
+  listBtn: {
+    background: theme.palette.common.white,
+    marginBottom: theme.spacing(0.5),
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    borderRadius: theme.spacing(0.5),
     '&:hover': {
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
@@ -240,14 +246,15 @@ export default function DateRangeSelector({ value, onSave, customPresets = [], s
         onClose={toggleClick}>
         {anchorEl && (
           <div className={classes.dateRangePickerWrapper}>
-            <div >
-              <div className={classes.child1}>
+            <div>
+              <div className={classes.leftItems}>
                 <List>
                   {presets.map((m, i) => (
                     <div key={m.id}>
-                      {!!i && <Divider />}
+                      {!!i}
                       <ListItem
                         button
+                        className={classes.listBtn}
                         selected={selectedRange.preset === m.id}
                         onClick={event => handleListItemClick(event, m.id)}
                       >
@@ -279,12 +286,14 @@ export default function DateRangeSelector({ value, onSave, customPresets = [], s
               )}
             </div>
             <div className={classes.actions}>
-              <Button variant="outlined" color="primary" onClick={handleSave}>
-                Apply
-              </Button>
-              <Button variant="text" color="primary" onClick={handleClose}>
-                Cancel
-              </Button>
+              <ButtonGroup>
+                <Button variant="outlined" color="primary" onClick={handleSave}>
+                  Apply
+                </Button>
+                <Button variant="text" color="primary" onClick={handleClose}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
             </div>
           </div>
         )}

@@ -13,8 +13,9 @@ import { USER_ACCESS_LEVELS, ERROR_MANAGEMENT_DOC_URL } from '../../utils/consta
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
-    margin: theme.spacing(2),
-    padding: theme.spacing(2),
+    margin: theme.spacing(3),
+    padding: theme.spacing(3),
+    fontSize: theme.spacing(2),
     border: `1px solid ${theme.palette.secondary.lightest}`,
   },
   footer: {
@@ -22,6 +23,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
     paddingTop: theme.spacing(2),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  listMigrate: {
+    '& li': {
+      marginTop: theme.spacing(2),
+    },
+  },
+  introErrorManagement: {
+    marginBottom: theme.spacing(2),
   },
 }));
 export default function UpgradeErrorManagement() {
@@ -72,25 +81,25 @@ export default function UpgradeErrorManagement() {
     <>
       <CeligoPageBar title="We&apos;ve a new and enhanced way to manage errors!" />
       <Paper className={classes.upgradeContainer} elevation={0}>
-        <Typography variant="body2">
-          Our new error management infrastructure gives you access <a href={`${ERROR_MANAGEMENT_DOC_URL}`} rel="noreferrer" target="_blank"> a lot of great new features</a>,
+        <Typography variant="root" component="div" className={classes.introErrorManagement}>
+          Our new error management infrastructure gives you access to <a href={`${ERROR_MANAGEMENT_DOC_URL}`} rel="noreferrer" target="_blank"> a lot of great new features</a>,
           with many more on the way! This new error management <br /> will eventually be rolled out to all accounts.
-
-          When you upgrade your account to our new error management platform:
         </Typography>
-        <ul>
+        <Typography variant="root"> When you upgrade your account to our new error management platform:</Typography>
+
+        <ul className={classes.listMigrate}>
           <li>
-            <Typography variant="body2">
-              It will automatically upgrade all integrations that you have shared with other users
+            <Typography variant="root">
+              It will automatically upgrade all integrations that you have shared with other users.
             </Typography>
           </li>
           <li>
-            <Typography variant="body2">
+            <Typography variant="root">
               You cannot switch to the current error management version. The two platforms are very different and not compatible.
             </Typography>
           </li>
           <li>
-            <Typography variant="body2">
+            <Typography variant="root">
               Error count may be lower because our new error management platform is already working for you, resolving duplicate errors during the upgrade process.
             </Typography>
           </li>
