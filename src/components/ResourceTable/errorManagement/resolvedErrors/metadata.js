@@ -28,11 +28,11 @@ export default {
     },
     { heading: 'Source', value: r => r.source },
     {
-      heading: 'Time stamp',
+      heading: 'Timestamp',
       value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
     {
-      heading: 'Resolved By',
+      heading: 'Resolved by',
       value: r => <UserName userId={r.resolvedBy} />,
     },
   ],
