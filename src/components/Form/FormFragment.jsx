@@ -70,7 +70,6 @@ export const FieldComponent = props => {
   }
 
   return (
-  // if its returning null wrap it within divs else return null
     <Renderer {...props} />
   );
 };
