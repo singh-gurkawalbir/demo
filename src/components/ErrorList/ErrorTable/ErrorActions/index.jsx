@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -7,6 +7,7 @@ import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import useConfirmDialog from '../../../ConfirmDialog';
 import ButtonGroup from '../../../ButtonGroup';
+import DownloadErrorsModal from './DownloadErrorsModal';
 
 const useStyles = makeStyles(theme => ({
   spinnerIcon: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorActions(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
   const { confirmDialog } = useConfirmDialog();
   const { flowId, resourceId, isResolved } = props;
   const isRetryInProgress = useSelector(
@@ -100,6 +102,9 @@ export default function ErrorActions(props) {
     });
   }, [isResolved, retryErrors, confirmDialog]);
 
+  const handleDownload = useCallback(() => setShowDownloadModal(true), []);
+  const handleCloseDownload = useCallback(() => setShowDownloadModal(false), []);
+
   return (
     <ButtonGroup>
       {!isResolved && (
@@ -121,6 +126,25 @@ export default function ErrorActions(props) {
         onClick={handleRetry}>
         Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
       </Button>
+
+      {/* Download Open/Resolved errors */}
+      <Button
+        variant="outlined"
+        color="secondary"
+        className={classes.btnActions}
+        onClick={handleDownload}>
+        Download
+      </Button>
+
+      {
+          showDownloadModal && (
+          <DownloadErrorsModal
+            flowId={flowId}
+            resourceId={resourceId}
+            onClose={handleCloseDownload}
+            isResolved={isResolved} />
+          )
+      }
     </ButtonGroup>
   );
 }
