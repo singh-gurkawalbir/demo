@@ -203,6 +203,8 @@ export default function DateRangeSelector({
                   onChange={item => handleDateRangeSelection(item.selection)}
                   moveRangeOnFirstSelection={false}
                   months={2}
+                  showMonthAndYearPickers={false}
+                  editableDateInputs={false}
                   className={classes.child}
                   ranges={[{...selectedRange, key: 'selection'}]}
                   direction="horizontal"
