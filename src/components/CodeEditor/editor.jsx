@@ -17,12 +17,16 @@ import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { useSelector } from 'react-redux';
 import jsonWorkerUrl from 'ace-builds/src-noconflict/worker-json';
+import javascriptWorkerUrl from 'ace-builds/src-noconflict/worker-javascript';
 import cssWorkerUrl from 'ace-builds/src-noconflict/worker-css';
+import xmlWorkerUrl from 'ace-builds/src-noconflict/worker-xml';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
 
 ace.config.setModuleUrl('ace/mode/css_worker', cssWorkerUrl);
 ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
+ace.config.setModuleUrl('ace/mode/javascript_worker', javascriptWorkerUrl);
+ace.config.setModuleUrl('ace/mode/xml_worker', xmlWorkerUrl);
 
 const useStyles = makeStyles(theme => ({
   editorErrorWrapper: {
