@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function DynaDate(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -104,7 +104,7 @@ export default function DynaDate(props) {
       <MuiPickersUtilsProvider utils={MomentDateFnsUtils} variant="filled">
 
         <KeyboardDatePicker
-          autoOk
+          autoOk={closeOnSelect}
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
           variant="inline"

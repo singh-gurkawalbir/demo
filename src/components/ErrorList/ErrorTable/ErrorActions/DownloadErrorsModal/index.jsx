@@ -17,12 +17,16 @@ const fieldMeta = {
       name: 'fromDate',
       type: 'date',
       label: 'From',
+      closeOnSelect: true,
+      validWhen: { isNot: { values: ['Invalid date'], message: '' } },
     },
     toDate: {
       id: 'toDate',
       name: 'toDate',
       type: 'date',
       label: 'To',
+      closeOnSelect: true,
+      validWhen: { isNot: { values: ['Invalid date'] } },
     },
   },
   layout: {
@@ -41,6 +45,7 @@ export default function DownloadErrorsModal({flowId, resourceId, onClose, isReso
   const classes = useStyles();
   const formKey = useFormInitWithPermissions({ fieldMeta });
   const formContext = useFormContext(formKey);
+
   const handleDownload = useCallback(
     () => {
       const { value: formValues = {} } = formContext || {};
@@ -64,6 +69,7 @@ export default function DownloadErrorsModal({flowId, resourceId, onClose, isReso
               variant="outlined"
               color="primary"
               data-test="downloadErrors"
+              disabled={!formContext.isValid}
               onClick={handleDownload}>
               Download
             </Button>
