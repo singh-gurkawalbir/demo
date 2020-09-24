@@ -44,11 +44,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const INVALID_DATE = 'Invalid date';
+const VALID_ERROR_TYPES = ['open', 'resolved'];
 
 function DownloadErrors({ flowId, resourceId, onClose }) {
   const match = useRouteMatch();
   const {type: errorType} = match.params || {};
-  const isResolved = errorType === 'resolved';
   const dispatch = useDispatch();
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -79,11 +79,24 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
           variant: 'error',
         });
       }
-      dispatch(actions.errorManager.flowErrorDetails.download({flowId, resourceId, isResolved, filters: { fromDate, toDate } }));
+      dispatch(actions.errorManager.flowErrorDetails.download(
+        {
+          flowId,
+          resourceId,
+          isResolved: errorType === 'resolved',
+          filters: { fromDate, toDate },
+        }
+      ));
       onClose();
     },
-    [dispatch, flowId, resourceId, isResolved, onClose, formContext, enqueueSnackbar],
+    [dispatch, flowId, resourceId, errorType, onClose, formContext, enqueueSnackbar],
   );
+
+  if (!VALID_ERROR_TYPES.includes(errorType)) {
+    onClose();
+
+    return null;
+  }
 
   return (
     <div>
