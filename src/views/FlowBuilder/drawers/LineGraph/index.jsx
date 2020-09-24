@@ -34,6 +34,22 @@ const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
   return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
 };
 
+const defaultPresets = [
+  {id: 'last1hour', label: 'Last 1 hour'},
+  {id: 'last4hours', label: 'Last 4 hours'},
+  {id: 'last24hours', label: 'Last 24 hours'},
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
+  {id: 'last3months', label: 'Last 3 months'},
+  {id: 'last6months', label: 'Last 6 months'},
+  {id: 'last9months', label: 'Last 9 months'},
+  {id: 'lastyear', label: 'Last year'},
+  {id: 'custom', label: 'Custom'},
+];
+
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
@@ -76,11 +92,12 @@ export default function LineGraphDrawer({ flowId }) {
 
       return [{
         label: 'Last run',
+        id: 'lastrun',
         range: () => ({
           startDate,
           endDate,
         }),
-      }];
+      }, ...defaultPresets];
     }
 
     return [];

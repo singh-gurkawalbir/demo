@@ -52,31 +52,31 @@ export const getSelectedRange = range => {
       end = endOfDay(addDays(new Date(), -1));
       break;
     case 'last7days':
-      start = startOfDay(addDays(new Date(), -7));
+      start = addDays(new Date(), -7);
       end = new Date();
       break;
     case 'last15days':
-      start = startOfDay(addDays(new Date(), -15));
+      start = addDays(new Date(), -15);
       end = new Date();
       break;
     case 'last30days':
-      start = startOfDay(addDays(new Date(), -30));
+      start = addDays(new Date(), -30);
       end = new Date();
       break;
     case 'last3months':
-      start = startOfDay(addMonths(new Date(), -3));
+      start = addMonths(new Date(), -3);
       end = new Date();
       break;
     case 'last6months':
-      start = startOfDay(addMonths(new Date(), -6));
+      start = addMonths(new Date(), -6);
       end = new Date();
       break;
     case 'last9months':
-      start = startOfDay(addMonths(new Date(), -9));
+      start = addMonths(new Date(), -9);
       end = new Date();
       break;
     case 'lastyear':
-      start = startOfDay(addMonths(new Date(), -12));
+      start = addMonths(new Date(), -12);
       end = new Date();
       break;
     case 'lastrun':
