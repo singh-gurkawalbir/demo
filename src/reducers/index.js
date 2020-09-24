@@ -2637,8 +2637,6 @@ selectors.tiles = state => {
       integration.mode !== INTEGRATION_MODES.SETTINGS
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
     } else if (t.numError && t.numError > 0) {
       status = TILE_STATUS.HAS_ERRORS;
     } else {

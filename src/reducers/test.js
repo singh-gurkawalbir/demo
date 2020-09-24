@@ -648,7 +648,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration1',
@@ -679,7 +679,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration4',
@@ -690,7 +690,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration5',
@@ -740,7 +740,7 @@ describe('tiles', () => {
           mode: 'settings',
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration8',
@@ -861,7 +861,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration1',
@@ -892,7 +892,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration4',
@@ -903,7 +903,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration5',
@@ -953,7 +953,7 @@ describe('tiles', () => {
           mode: 'settings',
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration8',
