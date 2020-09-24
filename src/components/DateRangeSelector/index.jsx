@@ -173,13 +173,32 @@ const useStyles = makeStyles(theme => ({
   },
   listBtn: {
     background: theme.palette.common.white,
-    marginBottom: theme.spacing(0.5),
+    marginBottom: theme.spacing(1),
     border: '1px solid',
+    minWidth: 212,
+    height: theme.spacing(4),
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
+    '& > * .MuiTypography-root': {
+      textAlign: 'center',
+    },
+    '&.Mui-selected': {
+      background: theme.palette.primary.light,
+      borderColor: theme.palette.primary.light,
+      '& > * .MuiTypography-root': {
+        color: theme.palette.common.white,
+      },
+      '&:hover': {
+        background: theme.palette.primary.light,
+        borderColor: theme.palette.primary.light,
+      },
+    },
     '&:hover': {
-      borderColor: theme.palette.secondary.lightest,
-      color: theme.palette.secondary.light,
+      borderColor: theme.palette.primary.light,
+      background: theme.palette.primary.light,
+      '& > * .MuiTypography-root': {
+        color: theme.palette.common.white,
+      },
     },
   },
 }));
