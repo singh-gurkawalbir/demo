@@ -180,8 +180,14 @@ export default function Panel(props) {
   // peeking into the patch set from the first step in PP/PG creation.
   // The patch set should have a value for /adaptorType which
   // contains [*Import|*Export].
-  const stagedProcessor = useSelector(state =>
-    selectors.stagedResource(state, id)
+  const isTechAdaptorForm = useSelector(state => {
+    const staggedPatches = selectors.stagedResource(state, id)?.patch;
+
+    return !!staggedPatches?.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    )?.value;
+  }
+
   );
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
@@ -213,26 +219,11 @@ export default function Panel(props) {
   // using isNew as dependency and this will be false for export/import form
   useEffect(() => {
     if (!isNew) {
-      const useTechAdaptorForm = stagedProcessor?.patch?.find(
-        p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
-      );
-
-      setShowNotificationToaster(!!useTechAdaptorForm?.value);
+      setShowNotificationToaster(isTechAdaptorForm);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
   const variant = match.isExact ? 'edit' : 'view';
-
-  // useTraceUpdate({
-  //   variant,
-  //   isNew,
-  //   resourceType,
-  //   flowId,
-  //   integrationId,
-  //   handleSubmitComplete,
-  //   showNotificationToaster,
-  //   onCloseNotificationToaster,
-  // });
 
   return (
     <>
