@@ -158,9 +158,9 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
         timeInMills: e[0],
         ...e[1].reduce((acc, cur) => ({
           ...cur,
-          success: (acc.success || 0) + (cur.success || 0),
-          error: (acc.error || 0) + (cur.error || 0),
-          ignored: (acc.ignored || 0) + (cur.ignored || 0),
+          success: (acc.success || 0) + (cur.resourceId !== cur.flowId ? (cur.success || 0) : 0),
+          error: (acc.error || 0) + (cur.resourceId !== cur.flowId ? (cur.error || 0) : 0),
+          ignored: (acc.ignored || 0) + (cur.resourceId !== cur.flowId ? (cur.ignored || 0) : 0),
           averageTimeTaken: Math.floor(((acc.averageTimeTaken || 0) + acc.sum) / acc.count),
           sum: acc.sum + (cur.averageTimeTaken || 0),
           count: acc.count + 1,
