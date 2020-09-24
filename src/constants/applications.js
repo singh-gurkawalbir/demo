@@ -1,4 +1,3 @@
-import { isProduction } from '../forms/utils';
 import { stringCompare } from '../utils/sort';
 
 // Schema details:
@@ -839,7 +838,7 @@ export const groupApplications = (
 
   assistantConnectors.sort(stringCompare('name'));
 
-  let filteredConnectors = assistantConnectors.filter(connector => {
+  const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.marketPlaceOnly) {
       return false;
     }
@@ -866,10 +865,6 @@ export const groupApplications = (
 
     return true;
   });
-
-  if (isProduction()) {
-    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
-  }
 
   return [
     {
