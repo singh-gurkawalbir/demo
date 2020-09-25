@@ -61,6 +61,7 @@ function* requestIntegrationErrors({ integrationId }) {
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
 
     yield put(
