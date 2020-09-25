@@ -1,5 +1,4 @@
 import React from 'react';
-import whyDidYouRender from '@welldone-software/why-did-you-render';
 import { render } from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
@@ -8,53 +7,48 @@ import { createLogger } from 'redux-logger';
 import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import App from './App';
-import rootReducer from './reducers';
+import rootReducer, { selectors } from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
-// import reportCrash from './utils/crash';
+import { getDomain } from './utils/resource';
 
-LogRocket.init('yb95vd/glad');
-setupLogRocketReact(LogRocket);
-
-const middleware = [];
 let store;
+const middleware = [];
 const sagaMiddleware = createSagaMiddleware({
   onError: error => {
     // eslint-disable-next-line no-console
     console.warn('saga middleware crashed on error ', error);
     store.dispatch(actions.app.errored());
     LogRocket.captureException(error);
-    // reportCrash({ error: {
-    //   name: error.name,
-    //   message: error.message,
-    //   stack: error.stack,
-    // }});
   },
 });
 
 middleware.push(sagaMiddleware);
 
-// redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
-const logOptions = {
-  diff: true,
-  duration: true,
-  collapsed: (getState, action, logEntry) => !logEntry.error,
-};
-
-if (
-  process.env.NODE_ENV === 'development' &&
-  process.env.WHY_RERENDER === 'true'
-) {
-  whyDidYouRender(React, { trackAllPureComponents: true });
-}
+middleware.push(LogRocket.reduxMiddleware({
+  stateSanitizer: state => ({
+    ...state,
+    auth: null,
+    authentication: null,
+    data: null,
+    session: null,
+  }),
+  actionSanitizer: () => null,
+}));
 
 if (process.env.NODE_ENV === 'development') {
+  // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
+  const logOptions = {
+    diff: true,
+    duration: true,
+    collapsed: (getState, action, logEntry) => !logEntry.error,
+  };
+
   middleware.push(createLogger(logOptions));
 }
 
 // trace true allows us to determine the origin of dispatched actions
 // using the redux dev tools plugin we can see the stack trace of where the request is originated from.
-
 const composeEnhancers =
   (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
   // TODO: check if we need to enable it in staging.
@@ -66,8 +60,52 @@ const composeEnhancers =
 
 store = createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(...middleware, LogRocket.reduxMiddleware()))
+  composeEnhancers(applyMiddleware(...middleware))
 );
+
+const VERSION = '6.10.1.9';
+
+// store.dispatch(actions.app.updateUIVersion(VERSION));
+const isProduction = getDomain() === 'integrator.io';
+const disableTelemetry = selectors.disableTelemetry(store.getState());
+
+if (!isProduction && !disableTelemetry) {
+  LogRocket.init('yb95vd/glad', {
+    release: VERSION,
+    console: {
+      isEnabled: {
+        debug: false,
+        log: false,
+      },
+    },
+    dom: {
+    // Yang: this is an overkill
+    // but it is the safest, we need to tag input/text tags with data-public attributes to allow them to be captured
+    // however, it might not be easy to do for components coming from other packages
+      inputSanitizer: true,
+      textSanitizer: true,
+    },
+    network: {
+      requestSanitizer: req => {
+        if (req.url.search(/aptrinsic\.com/) > -1) return null;
+        // Yang: this is likely too broad
+        // we may want to track non-sensitive/error request data later
+        // eslint-disable-next-line no-param-reassign
+        req.body = null;
+
+        return req;
+      },
+      responseSanitizer: response => {
+        // Yang: this is likely too broad
+        // we may want to track non-sensitive/error response data later
+        response.body = null;
+
+        return response;
+      },
+    },
+  });
+  setupLogRocketReact(LogRocket);
+}
 
 sagaMiddleware.run(rootSaga);
 

@@ -335,7 +335,8 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
-    // expect(saga.next().value).toEqual(put(actions.app.reload()));
+    saga.next();
+    expect(saga.next().value).toEqual(put(actions.app.reload()));
   });
   test('shouldnt remount the app when the user is authenticating for the very first time', () => {
     const email = 'someUserEmail';
@@ -378,7 +379,8 @@ describe('auth saga flow', () => {
 
     expect(effect).toEqual(put(actions.auth.complete()));
     expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
-    // expect(saga.next().done).toEqual(true);
+    saga.next();
+    expect(saga.next().done).toEqual(true);
   });
 });
 

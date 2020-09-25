@@ -227,6 +227,15 @@ export default function ProfileComponent() {
         helpKey: 'myaccount.developer',
         label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
+        helpKey: 'myaccount.developer',
+      },
+      disableTelemetry: {
+        id: 'disableTelemetry',
+        name: 'disableTelemetry',
+        type: 'checkbox',
+        label: 'Disable Telemetry',
+        defaultValue: preferences && preferences.disableTelemetry,
+        helpKey: 'myaccount.disableTelemetry',
       },
     },
     layout: {
@@ -241,6 +250,7 @@ export default function ProfileComponent() {
         'dateFormat',
         'timeFormat',
         'developer',
+        'disableTelemetry',
       ],
     },
   }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList]);

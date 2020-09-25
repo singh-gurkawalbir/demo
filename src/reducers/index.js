@@ -339,6 +339,10 @@ selectors.developerMode = state => (
   state && state.user && state.user.profile && state.user.profile.developer
 );
 
+selectors.disableTelemetry = state => (
+  (state && state.user && state.user.profile && state.user.profile.disableTelemetry) || false
+);
+
 selectors.currentEnvironment = state => selectors.userPreferences(state).environment;
 
 selectors.userOwnPreferences = createSelector(
@@ -365,6 +369,7 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       // eslint-disable-next-line camelcase
       auth_type_google,
+      disableTelemetry,
     } = { ...profile, ...preferences };
 
     return {
@@ -380,6 +385,7 @@ selectors.userProfilePreferencesProps = createSelector(
       timeFormat,
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
+      disableTelemetry,
     };
   });
 

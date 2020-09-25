@@ -2167,6 +2167,7 @@ export default {
   'myaccount.timeFormat':
     'Use this field to configure how you want times to be formatted in your integrator.io account. For example, there is an Audit Log page in your integrator.io account that lists changes made to resources in your account, and this field controls how the times on that page appear.',
   'myaccount.developer': 'Turning on this setting will expose developer centric fields in the integrator.io UI. For example, when defining an \'Export\' or an \'Import\' there are \'Hooks\' fields available in the UI where custom code can be configured.',
+  'myaccount.disableTelemetry': 'Turning on this setting will disable the telemetry collected by integrator.io for monitoring and debugging purposes. You may need to sign off for it to take effect.',
   'hooks.insertFunction':
     'Choose from among the supported function stubs to insert your selection into the content window below so that you can see the function signature and the meaning of its parameters.',
   'hooks.scriptContent':

@@ -66,6 +66,7 @@ selectors.appErrored = state => {
   return state.appErrored;
 };
 
+selectors.version = state => state.version;
 selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;
 selectors.isUserAcceptedAccountTransfer = state => !!state?.userAcceptedAccountTransfer;
 // #endregion
