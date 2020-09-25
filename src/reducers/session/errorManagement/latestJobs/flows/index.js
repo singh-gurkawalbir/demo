@@ -34,7 +34,12 @@ export default (state = {}, action) => {
         draft[flowId].data = [];
         // retains children till family call gives latest children jobs
         latestJobs?.forEach(latestJob => {
-          draft[flowId].data.push({ ...latestJob, children: (jobChildrenMap[latestJob._id] || {})});
+          const prevChildren = jobChildrenMap[latestJob._id];
+
+          draft[flowId].data.push({
+            ...latestJob,
+            ...(prevChildren ? { children: prevChildren } : {}),
+          });
         });
 
         break;

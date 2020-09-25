@@ -67,7 +67,7 @@ export default function RunDashboardActions({ flowId }) {
     {
       Icon: CancelIcon,
       action: 'cancel',
-      label: 'Cancel',
+      label: 'Cancel run',
       disabled: !validDashboardActions.includes('cancel'),
     },
     {
