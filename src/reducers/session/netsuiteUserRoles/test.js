@@ -26,7 +26,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({ [connectionId]: {
-      hideNotificationMessage: false,
+      hideNotificationMessage: true,
     } });
   });
 
@@ -62,7 +62,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: { hideNotificationMessage: false, status: 'error', message: 'Failed to retrieve' },
+      [connectionId]: { hideNotificationMessage: true, status: 'error', message: 'Failed to retrieve' },
     });
   });
   test('should clear the the message and the status on a failed request for netsuiteUserRoles', () => {
@@ -80,7 +80,7 @@ describe('netsuiteUser roles reducer ', () => {
     );
 
     expect(state).toEqual({
-      [connectionId]: {hideNotificationMessage: false, message: 'Failed to retrieve', status: 'error' },
+      [connectionId]: {hideNotificationMessage: true, message: 'Failed to retrieve', status: 'error' },
     });
 
     state = reducer(

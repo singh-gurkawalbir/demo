@@ -44,7 +44,7 @@ const NetsuiteValidateButton = props => {
     dispatch(actions.resource.connections.testClear(resourceId));
     dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.requestUserRoles(resourceId, values, false)
+      actions.resource.connections.netsuite.testConnection(resourceId, values)
     );
   };
 
@@ -63,7 +63,7 @@ const NetsuiteValidateButton = props => {
   useEffect(() => {
     if (resourceId && fieldsIsVisible && !isOffline) {
       dispatch(
-        actions.resource.connections.netsuite.requestUserRoles(resourceId, null, true)
+        actions.resource.connections.netsuite.requestUserRoles(resourceId, null)
       );
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
