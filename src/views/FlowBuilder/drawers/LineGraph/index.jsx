@@ -155,7 +155,7 @@ export default function LineGraphDrawer({ flowId }) {
     <RightDrawer
       anchor="right"
       title="Dashboard"
-      height="tall"
+      height="short"
       width="full"
       actions={action}
       variant="permanent"

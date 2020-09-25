@@ -32,9 +32,10 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST:
-        draft[integrationId] = {
-          status: 'requested',
-        };
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED: {
         const { data, total} = getErrorMapWithTotal(integrationErrors, '_flowId');
