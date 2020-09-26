@@ -134,6 +134,14 @@ export default function FlowsPanel({ integrationId, childId }) {
     [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
   );
 
+  const actionProps = useMemo(() => (
+    {
+      parentId: integrationId,
+      storeId: childId,
+      resourceType: 'flows',
+      isUserInErrMgtTwoDotZero,
+    }), [childId, integrationId, isUserInErrMgtTwoDotZero]);
+
   return (
     <div className={classes.root}>
       {showDialog && (
@@ -179,7 +187,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           data={flows}
           filterKey={filterKey}
           {...flowTableMeta}
-          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
+          actionProps={actionProps}
         />
       </LoadResources>
     </div>
