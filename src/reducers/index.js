@@ -5153,3 +5153,35 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.availableUsersList = (state, integrationId) => {
+  const permissions = selectors.userPermissions(state);
+  let _users = [];
+
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (integrationId) {
+      _users = selectors.integrationUsersForOwner(state, integrationId);
+    } else {
+      _users = selectors.usersList(state);
+    }
+  } else if (integrationId) {
+    _users = selectors.integrationUsers(state, integrationId);
+  }
+
+  if (integrationId && _users && _users.length > 0) {
+    const accountOwner = selectors.accountOwner(state);
+
+    _users = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accepted: true,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+        sharedWithUser: accountOwner,
+      },
+      ..._users,
+    ];
+  }
+
+  return _users;
+};
+

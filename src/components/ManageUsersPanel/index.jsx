@@ -8,6 +8,7 @@ import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UserDialog from './UserDialog';
 import UserList from './UserList';
+// import UsersList from './UsersList';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -69,6 +70,9 @@ export default function ManageUsersPanel({ integrationId }) {
         integrationId={integrationId}
         onEditUserClick={handleEditUserClick}
       />
+
+      {/* <UsersList integrationId={integrationId} /> */}
+
     </div>
   );
 }
