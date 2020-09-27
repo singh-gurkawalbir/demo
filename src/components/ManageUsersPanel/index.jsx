@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../utils/constants';
 import IconTextButton from '../IconTextButton';
@@ -8,7 +9,9 @@ import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UserDialog from './UserDialog';
 import UserList from './UserList';
-// import UsersList from './UsersList';
+import UsersList from './UsersList';
+import ChangePermissionsDrawer from './Drawers/ChangePermissions';
+import InviteUserDrawer from './Drawers/InviteUser';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,6 +32,8 @@ const infoTextUsers =
 
 export default function ManageUsersPanel({ integrationId }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const [showDialog, setShowDialog] = useState(false);
   const [userId, setUserId] = useState();
   const isAccountOwner = useSelector(
@@ -39,14 +44,16 @@ export default function ManageUsersPanel({ integrationId }) {
   const handleCloseDialog = useCallback(() => {
     setShowDialog(false);
   }, []);
-  const handleInviteUserClick = useCallback(() => {
-    setShowDialog(true);
-    setUserId();
-  }, []);
+  // const handleInviteUserClick = useCallback(() => {
+  //   setShowDialog(true);
+  //   setUserId();
+  // }, []);
   const handleEditUserClick = useCallback(userId => {
     setShowDialog(true);
     setUserId(userId);
   }, []);
+
+  const handleInvite = useCallback(() => history.push(`${match.url}/invite`), [history, match]);
 
   return (
     <div className={classes.root}>
@@ -60,7 +67,7 @@ export default function ManageUsersPanel({ integrationId }) {
       )}
       <PanelHeader title="Users" infoText={infoTextUsers}>
         {isAccountOwner && (
-          <IconTextButton onClick={handleInviteUserClick}>
+          <IconTextButton onClick={handleInvite}>
             <AddIcon /> Invite user
           </IconTextButton>
         )}
@@ -71,8 +78,9 @@ export default function ManageUsersPanel({ integrationId }) {
         onEditUserClick={handleEditUserClick}
       />
 
-      {/* <UsersList integrationId={integrationId} /> */}
-
+      <UsersList integrationId={integrationId} />
+      <InviteUserDrawer integrationId={integrationId} />
+      <ChangePermissionsDrawer integrationId={integrationId} />
     </div>
   );
 }
