@@ -1,14 +1,14 @@
 import React from 'react';
-import AccessLevel from './cells/AccessLevel';
-import EnableUser from './cells/EnableUser';
-import Status from './cells/Status';
-import AccessLevelHeader from './cells/AccessLevelHeader';
-import EnableUserHeader from './cells/EnableUserHeader';
-import StatusHeader from './cells/StatusHeader';
-import { ACCOUNT_IDS } from '../../../utils/constants';
-import ChangePermissions from './actions/ChangePermissions';
-import MakeAccountOwner from './actions/MakeAccountOwner';
-import DeleteFromAccount from './actions/DeleteFromAccount';
+import AccessLevel from '../cells/AccessLevel';
+import EnableUser from '../cells/EnableUser';
+import Status from '../cells/Status';
+import AccessLevelHeader from '../cells/AccessLevelHeader';
+import EnableUserHeader from '../cells/EnableUserHeader';
+import StatusHeader from '../cells/StatusHeader';
+import { ACCOUNT_IDS } from '../../../../utils/constants';
+import ChangePermissions from '../actions/ChangePermissions';
+import MakeAccountOwner from '../actions/MakeAccountOwner';
+import DeleteFromAccount from '../actions/DeleteFromAccount';
 
 export default {
   columns: () => {
