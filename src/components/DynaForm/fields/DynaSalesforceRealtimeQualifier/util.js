@@ -270,7 +270,11 @@ export function getSQL(queryBuilder) {
 }
 
 export function getAllFiltersConfig(filtersMetadata = [], referenceFields) {
-  const referencedFields = referenceFields.map(f => ({ id: f, label: f }));
+  const referencedFields = referenceFields.map(f => {
+    if (typeof f === 'string') { return { id: f, label: f }; }
+
+    return { id: f.label, ...f};
+  });
 
   return uniqBy(
     [...filtersMetadata, ...referencedFields].map(v => getFilterConfig(v)),

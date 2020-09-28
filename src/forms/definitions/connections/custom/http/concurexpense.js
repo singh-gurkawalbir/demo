@@ -48,6 +48,7 @@ export default {
         { field: 'http.auth.oauth.password', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
     },

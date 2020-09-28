@@ -37,6 +37,12 @@ export function* run({ flowId, customStartDate, options = {} }) {
     return true;
   }
 
+  const isUserInErrMgtTwoDotZero = yield select(selectors.isOwnerUserInErrMgtTwoDotZero);
+
+  if (isUserInErrMgtTwoDotZero) {
+    return yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
+  }
+
   const additionalProps = {
     _id: job._jobId,
     _flowId: flowId,

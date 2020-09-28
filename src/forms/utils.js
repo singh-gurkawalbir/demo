@@ -148,21 +148,19 @@ export const isAnyExpansionPanelFieldVisible = (meta, fieldStates) => {
 };
 
 export const fieldIDsExceptClockedFields = (meta, resourceType) => {
+  if (!meta) return null;
   const { fieldMap } = meta;
+
+  // if fieldMap is not provided just return metadata untranslated
+  // They DynaForm will probably return null in this case
+  if (!fieldMap) { return null; }
 
   return Object.keys(fieldMap).reduce((acc, curr) => {
     if (
       C_LOCKED_FIELDS[resourceType] &&
       !C_LOCKED_FIELDS[resourceType].includes(fieldMap[curr].id)
     ) {
-      acc[curr] = {
-        ...fieldMap[curr],
-        defaultDisabled: true,
-      };
-    } else {
-      acc[curr] = {
-        ...fieldMap[curr],
-      };
+      acc.push(fieldMap[curr].id);
     }
 
     return acc;
@@ -854,11 +852,27 @@ export const destinationOptions = {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
     },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
   ],
   s3: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
     },
   ],
   http: [

@@ -4,6 +4,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import { getSelectedRange } from '../../../utils/flowMetrics';
 import RefreshIcon from '../../icons/RefreshIcon';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
@@ -43,6 +44,7 @@ export default function LineGraphDrawer({ integrationId }) {
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
   });
+
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || []);
 
@@ -62,7 +64,7 @@ export default function LineGraphDrawer({ integrationId }) {
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
-      setRange(Array.isArray(range) ? range[0] : range);
+      setRange(getSelectedRange(range));
     },
     [dispatch, integrationId]
   );
@@ -78,7 +80,7 @@ export default function LineGraphDrawer({ integrationId }) {
         })
       );
     },
-    []
+    [dispatch, integrationId, preferences]
   );
 
   return (

@@ -248,21 +248,6 @@ export function* cancelJob({ jobId }) {
   }
 }
 
-// TODO: @Raghu Remove this once we have the latest Jobs API implementation inplace
-export function* cancelLatestJob({ jobId }) {
-  const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
-    resourceId: jobId,
-  });
-  const { path, opts } = requestOptions;
-
-  try {
-    yield call(apiCallWithRetry, { path, opts });
-  } catch (error) {
-    return true;
-  }
-  yield call(getJobFamily, { jobId });
-}
-
 export function* resolveCommit({ jobs = [] }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT);
   const { path, opts } = requestOptions;
@@ -664,16 +649,8 @@ function* retryProcessedErrors({ jobId, flowJobId, errorFileId }) {
   }
 }
 
-function* getLatestJobs({ integrationId, flowId}) {
-  yield call(requestJobCollection, { integrationId, flowId });
-  const latestJobs = yield select(selectors.latestFlowJobs);
-
-  yield all(latestJobs.map(job => put(actions.job.requestFamily({ jobId: job._id}))));
-}
-
 export const jobSagas = [
   takeEvery(actionTypes.JOB.REQUEST_COLLECTION, getJobCollection),
-  takeEvery(actionTypes.JOB.REQUEST_LATEST, getLatestJobs),
   takeEvery(actionTypes.JOB.REQUEST_FAMILY, getJobFamily),
   takeEvery(
     actionTypes.JOB.REQUEST_IN_PROGRESS_JOBS_STATUS,
@@ -681,7 +658,6 @@ export const jobSagas = [
   ),
   takeEvery(actionTypes.JOB.DOWNLOAD_FILES, downloadFiles),
   takeEvery(actionTypes.JOB.CANCEL, cancelJob),
-  takeEvery(actionTypes.JOB.CANCEL_LATEST, cancelLatestJob),
   takeEvery(actionTypes.JOB.RESOLVE_SELECTED, resolveSelected),
   takeEvery(actionTypes.JOB.RESOLVE_ALL, resolveAll),
   takeEvery(actionTypes.JOB.RETRY_SELECTED, retrySelected),

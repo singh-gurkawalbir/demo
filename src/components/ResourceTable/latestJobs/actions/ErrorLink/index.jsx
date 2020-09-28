@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import { selectors } from '../../../reducers';
+import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   errorLink: {

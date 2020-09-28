@@ -73,7 +73,8 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getRequestOptions from '../utils/requestOptions';
+import { getJobDuration } from './data/jobs/util';
+import getFilteredErrors from '../utils/errorManagement';
 
 const emptySet = [];
 const emptyObject = {};
@@ -2964,7 +2965,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   );
 
   if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
-    flows = [{ _id: _integrationId, name: '---All Flows---' }, ...flows];
+    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
 
     if (allFlowsSelected) flowValues = [_integrationId, ...flows];
   }
@@ -3216,54 +3217,74 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+selectors.flowDashboardJobs = createSelector(
+  (state, flowId) => selectors.latestFlowJobsList(state, flowId),
+  state => fromData.resourceDetailsMap(state?.data),
+  (latestFlowJobs, resourceMap) => {
+    const dashboardSteps = [];
 
-selectors.latestFlowJobs = createSelector(
-  state => selectors.flowJobs(state),
-  jobList => {
-    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
-    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+    latestFlowJobs?.data?.forEach(parentJob => {
+      // when the job is queued
+      if (parentJob.status === JOB_STATUS.QUEUED) {
+        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
+      }
+      if (parentJob.status === JOB_STATUS.CANCELED && !parentJob.children?.length) {
+        // In cases when job is cancelled while it is in queue, children are not yet created
+        // So show this job as the export step cancelled
+        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
+      }
+      const additionalProps = {
+        doneExporting: !!parentJob.doneExporting,
+        numPagesProcessed: 0,
+      };
 
-    // If there are any in progress jobs too, show them with queued jobs if exist
-    if (inProgressJobs.length) {
-      return [...queuedJobs, ...inProgressJobs];
-    }
-    // show queued jobs if exist
-    if (queuedJobs.length) {
-      return queuedJobs;
-    }
+      if (!additionalProps.doneExporting) {
+        if (
+          [
+            JOB_STATUS.COMPLETED,
+            JOB_STATUS.CANCELED,
+            JOB_STATUS.FAILED,
+          ].includes(parentJob.status)
+        ) {
+          additionalProps.doneExporting = true;
+        }
+      }
+      if (parentJob.children?.length) {
+        parentJob.children.forEach(cJob => {
+          const additionalChildProps = {
+            uiStatus: cJob.status,
+            duration: getJobDuration(cJob),
+            name: cJob._exportId
+              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          };
 
-    // If there are no in progress / queued jobs, show the latest job
-    // TODO : Discuss on this use case on what to show
-    return jobList[0] ? [jobList[0]] : emptySet;
-  });
+          if (cJob.type === 'import') {
+            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
+              additionalChildProps.percentComplete = Math.floor(
+                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
+              );
+            } else {
+              additionalChildProps.percentComplete = 0;
+            }
 
-selectors.flowDashboardDetails = createSelector(
-  state => selectors.latestFlowJobs(state),
-  latestJobs => {
-    if (!latestJobs.length) return emptySet;
+            additionalProps.numPagesProcessed += parseInt(
+              cJob.numPagesProcessed,
+              10
+            );
+          }
 
-    const childJobDetails = [];
-
-    latestJobs.forEach(job => {
-      if (job.status === JOB_STATUS.QUEUED) {
-        childJobDetails.push(job);
-      } else if (job.children?.length) {
-        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+          dashboardSteps.push({ ...cJob, ...additionalChildProps });
+        });
       }
     });
 
-    return childJobDetails;
-  });
-
-selectors.areFlowJobsLoading = (state, filters = {}) => {
-  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
-    filters,
-  }) || {};
-
-  const commKey = commKeyGen(path, opts.method);
-
-  return fromComms.isLoading(state.comms, commKey);
-};
+    return {
+      status: latestFlowJobs?.status,
+      data: dashboardSteps,
+    };
+  }
+);
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
@@ -5111,3 +5132,24 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
 
   return emptyObject;
 };
+
+selectors.errorDetails = (state, params) => {
+  const { flowId, resourceId, options = {} } = params;
+
+  return selectors.getErrors(state, {
+    flowId,
+    resourceId,
+    errorType: options.isResolved ? 'resolved' : 'open',
+  });
+};
+
+selectors.makeResourceErrorsSelector = () => createSelector(
+  selectors.errorDetails,
+  (_1, params) => params.options,
+  (errorDetails, options) => ({
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, options),
+  })
+);
+
+selectors.resourceErrors = selectors.makeResourceErrorsSelector();

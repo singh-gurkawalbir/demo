@@ -12,8 +12,11 @@ const useStyles = makeStyles(() => ({
 
 export default function RunDashboardPanel({ flowId }) {
   const classes = useStyles();
-  const integrationId = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)._integrationId || 'none');
+  const integrationId = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    return flow?._integrationId || 'none';
+  });
 
   return (
     <div className={classes.root}>
