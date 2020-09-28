@@ -613,6 +613,8 @@ export default {
     'Please enter the username of your Jira Server account.',
   'jiraserver.connection.http.auth.basic.password':
     'Please enter the password of your Jira Server account.',
+  'gainsight.connection.http.gainsightinstanceurl': 'Please enter the instance URI shown in your Gainsight CS account.For example, if https://test-domain.gainsightcloud.com/v1/ui/home is the URL after logging in,then the instance URI would be \'test-domain.gainsightcloud\'.',
+  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
