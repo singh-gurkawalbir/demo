@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '20vh',
-    width: '50vh',
+    width: '100%',
   },
   actions: {
     flexDirection: 'row !important',

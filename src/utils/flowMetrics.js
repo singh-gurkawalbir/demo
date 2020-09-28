@@ -1,12 +1,13 @@
-import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
-import isSameDay from 'date-fns/isSameDay';
 import endOfDay from 'date-fns/endOfDay';
 import addHours from 'date-fns/addHours';
 import moment from 'moment';
 import * as d3 from 'd3';
-import { addMonths } from 'date-fns';
+import groupBy from 'lodash/groupBy';
+import flatMap from 'lodash/flatMap';
+import forOwn from 'lodash/forOwn';
+import addMonths from 'date-fns/addMonths';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
@@ -52,31 +53,31 @@ export const getSelectedRange = range => {
       end = endOfDay(addDays(new Date(), -1));
       break;
     case 'last7days':
-      start = startOfDay(addDays(new Date(), -7));
+      start = startOfDay(addDays(new Date(), -6));
       end = new Date();
       break;
     case 'last15days':
-      start = startOfDay(addDays(new Date(), -15));
+      start = startOfDay(addDays(new Date(), -14));
       end = new Date();
       break;
     case 'last30days':
-      start = startOfDay(addDays(new Date(), -30));
+      start = startOfDay(addDays(new Date(), -29));
       end = new Date();
       break;
     case 'last3months':
-      start = startOfDay(addMonths(new Date(), -3));
+      start = addMonths(new Date(), -3);
       end = new Date();
       break;
     case 'last6months':
-      start = startOfDay(addMonths(new Date(), -6));
+      start = addMonths(new Date(), -6);
       end = new Date();
       break;
     case 'last9months':
-      start = startOfDay(addMonths(new Date(), -9));
+      start = addMonths(new Date(), -9);
       end = new Date();
       break;
     case 'lastyear':
-      start = startOfDay(addMonths(new Date(), -12));
+      start = addMonths(new Date(), -12);
       end = new Date();
       break;
     case 'lastrun':
@@ -163,69 +164,8 @@ export const getInterval = range => {
   return undefined;
 };
 
-export const getDurationLabel = (ranges = [], customPresets = []) => {
-  const { startDate, endDate } = ranges[0] || {};
-  const {startDate: lastRunStartDate, endDate: lastRunEndDate} = customPresets[0]?.range() || {};
-
-  if (!startDate && !endDate) { return 'Select date range'; }
-  if (startDate?.toISOString() === lastRunStartDate?.toISOString() &&
-    endDate?.toISOString() === lastRunEndDate?.toISOString()) {
-    return 'Last run';
-  }
-
-  const distance = formatDistanceStrict(startDate, endDate, { unit: 'day' });
-  const distanceInHours = formatDistanceStrict(startDate, endDate, {
-    unit: 'hour',
-  });
-  const distanceInMonths = formatDistanceStrict(startDate, endDate, {
-    unit: 'month',
-  });
-  const startOfToday = startOfDay(new Date());
-  const startOfYesterday = startOfDay(addDays(new Date(), -1));
-  const endOfYesterday = endOfDay(addDays(new Date(), -1));
-
-  if (startDate.getTime() === startOfYesterday.getTime() && endDate.getTime() === endOfYesterday.getTime()) {
-    return 'Yesterday';
-  }
-
-  if (!isSameDay(new Date(), endDate)) {
-    return 'Custom';
-  }
-
-  switch (distance) {
-    case '0 days':
-      if (startDate.toISOString() === startOfToday.toISOString()) {
-        return 'Today';
-      }
-
-      return `Last ${distanceInHours}`;
-
-    case '1 day':
-      if (startDate.toISOString() === startOfToday.toISOString()) {
-        return 'Today';
-      }
-      if (
-        distanceInHours === '24 hours' &&
-        isSameDay(addDays(new Date(), -1), startDate) &&
-        isSameDay(new Date(), endDate)
-      ) {
-        return 'Last 24 hours';
-      }
-
-      return 'Custom';
-    default:
-      if (!['0 months', '1 month'].includes(distanceInMonths) && isSameDay(new Date(), endDate)) {
-        return `Last ${distanceInMonths}`;
-      } if (isSameDay(new Date(), endDate)) {
-        return `Last ${distance}`;
-      }
-
-      return 'Custom';
-  }
-};
-
 const getFlowFilterExpression = (flowId, filters) => {
-  const {selectedResources} = filters;
+  const { selectedResources } = filters;
 
   if (selectedResources && selectedResources.length) {
     return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
@@ -273,8 +213,10 @@ const getFlowMetricsQueryParams = (flowId, filters) => {
 
   if (hours < 5 && startDateFromToday < 7) {
     duration = '1m';
-  } else if (days > 4) {
+  } else if (days > 4 && days < 90) {
     duration = '1d';
+  } else if (days > 90) {
+    duration = '1mo';
   } else {
     duration = '1h';
   }
@@ -291,7 +233,9 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     duration,
   } = getFlowMetricsQueryParams(flowId, filters);
 
-  return `from(bucket: "${bucket}")
+  return `import "math"
+
+  sei = from(bucket: "${bucket}")
     |> range(start: ${start}, stop: ${end})
     |> filter(fn: (r) => r.u == "${userId}")
     ${flowFilterExpression}
@@ -309,19 +253,9 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
       resourceId: r["ei"],
       averageTimeTaken: r["att"]
     }))
-    |> drop(columns: ["_start", "_stop","ei","f","u","s","e","i"])`;
-};
-
-export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
-  const {
-    bucket,
-    start,
-    end,
-    flowFilterExpression,
-    duration,
-  } = getFlowMetricsQueryParams(flowId, filters);
-
-  return `from(bucket: "${bucket}")
+    |> drop(columns: ["_start", "_stop","ei","f","u","s","e","i"])
+  
+    att = from(bucket: "${bucket}")
     |> range(start: ${start}, stop: ${end})
     |> filter(fn: (r) => r.u == "${userId}")
     ${flowFilterExpression}
@@ -329,8 +263,7 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
     |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
     |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
     (tables
-    |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c, attph: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c)})
-    )
+    |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
     |> drop(columns: ["tc", "tt"])
     |> set(key: "_field", value: outputField)
     |> rename(columns: {attph: "_value"})))
@@ -342,7 +275,10 @@ export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
         resourceId: r.ei,
         averageTimeTaken: r["att"]
       }))
-    |> drop(columns: ["_start", "_stop","ei","f","u"])`;
+    |> drop(columns: ["_start", "_stop","ei","f","u"])
+    
+    union(tables: [sei, att])
+    |> group()`;
 };
 
 export const getLabel = key => {
@@ -371,18 +307,56 @@ export const getAxisLabel = key => {
   }
 };
 
-export const getAxisLabelPosition = id => id === 'averageTimeTaken' ? 'insideBottomLeft' : 'insideLeft';
+const add = (a = 0, b = 0) => a + b;
 
-export const getFlowMetrics = (metrics, measurement) => {
-  if (metrics.data) return metrics.data[measurement];
+const addFlowEntry = (data = []) => {
+  const [seiData, attData] = data.reduce((acc, cur) => {
+    acc[cur.isAtt ? 1 : 0].push(cur);
+
+    return acc;
+  }, [[], []]);
+
+  attData.forEach(item => {
+    const seiItem = seiData.find(d => d.resourceId === item.resourceId);
+
+    seiItem.averageTimeTaken = +item.averageTimeTaken || 0;
+  });
+
+  const flowEntry = seiData.reduce((acc, item) => {
+    acc.type = 'flow';
+    acc.resourceId = item.flowId;
+    acc.timeInMills = item.timeInMills;
+    acc.success = add(item.success, acc.success);
+    acc.error = add(item.error, acc.error);
+    acc.ignored = add(item.ignored, acc.ignored);
+    acc.flowId = item.flowId;
+    acc.tc += item.success;
+    acc.tt += item.averageTimeTaken * item.success;
+    acc.averageTimeTaken = Math.floor((acc.tt + item.averageTimeTaken * item.success) / (acc.tc + item.success));
+
+    return acc;
+  }, {tc: 0, tt: 0, attph: 0});
+
+  seiData.push(flowEntry);
+
+  return seiData;
+};
+const addFlowLevelCounts = data => {
+  const groupedByTime = groupBy(data, 'timeInMills');
+
+  Object.keys(groupedByTime).forEach(key => {
+    groupedByTime[key] = addFlowEntry(groupedByTime[key]);
+  });
+
+  return flatMap(groupedByTime);
 };
 
 export const parseFlowMetricsJson = response => {
   if (!response || !response.length) {
     return [];
   }
-
-  return response
+  // remove unwanted fields
+  const data = response
     .map(item => ({
       timeInMills: new Date(item._time).getTime(),
       success: +item.success || 0,
@@ -391,5 +365,25 @@ export const parseFlowMetricsJson = response => {
       averageTimeTaken: +item.averageTimeTaken || 0,
       resourceId: item.resourceId,
       flowId: item.flowId,
+      isAtt: !!item._measurement,
     }));
+  const byFlow = groupBy(data, 'flowId');
+  const allFlows = [];
+
+  forOwn(byFlow, (v, k) => {
+    if (k) {
+      allFlows.push(...addFlowLevelCounts(v));
+    }
+  });
+
+  return allFlows.map(item => ({
+    timeInMills: item.timeInMills,
+    success: +item.success || 0,
+    error: +item.error || 0,
+    ignored: +item.ignored || 0,
+    averageTimeTaken: +item.averageTimeTaken || 0,
+    resourceId: item.resourceId,
+    flowId: item.flowId,
+    type: item.type,
+  }));
 };

@@ -331,12 +331,6 @@ function FlowBuilder() {
     },
     [patchFlow]
   );
-  const handleErrors = useCallback(
-    resourceId => () => {
-      handleDrawerOpen(`errors/${resourceId}`);
-    },
-    [handleDrawerOpen]
-  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(0);
@@ -507,7 +501,6 @@ function FlowBuilder() {
         <PageGenerator
           {...pg}
           onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-          onErrors={handleErrors(pg._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -534,7 +527,7 @@ function FlowBuilder() {
                 />
       )}
     </div>
-  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleErrors, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
+  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
 
   const pps = useMemo(() => (
     <div className={classes.processorContainer}>
@@ -542,7 +535,6 @@ function FlowBuilder() {
         <PageProcessor
           {...pp}
           onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-          onErrors={handleErrors(pp._importId || pp._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -581,7 +573,7 @@ function FlowBuilder() {
                   </Typography>
       )}
     </div>
-  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleErrors, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
+  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
