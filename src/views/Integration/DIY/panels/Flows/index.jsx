@@ -143,7 +143,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
   );
 
-  if (!flowErrorCountStatus) {
+  if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
       <SpinnerWrapper>
         <Spinner />
