@@ -6,6 +6,7 @@ import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
 
+const emptyObject = {};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -36,15 +37,15 @@ export default function SelectImport() {
     'flows',
     flowId
   );
-  const flowImports = useSelectorMemo(selectors.mkflowImportsList, flowId, importId);
+  const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
   const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
   const getMappingUrl = useCallback(_impId => {
-    const importResource = imports.find(({_id}) => _id === _impId);
+    const importResource = imports.find(({_id}) => _id === _impId) || emptyObject;
 
     if (isQueryBuilderSupported(importResource)) {
-      const url = match.url.replace('/mapping', '/queryBuilder');
+      const url = match.url.replace('/mapping', '/dbMapping');
 
       return importId ? url : `${url}/${_impId}`;
     }

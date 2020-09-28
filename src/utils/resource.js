@@ -779,7 +779,7 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
 export function isNetSuiteBatchExport(exportRes) {
   return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
 }
-export const isQueryBuilderSupported = importResource => {
+export const isQueryBuilderSupported = (importResource = {}) => {
   const {adaptorType} = importResource;
 
   if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {

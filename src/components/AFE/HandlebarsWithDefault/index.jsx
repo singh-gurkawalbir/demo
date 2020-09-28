@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { isEqual } from 'lodash';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import * as completers from '../editorSetup/completers';
@@ -72,24 +71,14 @@ export default function HandlebarsWithDefaults(props) {
   }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict, sampleRule]);
 
   useEffect(() => {
-    if (props.lookups && !isEqual(props.lookups, lookups)) {
+    if (props.lookups) {
       dispatch(
         actions.editor.patch(editorId, {
           lookups: props.lookups,
         })
       );
     }
-  }, [dispatch, editorId, isSampleDataLoading, lookups, props.isSampleDataLoading, props.lookups]);
-
-  useEffect(() => {
-    if (props.lookups && !isEqual(props.lookups, lookups)) {
-      dispatch(
-        actions.editor.patch(editorId, {
-          lookups: props.lookups,
-        })
-      );
-    }
-  }, [dispatch, editorId, lookups, props.lookups]);
+  }, [dispatch, editorId, props.lookups]);
 
   useEffect(() => {
     if (template === undefined && sampleRule) {

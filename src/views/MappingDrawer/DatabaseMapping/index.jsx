@@ -1,16 +1,12 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 import SQLQueryBuilderWrapper from '../../../components/DynaForm/fields/DynaSQLQueryBuilder/SQLQueryBuilderWrapper';
 import { selectors } from '../../../reducers';
 
-const emptySet = {};
+const emptyObject = {};
 const SQLQueryBuilder = props => {
   const {flowId, importId, index, disabled} = props;
-  const history = useHistory();
-  const match = useRouteMatch();
-
-  const id = 'rdbmsQuery';
   const importResource = useSelector(state => selectors.resource(state, 'imports', importId));
   const {value, title, ruleTitle, ...options} = useMemo(() => {
     if (importResource.adaptorType === 'RDBMSImport') {
@@ -37,7 +33,7 @@ const SQLQueryBuilder = props => {
       };
     }
 
-    return emptySet;
+    return emptyObject;
   }, [importResource]);
 
   const [lookups, setLookups] = useState(options.lookups || []);
@@ -69,14 +65,10 @@ const SQLQueryBuilder = props => {
   [importId, importResource, index, value]
   );
 
-  useEffect(() => {
-    history.replace(`${match.url}/${id}`);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <SQLQueryBuilderWrapper
-      id={id}
+    // id is empty to match url
+      id=""
       onFieldChange={handleLookupUpdate}
       disabled={disabled}
       value={value}
@@ -99,7 +91,7 @@ export default function DatabaseMapping({integrationId}) {
   const match = useRouteMatch();
   const { flowId, importId, index } = match.params;
   const isDatabaseImport = useSelector(state => {
-    const importResource = selectors.resource(state, 'imports', importId);
+    const importResource = selectors.resource(state, 'imports', importId) || emptyObject;
 
     return !!['RDBMSImport', 'DynamodbImport', 'MongodbImport'].includes(importResource.adaptorType);
   });

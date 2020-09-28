@@ -1,4 +1,4 @@
-import React, {Fragment } from 'react';
+import React, {Fragment, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -26,8 +26,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptySet = [];
 export default function SelectQueryType() {
   const match = useRouteMatch();
+
   const {importId} = match.params;
 
   const classes = useStyles();
@@ -36,7 +38,7 @@ export default function SelectQueryType() {
       const importResource = selectors.resource(state, 'imports', importId);
 
       if (importResource.adaptorType === 'RDBMSImport') {
-        return importResource.rdbms?.queryType;
+        return importResource.rdbms?.queryType || emptySet;
       }
       if (importResource.adaptorType === 'MongodbImport') {
         return [importResource.mongodb.method];
@@ -44,14 +46,22 @@ export default function SelectQueryType() {
       if (importResource.adaptorType === 'DynamodbImport') {
         return [importResource.dynamodb.method];
       }
+
+      return emptySet;
     },
     (left, right) => left && right && left.length === right.length
   );
 
+  const openQueryBuilder = useCallback(index => {
+    const url = match.url.replace('/dbMapping', '/queryBuilder');
+
+    return `${url}/${index}/view`;
+  }, [match.url]);
+
   // If there is only one query type then we can safely
   // take the user to the query builder relating to that Query Type
-  if (queryTypes?.length === 1) {
-    return <Redirect push={false} to={`${match.url}/0/view`} />;
+  if (queryTypes.length === 1) {
+    return <Redirect push={false} to={openQueryBuilder(0)} />;
   }
 
   // Finally, render a table of imports to choose from...
@@ -66,7 +76,8 @@ export default function SelectQueryType() {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={`${match.url}/${index}/view`}>
+            to={openQueryBuilder(index)}
+            >
             <Typography variant="h6" color="primary">
               {i}
             </Typography>

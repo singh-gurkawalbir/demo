@@ -49,7 +49,6 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         hideBackButton
         path={[
-          'databaseMapping/:flowId/:importId/view',
           'mapping/:flowId/:importId/:subRecordMappingId/view',
           'mapping/:flowId/:importId/view',
           'mapping/:flowId/:importId',
@@ -86,9 +85,8 @@ export default function MappingDrawerRoute(props) {
         width="default"
         title="Select Query Type"
         variant="temporary"
-        exact
         hideBackButton
-        path="queryBuilder/:flowId/:importId">
+        path="dbMapping/:flowId/:importId">
         <SelectQueryType />
       </RightDrawer>
       <Route

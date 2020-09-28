@@ -1,16 +1,13 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
 import { getDefaultData } from '../../../../utils/sampleData';
-import getJSONPaths, { getUnionObject } from '../../../../utils/jsonPaths';
-import sqlUtil from '../../../../utils/sql';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { getUnionObject } from '../../../../utils/jsonPaths';
 import DynaLookupEditor from '../DynaLookupEditor';
 
-const emptyObject = {};
 const ruleTitle = 'Template (use handlebars expressions to map fields from your export data)';
 const getEditorTitle = adaptorType => {
   if (adaptorType === 'MongodbImport') {
@@ -22,8 +19,6 @@ const getEditorTitle = adaptorType => {
   if (adaptorType === 'RDBMSImport') {
     return 'SQL query builder';
   }
-
-  return emptyObject;
 };
 export default function SQLQueryBuilderWrapper(props) {
   const {
@@ -45,28 +40,38 @@ export default function SQLQueryBuilderWrapper(props) {
     title,
   } = props;
   const dispatch = useDispatch();
-  const { merged: resourceData } = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'imports',
-    resourceId
-  );
-  const { adaptorType, _connectionId: connectionId} = resourceData;
+  const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
+    ? value[querySetPos]
+    : value,
+  [querySetPos, value]);
+
+  const { merged: resourceData = {} } = useSelector(state => selectors.resourceData(state, 'imports', resourceId));
+  const { adaptorType} = resourceData;
+
+  const sampleRule = useSelector(state => selectors.sampleRuleForSQLQueryBuilder(
+    state, {
+      importId: resourceId,
+      flowId,
+      method,
+      queryType,
+    }
+  ));
+
   const {data: sampleData, status: flowDataStatus} = useSelector(state =>
     selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'flowInput',
-    })
-  );
-  const {data: extractFields } = useSelector(state =>
+    }), shallowEqual);
+  const extractFields = useSelector(state =>
     selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'importMappingExtract',
-    })
-  );
+    }).data,
+  shallowEqual);
 
   useEffect(() => {
     if (flowId && !sampleData) {
@@ -93,52 +98,7 @@ export default function SQLQueryBuilderWrapper(props) {
       );
     }
   }, [dispatch, extractFields, flowId, resourceId]);
-  const connection = useSelector(state =>
-    selectors.resource(state, 'connections', connectionId)
-  );
-  const rdbmsSubType = connection?.rdbms?.type;
-  const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
-    ? value[querySetPos]
-    : value,
-  [querySetPos, value]);
   const defaultTitle = getEditorTitle(adaptorType);
-  const sampleRule = useMemo(() => {
-    if (sampleData && extractFields) {
-      const extractPaths = getJSONPaths(extractFields, null, {
-        wrapSpecialChars: true,
-      });
-
-      if (adaptorType === 'MongodbImport') {
-        return sqlUtil.getSampleMongoDbTemplate(
-          sampleData,
-          extractPaths,
-          method === 'insertMany'
-        );
-      } if (
-        adaptorType === 'DynamodbImport'
-      ) {
-        return sqlUtil.getSampleDynamodbTemplate(
-          sampleData,
-          extractPaths,
-          method === 'putItem'
-        );
-      } if (
-        adaptorType === 'RDBMSImport' && rdbmsSubType === 'snowflake'
-      ) {
-        return sqlUtil.getSampleSnowflakeTemplate(
-          sampleData,
-          extractPaths,
-          queryType === 'INSERT'
-        );
-      }
-
-      return sqlUtil.getSampleSQLTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    }
-  }, [adaptorType, extractFields, method, queryType, rdbmsSubType, sampleData]);
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {

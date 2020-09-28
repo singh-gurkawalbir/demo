@@ -76,6 +76,8 @@ import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
 import getRequestOptions from '../utils/requestOptions';
+import getJSONPaths from '../utils/jsonPaths';
+import sqlUtil from '../utils/sql';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3326,7 +3328,7 @@ selectors.flowImports = (state, id) => {
   return getImportsFromFlow(flow, imports);
 };
 
-selectors.mkflowImportsList = () => createSelector(
+selectors.flowMappingsImportsList = () => createSelector(
   (state, flowId) => selectors.resource(state, 'flows', flowId),
   state => state?.data?.resources?.imports,
   (state, flowId, importId) => importId,
@@ -5115,3 +5117,75 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
 
   return emptyObject;
 };
+
+selectors.sampleRuleForSQLQueryBuilder = createSelector([
+  (state, { importId}) => {
+    const {merged: importResource = {}} = selectors.resourceData(
+      'imports',
+      importId
+    );
+
+    return importResource.adaptorType;
+  },
+  (state, { importId}) => {
+    const {merged: importResource = {}} =
+      selectors.resourceData(
+        'imports',
+        importId
+      );
+    const {_connectionId} = importResource;
+
+    return selectors.resource(state, 'connections', _connectionId);
+  },
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'flowInput',
+  }).data,
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'importMappingExtract',
+  }).data,
+  (state, {method}) => method,
+  (state, {queryType}) => queryType,
+], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+  if (sampleData && extractFields) {
+    const extractPaths = getJSONPaths(extractFields, null, {
+      wrapSpecialChars: true,
+    });
+
+    if (adaptorType === 'MongodbImport') {
+      return sqlUtil.getSampleMongoDbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'insertMany'
+      );
+    } if (
+      adaptorType === 'DynamodbImport'
+    ) {
+      return sqlUtil.getSampleDynamodbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'putItem'
+      );
+    } if (
+      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+    ) {
+      return sqlUtil.getSampleSnowflakeTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
+    }
+
+    return sqlUtil.getSampleSQLTemplate(
+      sampleData,
+      extractPaths,
+      queryType === 'INSERT'
+    );
+  }
+});
+
