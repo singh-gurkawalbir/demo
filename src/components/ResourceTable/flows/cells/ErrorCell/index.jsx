@@ -23,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
+  label: {
+    position: 'relative',
+    top: 2,
+  },
 }));
 
 export default function RunCell({
@@ -64,7 +68,7 @@ export default function RunCell({
       <div className={classes.root}>
         <span className={classes.success}>
           <StatusCircle variant="success" size="small" />
-          <Typography variant="body2" component="span"> success </Typography>
+          <Typography variant="body2" component="span" className={classes.label}> success </Typography>
         </span>
       </div>
     );
