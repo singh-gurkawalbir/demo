@@ -1,7 +1,5 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
-import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
 
@@ -27,55 +25,6 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
 });
-
-/**
- * @param resourceDetails Details about the resource.
- * @param resourceDetails.type The type of the resource.
- * @param resourceDetails.id The id of the resource.
- * @param resourceDetails._integrationId _integrationId of the resource.
- */
-export default function getExistingResourcePagePath(resourceDetails = {}) {
-  let { type } = resourceDetails;
-  const { id, _integrationId } = resourceDetails;
-  let path;
-
-  if (type) {
-    if (RESOURCE_TYPE_SINGULAR_TO_PLURAL[type]) {
-      type = RESOURCE_TYPE_SINGULAR_TO_PLURAL[type];
-    }
-
-    const routeMap = {
-      accesstokens: 'tokens',
-    };
-
-    switch (type) {
-      case 'exports':
-      case 'imports':
-      case 'stacks':
-        path = `/${type}/edit/${type}/${id}`;
-        break;
-
-      case 'accesstokens':
-      case 'connections':
-        path = `/${routeMap[type] || type}?_id=${id}`;
-        break;
-
-      case 'flows':
-        path = `/integrations/${_integrationId ||
-          'none'}/settings/${type}/${id}/edit`;
-        break;
-
-      case 'integrations':
-        path = `/${type}/${id}/flows`;
-        break;
-
-      default:
-        path = undefined;
-    }
-  }
-
-  return getRoutePath(path);
-}
 
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
