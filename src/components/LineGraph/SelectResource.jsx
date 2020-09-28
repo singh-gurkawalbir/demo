@@ -3,6 +3,7 @@ import { Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox }
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
+import ButtonGroup from '../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -10,8 +11,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
   },
   formControl: {
-    margin: theme.spacing(2),
     wordBreak: 'break-word',
+
   },
   filter: {
     maxWidth: '350px',
@@ -37,10 +38,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
-    background: theme.palette.background.default,
+    maxHeight: 380,
+    overflowY: 'auto',
   },
   actions: {
-    paddingBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
   },
   dateRangePopperBtn: {
@@ -53,6 +54,18 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
       color: theme.palette.secondary.light,
     },
+  },
+  selectResourceItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing(2),
+    '& > .MuiFormControlLabel-label': {
+      fontSize: theme.spacing(2),
+    },
+  },
+  selectResourceCheck: {
+    marginTop: theme.spacing(-0.5),
+    marginRight: theme.spacing(0.5),
   },
 }));
 
@@ -134,12 +147,14 @@ export default function SelectResource(props) {
                     {flowResources.map(m => (
                       <FormControlLabel
                         key={m.id}
+                        className={classes.selectResourceItem}
                         control={(
                           <Checkbox
                             color="primary"
                             checked={checked.includes(m._id)}
                             onChange={handleFlowSelect(m._id)}
                             value="required"
+                            className={classes.selectResourceCheck}
                       />
                     )}
                         label={m.name}
@@ -150,12 +165,15 @@ export default function SelectResource(props) {
                 </FormControl>
               </div>
               <div className={classes.actions}>
-                <Button variant="outlined" color="primary" onClick={handleSave}>
-                  Apply
-                </Button>
-                <Button variant="text" color="primary" onClick={handleClose}>
-                  Cancel
-                </Button>
+                <ButtonGroup>
+
+                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                    Apply
+                  </Button>
+                  <Button variant="text" color="primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
               </div>
             </div>
           </div>

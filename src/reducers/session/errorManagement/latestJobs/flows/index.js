@@ -34,7 +34,12 @@ export default (state = {}, action) => {
         draft[flowId].data = [];
         // retains children till family call gives latest children jobs
         latestJobs?.forEach(latestJob => {
-          draft[flowId].data.push({ ...latestJob, children: (jobChildrenMap[latestJob._id] || {})});
+          const prevChildren = jobChildrenMap[latestJob._id];
+
+          draft[flowId].data.push({
+            ...latestJob,
+            ...(prevChildren ? { children: prevChildren } : {}),
+          });
         });
 
         break;
@@ -45,6 +50,11 @@ export default (state = {}, action) => {
           const index = draft[flowId].data.findIndex(flowJob => flowJob._id === job._id);
           const parsedJobFamily = parseJobFamily(job);
 
+          // parseJobFamily does not update for empty children, so updating the same
+          // TODO @Raghu: Make a separate util to handle the same
+          if (job.children?.length === 0) {
+            parsedJobFamily.children = [];
+          }
           // to retain __lastPageGeneratorJob property on the job
           if (draft[flowId].data[index]?.__lastPageGeneratorJob) {
             parsedJobFamily.__lastPageGeneratorJob = true;

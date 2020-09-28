@@ -36,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(3),
     display: 'inline-flex',
     justifyContent: 'space-between',
-    width: '68%',
+    width: '65%',
   },
   tablePaginationRoot: {
     float: 'right',
@@ -92,6 +92,17 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   }), [errorFilter, isResolved, flowId, resourceId]);
 
   const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
+
+  const hasErrors = useSelector(
+    state => {
+      const errors = selectors.getErrors(state, {
+        flowId,
+        resourceId,
+        errorType: isResolved ? 'resolved' : 'open',
+      })?.errors || [];
+
+      return !!errors.length;
+    });
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
@@ -200,13 +211,18 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       ) : (
         <>
           <div className={classes.header}>
-            <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={errorType} defaultFilter={defaultFilter} />
-            </div>
             {
-            !!errorObj.errors.length &&
-            <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
-          }
+            hasErrors &&
+              (
+                <div className={classes.errorsKeywordSearch}>
+                  <KeywordSearch filterKey={errorType} defaultFilter={defaultFilter} />
+                </div>
+              )
+            }
+            {
+              !!errorObj.errors.length &&
+              <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
+            }
 
           </div>
           {errorObj.errors.length ? (
