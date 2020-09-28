@@ -34,7 +34,7 @@ export default function UsersList({ integrationId }) {
   return (
     <ResourceTable
       resources={users}
-      resourceType={isAccountOwner ? 'usersForOwner' : 'sharedUsers'}
+      resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
       actionProps={actionProps}
     />
   );
