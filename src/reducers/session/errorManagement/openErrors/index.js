@@ -35,7 +35,6 @@ export default (state = {}, action) => {
         if (!draft[integrationId]) {
           draft[integrationId] = {};
         }
-        draft[integrationId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.RECEIVED: {
         const { data, total} = getErrorMapWithTotal(integrationErrors, '_flowId');

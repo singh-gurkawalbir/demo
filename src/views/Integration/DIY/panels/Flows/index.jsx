@@ -19,6 +19,8 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
+import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +46,8 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
 }));
+
+const tilesFilterConfig = { type: 'tiles'};
 
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
@@ -87,10 +91,17 @@ export default function FlowsPanel({ integrationId, childId }) {
   );
   const {
     data: integrationErrorsMap = {},
+    status: flowErrorCountStatus,
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const allTiles = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    tilesFilterConfig
+  ).resources;
+  const currentTileErrorCount = allTiles.find(t => t._integrationId === integrationId)?.numError;
+
   let totalErrors = 0;
 
   flows.forEach(flow => {
@@ -114,25 +125,33 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
-  const infoTextFlow =
-    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
     () => (
       <span className={classes.flowsPanelWithStatus}>
         Integration flows
-        {totalErrors ? (
+        {(totalErrors || currentTileErrorCount) ? (
           <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
-              <span>{totalErrors} errors</span>
+              <span>{totalErrors || currentTileErrorCount} errors</span>
             </span>
           </>
         ) : null}
       </span>
     ),
-    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
+    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
   );
+
+  if (!flowErrorCountStatus) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
+  }
+  const infoTextFlow =
+    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
 
   return (
     <div className={classes.root}>
