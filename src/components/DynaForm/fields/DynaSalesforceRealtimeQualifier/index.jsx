@@ -117,6 +117,8 @@ export default function DynaSalesforceRealtimeQualifier(props) {
         data={data}
         filters={filters}
         onFieldChange={onFieldChange}
+        connectionId={connectionId}
+        options={options}
       />
     </>
   );

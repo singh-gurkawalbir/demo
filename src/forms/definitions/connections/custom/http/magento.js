@@ -88,6 +88,7 @@ export default {
         { field: 'http.baseURI', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
       helpKey: 'magento.connection.http.auth.token.token',

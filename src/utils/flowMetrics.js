@@ -2,9 +2,11 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict';
 import startOfDay from 'date-fns/startOfDay';
 import addDays from 'date-fns/addDays';
 import isSameDay from 'date-fns/isSameDay';
+import endOfDay from 'date-fns/endOfDay';
+import addHours from 'date-fns/addHours';
 import moment from 'moment';
 import * as d3 from 'd3';
-import { endOfDay } from 'date-fns';
+import { addMonths } from 'date-fns';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
@@ -21,6 +23,68 @@ export const getLineColor = index => {
   ];
 
   return colorSpectrum[index % 8];
+};
+
+export const getSelectedRange = range => {
+  const {startDate, endDate, preset = 'custom'} = range;
+  let start = startDate;
+  let end = endDate;
+
+  switch (preset) {
+    case 'last1hour':
+      start = addHours(new Date(), -1);
+      end = new Date();
+      break;
+    case 'last4hours':
+      start = addHours(new Date(), -4);
+      end = new Date();
+      break;
+    case 'last24hours':
+      start = addHours(new Date(), -24);
+      end = new Date();
+      break;
+    case 'today':
+      start = startOfDay(new Date());
+      end = new Date();
+      break;
+    case 'yesterday':
+      start = startOfDay(addDays(new Date(), -1));
+      end = endOfDay(addDays(new Date(), -1));
+      break;
+    case 'last7days':
+      start = startOfDay(addDays(new Date(), -7));
+      end = new Date();
+      break;
+    case 'last15days':
+      start = startOfDay(addDays(new Date(), -15));
+      end = new Date();
+      break;
+    case 'last30days':
+      start = startOfDay(addDays(new Date(), -30));
+      end = new Date();
+      break;
+    case 'last3months':
+      start = startOfDay(addMonths(new Date(), -3));
+      end = new Date();
+      break;
+    case 'last6months':
+      start = startOfDay(addMonths(new Date(), -6));
+      end = new Date();
+      break;
+    case 'last9months':
+      start = startOfDay(addMonths(new Date(), -9));
+      end = new Date();
+      break;
+    case 'lastyear':
+      start = startOfDay(addMonths(new Date(), -12));
+      end = new Date();
+      break;
+    case 'lastrun':
+    default:
+      break;
+  }
+
+  return {...range, startDate: start, endDate: end};
 };
 
 export const getLegend = index => {
@@ -170,23 +234,25 @@ const getFlowFilterExpression = (flowId, filters) => {
   return `|> filter(fn: (r) => r.f == "${flowId}")`;
 };
 
-export const getFlowMetricsQuery = (flowId, userId, filters) => {
+const getISODateString = date => isDate(date) ? date.toISOString() : date;
+
+const getFlowMetricsQueryParams = (flowId, filters) => {
   const { range = {} } = filters;
   const flowFilterExpression = getFlowFilterExpression(flowId, filters);
   let start = '-1d';
   let end = '-1s';
 
-  if (isDate(range.startDate)) {
-    start = range.startDate.toISOString();
-  } else if (range.startDate) {
-    start = range.startDate;
+  let { startDate, endDate } = range;
+
+  if (range.preset !== 'custom') {
+    const selectedRange = getSelectedRange(range);
+
+    startDate = selectedRange.startDate;
+    endDate = selectedRange.endDate;
   }
 
-  if (isDate(range.endDate)) {
-    end = range.endDate.toISOString();
-  } else if (range.endDate) {
-    end = range.endDate;
-  }
+  start = getISODateString(startDate);
+  end = getISODateString(endDate);
 
   const days = moment(end).diff(moment(start), 'days');
   const hours = moment(end).diff(moment(start), 'hours');
@@ -212,14 +278,25 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
   } else {
     duration = '1h';
   }
-  const aggregrate = `|> aggregateWindow(every: ${duration}, fn: sum)`;
+
+  return { bucket, start, end, flowFilterExpression, duration };
+};
+
+export const getFlowMetricsQuery = (flowId, userId, filters) => {
+  const {
+    bucket,
+    start,
+    end,
+    flowFilterExpression,
+    duration,
+  } = getFlowMetricsQueryParams(flowId, filters);
 
   return `from(bucket: "${bucket}")
     |> range(start: ${start}, stop: ${end})
     |> filter(fn: (r) => r.u == "${userId}")
     ${flowFilterExpression}
     |> filter(fn: (r) => r._field == "c")
-    ${aggregrate}
+    |> aggregateWindow(every: ${duration}, fn: sum)
     |> drop(columns: ["_start", "_stop"])
     |> pivot(rowKey: ["_time"], columnKey: ["_measurement"], valueColumn: "_value")
     |> map(fn: (r) => ({
@@ -236,48 +313,13 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
 };
 
 export const getFlowMetricsAttQuery = (flowId, userId, filters) => {
-  const { range = {} } = filters;
-  const flowFilterExpression = getFlowFilterExpression(flowId, filters);
-
-  let start = '-1d';
-  let end = '-1s';
-
-  if (isDate(range.startDate)) {
-    start = range.startDate.toISOString();
-  } else if (range.startDate) {
-    start = range.startDate;
-  }
-
-  if (isDate(range.endDate)) {
-    end = range.endDate.toISOString();
-  } else if (range.endDate) {
-    end = range.endDate;
-  }
-
-  const days = moment(end).diff(moment(start), 'days');
-  const hours = moment(end).diff(moment(start), 'hours');
-  const startDateFromToday = moment().diff(moment(start), 'days');
-
-  /*
-    Last 1 hour: minute granularity
-    Last 4 hours: minute granularity
-    Last 1 - 4 days: hourly granularity
-    Else, daily granularity
-    flowEvents bucket -> 1 min granularity
-    flowEvents_1hr -> 1 hour granularity
-  */
-  const bucket = (days > 4 || startDateFromToday > 7) ? 'flowEvents_1hr' : 'flowEvents';
-
-  // If duration is more than 4 days, aggregate for 1d
-  let duration;
-
-  if (hours < 5 && startDateFromToday < 7) {
-    duration = '1m';
-  } else if (days > 4) {
-    duration = '1d';
-  } else {
-    duration = '1h';
-  }
+  const {
+    bucket,
+    start,
+    end,
+    flowFilterExpression,
+    duration,
+  } = getFlowMetricsQueryParams(flowId, filters);
 
   return `from(bucket: "${bucket}")
     |> range(start: ${start}, stop: ${end})

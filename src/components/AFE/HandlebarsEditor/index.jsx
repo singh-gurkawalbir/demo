@@ -83,6 +83,7 @@ export default function HandlebarsEditor(props) {
         isSampleDataLoading: props.isSampleDataLoading,
         v1template,
         v2template,
+        mode: resultMode,
       })
     );
     // get Helper functions when the editor initializes
@@ -97,7 +98,7 @@ export default function HandlebarsEditor(props) {
     () =>
       autoEvaluate
         ? 'Evaluated handlebars template'
-        : 'Click run to see your handlebars template evaluated here!',
+        : 'Click preview to evaluate your handlebars template',
     [autoEvaluate]
   );
 
@@ -116,13 +117,14 @@ export default function HandlebarsEditor(props) {
       layout={layout}
       templateClassName={templateClassName}
       ruleTitle="Type your handlebars template here"
-      dataTitle="Resources available in your template."
+      dataTitle="Resources available in your handlebars template"
       resultTitle={resultTitle}
       violations={violations}
       rule={template}
       data={data}
-      result={result ? result.data : ''}
+      result={result?.data || ''}
       error={error}
+      resultWarning={result?.warning}
       enableAutocomplete={enableAutocomplete}
       isSampleDataLoading={isSampleDataLoading}
     />

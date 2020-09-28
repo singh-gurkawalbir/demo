@@ -13,6 +13,8 @@ export default function getRequestOptions(
     filters = {},
     adaptorType,
     actionType,
+    connectorId,
+    licenseId,
   } = {}
 ) {
   switch (action) {
@@ -61,6 +63,8 @@ export default function getRequestOptions(
         path = '/licenses/retrialRequest';
       } else if (actionType === 'upgrade') {
         path = '/licenses/upgradeRequest';
+      } else if (actionType === 'connectorRenewal') {
+        path = `/connectors/${connectorId}/licenses/${licenseId}/renewRequest`;
       }
 
       return {

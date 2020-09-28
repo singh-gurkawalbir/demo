@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.contrastText,
   },
   progressBar: {
-    height: 10,
+    height: theme.spacing(2),
     borderRadius: 10,
     maxWidth: '75%',
     backgroundColor: theme.palette.secondary.lightest,

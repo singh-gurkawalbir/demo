@@ -16,15 +16,29 @@ export default function useSaveStatusIndicator(props) {
   const [closeOnSuccess, setCloseOnSuccess] = useState(false);
   // Selector to watch for Comm status
   const commStatus = useSelector(state => selectors.commStatusPerPath(state, path, method));
+
+  const handleSave = useCallback(values => {
+    onSave(values);
+    setCloseOnSuccess(false);
+    setDisableSave(true);
+    setSaveInProgress(true);
+  }, [onSave]);
+
+  const handleSaveClose = useCallback(values => {
+    onSave(values);
+    setCloseOnSuccess(true);
+    setDisableSave(true);
+    setSaveInProgress(true);
+  }, [onSave]);
+
   // Generates a submitHandler which updates states on saving
   const submitHandler = useCallback(
-    closeOnSave => values => {
-      onSave(values);
-      setCloseOnSuccess(closeOnSave);
-      setDisableSave(true);
-      setSaveInProgress(true);
+    closeOnSave => {
+      if (closeOnSave) { return handleSaveClose; }
+
+      return handleSave;
     },
-    [onSave],
+    [handleSave, handleSaveClose],
   );
 
   useEffect(() => {

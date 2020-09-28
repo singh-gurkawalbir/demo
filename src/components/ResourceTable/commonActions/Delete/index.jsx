@@ -19,18 +19,17 @@ export default {
     return `Delete ${MODEL_PLURAL_TO_LABEL[actionProps?.resourceType]?.toLowerCase()}`;
   },
   icon: TrashIcon,
-  hasAccess: ({ state, rowData, resourceType }) => {
+  useHasAccess: ({ rowData, resourceType }) => {
     const { _integrationId } = rowData;
-
-    // only check permissions for integration flows as only those can be shared
-    if (resourceType !== 'flows' || !_integrationId) { return true; }
-
-    const canDelete = selectors.resourcePermissions(
+    const canDelete = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
       _integrationId,
       'flows'
-    ).delete;
+    ))?.delete;
+
+    // only check permissions for integration flows as only those can be shared
+    if (resourceType !== 'flows' || !_integrationId) { return true; }
 
     return canDelete;
   },

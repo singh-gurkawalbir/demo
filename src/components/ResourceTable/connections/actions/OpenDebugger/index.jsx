@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -7,13 +7,13 @@ import DebugIcon from '../../../../icons/DebugIcon';
 export default {
   label: 'Open debugger',
   icon: DebugIcon,
-  hasAccess: ({ state, rowData }) => {
+  useHasAccess: ({ rowData }) => {
     const { _id: connectionId } = rowData;
-    const hasAccess = selectors.resourcePermissions(
+    const hasAccess = useSelector(state => selectors.resourcePermissions(
       state,
       'connections',
       connectionId
-    ).edit;
+    ))?.edit;
 
     return hasAccess;
   },

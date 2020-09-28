@@ -401,6 +401,7 @@ describe('initialize app saga', () => {
     const setCSRFEffect = saga.next('someCSRF').value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, 'someCSRF'));
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
 
     const authCompletedEffect = saga.next().value;
 

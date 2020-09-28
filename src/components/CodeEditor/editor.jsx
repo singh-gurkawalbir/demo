@@ -27,6 +27,14 @@ const useStyles = makeStyles(theme => ({
       color: `${theme.palette.error.dark} !important`,
     },
   },
+  editorWarningWrapper: {
+    background: `${fade(theme.palette.warning.main, 0.06)} !important`,
+    border: '1px solid',
+    borderColor: theme.palette.warning.main,
+    '& > .ace_gutter': {
+      color: `${theme.palette.warning.main} !important`,
+    },
+  },
   errorMarker: {
     background: fade(theme.palette.error.dark, 0.3),
     color: theme.palette.common.white,
@@ -52,6 +60,7 @@ export default function CodeEditor({
   onChange,
   skipDelay = false,
   hasError,
+  hasWarning,
   errorLine,
 }) {
   const classes = useStyles();
@@ -141,11 +150,14 @@ export default function CodeEditor({
     if (aceEditor?.current) {
       if (hasError) {
         aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
+      } else if (hasWarning) {
+        aceEditor.current.editor.setStyle(classes.editorWarningWrapper);
       } else {
         aceEditor.current.editor.unsetStyle(classes.editorErrorWrapper);
+        aceEditor.current.editor.unsetStyle(classes.editorWarningWrapper);
       }
     }
-  }, [classes.editorErrorWrapper, hasError]);
+  }, [classes.editorErrorWrapper, classes.editorWarningWrapper, hasError, hasWarning]);
 
   return (
     <>

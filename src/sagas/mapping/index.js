@@ -215,14 +215,14 @@ export function* mappingInit({
     formattedMappings = subRecordMapping;
     lookups = subrecordLookups;
   } else {
-    formattedMappings = mappingUtil.getMappingFromResource(
+    formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      false,
+      isFieldMapping: false,
       isGroupedSampleData,
-      options.recordType,
+      netsuiteRecordType: options.recordType,
       options,
-      exportResource
-    );
+      exportResource,
+    });
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }
   // adding conditional lookup
@@ -231,6 +231,7 @@ export function* mappingInit({
 
     return {...lookup, isConditionalLookup: !!isConditionalLookup};
   });
+  console.log('formattedMappings', formattedMappings);
   yield put(
     actions.mapping.initComplete({
       mappings: formattedMappings.map(m => ({

@@ -170,7 +170,6 @@ export default {
       id: 'http.unencrypted.company',
       type: 'text',
       label: 'Company',
-      defaultValue: '',
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'acumatica.connection.http.unencrypted.company',
     },

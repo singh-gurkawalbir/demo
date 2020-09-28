@@ -22,14 +22,28 @@ export default function useFormInitWithPermissions(props) {
   const { fieldMeta } = props;
 
   useEffect(() => {
-    if (disableAllFieldsExceptClocked && formKey) {
-      fieldIDsExceptClockedFields(fieldMeta, resourceType).forEach(fieldId => {
-        fieldId &&
-          dispatch(
-            actions.form.forceFieldState(formKey)(fieldId, undefined, true)
-          );
+    let disableFields;
+
+    if (formKey && disableAllFieldsExceptClocked) {
+      disableFields = fieldIDsExceptClockedFields(fieldMeta, resourceType);
+
+      disableFields && disableFields.forEach(id => {
+        dispatch(
+          actions.form.forceFieldState(formKey)(id, {disabled: true})
+        );
       });
     }
+
+    return () => {
+      // cleanup remove all force computations associated to disableFields
+      if (formKey && disableAllFieldsExceptClocked && disableFields) {
+        disableFields.forEach(id => {
+          dispatch(
+            actions.form.clearForceFieldState(formKey)(id)
+          );
+        });
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     disableAllFieldsExceptClocked,

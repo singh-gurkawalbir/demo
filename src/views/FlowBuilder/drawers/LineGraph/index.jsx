@@ -14,6 +14,7 @@ import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -97,7 +98,7 @@ export default function LineGraphDrawer({ flowId }) {
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(flowId));
-      setRange(Array.isArray(range) ? range[0] : range);
+      setRange(getSelectedRange(range));
     },
     [dispatch, flowId]
   );

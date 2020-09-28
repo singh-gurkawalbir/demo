@@ -1,10 +1,10 @@
 import React from 'react';
 import Retry from '../actions/Retry';
-import SelectError from '../components/SelectError';
-import SelectAllErrors from '../components/SelectAllErrors';
-import UserName from '../components/UserName';
+import SelectError from '../cells/SelectError';
+import SelectAllErrors from '../cells/SelectAllErrors';
+import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import ErrorMessage from '../components/ErrorMessage';
+import ErrorMessage from '../cells/ErrorMessage';
 
 export default {
   columns: [
