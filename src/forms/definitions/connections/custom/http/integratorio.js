@@ -38,6 +38,7 @@ export default {
       id: 'integrator.region',
       type: 'select',
       label: 'Region',
+      helpKey: 'integratorio.connection.integrator.region',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -69,7 +70,7 @@ export default {
       fieldId: 'http.auth.token.token',
       label: 'Token',
       required: true,
-      helpKey: 'integrator.connection.http.auth.token.token',
+      helpKey: 'integratorio.connection.http.auth.token.token',
     },
     application: {
       fieldId: 'application',
