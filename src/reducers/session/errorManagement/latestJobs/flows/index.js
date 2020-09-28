@@ -50,6 +50,11 @@ export default (state = {}, action) => {
           const index = draft[flowId].data.findIndex(flowJob => flowJob._id === job._id);
           const parsedJobFamily = parseJobFamily(job);
 
+          // parseJobFamily does not update for empty children, so updating the same
+          // TODO @Raghu: Make a separate util to handle the same
+          if (job.children?.length === 0) {
+            parsedJobFamily.children = [];
+          }
           // to retain __lastPageGeneratorJob property on the job
           if (draft[flowId].data[index]?.__lastPageGeneratorJob) {
             parsedJobFamily.__lastPageGeneratorJob = true;
