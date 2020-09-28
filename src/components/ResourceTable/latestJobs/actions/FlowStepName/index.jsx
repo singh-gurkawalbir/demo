@@ -9,7 +9,12 @@ export default function FlowStepName({ job }) {
     return exportObj?.name || 'Export';
   });
 
-  if (job?.status === JOB_STATUS.QUEUED) {
+  // In cases when parent job is cancelled while it is in queue, children are not yet created
+  // In that case, we show that parent job with PG's name similar to Queued job
+  // flowJobId exists on job if it is a child job
+  const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && job._exportId && !job._flowJobId;
+
+  if (job.status === JOB_STATUS.QUEUED || isCancelledParentJob) {
     return exportName;
   }
 

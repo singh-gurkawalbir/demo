@@ -810,7 +810,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. You define the query command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': '“Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. “Use SQL Query once per flow run” when you want to execute the query once per run. You define the query command in Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':

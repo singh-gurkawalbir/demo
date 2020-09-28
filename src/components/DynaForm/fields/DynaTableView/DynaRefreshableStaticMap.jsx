@@ -122,7 +122,8 @@ export default function DynaRefreshableStaticMap(props) {
     dispatch(
       actions.metadata.refresh(
         connectionId,
-        options.commMetaPath || commMetaPath
+        options.commMetaPath || commMetaPath,
+        {refreshCache: true}
       )
     );
   };
