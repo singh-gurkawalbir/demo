@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import groupBy from 'lodash/groupBy';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -152,20 +151,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      const fData = data.filter(d => d.flowId === r);
-
-      flowData[r] = Object.entries(groupBy(fData, 'timeInMills')).map(e => ({
-        timeInMills: e[0],
-        ...e[1].reduce((acc, cur) => ({
-          ...cur,
-          success: (acc.success || 0) + (cur.resourceId !== cur.flowId ? (cur.success || 0) : 0),
-          error: (acc.error || 0) + (cur.resourceId !== cur.flowId ? (cur.error || 0) : 0),
-          ignored: (acc.ignored || 0) + (cur.resourceId !== cur.flowId ? (cur.ignored || 0) : 0),
-          averageTimeTaken: Math.floor(((acc.averageTimeTaken || 0) + acc.sum) / acc.count),
-          sum: acc.sum + (cur.averageTimeTaken || 0),
-          count: acc.count + 1,
-        }), {count: 1, sum: 0}),
-      }));
+      flowData[r] = data.filter(d => d.type === 'flow' && d.flowId === r);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
