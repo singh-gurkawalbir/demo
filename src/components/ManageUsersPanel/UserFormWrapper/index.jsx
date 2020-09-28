@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
 import UserForm from './UserForm';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import actions from '../../../actions';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import CommStatus from '../../CommStatus';
@@ -16,7 +14,6 @@ import CommStatus from '../../CommStatus';
 export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
   const history = useHistory();
-  const [errorMessage, setErrorMessage] = useState();
   const [actionsToClear, setActionsToClear] = useState();
   const [disableSave, setDisableSave] = useState(false);
   const handleSaveClick = useCallback(
@@ -77,14 +74,7 @@ export default function UserFormWrapper({ userId }) {
       ) {
         if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
           handleClose();
-
-          setErrorMessage();
-        } else if (objStatus.createOrUpdate.status === COMM_STATES.ERROR) {
-          setErrorMessage(
-            inferErrorMessage(objStatus.createOrUpdate.message)[0]
-          );
         }
-
         setActionsToClear(['createOrUpdate']);
         setDisableSave(false);
       }
@@ -104,11 +94,6 @@ export default function UserFormWrapper({ userId }) {
         actionsToClear={actionsToClear}
         commStatusHandler={commStatusHandler}
       />
-      {errorMessage && (
-      <Typography color="error" variant="body2">
-        {errorMessage}
-      </Typography>
-      )}
       <UserForm
         id={userId}
         disableSave={disableSave}

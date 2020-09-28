@@ -15,6 +15,7 @@ export default function ChangePermissionsDrawer({ integrationId }) {
       path="edit/:userId"
       title="Change user permissions"
       variant="temporary"
+      width="medium"
       hideBackButton>
       <ChangePermissions integrationId={integrationId} />
     </RightDrawer>

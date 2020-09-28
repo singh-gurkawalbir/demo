@@ -8,6 +8,7 @@ export default function InviteUserDrawer({ integrationId }) {
       path="invite"
       title="Invite user"
       variant="temporary"
+      width="medium"
       hideBackButton>
       <UserFormWrapper integrationId={integrationId} />
     </RightDrawer>

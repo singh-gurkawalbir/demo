@@ -44,8 +44,9 @@ export default {
     if (!integrationId) {
       actions.push(ChangePermissions);
       if (user.accepted) {
-        actions.push(MakeAccountOwner, DeleteFromAccount);
+        actions.push(MakeAccountOwner);
       }
+      actions.push(DeleteFromAccount);
     }
 
     return actions;
