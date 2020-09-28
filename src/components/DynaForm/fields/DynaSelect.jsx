@@ -167,6 +167,7 @@ export default function DynaSelect(props) {
     skipDefault = false,
     onFieldChange,
     skipSort,
+    dataTest,
   } = props;
 
   const listRef = React.createRef();
@@ -222,7 +223,7 @@ export default function DynaSelect(props) {
     }
 
     return items;
-  }, [isSubHeader, skipSort, options, placeholder]);
+  }, [options, isSubHeader, skipSort, placeholder, skipDefault]);
 
   const matchMenuIndex = useAutoScrollOption(items, open, listRef, value);
   let finalTextValue;
@@ -261,7 +262,7 @@ export default function DynaSelect(props) {
         required={required}
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
-          data-test={id}
+          data-test={dataTest || id}
           value={finalTextValue}
           disableUnderline
           displayEmpty
