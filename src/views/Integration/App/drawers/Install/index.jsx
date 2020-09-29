@@ -35,6 +35,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -76,6 +77,8 @@ export default function ConnectorInstallation(props) {
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const {
     name: integrationName,
     install = [],
@@ -86,26 +89,18 @@ export default function ConnectorInstallation(props) {
     _connectorId,
     initChild,
     parentId,
-  } = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
+  } = useMemo(() => integration ? {
+    name: integration.name,
+    initChild: integration.initChild,
+    install: integration.install,
+    mode: integration.mode,
+    stores: integration.stores,
+    supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+    _connectorId: integration._connectorId,
+    integrationInstallSteps: integration.installSteps,
+    parentId: integration._parentId,
+  } : emptyObject, [integration]);
 
-    if (integration) {
-      return {
-        name: integration.name,
-        initChild: integration.initChild,
-        install: integration.install,
-        mode: integration.mode,
-        stores: integration.stores,
-        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
-        _connectorId: integration._connectorId,
-        integrationInstallSteps: integration.installSteps,
-        parentId: integration._parentId,
-      };
-    }
-
-    return emptyObject;
-  }, shallowEqual
-  );
   const {
     name: childIntegrationName,
     id: childIntegrationId,

@@ -34,6 +34,7 @@ import integrationAppUtil, { getAdminLevelTabs, getIntegrationAppUrlName } from 
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const allTabs = [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -117,9 +118,9 @@ export default function IntegrationApp(props) {
   const { integrationId, storeId, tab, match } = props;
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+
+  console.log('check ', integration);
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
@@ -129,7 +130,7 @@ export default function IntegrationApp(props) {
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
-  const integrationAppName = getIntegrationAppUrlName(integration.name);
+  const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const queryParams = new URLSearchParams(location.search);
   const flowJobId = queryParams.get('_flowJobId');
   const jobFlowId = useSelector(state => {
@@ -313,7 +314,7 @@ export default function IntegrationApp(props) {
   if (redirectToPage) {
     return <Redirect push={false} to={redirectToPage} />;
   }
-
+  console.log('rerender IA');
   // console.log('render: <IntegrationApp>');
 
   return (

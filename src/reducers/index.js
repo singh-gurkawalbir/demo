@@ -983,6 +983,8 @@ selectors.marketplaceConnectors = (
     .sort(stringCompare('name'));
 };
 
+selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
+
 selectors.makeMarketPlaceConnectorsSelector = () =>
   createSelector(
     selectors.userState,
@@ -1168,7 +1170,7 @@ selectors.integrationAppResourceList = (
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
-    fromData.integrationAppSettings(state.data, integrationId) || {};
+    selectors.integrationAppSettings(state, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
   const { resources: integrationConnections } = selectors.resourceList(state, {
     type: 'connections',
@@ -1217,8 +1219,8 @@ selectors.integrationAppResourceList = (
 };
 
 selectors.integrationAppStore = (state, integrationId, storeId) => {
-  const integration = fromData.integrationAppSettings(
-    state && state.data,
+  const integration = selectors.integrationAppSettings(
+    state,
     integrationId
   );
 
@@ -1480,7 +1482,7 @@ selectors.mkIntegrationChildren = () => createSelector(
 
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource = selectors.integrationAppSettings(state, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
@@ -1513,63 +1515,78 @@ selectors.integrationAppLicense = (state, id) => {
   };
 };
 
-selectors.integrationAppFlowSections = (state, id, store) => {
-  if (!state) return emptySet;
-  let flowSections = [];
-  const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
-  const { sections = [], supportsMultiStore } =
-    integrationResource.settings || {};
+selectors.mkIntegrationAppFlowSections = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
-  if (supportsMultiStore) {
-    if (Array.isArray(sections) && sections.length) {
-      if (store) {
-        flowSections =
-          (sections.find(sec => sec.id === store) || {}).sections || [];
+  return createSelector(
+    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (_1, _2, store) => store,
+    (integrationResource, store) => {
+      let flowSections = [];
+      const { sections = [], supportsMultiStore } =
+      integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        if (Array.isArray(sections) && sections.length) {
+          if (store) {
+            flowSections =
+            (sections.find(sec => sec.id === store) || {}).sections || [];
+          } else {
+            flowSections =
+            (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+          }
+        }
       } else {
-        flowSections =
-          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+        flowSections = sections;
       }
-    }
-  } else {
-    flowSections = sections;
-  }
 
-  return flowSections.map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-  }));
+      return flowSections.map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+      }));
+    });
 };
 
-selectors.integrationAppGeneralSettings = (state, id, storeId) => {
-  if (!state) return emptyObject;
-  let fields;
-  let subSections;
-  const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
-  const { supportsMultiStore, general } = integrationResource.settings || {};
+selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
 
-  if (supportsMultiStore) {
-    const storeSection = (general || []).find(s => s.id === storeId) || {};
+selectors.mkIntegrationAppGeneralSettings = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
-    ({ fields, sections: subSections } = storeSection);
-  } else if (Array.isArray(general)) {
-    ({ fields, sections: subSections } =
+  return createSelector(
+
+    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (_1, _2, storeId) => storeId,
+    (integrationResource, storeId) => {
+      let fields;
+      let subSections;
+      const { supportsMultiStore, general } = integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        const storeSection = (general || []).find(s => s.id === storeId) || {};
+
+        ({ fields, sections: subSections } = storeSection);
+      } else if (Array.isArray(general)) {
+        ({ fields, sections: subSections } =
       general.find(s => s.title === 'General') || {});
-  } else {
-    ({ fields, sections: subSections } = general || {});
-  }
+      } else {
+        ({ fields, sections: subSections } = general || {});
+      }
 
-  return {
-    fields,
-    sections: subSections,
-  };
+      return {
+        fields,
+        sections: subSections,
+      };
+    }
+
+  );
 };
+
+selectors.integrationAppGeneralSettings = selectors.mkIntegrationAppGeneralSettings();
 
 selectors.hasGeneralSettings = (state, integrationId, storeId) => {
   if (!state) return false;
   const integrationResource =
-    fromData.integrationAppSettings(state.data, integrationId) || {};
+    selectors.integrationAppSettings(state, integrationId) || {};
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1592,8 +1609,8 @@ selectors.integrationAppSectionMetadata = (
     return emptyObject;
   }
 
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
+  const integrationResource = selectors.integrationAppSettings(
+    state,
     integrationId
   );
   const { supportsMultiStore, sections = [] } =
@@ -1621,7 +1638,7 @@ selectors.integrationAppSectionMetadata = (
 selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
   if (!state) return emptyObject;
   const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
+    selectors.integrationAppSettings(state, id) || emptyObject;
   const {
     supportsMultiStore,
     supportsMatchRuleEngine: showMatchRuleEngine,
@@ -1711,6 +1728,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
     type: 'flows',
     filter: { _integrationId: integrationId },
   }).resources;
+
   const integration = selectors.integrationAppSettings(state, integrationId);
 
   if (integration.stores && storeId) {
@@ -1826,7 +1844,7 @@ selectors.addNewStoreSteps = (state, integrationId) => {
 };
 
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
-  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  const integration = selectors.integrationAppSettings(state, integrationId);
 
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;

@@ -8,6 +8,7 @@ import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '../../../Flows';
 import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIASettingsStateWithHandleClose';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   configureform: {
@@ -30,15 +31,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function ConfigureSettings({ integrationId, storeId, sectionId, parentUrl }) {
   const classes = useStyles();
-  const section = useSelector(state => {
-    const flowSections = selectors.integrationAppFlowSections(
-      state,
-      integrationId,
-      storeId
-    );
 
-    return flowSections.find(s => s.titleId === sectionId);
-  }, shallowEqual);
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId,
+    storeId);
+
+  const section = useMemo(() => flowSections.find(s => s.titleId === sectionId), [flowSections, sectionId]);
 
   const flowSettingsMeta = useSelector(
     state =>

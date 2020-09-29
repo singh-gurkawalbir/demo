@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import useTraceUpdate from 'use-trace-update';
 import { selectors } from '../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { IAFormStateManager, useActiveTab} from '../Flows';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,8 +31,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
-  const generalSectionMetadata = useSelector(state =>
-    selectors.integrationAppGeneralSettings(state, integrationId, storeId)
+
+  const generalSectionMetadata = useSelectorMemo(
+    selectors.mkIntegrationAppSettings, integrationId
   );
   const hasGeneralSettings = useSelector(state =>
     selectors.hasGeneralSettings(state, integrationId, storeId)
@@ -42,9 +45,10 @@ export default function GeneralPanel({ integrationId, storeId }) {
         integrationId,
         true
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [integrationId, storeId]
+    [generalSectionMetadata, integrationId]
   );
+
+  useTraceUpdate({generalSectionMetadata});
   const formState = useSelector(
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual
