@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
@@ -7,6 +8,13 @@ import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
+
+const useStyles = makeStyles({
+  wrapperErrorDrawer: {
+    position: 'relative',
+    height: '100%',
+  },
+});
 
 export default function ErrorDrawer({
   height = 'tall',
@@ -20,6 +28,7 @@ export default function ErrorDrawer({
   integrationName,
 }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
   const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
   const [errorCount, setErrorCount] = useState(
     childJobId ? numError + numResolved : undefined
@@ -85,21 +94,23 @@ export default function ErrorDrawer({
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>
-      {!job ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
-      ) : (
-        <>
-          <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
-          <JobErrorTable
-            jobErrors={jobErrors}
-            errorCount={errorCount}
-            job={job}
-            onCloseClick={onClose}
+      <div className={classes.wrapperErrorDrawer}>
+        {!job ? (
+          <SpinnerWrapper>
+            <Spinner />
+          </SpinnerWrapper>
+        ) : (
+          <>
+            <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
+            <JobErrorTable
+              jobErrors={jobErrors}
+              errorCount={errorCount}
+              job={job}
+              onCloseClick={onClose}
           />
-        </>
-      )}
+          </>
+        )}
+      </div>
     </RightDrawer>
   );
 }
