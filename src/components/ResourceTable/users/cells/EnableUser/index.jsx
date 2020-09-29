@@ -4,22 +4,26 @@ import CeligoSwitch from '../../../../CeligoSwitch';
 import { ACCOUNT_IDS } from '../../../../../utils/constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import actions from '../../../../../actions';
+import actionTypes from '../../../../../actions/types';
+import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import CommStatus from '../../../../CommStatus';
 
 export default function EnableUser({ user, integrationId}) {
   const { confirmDialog } = useConfirmDialog();
+  const { sharedWithUser, disabled, _id: userId, accepted } = user;
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
 
   const handleSwitch = useCallback(() => {
     confirmDialog({
-      title: `Confirm ${user.disabled ? 'enable' : 'disable'}`,
-      message: `Are you sure you want to ${
-        user.disabled ? 'enable' : 'disable'
-      } this user?`,
+      title: `Confirm ${disabled ? 'enable' : 'disable'}`,
+      message: `Are you sure you want to ${disabled ? 'enable' : 'disable'} this user?`,
       buttons: [
         {
-          label: user.disabled ? 'Enable' : 'Disable',
+          label: disabled ? 'Enable' : 'Disable',
           onClick: () => {
-            dispatch(actions.user.org.users.disable(user._id, user.disabled));
+            dispatch(actions.user.org.users.disable(userId, disabled));
           },
         },
         {
@@ -28,14 +32,56 @@ export default function EnableUser({ user, integrationId}) {
         },
       ],
     });
-  }, [confirmDialog, user._id, user.disabled, dispatch]);
+  }, [confirmDialog, userId, disabled, dispatch]);
+
+  const getStatusMessage = useCallback((status, message) => {
+    const { name, email } = sharedWithUser || {};
+    const userName = name || email;
+
+    if (status === COMM_STATES.SUCCESS) {
+      return `User ${userName} ${disabled ? 'enabled' : 'disabled'} successfulluyy`;
+    }
+
+    return `${disabled ? 'Enabling' : 'Disabling'} user ${userName} failed due to the error "${message}"`;
+  }, [disabled, sharedWithUser]);
+
+  const commStatusHandler = useCallback(
+    objStatus => {
+      const {status, message} = objStatus.disable || {};
+
+      if ([COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(status)) {
+        const statusMessage = getStatusMessage(status, message);
+
+        enquesnackbar({
+          message: statusMessage,
+          variant: status,
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center',
+          },
+        });
+      }
+    },
+    [enquesnackbar, getStatusMessage]
+  );
 
   return (
-    <CeligoSwitch
-      data-test="disableUser"
-      disabled={!user.accepted || (integrationId && (user._id === ACCOUNT_IDS.OWN))}
-      checked={!user.disabled}
-      onChange={handleSwitch}
+    <>
+      <CommStatus
+        actionsToMonitor={{
+          disable: { action: actionTypes.USER_DISABLE, resourceId: userId },
+        }}
+        autoClearOnComplete
+        commStatusHandler={objStatus => {
+          commStatusHandler(objStatus);
+        }}
       />
+      <CeligoSwitch
+        data-test="disableUser"
+        disabled={!accepted || (integrationId && (userId === ACCOUNT_IDS.OWN))}
+        checked={!disabled}
+        onChange={handleSwitch}
+      />
+    </>
   );
 }
