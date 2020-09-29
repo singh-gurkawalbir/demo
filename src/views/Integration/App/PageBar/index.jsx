@@ -38,14 +38,6 @@ const useStyles = makeStyles(theme => ({
       paddingTop: theme.spacing(1),
     },
   },
-  PageWrapper: {
-    padding: theme.spacing(3),
-    '& > [role = tabpanel]': {
-      background: 'none',
-      padding: 0,
-      border: 'none',
-    },
-  },
 }));
 
 export default function PageBar() {
