@@ -45,35 +45,23 @@ export default function RunCell({
     return '';
   });
 
-  const hasFlowJobs = useSelector(state => {
-    const latestFlowJobs = selectors.latestJobMap(state, integrationId)?.data || [];
-
-    return !!latestFlowJobs.find(job => job._flowId === flowId);
-  });
-
   if (flowErrorCount) {
     return (
       <div className={classes.root}>
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
-          <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} errors</Link>
-        </span>
-      </div>
-    );
-  }
-  // when there are no errors and has flow jobs , that implies last flow run is success
-  if (hasFlowJobs) {
-    // TODO @Raghu: Check on what cases, we need to show success
-    return (
-      <div className={classes.root}>
-        <span className={classes.success}>
-          <StatusCircle variant="success" size="small" />
-          <Typography variant="body2" component="span" className={classes.label}> success </Typography>
+          <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
         </span>
       </div>
     );
   }
 
-  return null;
+  return (
+    <div className={classes.root}>
+      <span className={classes.success}>
+        <StatusCircle variant="success" size="small" />
+        <Typography variant="body2" component="span" className={classes.label}> success </Typography>
+      </span>
+    </div>
+  );
 }
-
