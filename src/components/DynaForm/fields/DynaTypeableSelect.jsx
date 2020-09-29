@@ -200,17 +200,17 @@ export default function DynaTypeableSelect(props) {
       return;
     }
     if (!isFocused) { setIsFocused(true); }
-  }, [isFocused]);
+    if (onTouch) {
+      onTouch(id);
+    }
+  }, [id, isFocused, onTouch]);
   const handleFocusOut = useCallback(evt => {
     // this component is a combo of textArea and react-select. trigger focus out when user tries to focus out of react-select
     if (evt.target.type === 'textarea') {
       return;
     }
     if (isFocused) { setIsFocused(false); }
-    if (onTouch) {
-      onTouch(id);
-    }
-  }, [id, isFocused, onTouch]);
+  }, [isFocused]);
 
   useEffect(() => {
     const div = ref.current;
