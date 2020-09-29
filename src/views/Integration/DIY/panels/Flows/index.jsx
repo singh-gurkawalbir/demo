@@ -100,7 +100,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     selectors.makeResourceListSelector,
     tilesFilterConfig
   ).resources;
-  const currentTileErrorCount = allTiles.find(t => t._integrationId === integrationId)?.numError;
+  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
   let totalErrors = 0;
 
@@ -150,7 +150,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       isUserInErrMgtTwoDotZero,
     }), [childId, integrationId, isUserInErrMgtTwoDotZero]);
 
-  if (!flowErrorCountStatus) {
+  if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
       <SpinnerWrapper>
         <Spinner />
