@@ -6,7 +6,6 @@ import { selectors } from '../../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import LoadResources from '../../../../../../../components/LoadResources';
 import { IAFormStateManager, useActiveTab } from '../../../Flows';
-import useIASettingsStateWithHandleClose from '../../../../../../../hooks/useIASettingsStateWithHandleClose';
 import { SavingMask } from '../../../../../../SuiteScript/Integration/App/panels/Settings/sections/ConfigureSettings';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
@@ -29,24 +28,18 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ConfigureSettings({ integrationId, storeId, sectionId, parentUrl }) {
+export default function ConfigureSettings({ integrationId, storeId, sectionId }) {
   const classes = useStyles();
 
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId,
     storeId);
 
   const section = useMemo(() => flowSections.find(s => s.titleId === sectionId), [flowSections, sectionId]);
+  const flowSettingsMeta = useSelectorMemo(selectors.mkIntegrationAppSectionMetadata,
+    integrationId,
+    sectionId,
+    storeId);
 
-  const flowSettingsMeta = useSelector(
-    state =>
-      selectors.integrationAppSectionMetadata(
-        state,
-        integrationId,
-        sectionId,
-        storeId
-      ),
-    shallowEqual
-  );
   const translatedMeta = useMemo(
     () =>
       integrationSettingsToDynaFormMetadata(
@@ -56,11 +49,15 @@ export default function ConfigureSettings({ integrationId, storeId, sectionId, p
       ),
     [flowSettingsMeta, integrationId]
   );
-  const { formState } = useIASettingsStateWithHandleClose(
-    integrationId,
-    null,
-    sectionId,
-    parentUrl
+  const formState = useSelector(
+    state =>
+      selectors.integrationAppSettingsFormState(
+        state,
+        integrationId,
+        null,
+        sectionId
+      ),
+    shallowEqual
   );
   const activeTabProps = useActiveTab();
 

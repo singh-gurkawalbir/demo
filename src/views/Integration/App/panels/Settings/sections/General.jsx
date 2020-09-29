@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import useTraceUpdate from 'use-trace-update';
 import { selectors } from '../../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../forms/utils';
 import PanelHeader from '../../../../../../components/PanelHeader';
@@ -51,10 +50,6 @@ export default function GeneralPanel({ integrationId, storeId }) {
     shallowEqual
   );
   const activeTabProps = useActiveTab();
-
-  useTraceUpdate({generalSectionMetadata});
-
-  console.log('check rerernder', generalSectionMetadata);
 
   return (
     <div>

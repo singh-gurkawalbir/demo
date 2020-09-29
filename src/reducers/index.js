@@ -1603,40 +1603,38 @@ selectors.hasGeneralSettings = (state, integrationId, storeId) => {
   return !isEmpty(general);
 };
 
-selectors.integrationAppSectionMetadata = (
-  state,
-  integrationId,
-  section,
-  storeId
-) => {
-  if (!state) {
-    return emptyObject;
-  }
+selectors.mkIntegrationAppSectionMetadata = () => {
+  const integrationSettings = selectors.mkIntegrationAppSettings();
 
-  const integrationResource = selectors.integrationAppSettings(
-    state,
-    integrationId
-  );
-  const { supportsMultiStore, sections = [] } =
-    integrationResource.settings || {};
-  let allSections = sections;
+  return createSelector(
+    (state, integrationId) => integrationSettings(state, integrationId),
+    (_1, _2, section) => section,
+    (_1, _2, _3, storeId) => storeId,
+    (integrationResource, section, storeId) => {
+      if (!integrationResource) return emptyObject;
 
-  if (supportsMultiStore) {
-    if (storeId) {
-      // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      const { supportsMultiStore, sections = [] } = integrationResource.settings || {};
+      let allSections = sections;
 
-      allSections = store.sections || [];
-    }
-  }
+      if (supportsMultiStore) {
+        if (storeId) {
+          // If storeId passed, return sections from that store
+          const store = sections.find(s => s.id === storeId) || {};
 
-  const selectedSection =
+          allSections = store.sections || [];
+        }
+      }
+
+      const selectedSection =
     allSections.find(
       sec =>
         getTitleIdFromSection(sec) === section
     ) || {};
 
-  return selectedSection;
+      return selectedSection;
+    }
+
+  );
 };
 
 selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
