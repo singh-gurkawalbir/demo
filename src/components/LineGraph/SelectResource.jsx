@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 5,
   },
   formGroup: {
+    maxHeight: 380,
+    overflowY: 'auto',
     '& > label': {
       width: '100%',
     },
@@ -38,8 +40,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
-    maxHeight: 380,
-    overflowY: 'auto',
   },
   actions: {
     marginTop: theme.spacing(2),
