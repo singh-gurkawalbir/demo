@@ -105,8 +105,10 @@ export const getLegend = index => {
   return legendTypes[index % 10];
 };
 
-export const getTicks = (domainRange, range, isValue) => {
+export const getTicks = (domainRange, srange, isValue) => {
   let ticks;
+  const range = getSelectedRange(srange);
+
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');
   const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
@@ -127,10 +129,10 @@ export const getTicks = (domainRange, range, isValue) => {
 
   if (days < 5) {
     ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
-  } else if (days < 180) {
+  } else if (days < 90) {
     ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
   } else {
-    ticks = domainRange.ticks(d3.timeHour.every(24 * 30)).map(t => t.getTime());
+    ticks = domainRange.ticks(d3.timeDay.every(30)).map(t => t.getTime());
   }
 
   return ticks;
@@ -144,24 +146,10 @@ export const getXAxisFormat = range => {
   } else if (days < 90) {
     xAxisFormat = 'MM/DD/YY';
   } else {
-    xAxisFormat = 'MMM';
+    xAxisFormat = 'MMMM';
   }
 
   return xAxisFormat;
-};
-
-export const getInterval = range => {
-  const {startDate, endDate} = range || {};
-  const distanceInDays = moment(endDate).diff(moment(startDate), 'days');
-
-  if (distanceInDays > 90 && distanceInDays < 180) {
-    return 24;
-  }
-  if (distanceInDays > 180) {
-    return 30;
-  }
-
-  return undefined;
 };
 
 const getFlowFilterExpression = (flowId, filters) => {
