@@ -4,6 +4,8 @@ import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
+import ChangePermissionsDrawer from '../Drawers/ChangePermissions';
+import InviteUserDrawer from '../Drawers/InviteUser';
 
 export default function UsersList({ integrationId }) {
   const dispatch = useDispatch();
@@ -32,10 +34,14 @@ export default function UsersList({ integrationId }) {
   const actionProps = useMemo(() => ({ integrationId }), [integrationId]);
 
   return (
-    <ResourceTable
-      resources={users}
-      resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
-      actionProps={actionProps}
+    <>
+      <ResourceTable
+        resources={users}
+        resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
+        actionProps={actionProps}
     />
+      <InviteUserDrawer integrationId={integrationId} />
+      <ChangePermissionsDrawer integrationId={integrationId} />
+    </>
   );
 }

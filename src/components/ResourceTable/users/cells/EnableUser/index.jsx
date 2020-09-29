@@ -39,7 +39,7 @@ export default function EnableUser({ user, integrationId}) {
     const userName = name || email;
 
     if (status === COMM_STATES.SUCCESS) {
-      return `User ${userName} ${disabled ? 'enabled' : 'disabled'} successfulluyy`;
+      return `User ${userName} ${disabled ? 'enabled' : 'disabled'} successfully`;
     }
 
     return `${disabled ? 'Enabling' : 'Disabling'} user ${userName} failed due to the error "${message}"`;

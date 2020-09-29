@@ -66,20 +66,18 @@ export default function UserFormWrapper({ userId }) {
   const commStatusHandler = useCallback(
     objStatus => {
       if (
-        objStatus &&
-        objStatus.createOrUpdate &&
-        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(
-          objStatus.createOrUpdate.status
-        )
+        objStatus?.createOrUpdate &&
+        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus.createOrUpdate.status) &&
+        disableSave
       ) {
+        setActionsToClear(['createOrUpdate']);
+        setDisableSave(false);
         if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
           handleClose();
         }
-        setActionsToClear(['createOrUpdate']);
-        setDisableSave(false);
       }
     },
-    [handleClose]
+    [handleClose, disableSave]
   );
 
   return (
