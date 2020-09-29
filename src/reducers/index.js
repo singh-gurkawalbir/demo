@@ -1218,18 +1218,22 @@ selectors.integrationAppResourceList = (
   };
 };
 
-selectors.integrationAppStore = (state, integrationId, storeId) => {
-  const integration = selectors.integrationAppSettings(
-    state,
-    integrationId
-  );
+selectors.mkIntegrationAppStore = () => {
+  const integrationSettings = selectors.mkIntegrationAppSettings();
 
-  if (!integration || !integration.stores || !integration.stores.length) {
-    return emptyObject;
-  }
+  return createSelector(
+    (state, integrationId) => integrationSettings(state, integrationId),
+    (_1, _2, storeId) => storeId,
+    (integration, storeId) => {
+      if (!integration || !integration.stores || !integration.stores.length) {
+        return emptyObject;
+      }
 
-  return (
-    integration.stores.find(store => store.value === storeId) || emptyObject
+      return (
+        integration.stores.find(store => store.value === storeId) || emptyObject
+      );
+    }
+
   );
 };
 

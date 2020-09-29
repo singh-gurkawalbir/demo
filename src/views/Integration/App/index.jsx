@@ -120,13 +120,11 @@ export default function IntegrationApp(props) {
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  console.log('check ', integration);
   const defaultStoreId = useSelector(state =>
     selectors.defaultStoreId(state, integrationId, storeId)
   );
-  const currentStore = useSelector(state =>
-    selectors.integrationAppStore(state, integrationId, storeId)
-  );
+  const currentStore = useSelectorMemo(selectors.mkIntegrationAppStore, integrationId, storeId);
+
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
