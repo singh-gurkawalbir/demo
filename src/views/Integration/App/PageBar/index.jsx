@@ -45,7 +45,7 @@ export default function PageBar() {
   const classes = useStyles();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { integrationId, storeId, tab } = match;
+  const { integrationId, storeId, tab } = match.params;
 
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
