@@ -402,7 +402,6 @@ export function* patchGenerateThroughAssistant({value}) {
     );
   }
 }
-
 export const mappingSagas = [
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.INIT, mappingInit),
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.SAVE, saveMappings),

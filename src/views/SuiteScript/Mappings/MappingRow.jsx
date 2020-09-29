@@ -226,7 +226,6 @@ export default function MappingRow(props) {
             disabled={disabled}
             extractFields={extractFields}
             generateFields={generateFields}
-            onTouch={handleTouch}
           />
         </div>
         <div
