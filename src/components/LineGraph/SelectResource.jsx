@@ -85,9 +85,7 @@ export default function SelectResource(props) {
 
   const handleSave = useCallback(() => {
     setInitialValue(checked);
-    const filterChecked = Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : [];
-
-    onSave && onSave(filterChecked);
+    onSave && onSave(checked);
     setAnchorEl(null);
   }, [onSave, checked]);
 
