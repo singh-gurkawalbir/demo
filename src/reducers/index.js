@@ -1558,9 +1558,10 @@ selectors.mkIntegrationAppGeneralSettings = () => {
 
   return createSelector(
 
-    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (state, id) => (state && integrationSettingsSelector(state, id)),
     (_1, _2, storeId) => storeId,
     (integrationResource, storeId) => {
+      if (!integrationResource) return emptyObject;
       let fields;
       let subSections;
       const { supportsMultiStore, general } = integrationResource.settings || {};
