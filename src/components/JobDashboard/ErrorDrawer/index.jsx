@@ -8,6 +8,7 @@ import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
+import { JOB_STATUS } from '../../../utils/constants';
 
 const useStyles = makeStyles({
   wrapperErrorDrawer: {
@@ -40,9 +41,20 @@ export default function ErrorDrawer({
     selectors.jobErrors(state, childJobId)
   );
   const flowJobChildrenLoaded = !!(flowJob?.children?.length > 0);
-  const jobWithErrors = flowJob?.children?.find(j =>
-    showResolved ? j.numResolved > 0 : j.numError > 0
-  );
+  let jobWithErrors;
+  let anyChildJobsAreInProgress = false;
+
+  if (flowJobChildrenLoaded) {
+    jobWithErrors = flowJob.children.find(j =>
+      (showResolved ? j.numResolved > 0 : j.numError > 0) && j.errorFile
+    );
+    if (!jobWithErrors) {
+      anyChildJobsAreInProgress = flowJob.children.filter(j =>
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(j.status)
+      ).length > 0;
+    }
+  }
+
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -73,6 +85,12 @@ export default function ErrorDrawer({
       }
     }
   }, [dispatch, childJobId, flowJobChildrenLoaded, jobWithErrors, showResolved]);
+
+  useEffect(() => {
+    if (anyChildJobsAreInProgress) {
+      dispatch(actions.job.requestInProgressJobStatus());
+    }
+  }, [anyChildJobsAreInProgress, dispatch]);
   let job;
 
   if (childJobId) {
@@ -95,11 +113,15 @@ export default function ErrorDrawer({
       helpTitle="Job errors"
       onClose={handleClose}>
       <div className={classes.wrapperErrorDrawer}>
-        {!job ? (
+        {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
           <SpinnerWrapper>
-            <Spinner />
+            <Spinner /> <span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>
           </SpinnerWrapper>
-        ) : (
+        )}
+        {(flowJobChildrenLoaded && !anyChildJobsAreInProgress && !jobWithErrors) && (
+          <span>No jobs with errors</span>
+        )}
+        {job && (
           <>
             <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
             <JobErrorTable
