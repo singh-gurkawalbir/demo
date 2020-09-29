@@ -1,5 +1,5 @@
 import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
-import jsonPatch, {deepClone} from 'fast-json-patch';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
