@@ -172,7 +172,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
         storeId={storeId}

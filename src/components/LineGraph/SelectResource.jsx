@@ -95,14 +95,16 @@ export default function SelectResource(props) {
   }, [initalValue]);
 
   const buttonName = useMemo(() => {
-    if (!checked || !checked.length) {
+    const filterChecked = Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : [];
+
+    if (!checked || !filterChecked.length) {
       return 'No flows selected';
     }
-    if (checked.length === 1) {
-      return flowResources.find(r => r._id === checked[0])?.name;
+    if (filterChecked.length === 1) {
+      return flowResources.find(r => r._id === filterChecked[0])?.name;
     }
 
-    return `${checked.length} ${isFlow ? 'resources' : 'flows'} selected`;
+    return `${filterChecked.length} ${isFlow ? 'resources' : 'flows'} selected`;
   }, [checked, isFlow, flowResources]);
 
   const handleFlowSelect = id => event => {
