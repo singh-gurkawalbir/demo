@@ -162,7 +162,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
       )}
       <MappingDrawerRoute integrationId={integrationId} />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
