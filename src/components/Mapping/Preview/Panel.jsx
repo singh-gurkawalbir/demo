@@ -45,7 +45,7 @@ export default function PreviewPanel({importId, subRecordMappingId, disabled}) {
     selectors.mappingHttpAssistantPreviewData(state, importId)
   );
   const salesforceNetsuitePreviewData = useMemo(() => {
-    if (mappingPreviewType === 'salesforce') {
+    if (['salesforce', 'netsuite'].includes(mappingPreviewType)) {
       return Array.isArray(previewData)
         ? previewData[0]
         : previewData;
