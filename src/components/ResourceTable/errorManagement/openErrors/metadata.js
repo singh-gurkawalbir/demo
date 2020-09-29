@@ -35,7 +35,7 @@ export default {
       width: '15%',
     },
     {
-      heading: 'Time stamp',
+      heading: 'Timestamp',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

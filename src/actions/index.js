@@ -1850,6 +1850,12 @@ const errorManager = {
         resourceId,
         diff,
       }),
+    download: ({ flowId, resourceId, isResolved, filters }) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST, {
+      flowId,
+      resourceId,
+      isResolved,
+      filters,
+    }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

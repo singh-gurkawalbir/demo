@@ -42,7 +42,7 @@ export default function StatusCell({
     return <CeligoTimeAgo date={date} />;
   }
   if (['completed', 'canceled', 'failed'].includes(job.status)) {
-    return <CeligoTimeAgo date={job.endedAt} />;
+    return <CeligoTimeAgo date={job.lastExecutedAt} />;
   }
 
   const isJobInQueuedStatus =
