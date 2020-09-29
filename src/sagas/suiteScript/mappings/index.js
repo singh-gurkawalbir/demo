@@ -389,6 +389,20 @@ export function* updateImportSampleData() {
   yield put(actions.suiteScript.mapping.updateMappings(modifiedMappings));
 }
 
+export function* patchGenerateThroughAssistant({value}) {
+  const {
+    lastModifiedRowKey,
+  } = yield select(selectors.suiteScriptMappings);
+
+  // trigger patch only when user has touched some field.On touch of last field lastModifiedRowKey = 'new'
+  if (lastModifiedRowKey) {
+    yield put(actions.suiteScript.mapping.patchField('generate',
+      lastModifiedRowKey,
+      value)
+    );
+  }
+}
+
 export const mappingSagas = [
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.INIT, mappingInit),
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.SAVE, saveMappings),
@@ -396,5 +410,6 @@ export const mappingSagas = [
   takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
   takeEvery(actionTypes.SUITESCRIPT.MAPPING.CHECK_FOR_SF_SUBLIST_EXTRACT_PATCH, checkForSFSublistExtractPatch),
+  takeLatest(actionTypes.SUITESCRIPT.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, patchGenerateThroughAssistant),
 
 ];

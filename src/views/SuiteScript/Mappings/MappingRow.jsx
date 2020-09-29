@@ -96,6 +96,7 @@ export default function MappingRow(props) {
     onMove,
     onDrop,
     index,
+    onTouch,
     isDraggable = false,
   } = props;
   const {
@@ -150,6 +151,9 @@ export default function MappingRow(props) {
 
   drag(drop(ref));
 
+  const handleTouch = useCallback(() => {
+    onTouch(key);
+  }, [key, onTouch]);
   const handleBlur = useCallback(
     type => (id, value) => {
       onFieldUpdate(mapping, type, value);
@@ -191,6 +195,7 @@ export default function MappingRow(props) {
             options={extractFields || emptySet}
             disabled={disabled}
             onBlur={handleBlur('extract')}
+            onTouch={onTouch}
           />
         </div>
         <MappingConnectorIcon className={classes.mappingIcon} />
@@ -206,6 +211,7 @@ export default function MappingRow(props) {
             options={generateFields}
             disabled={disabled}
             onBlur={handleBlur('generate')}
+            onTouch={handleTouch}
           />
         </div>
         <div>
@@ -220,6 +226,7 @@ export default function MappingRow(props) {
             disabled={disabled}
             extractFields={extractFields}
             generateFields={generateFields}
+            onTouch={handleTouch}
           />
         </div>
         <div

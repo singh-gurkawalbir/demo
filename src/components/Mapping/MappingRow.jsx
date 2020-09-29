@@ -109,7 +109,6 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-  const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
 
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -159,17 +158,9 @@ export default function MappingRow({
         }
       }
       dispatch(actions.mapping.patchField(field, mappingKey, value));
-
-      return;
-    }
-
-    if (lastModifiedRowKey !== mappingKey) {
-      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
-
-      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
     }
   },
-  [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
+  [dispatch, extract, generate, mapping, mappingKey]
   );
 
   const handleExtractBlur = useCallback((_id, value) => {
@@ -181,12 +172,8 @@ export default function MappingRow({
   }, [handleBlur]);
 
   const handleFieldTouch = useCallback(() => {
-    if (!lastModifiedRowKey || lastModifiedRowKey !== mappingKey) {
-      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
-
-      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
-    }
-  }, [dispatch, lastModifiedRowKey, mappingKey]);
+    dispatch(actions.mapping.updateLastFieldTouched(mappingKey));
+  }, [dispatch, mappingKey]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.mapping.delete(mappingKey));
