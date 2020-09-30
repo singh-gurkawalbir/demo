@@ -458,7 +458,7 @@ function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <SpinnerWrapper>
-          <Spinner />
+          <Spinner /> <span>Loading job errors...</span>
         </SpinnerWrapper>
       ) : (
         <>
