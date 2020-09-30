@@ -113,7 +113,7 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   try {
     const response = yield call(apiCallWithRetry, {
       path,
-      hidden: true,
+      hidden: hideNetWorkSnackbar,
       opts: {
         method: 'GET',
       },
