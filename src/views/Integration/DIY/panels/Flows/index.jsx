@@ -100,7 +100,7 @@ export default function FlowsPanel({ integrationId, childId }) {
     selectors.makeResourceListSelector,
     tilesFilterConfig
   ).resources;
-  const currentTileErrorCount = allTiles.find(t => t._integrationId === integrationId)?.numError;
+  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
 
   let totalErrors = 0;
 
@@ -162,7 +162,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
       )}
       <MappingDrawerRoute integrationId={integrationId} />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
