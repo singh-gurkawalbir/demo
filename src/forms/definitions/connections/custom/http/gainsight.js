@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${
-      formValues['/http/gainsightinstanceurl']
+      formValues['/http/gainsightInstanceURL']
     }.com`,
     '/http/ping/relativeURI': '/v1.0/api/people',
     '/http/ping/method': 'GET',
@@ -16,14 +16,14 @@ export default {
   }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.gainsightinstanceurl': {
-      id: 'http.gainsightinstanceurl',
+    'http.gainsightInstanceURL': {
+      id: 'http.gainsightInstanceURL',
       type: 'text',
       startAdornment: 'https://',
       endAdornment: '.com',
       label: 'Instance URI',
       required: true,
-      helpKey: 'gainsight.connection.http.gainsightinstanceurl',
+      helpKey: 'gainsight.connection.http.gainsightInstanceURL',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
@@ -57,7 +57,7 @@ export default {
     type: 'collapse',
     containers: [
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
-      { collapsed: true, label: 'Application details', fields: ['http.gainsightinstanceurl', 'http.auth.token.token'] },
+      { collapsed: true, label: 'Application details', fields: ['http.gainsightInstanceURL', 'http.auth.token.token'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
