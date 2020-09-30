@@ -27,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 5,
   },
   formGroup: {
+    maxHeight: 380,
+    overflowY: 'auto',
     '& > label': {
       width: '100%',
     },
@@ -38,8 +40,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
-    maxHeight: 380,
-    overflowY: 'auto',
   },
   actions: {
     marginTop: theme.spacing(2),
@@ -95,14 +95,16 @@ export default function SelectResource(props) {
   }, [initalValue]);
 
   const buttonName = useMemo(() => {
-    if (!checked || !checked.length) {
+    const filterChecked = Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : [];
+
+    if (!checked || !filterChecked.length) {
       return 'No flows selected';
     }
-    if (checked.length === 1) {
-      return flowResources.find(r => r._id === checked[0])?.name;
+    if (filterChecked.length === 1) {
+      return flowResources.find(r => r._id === filterChecked[0])?.name;
     }
 
-    return `${checked.length} ${isFlow ? 'resources' : 'flows'} selected`;
+    return `${filterChecked.length} ${isFlow ? 'resources' : 'flows'} selected`;
   }, [checked, isFlow, flowResources]);
 
   const handleFlowSelect = id => event => {

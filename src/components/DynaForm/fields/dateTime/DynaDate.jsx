@@ -105,6 +105,7 @@ export default function DynaDate(props) {
 
         <KeyboardDatePicker
           autoOk={closeOnSelect}
+          disableToolbar
           disabled={disabled}
           className={classes.keyBoardDateWrapper}
           variant="inline"
