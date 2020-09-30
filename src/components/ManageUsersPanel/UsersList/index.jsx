@@ -4,7 +4,7 @@ import ResourceTable from '../../ResourceTable';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
-import ChangePermissionsDrawer from '../Drawers/ChangePermissions';
+import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
 
 export default function UsersList({ integrationId }) {
@@ -41,7 +41,7 @@ export default function UsersList({ integrationId }) {
         actionProps={actionProps}
     />
       <InviteUserDrawer integrationId={integrationId} />
-      <ChangePermissionsDrawer integrationId={integrationId} />
+      <ManagePermissionsDrawer integrationId={integrationId} />
     </>
   );
 }

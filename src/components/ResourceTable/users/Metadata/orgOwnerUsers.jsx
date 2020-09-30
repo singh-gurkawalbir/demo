@@ -6,7 +6,7 @@ import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
 import { ACCOUNT_IDS } from '../../../../utils/constants';
-import ChangePermissions from '../actions/ChangePermissions';
+import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
@@ -39,10 +39,10 @@ export default {
     const actions = [];
 
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
-      actions.push(ChangePermissions);
+      actions.push(ManagePermissions);
     }
     if (!integrationId) {
-      actions.push(ChangePermissions);
+      actions.push(ManagePermissions);
       if (user.accepted) {
         actions.push(MakeAccountOwner);
       }

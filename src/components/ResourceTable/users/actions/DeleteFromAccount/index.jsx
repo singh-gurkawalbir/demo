@@ -8,7 +8,7 @@ import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import CommStatus from '../../../../CommStatus';
 
 export default {
-  label: 'Delete from account',
+  label: 'Remove user from account',
   component: function DeleteFromAccount({ rowData: user }) {
     const { confirmDialog } = useConfirmDialog();
     const dispatch = useDispatch();

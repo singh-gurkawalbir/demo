@@ -3,21 +3,21 @@ import { useRouteMatch } from 'react-router-dom';
 import RightDrawer from '../../../drawer/Right';
 import UserFormWrapper from '../../UserFormWrapper';
 
-function ChangePermissions({ integrationId }) {
+function ManagePermissions({ integrationId }) {
   const match = useRouteMatch();
   const { userId } = match.params;
 
   return <UserFormWrapper integrationId={integrationId} userId={userId} />;
 }
-export default function ChangePermissionsDrawer({ integrationId }) {
+export default function ManagePermissionsDrawer({ integrationId }) {
   return (
     <RightDrawer
       path="edit/:userId"
-      title="Change user permissions"
+      title="Manage user permissions"
       variant="temporary"
       width="medium"
       hideBackButton>
-      <ChangePermissions integrationId={integrationId} />
+      <ManagePermissions integrationId={integrationId} />
     </RightDrawer>
   );
 }

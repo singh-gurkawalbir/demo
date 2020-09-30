@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 export default {
-  label: 'Change Permissions',
-  component: function ChangePermissions({ rowData: user }) {
+  label: 'Manage Permissions',
+  component: function ManagePermissions({ rowData: user }) {
     const match = useRouteMatch();
     const history = useHistory();
     const openEditDrawer = useCallback(() => {
