@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 
@@ -58,10 +59,10 @@ const useStyles = makeStyles(theme => ({
 
 function Tag(props) {
   const classes = useStyles();
-  const { variant } = props;
+  const { variant, className } = props;
 
   return (
-    <div className={classes.wrapper}>
+    <div className={clsx(classes.wrapper, className)}>
       <span className={classes.label}>{variant}</span>
     </div>
   );

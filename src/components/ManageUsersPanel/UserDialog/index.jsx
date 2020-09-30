@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import {
@@ -17,6 +17,7 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
   const [errorMessage, setErrorMessage] = useState();
   const [disableSave, setDisableSave] = useState(false);
   const [actionsToClear, setActionsToClear] = useState();
+  const [callSuccessCleanup, setCallSuccessCleanup] = useState(false);
   const dispatch = useDispatch();
   const handleClose = useCallback(() => {
     setErrorMessage();
@@ -77,7 +78,9 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         )
       ) {
         if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
-          if (onSuccess) onSuccess();
+          if (onSuccess) {
+            setCallSuccessCleanup(true);
+          }
 
           setErrorMessage();
         } else if (objStatus.createOrUpdate.status === COMM_STATES.ERROR) {
@@ -92,6 +95,15 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
     },
     [onSuccess]
   );
+
+  useEffect(() => {
+    // this is a hack to overcome React Batching mechanism.
+    // If we add onSuccess() directly in commStatusHandler, then local state like setActionsToClear was not getting set(and was removed directly
+    // because onSuccess handler unmounts this component) and hence the comm status was never clearing up
+    // TODO: any other better way to do this? (eg using asynchronous call, setTimeout(() => onSuccess());)
+
+    if (callSuccessCleanup) { onSuccess(); }
+  }, [callSuccessCleanup, onSuccess]);
 
   return (
     <>

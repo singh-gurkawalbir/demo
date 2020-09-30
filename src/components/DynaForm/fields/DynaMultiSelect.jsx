@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
+import Tag from '../../HomePageCard/Footer/Tag';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -40,6 +41,14 @@ const useStyles = makeStyles(theme => ({
   },
   multislectWrapper: {
     width: '100%',
+  },
+  // TODO: @azhar update the styling
+  tagWrapper: {
+    color: theme.palette.secondary.light,
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -99,6 +108,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
+              {item.tag && <Tag className={classes.tagWrapper} variant={item.tag} />}
             </MenuItem>
           );
         })
@@ -145,11 +155,12 @@ export default function DynaMultiSelect(props) {
 
   const createChip = value => {
     const fieldOption = options[0].items.find(option => option.value === value);
+    const label = <> {fieldOption?.label || value} {fieldOption?.tag && <Tag className={classes.tagWrapper} variant={fieldOption.tag} />}</>;
 
     return fieldOption ? (
       <Chip
         key={value}
-        label={fieldOption.label || value}
+        label={label}
         className={classes.chip}
       />
     ) : null;
