@@ -119,11 +119,7 @@ const ErrorsList = ({integrationId, childId}) => {
   );
 };
 
-export default function ErrorsListDrawer() {
-  const match = useRouteMatch();
-
-  const { integrationId, childId } = match.params;
-
+export default function ErrorsListDrawer({ integrationId, childId }) {
   return (
     <LoadResources
       required="true"
