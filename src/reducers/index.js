@@ -5155,3 +5155,31 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+// Yang: createSelector version of the mkSelectors does not proxy well with genSelectors
+// we probably need to stop auto generate these(probably filter by names that starts with mk or make)
+selectors.mkIsUIVersionOld = () => createSelector(
+  selectors.initVersion,
+  selectors.version,
+  (v1, v2) => {
+    if (v1 === v2) return false;
+    if (!v1 || !v2 || v1 === 'patch' || v2 === 'patch') return false;
+    const init = v1.split('.');
+    const cur = v2.split('.');
+
+    const r = new RegExp('\\d+');
+
+    for (let i = 0; i < Math.min(init.length, cur.length); i += 1) {
+      const mi = init[i].match(r);
+      const mc = cur[i].match(r);
+
+      if (mi == null || mc == null) return true;
+      const vi = +mi[0];
+      const vc = +mc[0];
+
+      if (vi < vc) return true;
+    }
+
+    return false;
+  }
+);

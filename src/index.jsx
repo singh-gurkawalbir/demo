@@ -63,14 +63,15 @@ store = createStore(
   composeEnhancers(applyMiddleware(...middleware))
 );
 
-const VERSION = '6.10.1.9';
-
-// store.dispatch(actions.app.updateUIVersion(VERSION));
+// eslint-disable-next-line no-undef
+store.dispatch(actions.app.updateUIVersion(VERSION));
 const isProduction = getDomain() === 'integrator.io';
 const disableTelemetry = selectors.disableTelemetry(store.getState());
 
 if (!isProduction && !disableTelemetry) {
+  // init MUST happen before saga run
   LogRocket.init('yb95vd/glad', {
+    // eslint-disable-next-line no-undef
     release: VERSION,
     console: {
       isEnabled: {

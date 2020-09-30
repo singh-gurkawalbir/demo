@@ -80,6 +80,9 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(process.env.RELEASE_VERSION || ''),
+    }),
   ],
   output: {
     publicPath: '/',
@@ -100,6 +103,9 @@ module.exports = (env, argv) => {
 
   if (config.mode === 'production' && process.env.NODE_ENV === 'analyze') {
     config.plugins.push(new BundleAnalyzerPlugin());
+  } else if (config.mode === 'production') {
+    // generate source map for logrocket
+    config.devtool = 'source-map';
   } else if (config.mode === 'development' || runOptimizedLocal) {
     if (!runOptimizedLocal) {
       config.plugins.push(new ReactRefreshWebpackPlugin());

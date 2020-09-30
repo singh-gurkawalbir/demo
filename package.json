@@ -11,6 +11,7 @@
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "build": "env NODE_ENV=production webpack --mode=production",
+    "release": "./release.sh",
     "build-analyze": "env NODE_ENV=analyze webpack --mode=production",
     "lint": "eslint --ext .js --ext .jsx ./src",
     "test": "env NODE_ENV=test jest",
@@ -130,6 +131,7 @@
     "jest-date-mock": "1.0.8",
     "jest-each": "24.8.0",
     "lint-staged": "^10.2.11",
+    "logrocket-cli": "^0.12.0",
     "react-refresh": "^0.8.3",
     "react-styleguidist": "^11.0.8",
     "redux-saga-test-plan": "^4.0.0-rc.3",
