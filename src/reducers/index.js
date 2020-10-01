@@ -2944,8 +2944,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
         ['none', 'none-sb'].includes(_integrationId),
     },
   }).resources;
-  const notifications = selectors.resourceList(state, { type: 'notifications' })
-    .resources;
+  const notifications = selectors.getSubscribedNotifications(state);
   const connections = _connectorId
     ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
@@ -2976,6 +2975,45 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   };
 };
 
+/**
+ * selectors.getNotifications: given user id, return all notifications for that user
+ * selectors.subscribedIntegrationResources:
+ *  given integrationId : return { connections, flows, subscribedConnections, subscribedFlows }
+ * selectors.isFlowSubscribed:
+ *  given flowId - returns true/false whether flow is subscribed or not
+ * selectors.subscribedFlowConnections
+ *  given flowId - returns connections subscribed under this flow
+ */
+/** Notification related selectors */
+
+selectors.getSubscribedNotifications = (state, userEmail) => {
+  const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
+  const notifications = selectors.resourceList(state, {
+    type: 'notifications',
+    filter: {
+      subscribedByUser: subscribedByUser => subscribedByUser.email === emailIdToFilter,
+    },
+  }).resources || [];
+
+  return notifications;
+};
+
+// selectors.subscribedIntegrationResources = (state, integrationId, storeId, userId) => {
+//   console.log(integrationId, storeId, userId);
+//   // If userId passed return for that user else fetch current account owner
+//   // given integrationId : return { connections, flows, subscribedConnections, subscribedFlows }
+// };
+
+// selectors.isFlowSubscribed = (state, flowId) => {
+//   // given flowId - returns true/false whether flow is subscribed or not
+// };
+
+// selectors.subscribedFlowConnections = (state, flowId) => {
+//   // given flowId - returns connections subscribed under this flow
+//   // this is for account owner
+// };
+
+/** End of Notification selectors */
 selectors.auditLogs = (
   state,
   resourceType,

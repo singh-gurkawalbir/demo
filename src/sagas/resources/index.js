@@ -607,6 +607,9 @@ export function* getResourceCollection({ resourceType }) {
   if (resourceType === 'marketplacetemplates') {
     path = '/templates/published';
   }
+  if (resourceType === 'notifications') {
+    path = '/notifications?users=all';
+  }
 
   try {
     let collection = yield call(apiCallWithRetry, {
