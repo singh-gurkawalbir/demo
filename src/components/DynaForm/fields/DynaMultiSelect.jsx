@@ -29,9 +29,6 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     padding: 0,
   },
-  chip: {
-    margin: 4,
-  },
   menuItems: {
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
@@ -42,6 +39,12 @@ const useStyles = makeStyles(theme => ({
   multislectWrapper: {
     width: '100%',
   },
+}));
+
+const chipUseStyles = makeStyles(theme => ({
+  chip: {
+    margin: 4,
+  },
   // TODO: @azhar update the styling
   tagWrapper: {
     color: theme.palette.secondary.light,
@@ -51,6 +54,43 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
 }));
+
+const ChipLabel = ({label, tag}) => {
+  const classes = chipUseStyles();
+
+  if (!tag) return label;
+
+  return (
+    <>
+      {label}
+      <Tag className={classes.tagWrapper} variant={tag} />
+    </>
+  );
+};
+const CreateChip = ({label, value, tag}) => {
+  const classes = chipUseStyles();
+  const newLabel = <ChipLabel label={label || value} tag={tag} />;
+
+  return (
+    <Chip
+      key={value}
+      label={newLabel}
+      className={classes.chip}
+    />
+  );
+};
+
+function setChip(value) {
+  const fieldOption = this.find(option => option.value === value);
+
+  return fieldOption ? (
+    <CreateChip
+      value={value}
+      label={fieldOption.label}
+      tag={fieldOption.tag}
+    />
+  ) : null;
+}
 
 export default function DynaMultiSelect(props) {
   const {
@@ -153,19 +193,6 @@ export default function DynaMultiSelect(props) {
     }
   }, [id, onFieldChange, selectAllIdentifier, value]);
 
-  const createChip = value => {
-    const fieldOption = options[0].items.find(option => option.value === value);
-    const label = <> {fieldOption?.label || value} {fieldOption?.tag && <Tag className={classes.tagWrapper} variant={fieldOption.tag} />}</>;
-
-    return fieldOption ? (
-      <Chip
-        key={value}
-        label={label}
-        className={classes.chip}
-      />
-    ) : null;
-  };
-
   return (
     <div className={classes.multislectWrapper}>
       <div className={classes.labelWrapper}>
@@ -198,7 +225,7 @@ export default function DynaMultiSelect(props) {
               <div className={classes.chips}>
                 {selected &&
                   typeof selected.map === 'function' &&
-                  selected.map(createChip)}
+                  selected.map(setChip, options[0].items)}
               </div>
             )}>
           {items}
