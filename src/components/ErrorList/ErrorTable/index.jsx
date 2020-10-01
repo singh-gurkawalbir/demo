@@ -68,6 +68,10 @@ const useStyles = makeStyles(theme => ({
       right: theme.spacing(-2),
     },
   },
+  errorTableWrapper: {
+    position: 'relative',
+    height: '100%',
+  },
 }));
 const defaultOpenErrorsFilter = {
   searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey'],
@@ -218,7 +222,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
   // TODO @Raghu: Refactor the pagination related code
   return (
-    <div className={clsx({ [classes.hide]: !show })}>
+    <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
