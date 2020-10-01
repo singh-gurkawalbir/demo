@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Redirect, generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Select, MenuItem } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -17,7 +17,6 @@ import IconTextButton from '../../../components/IconTextButton';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import ResourceDrawer from '../../../components/drawer/Resource';
 import ChipInput from '../../../components/ChipInput';
-import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import FlowsPanel from './panels/Flows';
 import AuditLogPanel from './panels/AuditLog';
 import NotificationsPanel from './panels/Notifications';
@@ -34,6 +33,7 @@ import integrationAppUtil, { getAdminLevelTabs, getIntegrationAppUrlName } from 
 import SettingsIcon from '../../../components/icons/SettingsIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
+import CeligoSelect from '../../../components/CeligoSelect';
 
 const allTabs = [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -120,9 +120,9 @@ export default function IntegrationApp(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  const defaultStoreId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId, storeId)
-  );
+  // const defaultStoreId = useSelector(state =>
+  //   selectors.defaultStoreId(state, integrationId, storeId)
+  // );
   const currentStore = useSelector(state =>
     selectors.integrationAppStore(state, integrationId, storeId)
   );
@@ -239,12 +239,21 @@ export default function IntegrationApp(props) {
     e => {
       const newStoreId = e.target.value;
 
-      // Redirect to current tab of new store
-      history.push(
-        getRoutePath(
-          `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
-        )
-      );
+      if (newStoreId) {
+        // Redirect to current tab of new store
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+          )
+        );
+      } else {
+        // Redirect to current tab of new store
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/${tab}`
+          )
+        );
+      }
     },
     [history, integrationAppName, integrationId, tab]
   );
@@ -269,13 +278,13 @@ export default function IntegrationApp(props) {
   // or if no tab is selected, we rewrite the current url in the history to carry
   // this state information forward.
   if (supportsMultiStore) {
-    if (!storeId) {
+    if (!storeId && searchParamchildId) {
       return (
         <Redirect
           push={false}
           to={
             {
-              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamchildId || defaultStoreId}/${tab ||
+              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamchildId}/${tab ||
             'flows'}`),
               search: location.search,
             }
@@ -351,23 +360,19 @@ export default function IntegrationApp(props) {
                 <AddIcon /> Add {storeLabel}
               </IconTextButton>
             )}
-            <Select
-              displayEmpty
+            <CeligoSelect
               data-test={`select${storeLabel}`}
               className={classes.storeSelect}
               onChange={handleStoreChange}
-              IconComponent={ArrowDownIcon}
-              value={storeId}>
-              <MenuItem disabled value="">
-                Select {storeLabel}
-              </MenuItem>
-
-              {integration.stores.map(s => (
-                <MenuItem key={s.value} value={s.value}>
-                  {s.label}
+              displayEmpty
+              value={storeId || ''}>
+              <MenuItem value="">Select {storeLabel}</MenuItem>
+              {integration.stores.map(opt => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label || opt.value}
                 </MenuItem>
               ))}
-            </Select>
+            </CeligoSelect>
           </div>
         )}
       </CeligoPageBar>

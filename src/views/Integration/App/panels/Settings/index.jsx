@@ -58,6 +58,11 @@ export default function SettingsPanel({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const isParentView = useSelector(state => {
+    const integration = selectors.integrationAppSettings(state, integrationId);
+
+    return !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
+  });
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
@@ -104,7 +109,7 @@ export default function SettingsPanel({
   // sections.
   if (match.isExact) {
     // no section provided.
-    if (availableSections.length === 0) {
+    if (availableSections.length === 0 || isParentView) {
       return (
         <div className={classes.root}>
           <div className={classes.container}>

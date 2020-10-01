@@ -1883,8 +1883,8 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (integration?.settings?.supportsMultiStore) {
     const { stores } = selectors.integrationAppSettings(state, integrationId);
 
-    if (!flowId && stores?.length) {
-      return stores[0].value;
+    if (!flowId) {
+      return null;
     }
 
     return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;

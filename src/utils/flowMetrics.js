@@ -201,9 +201,9 @@ const getFlowMetricsQueryParams = (flowId, filters) => {
 
   if (hours < 5 && startDateFromToday < 7) {
     duration = '1m';
-  } else if (days > 4 && days < 90) {
+  } else if (days > 4 && days < 180) {
     duration = '1d';
-  } else if (days > 90) {
+  } else if (days > 180) {
     duration = '1mo';
   } else {
     duration = '1h';
