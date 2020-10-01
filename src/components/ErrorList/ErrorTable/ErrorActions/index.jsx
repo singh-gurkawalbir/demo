@@ -30,7 +30,7 @@ export default function ErrorActions(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
-  const { flowId, resourceId, isResolved } = props;
+  const { flowId, resourceId, isResolved, className } = props;
   const isRetryInProgress = useSelector(
     state =>
       selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
@@ -108,8 +108,9 @@ export default function ErrorActions(props) {
   }, [match.url, history, isResolved]);
 
   return (
-    <ButtonGroup>
-      {!isResolved && (
+    <div className={className}>
+      <ButtonGroup>
+        {!isResolved && (
         <Button
           variant="outlined"
           color="secondary"
@@ -118,25 +119,27 @@ export default function ErrorActions(props) {
           onClick={handleResolve}>
           Resolve{isResolveInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
         </Button>
-      )}
+        )}
 
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={classes.btnActions}
-        disabled={!areSelectedErrorsRetriable || isActionInProgress}
-        onClick={handleRetry}>
-        Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
-      </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.btnActions}
+          disabled={!areSelectedErrorsRetriable || isActionInProgress}
+          onClick={handleRetry}>
+          Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
+        </Button>
 
-      {/* Download Open/Resolved errors */}
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={classes.btnActions}
-        onClick={handleDownload}>
-        Download
-      </Button>
-    </ButtonGroup>
+        {/* Download Open/Resolved errors */}
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.btnActions}
+          onClick={handleDownload}>
+          Download all
+        </Button>
+      </ButtonGroup>
+    </div>
+
   );
 }
