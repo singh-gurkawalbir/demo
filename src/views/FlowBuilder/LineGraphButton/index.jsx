@@ -34,7 +34,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
     return !!latestJobs.length;
   });
 
-  const disableButton = !flow.lastExecuted && !flowJobExists;
+  const disableButton = !flow.lastExecutedAt && !flowJobExists;
 
   return (
     <IconButton
