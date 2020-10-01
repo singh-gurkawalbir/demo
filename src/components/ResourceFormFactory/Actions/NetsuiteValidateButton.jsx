@@ -42,12 +42,13 @@ const NetsuiteValidateButton = props => {
   const handleValidate = values => {
     // clear the ping comm status first as validity will be determined by netsuite user roles
     dispatch(actions.resource.connections.testClear(resourceId));
+    dispatch(actions.resource.connections.netsuite.clearUserRoles(resourceId));
     dispatch(
-      actions.resource.connections.netsuite.requestUserRoles(resourceId, values)
+      actions.resource.connections.netsuite.testConnection(resourceId, values)
     );
   };
 
-  const { status, message } = useSelector(state =>
+  const { status, message, hideNotificationMessage } = useSelector(state =>
     selectors.netsuiteUserRoles(state, resourceId) || {}
   );
   const isValidatingNetsuiteUserRoles = useSelector(state =>
@@ -122,7 +123,7 @@ const NetsuiteValidateButton = props => {
       onClick={() => {
         handleValidate(trim(value));
       }}>
-      {isValidatingNetsuiteUserRoles ? 'Testing' : 'Test Connection'}
+      {(isValidatingNetsuiteUserRoles && !hideNotificationMessage) ? 'Testing' : 'Test Connection'}
     </Button>
   );
 };
