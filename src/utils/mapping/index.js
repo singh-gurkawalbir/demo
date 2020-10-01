@@ -357,15 +357,14 @@ export function extractMappingFieldsFromCsv(data = '', options = {}) {
   if (typeof data !== 'string') return;
   const fields = generateCSVFields(data, options);
 
-  const extractFieldObj = {};
+  return fields.reduce((extractFieldObj, field) => {
+    const [value] = field;
 
-  fields.forEach(f => {
-    const key = f[0];
+    // eslint-disable-next-line no-param-reassign
+    extractFieldObj[value] = value;
 
-    extractFieldObj[key] = key;
-  });
-
-  return extractFieldObj;
+    return extractFieldObj;
+  }, {});
 }
 
 export function wrapTextForSpecialChars(extract, flowSampleData) {
