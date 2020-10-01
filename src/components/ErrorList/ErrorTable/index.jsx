@@ -35,7 +35,6 @@ const useStyles = makeStyles(theme => ({
   header: {
     paddingBottom: theme.spacing(3),
     display: 'inline-flex',
-    justifyContent: 'space-between',
     width: '65%',
   },
   tablePaginationRoot: {
@@ -51,6 +50,23 @@ const useStyles = makeStyles(theme => ({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+  },
+  refreshBtn: {
+    marginLeft: theme.spacing(2),
+  },
+  errorActions: {
+    position: 'relative',
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(1),
+    '&:after': {
+      content: "''",
+      position: 'absolute',
+      width: '1px',
+      height: '75%',
+      top: '15%',
+      backgroundColor: theme.palette.secondary.lightest,
+      right: theme.spacing(-2),
+    },
   },
 }));
 const defaultOpenErrorsFilter = {
@@ -203,7 +219,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx({ [classes.hide]: !show })}>
-      <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
@@ -221,8 +236,12 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
             }
             {
               !!errorObj.errors.length &&
-              <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
+              <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} className={classes.errorActions} />
+
             }
+            <div className={clsx({[classes.refreshBtn]: !isResolved})}>
+              <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
+            </div>
 
           </div>
           {errorObj.errors.length ? (
