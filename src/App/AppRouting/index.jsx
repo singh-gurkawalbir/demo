@@ -85,7 +85,7 @@ const SuiteScriptIntegrationAppInstallation = loadable(() =>
 function ResourceListRouteCatcher(props) {
   const {match} = props;
 
-  const isResource = !!ResourceListInfo[(match?.params?.resourceType || '').trim().toLowerCase()];
+  const isResource = !!ResourceListInfo[(match?.params?.resourceType || '')];
 
   return <>{ isResource ? <ResourceList props={props} /> : <NotFound /> }</>;
 }
