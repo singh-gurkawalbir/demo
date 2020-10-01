@@ -79,14 +79,14 @@ export default {
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
-  'connection.integrator.region':
+  'integratorio.connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
-  'connection.integrator.token':
+  'integratorio.connection.http.auth.token.token':
     'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   'recharge.connection.http.auth.token.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
-  'bconnection.http.bamboohrSubdomain':
-    'Please enter your company name here which you configured while signing up for a new BambooHR account.',
+  'bamboohr.connection.http.bamboohrSubdomain':
+    'Enter the unique portion of the bamboohr.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.bamboohr.com, then enter personnel for the subdomain.',
   'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
   'connection.http.oktaSubdomain':
     'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
@@ -197,7 +197,8 @@ export default {
   'anaplan.connection.http.auth.basic.username':
     'The username of your Anaplan account.',
   'anaplan.connection.http.auth.basic.password':
-    'The password of your Anaplan account.',
+    'The password of your Anaplan account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'anaplan.connection.http.auth.type': 'Please select Authentication type.',
   'namely.connection.http.namelyCompanyName':
     'Your subdomain. For example, https://mysubdomain.namely.com',
   'namely.connection.http.auth.token.token':
@@ -613,6 +614,8 @@ export default {
     'Please enter the username of your Jira Server account.',
   'jiraserver.connection.http.auth.basic.password':
     'Please enter the password of your Jira Server account.',
+  'gainsight.connection.http.gainsightInstanceURL': 'Please enter the instance URI shown in your Gainsight CS account.For example, if https://test-domain.gainsightcloud.com/v1/ui/home is the URL after logging in,then the instance URI would be \'test-domain.gainsightcloud\'.',
+  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':

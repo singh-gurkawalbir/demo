@@ -76,7 +76,11 @@ export default function ConnectionStatusPanel(props) {
       const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
 
       if (resource.type === 'netsuite' && !commStatus) {
-        return selectors.netsuiteUserRoles(state, connectionId)?.status;
+        const {status, hideNotificationMessage} = selectors.netsuiteUserRoles(state, connectionId);
+
+        if (!hideNotificationMessage) {
+          return status;
+        }
       }
 
       return commStatus;

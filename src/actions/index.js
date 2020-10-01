@@ -392,6 +392,13 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
+          hideNotificationMessage: true,
+        }),
+      testConnection: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+          hideNotificationMessage: false,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
