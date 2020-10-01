@@ -1210,9 +1210,7 @@ export default {
         if (typeof sampleData === 'string' && isJsonString(sampleData)) {
           formattedSampleData = getJSONPaths(JSON.parse(sampleData));
         } else if (typeof sampleData === 'object') {
-          formattedSampleData = Array.isArray(sampleData)
-            ? sampleData
-            : getJSONPaths(sampleData);
+          formattedSampleData = getJSONPaths(sampleData);
         }
 
         formattedGenerateFields =
