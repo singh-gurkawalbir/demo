@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
+import LoadResources from '../../LoadResources';
 
 export default function UsersList({ integrationId }) {
   const dispatch = useDispatch();
@@ -35,11 +36,13 @@ export default function UsersList({ integrationId }) {
 
   return (
     <>
-      <ResourceTable
-        resources={users}
-        resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
-        actionProps={actionProps}
-    />
+      <LoadResources required resources="integrations, connections, notifications">
+        <ResourceTable
+          resources={users}
+          resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
+          actionProps={actionProps}
+        />
+      </LoadResources>
       <InviteUserDrawer integrationId={integrationId} />
       <ManagePermissionsDrawer integrationId={integrationId} />
     </>

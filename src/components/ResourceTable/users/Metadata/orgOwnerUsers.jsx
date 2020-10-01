@@ -2,6 +2,7 @@ import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
 import Status from '../cells/Status';
+import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
@@ -29,6 +30,11 @@ export default {
         headerValue: EnableUserHeader,
         value: (r, { integrationId}) =>
           <EnableUser user={r} integrationId={integrationId} />,
+      },
+      {
+        heading: 'Notifications',
+        value: (r, { integrationId}) =>
+          <Notifications user={r} integrationId={integrationId} />,
       },
     ];
 

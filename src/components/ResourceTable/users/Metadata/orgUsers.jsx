@@ -1,6 +1,7 @@
 import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import Status from '../cells/Status';
+import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import StatusHeader from '../cells/StatusHeader';
 
@@ -18,6 +19,11 @@ export default {
         headerValue: StatusHeader,
         value: (r, { integrationId}) =>
           <Status user={r} integrationId={integrationId} />,
+      },
+      {
+        heading: 'Notifications',
+        value: (r, { integrationId}) =>
+          <Notifications user={r} integrationId={integrationId} />,
       },
     ];
 
