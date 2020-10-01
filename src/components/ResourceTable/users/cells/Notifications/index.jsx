@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 
 export default function Notifications({ user }) {
-  const notifications = useSelector(state => selectors.getSubscribedNotifications(state, user.sharedWithUser.email));
+  const hasNotifications = useSelector(state =>
+    selectors.integrationSubscribedNotifications(state, user.sharedWithUser.email)
+  );
 
-  return <div> { notifications.length ? 'Yes' : 'No'} </div>;
+  return <div> { hasNotifications ? 'Yes' : 'No'} </div>;
 }

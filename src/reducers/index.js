@@ -2944,7 +2944,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
         ['none', 'none-sb'].includes(_integrationId),
     },
   }).resources;
-  const notifications = selectors.getSubscribedNotifications(state);
+  const notifications = selectors.subscribedNotifications(state);
   const connections = _connectorId
     ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
@@ -2986,7 +2986,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
  */
 /** Notification related selectors */
 
-selectors.getSubscribedNotifications = (state, userEmail) => {
+selectors.subscribedNotifications = (state, userEmail) => {
   const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
   const notifications = selectors.resourceList(state, {
     type: 'notifications',
@@ -2996,6 +2996,60 @@ selectors.getSubscribedNotifications = (state, userEmail) => {
   }).resources || [];
 
   return notifications;
+};
+
+selectors.integrationSubscribedNotifications = (state, _integrationId, storeId, userEmail) => {
+  const diyFlows = selectors.resourceList(state, {
+    type: 'flows',
+    filter: {
+      $where() {
+        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+          return !this._integrationId;
+        }
+
+        return this._integrationId === _integrationId;
+      },
+    },
+  }).resources;
+  const { _registeredConnectionIds = [], _connectorId } =
+    selectors.resource(state, 'integrations', _integrationId) || {};
+  const diyConnections = selectors.resourceList(state, {
+    type: 'connections',
+    filter: {
+      _id: id =>
+        _registeredConnectionIds.includes(id) ||
+        ['none', 'none-sb'].includes(_integrationId),
+    },
+  }).resources;
+  const notifications = selectors.subscribedNotifications(state, userEmail);
+  const connections = _connectorId
+    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
+    : diyConnections;
+  let flows = _connectorId
+    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
+    : diyFlows;
+  const connectionValues = connections
+    .filter(c => !!notifications.find(n => n._connectionId === c._id))
+    .map(c => c._id);
+  let flowValues = flows
+    .filter(f => !!notifications.find(n => n._flowId === f._id))
+    .map(f => f._id);
+  const allFlowsSelected = !!notifications.find(
+    n => n._integrationId === _integrationId
+  );
+
+  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
+    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+
+    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+  }
+
+  return {
+    connections,
+    flows,
+    connectionValues,
+    flowValues,
+  };
 };
 
 // selectors.subscribedIntegrationResources = (state, integrationId, storeId, userId) => {
