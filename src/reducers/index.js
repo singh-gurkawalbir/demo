@@ -2921,12 +2921,12 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.integrationResources = (state, _integrationId, storeId) => {
+selectors.notificationResources = (state, _integrationId, storeId) => {
   const diyFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: {
       $where() {
-        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+        if (!_integrationId || ['none'].includes(_integrationId)) {
           return !this._integrationId;
         }
 
@@ -2941,7 +2941,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none', 'none-sb'].includes(_integrationId),
+        ['none'].includes(_integrationId),
     },
   }).resources;
   const notifications = selectors.resourceList(state, { type: 'notifications' })
@@ -2949,7 +2949,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   const connections = _connectorId
     ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
-  let flows = _connectorId
+  const flows = _connectorId
     ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
     : diyFlows;
   const connectionValues = connections
@@ -2962,10 +2962,8 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     n => n._integrationId === _integrationId
   );
 
-  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
-    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
-
-    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
+    flowValues = [_integrationId, ...flows];
   }
 
   return {
