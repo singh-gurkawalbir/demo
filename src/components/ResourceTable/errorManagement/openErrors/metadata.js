@@ -21,13 +21,13 @@ export default {
     },
     {
       heading: 'Message',
-      width: '40%',
+      width: '50%',
       value: r => <OverflowWrapper message={r.message} />,
     },
     {
       heading: 'Code',
       value: r => <OverflowWrapper message={r.code} />,
-      width: '15%',
+      width: '20%',
     },
     {
       heading: 'Source',
@@ -36,6 +36,7 @@ export default {
     },
     {
       heading: 'Timestamp',
+      width: '10%',
       value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

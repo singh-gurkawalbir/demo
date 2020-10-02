@@ -24,23 +24,28 @@ export default {
     },
     {
       heading: 'Code',
-      width: '15%',
+      width: '20%',
       value: r => <OverflowWrapper message={r.code} />,
     },
     {
       heading: 'Source',
-      width: '15%',
+      width: '10%',
       value: r => <OverflowWrapper message={r.source} />,
     },
     {
       heading: 'Timestamp',
       width: '10%',
-      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
+      value: r => <CeligoTimeAgo date={r.occurredAt} />,
     },
     {
       heading: 'Resolved by',
       width: '15%',
       value: r => <UserName userId={r.resolvedBy} />,
+    },
+    {
+      heading: 'Resolved at',
+      width: '10%',
+      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {

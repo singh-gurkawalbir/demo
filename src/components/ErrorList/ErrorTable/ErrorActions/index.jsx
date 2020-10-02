@@ -28,6 +28,9 @@ export default function ErrorActions(props) {
   const classes = useStyles();
   const { confirmDialog } = useConfirmDialog();
   const { flowId, resourceId, isResolved, className } = props;
+  const isFlowDisabled = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?.disabled
+  );
   const isRetryInProgress = useSelector(
     state =>
       selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
@@ -118,7 +121,7 @@ export default function ErrorActions(props) {
           variant="outlined"
           color="secondary"
           className={classes.btnActions}
-          disabled={!areSelectedErrorsRetriable || isActionInProgress}
+          disabled={!areSelectedErrorsRetriable || isActionInProgress || isFlowDisabled}
           onClick={handleRetry}>
           Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
         </Button>

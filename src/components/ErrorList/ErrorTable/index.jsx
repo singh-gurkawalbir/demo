@@ -117,6 +117,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const dataFilter = useSelector(
     state => selectors.filter(state, errorType) || defaultFilter
   );
+  const isFlowDisabled = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?.disabled
+  );
   const errorConfig = useMemo(() => ({
     flowId,
     resourceId,
@@ -149,8 +152,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       flowId,
       actionInProgress: isAnyActionInProgress,
       isResolved,
+      isFlowDisabled,
     }),
-    [errorType, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved]
+    [errorType, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved, isFlowDisabled]
   );
   const fetchErrors = useCallback(
     loadMore =>
