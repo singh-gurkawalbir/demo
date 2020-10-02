@@ -9,7 +9,6 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
 import getRoutePath from '../../utils/routePaths';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const contentWrapper = {
   minWidth: 432,
@@ -128,7 +127,7 @@ export default function AlertDialog() {
     selectors.isAuthenticated(state)
   );
 
-  const isUiVersionOld = useSelectorMemo(selectors.mkIsUIVersionOld);
+  const isUiVersionOld = useSelector(selectors.isUIVersionOld);
 
   const isUserAcceptedAccountTransfer = useSelector(state =>
     selectors.isUserAcceptedAccountTransfer(state)

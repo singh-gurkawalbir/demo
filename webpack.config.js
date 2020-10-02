@@ -80,9 +80,6 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
-    new webpack.DefinePlugin({
-      VERSION: JSON.stringify(process.env.RELEASE_VERSION || ''),
-    }),
   ],
   output: {
     publicPath: '/',

@@ -5,12 +5,10 @@ import { Provider } from 'react-redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import LogRocket from 'logrocket';
-import setupLogRocketReact from 'logrocket-react';
 import App from './App';
-import rootReducer, { selectors } from './reducers';
+import rootReducer from './reducers';
 import rootSaga from './sagas';
 import actions from './actions';
-import { getDomain } from './utils/resource';
 
 let store;
 const middleware = [];
@@ -29,7 +27,6 @@ middleware.push(LogRocket.reduxMiddleware({
   stateSanitizer: state => ({
     ...state,
     auth: null,
-    authentication: null,
     data: null,
     session: null,
   }),
@@ -62,51 +59,6 @@ store = createStore(
   rootReducer,
   composeEnhancers(applyMiddleware(...middleware))
 );
-
-// eslint-disable-next-line no-undef
-store.dispatch(actions.app.updateUIVersion(VERSION));
-const isProduction = getDomain() === 'integrator.io';
-const disableTelemetry = selectors.disableTelemetry(store.getState());
-
-if (!isProduction && !disableTelemetry) {
-  // init MUST happen before saga run
-  LogRocket.init('yb95vd/glad', {
-    // eslint-disable-next-line no-undef
-    release: VERSION,
-    console: {
-      isEnabled: {
-        debug: false,
-        log: false,
-      },
-    },
-    dom: {
-    // Yang: this is an overkill
-    // but it is the safest, we need to tag input/text tags with data-public attributes to allow them to be captured
-    // however, it might not be easy to do for components coming from other packages
-      inputSanitizer: true,
-      textSanitizer: true,
-    },
-    network: {
-      requestSanitizer: req => {
-        if (req.url.search(/aptrinsic\.com/) > -1) return null;
-        // Yang: this is likely too broad
-        // we may want to track non-sensitive/error request data later
-        // eslint-disable-next-line no-param-reassign
-        req.body = null;
-
-        return req;
-      },
-      responseSanitizer: response => {
-        // Yang: this is likely too broad
-        // we may want to track non-sensitive/error response data later
-        response.body = null;
-
-        return response;
-      },
-    },
-  });
-  setupLogRocketReact(LogRocket);
-}
 
 sagaMiddleware.run(rootSaga);
 
