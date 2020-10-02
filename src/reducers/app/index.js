@@ -71,6 +71,7 @@ selectors.version = state => state?.version;
 selectors.isUIVersionDifferent = state => state?.initVersion !== state?.version;
 selectors.isUserAcceptedAccountTransfer = state => !!state?.userAcceptedAccountTransfer;
 selectors.isUIVersionOld = state => {
+  if (process?.env?.NODE_ENV) return false;
   const v1 = state.initVersion;
   const v2 = state.version;
 

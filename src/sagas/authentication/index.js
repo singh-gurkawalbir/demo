@@ -234,6 +234,7 @@ export function* auth({ email, password }) {
 
 export function* initializeLogRocket() {
   const version = yield select(selectors.version);
+  const p = yield select(selectors.userProfile);
 
   LogRocket.init('yb95vd/glad', {
     release: version,
@@ -270,6 +271,15 @@ export function* initializeLogRocket() {
     },
   });
   setupLogRocketReact(LogRocket);
+  // identify user with LogRocket
+  if (p?._id) {
+    LogRocket.identify(p._id, {
+      name: p.name,
+      email: p.email,
+      company: p.company,
+      developer: !!p.developer,
+    });
+  }
 }
 
 export function* initializeApp() {
@@ -292,15 +302,6 @@ export function* initializeApp() {
       if (getDomain() !== 'integrator.io' && !p?.disableTelemetry) {
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
-        // identify user with LogRocket
-        if (p?._id) {
-          LogRocket.identify(p._id, {
-            name: p.name,
-            email: p.email,
-            company: p.company,
-            developer: !!p.developer,
-          });
-        }
       }
     } else {
       // existing session is invalid

@@ -227,7 +227,6 @@ export default function ProfileComponent() {
         helpKey: 'myaccount.developer',
         label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
-        helpKey: 'myaccount.developer',
       },
       disableTelemetry: {
         id: 'disableTelemetry',
