@@ -7,6 +7,11 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 export default {
   label: 'Retry',
   icon: RefreshIcon,
+  disabledActionText: ({isFlowDisabled}) => {
+    if (isFlowDisabled) {
+      return 'Enable the flow to retry';
+    }
+  },
   component: function Retry({ flowId, resourceId, rowData, isResolved }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();

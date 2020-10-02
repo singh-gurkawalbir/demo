@@ -1392,6 +1392,8 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  patchGenerateThroughAssistant: value =>
+    action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
   addLookup: ({value, isConditionalLookup}) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
   updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
