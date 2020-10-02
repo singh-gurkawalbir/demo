@@ -6,7 +6,7 @@ import EditRetryData from '../actions/EditRetry';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import ErrorMessage from '../cells/ErrorMessage';
+import OverflowWrapper from '../cells/OverflowWrapper';
 
 export default {
   columns: [
@@ -22,16 +22,16 @@ export default {
     {
       heading: 'Message',
       width: '40%',
-      value: r => <ErrorMessage message={r.message} />,
+      value: r => <OverflowWrapper message={r.message} />,
     },
     {
       heading: 'Code',
-      value: r => r.code,
+      value: r => <OverflowWrapper message={r.code} />,
       width: '15%',
     },
     {
       heading: 'Source',
-      value: r => r.source,
+      value: r => <OverflowWrapper message={r.source} />,
       width: '15%',
     },
     {
