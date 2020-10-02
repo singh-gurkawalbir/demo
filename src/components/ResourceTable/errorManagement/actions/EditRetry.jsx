@@ -7,7 +7,7 @@ export default {
   icon: EditIcon,
   disabledActionText: ({isFlowDisabled}) => {
     if (isFlowDisabled) {
-      return 'Enable the flow to retry';
+      return 'Enable the flow to edit retry data';
     }
   },
   component: function EditRetry({rowData = {}}) {
