@@ -3255,6 +3255,11 @@ selectors.flowDashboardJobs = createSelector(
               : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
           };
 
+          // If parent job is cancelled, show child in progress jobs as cancelling
+          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
+            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
+          }
+
           if (cJob.type === 'import') {
             if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
               additionalChildProps.percentComplete = Math.floor(

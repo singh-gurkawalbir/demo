@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -32,18 +32,25 @@ const useStyles = makeStyles(theme => ({
   introErrorManagement: {
     marginBottom: theme.spacing(2),
   },
+  successMessage: {
+    marginTop: theme.spacing(2),
+  },
 }));
 export default function UpgradeErrorManagement() {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
     const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;
   });
+  const commStatus = useSelector(state =>
+    selectors.commStatusPerPath(state, '/profile', 'PUT')
+  );
 
   const redirectToDashboard = useCallback(() => history.replace(getRoutePath('/')), [history]);
 
@@ -57,7 +64,7 @@ export default function UpgradeErrorManagement() {
             label: 'Yes, upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
-              redirectToDashboard();
+              setUpgradeRequested(true);
             },
           },
           {
@@ -67,15 +74,44 @@ export default function UpgradeErrorManagement() {
         ],
       });
     },
-    [confirmDialog, dispatch, redirectToDashboard],
+    [confirmDialog, dispatch],
   );
 
+  const successMessage = useMemo(() => (
+    <>
+      <div> Our new error management infrastructure gives you access to <a href={`${ERROR_MANAGEMENT_DOC_URL}`} rel="noreferrer" target="_blank"> a lot of great new features</a>, with many more on the way! </div>
+      <div className={classes.successMessage}> This new error management will eventually be rolled out to all accounts, and you&apos;re one of the lucky people who gets to check it out first! </div>
+    </>
+  ), [classes.successMessage]);
+
+  const handleUpgradeSuccess = useCallback(() => {
+    confirmDialog({
+      title: "You've successfully upgraded",
+      message: successMessage,
+      buttons: [
+        {
+          label: 'Let me start managing errors!',
+          onClick: () => {
+            redirectToDashboard();
+          },
+        },
+      ],
+      onDialogClose: redirectToDashboard,
+    });
+  }, [confirmDialog, redirectToDashboard, successMessage]);
+
   useEffect(() => {
-    if (!isMigrationPageAccessible) {
+    if (upgradeRequested && commStatus === 'success') {
+      handleUpgradeSuccess();
+    }
+  }, [commStatus, upgradeRequested, handleUpgradeSuccess]);
+
+  useEffect(() => {
+    if (!isMigrationPageAccessible && !upgradeRequested) {
       // This page is not accessible to EM 2.0 / if not an Account owner.. so redirect him to dashboard page
       redirectToDashboard();
     }
-  }, [isMigrationPageAccessible, redirectToDashboard]);
+  }, [isMigrationPageAccessible, upgradeRequested, redirectToDashboard]);
 
   return (
     <>
@@ -110,10 +146,11 @@ export default function UpgradeErrorManagement() {
             <Button
               variant="outlined"
               color="primary"
+              disabled={upgradeRequested}
               onClick={handleUpgrade}
               data-test="EM2.0_Upgrade"
               >
-              Upgrade
+              {(upgradeRequested && commStatus === 'loading') ? 'Upgrading...' : 'Upgrade'}
             </Button>
             <Button
               variant="text"

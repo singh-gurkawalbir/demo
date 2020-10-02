@@ -6,6 +6,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import startOfDay from 'date-fns/startOfDay';
+import endOfDay from 'date-fns/endOfDay';
 import ArrowPopper from '../ArrowPopper';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import ButtonGroup from '../ButtonGroup';
@@ -142,6 +144,7 @@ export default function DateRangeSelector({
     }
     setInitialValue(selectedRange);
     onSave && onSave(selectedRange);
+
     setAnchorEl(null);
   }, [customPresets, onSave, selectedRange]);
 
@@ -157,7 +160,13 @@ export default function DateRangeSelector({
   }, []);
 
   const handleDateRangeSelection = useCallback(range => {
-    setSelectedRange({ preset: 'custom', startDate: range.startDate, endDate: range.endDate });
+    let { startDate, endDate } = range;
+
+    if (startDate.getTime() === endDate.getTime() && endDate.getTime() === startOfDay(endDate).getTime()) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
+    setSelectedRange({ preset: 'custom', startDate, endDate });
   }, []);
 
   return (
