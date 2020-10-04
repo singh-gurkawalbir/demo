@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Route,
@@ -206,18 +206,15 @@ function FlowList({ integrationId, storeId }) {
     </LoadResources>
   );
 }
-const emptyObject = {};
 
 const SectionTitle = ({integrationId, storeId, title, titleId}) => {
   const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const integrationErrorsPerSection = useSelector(state => {
-    if (!isUserInErrMgtTwoDotZero) return emptyObject;
-
-    return selectors.integrationErrorsPerSection(state, integrationId, storeId);
-  });
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, storeId),
+  shallowEqual);
 
   const errorCount = integrationErrorsPerSection[titleId];
   const errorStatus = useMemo(() => {
