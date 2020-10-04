@@ -25,6 +25,7 @@ import consolidatedActions from '../../../../../components/ResourceFormFactory/A
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import StatusCircle from '../../../../../components/StatusCircle';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,6 +52,10 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
+  },
+  flexContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 export const useActiveTab = () => {
@@ -201,6 +206,44 @@ function FlowList({ integrationId, storeId }) {
     </LoadResources>
   );
 }
+const emptyObject = {};
+
+const SectionTitle = ({integrationId, storeId, title, titleId}) => {
+  const classes = useStyles();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const integrationErrorsPerSection = useSelector(state => {
+    if (!isUserInErrMgtTwoDotZero) return emptyObject;
+
+    return selectors.integrationErrorsPerSection(state, integrationId, storeId);
+  });
+
+  const errorCount = integrationErrorsPerSection[titleId];
+  const errorStatus = useMemo(() => {
+    if (errorCount === 0) {
+      return <StatusCircle size="small" variant="success" />;
+    }
+
+    return (
+      <div>
+        <StatusCircle size="small" variant="error" />
+        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      </div>
+    );
+  }, [errorCount]);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return title;
+  }
+
+  return (
+    <div className={classes.flexContainer}>
+      <div> { title }</div>
+      <div> {errorStatus} </div>
+    </div>
+  );
+};
 
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
@@ -230,7 +273,11 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  {title}
+                  <SectionTitle
+                    title={title}
+                    titleId={titleId}
+                    integrationId={integrationId}
+                    storeId={storeId} />
                 </NavLink>
               </ListItem>
             ))}

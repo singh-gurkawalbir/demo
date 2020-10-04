@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -5154,3 +5155,27 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.integrationErrorsPerSection = createSelector(
+  selectors.integrationAppFlowSections,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => selectors.resourceList(state, { type: 'flows' }).resources,
+  (flowSections, integrationErrors, flowsList) =>
+    // go through all sections and aggregate error counts of all the flows per sections against titleId
+    flowSections.reduce((errorsMap, section) => {
+      const { flows = [], titleId } = section;
+
+      errorsMap[titleId] = flows.reduce((total, flow) => {
+        const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
+
+        // we consider enabled flows to show total count per section
+        if (!isFlowDisabled) {
+          total += (integrationErrors[flow._id] || 0);
+        }
+
+        return total;
+      }, 0);
+
+      return errorsMap;
+    }, {})
+);
