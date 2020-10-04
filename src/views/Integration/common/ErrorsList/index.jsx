@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   button: {
-    color: theme.palette.error.main,
+    color: theme.palette.primary.main,
     width: '100%',
     cursor: 'pointer',
     display: 'block',

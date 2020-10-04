@@ -47,9 +47,20 @@ const useStyles = makeStyles(theme => ({
     },
   },
   status: {
+    position: 'relative',
     '& > * :hover': {
       color: theme.palette.primary.main,
     },
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
+  connectionDownRedDot: {
+    width: theme.spacing(1),
+    height: theme.spacing(1),
+    position: 'absolute',
+    right: theme.spacing(-0.5),
+    top: 0,
   },
 }));
 
@@ -244,7 +255,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           {isConnectionDown && (
           <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
-              <ConnectionDownIcon />
+              <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
             </IconButton>
           </Tooltip>
           )}

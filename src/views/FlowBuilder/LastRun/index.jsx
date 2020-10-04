@@ -5,6 +5,7 @@ import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../utils/constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
+import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
@@ -59,15 +60,21 @@ export default function LastRun({ flowId }) {
 
   const lastRunStatusLabel = useMemo(() => {
     if ([FLOW_RUNNING_STATUS, FLOW_IN_QUEUE_STATUS].includes(lastRunStatus)) {
-      return lastRunStatus;
+      return (
+        <>
+          <Spinner color="primary" size={16} className={classes.icon} />
+          <span>{lastRunStatus}</span>
+        </>
+      );
     }
 
     return (
       <>
+        <RefreshIcon className={classes.icon} />
         Last run: <CeligoTimeAgo date={lastRunStatus} />
       </>
     );
-  }, [lastRunStatus]);
+  }, [lastRunStatus, classes.icon]);
 
   if (!lastRunStatus) return null;
 
@@ -75,7 +82,7 @@ export default function LastRun({ flowId }) {
     <>
       <div className={classes.divider} />
       <span className={classes.flexContainer}>
-        <RefreshIcon className={classes.icon} /> {lastRunStatusLabel}
+        {lastRunStatusLabel}
       </span>
     </>
   );

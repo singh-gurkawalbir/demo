@@ -18,7 +18,6 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
@@ -269,7 +268,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             type="number"
             ticks={ticks}
             allowDuplicatedCategory={false}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis

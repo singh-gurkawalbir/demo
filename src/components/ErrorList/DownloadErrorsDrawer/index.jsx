@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button } from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
+import moment from 'moment';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
@@ -70,8 +71,8 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   const handleDownload = useCallback(
     () => {
       const { value: formValues = {} } = formContext || {};
-      const fromDate = formValues.fromDate && new Date(formValues.fromDate).toISOString();
-      const toDate = formValues.toDate && new Date(formValues.toDate).toISOString();
+      const fromDate = formValues.fromDate && moment(formValues.fromDate).startOf('day').toISOString();
+      const toDate = formValues.toDate && moment(formValues.toDate).endOf('day').toISOString();
 
       if (fromDate && toDate && fromDate > toDate) {
         return enqueueSnackbar({

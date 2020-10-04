@@ -188,13 +188,18 @@ function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
     { flowId, resourceId, isResolved, filters }
   );
   const { path, opts } = requestOptions;
-  const response = yield call(apiCallWithRetry, {
-    path,
-    opts,
-  });
 
-  if (response.signedURL) {
-    yield call(openExternalUrl, { url: response.signedURL });
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts,
+    });
+
+    if (response.signedURL) {
+      yield call(openExternalUrl, { url: response.signedURL });
+    }
+  } catch (e) {
+  //  Handle errors
   }
 }
 

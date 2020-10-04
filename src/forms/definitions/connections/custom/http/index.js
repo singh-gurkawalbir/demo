@@ -188,6 +188,7 @@ import microsoftdynamics365financeandoperation from './microsoftdynamics365finan
 import precisely from './precisely';
 import shipengine from './shipengine';
 import jiraserver from './jiraserver';
+import gainsight from './gainsight';
 
 export default {
   concurexpense,
@@ -379,4 +380,5 @@ export default {
   precisely,
   shipengine,
   jiraserver,
+  gainsight,
 };

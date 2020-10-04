@@ -298,7 +298,7 @@ export default function getRequestOptions(
       const toKey = isResolved ? 'resolvedAt_lte' : 'occurredAt_lte';
 
       if (fromDate && toDate) {
-        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}’`;
+        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
       } else if (fromDate) {
         path += `?${fromKey}=${fromDate}`;
       } else if (toDate) {
