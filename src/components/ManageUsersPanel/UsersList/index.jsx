@@ -6,9 +6,10 @@ import actions from '../../../actions';
 import { USER_ACCESS_LEVELS } from '../../../utils/constants';
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
+import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
 import LoadResources from '../../LoadResources';
 
-export default function UsersList({ integrationId }) {
+export default function UsersList({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const permissions = useSelector(state => selectors.userPermissions(state));
 
@@ -32,7 +33,7 @@ export default function UsersList({ integrationId }) {
   const isAccountOwner =
   permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
-  const actionProps = useMemo(() => ({ integrationId }), [integrationId]);
+  const actionProps = useMemo(() => ({ integrationId, storeId }), [integrationId, storeId]);
 
   return (
     <>
@@ -45,6 +46,7 @@ export default function UsersList({ integrationId }) {
       </LoadResources>
       <InviteUserDrawer integrationId={integrationId} />
       <ManagePermissionsDrawer integrationId={integrationId} />
+      { integrationId && <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} /> }
     </>
   );
 }

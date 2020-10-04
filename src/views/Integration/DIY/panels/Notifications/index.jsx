@@ -46,7 +46,7 @@ export default function NotificationsSection({ integrationId, childId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.notificationResources(state, _integrationId)
+      selectors.integrationNotificationResources(state, integrationId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');

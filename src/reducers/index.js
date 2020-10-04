@@ -2996,7 +2996,8 @@ selectors.subscribedNotifications = (state, userEmail) => {
   return notifications;
 };
 
-selectors.integrationSubscribedNotifications = (state, _integrationId, storeId, userEmail) => {
+selectors.integrationNotificationResources = (state, _integrationId, options = {}) => {
+  const { storeId, userEmail } = options;
   const diyFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: {
@@ -3049,22 +3050,6 @@ selectors.integrationSubscribedNotifications = (state, _integrationId, storeId, 
     flowValues,
   };
 };
-
-// selectors.subscribedIntegrationResources = (state, integrationId, storeId, userId) => {
-//   console.log(integrationId, storeId, userId);
-//   // If userId passed return for that user else fetch current account owner
-//   // given integrationId : return { connections, flows, subscribedConnections, subscribedFlows }
-// };
-
-// selectors.isFlowSubscribed = (state, flowId) => {
-//   // given flowId - returns true/false whether flow is subscribed or not
-// };
-
-// selectors.subscribedFlowConnections = (state, flowId) => {
-//   // given flowId - returns connections subscribed under this flow
-//   // this is for account owner
-// };
-
 /** End of Notification selectors */
 selectors.auditLogs = (
   state,

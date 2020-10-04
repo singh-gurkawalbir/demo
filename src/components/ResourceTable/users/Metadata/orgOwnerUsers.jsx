@@ -12,7 +12,7 @@ import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
 export default {
-  columns: () => {
+  columns: (r, { integrationId }) => {
     const columns = [
       { heading: 'Name', value: r => r.sharedWithUser.name },
       { heading: 'Email', value: r => r.sharedWithUser.email },
@@ -31,11 +31,11 @@ export default {
         value: (r, { integrationId}) =>
           <EnableUser user={r} integrationId={integrationId} />,
       },
-      {
+      ...(integrationId ? [{
         heading: 'Notifications',
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
-      },
+      }] : []),
     ];
 
     return columns;

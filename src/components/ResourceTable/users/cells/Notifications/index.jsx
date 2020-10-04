@@ -1,11 +1,25 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useRouteMatch, Link } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
 
-export default function Notifications({ user }) {
-  const hasNotifications = useSelector(state =>
-    selectors.integrationSubscribedNotifications(state, user.sharedWithUser.email)
-  );
+export default function Notifications({ user, integrationId, storeId }) {
+  const match = useRouteMatch();
+  const userEmail = user.sharedWithUser.email;
+  const hasNotifications = useSelector(state => {
+    if (!integrationId) {
+      // account level
+      return !!selectors.subscribedNotifications(state, userEmail)?.length;
+    }
+    // integration level notifications
+    const { flowValues = [], connectionValues = [] } = selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail});
 
-  return <div> { hasNotifications ? 'Yes' : 'No'} </div>;
+    return flowValues.length || connectionValues.length;
+  });
+
+  if (hasNotifications) {
+    return <Link to={`${match.url}/${userEmail}/notifications`}>Yes</Link>;
+  }
+
+  return 'No';
 }
