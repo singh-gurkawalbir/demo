@@ -3,7 +3,7 @@ import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
 import jsonUtil from './json';
 import { isFileAdaptor, isBlobTypeResource } from './resource';
-import { extractFieldsFromCsv } from './file';
+import { extractMappingFieldsFromCsv } from './mapping';
 import {
   getFormattedNSSalesOrderMetadataData,
   getFormattedNSCustomerSampleData,
@@ -89,10 +89,10 @@ export function processSampleData(sampleData, resource) {
     if (fileType) {
       switch (fileType) {
         case 'csv':
-          return extractFieldsFromCsv(sampleData, csv);
+          return extractMappingFieldsFromCsv(sampleData, csv);
         case 'xlsx':
           // for xlsx files sample data is stored in csv format
-          return extractFieldsFromCsv(sampleData, xlsx);
+          return extractMappingFieldsFromCsv(sampleData, xlsx);
         case 'json':
         case 'filedefinition':
           return sampleData;
