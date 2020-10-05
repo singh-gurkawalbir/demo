@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
@@ -154,14 +153,6 @@ function ExportsPreviewPanel(props) {
     setPanelType(panelType);
   }, []);
   const isDrawerOpened = useSelector(state => selectors.drawerOpened(state));
-
-  useTraceUpdate({
-    availablePreviewStages,
-    resourceSampleData,
-    previewStageDataList,
-  });
-
-  useTraceUpdate(props);
 
   return (
     <div

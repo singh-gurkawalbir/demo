@@ -18,20 +18,6 @@ import {
   isAS2Resource,
 } from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
-
-const count = 105996;
-let i = 0;
-
-const elements = [];
-
-while (i < count) {
-  elements.push({
-    id: 'TEuZS4',
-    email: 'test_csv489@create.com',
-  });
-
-  i += 1;
-}
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -120,7 +106,7 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
       });
     }
 
-    yield put(actions.sampleData.received(resourceId, {p: elements}));
+    yield put(actions.sampleData.received(resourceId, previewData));
   } catch (e) {
     // Handling Errors with status code between 400 and 500
     if (e.status === 403 || e.status === 401) {

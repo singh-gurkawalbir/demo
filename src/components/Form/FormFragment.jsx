@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { makeStyles} from '@material-ui/core';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import useTraceUpdate from 'use-trace-update';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import fields from '../DynaForm/fields';
@@ -42,12 +41,9 @@ const Renderer = props => {
   const DynaField = fields[type] || dummyFn;
   const allFieldProps = useMemo(() => ({...props, ...fieldState, resourceContext: context}), [context, fieldState, props]);
 
-  useTraceUpdate(allFieldProps);
   // get the element early on and check if its returning null
   // we had to host this earlier or else fieldState visibility is impacting it by changing the order of hooks
   const ele = DynaField(allFieldProps);
-
-  useTraceUpdate({id, ele});
 
   return (
     // if its returning null wrap it within divs else return null

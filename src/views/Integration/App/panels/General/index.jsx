@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
-import useTraceUpdate from 'use-trace-update';
 import { selectors } from '../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -48,7 +47,6 @@ export default function GeneralPanel({ integrationId, storeId }) {
     [generalSectionMetadata, integrationId]
   );
 
-  useTraceUpdate({generalSectionMetadata});
   const formState = useSelector(
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual
