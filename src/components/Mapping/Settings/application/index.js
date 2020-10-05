@@ -160,7 +160,7 @@ export default {
       settings.useAsAnInitializeValue = formVal.useAsAnInitializeValue;
     }
 
-    if (formVal.immutable) {
+    if ('immutable' in formVal) {
       settings.immutable = formVal.immutable;
     }
 
