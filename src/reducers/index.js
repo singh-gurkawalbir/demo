@@ -1189,7 +1189,7 @@ selectors.integrationAppResourceList = (
 
   const flows = [];
   const flowIds = [];
-  const connections = [];
+  const connections = integrationConnections;
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
@@ -1202,15 +1202,12 @@ selectors.integrationAppResourceList = (
     const flow = selectors.resource(state, 'flows', fid) || {};
 
     flows.push({_id: flow._id, name: flow.name});
-    connections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {
-    connections: integrationConnections.filter(c =>
-      connections.includes(c._id)
-    ),
+    connections,
     flows,
     exports,
     imports,
