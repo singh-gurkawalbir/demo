@@ -26,7 +26,7 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
+export const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   if (wrapped) {
     return (
       getJSONPathArrayWithSpecialCharactersWrapped(

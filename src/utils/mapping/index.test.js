@@ -1,6 +1,6 @@
 /* global describe, test,  expect */
 import each from 'jest-each';
-import util from '.';
+import util, {checkExtractPathFoundInSampledata, unwrapTextForSpecialChars} from '.';
 
 describe('isEqual', () => {
   const testCases = [
@@ -364,7 +364,7 @@ describe('isEqual', () => {
     }
   );
 });
-describe('Mapping utils', () => {
+describe('Field-list mapping to UI mapping utils', () => {
   test('should flatten IA Netsuite Import Mapping', () => {
     const inputObj = {
       importResource: {
@@ -615,6 +615,129 @@ describe('Mapping utils', () => {
         extract: 'ShippingState',
         internalId: false,
         lookupName: 'shipping_state_lookup',
+      },
+    ];
+
+    expect(util.getMappingFromResource(inputObj)).toEqual(formattedMapping);
+  });
+
+  test('should flatten Netsuite Import Mapping in case of grouped flow sample data', () => {
+    const inputObj = {
+      importResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        distributed: true,
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'account',
+          mapping: {
+            fields: [
+              {
+                generate: 'category1099misc',
+                hardCodedValue: '-170',
+                internalId: true,
+              },
+              {
+                generate: 'c',
+                extract: "['test test']",
+                internalId: false,
+              },
+              {
+                generate: 'celigo_initializeValues',
+                hardCodedValue: 'c',
+              },
+            ],
+            lists: [
+              {
+                generate: 'a',
+                fields: [
+                  {
+                    generate: 'a1',
+                    extract: "0.['test test']",
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a2',
+                    extract: "0.['test test']",
+                    discardIfEmpty: true,
+                    immutable: true,
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a3',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+              {
+                generate: 'b',
+                fields: [
+                  {
+                    generate: 'b1',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      isFieldMapping: false,
+      isGroupedSampleData: true,
+      netsuiteRecordType: 'account',
+      options: {
+        recordType: 'account',
+      },
+      exportResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const formattedMapping = [
+      {
+        generate: 'category1099misc.internalid',
+        hardCodedValue: '-170',
+        internalId: true,
+        useAsAnInitializeValue: false,
+      },
+      {
+        generate: 'c',
+        extract: 'test test',
+        internalId: false,
+        useAsAnInitializeValue: true,
+      },
+      {
+        generate: 'a[*].a1',
+        extract: 'test test',
+        internalId: false,
+        useFirstRow: true,
+      },
+      {
+        generate: 'a[*].a2',
+        extract: 'test test',
+        discardIfEmpty: true,
+        immutable: true,
+        internalId: false,
+        useFirstRow: true,
+      },
+      {
+        generate: 'a[*].a3',
+        extract: 'test test',
+        internalId: false,
+      },
+      {
+        generate: 'b[*].b1',
+        extract: 'test test',
+        internalId: false,
       },
     ];
 
@@ -1565,5 +1688,1353 @@ describe('Mapping utils', () => {
     ];
 
     expect(util.getMappingFromResource(inputObj)).toEqual(formattedMapping);
+  });
+
+  test('should flatten Netsuite Import Mapping in case of grouped flow sample data', () => {
+    const inputObj = {
+      importResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        distributed: true,
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'account',
+          mapping: {
+            fields: [
+              {
+                generate: 'category1099misc',
+                hardCodedValue: '-170',
+                internalId: true,
+              },
+              {
+                generate: 'c',
+                extract: "['test test']",
+                internalId: false,
+              },
+              {
+                generate: 'celigo_initializeValues',
+                hardCodedValue: 'c',
+              },
+            ],
+            lists: [
+              {
+                generate: 'a',
+                fields: [
+                  {
+                    generate: 'a1',
+                    extract: "0.['test test']",
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a2',
+                    extract: "0.['test test']",
+                    discardIfEmpty: true,
+                    immutable: true,
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a3',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+              {
+                generate: 'b',
+                fields: [
+                  {
+                    generate: 'b1',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      isFieldMapping: false,
+      isGroupedSampleData: true,
+      netsuiteRecordType: 'account',
+      options: {
+        recordType: 'account',
+      },
+      exportResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const formattedMapping = [
+      {
+        generate: 'category1099misc.internalid',
+        hardCodedValue: '-170',
+        internalId: true,
+        useAsAnInitializeValue: false,
+      },
+      {
+        generate: 'c',
+        extract: 'test test',
+        internalId: false,
+        useAsAnInitializeValue: true,
+      },
+      {
+        generate: 'a[*].a1',
+        extract: 'test test',
+        internalId: false,
+        useFirstRow: true,
+      },
+      {
+        generate: 'a[*].a2',
+        extract: 'test test',
+        discardIfEmpty: true,
+        immutable: true,
+        internalId: false,
+        useFirstRow: true,
+      },
+      {
+        generate: 'a[*].a3',
+        extract: 'test test',
+        internalId: false,
+      },
+      {
+        generate: 'b[*].b1',
+        extract: 'test test',
+        internalId: false,
+      },
+    ];
+
+    expect(util.getMappingFromResource(inputObj)).toEqual(formattedMapping);
+  });
+
+  test('should flatten Netsuite Import Mapping in case of non-grouped flow sample data', () => {
+    const inputObj = {
+      importResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        distributed: true,
+        netsuite_da: {
+          operation: 'add',
+          recordType: 'account',
+          mapping: {
+            fields: [
+              {
+                generate: 'category1099misc',
+                hardCodedValue: '-170',
+                internalId: true,
+              },
+              {
+                generate: 'c',
+                extract: "['test test']",
+                internalId: false,
+              },
+              {
+                generate: 'celigo_initializeValues',
+                hardCodedValue: 'c',
+              },
+            ],
+            lists: [
+              {
+                generate: 'a',
+                fields: [
+                  {
+                    generate: 'a1',
+                    extract: "0.['test test']",
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a2',
+                    extract: "0.['test test']",
+                    discardIfEmpty: true,
+                    immutable: true,
+                    internalId: false,
+                  },
+                  {
+                    generate: 'a3',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+              {
+                generate: 'b',
+                fields: [
+                  {
+                    generate: 'b1',
+                    extract: "*.['test test']",
+                    internalId: false,
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      isFieldMapping: false,
+      isGroupedSampleData: false,
+      netsuiteRecordType: 'account',
+      options: {
+        recordType: 'account',
+      },
+      exportResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const formattedMapping = [
+      {
+        generate: 'category1099misc.internalid',
+        hardCodedValue: '-170',
+        internalId: true,
+        useAsAnInitializeValue: false,
+      },
+      {
+        generate: 'c',
+        extract: 'test test',
+        internalId: false,
+        useAsAnInitializeValue: true,
+      },
+      {
+        generate: 'a[*].a1',
+        extract: 'test test',
+        internalId: false,
+      },
+      {
+        generate: 'a[*].a2',
+        extract: 'test test',
+        discardIfEmpty: true,
+        immutable: true,
+        internalId: false,
+      },
+      {
+        generate: 'a[*].a3',
+        extract: 'test test',
+        internalId: false,
+      },
+      {
+        generate: 'b[*].b1',
+        extract: 'test test',
+        internalId: false,
+      },
+    ];
+
+    expect(util.getMappingFromResource(inputObj)).toEqual(formattedMapping);
+  });
+});
+describe('UI mapping to field-list mapping utils', () => {
+  test('should convert UI Netsuite Mapping to field-list mapping in case of grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'category1099misc.internalid',
+          hardCodedValue: '-170',
+          internalId: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'c',
+          extract: 'test test',
+          internalId: false,
+          useAsAnInitializeValue: true,
+        },
+        {
+          generate: 'a[*].a1',
+          extract: 'test test',
+          internalId: false,
+          useFirstRow: true,
+        },
+        {
+          generate: 'a[*].a2',
+          extract: 'test test',
+          discardIfEmpty: true,
+          immutable: true,
+          internalId: false,
+          useFirstRow: true,
+        },
+        {
+          generate: 'a[*].a3',
+          extract: 'test test',
+          internalId: false,
+          useFirstRow: true,
+        },
+        {
+          generate: 'b[*].b',
+          extract: 'test test',
+          internalId: false,
+          useFirstRow: true,
+        },
+      ],
+      generateFields: [
+        {
+          id: 'category1099misc.internalid',
+          name: '1099-MISC Category (InternalId)',
+          type: 'select',
+        },
+        {
+          id: 'category1099misc',
+          name: '1099-MISC Category (Name)',
+          type: 'select',
+        },
+      ],
+      isGroupedSampleData: true,
+      importResource: {
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      netsuiteRecordType: 'account',
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          generate: 'category1099misc',
+          hardCodedValue: '-170',
+          internalId: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'c',
+          extract: "['test test']",
+          internalId: false,
+        },
+        {
+          generate: 'celigo_initializeValues',
+          hardCodedValue: 'c',
+        },
+      ],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              generate: 'a1',
+              extract: "0.['test test']",
+              internalId: false,
+            },
+            {
+              generate: 'a2',
+              extract: "0.['test test']",
+              discardIfEmpty: true,
+              immutable: true,
+              internalId: false,
+            },
+            {
+              generate: 'a3',
+              extract: "0.['test test']",
+              internalId: false,
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              generate: 'b',
+              extract: "0.['test test']",
+              internalId: false,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI Netsuite Mapping to field-list mapping in case of non-grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'category1099misc.internalid',
+          hardCodedValue: '-170',
+          internalId: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'c',
+          extract: 'test test',
+          internalId: false,
+          useAsAnInitializeValue: true,
+        },
+        {
+          generate: 'a[*].a1',
+          extract: 'test test',
+          internalId: false,
+        },
+        {
+          generate: 'a[*].a2',
+          extract: 'test test',
+          discardIfEmpty: true,
+          immutable: true,
+          internalId: false,
+        },
+        {
+          generate: 'a[*].a3',
+          extract: 'test test',
+          internalId: false,
+        },
+        {
+          generate: 'b[*].b',
+          extract: 'test test',
+          internalId: false,
+        },
+      ],
+      generateFields: [
+        {
+          id: 'category1099misc.internalid',
+          name: '1099-MISC Category (InternalId)',
+          type: 'select',
+        },
+        {
+          id: 'category1099misc',
+          name: '1099-MISC Category (Name)',
+          type: 'select',
+        },
+      ],
+      isGroupedSampleData: false,
+      importResource: {
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      netsuiteRecordType: 'account',
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          generate: 'category1099misc',
+          hardCodedValue: '-170',
+          internalId: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'c',
+          extract: "['test test']",
+          internalId: false,
+        },
+        {
+          generate: 'celigo_initializeValues',
+          hardCodedValue: 'c',
+        },
+      ],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              generate: 'a1',
+              extract: "['test test']",
+              internalId: false,
+            },
+            {
+              generate: 'a2',
+              extract: "['test test']",
+              discardIfEmpty: true,
+              immutable: true,
+              internalId: false,
+            },
+            {
+              generate: 'a3',
+              extract: "['test test']",
+              internalId: false,
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              generate: 'b',
+              extract: "['test test']",
+              internalId: false,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI IA Netsuite Mapping to field-list mapping', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'custentity_celigo_sfio_sf_id',
+          extract: 'Id',
+          isRequired: true,
+          isNotEditable: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'companyname',
+          extract: 'Name',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'parent.internalid',
+          extract: 'ParentId',
+          internalId: true,
+          lookupName: 'customer_parent_lookup',
+          immutable: false,
+          discardIfEmpty: false,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'url',
+          extract: '{{#if Website}}{{#contains Website "http"}}{{Website}}{{else}}http://{{Website}}{{/contains}}{{/if}}',
+          internalId: false,
+          immutable: false,
+          discardIfEmpty: false,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'custentity_celigo_sfnsio_dummymapping',
+          extract: 'Website',
+          internalId: false,
+          immutable: false,
+          discardIfEmpty: false,
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: '_billing_addressbook[*].defaultbilling',
+          hardCodedValue: 'true',
+        },
+        {
+          generate: '_billing_addressbook[*].state',
+          extract: 'BillingState',
+          internalId: false,
+          lookupName: 'billing_state_lookup',
+        },
+      ],
+      generateFields: [
+        {
+          id: 'custentity_celigo_sfio_sf_id',
+          name: 'Salesforce Id (IO) (2)',
+          type: 'text',
+        },
+        {
+          id: 'companyname',
+          name: 'Company Name',
+          type: 'text',
+        },
+        {
+          id: 'parent.internalid',
+          name: 'Child Of (InternalId)',
+          type: 'select',
+        },
+        {
+          id: '_billing_addressbook[*].state',
+          name: 'Billing State',
+          type: 'text',
+          sublist: '_billing_addressbook',
+        },
+      ],
+      isGroupedSampleData: false,
+      importResource: {
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+      netsuiteRecordType: 'customer',
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          generate: 'custentity_celigo_sfio_sf_id',
+          extract: 'Id',
+          isRequired: true,
+          isNotEditable: true,
+          useAsAnInitializeValue: false,
+          internalId: false,
+        },
+        {
+          generate: 'companyname',
+          extract: 'Name',
+          isRequired: true,
+          useAsAnInitializeValue: false,
+          internalId: false,
+        },
+        {
+          generate: 'parent',
+          extract: 'ParentId',
+          internalId: true,
+          lookupName: 'customer_parent_lookup',
+          immutable: false,
+          discardIfEmpty: false,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'url',
+          extract: '{{#if Website}}{{#contains Website "http"}}{{Website}}{{else}}http://{{Website}}{{/contains}}{{/if}}',
+          internalId: false,
+          immutable: false,
+          discardIfEmpty: false,
+          useAsAnInitializeValue: false,
+        },
+        {
+          generate: 'custentity_celigo_sfnsio_dummymapping',
+          extract: 'Website',
+          internalId: false,
+          immutable: false,
+          discardIfEmpty: false,
+          isRequired: true,
+          useAsAnInitializeValue: false,
+        },
+      ],
+      lists: [
+        {
+          generate: '_billing_addressbook',
+          fields: [
+            {
+              generate: 'defaultbilling',
+              hardCodedValue: 'true',
+              internalId: false,
+            },
+            {
+              generate: 'state',
+              extract: 'BillingState',
+              internalId: false,
+              lookupName: 'billing_state_lookup',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI IA Salesforce Mapping to field-list mapping', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'id',
+          generate: 'celigo_sfnsio__NetSuite_Id__c',
+          isRequired: true,
+          isNotEditable: true,
+        },
+        {
+          extract: 'trandate',
+          extractDateFormat: 'MM/DD/YYYY',
+          extractDateTimezone: 'America/Los_Angeles',
+          generate: 'EffectiveDate',
+        },
+        {
+          generate: 'Status',
+          hardCodedValue: 'Draft',
+        },
+        {
+          extract: 'entity.internalid',
+          generate: 'AccountId',
+          lookupName: 'account_lookup',
+          isRequired: true,
+        },
+        {
+          extract: 'item[*].orderItemId',
+          generate: 'OrderItems[*].Id',
+        },
+      ],
+      generateFields: [
+        {
+          id: 'Id',
+          name: 'Order ID',
+          type: 'id',
+          options: [
+          ],
+        },
+        {
+          id: 'EffectiveDate',
+          name: 'Order Start Date',
+          type: 'date',
+          options: [
+
+          ],
+        },
+        {
+          id: 'Status',
+          name: 'Status',
+          type: 'picklist',
+          options: [
+            {
+              active: true,
+              defaultValue: false,
+              label: 'Draft',
+              validFor: null,
+              value: 'Draft',
+            },
+            {
+              active: true,
+              defaultValue: false,
+              label: 'Activated',
+              validFor: null,
+              value: 'Activated',
+            },
+          ],
+        },
+        {
+          id: 'OrderItems[*].Id',
+          name: 'OrderItems: Order Product ID',
+          type: 'id',
+          options: [],
+        },
+      ],
+      isGroupedSampleData: false,
+      importResource: {
+        _integrationId: '5ee0d6d79dd4b36c17c41927',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        salesforce: {
+          operation: 'addupdate',
+          sObjectType: 'Order',
+          api: 'compositerecord',
+        },
+        adaptorType: 'SalesforceImport',
+      },
+      exportResource: {
+        _connectionId: '5ee0d6d73c11e4201f431566',
+        _integrationId: '5ee0d6d79dd4b36c17c41927',
+        _connectorId: '5b61ae4aeb538642c26bdbe6',
+        type: 'distributed',
+        distributed: {
+        },
+        netsuite: {
+          type: 'distributed',
+          skipGrouping: false,
+          restlet: {
+            criteria: [
+            ],
+          },
+          distributed: {
+            recordType: 'salesorder',
+            sublists: [
+              'item',
+            ],
+            skipExportFieldId: 'custbody_celigo_sfio_skip_export_to_sf',
+          },
+        },
+
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          extract: 'id',
+          generate: 'celigo_sfnsio__NetSuite_Id__c',
+          isRequired: true,
+          isNotEditable: true,
+        },
+        {
+          extract: 'trandate',
+          extractDateFormat: 'MM/DD/YYYY',
+          extractDateTimezone: 'America/Los_Angeles',
+          generate: 'EffectiveDate',
+        },
+        {
+          generate: 'Status',
+          hardCodedValue: 'Draft',
+        },
+        {
+          extract: 'entity.internalid',
+          generate: 'AccountId',
+          lookupName: 'account_lookup',
+          isRequired: true,
+        },
+      ],
+      lists: [
+        {
+          generate: 'OrderItems',
+          fields: [
+            {
+              extract: 'item[*].orderItemId',
+              generate: 'Id',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI FTP Mapping to field-list mapping in case of grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'Base Price',
+          generate: 'test test',
+        },
+        {
+          extract: 'Description',
+          generate: 'a[*].a1',
+        },
+        {
+          generate: 'a[*].a2',
+          extract: 'Type',
+          useFirstRow: true,
+        },
+        {
+          generate: 'b[*].b1',
+          extract: 'Display Name',
+          useFirstRow: false,
+          discardIfEmpty: true,
+        },
+        {
+          generate: 'test test2',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          generate: 'test test2',
+          useFirstRow: true,
+          hardCodedValue: null,
+        },
+      ],
+      lists: [
+        {
+          generate: '',
+          fields: [
+            {
+              extract: '*.[Base Price]',
+              generate: 'test test',
+            },
+          ],
+        },
+        {
+          generate: 'a',
+          fields: [
+            {
+              extract: '*.Description',
+              generate: 'a1',
+            },
+            {
+              generate: 'a2',
+              extract: 'Type',
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              generate: 'b1',
+              extract: '*.[Display Name]',
+              discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI FTP Mapping to field-list mapping in case of non-grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          generate: 'test test2',
+          hardCodedValue: null,
+        },
+        {
+          extract: 'Base Price',
+          generate: 'test test',
+        },
+        {
+          extract: 'Description',
+          generate: 'a[*].a1',
+        },
+        {
+          extract: 'Type',
+          generate: 'a[*].a2',
+        },
+        {
+          extract: 'Display Name',
+          generate: 'b[*].b1',
+          discardIfEmpty: true,
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: false,
+      importResource: {
+        _connectionId: '5f354102b2b91626b0e94d00',
+        distributed: false,
+        file: {
+          type: 'csv',
+          csv: {},
+        },
+        ftp: {},
+        adaptorType: 'FTPImport',
+      },
+      exportResource: {
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          generate: 'test test2',
+          hardCodedValue: null,
+        },
+        {
+          extract: '[Base Price]',
+          generate: 'test test',
+        },
+      ],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              extract: 'Description',
+              generate: 'a1',
+            },
+            {
+              extract: 'Type',
+              generate: 'a2',
+            },
+          ],
+        },
+        {
+          generate: 'b',
+          fields: [
+            {
+              extract: '[Display Name]',
+              generate: 'b1',
+              discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI IA Mapping to field-list mapping', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: '{{#if [First Name]}}{{[First Name]}}{{else}}{{[Company Name]}}{{/if}}',
+          generate: 'customer.first_name',
+          isRequired: true,
+        },
+        {
+          extract: 'Last Name',
+          generate: 'customer.last_name',
+          isRequired: true,
+        },
+        {
+          extract: 'addresses[*].[Addressee(Address)]',
+          generate: 'customer.addresses[*].name',
+        },
+      ],
+      generateFields: [
+        {
+          id: 'customer.first_name',
+          type: 'string',
+          name: 'customer.first_name',
+        },
+        {
+          id: 'customer.last_name',
+          type: 'string',
+          name: 'customer.last_name',
+        },
+        {
+          id: 'customer.addresses[*].name',
+          type: 'string',
+          name: 'customer.addresses[*].name',
+        },
+      ],
+      isGroupedSampleData: false,
+      importResource: {
+        _integrationId: '5d91ca994a9f8b5e241b9e7b',
+        _connectorId: '5656f5e3bebf89c03f5dd77e',
+        externalId: 'shopify_customer_import_adaptor',
+        distributed: false,
+        http: {},
+        rest: {},
+        adaptorType: 'RESTImport',
+      },
+      exportResource: {
+        _connectionId: '5d91ca9a4a9f8b5e241b9e7e',
+        _integrationId: '5d91ca994a9f8b5e241b9e7b',
+        _connectorId: '5656f5e3bebf89c03f5dd77e',
+        externalId: 'shopify_netsuite_customer_export_adaptor',
+        type: 'once',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          statsOnly: false,
+          restlet: {
+            recordType: 'customer',
+            searchId: '152957',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          extract: '{{#if [First Name]}}{{[First Name]}}{{else}}{{[Company Name]}}{{/if}}',
+          generate: 'customer.first_name',
+          isRequired: true,
+        },
+        {
+          extract: '[Last Name]',
+          generate: 'customer.last_name',
+          isRequired: true,
+        },
+      ],
+      lists: [
+        {
+          generate: 'customer.addresses',
+          fields: [
+            {
+              extract: 'addresses[*].[Addressee(Address)]',
+              generate: 'name',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI Assistant Mapping to field-list mapping in case of grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'Base Price',
+          generate: 'test',
+        },
+        {
+          generate: 'a[*].a1',
+          extract: 'test test',
+        },
+        {
+          generate: 'a[*].a2',
+          useFirstRow: true,
+          discardIfEmpty: true,
+          immutable: true,
+          extract: 'test test',
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: true,
+      importResource: {
+        _connectionId: '5c89f66f26a9676c5d71b7b6',
+        distributed: false,
+        apiIdentifier: 'i32e506616',
+        assistant: 'zendesk',
+        http: {},
+        rest: {},
+        adaptorType: 'RESTImport',
+        assistantMetadata: {
+          resource: 'apps',
+          version: 'v2',
+          operation: 'create_app',
+          lookups: {
+
+          },
+        },
+      },
+      exportResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: false,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          extract: '[Base Price]',
+          generate: 'test',
+        },
+      ],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              generate: 'a1',
+              extract: '*.[test test]',
+            },
+            {
+              generate: 'a2',
+              discardIfEmpty: true,
+              immutable: true,
+              extract: '[test test]',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+
+  test('should convert UI Assistant Mapping to field-list mapping in case of non-grouped flow sample data', () => {
+    const inputObj = {
+      mappings: [
+        {
+          extract: 'Base Price',
+          generate: 'test',
+        },
+        {
+          extract: 'test test',
+          generate: 'a[*].a1',
+        },
+        {
+          extract: 'test test',
+          generate: 'a[*].a2',
+          immutable: true,
+          discardIfEmpty: true,
+        },
+      ],
+      generateFields: [],
+      isGroupedSampleData: false,
+      importResource: {
+        _connectionId: '5c89f66f26a9676c5d71b7b6',
+        distributed: false,
+        apiIdentifier: 'i32e506616',
+        assistant: 'zendesk',
+        http: {},
+        rest: {},
+        adaptorType: 'RESTImport',
+        assistantMetadata: {
+          resource: 'apps',
+          version: 'v2',
+          operation: 'create_app',
+        },
+      },
+      exportResource: {
+        _connectionId: '5f6afce137d65b2db44b7040',
+        netsuite: {
+          type: 'restlet',
+          skipGrouping: true,
+          restlet: {
+            recordType: 'item',
+            searchId: '12',
+          },
+        },
+        adaptorType: 'NetSuiteExport',
+      },
+    };
+    const fieldListMapping = {
+      fields: [
+        {
+          extract: '[Base Price]',
+          generate: 'test',
+        },
+      ],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              extract: '[test test]',
+              generate: 'a1',
+            },
+            {
+              extract: '[test test]',
+              generate: 'a2',
+              immutable: true,
+              discardIfEmpty: true,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(util.generateFieldsAndListMappingForApp(inputObj)).toEqual(fieldListMapping);
+  });
+});
+
+describe('mapping utils', () => {
+  test('checkExtractPathFoundInSampledata util', () => {
+    expect(checkExtractPathFoundInSampledata('abc.a', {
+      abc: { a: 1},
+      b: 'c',
+    }, false)).toEqual(true);
+    expect(checkExtractPathFoundInSampledata('abc[*].a', {
+      abc: [{ a: 1}],
+      b: 'c',
+    }, false)).toEqual(true);
+    expect(checkExtractPathFoundInSampledata('abc[*].b', {
+      abc: [{ a: 1}],
+      b: 'c',
+    }, false)).toEqual(false);
+  });
+  test('isCsvOrXlsxResource util', () => {
+    expect(util.isCsvOrXlsxResource({
+      adaptorType: 'FTPImport',
+      file: {
+        type: 'csv',
+      },
+    })).toEqual(true);
+    expect(util.isCsvOrXlsxResource({
+      adaptorType: 'S3Import',
+      file: {
+        type: 'xlsx',
+      },
+    })).toEqual(true);
+    expect(util.isCsvOrXlsxResource({
+      adaptorType: 'S3Import',
+    })).toEqual(false);
+  });
+  // TODO
+  test('isMappingEqual util', () => {
+  });
+  test('unwrapTextForSpecialChars util', () => {
+    const testcases = [
+      {
+        extract: 'abc',
+        flowSampleData: undefined,
+        result: 'abc',
+      },
+      {
+        extract: '[abc]',
+        flowSampleData: undefined,
+        result: 'abc',
+      },
+      {
+        extract: '[[abc]]',
+        flowSampleData: undefined,
+        result: '[abc]',
+      },
+      {
+        extract: 'abc[*].ab',
+        flowSampleData: {
+          abc: [{ab: 1}],
+        },
+        result: '[abc]',
+      },
+
+      // {
+      //   extract: {},
+      //   flowSampleData: [],
+      // },
+      // {
+      //   extract: {},
+      //   flowSampleData: [],
+      // },
+      // {
+      //   extract: {},
+      //   flowSampleData: [],
+      // },
+    ];
+
+    testcases.forEach(({extract, flowSampleData, result}) => {
+      expect(unwrapTextForSpecialChars(extract, flowSampleData)).toEqual(result);
+    });
+  });
+  test('extractMappingFieldsFromCsv util', () => {
+
+  });
+  test('wrapTextForSpecialChars util', () => {
+
+  });
+  test('setCategoryMappingData util', () => {
+
+  });
+  test('getFieldMappingType util', () => {
+
+  });
+  test('getHardCodedActionValue util', () => {
+
+  });
+  test('getDefaultLookupActionValue util', () => {
+
+  });
+  test('getDefaultActionValue util', () => {
+
+  });
+  test('addVariationMap util', () => {
+
+  });
+
+  test('addCategory util', () => {
+
+  });
+  test('addVariation util', () => {
+
+  });
+  test('getApplicationName util', () => {
+
+  });
+  test('getSubRecordRecordTypeAndJsonPath util', () => {
+
+  });
+  test('generateSubrecordMappingAndLookup util', () => {
+
+  });
+  test('appendModifiedSubRecordToMapping util', () => {
+
+  });
+  test('getFormattedGenerateData util', () => {
+
+  });
+  test('validateMappings util', () => {
+
+  });
+  test('getExtractPaths util', () => {
+
+  });
+  test('shiftSubRecordLast util', () => {
+
   });
 });
