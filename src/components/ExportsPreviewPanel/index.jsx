@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import useTraceUpdate from 'use-trace-update';
-import actions from '../../../../actions';
-import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { selectors } from '../../../../reducers';
-import { isNewId } from '../../../../utils/resource';
+import actions from '../../actions';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../reducers';
+import { isNewId } from '../../utils/resource';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -115,7 +115,7 @@ function PreviewInfo({
   />
   );
 }
-function DynaExportPanel(props) {
+function ExportsPreviewPanel(props) {
   const { resourceId, formKey, resourceType, flowId } = props;
   const classes = useStyles();
 
@@ -192,4 +192,4 @@ function DynaExportPanel(props) {
   );
 }
 
-export default DynaExportPanel;
+export default ExportsPreviewPanel;

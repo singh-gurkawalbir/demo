@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import PanelLoader from '../../../../PanelLoader';
+import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
-import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
-import { selectors } from '../../../../../reducers';
-import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { getPreviewBodyTemplateType } from '../../../utils/exportPanel';
+import { selectors } from '../../../reducers';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 export default function PreviewBody(props) {
   const {

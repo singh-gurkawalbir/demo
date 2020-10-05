@@ -375,119 +375,108 @@ export default {
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
     },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
     formView: { fieldId: 'formView' },
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
   },
 
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView', 'semiassistantoperationselect'] },
+      // {
+      //   collapsed: true,
+      //   label: 'Assistant Helper',
+      //   fields: ['semiassistantoperationselect'],
+      // },
       {
-        type: 'collapse',
-        containers: [
-          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView', 'semiassistantoperationselect'] },
-          // {
-          //   collapsed: true,
-          //   label: 'Assistant Helper',
-          //   fields: ['semiassistantoperationselect'],
-          // },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
-              return 'What would you like to export?';
-            },
+          return 'What would you like to export?';
+        },
+        fields: [
+          'http.method',
+          'http.blobMethod',
+          'http.headers',
+          'http.requestMediaType',
+          'http.relativeURI',
+          'http.body',
+          'http.response.blobFormat',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: [
+          'type',
+          'delta.dateFormat',
+          'delta.lagOffset',
+          'once.booleanField',
+          'http.once.relativeURI',
+          'http.once.method',
+          'http.once.body',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Does this API support paging?',
+        fields: [
+          'http.paging.method',
+          'http.paging.skip',
+          'http.paging.page',
+          'http.paging.token',
+          'http.paging.path',
+          'http.paging.relativeURI',
+          'http.paging.linkHeaderRelation',
+          'http.paging.pathAfterFirstRequest',
+          'http.paging.body',
+          'http.paging.resourcePath',
+          'http.paging.maxPagePath',
+          'http.paging.maxCountPath',
+          'http.paging.lastPageStatusCode',
+          'http.paging.lastPagePath',
+          'http.paging.lastPageValues',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        containers: [
+          {
             fields: [
-              'http.method',
-              'http.blobMethod',
-              'http.headers',
-              'http.requestMediaType',
-              'http.relativeURI',
-              'http.body',
-              'http.response.blobFormat',
+              'http.response.resourcePath',
+              'http.response.errorPath',
+              'http.response.successPath',
+              'http.response.successValues',
+              'http.response.failPath',
+              'http.response.failValues',
+              'http.successMediaType',
             ],
           },
           {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: [
-              'type',
-              'delta.dateFormat',
-              'delta.lagOffset',
-              'once.booleanField',
-              'http.once.relativeURI',
-              'http.once.method',
-              'http.once.body',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Does this API support paging?',
-            fields: [
-              'http.paging.method',
-              'http.paging.skip',
-              'http.paging.page',
-              'http.paging.token',
-              'http.paging.path',
-              'http.paging.relativeURI',
-              'http.paging.linkHeaderRelation',
-              'http.paging.pathAfterFirstRequest',
-              'http.paging.body',
-              'http.paging.resourcePath',
-              'http.paging.maxPagePath',
-              'http.paging.maxCountPath',
-              'http.paging.lastPageStatusCode',
-              'http.paging.lastPagePath',
-              'http.paging.lastPageValues',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Non-standard API response patterns',
+            type: 'indent',
             containers: [
-              {
-                fields: [
-                  'http.response.resourcePath',
-                  'http.response.errorPath',
-                  'http.response.successPath',
-                  'http.response.successValues',
-                  'http.response.failPath',
-                  'http.response.failValues',
-                  'http.successMediaType',
-                ],
-              },
-              {
-                type: 'indent',
-                containers: [
-                  {fields: [
-                    'file.csv',
-                  ]},
-                ],
-              },
-              {
-                fields: [
-                  'http.errorMediaType',
-                ],
-              },
+              {fields: [
+                'file.csv',
+              ]},
             ],
           },
           {
-            collapsed: true,
-            label: 'Advanced',
             fields: [
-              'advancedSettings',
-              'configureAsyncHelper',
-              'http._asyncHelperId',
+              'http.errorMediaType',
             ],
           },
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'advancedSettings',
+          'configureAsyncHelper',
+          'http._asyncHelperId',
+        ],
       },
     ],
   },

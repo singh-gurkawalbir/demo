@@ -9,6 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
 import Close from '../../../icons/CloseIcon';
@@ -38,8 +39,15 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
+  baseForm: {
+    display: 'flex',
+  },
   resourceFormWrapper: {
+    flexDirection: 'row',
     padding: theme.spacing(3, 3, 0, 3),
+  },
+  exportsPanel: {
+    flexDirection: 'row',
   },
   appLogo: {
     paddingRight: theme.spacing(2),
@@ -258,20 +266,35 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          <ResourceFormWithStatusPanel
-            formKey={newId}
-            className={classes.resourceFormWrapper}
-            variant={variant}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            flowId={flowId}
-            integrationId={integrationId}
-            isFlowBuilderView={!!flowId}
-            onSubmitComplete={handleSubmitComplete}
-            showNotificationToaster={showNotificationToaster}
-            onCloseNotificationToaster={onCloseNotificationToaster}
+          <div
+            className={clsx({
+              [classes.baseForm]: resourceType === 'exports',
+            })}
+          >
+            <ResourceFormWithStatusPanel
+              formKey={newId}
+              className={classes.resourceFormWrapper}
+              variant={variant}
+              isNew={isNew}
+              resourceType={resourceType}
+              resourceId={id}
+              flowId={flowId}
+              integrationId={integrationId}
+              isFlowBuilderView={!!flowId}
+              onSubmitComplete={handleSubmitComplete}
+              showNotificationToaster={showNotificationToaster}
+              onCloseNotificationToaster={onCloseNotificationToaster}
           />
+            {resourceType === 'exports' && (
+              <ExportsPreviewPanel
+                className={classes.exportsPanel}
+                resourceId={id}
+                formKey={newId}
+                resourceType={resourceType}
+                flowId={flowId}
+          />
+            )}
+          </div>
           <ResourceFormActionsPanel
             formKey={newId}
             isNew={isNew}

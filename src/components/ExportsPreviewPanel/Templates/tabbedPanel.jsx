@@ -4,8 +4,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipBoardPanel from './clipBoardPanel';
-import { getBodyHeaderFieldsForPreviewData } from '../../../../../utils/exportPanel';
-import JsonContent from '../../../../JsonContent';
+import { getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
+import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
