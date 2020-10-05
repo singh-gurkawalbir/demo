@@ -1,6 +1,6 @@
 /* global describe, test,  expect */
 import each from 'jest-each';
-import util, {checkExtractPathFoundInSampledata, unwrapTextForSpecialChars} from '.';
+import util, {checkExtractPathFoundInSampledata, unwrapTextForSpecialChars, wrapTextForSpecialChars} from '.';
 
 describe('isEqual', () => {
   const testCases = [
@@ -2940,7 +2940,7 @@ describe('mapping utils', () => {
   test('isMappingEqual util', () => {
   });
   test('unwrapTextForSpecialChars util', () => {
-    const testcases = [
+    const testCases = [
       {
         extract: 'abc',
         flowSampleData: undefined,
@@ -2961,60 +2961,136 @@ describe('mapping utils', () => {
         flowSampleData: {
           abc: [{ab: 1}],
         },
-        result: '[abc]',
+        result: 'abc[*].ab',
       },
-
-      // {
-      //   extract: {},
-      //   flowSampleData: [],
-      // },
-      // {
-      //   extract: {},
-      //   flowSampleData: [],
-      // },
-      // {
-      //   extract: {},
-      //   flowSampleData: [],
-      // },
     ];
 
-    testcases.forEach(({extract, flowSampleData, result}) => {
+    testCases.forEach(({extract, flowSampleData, result}) => {
       expect(unwrapTextForSpecialChars(extract, flowSampleData)).toEqual(result);
     });
   });
+  // TODO
   test('extractMappingFieldsFromCsv util', () => {
 
   });
   test('wrapTextForSpecialChars util', () => {
+    const testCases = [
+      {
+        extract: 'abc',
+        flowSampleData: undefined,
+        result: 'abc',
+      },
+      {
+        extract: 'abc asdf',
+        flowSampleData: undefined,
+        result: '[abc asdf]',
+      },
+      {
+        extract: '[[abc]]',
+        flowSampleData: undefined,
+        result: '[[[abc\\]\\]]',
+      },
+      {
+        extract: 'abc[*].ab',
+        flowSampleData: {
+          abc: [{ab: 1}],
+        },
+        result: 'abc[*].ab',
+      },
+      {
+        extract: 'abc-abv',
+        flowSampleData: {},
+        result: '[abc-abv]',
+      },
+    ];
 
+    testCases.forEach(({extract, flowSampleData, result}) => {
+      expect(wrapTextForSpecialChars(extract, flowSampleData)).toEqual(result);
+    });
   });
+  // TODO (Sravan)
   test('setCategoryMappingData util', () => {
 
   });
   test('getFieldMappingType util', () => {
+    const testCases = [
+      {input: {lookupName: 'abc'}, output: 'lookup'},
+      {input: {hardCodedValue: 'abc'}, output: 'hardCoded'},
+      {input: {extract: 'abc'}, output: 'standard'},
+      {input: {extract: 'abc{{sum 1 2}}'}, output: 'multifield'},
+    ];
 
+    testCases.forEach(({input, output}) => {
+      expect(util.getFieldMappingType(input)).toEqual(output);
+    });
   });
   test('getHardCodedActionValue util', () => {
+    const testCases = [
+      {input: {hardCodedValue: 'abc'}, output: 'default'},
+      {input: {hardCodedValue: 'test test'}, output: 'default'},
+      {input: {hardCodedValue: ''}, output: 'useEmptyString'},
+      {input: {hardCodedValue: null}, output: 'useNull'},
+    ];
 
+    testCases.forEach(({input, output}) => {
+      expect(util.getHardCodedActionValue(input)).toEqual(output);
+    });
   });
   test('getDefaultLookupActionValue util', () => {
+    const testCases = [
+      {input: {allowFailures: false}, output: 'disallowFailure'},
+      {input: {allowFailures: false, default: ''}, output: 'disallowFailure'},
+      {input: {allowFailures: true, useDefaultOnMultipleMatches: true}, output: 'useDefaultOnMultipleMatches'},
+      {input: {allowFailures: true, default: 'asd'}, output: 'default'},
+      {input: {allowFailures: true, default: ''}, output: 'useEmptyString'},
+      {input: {allowFailures: true, default: null}, output: 'useNull'},
+      {input: {allowFailures: true, default: 'null'}, output: 'default'},
+    ];
 
+    testCases.forEach(({input, output}) => {
+      expect(util.getDefaultLookupActionValue(input)).toEqual(output);
+    });
   });
   test('getDefaultActionValue util', () => {
+    const testCases = [
+      {input: {default: ''}, output: 'useEmptyString'},
+      {input: {default: null}, output: 'useNull'},
+      {input: {default: 'null'}, output: 'default'},
+      {input: {default: 'test'}, output: 'default'},
+      {input: {}, output: undefined},
+    ];
 
+    testCases.forEach(({input, output}) => {
+      expect(util.getDefaultActionValue(input)).toEqual(output);
+    });
   });
+  // TODO (Sravan)
   test('addVariationMap util', () => {
 
   });
-
+  // TODO (Sravan)
   test('addCategory util', () => {
 
   });
+  // TODO (Sravan)
   test('addVariation util', () => {
 
   });
   test('getApplicationName util', () => {
+    const testCases = [
+      {resource: {assistant: 'trinet'}, connection: {}, appName: 'TriNet'},
+      {resource: {adaptorType: 'FTPImport'}, connection: {}, appName: 'FTP'},
+      {resource: {adaptorType: 'S3Import'}, connection: {}, appName: 'Amazon S3'},
+      {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mysql'}}, appName: 'MySQL'},
+      {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mssql'}}, appName: 'Microsoft SQL'},
+      {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
+      {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
 
+    ];
+
+    testCases.forEach(({resource, connection, appName}) => {
+      expect(util.getApplicationName(resource, connection)).toEqual(appName);
+    });
   });
   test('getSubRecordRecordTypeAndJsonPath util', () => {
 
