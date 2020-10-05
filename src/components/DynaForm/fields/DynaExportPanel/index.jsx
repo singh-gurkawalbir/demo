@@ -1,10 +1,11 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { deepClone } from 'fast-json-patch';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import useTraceUpdate from 'use-trace-update';
 import actions from '../../../../actions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
 import useFormContext from '../../../Form/FormContext';
@@ -47,6 +48,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const resourceSampleData = {data: 1, status: 'received', error: 1};
+
 function DynaExportPanel(props) {
   const { resourceId, formKey, resourceType, flowId } = props;
   const formContext = useFormContext(formKey);
@@ -75,25 +78,26 @@ function DynaExportPanel(props) {
   // set the panel type with the default panel
   const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
-  const previewStageDataList = useSelector(state => {
-    const stageData = [];
+  const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-    availablePreviewStages.length &&
-      availablePreviewStages.forEach(({ value }) => {
-        stageData[value] = deepClone(
-          selectors.getResourceSampleDataWithStatus(state, resourceId, value)
-        );
-      });
+  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
-    return stageData;
-  }, shallowEqual);
+  console.log('see ', formKey, previewStageDataList);
   // get the default raw stage sampleData to track the status of the request
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
-  const resourceSampleData = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
-  shallowEqual
-  );
+  // const resourceSampleData = useSelector(state =>
+  //   ({...selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')}),
+
+  // (a, b) => {
+  //   console.log('check a b ', a, b);
+
+  //   console.log('result ', shallowEqual(a, b));
+
+  //   return shallowEqual(a, b);
+  // }
+
+  // );
   const fetchExportPreviewData = useCallback(() => {
     // Just a fail safe condition not to request for sample data incase of not exports
     if (resourceType !== 'exports') return;
@@ -136,6 +140,14 @@ function DynaExportPanel(props) {
     setPanelType(panelType);
   }, []);
   const isDrawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  useTraceUpdate({
+    availablePreviewStages,
+    resourceSampleData,
+    previewStageDataList,
+  });
+
+  useTraceUpdate(props);
 
   return (
     <div

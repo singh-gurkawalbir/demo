@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { makeStyles} from '@material-ui/core';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import useTraceUpdate from 'use-trace-update';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import fields from '../DynaForm/fields';
@@ -36,13 +37,17 @@ const Renderer = props => {
   );
 
   const { resourceId, resourceType } = formParentContext || {};
-  const context = { resourceId, resourceType };
+  const context = useMemo(() => ({ resourceId, resourceType }), [resourceId, resourceType]);
 
   const DynaField = fields[type] || dummyFn;
+  const allProps = useMemo(() => ({...props, ...fieldState, resourceContext: context}), [context, fieldState, props]);
 
+  useTraceUpdate(allProps);
   // get the element early on and check if its returning null
   // we had to host this earlier or else fieldState visibility is impacting it by changing the order of hooks
-  const ele = DynaField({...props, ...fieldState, resourceContext: context});
+  const ele = DynaField(allProps);
+
+  useTraceUpdate({id, ele});
 
   return (
     // if its returning null wrap it within divs else return null
@@ -110,7 +115,6 @@ export default function FormFragment({ defaultFields, formKey }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, registerField]);
 */
-  // console.log('see rerender form ', formParentContext);
 
   return (
     <>

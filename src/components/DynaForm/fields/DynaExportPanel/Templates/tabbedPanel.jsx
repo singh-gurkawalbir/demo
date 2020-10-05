@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import clsx from 'clsx';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -36,9 +36,9 @@ export default function TabbedPanel(props) {
   const classes = useStyles();
   const [tabValue, setTabValue] = useState('body');
 
-  function handleTabChange(event, newValue) {
+  const handleTabChange = useCallback((event, newValue) => {
     setTabValue(newValue);
-  }
+  }, []);
 
   const tabContent = useMemo(() => {
     const { body, headers, others } = getBodyHeaderFieldsForPreviewData(
