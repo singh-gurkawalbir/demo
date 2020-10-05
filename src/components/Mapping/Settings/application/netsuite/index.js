@@ -136,7 +136,7 @@ export default {
           defaultValue: value.useAsAnInitializeValue || false,
           helpKey: 'mapping.useAsInitializeValue',
           // TODO check when this field is hidden
-          label: 'Use this Field for NetSuite record initialization',
+          label: 'Use this field for NetSuite record initialization',
         },
         fieldMappingType: {
           id: 'fieldMappingType',
