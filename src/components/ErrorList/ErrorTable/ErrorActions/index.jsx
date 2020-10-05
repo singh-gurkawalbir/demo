@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { useRouteMatch, useHistory } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
@@ -27,10 +26,11 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorActions(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const history = useHistory();
-  const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
-  const { flowId, resourceId, isResolved } = props;
+  const { flowId, resourceId, isResolved, className } = props;
+  const isFlowDisabled = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?.disabled
+  );
   const isRetryInProgress = useSelector(
     state =>
       selectors.errorActionsContext(state, { flowId, resourceId, actionType: 'retry' })
@@ -103,13 +103,10 @@ export default function ErrorActions(props) {
     });
   }, [isResolved, retryErrors, confirmDialog]);
 
-  const handleDownload = useCallback(() => {
-    history.push(`${match.url}/download/${isResolved ? 'resolved' : 'open'}`);
-  }, [match.url, history, isResolved]);
-
   return (
-    <ButtonGroup>
-      {!isResolved && (
+    <div className={className}>
+      <ButtonGroup>
+        {!isResolved && (
         <Button
           variant="outlined"
           color="secondary"
@@ -118,25 +115,18 @@ export default function ErrorActions(props) {
           onClick={handleResolve}>
           Resolve{isResolveInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
         </Button>
-      )}
+        )}
 
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={classes.btnActions}
-        disabled={!areSelectedErrorsRetriable || isActionInProgress}
-        onClick={handleRetry}>
-        Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
-      </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          className={classes.btnActions}
+          disabled={!areSelectedErrorsRetriable || isActionInProgress || isFlowDisabled}
+          onClick={handleRetry}>
+          Retry{isRetryInProgress ? <Spinner size={16} className={classes.spinnerIcon} /> : null}
+        </Button>
+      </ButtonGroup>
+    </div>
 
-      {/* Download Open/Resolved errors */}
-      <Button
-        variant="outlined"
-        color="secondary"
-        className={classes.btnActions}
-        onClick={handleDownload}>
-        Download
-      </Button>
-    </ButtonGroup>
   );
 }
