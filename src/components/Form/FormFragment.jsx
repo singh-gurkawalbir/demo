@@ -40,12 +40,12 @@ const Renderer = props => {
   const context = useMemo(() => ({ resourceId, resourceType }), [resourceId, resourceType]);
 
   const DynaField = fields[type] || dummyFn;
-  const allProps = useMemo(() => ({...props, ...fieldState, resourceContext: context}), [context, fieldState, props]);
+  const allFieldProps = useMemo(() => ({...props, ...fieldState, resourceContext: context}), [context, fieldState, props]);
 
-  useTraceUpdate(allProps);
+  useTraceUpdate(allFieldProps);
   // get the element early on and check if its returning null
   // we had to host this earlier or else fieldState visibility is impacting it by changing the order of hooks
-  const ele = DynaField(allProps);
+  const ele = DynaField(allFieldProps);
 
   useTraceUpdate({id, ele});
 

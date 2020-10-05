@@ -8,7 +8,6 @@ import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { isNewId } from '../../../../utils/resource';
-import useFormContext from '../../../Form/FormContext';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -48,17 +47,78 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const resourceSampleData = {data: 1, status: 'received', error: 1};
+// const resourceSampleData = {data: 1, status: 'received', error: 1};
 
-function DynaExportPanel(props) {
-  const { resourceId, formKey, resourceType, flowId } = props;
-  const formContext = useFormContext(formKey);
-  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
-  const classes = useStyles();
+function PreviewInfo({
+  flowId, resourceId, formKey, resourceType,
+  resourceSampleData,
+  previewStageDataList,
+  panelType,
+  isPreviewDisabled,
+}) {
+  const value = useSelector(
+    state => selectors.formState(state, formKey)?.value,
+    shallowEqual
+  );
+
   const dispatch = useDispatch();
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
   );
+  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
+
+  const fetchExportPreviewData = useCallback(() => {
+    // Just a fail safe condition not to request for sample data incase of not exports
+    if (resourceType !== 'exports') return;
+
+    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
+    if (!flowId || isPageGeneratorExport) {
+      dispatch(
+        actions.sampleData.request(resourceId, resourceType, value)
+      );
+    } else {
+      dispatch(
+        actions.sampleData.requestLookupPreview(
+          resourceId,
+          flowId,
+          value
+        )
+      );
+    }
+  }, [
+    isPageGeneratorExport,
+    dispatch,
+    resourceId,
+    resourceType,
+    value,
+    flowId,
+  ]);
+
+  useEffect(() => {
+    // Fetches preview data incase of initial load of an edit export mode
+    // Not fetched for online connections
+    // TODO @Raghu: should we make a offline preview call though connection is offline ?
+    // Needs a refactor to preview saga for that
+    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
+      setIsPreviewDataFetched(true);
+      fetchExportPreviewData();
+    }
+  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
+
+  return (
+    <Panels.PreviewInfo
+      fetchExportPreviewData={fetchExportPreviewData}
+      resourceSampleData={resourceSampleData}
+      previewStageDataList={previewStageDataList}
+      panelType={panelType}
+      disabled={isPreviewDisabled}
+  />
+  );
+}
+function DynaExportPanel(props) {
+  const { resourceId, formKey, resourceType, flowId } = props;
+  const classes = useStyles();
+
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
@@ -82,59 +142,13 @@ function DynaExportPanel(props) {
 
   const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
-  console.log('see ', formKey, previewStageDataList);
   // get the default raw stage sampleData to track the status of the request
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
-  // const resourceSampleData = useSelector(state =>
-  //   ({...selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw')}),
-
-  // (a, b) => {
-  //   console.log('check a b ', a, b);
-
-  //   console.log('result ', shallowEqual(a, b));
-
-  //   return shallowEqual(a, b);
-  // }
-
-  // );
-  const fetchExportPreviewData = useCallback(() => {
-    // Just a fail safe condition not to request for sample data incase of not exports
-    if (resourceType !== 'exports') return;
-
-    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    if (!flowId || isPageGeneratorExport) {
-      dispatch(
-        actions.sampleData.request(resourceId, resourceType, formContext.value)
-      );
-    } else {
-      dispatch(
-        actions.sampleData.requestLookupPreview(
-          resourceId,
-          flowId,
-          formContext.value
-        )
-      );
-    }
-  }, [
-    isPageGeneratorExport,
-    dispatch,
-    resourceId,
-    resourceType,
-    formContext.value,
-    flowId,
-  ]);
-
-  useEffect(() => {
-    // Fetches preview data incase of initial load of an edit export mode
-    // Not fetched for online connections
-    // TODO @Raghu: should we make a offline preview call though connection is offline ?
-    // Needs a refactor to preview saga for that
-    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-      setIsPreviewDataFetched(true);
-      fetchExportPreviewData();
-    }
-  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
+  const resourceSampleData = useSelector(state =>
+    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
+  shallowEqual
+  );
 
   const handlePanelViewChange = useCallback(panelType => {
     setPanelType(panelType);
@@ -157,12 +171,12 @@ function DynaExportPanel(props) {
       <Typography className={classes.previewDataHeading}>
         Preview data
       </Typography>
-      <Panels.PreviewInfo
-        fetchExportPreviewData={fetchExportPreviewData}
+      <PreviewInfo
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
         panelType={panelType}
-        disabled={isPreviewDisabled}
+        isPreviewDisabled={isPreviewDisabled}
+        flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
       />
       <Panels.PreviewBody
         resourceSampleData={resourceSampleData}

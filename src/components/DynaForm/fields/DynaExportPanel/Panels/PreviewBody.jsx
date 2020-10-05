@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
 import PanelLoader from '../../../../PanelLoader';
 import Templates from '../Templates';
 import { getPreviewBodyTemplateType } from '../../../../../utils/exportPanel';
