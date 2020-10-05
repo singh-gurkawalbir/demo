@@ -1,6 +1,11 @@
 /* global describe, test,  expect */
 import each from 'jest-each';
-import util, {checkExtractPathFoundInSampledata, unwrapTextForSpecialChars, wrapTextForSpecialChars} from '.';
+import util, {
+  checkExtractPathFoundInSampledata,
+  unwrapTextForSpecialChars,
+  wrapTextForSpecialChars,
+  isMappingEqual,
+} from '.';
 
 describe('isEqual', () => {
   const testCases = [
@@ -2936,9 +2941,6 @@ describe('mapping utils', () => {
       adaptorType: 'S3Import',
     })).toEqual(false);
   });
-  // TODO
-  test('isMappingEqual util', () => {
-  });
   test('unwrapTextForSpecialChars util', () => {
     const testCases = [
       {
@@ -2968,10 +2970,6 @@ describe('mapping utils', () => {
     testCases.forEach(({extract, flowSampleData, result}) => {
       expect(unwrapTextForSpecialChars(extract, flowSampleData)).toEqual(result);
     });
-  });
-  // TODO
-  test('extractMappingFieldsFromCsv util', () => {
-
   });
   test('wrapTextForSpecialChars util', () => {
     const testCases = [
@@ -3064,18 +3062,6 @@ describe('mapping utils', () => {
       expect(util.getDefaultActionValue(input)).toEqual(output);
     });
   });
-  // TODO (Sravan)
-  test('addVariationMap util', () => {
-
-  });
-  // TODO (Sravan)
-  test('addCategory util', () => {
-
-  });
-  // TODO (Sravan)
-  test('addVariation util', () => {
-
-  });
   test('getApplicationName util', () => {
     const testCases = [
       {resource: {assistant: 'trinet'}, connection: {}, appName: 'TriNet'},
@@ -3093,24 +3079,265 @@ describe('mapping utils', () => {
     });
   });
   test('getSubRecordRecordTypeAndJsonPath util', () => {
+    const resource = {
+      distributed: true,
+      netsuite_da: {
+        operation: 'add',
+        recordType: 'salesorder',
+        mapping: {
+          lists: [
+            {
+              generate: 'item',
+              fields: [
+                {
+                  generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    recordType: 'inventorydetail',
+                    jsonPath: '$',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      adaptorType: 'NetSuiteDistributedImport',
+    };
+    const subRecordMappingId = 'item[*].celigo_inventorydetail';
 
-  });
-  test('generateSubrecordMappingAndLookup util', () => {
-
-  });
-  test('appendModifiedSubRecordToMapping util', () => {
-
-  });
-  test('getFormattedGenerateData util', () => {
-
+    expect(util.getSubRecordRecordTypeAndJsonPath(resource, subRecordMappingId)).toEqual({
+      recordType: 'inventorydetail',
+      jsonPath: '$',
+    });
   });
   test('validateMappings util', () => {
+    const testCases = [
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'a', generate: 'b'},
+        ],
+        lookups: [],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'a', generate: 'a'},
+        ],
+        lookups: [],
+        result: {
+          isSuccess: false,
+          errMessage: 'You have duplicate mappings for the field(s): a',
+        },
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'a'},
+        ],
+        lookups: [],
+        result: {
+          isSuccess: false,
+          errMessage: 'One or more generate fields missing',
+        },
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {generate: 'b'},
+        ],
+        lookups: [],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract Fields missing for field(s): b',
+        },
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {generate: 'b', lookupName: 'lookup1'},
+        ],
+        lookups: [{name: 'lookup1'}],
+        result: {
+          isSuccess: true,
+        },
+      },
+      {
+        mappings: [
+          {extract: 'a', generate: 'a'},
+          {generate: 'b', lookupName: 'lookup1'},
+        ],
+        lookups: [{name: 'lookup1', map: {a: 'b'}}],
+        result: {
+          isSuccess: false,
+          errMessage: 'Extract Fields missing for field(s): b',
+        },
+      },
+    ];
 
+    testCases.forEach(({mappings, lookups, result}) => {
+      expect(util.validateMappings(mappings, lookups)).toEqual(result);
+    });
   });
   test('getExtractPaths util', () => {
+    const testCases = [
+      {
+        fields: [{
+          id: 'test',
+          test2: {
+            a: 1,
+            b: 2,
+          },
+        }],
+        options: { jsonPath: '$'},
+        result: [
+          { id: 'id', type: 'string' },
+          { id: 'test2.a', type: 'number' },
+          { id: 'test2.b', type: 'number' },
+        ],
+      },
+      {
+        fields: [{
+          id: 'test',
+          test2: {
+            a: 1,
+            b: 2,
+          },
+        }],
+        options: { jsonPath: 'a'},
+        result: [],
+      },
+      {
+        fields: [{
+          id: 'test',
+          test2: [{
+            a: 1,
+            b: 2,
+          }],
+        }],
+        options: { jsonPath: 'test2'},
+        result: [
+          { id: 'a', type: 'number' },
+          { id: 'b', type: 'number' },
+        ],
+      },
+    ];
 
+    testCases.forEach(({fields, options, result}) => {
+      expect(util.getExtractPaths(fields, options)).toEqual(result);
+    });
   });
   test('shiftSubRecordLast util', () => {
+    const input = {
+      fields: [],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              generate: 'x',
+              subRecordMapping: {},
+            },
+            {
+              generate: 'x',
+              extract: 'y',
+            },
 
+          ],
+        },
+      ],
+    };
+    const output = {
+      fields: [],
+      lists: [
+        {
+          generate: 'a',
+          fields: [
+            {
+              generate: 'x',
+              extract: 'y',
+            },
+            {
+              generate: 'x',
+              subRecordMapping: {},
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(JSON.stringify(util.shiftSubRecordLast(input))).toEqual(JSON.stringify(output));
+  });
+  test('isMappingEqual util', () => {
+    const testCases = [
+      {
+        mapping1: [{extract: 'a', generate: 'a'}],
+        mapping2: [{extract: 'a', generate: 'a'}],
+        result: true,
+      },
+      {
+        mapping1: [{extract: 'a', generate: 'a'}],
+        mapping2: [{extract: 'a', generate: 'b'}],
+        result: false,
+      },
+      {
+        mapping1: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'b', generate: 'b'},
+        ],
+        mapping2: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'b', generate: 'b', lookupName: 'a'},
+        ],
+        result: false,
+      },
+      {
+        mapping1: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'b', generate: 'b'},
+        ],
+        mapping2: [
+          {extract: 'a', generate: 'a', key: 'k1', isRequired: true, isNotEditable: true},
+          {extract: 'b', generate: 'b', key: 'k2', isRequired: true, isNotEditable: true},
+        ],
+        result: true,
+      },
+      {
+        mapping1: [
+          {extract: 'a', generate: 'a'},
+          {extract: 'b', generate: 'b'},
+        ],
+        mapping2: [
+          {extract: 'a', generate: 'a', anyOtherKey: 'a'},
+          {extract: 'b', generate: 'b'},
+        ],
+        result: false,
+      },
+    ];
+
+    testCases.forEach(({mapping1, mapping2, result}) => {
+      expect(isMappingEqual(mapping1, mapping2)).toEqual(result);
+    });
+  });
+  // TODO after release branch merge to master
+  test('extractMappingFieldsFromCsv util', () => {
+  });
+  // TODO
+  test('generateSubrecordMappingAndLookup util', () => {
+  });
+  // TODO
+  test('appendModifiedSubRecordToMapping util', () => {
+  });
+  test('getFormattedGenerateData util', () => {
+  });
+  // TODO (Sravan)
+  test('addVariationMap util', () => {
+  });
+  // TODO (Sravan)
+  test('addCategory util', () => {
+  });
+  // TODO (Sravan)
+  test('addVariation util', () => {
   });
 });
