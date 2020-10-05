@@ -109,7 +109,7 @@ const metadata = {
           return null;
         }
 
-        return resourceCategory(importDoc, r.isLookup);
+        return resourceCategory(importDoc, r.isLookup, !r.isLookup);
       },
     },
   ],

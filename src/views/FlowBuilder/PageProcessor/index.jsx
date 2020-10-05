@@ -72,6 +72,7 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
+  // TODO: move this logic to util function and use "resourceCategory" function
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (

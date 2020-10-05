@@ -349,9 +349,7 @@ export function isRealTimeOrDistributedResource(
   return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
 }
 
-export function resourceCategory(resource = {}, isLookup) {
-  const isImport = /^i/.test(resource.apiIdentifier);
-
+export function resourceCategory(resource = {}, isLookup, isImport) {
   // eslint-disable-next-line no-nested-ternary
   let blockType = isImport ? 'Import' : isLookup ? 'Lookup' : 'Export';
 
