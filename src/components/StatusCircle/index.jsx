@@ -33,12 +33,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function StatusCircle({ variant, size = 'large' }) {
+function StatusCircle({ variant, size = 'large', className }) {
   const classes = useStyles();
 
   return (
     <span
-      className={clsx(classes[size], classes[variant], classes.root)}
+      className={clsx(classes[size], classes[variant], classes.root, className)}
     />
   );
 }

@@ -50,7 +50,7 @@ export default (state = {}, action) => {
         };
         break;
       case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD:
-        draft.mapping.lastModifiedRowKey = key;
+        draft.mapping.lastModifiedRowKey = key || 'new';
         break;
       case actionTypes.MAPPING.DELETE: {
         const mappingToDelete = draft.mapping.mappings.find(m => m.key === key);
@@ -210,7 +210,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:
-        draft.mapping.isNSAssistantFormLoaded = value;
+        if (draft.mapping) { draft.mapping.isNSAssistantFormLoaded = value; }
         break;
       case actionTypes.MAPPING.UPDATE_LIST:
         if (draft.mapping) {
