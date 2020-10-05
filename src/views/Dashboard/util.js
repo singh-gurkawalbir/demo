@@ -29,7 +29,9 @@ export function sortTiles(tiles = [], tilesOrder = []) {
 }
 
 export function isTileStatusConnectionDown(tile) {
-  return tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
+  // offlineConnections does not exist for suitescript tiles
+  // This util is used for IO tiles
+  return !!tile.offlineConnections?.length;
 }
 
 export function tileStatus(tile) {

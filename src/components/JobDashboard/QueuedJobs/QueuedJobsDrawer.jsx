@@ -217,6 +217,7 @@ export default function QueuedJobsDrawer() {
         width="full"
         actions={action}
         variant="permanent"
+        hideBackButton
         onClose={handleClose}
         path={paths}>
         <QueuedJobs connectionId={connectionId} />

@@ -58,6 +58,13 @@ export default function LineGraphDrawer({ integrationId }) {
       resourceList.resources.filter(flow => flow._integrationId === integrationId && !flow.disabled).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
+  const validResources = useMemo(() => {
+    if (selectedResources && selectedResources.length) {
+      return selectedResources.filter(sr => flowResources.find(r => r._id === sr));
+    }
+
+    return selectedResources;
+  }, [flowResources, selectedResources]);
   const handleRefreshClick = useCallback(() => {
     setRefresh(new Date().getTime());
   }, []);
@@ -102,7 +109,7 @@ export default function LineGraphDrawer({ integrationId }) {
       </div>
       <FlowCharts
         integrationId={integrationId}
-        selectedResources={selectedResources}
+        selectedResources={validResources}
         range={range}
         refresh={refresh}
         className={classes.scheduleContainer}

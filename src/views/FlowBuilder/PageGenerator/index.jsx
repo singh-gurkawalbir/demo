@@ -58,7 +58,6 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   onMove,
-  onErrors,
   openErrorCount,
   ...pg
 }) => {
@@ -353,7 +352,6 @@ const PageGenerator = ({
         integrationId={integrationId}
         name={blockName}
         onDelete={!isDataLoader && onDelete(blockName)}
-        onErrors={onErrors}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}

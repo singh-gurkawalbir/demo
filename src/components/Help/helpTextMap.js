@@ -79,14 +79,14 @@ export default {
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
-  'connection.integrator.region':
+  'integratorio.connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
-  'connection.integrator.token':
+  'integratorio.connection.http.auth.token.token':
     'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   'recharge.connection.http.auth.token.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
-  'bconnection.http.bamboohrSubdomain':
-    'Please enter your company name here which you configured while signing up for a new BambooHR account.',
+  'bamboohr.connection.http.bamboohrSubdomain':
+    'Enter the unique portion of the bamboohr.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.bamboohr.com, then enter personnel for the subdomain.',
   'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
   'connection.http.oktaSubdomain':
     'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
@@ -197,7 +197,8 @@ export default {
   'anaplan.connection.http.auth.basic.username':
     'The username of your Anaplan account.',
   'anaplan.connection.http.auth.basic.password':
-    'The password of your Anaplan account.',
+    'The password of your Anaplan account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'anaplan.connection.http.auth.type': 'Please select Authentication type.',
   'namely.connection.http.namelyCompanyName':
     'Your subdomain. For example, https://mysubdomain.namely.com',
   'namely.connection.http.auth.token.token':
@@ -613,6 +614,8 @@ export default {
     'Please enter the username of your Jira Server account.',
   'jiraserver.connection.http.auth.basic.password':
     'Please enter the password of your Jira Server account.',
+  'gainsight.connection.http.gainsightInstanceURL': 'Please enter the instance URI shown in your Gainsight CS account.For example, if https://test-domain.gainsightcloud.com/v1/ui/home is the URL after logging in,then the instance URI would be \'test-domain.gainsightcloud\'.',
+  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -810,7 +813,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. You define the query command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': '“Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. “Use SQL Query once per flow run” when you want to execute the query once per run. You define the query command in Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -2108,6 +2111,8 @@ export default {
     `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">handlebars Helper Guide</a>`,
   'mapping.immutable':
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
+  'mapping.useAsInitializeValue':
+    'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) when the record is being created or transformed, known as record initialization. Check this checkbox if you would like to add this field during record initialization. \nExample: To specify the subtype as Sale, Purchase, or Resale when creating a non inventory item, check the Record is being created checkbox.',
   'mapping.lookup.mode':
     'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
   'mapping.conditional.when':

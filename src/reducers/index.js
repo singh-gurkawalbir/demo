@@ -2634,8 +2634,6 @@ selectors.tiles = state => {
       integration.mode !== INTEGRATION_MODES.SETTINGS
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
     } else if (t.numError && t.numError > 0) {
       status = TILE_STATUS.HAS_ERRORS;
     } else {
@@ -2920,12 +2918,12 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.integrationResources = (state, _integrationId, storeId) => {
+selectors.notificationResources = (state, _integrationId, storeId) => {
   const diyFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: {
       $where() {
-        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+        if (!_integrationId || ['none'].includes(_integrationId)) {
           return !this._integrationId;
         }
 
@@ -2940,7 +2938,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none', 'none-sb'].includes(_integrationId),
+        ['none'].includes(_integrationId),
     },
   }).resources;
   const notifications = selectors.resourceList(state, { type: 'notifications' })
@@ -2948,7 +2946,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   const connections = _connectorId
     ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
-  let flows = _connectorId
+  const flows = _connectorId
     ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
     : diyFlows;
   const connectionValues = connections
@@ -2961,10 +2959,8 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     n => n._integrationId === _integrationId
   );
 
-  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
-    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
-
-    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
+    flowValues = [_integrationId, ...flows];
   }
 
   return {
@@ -3225,7 +3221,7 @@ selectors.flowDashboardJobs = createSelector(
       if (parentJob.status === JOB_STATUS.QUEUED) {
         return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
       }
-      if (parentJob.status === JOB_STATUS.CANCELED && !parentJob.children?.length) {
+      if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
         // In cases when job is cancelled while it is in queue, children are not yet created
         // So show this job as the export step cancelled
         return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
@@ -3255,6 +3251,11 @@ selectors.flowDashboardJobs = createSelector(
               ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
               : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
           };
+
+          // If parent job is cancelled, show child in progress jobs as cancelling
+          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
+            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
+          }
 
           if (cJob.type === 'import') {
             if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {

@@ -13,26 +13,23 @@ export default {
     } else {
       baseURI = 'https://api.staging.integrator.io';
     }
-    retValues['/http/headers'] = [
-      {
-        name: 'Authorization',
-        value: `Bearer ${formValues['/integrator/token']}`,
-      },
-      { name: 'Content-Type', value: 'application/json' },
-    ];
     delete retValues['/integrator/environment'];
     delete retValues['/integrator/region'];
-    delete retValues['/integrator/token'];
+    delete retValues['/http/headers'];
+    retValues['/http/headers'] = undefined;
 
     return {
       ...retValues,
       '/type': 'http',
       '/assistant': 'integratorio',
-      '/http/auth/type': 'custom',
+      '/http/auth/type': 'token',
       '/http/mediaType': 'json',
       '/http/ping/method': 'GET',
       '/http/baseURI': baseURI,
       '/http/ping/relativeURI': '/v1/connections',
+      '/http/auth/token/location': 'header',
+      '/http/auth/token/scheme': 'Bearer',
+      '/http/auth/token/headerName': 'Authorization',
     };
   },
   fieldMap: {
@@ -41,6 +38,7 @@ export default {
       id: 'integrator.region',
       type: 'select',
       label: 'Region',
+      helpKey: 'integratorio.connection.integrator.region',
       required: true,
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
@@ -68,14 +66,11 @@ export default {
         },
       ],
     },
-    'integrator.token': {
-      id: 'integrator.token',
-      type: 'text',
+    'http.auth.token.token': {
+      fieldId: 'http.auth.token.token',
       label: 'Token',
       required: true,
-      inputType: 'password',
-      description:
-        'Note: for security reasons this field must always be re-entered.',
+      helpKey: 'integratorio.connection.http.auth.token.token',
     },
     application: {
       fieldId: 'application',
@@ -88,7 +83,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['integrator.region', 'integrator.token'] },
+        fields: ['integrator.region', 'http.auth.token.token'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

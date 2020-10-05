@@ -53,7 +53,6 @@ const PageProcessor = ({
   isMonitorLevelAccess,
   onDelete,
   openErrorCount,
-  onErrors,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -321,7 +320,6 @@ const PageProcessor = ({
           integrationId={integrationId}
           name={name}
           onDelete={onDelete(name)}
-          onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}

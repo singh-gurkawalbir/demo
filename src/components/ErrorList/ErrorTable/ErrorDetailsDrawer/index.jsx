@@ -32,7 +32,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
         path: `${match.url}/details/:errorId/:mode`,
       });
 
-      if (!matchErrorPath || !matchErrorPath.params) return false;
+      if (!matchErrorPath || !matchErrorPath.params) return true;
       const { errorId } = matchErrorPath.params;
 
       if (!errorId) return false;
@@ -58,7 +58,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
   return (
     <RightDrawer
       path="details/:errorId/:mode"
-      title="Edit record"
+      title="View error details"
       variant="temporary"
       hideBackButton>
       <ErrorDetails

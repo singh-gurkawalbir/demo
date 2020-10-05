@@ -395,6 +395,13 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
+          hideNotificationMessage: true,
+        }),
+      testConnection: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+          hideNotificationMessage: false,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -1388,6 +1395,8 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  patchGenerateThroughAssistant: value =>
+    action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
   addLookup: ({value, isConditionalLookup}) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
   updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
@@ -1853,6 +1862,12 @@ const errorManager = {
         resourceId,
         diff,
       }),
+    download: ({ flowId, resourceId, isResolved, filters }) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST, {
+      flowId,
+      resourceId,
+      isResolved,
+      filters,
+    }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

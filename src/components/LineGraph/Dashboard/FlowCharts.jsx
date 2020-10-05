@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import groupBy from 'lodash/groupBy';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -19,7 +18,6 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
@@ -152,20 +150,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      const fData = data.filter(d => d.flowId === r);
-
-      flowData[r] = Object.entries(groupBy(fData, 'timeInMills')).map(e => ({
-        timeInMills: e[0],
-        ...e[1].reduce((acc, cur) => ({
-          ...cur,
-          success: (acc.success || 0) + (cur.success || 0),
-          error: (acc.error || 0) + (cur.error || 0),
-          ignored: (acc.ignored || 0) + (cur.ignored || 0),
-          averageTimeTaken: Math.floor(((acc.averageTimeTaken || 0) + acc.sum) / acc.count),
-          sum: acc.sum + (cur.averageTimeTaken || 0),
-          count: acc.count + 1,
-        }), {count: 1, sum: 0}),
-      }));
+      flowData[r] = data.filter(d => d.type === 'flow' && d.flowId === r);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -291,7 +276,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             type="number"
             allowDuplicatedCategory={false}
             ticks={ticks}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -367,7 +351,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   return (
     <div className={classes.root}>
-      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

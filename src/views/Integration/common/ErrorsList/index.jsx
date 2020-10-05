@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   button: {
-    color: theme.palette.error.main,
+    color: theme.palette.primary.main,
     width: '100%',
     cursor: 'pointer',
     display: 'block',
@@ -119,11 +119,7 @@ const ErrorsList = ({integrationId, childId}) => {
   );
 };
 
-export default function ErrorsListDrawer() {
-  const match = useRouteMatch();
-
-  const { integrationId, childId } = match.params;
-
+export default function ErrorsListDrawer({ integrationId, childId }) {
   return (
     <LoadResources
       required="true"

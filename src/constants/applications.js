@@ -164,11 +164,6 @@ const connectors = [
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
   {
-    id: 'gainsight',
-    name: 'Gainsight CS',
-    marketPlaceOnly: true,
-  },
-  {
     id: 'aptrinsic',
     name: 'Gainsight PX',
     type: 'rest',
