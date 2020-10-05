@@ -90,9 +90,9 @@ const getResourceSampleData = (resourceIdSampleData, stage) => {
 };
 
 const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
-  data: getResourceSampleData(resourceIdSampleData, stage) || 1,
+  data: getResourceSampleData(resourceIdSampleData, stage),
   status: resourceIdSampleData?.status,
-  error: 1,
+  error: resourceIdSampleData?.error,
 });
 
 selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);

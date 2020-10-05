@@ -90,8 +90,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const match = useRouteMatch();
   const supportsMultiStore = !!storeId;
 
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const version = integration && integration.version;
+  const version = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId)?.version;
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)

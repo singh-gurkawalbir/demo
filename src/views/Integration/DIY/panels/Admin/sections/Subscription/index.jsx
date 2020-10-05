@@ -89,8 +89,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const supportsMultiStore = !!storeId;
-  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-  const version = integration && integration.version;
+  const version = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId)?.version;
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );

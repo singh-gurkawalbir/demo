@@ -32,7 +32,7 @@ export default function GeneralPanel({ integrationId, storeId }) {
   // need the flows returned by the selector.
 
   const generalSectionMetadata = useSelectorMemo(
-    selectors.mkIntegrationAppSettings, integrationId
+    selectors.mkIntegrationAppGeneralSettings, integrationId
   );
   const hasGeneralSettings = useSelector(state =>
     selectors.hasGeneralSettings(state, integrationId, storeId)

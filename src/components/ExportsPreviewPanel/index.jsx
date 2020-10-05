@@ -114,6 +114,7 @@ function PreviewInfo({
   />
   );
 }
+
 function ExportsPreviewPanel(props) {
   const { resourceId, formKey, resourceType, flowId } = props;
   const classes = useStyles();

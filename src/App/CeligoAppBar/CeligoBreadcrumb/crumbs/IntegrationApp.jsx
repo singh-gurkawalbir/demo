@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
@@ -19,13 +19,7 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 export const StoreCrumb = ({ integrationId, storeId }) => {
   const iaSettings = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const store = useMemo(() => {
-    if (iaSettings && iaSettings.stores) {
-      return iaSettings.stores.find(s => s.value === storeId);
-    }
-
-    return null;
-  }, [iaSettings, storeId]);
+  const store = iaSettings?.stores?.find(s => s?.value === storeId);
 
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const childName = useSelector(state => {

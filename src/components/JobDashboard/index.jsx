@@ -15,7 +15,7 @@ import { hashCode } from '../../utils/string';
 import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(({
-  allErrors: {
+  jobTable: {
     height: '100%',
     overflow: 'auto',
     paddingBottom: 115,
@@ -410,7 +410,7 @@ export default function JobDashboard({
         disableActions={disableActions}
       />
       <JobTable
-        classes={classes.allErrors}
+        classes={classes.jobTable}
         onSelectChange={handleSelectChange}
         jobsInCurrentPage={jobs}
         selectedJobs={selectedJobs}
