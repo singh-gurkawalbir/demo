@@ -267,7 +267,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
   return (
     <div className={classes.root}>
       {isParentView ? (
-        <Typography variant="h3">Choose a store from the store drop-down to view flows.“</Typography>
+        <Typography variant="h3">Choose a store from the store drop-down to view flows.</Typography>
       ) : (
         <Grid container wrap="nowrap">
           <Grid item className={classes.subNav}>

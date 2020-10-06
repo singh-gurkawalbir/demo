@@ -76,6 +76,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const defaultChildId = useSelector(state =>
+    selectors.defaultStoreId(state, tile._integrationId)
+  );
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -111,7 +114,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
