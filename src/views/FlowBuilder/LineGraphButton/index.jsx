@@ -41,6 +41,7 @@ export default function LineGraphButton({flowId, onClickHandler}) {
       disabled={disableButton}
       className={classes.chartsIcon}
       data-test="charts"
+      title="Dashboard"
       onClick={onClickHandler('charts')}>
       <GraphIcon className={classes.iconGraph} />
     </IconButton>
