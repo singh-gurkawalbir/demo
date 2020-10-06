@@ -93,7 +93,7 @@ export default function TransformEditor(props) {
   return (
     <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Transform rules" />
+        <PanelTitle title="Rules" />
         <TransformPanel
           keyName={keyName}
           valueName={valueName}
