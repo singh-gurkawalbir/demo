@@ -39,6 +39,7 @@ import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integr
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import ChipInput from '../../../components/ChipInput';
+import AddIcon from '../../../components/icons/AddIcon';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -548,7 +549,7 @@ export default function Integration(props) {
                 onClick={handleAddNewStore}
                 variant="text"
                 data-test="addNewStore">
-                <CopyIcon /> Add new child
+                <AddIcon /> Add new child
               </IconTextButton>
               <Select
                 displayEmpty
@@ -557,9 +558,6 @@ export default function Integration(props) {
                 onChange={handleStoreChange}
                 IconComponent={ArrowDownIcon}
                 value={childId}>
-                <MenuItem disabled value="">
-                  Select child
-                </MenuItem>
 
                 {children.map(s => (
                   <MenuItem key={s.value} value={s.value}>
