@@ -7,7 +7,7 @@ import { selectors } from '../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 
-export default function TabRedirection() {
+export default function TabRedirection({children}) {
   const history = useHistory();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -142,5 +142,5 @@ export default function TabRedirection() {
   }
   // console.log('render: <IntegrationApp>');
 
-  return null;
+  return children;
 }

@@ -23,11 +23,12 @@ export default function IntegrationApp() {
 
   return (
     <>
-      <TabRedirection />
-      <PageBar />
-      <IntegrationTabs />
-      <ResourceDrawer />
-      <QueuedJobsDrawer />
+      <TabRedirection >
+        <PageBar />
+        <IntegrationTabs />
+        <ResourceDrawer />
+        <QueuedJobsDrawer />
+      </TabRedirection>
     </>
   );
 }
