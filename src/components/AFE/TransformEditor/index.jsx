@@ -104,7 +104,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming data" />
+        <PanelTitle title="Input" />
         {isSampleDataLoading ? (
           <PanelLoader />
         ) : (
@@ -121,7 +121,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Transformed data" />
+        <PanelTitle title="Output" />
         <CodePanel
           name="result"
           overrides={{ showGutter: false }}

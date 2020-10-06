@@ -53,9 +53,9 @@ function TransformationDrawer({ flowId, resource, onClose, isViewMode }) {
 
   return (
     <TransformToggleEditorDrawer
-      title="Transform record"
+      title="Define transformation"
       helpKey="export.transform.rules"
-      helpTitle="Transform record"
+      helpTitle="Transform Rules"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}
