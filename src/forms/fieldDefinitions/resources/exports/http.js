@@ -144,6 +144,9 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    requestMediaType: r =>
+      r?.http?.requestMediaType || 'json',
     requiredWhenAll: [
       {
         field: 'http.relativeURI',
@@ -548,6 +551,9 @@ export default {
     type: 'httprequestbody',
     connectionId: r => r && r._connectionId,
     label: 'Build HTTP request body',
+    refreshOptionsOnChangesTo: ['http.requestMediaType'],
+    requestMediaType: r =>
+      r?.http?.requestMediaType || 'json',
     visibleWhenAll: [
       {
         field: 'outputMode',

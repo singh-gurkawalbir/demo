@@ -214,6 +214,40 @@ export default {
     };
   },
 
+  optionsHandler: (fieldId, fields) => {
+    if (
+      fieldId === 'http.body' ||
+      fieldId === 'http.once.body'
+    ) {
+      const bodyFields = [];
+      let requestMediaTypeField = {};
+
+      fields.map(field => {
+        if (field.fieldId === 'http.body' || field.fieldId === 'http.once.body') {
+          bodyFields.push(field);
+        } else if (field.fieldId === 'http.requestMediaType') { requestMediaTypeField = {...field}; }
+
+        return null;
+      });
+
+      // reset http body field if requestMediaTypeField changed
+      bodyFields.forEach(field => {
+        const f = field;
+
+        if (f?.requestMediaType !== requestMediaTypeField.value) {
+          f.value = '';
+          f.requestMediaType = requestMediaTypeField.value;
+        }
+      });
+
+      return {
+        contentType: requestMediaTypeField.value,
+      };
+    }
+
+    return null;
+  },
+
   fieldMap: {
     common: { formId: 'common' },
     outputMode: {
