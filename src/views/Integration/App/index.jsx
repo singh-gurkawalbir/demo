@@ -121,9 +121,6 @@ export default function IntegrationApp(props) {
   const integration = useSelector(state =>
     selectors.integrationAppSettings(state, integrationId)
   );
-  // const defaultStoreId = useSelector(state =>
-  //   selectors.defaultStoreId(state, integrationId, storeId)
-  // );
   const integrationErrorsPerStore = useSelector(state =>
     selectors.integrationErrorsPerStore(state, integrationId),
   shallowEqual
@@ -400,7 +397,7 @@ export default function IntegrationApp(props) {
               onChange={handleStoreChange}
               displayEmpty
               value={storeId || ''}>
-              <MenuItem value="">Select {storeLabel}</MenuItem>
+              <MenuItem value="">All {storeLabel}s</MenuItem>
               {storeMenuItems}
             </CeligoSelect>
           </div>
