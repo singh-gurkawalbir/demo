@@ -93,7 +93,6 @@ export default function PageBar() {
   }, [history, integrationAppName, integrationId]);
 
   return (
-
     <CeligoPageBar
       title={integration.name}
       titleTag={(

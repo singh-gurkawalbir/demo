@@ -49,7 +49,10 @@ const useStyles = makeStyles(theme => ({
 // const resourceSampleData = {data: 1, status: 'received', error: 1};
 
 function PreviewInfo({
-  flowId, resourceId, formKey, resourceType,
+  flowId,
+  resourceId,
+  formKey,
+  resourceType,
   resourceSampleData,
   previewStageDataList,
   panelType,
@@ -115,8 +118,7 @@ function PreviewInfo({
   );
 }
 
-function ExportsPreviewPanel(props) {
-  const { resourceId, formKey, resourceType, flowId } = props;
+function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
   const classes = useStyles();
 
   const isPreviewDisabled = useSelector(state =>

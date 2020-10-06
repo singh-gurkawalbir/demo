@@ -1,4 +1,4 @@
-import { deepClone } from 'fast-json-patch/lib/core';
+
 /*
  * This state holds the entire stages of Export's Data flow
  * Involves the data in each and every stage
@@ -102,7 +102,7 @@ selectors.mkPreviewStageDataList = () => createSelector(
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) =>
     stages.reduce((acc, stage) => {
-      acc[stage] = deepClone(getResourceSampleDataWithStatus(resourceIdSampleData, stage));
+      acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
 
       return acc;
     }, {})

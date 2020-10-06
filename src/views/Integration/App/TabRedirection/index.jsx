@@ -35,28 +35,28 @@ export default function TabRedirection() {
     return job && job._flowId;
   }
   );
-  const searchParamchildId = useSelector(state =>
+  const searchParamChildId = useSelector(state =>
     selectors.integrationAppChildIdOfFlow(state, integrationId, jobFlowId)
   );
 
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
-  const addOnState = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
+  const addOnStateStatus = useSelector(state =>
+    selectors.integrationAppAddOnState(state, integrationId)?.status
   );
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
 
   useEffect(() => {
-    if (!addOnState || !addOnState.status) {
+    if (!addOnStateStatus) {
       dispatch(
         actions.integrationApp.settings.requestAddOnLicenseMetadata(
           integrationId
         )
       );
     }
-  }, [addOnState, dispatch, integrationId]);
+  }, [addOnStateStatus, dispatch, integrationId]);
 
   useEffect(() => {
     if (!integrationAppMetadata.status) {
@@ -102,7 +102,7 @@ export default function TabRedirection() {
           push={false}
           to={
             {
-              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamchildId || defaultStoreId}/${tab ||
+              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamChildId || defaultStoreId}/${tab ||
             'flows'}`),
               search: location.search,
             }

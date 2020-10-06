@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch } from 'react-router-dom';
@@ -68,7 +68,7 @@ const allTabs = [
 ];
 
 const useStyles = makeStyles(theme => ({
-  PageWrapper: {
+  pageWrapper: {
     padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
@@ -84,22 +84,15 @@ export default function IntegrationTabsComponent() {
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const filterTabs = [];
   // TODO: This selector isn't actually returning add on state.
   // it is returning ALL integration settings state.
-  const addOnState = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
+  const hasAddOns = useSelector(state => {
+    const addOnState = selectors.integrationAppAddOnState(state, integrationId);
+
+    return addOnState?.addOns?.addOnMetaData?.length > 0;
+  }
   );
 
-  const hasAddOns =
-    addOnState &&
-    addOnState.addOns &&
-    addOnState.addOns.addOnMetaData &&
-    addOnState.addOns.addOnMetaData.length > 0;
-
-  if (!hasAddOns) {
-    filterTabs.push('addons');
-  }
   const accessLevel = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
@@ -113,14 +106,22 @@ export default function IntegrationTabsComponent() {
     isMonitorLevelUser: accessLevel === 'monitor',
   }).length;
 
-  if (!showAdminTab) {
-    filterTabs.push('admin');
-  }
-  const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
+  const availableTabs = useMemo(() => {
+    const filterTabs = [];
+
+    if (!hasAddOns) {
+      filterTabs.push('addons');
+    }
+    if (!showAdminTab) {
+      filterTabs.push('admin');
+    }
+
+    return allTabs.filter(tab => !filterTabs.includes(tab.path));
+  }, [hasAddOns, showAdminTab]);
 
   return (
 
-    <IntegrationTabs tabs={availableTabs} className={classes.PageWrapper} />
+    <IntegrationTabs tabs={availableTabs} className={classes.pageWrapper} />
 
   );
 }

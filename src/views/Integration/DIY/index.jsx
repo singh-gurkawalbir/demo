@@ -41,7 +41,7 @@ import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import ChipInput from '../../../components/ChipInput';
 
 const useStyles = makeStyles(theme => ({
-  PageWrapper: {
+  pageWrapper: {
     padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
@@ -584,7 +584,7 @@ export default function Integration() {
         <IntegrationTabs
           tabs={availableTabs}
           match={match}
-          className={classes.PageWrapper}
+          className={classes.pageWrapper}
         />
       </LoadResources>
     </>
