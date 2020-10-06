@@ -30,7 +30,6 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
     sectionsToHide.push('readme');
     sectionsToHide.push('general');
     if (!isParent) {
-      sectionsToHide.push('subscription');
       sectionsToHide.push('apitoken');
     } else if (supportsChild && children && children.length > 1) {
       sectionsToHide.push('uninstall');
@@ -47,23 +46,28 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
 };
 
 export const getTopLevelTabs = (options = {}) => {
-  const {tabs: allTabs, isIntegrationApp, isParent, hasAddOns, integrationId, hideSettingsTab} = options;
+  const {
+    tabs: allTabs,
+    isIntegrationApp,
+    hasAddOns,
+    integrationId,
+    hideSettingsTab,
+  } = options;
   const excludeTabs = [];
   const showAdminTabs = !!getAdminLevelTabs(options).length;
   const isStandalone = STANDALONE_INTEGRATION.id === integrationId;
 
   if (isIntegrationApp) {
-    excludeTabs.push('users');
     if (!hasAddOns) {
       excludeTabs.push('addons');
     }
   } else {
     excludeTabs.push('addons');
   }
-  if (isParent) {
-    excludeTabs.push('flows');
-    excludeTabs.push('dashboard');
-  }
+  // if (isParent) {
+  //   excludeTabs.push('flows');
+  //   excludeTabs.push('dashboard');
+  // }
   if (isStandalone) {
     excludeTabs.push('admin');
   }

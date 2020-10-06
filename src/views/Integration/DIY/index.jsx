@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles, Select, MenuItem } from '@material-ui/core';
+import { makeStyles, MenuItem } from '@material-ui/core';
 import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -40,6 +40,7 @@ import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import ChipInput from '../../../components/ChipInput';
 import AddIcon from '../../../components/icons/AddIcon';
+import CeligoSelect from '../../../components/CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   PageWrapper: {
@@ -551,7 +552,7 @@ export default function Integration(props) {
                 data-test="addNewStore">
                 <AddIcon /> Add new child
               </IconTextButton>
-              <Select
+              <CeligoSelect
                 displayEmpty
                 data-test="select Child"
                 className={classes.storeSelect}
@@ -564,7 +565,7 @@ export default function Integration(props) {
                     {s.label}
                   </MenuItem>
                 ))}
-              </Select>
+              </CeligoSelect>
             </>
           )}
 

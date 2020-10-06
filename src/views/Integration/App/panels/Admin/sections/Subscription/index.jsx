@@ -17,7 +17,6 @@ const metadata = {
   columns: (empty, actionProps) => {
     const { supportsMultiStore, storeId, storeLabel, stores } = actionProps;
 
-    console.log('actionProps', actionProps);
     let columns = [
       {
         heading: 'Name',
