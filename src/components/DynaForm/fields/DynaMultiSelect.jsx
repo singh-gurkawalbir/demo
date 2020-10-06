@@ -67,7 +67,7 @@ const ChipLabel = ({label, tag}) => {
     </>
   );
 };
-const CreateChip = ({label, value, tag}) => {
+const SelectedValueChip = ({label, value, tag}) => {
   const classes = chipUseStyles();
   const newLabel = <ChipLabel label={label || value} tag={tag} />;
 
@@ -79,18 +79,6 @@ const CreateChip = ({label, value, tag}) => {
     />
   );
 };
-
-function setChip(value) {
-  const fieldOption = this.find(option => option.value === value);
-
-  return fieldOption ? (
-    <CreateChip
-      value={value}
-      label={fieldOption.label}
-      tag={fieldOption.tag}
-    />
-  ) : null;
-}
 
 export default function DynaMultiSelect(props) {
   const {
@@ -225,7 +213,17 @@ export default function DynaMultiSelect(props) {
               <div className={classes.chips}>
                 {selected &&
                   typeof selected.map === 'function' &&
-                  selected.map(setChip, options[0].items)}
+                  selected.map(value => {
+                    const fieldProps = options?.[0]?.items?.find(option => option.value === value);
+
+                    return (fieldProps
+                      ? (
+                        <SelectedValueChip
+                          key={fieldProps.label}
+                          {...fieldProps} />
+                      ) : null
+                    );
+                  })}
               </div>
             )}>
           {items}

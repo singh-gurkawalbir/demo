@@ -57,9 +57,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Tag(props) {
+function Tag({ variant, className }) {
   const classes = useStyles();
-  const { variant, className } = props;
 
   return (
     <div className={clsx(classes.wrapper, className)}>
