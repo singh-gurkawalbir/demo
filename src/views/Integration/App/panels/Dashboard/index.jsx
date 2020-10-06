@@ -30,7 +30,7 @@ export default function DashboardPanel({ integrationId, storeId }) {
   let infoTextDashboard;
 
   if (isUserInErrMgtTwoDotZero) {
-    infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year. <a href="https://docs.celigo.com/hc/en-us/articles/360048814732-A-more-powerful-way-to-manage-integration-errors">Learn more about error management enhancements</a>.';
+    infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
   }
 
   // We may not have an IA that supports children, but those who do,
