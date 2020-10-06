@@ -26,7 +26,7 @@ export default function AuditLogSection({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
       <div className={classes.AuditLogWrapper}>
-        <AuditLog resourceType="integrations" resourceId={childId || integrationId} />
+        <AuditLog resourceType="integrations" resourceId={childId || integrationId} childId={childId} />
       </div>
     </div>
   );
