@@ -4,20 +4,14 @@ import IconTextButton from '../../../IconTextButton';
 import Icon from '../../../icons/RefreshIcon';
 
 const useStyles = makeStyles(theme => ({
-  card: {
-    position: 'absolute',
-    top: 0,
-    textAlign: 'center',
-    left: '50%',
-    transform: 'translateX(-50%)',
-  },
   refresh: {
     color: `${theme.palette.common.white} !important`,
-    borderRadius: 0,
+    height: theme.spacing(4),
   },
   refreshDisabled: {
-    borderRadius: 0,
+    borderColor: 'inherit',
   },
+
 }));
 
 export default function RefreshCard(props) {
@@ -33,8 +27,8 @@ export default function RefreshCard(props) {
         className={classes.card}
         title="New errors will take up to 30 seconds to display" >
         <IconTextButton
-          onClick={handleClick} color="secondary" variant="outlined" className={classes.refreshDisabled}
-          disabled>
+          onClick={handleClick} color="primary" variant="outlined"
+          disabled className={classes.refreshDisabled}>
           <Icon /> Refresh errors
         </IconTextButton>
       </div>

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import ErrorTable from './ErrorTable';
+import DownloadErrorsDrawer from './DownloadErrorsDrawer';
 
 export default function ErrorList({ flowId, errorType }) {
   const match = useRouteMatch();
@@ -28,6 +29,7 @@ export default function ErrorList({ flowId, errorType }) {
         show={errorType === 'resolved'}
         isResolved
       />
+      <DownloadErrorsDrawer flowId={flowId} resourceId={resourceId} />
     </>
   );
 }

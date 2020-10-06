@@ -1,5 +1,5 @@
 import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
-import jsonPatch from 'fast-json-patch';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -107,6 +107,29 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   }
 }
 
+export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
+  const path = `/connection/${connectionId}/revoke`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      hidden: hideNetWorkSnackbar,
+      opts: {
+        method: 'GET',
+      },
+      message: 'Revoking Connection',
+    });
+
+    if (response && response.errors) {
+      yield put(
+        actions.api.failure(path, 'GET', JSON.stringify(response.errors), hideNetWorkSnackbar)
+      );
+    }
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -155,6 +178,16 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   }
 
   let updated;
+
+  // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
+  // number of active tokens on netsuite, revoking token when user updates token-auto connection.
+  if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
+    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
+
+    if (isTokenToBeRevoked) {
+      yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
+    }
+  }
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
   // and React we are forced to convert HTTP to REST doc for existing REST assistants since we don't want to build
@@ -491,8 +524,10 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
 
     if (!options.doNotRefetch) {
       const resource = yield select(selectors.resource, resourceType, id);
-      const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
-        .newDocument;
+
+      // applyPatch is not able to update the object as per patchSet as resource is
+      // selector's result and is not mutatable. Therefore deepcloning resource in args.
+      const resourceUpdated = jsonPatch.applyPatch(deepClone(resource), patchSet).newDocument;
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
@@ -722,28 +757,6 @@ export function* updateTradingPartner({ connectionId }) {
     yield put(
       actions.connection.completeTradingPartner(response?._connectionIds || [])
     );
-  } catch (error) {
-    return undefined;
-  }
-}
-
-export function* requestRevoke({ connectionId }) {
-  const path = `/connection/${connectionId}/revoke`;
-
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'GET',
-      },
-      message: 'Revoking Connection',
-    });
-
-    if (response && response.errors) {
-      yield put(
-        actions.api.failure(path, 'GET', JSON.stringify(response.errors), false)
-      );
-    }
   } catch (error) {
     return undefined;
   }

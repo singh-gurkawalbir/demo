@@ -190,6 +190,9 @@ const SuiteScriptMapping = props => {
     dispatch(actions.suiteScript.mapping.delete(key));
   }, [dispatch]);
 
+  const handleTouch = useCallback(key => {
+    dispatch(actions.suiteScript.mapping.updateLastFieldTouched(key));
+  }, [dispatch]);
   const handleFieldUpdate = useCallback(
     (_mapping, field, value) => {
       const { key, generate = '', extract = '' } = _mapping;
@@ -215,16 +218,9 @@ const SuiteScriptMapping = props => {
           }
         }
         dispatch(actions.suiteScript.mapping.patchField({ field, key, value}));
-
-        return;
-      }
-      if (lastModifiedRowKey !== key) {
-        const _lastModifiedRowKey = key === undefined ? 'new' : key;
-
-        dispatch(actions.suiteScript.mapping.updateLastFieldTouched(_lastModifiedRowKey));
       }
     },
-    [dispatch, lastModifiedRowKey]
+    [dispatch]
   );
   const handleSFNSAssistantFieldClick = useCallback(
     meta => {
@@ -402,6 +398,7 @@ const SuiteScriptMapping = props => {
               key={`${mapping.key}-${mapping.rowIdentifier}`}
               mapping={mapping}
               onFieldUpdate={handleFieldUpdate}
+              onTouch={handleTouch}
               disabled={!isManageLevelUser}
               ssLinkedConnectionId={ssLinkedConnectionId}
               integrationId={integrationId}
@@ -420,6 +417,7 @@ const SuiteScriptMapping = props => {
             index={emptyRowIndex}
             mapping={emptyObj}
             onFieldUpdate={handleFieldUpdate}
+            onTouch={handleTouch}
             disabled={!isManageLevelUser}
             ssLinkedConnectionId={ssLinkedConnectionId}
             integrationId={integrationId}

@@ -12,7 +12,7 @@ const columns = [
     value: function NameWithInfoicon(r) {
       return (
         <>
-          {r && r.doc.name}
+          {r?.doc?.name || r?.doc?._id}
           <InfoIconButton info={r.doc.description} size="xs" />
         </>
       );

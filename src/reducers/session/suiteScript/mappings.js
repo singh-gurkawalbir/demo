@@ -244,7 +244,7 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.MAPPING.UPDATE_LAST_TOUCHED_FIELD: {
         const { key } = action;
 
-        draft.mappings.lastModifiedRowKey = key;
+        draft.mappings.lastModifiedRowKey = key || 'new';
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.SET_SF_SUBLIST_FIELD_NAME: {

@@ -298,6 +298,41 @@ export function isRealTimeOrDistributedResource(
   return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
 }
 
+export function resourceCategory(resource = {}, isLookup, isImport) {
+  // eslint-disable-next-line no-nested-ternary
+  let blockType = isImport ? 'Import' : isLookup ? 'Lookup' : 'Export';
+
+  if (!isImport && !isLookup) {
+    blockType = isRealTimeOrDistributedResource(resource)
+      ? 'Listener'
+      : 'Export';
+  }
+
+  if (resource.adaptorType === 'SimpleExport') {
+    blockType = 'Data Loader';
+  }
+
+  if (
+    (['RESTExport', 'HTTPExport', 'NetSuiteExport', 'SalesforceExport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.type === 'blob') ||
+    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  } else if (
+    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.blobKeyPath) ||
+    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  }
+
+  return blockType;
+}
+
 // All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
 export const isBlobTypeResource = (resource = {}) =>
   resource && (resource.type === 'blob' || !!resource.blobKeyPath);
