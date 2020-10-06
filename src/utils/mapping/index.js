@@ -11,6 +11,7 @@ import getJSONPaths, {
 } from '../jsonPaths';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
+import {generateCSVFields} from '../file';
 
 const isCsvOrXlsxResource = resource => {
   const { adaptorType: resourceAdapterType, file } = resource;
@@ -342,6 +343,28 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
   }
 
   return modifiedExtract;
+}
+
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c]
+ * Returns  {'a':'a', 'b':'b': 'c':'c'}
+ */
+export function extractMappingFieldsFromCsv(data = '', options = {}) {
+  if (typeof data !== 'string') return;
+  const fields = generateCSVFields(data, options);
+
+  return fields.reduce((extractFieldObj, field) => {
+    const [value] = field;
+
+    // eslint-disable-next-line no-param-reassign
+    extractFieldObj[value] = value;
+
+    return extractFieldObj;
+  }, {});
 }
 
 export function wrapTextForSpecialChars(extract, flowSampleData) {
@@ -1210,9 +1233,7 @@ export default {
         if (typeof sampleData === 'string' && isJsonString(sampleData)) {
           formattedSampleData = getJSONPaths(JSON.parse(sampleData));
         } else if (typeof sampleData === 'object') {
-          formattedSampleData = Array.isArray(sampleData)
-            ? sampleData
-            : getJSONPaths(sampleData);
+          formattedSampleData = getJSONPaths(sampleData);
         }
 
         formattedGenerateFields =
