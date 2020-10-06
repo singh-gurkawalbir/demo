@@ -33,7 +33,7 @@ export default function UsersList({ integrationId, storeId }) {
   const isAccountOwner =
   permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
 
-  const actionProps = useMemo(() => ({ integrationId, storeId }), [integrationId, storeId]);
+  const actionProps = useMemo(() => ({ integrationId, storeId, isAccountOwner }), [integrationId, storeId, isAccountOwner]);
 
   return (
     <>

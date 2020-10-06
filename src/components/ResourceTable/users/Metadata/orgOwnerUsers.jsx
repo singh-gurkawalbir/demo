@@ -8,6 +8,7 @@ import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
 import { ACCOUNT_IDS } from '../../../../utils/constants';
 import ManagePermissions from '../actions/ManagePermissions';
+import ManageNotifications from '../actions/ManageNotifications';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
@@ -41,11 +42,18 @@ export default {
     return columns;
   },
   rowActions: (user, actionProps) => {
-    const { integrationId } = actionProps || {};
+    const { integrationId, isAccountOwner } = actionProps || {};
     const actions = [];
 
+    if (!isAccountOwner) {
+      if (integrationId) {
+        actions.push(ManageNotifications);
+      }
+
+      return actions;
+    }
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
-      actions.push(ManagePermissions);
+      actions.push(ManagePermissions, ManageNotifications);
     }
     if (!integrationId) {
       actions.push(ManagePermissions);
