@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-export default function ErrorMessage({ message }) {
+export default function OverflowWrapper({ message }) {
   const classes = useStyles();
 
   return (
