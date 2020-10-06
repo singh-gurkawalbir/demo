@@ -150,7 +150,6 @@ export default function SettingsPanel({
                       integrationId={integrationId}
                       storeId={storeId}
                       sectionId={path}
-                      parentUrl={match.url}
                       />
                   </>
                 ) : (
