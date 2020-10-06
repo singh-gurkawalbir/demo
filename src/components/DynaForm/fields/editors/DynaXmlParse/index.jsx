@@ -156,10 +156,10 @@ export default function DynaXmlParse({
       setCurrentOptions(getInitOptions(parsersValue));
 
       setForm(getForm(editorValues, resourceId));
-      setRemountKey(remountKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsersValue);
     }
-  }, [remountKey, getInitOptions, id, onFieldChange, resourceId]);
+  }, [getInitOptions, id, onFieldChange, resourceId]);
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {

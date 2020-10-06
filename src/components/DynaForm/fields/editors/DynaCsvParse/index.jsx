@@ -133,7 +133,7 @@ export default function DynaCsvParse(props) {
 
       setCurrentOptions(parsedVal);
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
-      setRemountKey(remountKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsedVal);
 
       dispatch(
@@ -149,7 +149,7 @@ export default function DynaCsvParse(props) {
         )
       );
     }
-  }, [csvData, dispatch, remountKey, id, onFieldChange, resourceId, resourceType]);
+  }, [csvData, dispatch, id, onFieldChange, resourceId, resourceType]);
 
   const editorDataTitle = useMemo(
     () => {

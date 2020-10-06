@@ -119,10 +119,10 @@ export default function DynaCsvGenerate(props) {
 
       setCurrentOptions(getInitOptions(parsedVal));
       setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
-      setRemountKey(remountKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsedVal);
     }
-  }, [remountKey, getInitOptions, id, isHttpImport, onFieldChange]);
+  }, [getInitOptions, id, isHttpImport, onFieldChange]);
 
   const [secondaryFormKey] = useState(generateNewId());
 
