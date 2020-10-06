@@ -13,6 +13,7 @@ import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
 import { generateNewId } from '../../../../../utils/resource';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -83,8 +84,9 @@ export default function DynaCsvParse(props) {
     resourceType,
     disabled,
     uploadSampleDataFieldName,
+    formKey: parentFormKey,
   } = props;
-  const [formKey, setFormKey] = useState(1);
+  const [remountKey, setRemountKey] = useState(1);
   const getInitOptions = useCallback(
     val => {
       if (!('trimSpaces' in val)) {
@@ -131,7 +133,7 @@ export default function DynaCsvParse(props) {
 
       setCurrentOptions(parsedVal);
       setForm(getFormMetadata({...editorValues, resourceId, resourceType}));
-      setFormKey(formKey + 1);
+      setRemountKey(remountKey + 1);
       onFieldChange(id, parsedVal);
 
       dispatch(
@@ -147,7 +149,7 @@ export default function DynaCsvParse(props) {
         )
       );
     }
-  }, [csvData, dispatch, formKey, id, onFieldChange, resourceId, resourceType]);
+  }, [csvData, dispatch, remountKey, id, onFieldChange, resourceId, resourceType]);
 
   const editorDataTitle = useMemo(
     () => {
@@ -185,9 +187,10 @@ export default function DynaCsvParse(props) {
   const [secondaryFormKey] = useState(generateNewId());
 
   useUpdateParentForm(secondaryFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
-    remount: formKey,
+    remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,
     fieldMeta: form,
