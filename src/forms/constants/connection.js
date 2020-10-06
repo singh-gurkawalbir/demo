@@ -107,6 +107,8 @@ export default {
     'shipengine',
     'jiraserver',
     'gainsight',
+    'dotdigital',
+    'checkout',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
