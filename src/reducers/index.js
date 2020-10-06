@@ -5202,5 +5202,5 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
       0);
 
     return storeErrorsMap;
-  }, emptyObject);
+  }, {});
 };
