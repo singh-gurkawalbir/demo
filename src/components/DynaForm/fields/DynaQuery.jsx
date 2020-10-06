@@ -25,7 +25,7 @@ export default function DynaQuery(props) {
     <>
       <DynaText {...props} disabled multiline />
       <SqlQueryBuilderEditorDrawer
-        title="Lookups"
+        title={`Define ${label}`}
         dataTest="lookupQuery"
         id={`lookupQueryBuilder-${id}`}
         rule={value || defaultQueryValue}

@@ -139,7 +139,7 @@ export default function DynaCsvGenerate(props) {
       <div className={classes.csvContainer}>
         <DynaEditorWithFlowSampleData
           formKey={parentFormKey}
-          title="CSV generator helper"
+          title={label}
           id={`csvGenerate-${id}-${resourceId}`}
           mode="csv"
           csvEditorType="generate"

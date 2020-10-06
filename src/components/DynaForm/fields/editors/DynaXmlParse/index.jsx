@@ -106,6 +106,7 @@ export default function DynaXmlParse({
   resourceType,
   disabled,
   uploadSampleDataFieldName,
+  label,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -223,7 +224,7 @@ export default function DynaXmlParse({
     <>
       <div className={classes.container}>
         <XmlParseEditorDrawer
-          title="XML parser helper"
+          title={label}
           id={id + resourceId}
           data={data}
           resourceType={resourceType}
@@ -235,7 +236,7 @@ export default function DynaXmlParse({
         />
 
         <div className={classes.labelWrapper}>
-          <FormLabel className={classes.label}>XML parser helper</FormLabel>
+          <FormLabel className={classes.label}>{label}</FormLabel>
           <FieldHelp label="Live parser" helpText="The live parser will give you immediate feedback on how your parse options are applied against your raw XML data." />
         </div>
         <Button
