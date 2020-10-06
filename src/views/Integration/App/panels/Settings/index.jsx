@@ -120,7 +120,9 @@ export default function SettingsPanel({
           <Divider className={classes.divider} />
           <div className={classes.content}>
             <span>
-              You don&apos;t have any custom settings for this integration.
+              {isParentView
+                ? 'Choose a store from the store drop-down to view settings.'
+                : 'You don&apos;t have any custom settings for this integration.' }
             </span>
           </div>
         </div>

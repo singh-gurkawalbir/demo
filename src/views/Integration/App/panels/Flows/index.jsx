@@ -6,7 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem, Typography } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -33,10 +33,18 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  container: {
+    display: 'flex',
+  },
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
+  },
+  divider: {
+    marginRight: theme.spacing(1),
+    marginTop: '10px',
+    marginBottom: '10px',
   },
   content: {
     width: '100%',
@@ -264,40 +272,54 @@ export default function FlowsPanel({ storeId, integrationId }) {
     );
   }
 
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <div className={classes.container}>
+          <Typography variant="h4">
+            Flows
+          </Typography>
+        </div>
+        <Divider className={classes.divider} />
+        <div className={classes.content}>
+          <span>
+            Choose a store from the store drop-down to view flows.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={classes.root}>
-      {isParentView ? (
-        <Typography variant="h3">Choose a store from the store drop-down to view flows.</Typography>
-      ) : (
-        <Grid container wrap="nowrap">
-          <Grid item className={classes.subNav}>
-            <List>
-              {flowSections.map(({ title, titleId }) => (
-                <ListItem key={titleId}>
-                  <NavLink
-                    className={classes.listItem}
-                    activeClassName={classes.activeListItem}
-                    to={titleId}
-                    data-test={titleId}>
-                    <SectionTitle
-                      title={title}
-                      titleId={titleId}
-                      integrationId={integrationId}
-                      storeId={storeId} />
-                  </NavLink>
-                </ListItem>
-              ))}
-            </List>
-          </Grid>
-          <Grid item className={classes.content}>
-            <LoadResources required resources="flows">
-              <Route path={`${match.url}/:sectionId`}>
-                <FlowList integrationId={integrationId} storeId={storeId} />
-              </Route>
-            </LoadResources>
-          </Grid>
+      <Grid container wrap="nowrap">
+        <Grid item className={classes.subNav}>
+          <List>
+            {flowSections.map(({ title, titleId }) => (
+              <ListItem key={titleId}>
+                <NavLink
+                  className={classes.listItem}
+                  activeClassName={classes.activeListItem}
+                  to={titleId}
+                  data-test={titleId}>
+                  <SectionTitle
+                    title={title}
+                    titleId={titleId}
+                    integrationId={integrationId}
+                    storeId={storeId} />
+                </NavLink>
+              </ListItem>
+            ))}
+          </List>
         </Grid>
-      ) }
+        <Grid item className={classes.content}>
+          <LoadResources required resources="flows">
+            <Route path={`${match.url}/:sectionId`}>
+              <FlowList integrationId={integrationId} storeId={storeId} />
+            </Route>
+          </LoadResources>
+        </Grid>
+      </Grid>
     </div>
   );
 }
