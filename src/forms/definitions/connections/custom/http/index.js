@@ -190,6 +190,7 @@ import shipengine from './shipengine';
 import jiraserver from './jiraserver';
 import gainsight from './gainsight';
 import dotdigital from './dotdigital';
+import checkout from './checkout';
 
 export default {
   concurexpense,
@@ -383,4 +384,5 @@ export default {
   jiraserver,
   gainsight,
   dotdigital,
+  checkout,
 };
