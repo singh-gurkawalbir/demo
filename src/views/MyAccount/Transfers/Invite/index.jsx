@@ -63,7 +63,7 @@ export default function Invite(props) {
         required: true,
         options: [
           {
-            items: integrations.map(i => ({ label: i.name, value: i._id })),
+            items: integrations.map(i => ({ label: i.name, value: i._id, tag: i.tag })),
           },
         ],
       },
