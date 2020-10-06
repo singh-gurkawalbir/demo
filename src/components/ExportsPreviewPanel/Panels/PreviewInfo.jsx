@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import IconTextButton from '../../../../IconTextButton';
-import ArrowRightIcon from '../../../../icons/ArrowRightIcon';
+import IconTextButton from '../../IconTextButton';
+import ArrowRightIcon from '../../icons/ArrowRightIcon';
 // import ErrorIcon from '../../../../icons/ErrorIcon';
-import { getPreviewDataPageSizeInfo } from '../../../../../utils/exportPanel';
-import ErroredMessageComponent from '../../ErroredMessageComponent';
+import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
+import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {

@@ -24,6 +24,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import IconTextButton from '../../../../../components/IconTextButton';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -74,10 +75,9 @@ export default function IntegrationAppAddNewStore(props) {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [requestedSteps, setRequestedSteps] = useState(false);
   const dispatch = useDispatch();
-  const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
-    ) || {};
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+
   const [initialStores] = useState(integration.stores);
   const showUninstall = !!(
     integration &&

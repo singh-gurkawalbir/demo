@@ -9,6 +9,7 @@ import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
 import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
+import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -37,10 +38,9 @@ export default function UninstallSection({ storeId, integrationId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
-  const integration =
-    useSelector(state =>
-      selectors.integrationAppSettings(state, integrationId)
-    ) || {};
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
