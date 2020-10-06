@@ -2392,6 +2392,7 @@ selectors.resourcePermissions = (
           },
           connections: {
             edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
           },
           edit: value.edit,
           delete: value.delete,

@@ -47,6 +47,16 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       'connections'
     )
   );
+  const applications = [];
+
+  if (childId) {
+    connections.forEach(conn => {
+      if (!(applications.includes(conn.type))) {
+        applications.push(conn.assistant || conn.type);
+      }
+    });
+  }
+
   const [tempId, setTempId] = useState(null);
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, tempId)
@@ -109,6 +119,14 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                       value: _integrationId,
                     },
                   ];
+
+                  if (childId) {
+                    patchSet.push({
+                      op: 'add',
+                      path: '/applications',
+                      value: applications,
+                    });
+                  }
 
                   dispatch(
                     actions.resource.patchStaged(newId, patchSet, 'value')
