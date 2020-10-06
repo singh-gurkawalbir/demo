@@ -21,7 +21,7 @@ export default function NameCell({al, actionProps}) {
     <Link
       onClick={actionProps && actionProps.onClick}
       to={routePath}>
-      {resourceName || `${al._resourceId}`}
+      {resourceName || al._resourceId}
     </Link>
   );
 }

@@ -2262,7 +2262,7 @@ selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
 
   // fetch parent integration name and id to append in the url
   if (_parentId) {
-    const {name} = selectors.resource(state, 'integrations', _parentId) || {};
+    const name = selectors.resource(state, 'integrations', _parentId)?.name;
 
     integrationName = name;
     integrationId = _parentId;
