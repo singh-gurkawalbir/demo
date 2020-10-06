@@ -4,6 +4,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import { subHours } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
+import { getSelectedRange } from '../../../utils/flowMetrics';
 import RefreshIcon from '../../icons/RefreshIcon';
 import DateRangeSelector from '../../DateRangeSelector';
 import FlowCharts from './FlowCharts';
@@ -43,6 +44,7 @@ export default function LineGraphDrawer({ integrationId }) {
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
   });
+
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || []);
 
@@ -56,13 +58,20 @@ export default function LineGraphDrawer({ integrationId }) {
       resourceList.resources.filter(flow => flow._integrationId === integrationId && !flow.disabled).map(f => ({_id: f._id, name: f.name})),
     [resourceList.resources, integrationId]
   );
+  const validResources = useMemo(() => {
+    if (selectedResources && selectedResources.length) {
+      return selectedResources.filter(sr => flowResources.find(r => r._id === sr));
+    }
+
+    return selectedResources;
+  }, [flowResources, selectedResources]);
   const handleRefreshClick = useCallback(() => {
     setRefresh(new Date().getTime());
   }, []);
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
-      setRange(Array.isArray(range) ? range[0] : range);
+      setRange(getSelectedRange(range));
     },
     [dispatch, integrationId]
   );
@@ -78,7 +87,7 @@ export default function LineGraphDrawer({ integrationId }) {
         })
       );
     },
-    []
+    [dispatch, integrationId, preferences]
   );
 
   return (
@@ -100,7 +109,7 @@ export default function LineGraphDrawer({ integrationId }) {
       </div>
       <FlowCharts
         integrationId={integrationId}
-        selectedResources={selectedResources}
+        selectedResources={validResources}
         range={range}
         refresh={refresh}
         className={classes.scheduleContainer}

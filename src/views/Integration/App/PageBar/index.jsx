@@ -1,7 +1,7 @@
 import { MenuItem, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback} from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import CeligoPageBar from '../../../../components/CeligoPageBar';
@@ -14,6 +14,7 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
+import StatusCircle from '../../../../components/StatusCircle';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -40,6 +41,41 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const StoreMenuItems = ({integration, integrationId, storeId}) => {
+  const integrationErrorsPerStore = useSelector(state =>
+    selectors.integrationErrorsPerStore(state, integrationId),
+  shallowEqual
+  );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
+  return integration?.stores?.map(store => {
+    if (store.value === storeId || !isUserInErrMgtTwoDotZero) {
+      return (
+        <MenuItem key={store.value} value={store.value}>
+          {store.label}
+        </MenuItem>
+      );
+    }
+    const storeErrorCount = integrationErrorsPerStore[store.value];
+
+    if (storeErrorCount === 0) {
+      return (
+        <MenuItem key={store.value} value={store.value}>
+          <div> {store.label}</div>
+          <StatusCircle size="small" variant="success" />
+        </MenuItem>
+      );
+    }
+
+    return (
+      <MenuItem key={store.value} value={store.value}>
+        <div> {store.label}</div>
+      </MenuItem>
+    );
+  });
+};
 export default function PageBar() {
   const history = useHistory();
   const classes = useStyles();
@@ -135,11 +171,11 @@ export default function PageBar() {
             Select {storeLabel}
           </MenuItem>
 
-          {integration.stores.map(s => (
-            <MenuItem key={s.value} value={s.value}>
-              {s.label}
-            </MenuItem>
-          ))}
+          <StoreMenuItems
+            integration={integration}
+            integrationId={integrationId}
+            storeId={storeId} />
+
         </Select>
       </div>
       )}

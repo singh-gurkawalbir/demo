@@ -134,9 +134,9 @@ export default {
           name: 'useAsAnInitializeValue',
           type: 'checkbox',
           defaultValue: value.useAsAnInitializeValue || false,
-          // helpText not present
+          helpKey: 'mapping.useAsInitializeValue',
           // TODO check when this field is hidden
-          label: 'Use this field during record initialization',
+          label: 'Use this field for NetSuite record initialization',
         },
         fieldMappingType: {
           id: 'fieldMappingType',

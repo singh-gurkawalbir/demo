@@ -249,6 +249,7 @@ export const JOB_TYPES = Object.freeze({
 export const JOB_STATUS = Object.freeze({
   COMPLETED: 'completed',
   CANCELED: 'canceled',
+  CANCELLING: 'cancelling',
   FAILED: 'failed',
   QUEUED: 'queued',
   RUNNING: 'running',
@@ -400,6 +401,7 @@ export const SUBMIT_TICKET_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/requests/new?preview_as_role=end_user`;
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
+export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
 export const AS2_URLS_STAGING = [
   {

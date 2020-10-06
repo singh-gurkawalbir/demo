@@ -852,11 +852,27 @@ export const destinationOptions = {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
     },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
+    },
   ],
   s3: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
+    },
+    {
+      label: 'Lookup additional records (per record)',
+      value: 'lookupRecords',
+    },
+    {
+      label: 'Lookup additional files (per record)',
+      value: 'lookupFiles',
     },
   ],
   http: [

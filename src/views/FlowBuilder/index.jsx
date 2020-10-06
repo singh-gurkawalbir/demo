@@ -331,19 +331,16 @@ function FlowBuilder() {
     },
     [patchFlow]
   );
-  const handleErrors = useCallback(
-    resourceId => () => {
-      handleDrawerOpen(`errors/${resourceId}`);
-    },
-    [handleDrawerOpen]
-  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(0);
 
-    // Raise Bottom Drawer height
-    setBottomDrawerHeight(500);
-  }, [setBottomDrawerHeight]);
+    // Raising bottom drawer in cases where console is minimized
+    // and user can not see dashboard after running the flow
+    if (bottomDrawerHeight < 225) {
+      setBottomDrawerHeight(300);
+    }
+  }, [setBottomDrawerHeight, bottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);
@@ -429,9 +426,9 @@ function FlowBuilder() {
       ) : (
         <CeligoTimeAgo date={flow.lastModified} />
       )}
-      {isUserInErrMgtTwoDotZero && <LastRun />}
+      {isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
     </div>
-  ), [classes.subtitle, flow.lastModified, isNewFlow, isUserInErrMgtTwoDotZero]);
+  ), [classes.subtitle, flow.lastModified, isNewFlow, isUserInErrMgtTwoDotZero, flowId]);
 
   const pageBarChildren = useMemo(() => {
     const excludes = ['mapping', 'detach', 'audit', 'schedule'];
@@ -507,7 +504,6 @@ function FlowBuilder() {
         <PageGenerator
           {...pg}
           onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-          onErrors={handleErrors(pg._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -534,7 +530,7 @@ function FlowBuilder() {
                 />
       )}
     </div>
-  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleErrors, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
+  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
 
   const pps = useMemo(() => (
     <div className={classes.processorContainer}>
@@ -542,7 +538,6 @@ function FlowBuilder() {
         <PageProcessor
           {...pp}
           onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-          onErrors={handleErrors(pp._importId || pp._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -581,7 +576,7 @@ function FlowBuilder() {
                   </Typography>
       )}
     </div>
-  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleErrors, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
+  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
@@ -590,6 +585,7 @@ function FlowBuilder() {
 
     return () => {
       dispatch(actions.errorManager.openFlowErrors.cancelPoll());
+      dispatch(actions.errorManager.latestFlowJobs.clear({ flowId }));
     };
   }, [
     dispatch,

@@ -20,11 +20,17 @@ function DynaSalesforceSelectOptionsGenerator(props) {
 
   const options = salesforceExportSelectOptions(data, fieldName);
   const handleRefreshResource = () =>
-    dispatch(actions.metadata.refresh(connectionId, commMetaPath));
+    dispatch(actions.metadata.refresh(
+      connectionId,
+      commMetaPath,
+      {
+        refreshCache: true,
+      }
+    ));
 
   return (
     <DynaGenericSelect
-      handleRefreshResource={handleRefreshResource}
+      onRefresh={handleRefreshResource}
       fieldStatus={status}
       fieldData={options}
       fieldError={errorMessage}

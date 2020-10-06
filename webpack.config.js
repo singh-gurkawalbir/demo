@@ -53,6 +53,19 @@ const config = {
           },
         ],
       },
+      {
+        test: /ace-builds.*\/worker-.*$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              esModule: false,
+              name: '[name].[hash:8].[ext]',
+              outputPath: 'static/ace/',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {

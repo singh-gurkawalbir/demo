@@ -392,6 +392,13 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
+          hideNotificationMessage: true,
+        }),
+      testConnection: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+          hideNotificationMessage: false,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -1385,6 +1392,8 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  patchGenerateThroughAssistant: value =>
+    action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
   addLookup: ({value, isConditionalLookup}) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
   updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
@@ -1557,8 +1566,6 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-  cancelLatest: ({ jobId }) =>
-    action(actionTypes.JOB.CANCEL_LATEST, { jobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
@@ -1692,6 +1699,37 @@ const errorManager = {
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
+  latestFlowJobs: {
+    request: ({ flowId, refresh = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST, {
+        flowId,
+        refresh,
+      }),
+    received: ({flowId, latestJobs}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
+        flowId, latestJobs,
+      }),
+    requestJobFamily: ({ flowId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
+        flowId, jobId,
+      }),
+    receivedJobFamily: ({ flowId, job}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
+        flowId, job,
+      }),
+    requestInProgressJobsPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL, {
+        flowId,
+      }),
+    noInProgressJobs: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS),
+    clear: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {
+        flowId,
+      }),
+    cancelLatestJobs: ({ flowId, jobIds }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
+  },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
@@ -1821,6 +1859,12 @@ const errorManager = {
         resourceId,
         diff,
       }),
+    download: ({ flowId, resourceId, isResolved, filters }) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST, {
+      flowId,
+      resourceId,
+      isResolved,
+      filters,
+    }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

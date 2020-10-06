@@ -3,6 +3,7 @@ import { Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox }
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useState, useMemo } from 'react';
 import ArrowPopper from '../ArrowPopper';
+import ButtonGroup from '../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -10,8 +11,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
   },
   formControl: {
-    margin: theme.spacing(2),
     wordBreak: 'break-word',
+
   },
   filter: {
     maxWidth: '350px',
@@ -26,6 +27,8 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 5,
   },
   formGroup: {
+    maxHeight: 380,
+    overflowY: 'auto',
     '& > label': {
       width: '100%',
     },
@@ -37,10 +40,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     padding: theme.spacing(2),
-    background: theme.palette.background.default,
   },
   actions: {
-    paddingBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
   },
   dateRangePopperBtn: {
@@ -54,29 +55,56 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.secondary.light,
     },
   },
+  selectResourceItem: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginBottom: theme.spacing(2),
+    '& > .MuiFormControlLabel-label': {
+      fontSize: theme.spacing(2),
+    },
+  },
+  selectResourceCheck: {
+    marginTop: theme.spacing(-0.5),
+    marginRight: theme.spacing(0.5),
+  },
 }));
 
 export default function SelectResource(props) {
   const { flowResources = [], selectedResources = [], onSave, isFlow } = props;
+  const [initalValue, setInitialValue] = useState(selectedResources);
   const [checked, setChecked] = useState(selectedResources);
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
+
   const toggleClick = useCallback(event => {
     if (anchorEl) {
-      onSave(checked);
+      setChecked(initalValue);
     }
     setAnchorEl(state => (state ? null : event.currentTarget));
-  }, [anchorEl, checked, onSave]);
+  }, [anchorEl, initalValue]);
+
+  const handleSave = useCallback(() => {
+    setInitialValue(checked);
+    onSave && onSave(checked);
+    setAnchorEl(null);
+  }, [onSave, checked]);
+
+  const handleClose = useCallback(() => {
+    setChecked(initalValue);
+    setAnchorEl(null);
+  }, [initalValue]);
 
   const buttonName = useMemo(() => {
-    if (!checked || !checked.length) {
+    const filterChecked = Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : [];
+
+    if (!checked || !filterChecked.length) {
       return 'No flows selected';
     }
-    if (checked.length === 1) {
-      return flowResources.find(r => r._id === checked[0])?.name;
+    if (filterChecked.length === 1) {
+      return flowResources.find(r => r._id === filterChecked[0])?.name;
     }
 
-    return `${checked.length} ${isFlow ? 'resources' : 'flows'} selected`;
+    return `${filterChecked.length} ${isFlow ? 'resources' : 'flows'} selected`;
   }, [checked, isFlow, flowResources]);
 
   const handleFlowSelect = id => event => {
@@ -121,12 +149,14 @@ export default function SelectResource(props) {
                     {flowResources.map(m => (
                       <FormControlLabel
                         key={m.id}
+                        className={classes.selectResourceItem}
                         control={(
                           <Checkbox
                             color="primary"
                             checked={checked.includes(m._id)}
                             onChange={handleFlowSelect(m._id)}
                             value="required"
+                            className={classes.selectResourceCheck}
                       />
                     )}
                         label={m.name}
@@ -135,6 +165,17 @@ export default function SelectResource(props) {
 
                   </FormGroup>
                 </FormControl>
+              </div>
+              <div className={classes.actions}>
+                <ButtonGroup>
+
+                  <Button variant="outlined" color="primary" onClick={handleSave}>
+                    Apply
+                  </Button>
+                  <Button variant="text" color="primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
               </div>
             </div>
           </div>

@@ -33,6 +33,7 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       helpKey: 'precisely.http._iClientId',
+      ignoreEnvironmentFilter: true,
     },
     application: {
       fieldId: 'application',

@@ -106,6 +106,9 @@ export default {
     'g2',
     'shipengine',
     'jiraserver',
+    'gainsight',
+    'dotdigital',
+    'checkout',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

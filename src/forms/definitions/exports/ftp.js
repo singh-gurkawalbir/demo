@@ -181,6 +181,7 @@ export default {
           ],
         },
       ],
+      visible: r => !(r && r.isLookup),
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -191,6 +192,14 @@ export default {
 
       defaultValue: r => {
         const isNew = isNewId(r._id);
+
+        if (r && r.isLookup) {
+          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
+            return 'records';
+          }
+
+          return 'blob';
+        }
 
         // if its create
         if (isNew) return 'records';

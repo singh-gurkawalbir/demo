@@ -5,6 +5,7 @@ import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../utils/constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
 import RefreshIcon from '../../../components/icons/RefreshIcon';
+import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
@@ -27,12 +28,12 @@ const useStyles = makeStyles(theme => ({
 const FLOW_RUNNING_STATUS = 'In progress';
 const FLOW_IN_QUEUE_STATUS = 'Waiting in queue';
 
-export default function LastRun() {
+export default function LastRun({ flowId }) {
   const classes = useStyles();
   const [lastRunStatus, setLastRunStatus] = useState();
 
   const flowJobStatus = useSelector(state => {
-    const latestJobs = selectors.latestFlowJobs(state);
+    const latestJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     const isInProgress = latestJobs.some(job => job.status === JOB_STATUS.RUNNING);
 
@@ -44,7 +45,7 @@ export default function LastRun() {
   });
 
   const lastExecutedJob = useSelector(state => {
-    const jobs = selectors.flowJobs(state);
+    const jobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return jobs.find(job => !!job.lastExecutedAt);
   }, shallowEqual);
@@ -59,15 +60,21 @@ export default function LastRun() {
 
   const lastRunStatusLabel = useMemo(() => {
     if ([FLOW_RUNNING_STATUS, FLOW_IN_QUEUE_STATUS].includes(lastRunStatus)) {
-      return lastRunStatus;
+      return (
+        <>
+          <Spinner color="primary" size={16} className={classes.icon} />
+          <span>{lastRunStatus}</span>
+        </>
+      );
     }
 
     return (
       <>
+        <RefreshIcon className={classes.icon} />
         Last run: <CeligoTimeAgo date={lastRunStatus} />
       </>
     );
-  }, [lastRunStatus]);
+  }, [lastRunStatus, classes.icon]);
 
   if (!lastRunStatus) return null;
 
@@ -75,7 +82,7 @@ export default function LastRun() {
     <>
       <div className={classes.divider} />
       <span className={classes.flexContainer}>
-        <RefreshIcon className={classes.icon} /> {lastRunStatusLabel}
+        {lastRunStatusLabel}
       </span>
     </>
   );

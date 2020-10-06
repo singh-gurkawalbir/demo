@@ -1,4 +1,3 @@
-import { isProduction } from '../forms/utils';
 import { stringCompare } from '../utils/sort';
 
 // Schema details:
@@ -164,11 +163,6 @@ const connectors = [
   { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
   { id: 'amazonmws', name: 'Amazon MWS', type: 'http', assistant: 'amazonmws' },
   { id: 'anaplan', name: 'Anaplan', type: 'http', assistant: 'anaplan' },
-  {
-    id: 'gainsight',
-    name: 'Gainsight CS',
-    marketPlaceOnly: true,
-  },
   {
     id: 'aptrinsic',
     name: 'Gainsight PX',
@@ -839,7 +833,7 @@ export const groupApplications = (
 
   assistantConnectors.sort(stringCompare('name'));
 
-  let filteredConnectors = assistantConnectors.filter(connector => {
+  const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.marketPlaceOnly) {
       return false;
     }
@@ -866,10 +860,6 @@ export const groupApplications = (
 
     return true;
   });
-
-  if (isProduction()) {
-    filteredConnectors = filteredConnectors.filter(c => c.id !== 'snowflake');
-  }
 
   return [
     {

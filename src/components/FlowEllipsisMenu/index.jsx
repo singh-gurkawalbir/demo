@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -39,12 +39,14 @@ const allActions = {
   delete: { action: 'delete', label: 'Delete flow', Icon: TrashIcon },
 };
 
+const emptyObject = {};
+
 export default function FlowEllipsisMenu({ flowId, exclude }) {
   const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
   const flowDetails =
-    useSelector(state => selectors.flowDetails(state, flowId)) || {};
+    useSelector(state => selectors.flowDetails(state, flowId), shallowEqual) || emptyObject;
   const patchFlow = useCallback(
     (path, value) => {
       const patchSet = [{ op: 'replace', path, value }];
@@ -58,7 +60,8 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
 
   const integrationId = flowDetails._integrationId;
   const permission = useSelector(state =>
-    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows')
+    selectors.resourcePermissions(state, 'integrations', integrationId, 'flows'),
+  shallowEqual
   );
   const integrationAppName = useSelector(state => {
     const integration = selectors.resource(
