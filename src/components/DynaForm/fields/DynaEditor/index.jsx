@@ -61,8 +61,6 @@ export default function DynaEditor(props) {
     errorMessages,
     required,
     isValid,
-    helpKey,
-    helpText,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
@@ -139,8 +137,7 @@ export default function DynaEditor(props) {
         />
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel required={required} error={!isValid} >{label}</FormLabel>
-          {/* TODO: its better is to put this condition inside FieldHelp. It should only show up only when there is helpText or helpKey. */}
-          {(helpKey || helpText) && <FieldHelp {...props} />}
+          <FieldHelp {...props} />
         </div>
 
         <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
