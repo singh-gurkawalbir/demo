@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -5263,3 +5264,51 @@ selectors.availableUsersList = (state, integrationId) => {
   return _users;
 };
 
+/**
+ * Returns error count per category in a store for IA 1.0
+ * A map of titleId and total errors on that category
+ */
+selectors.integrationErrorsPerSection = createSelector(
+  selectors.integrationAppFlowSections,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => selectors.resourceList(state, { type: 'flows' }).resources,
+  (flowSections, integrationErrors, flowsList) =>
+    // go through all sections and aggregate error counts of all the flows per sections against titleId
+    flowSections.reduce((errorsMap, section) => {
+      const { flows = [], titleId } = section;
+
+      errorsMap[titleId] = flows.reduce((total, flow) => {
+        const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
+
+        // we consider enabled flows to show total count per section
+        if (!isFlowDisabled) {
+          total += (integrationErrors[flow._id] || 0);
+        }
+
+        return total;
+      }, 0);
+
+      return errorsMap;
+    }, emptyObject)
+);
+
+/**
+ * Returns error count per Store in an Integration for IA 1.0
+ * A map of storeId and total errors on that Store
+ */
+selectors.integrationErrorsPerStore = (state, integrationId) => {
+  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId);
+  const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
+
+  if (!supportsMultiStore) return emptyObject;
+
+  return stores.reduce((storeErrorsMap, store) => {
+    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, store.id);
+
+    storeErrorsMap[store.id] = Object.values(sectionErrorsMap).reduce(
+      (total, count) => total + count,
+      0);
+
+    return storeErrorsMap;
+  }, emptyObject);
+};
