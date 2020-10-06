@@ -72,7 +72,7 @@ const metadata = {
         }, [flowBuilderTo, history, id]);
 
         if (count === 0) {
-          return 'Success';
+          return '0';
         }
 
         return (
