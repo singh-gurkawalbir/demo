@@ -286,7 +286,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 color="secondary"
                 className={classes.btnActions}
                 onClick={handleDownload}>
-                Download all
+                Download
               </Button>
             </div>
           </div>
