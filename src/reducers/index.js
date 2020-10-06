@@ -2256,24 +2256,42 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-selectors.getResourceEditUrl = (state, resourceType, resourceId) => {
-  if (resourceType === 'flows') {
-    const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId, name } =
+selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
+  let integrationId = resourceType === 'integrations' ? resourceId : getParentsResourceId(state, resourceType, resourceId);
+  // eslint-disable-next-line prefer-const
+  let { name: integrationName, _parentId } = selectors.resource(state, 'integrations', integrationId) || {};
+
+  // fetch parent integration name and id to append in the url
+  if (_parentId) {
+    const name = selectors.resource(state, 'integrations', _parentId)?.name;
+
+    integrationName = name;
+    integrationId = _parentId;
+  }
+  // to handle standalone integrations
+  integrationId = integrationId || 'none';
+
+  const { _connectorId } =
       selectors.resource(state, resourceType, resourceId) || {};
 
-    // if _connectorId its an integrationApp
-    if (_connectorId) {
-      return getRoutePath(
-        `/integrationapps/${getIntegrationAppUrlName(
-          name
-        )}/${integrationId}/flowBuilder/${resourceId}`
-      );
-    }
+  let iaUrlPrefix;
 
-    return getRoutePath(
-      `/integrations/${integrationId}/flowBuilder/${resourceId}`
-    );
+  if (_connectorId) {
+    if (childId) {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+    } else {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;
+    }
+  }
+
+  if (resourceType === 'flows') {
+    const isDataLoader = selectors.isDataLoader(state, resourceId);
+    const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+    return getRoutePath(`${iaUrlPrefix || `/integrations/${integrationId}`}/${flowBuilderPathName}/${resourceId}`);
+  }
+  if (resourceType === 'integrations') {
+    return getRoutePath(`${iaUrlPrefix || `/integrations/${resourceId}`}/flows`);
   }
 
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
@@ -5181,7 +5199,7 @@ selectors.integrationErrorsPerSection = createSelector(
       }, 0);
 
       return errorsMap;
-    }, emptyObject)
+    }, {})
 );
 
 /**
@@ -5202,5 +5220,5 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
       0);
 
     return storeErrorsMap;
-  }, emptyObject);
+  }, {});
 };

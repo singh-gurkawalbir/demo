@@ -183,6 +183,10 @@ export default function IntegrationApp(props) {
     return (
       <MenuItem key={store.value} value={store.value}>
         <div> {store.label}</div>
+        <div>
+          <StatusCircle size="small" variant="error" />
+          <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+        </div>
       </MenuItem>
     );
   }), [integrationErrorsPerStore, integration.stores, storeId, isUserInErrMgtTwoDotZero]);
