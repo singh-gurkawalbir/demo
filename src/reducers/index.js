@@ -5181,7 +5181,7 @@ selectors.integrationErrorsPerSection = createSelector(
       }, 0);
 
       return errorsMap;
-    }, emptyObject)
+    }, {})
 );
 
 /**
