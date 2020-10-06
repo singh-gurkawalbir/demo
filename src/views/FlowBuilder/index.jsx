@@ -335,9 +335,12 @@ function FlowBuilder() {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(0);
 
-    // Raise Bottom Drawer height
-    setBottomDrawerHeight(500);
-  }, [setBottomDrawerHeight]);
+    // Raising bottom drawer in cases where console is minimized
+    // and user can not see dashboard after running the flow
+    if (bottomDrawerHeight < 225) {
+      setBottomDrawerHeight(300);
+    }
+  }, [setBottomDrawerHeight, bottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);

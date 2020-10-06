@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Redirect, generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { MenuItem } from '@material-ui/core';
@@ -34,6 +34,7 @@ import SettingsIcon from '../../../components/icons/SettingsIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import CeligoSelect from '../../../components/CeligoSelect';
+import StatusCircle from '../../../components/StatusCircle';
 
 const allTabs = [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
@@ -123,11 +124,18 @@ export default function IntegrationApp(props) {
   // const defaultStoreId = useSelector(state =>
   //   selectors.defaultStoreId(state, integrationId, storeId)
   // );
+  const integrationErrorsPerStore = useSelector(state =>
+    selectors.integrationErrorsPerStore(state, integrationId),
+  shallowEqual
+  );
   const currentStore = useSelector(state =>
     selectors.integrationAppStore(state, integrationId, storeId)
   );
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
+  );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const queryParams = new URLSearchParams(location.search);
@@ -155,6 +163,33 @@ export default function IntegrationApp(props) {
       selectors.resourcePermissions(state, 'integrations', integrationId)
         .accessLevel
   );
+
+  const storeMenuItems = useMemo(() => integration.stores?.map(store => {
+    if (store.value === storeId || !isUserInErrMgtTwoDotZero) {
+      return (
+        <MenuItem key={store.value} value={store.value}>
+          {store.label}
+        </MenuItem>
+      );
+    }
+    const storeErrorCount = integrationErrorsPerStore[store.value];
+
+    if (storeErrorCount === 0) {
+      return (
+        <MenuItem key={store.value} value={store.value}>
+          <div> {store.label}</div>
+          <StatusCircle size="small" variant="success" />
+        </MenuItem>
+      );
+    }
+
+    return (
+      <MenuItem key={store.value} value={store.value}>
+        <div> {store.label}</div>
+      </MenuItem>
+    );
+  }), [integrationErrorsPerStore, integration.stores, storeId, isUserInErrMgtTwoDotZero]);
+
   const isCloningSupported =
     integration &&
     integrationAppUtil.isCloningSupported(
@@ -322,7 +357,6 @@ export default function IntegrationApp(props) {
   if (redirectToPage) {
     return <Redirect push={false} to={redirectToPage} />;
   }
-
   // console.log('render: <IntegrationApp>');
 
   return (
@@ -367,11 +401,7 @@ export default function IntegrationApp(props) {
               displayEmpty
               value={storeId || ''}>
               <MenuItem value="">Select {storeLabel}</MenuItem>
-              {integration.stores.map(opt => (
-                <MenuItem key={opt.value} value={opt.value}>
-                  {opt.label || opt.value}
-                </MenuItem>
-              ))}
+              {storeMenuItems}
             </CeligoSelect>
           </div>
         )}

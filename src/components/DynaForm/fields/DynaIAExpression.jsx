@@ -95,7 +95,7 @@ export default function DynaIAExpression(props) {
     commMetaPath = `netsuite/metadata/suitescript/connections/${connection._id}/recordTypes/${recordType}/searchFilters?includeJoinFilters=true`;
   }
 
-  const options = { commMetaPath, disableFetch: false };
+  const options = { commMetaPath, disableFetch: false, sObjectType: resource?.salesforce?.sObjectType };
 
   switch (filterType) {
     case 'netsuiteImportLookup':
@@ -120,7 +120,8 @@ export default function DynaIAExpression(props) {
       {...props}
       flowId={flowId}
       options={options}
-      resourceId={resource && resource._id}
+      resourceId={resource?._id}
+      connectionId={connection._id}
     />
   );
 }

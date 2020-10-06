@@ -239,6 +239,7 @@ const PageGenerator = ({
       };
     }
 
+    // TODO: move this logic to util function and use "resourceCategory" function
     let blockType;
 
     if (!pending || resourceId) {

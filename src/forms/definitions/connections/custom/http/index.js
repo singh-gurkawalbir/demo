@@ -189,6 +189,7 @@ import precisely from './precisely';
 import shipengine from './shipengine';
 import jiraserver from './jiraserver';
 import gainsight from './gainsight';
+import dotdigital from './dotdigital';
 
 export default {
   concurexpense,
@@ -381,4 +382,5 @@ export default {
   shipengine,
   jiraserver,
   gainsight,
+  dotdigital,
 };

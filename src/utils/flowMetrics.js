@@ -109,25 +109,27 @@ export const getTicks = (domainRange, srange, isValue) => {
   let ticks;
   const range = getSelectedRange(srange);
 
+  const startDateFromNowInDays = moment().diff(moment(range.startDate), 'days');
   const days = moment(range.endDate).diff(moment(range.startDate), 'days');
   const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
 
-  if (hours <= 1) {
-    if (isValue) {
-      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+  if (startDateFromNowInDays < 7) {
+    if (hours <= 1) {
+      if (isValue) {
+        return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+      }
+
+      return domainRange.ticks(d3.timeMinute.every(5)).map(t => t.getTime());
     }
+    if (hours > 1 && hours < 5) {
+      if (isValue) {
+        return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+      }
 
-    return domainRange.ticks(d3.timeMinute.every(5)).map(t => t.getTime());
-  }
-  if (hours > 1 && hours < 5) {
-    if (isValue) {
-      return domainRange.ticks(d3.timeMinute.every(1)).map(t => t.getTime());
+      return domainRange.ticks(d3.timeMinute.every(10)).map(t => t.getTime());
     }
-
-    return domainRange.ticks(d3.timeMinute.every(10)).map(t => t.getTime());
   }
-
-  if (days < 5) {
+  if (hours <= 4 * 24) {
     ticks = domainRange.ticks(d3.timeHour.every(1)).map(t => t.getTime());
   } else if (days < 90) {
     ticks = domainRange.ticks(d3.timeHour.every(24)).map(t => t.getTime());
@@ -138,12 +140,14 @@ export const getTicks = (domainRange, srange, isValue) => {
   return ticks;
 };
 export const getXAxisFormat = range => {
-  const days = moment(range.endDate).diff(moment(range.startDate), 'days');
+  const hours = moment(range.endDate).diff(moment(range.startDate), 'hours');
   let xAxisFormat;
 
-  if (days < 2) {
+  if (hours <= 24) {
     xAxisFormat = 'HH:mm';
-  } else if (days < 90) {
+  // } else if (hours > 24 && hours < 4 * 24) {
+  //   xAxisFormat = 'ddd HH:mm';
+  } else if (hours < 90 * 24) {
     xAxisFormat = 'MM/DD/YY';
   } else {
     xAxisFormat = 'MMMM';
