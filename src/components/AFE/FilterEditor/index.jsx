@@ -72,6 +72,7 @@ export default function FilterEditor(props) {
       dispatch(actions.editor.patch(editorId, {
         isSampleDataLoading: false,
         data: props.data,
+        lastValidData: props.data,
       }));
     }
   }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);

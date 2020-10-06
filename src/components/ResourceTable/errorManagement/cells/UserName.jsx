@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
+import OverflowWrapper from './OverflowWrapper';
 
 export default function UserName({ userId }) {
   // TODO @Raghu: Add selector to get user name
@@ -20,5 +21,5 @@ export default function UserName({ userId }) {
     return 'Autopilot';
   }
 
-  return <div> {userName || userId}</div>;
+  return <OverflowWrapper message={userName || userId} />;
 }

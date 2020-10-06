@@ -79,7 +79,7 @@ export default {
       type: 'text',
       label: 'Username',
       required: true,
-      helpKey: 'anaplan.connection.http.unencrypted.username',
+      helpKey: 'anaplan.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.encrypted.password': {
@@ -89,7 +89,7 @@ export default {
       label: 'Password',
       defaultValue: '',
       required: true,
-      helpKey: 'anaplan.connection.http.encrypted.password',
+      helpKey: 'anaplan.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.token.token': {

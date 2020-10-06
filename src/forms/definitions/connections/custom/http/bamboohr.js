@@ -26,6 +26,7 @@ export default {
       type: 'text',
       required: true,
       label: 'Subdomain',
+      helpKey: 'bamboohr.connection.http.bamboohrSubdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
