@@ -108,6 +108,7 @@ export default {
     'jiraserver',
     'gainsight',
     'dotdigital',
+    'checkout',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
