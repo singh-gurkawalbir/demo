@@ -40,6 +40,11 @@ export default function UninstallSection({ storeId, integrationId }) {
     useSelector(state =>
       selectors.integrationAppSettings(state, integrationId)
     ) || {};
+  const isParentView = useSelector(state => {
+    const integration = selectors.integrationAppSettings(state, integrationId);
+
+    return !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
+  });
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
@@ -70,6 +75,20 @@ export default function UninstallSection({ storeId, integrationId }) {
       ],
     });
   };
+
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <PanelHeader title="Uninstall" />
+        <Divider />
+        <div className={classes.content}>
+          <span>
+            Choose a store from the store drop-down to uninstall.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
