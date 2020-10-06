@@ -9,7 +9,8 @@ import StatusCircle from '../../../../StatusCircle';
 const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 300,
-    wordWrap: 'break-word',
+    minWidth: 100,
+    wordBreak: 'break-word',
   },
   errorStatus: {
     justifyContent: 'center',
