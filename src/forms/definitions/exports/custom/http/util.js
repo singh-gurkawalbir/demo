@@ -286,11 +286,6 @@ export function fieldMeta({ resource, assistantData }) {
     fieldMap[field.id || field.fieldId] = field;
     exportTypeFieldIds.push(field.id || field.fieldId);
   });
-
-  fieldMap.exportPanel = {
-    fieldId: 'exportPanel',
-  };
-
   fieldMap.settings = {
     fieldId: 'settings',
   };
@@ -298,35 +293,27 @@ export function fieldMeta({ resource, assistantData }) {
   return {
     fieldMap,
     layout: {
-      type: 'column',
+      type: 'collapse',
       containers: [
         {
-          type: 'collapse',
-          containers: [
-            {
-              collapsed: true,
-              label: 'General',
-              fields: ['common', 'exportOneToMany', 'formView'],
-            },
-            {
-              collapsed: true,
-              label: 'What would you like to export?',
-              fields: [...fieldIds],
-            },
-            {
-              collapsed: true,
-              label: 'Configure export type',
-              fields: [...exportTypeFieldIds],
-            },
-            {
-              collapsed: true,
-              label: 'Advanced',
-              fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
-            },
-          ],
+          collapsed: true,
+          label: 'General',
+          fields: ['common', 'exportOneToMany', 'formView'],
         },
         {
-          fields: ['exportPanel'],
+          collapsed: true,
+          label: 'What would you like to export?',
+          fields: [...fieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Configure export type',
+          fields: [...exportTypeFieldIds],
+        },
+        {
+          collapsed: true,
+          label: 'Advanced',
+          fields: ['pageSize', 'skipRetries', 'apiIdentifier'],
         },
       ],
     },

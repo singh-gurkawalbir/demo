@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import JsonContent from '../../../../JsonContent';
+import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {

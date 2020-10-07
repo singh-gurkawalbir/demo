@@ -22,6 +22,17 @@ const applicationsWithPreviewPanel = [
 ];
 const emptyList = [];
 
+const HTTP_STAGES = [
+  { label: 'HTTP request', value: 'request' },
+  { label: 'HTTP response', value: 'raw' },
+  { label: 'Parsed output', value: 'parse' },
+];
+
+Object.freeze(HTTP_STAGES);
+
+const PARSED_STAGE = [{ label: 'Parsed output', value: 'parse' }];
+
+Object.freeze(PARSED_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
@@ -30,33 +41,23 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
-    return [
-      { label: 'Parsed output', value: 'parse' },
-    ];
+    return PARSED_STAGE;
   }
 
   if (!appType) return emptyList;
 
   switch (appType) {
     case 'http':
-      return [
-        { label: 'HTTP request', value: 'request' },
-        { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed output', value: 'parse' },
-      ];
+      return HTTP_STAGES;
     case 'netsuite':
     case 'salesforce':
-      return [{ label: 'Parsed output', value: 'parse' }];
+      return PARSED_STAGE;
     case 'rest':
-      return [
-        { label: 'HTTP request', value: 'request' },
-        { label: 'HTTP response', value: 'raw' },
-        { label: 'Parsed output', value: 'parse' },
-      ];
+      return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return [{ label: 'Parsed output', value: 'parse' }];
+      return PARSED_STAGE;
     default:
       return emptyList;
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import TextToggle from '../../../../TextToggle';
+import TextToggle from '../../TextToggle';
 
 const useStyles = makeStyles(theme => ({
   textToggleContainer: {

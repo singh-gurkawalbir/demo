@@ -25,8 +25,6 @@ export default function UserFormWrapper({ userId }) {
         integrationAccessLevel: [],
       };
 
-      setDisableSave(true);
-
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
         integrationsToManage.forEach(_integrationId =>
           aShareData.integrationAccessLevel.push({

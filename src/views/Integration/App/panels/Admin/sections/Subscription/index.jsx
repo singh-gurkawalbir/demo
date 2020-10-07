@@ -12,6 +12,7 @@ import { selectors } from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const metadata = {
   columns: [
@@ -88,11 +89,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const supportsMultiStore = !!storeId;
-  const version = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
 
-    return integration && integration.version;
-  });
+  const version = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId)?.version;
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
