@@ -15,6 +15,7 @@ import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { getEmptyMessage } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,11 +59,8 @@ export default function SettingsPanel({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
-  const isParentView = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
-
-    return !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
-  });
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
@@ -115,7 +113,7 @@ export default function SettingsPanel({
           <div className={classes.content}>
             <span>
               {isParentView
-                ? 'Choose a store from the store drop-down to view settings.'
+                ? getEmptyMessage(integration.settings?.storeLabel, 'view settings')
                 : 'You don&apos;t have any custom settings for this integration.' }
             </span>
           </div>

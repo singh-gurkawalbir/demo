@@ -6,7 +6,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
-import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import { getEmptyMessage, getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
@@ -77,7 +77,7 @@ export default function UninstallSection({ storeId, integrationId }) {
         <Divider />
         <div className={classes.content}>
           <span>
-            Choose a store from the store drop-down to uninstall.
+            {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
           </span>
         </div>
       </div>

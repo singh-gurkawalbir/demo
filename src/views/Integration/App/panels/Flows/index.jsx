@@ -26,6 +26,8 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
+import { getEmptyMessage } from '../../../../../utils/integrationApps';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -253,12 +255,9 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
 
-  const isParentView = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
-
-    return !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId);
-  });
+  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
@@ -283,7 +282,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
         <Divider className={classes.divider} />
         <div className={classes.content}>
           <span>
-            Choose a store from the store drop-down to view flows.
+            {getEmptyMessage(integration.settings?.storeLabel, 'view flows')}
           </span>
         </div>
       </div>
