@@ -81,7 +81,7 @@ export default function ReplaceConnection(props) {
     optionsHandler: fieldMeta.optionsHandler,
   });
 
-  const clone = useCallback(formVal => {
+  const replace = useCallback(formVal => {
     if (formVal._connectionId) { dispatch(actions.resource.replaceConnection(flowId, connection._id, formVal._connectionId)); }
   }, [dispatch, flowId, connection._id]);
 
@@ -93,10 +93,10 @@ export default function ReplaceConnection(props) {
       <ButtonGroup>
         <DynaSubmit
           formKey={formKey}
-          onClick={clone}
+          onClick={replace}
           color="primary"
           disabled={false}
-          data-test="saveFlowSchedule">
+          data-test="replaceConnection">
           Replace
         </DynaSubmit>
         <Button onClick={onClose} variant="text" color="primary">

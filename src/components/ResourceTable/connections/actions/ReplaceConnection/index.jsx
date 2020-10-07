@@ -7,7 +7,7 @@ import RightDrawer from '../../../../drawer/Right';
 export default {
   label: 'Replace connection',
   icon: DebugIcon,
-  component: function Replaceconnection({ rowData = {} }) {
+  component: function ReplaceConnections({ rowData = {} }) {
     const { _id: connectionId } = rowData;
     const [show, setShow] = useState(true);
     const history = useHistory();
