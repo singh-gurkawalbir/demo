@@ -56,7 +56,7 @@ export default function getFormMetadata(options) {
         name: 'rowsPerRecord',
         label: 'Multiple rows per record',
         type: 'checkboxforresetfields',
-        fieldsToReset: [{ id: 'keyColumns', type: 'filekeycolumn', defaultValue: [] }],
+        fieldsToReset: [{ id: 'keyColumns', defaultValue: [] }],
         defaultValue: !!(Array.isArray(options?.keyColumns) && options.keyColumns.length),
         required: true,
       },
@@ -75,7 +75,6 @@ export default function getFormMetadata(options) {
           'trimSpaces',
           'rowsToSkip',
           'hasHeaderRow',
-          'rowsPerRecord',
         ],
         visibleWhen: [
           {
