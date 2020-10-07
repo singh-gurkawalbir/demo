@@ -112,7 +112,6 @@ export default function TransformEditor(props) {
             name="data"
             value={data}
             mode="json"
-            overrides={{ showGutter: false }}
             onChange={handleDataChange}
             readOnly={disabled}
             hasError={!!violations?.dataError}
@@ -124,7 +123,6 @@ export default function TransformEditor(props) {
         <PanelTitle title="Output" />
         <CodePanel
           name="result"
-          overrides={{ showGutter: false }}
           value={parsedData || ''}
           mode="json"
           readOnly
