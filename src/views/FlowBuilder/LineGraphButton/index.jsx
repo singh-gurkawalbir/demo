@@ -1,7 +1,8 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import GraphIcon from '../../../components/icons/GraphIcon';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 
@@ -37,13 +38,13 @@ export default function LineGraphButton({flowId, onClickHandler}) {
   const disableButton = !flow.lastExecutedAt && !flowJobExists;
 
   return (
-    <IconButton
+    <IconButtonWithTooltip
       disabled={disableButton}
       className={classes.chartsIcon}
       data-test="charts"
-      title="Dashboard"
+      tooltipProps={{title: 'Dashboard'}}
       onClick={onClickHandler('charts')}>
       <GraphIcon className={classes.iconGraph} />
-    </IconButton>
+    </IconButtonWithTooltip>
   );
 }
