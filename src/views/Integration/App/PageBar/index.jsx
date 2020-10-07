@@ -132,7 +132,7 @@ export default function PageBar() {
     );
   }, [history, integrationAppName, integrationId]);
 
-  const renderStoreValue = useCallback(selectedStoreId =>
+  const renderStoreLabel = useCallback(selectedStoreId =>
     integration.stores?.find(store => store.value === selectedStoreId)?.label,
   [integration]);
 
@@ -175,7 +175,7 @@ export default function PageBar() {
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
           onChange={handleStoreChange}
-          renderValue={renderStoreValue}
+          renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
           value={storeId}>
           <MenuItem disabled value="">
