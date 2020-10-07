@@ -19,6 +19,12 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     fontSize: '14px',
   },
+  errorStatusLink: {
+    color: theme.palette.primary.main,
+    '&:hover': {
+      color: theme.palette.primary.light,
+    },
+  },
   success: {
     fontSize: '14px',
     display: 'flex',
@@ -51,7 +57,7 @@ export default function RunCell({
       <div className={classes.root}>
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
-          <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
+          <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
         </span>
       </div>
     );
