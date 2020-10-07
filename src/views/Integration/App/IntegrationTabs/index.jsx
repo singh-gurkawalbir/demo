@@ -5,6 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import IntegrationTabs from '../../common/Tabs';
 import AuditLogIcon from '../../../../components/icons/AuditLogIcon';
+import GraphIcon from '../../../../components/icons/GraphIcon';
 import DashboardIcon from '../../../../components/icons/DashboardIcon';
 import ConnectionsIcon from '../../../../components/icons/ConnectionsIcon';
 import NotificationsIcon from '../../../../components/icons/NotificationsIcon';
@@ -25,13 +26,13 @@ import SingleUserIcon from '../../../../components/icons/SingleUserIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getAdminLevelTabs } from '../../../../utils/integrationApps';
 
-const allTabs = [
+const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: DashboardIcon,
+    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -92,6 +93,9 @@ export default function IntegrationTabsComponent() {
     return addOnState?.addOns?.addOnMetaData?.length > 0;
   }
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
 
   const accessLevel = useSelector(
     state =>
@@ -116,7 +120,7 @@ export default function IntegrationTabsComponent() {
       filterTabs.push('admin');
     }
 
-    return allTabs.filter(tab => !filterTabs.includes(tab.path));
+    return getAllTabs(isUserInErrMgtTwoDotZero).filter(tab => !filterTabs.includes(tab.path));
   }, [hasAddOns, showAdminTab]);
 
   return (
