@@ -13,6 +13,12 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     '& span': {
       fontSize: '12px',
+      color: theme.palette.primary.main,
+    },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
     },
   },
 }));

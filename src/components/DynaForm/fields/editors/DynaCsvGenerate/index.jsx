@@ -11,6 +11,7 @@ import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { generateNewId } from '../../../../../utils/resource';
 import useFormContext from '../../../../Form/FormContext';
+import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
 const useStyles = makeStyles({
   csvContainer: {
@@ -72,7 +73,7 @@ export default function DynaCsvGenerate(props) {
     flowId,
     formKey: parentFormKey,
   } = props;
-  const [formKey, setFormKey] = useState(1);
+  const [remountKey, setRemountKey] = useState(1);
   const handleOpenDrawer = usePushRightDrawer(id);
 
   const isHttpImport = useSelector(state => {
@@ -118,17 +119,18 @@ export default function DynaCsvGenerate(props) {
 
       setCurrentOptions(getInitOptions(parsedVal));
       setForm(getFormMetadata({...editorValues, customHeaderRowsSupported: isHttpImport}));
-      setFormKey(formKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsedVal);
     }
-  }, [formKey, getInitOptions, id, isHttpImport, onFieldChange]);
+  }, [getInitOptions, id, isHttpImport, onFieldChange]);
 
   const [secondaryFormKey] = useState(generateNewId());
 
   useUpdateParentForm(secondaryFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
-    remount: formKey,
+    remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,
     fieldMeta: form,

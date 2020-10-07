@@ -29,13 +29,16 @@ const getColumns = result => {
   return Object.keys(sampleRecord).map(name => ({ label: name, value: name }));
 };
 
+const emptySet = [];
+const emptyObj = {};
+
 export default function DynaFileKeyColumn(props) {
   const {
     disabled,
     id,
     name,
     onFieldChange,
-    value = [],
+    value = emptySet,
     label,
     required,
     resourceId,
@@ -43,7 +46,7 @@ export default function DynaFileKeyColumn(props) {
     isValid,
     helpText,
     helpKey,
-    options = {},
+    options = emptyObj,
   } = props;
   const dispatch = useDispatch();
   const classes = useStyles();
