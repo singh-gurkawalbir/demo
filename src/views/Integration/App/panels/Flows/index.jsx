@@ -77,8 +77,6 @@ export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
     mode: 'primary',
   })), [actions, actionProps]);
 
-  if (!actions || !actions.length) { return null; }
-
   return (
     <GenerateButtons
       fieldMap={fieldMap}
@@ -121,10 +119,12 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
+      {fieldMeta?.actions?.length && (
       <ActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
       />
+    )}
     </>
   );
 };

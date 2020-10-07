@@ -611,9 +611,6 @@ export default {
     type: 'sampledata',
     label: 'Sample data',
   },
-  exportPanel: {
-    type: 'exportpanel',
-  },
   skipRetries: {
     type: 'skipRetries',
     label: 'Do not store retry data',

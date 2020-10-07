@@ -117,7 +117,6 @@ export default function fields(state = {}, action) {
           // eslint-disable-next-line no-console
           return console.warn('Field ID not there', id);
         }
-        fieldsRef[id].touched = true;
 
         fieldsRef[id].touched = true;
         getNextStateFromFields(draft[formKey]);

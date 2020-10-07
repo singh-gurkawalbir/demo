@@ -1,10 +1,8 @@
 /* global describe, test, expect */
 import each from 'jest-each';
 import actionTypes from '../actions/types';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import getJsonPaths from './jsonPaths';
 import getRequestOptions from './requestOptions';
-import getExistingResourcePagePath from './resource';
 import getRoutePath from './routePaths';
 import retry from './retry';
 
@@ -65,35 +63,6 @@ describe('Route paths util method', () => {
     });
     ['something', '  something  '].forEach(r => {
       expect(getRoutePath(r)).toEqual(`${uiRoutePathPrefix}/${r.trim()}`);
-    });
-  });
-});
-
-describe('getExistingResourcePagePath util method', () => {
-  test('should return valid path, if no resource details passed', () => {
-    expect(getExistingResourcePagePath()).toEqual(`${uiRoutePathPrefix}/`);
-  });
-  test('should return valid path, if invalid resource type passed', () => {
-    expect(getExistingResourcePagePath({ type: 'something' })).toEqual(
-      `${uiRoutePathPrefix}/`
-    );
-  });
-  ['export', 'exports', 'imports', 'stacks'].forEach(rt => {
-    describe(`should return valid path for resource type ${rt}`, () => {
-      test('should return valid path, if id is not passed', () => {
-        expect(getExistingResourcePagePath({ type: rt })).toEqual(
-          `${uiRoutePathPrefix}/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] ||
-            rt}/edit/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] || rt}/undefined`
-        );
-      });
-      test('should return valid path, if id is passed', () => {
-        expect(
-          getExistingResourcePagePath({ type: rt, id: 'something' })
-        ).toEqual(
-          `${uiRoutePathPrefix}/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] ||
-            rt}/edit/${RESOURCE_TYPE_SINGULAR_TO_PLURAL[rt] || rt}/something`
-        );
-      });
     });
   });
 });

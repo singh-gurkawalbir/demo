@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Typography from '@material-ui/core/Typography';
@@ -67,13 +67,13 @@ export default function TextToggle({
 }) {
   const classes = useStyles({ minWidth });
 
-  function handleChange(event, newValue) {
+  const handleChange = useCallback((event, newValue) => {
     if (newValue) {
       if (typeof onChange === 'function') {
         onChange(newValue);
       }
     }
-  }
+  }, [onChange]);
 
   return (
     <ToggleButtonGroup
