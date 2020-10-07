@@ -64,7 +64,7 @@ const StoreMenuItems = ({ integration, integrationId }) => {
       return (
         <MenuItem key={store.value} value={store.value}>
           <div> {store.label}</div>
-          <StatusCircle size="small" variant="success" />
+          <span><StatusCircle size="small" variant="success" /> Success</span>
         </MenuItem>
       );
     }
@@ -136,6 +136,8 @@ export default function PageBar() {
     integration.stores?.find(store => store.value === selectedStoreId)?.label,
   [integration]);
 
+  const items = StoreMenuItems({ integration, integrationId });
+
   return (
     <CeligoPageBar
       title={integration.name}
@@ -179,12 +181,7 @@ export default function PageBar() {
           <MenuItem disabled value="">
             Select {storeLabel}
           </MenuItem>
-
-          <StoreMenuItems
-            integration={integration}
-            integrationId={integrationId}
-          />
-
+          {items}
         </Select>
       </div>
       )}
