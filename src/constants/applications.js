@@ -800,7 +800,7 @@ const getAssistants = () => {
 
 export const groupApplications = (
   resourceType,
-  { appType, isSimpleImport, connectorApplications }
+  { appType, isSimpleImport }
 ) => {
   const assistantConnectors = connectors.filter(c => !c.assistant);
   const assistants = getAssistants();
@@ -836,9 +836,6 @@ export const groupApplications = (
   const filteredConnectors = assistantConnectors.filter(connector => {
     if (connector.marketPlaceOnly) {
       return false;
-    }
-    if (connectorApplications) {
-      return connectorApplications.includes(connector.assistant || connector.type);
     }
 
     if (

@@ -108,10 +108,15 @@ export default function SelectApplication(props) {
       groupApplications(resourceType, {
         appType: appType || (fieldOptions && fieldOptions.appType),
         isSimpleImport: isDataLoader,
-        connectorApplications,
       }),
-    [appType, fieldOptions, isDataLoader, resourceType, connectorApplications]
+    [appType, fieldOptions, isDataLoader, resourceType]
   );
+
+  if (connectorApplications) {
+    groupedApps.forEach((groupedApp, i) => {
+      groupedApps[i].connectors = groupedApp.connectors.filter(connector => connectorApplications.includes(connector.assistant || connector.type));
+    });
+  }
 
   // Custom styles for Select Control
   const customStyles = {
