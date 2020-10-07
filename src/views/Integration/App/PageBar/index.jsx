@@ -136,7 +136,7 @@ export default function PageBar() {
     integration.stores?.find(store => store.value === selectedStoreId)?.label,
   [integration]);
 
-  const items = StoreMenuItems({ integration, integrationId });
+  const storeItems = StoreMenuItems({ integration, integrationId });
 
   return (
     <CeligoPageBar
@@ -181,7 +181,7 @@ export default function PageBar() {
           <MenuItem disabled value="">
             Select {storeLabel}
           </MenuItem>
-          {items}
+          {storeItems}
         </Select>
       </div>
       )}
