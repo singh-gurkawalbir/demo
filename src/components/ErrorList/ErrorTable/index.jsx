@@ -24,9 +24,9 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.common.white,
       '& > div[class*="MuiInputBase-root"]': {
         width: '100%',
-        height: '100%',
         '& > input': {
           width: '100%',
+          height: '100%',
         },
       },
     },
