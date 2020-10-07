@@ -114,8 +114,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return {
         supportsChild: !!(integration.initChild && integration.initChild.function),
         version: integration.version,
-        stores: integration.stores,
-        storeLabel: integration.settings && integration.settings.storeLabel,
       };
     }
 
