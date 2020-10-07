@@ -28,6 +28,13 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'flex-start',
   },
+  searchParamForm: {
+    overflow: 'visible !important',
+    padding: '0px !important',
+  },
+  searchParamModalContent: {
+    overflow: 'visible !important',
+  },
 });
 const SearchParamsModal = props => {
   const {
@@ -82,30 +89,33 @@ const SearchParamsModal = props => {
     },
     validationHandler,
   });
+  const classes = useStyles();
 
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.searchParamModalContent}>
       <>
         <span>Search parameters</span>
       </>
-      <>
+      <div>
         <DynaForm
           formKey={formKey}
+          className={classes.searchParamForm}
           fieldMeta={{
             fieldMap,
             layout,
           }} />
-        <div>
-          <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
-          <Button
-            data-test="cancelSearchParams"
-            onClick={onClose}
-            variant="text"
-            color="primary">
-            Cancel
-          </Button>
-        </div>
-      </>
+      </div>
+      <div>
+        <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
+        <Button
+          data-test="cancelSearchParams"
+          onClick={onClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </div>
+
     </ModalDialog>
   );
 };
