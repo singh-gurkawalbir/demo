@@ -179,53 +179,42 @@ export default {
     'file.encoding': { fieldId: 'file.encoding' },
     pageSize: { fieldId: 'pageSize' },
     dataURITemplate: { fieldId: 'dataURITemplate' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            label: 'General',
-            collapsed: false,
-            fields: [
-              'common',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'How would you like to parse the file?',
-            type: 'indent',
-            fields: [
-              'outputMode',
-              'file.type',
-              'uploadFile',
-            ],
-            containers: [
-              {fields: [
-                // 'file.xml.resourcePath', // moved into 'parsers' input
-                'parsers',
-                'file.csv',
-                'file.json.resourcePath',
-                'file.xlsx.hasHeaderRow',
-                'file.xlsx.rowsPerRecord',
-                'file.xlsx.keyColumns',
-              ]},
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
-          },
+        label: 'General',
+        collapsed: false,
+        fields: [
+          'common',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'How would you like to parse the file?',
+        type: 'indent',
+        fields: [
+          'outputMode',
+          'file.type',
+          'uploadFile',
+        ],
+        containers: [
+          {fields: [
+            // 'file.xml.resourcePath', // moved into 'parsers' input
+            'parsers',
+            'file.csv',
+            'file.json.resourcePath',
+            'file.xlsx.hasHeaderRow',
+            'file.xlsx.rowsPerRecord',
+            'file.xlsx.keyColumns',
+          ]},
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: ['file.encoding', 'pageSize', 'dataURITemplate'],
       },
     ],
   },

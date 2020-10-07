@@ -18,7 +18,8 @@ import RunFlowButton from '../../RunFlowButton';
 import CeligoSelect from '../../CeligoSelect';
 import IconTextButton from '../../IconTextButton';
 import FlowSelector from '../FlowSelector';
-import DateRangeSelector from './DateRangeFilter';
+import DateRangeSelector from '../../DateRangeSelector';
+import { getSelectedRange } from '../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,8 +80,16 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
+const rangeFilters = [
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];
 
-function Filters({
+export default function Filters({
   integrationId,
   flowId,
   filterKey,
@@ -133,7 +142,7 @@ function Filters({
   );
 
   const handleDateRangeChange = useCallback(range => {
-    patchFilter('dateRange', range);
+    patchFilter('dateRange', [getSelectedRange(range)]);
   }, [patchFilter]);
 
   const handleRefreshClick = useCallback(() => {
@@ -214,7 +223,12 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
-        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
+        <DateRangeSelector
+          value={dateRange || {startDate: null, endDate: null, preset: null}}
+          clearable
+          customPresets={rangeFilters}
+          onSave={handleDateRangeChange}
+          showTime={false} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
@@ -270,4 +284,3 @@ function Filters({
   );
 }
 
-export default Filters;

@@ -12,6 +12,11 @@ export default {
       delete newValues['/blobKeyPath'];
     }
 
+    if (newValues['/netsuite_da/operation'] === 'add') {
+      delete newValues['/netsuite_da/internalIdLookup/expression'];
+      newValues['/netsuite_da/internalIdLookup'] = undefined;
+    }
+
     const subrecords = newValues['/netsuite_da/useSS2Restlets'] === 'true' ? [] : newValues['/netsuite_da/subrecords'];
 
     const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';

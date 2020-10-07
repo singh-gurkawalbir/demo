@@ -24,6 +24,7 @@ import {
 } from './util';
 import actions from '../../../../actions';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import { ReferencedFieldsModal } from '../DynaSalesforceExportComponents/DynaTreeModal';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -39,13 +40,16 @@ export default function FilterPanel({
   id,
   onFieldChange,
   editorId,
+  connectionId,
   rule,
   filters = defaultFilters,
+  options,
 }) {
   // TODO: is this the right way to add reference to window object? check the best way to do this.
   window.SQLParser = sqlParser;
   const qbuilder = useRef(null);
   const classes = useStyles();
+  const [openModal, setOpenModal] = useState(false);
   const [rules, setRules] = useState();
   const [referencedFieldsResolved, setReferencedFieldsResolved] = useState(
     false
@@ -151,6 +155,9 @@ export default function FilterPanel({
       setReferencedFieldsResolved(true);
     }
   }, [referenceFields, filtersMetadata, builderInitComplete]);
+  const toggleDialog = useCallback(() => {
+    setOpenModal(state => !state);
+  }, []);
 
   useEffect(() => {
     if (builderInitComplete) {
@@ -194,6 +201,16 @@ export default function FilterPanel({
               handleFilterRulesChange();
             });
         }
+
+        // Prepend the 'Add Referenced fields' button inside query builder before group actions
+        if (jQuery('[data-add=add-reference-fields]').length === 0) {
+          const buttonHtml = '<div class="btn-group"><button type="button" class="btn btn-xs btn-success" data-add="add-reference-fields"><i class="glyphicon"></i>Add Reference Fields</button></div>';
+
+          jQuery(buttonHtml).prependTo(jQuery(jQuery('.rules-group-header:first .group-actions')[0]));
+          jQuery(jQuery('[data-add=add-reference-fields]')[0]).on('click', () => {
+            toggleDialog();
+          });
+        }
       } catch (e) {
         enqueueSnackbar({
           message: 'Error occured while parsing expression.',
@@ -205,9 +222,24 @@ export default function FilterPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [builderInitComplete, referencedFieldsResolved]);
 
+  const handleAddReferenceFields = useCallback((id, values) => {
+    setReferenceFields(referenceFields => [...referenceFields, ...values]);
+  }, []);
+
   return (
     <div className={classes.container}>
       <div className="salesforce-Qualifier" ref={qbuilder} />
+      {openModal ? (
+        <ReferencedFieldsModal
+          handleClose={toggleDialog}
+          connectionId={connectionId}
+          onFieldChange={handleAddReferenceFields}
+          selectedReferenceTo={options?.sObjectType}
+          value={referenceFields}
+          skipFirstLevelFields
+          isFieldMetaRequired
+        />
+      ) : null}
     </div>
   );
 }

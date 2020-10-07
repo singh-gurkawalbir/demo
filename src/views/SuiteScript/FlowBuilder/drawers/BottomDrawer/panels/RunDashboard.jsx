@@ -13,7 +13,12 @@ const useStyles = makeStyles(theme => ({
 export default function RunDashboardPanel({ ssLinkedConnectionId, flowId }) {
   const classes = useStyles();
   const integrationId = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)._integrationId);
+    selectors.suiteScriptResource(state, {
+      resourceType: 'flows',
+      id: flowId,
+      ssLinkedConnectionId,
+    })._integrationId
+  );
 
   return (
     <div className={classes.root}>

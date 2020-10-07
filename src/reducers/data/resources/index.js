@@ -496,36 +496,43 @@ selectors.integrationInstallSteps = (state, id) => {
 // and the component developer ALMOST has the same experience, wherein the just
 // need to pass the integration resource to the new util method for the transformation to take
 // effect.
-selectors.integrationAppSettings = (state, id) => {
-  if (!state) return null;
-  const integration = selectors.resource(state, 'integrations', id);
 
-  if (!integration) {
-    return null;
-  }
+selectors.mkIntegrationAppSettings = () => {
+  const resourceSelector = selectors.makeResourceSelector();
 
-  return produce(integration, draft => {
-    if (!draft.settings) {
-      draft.settings = emptyObject;
+  return createSelector((state, id) => resourceSelector(state?.data?.resources, 'integrations', id) || null,
+
+    integration => {
+      if (!integration) {
+        return null;
+      }
+
+      return produce(integration, draft => {
+        if (!draft.settings) {
+          draft.settings = emptyObject;
+        }
+
+        if (draft.settings.general) {
+          draft.settings.hasGeneralSettings = true;
+        }
+
+        if (draft.settings.supportsMultiStore) {
+          draft.stores = draft.settings.sections.map(s => ({
+            label: s.title,
+            hidden: !!s.hidden,
+            mode: s.mode || 'settings',
+            value: s.id,
+          }));
+        }
+      });
     }
 
-    if (draft.settings.general) {
-      draft.settings.hasGeneralSettings = true;
-    }
-
-    if (draft.settings.supportsMultiStore) {
-      draft.stores = draft.settings.sections.map(s => ({
-        label: s.title,
-        hidden: !!s.hidden,
-        mode: s.mode || 'settings',
-        value: s.id,
-      }));
-    }
-  });
+  );
 };
+const integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.defaultStoreId = (state, id, store) => {
-  const settings = selectors.integrationAppSettings(state, id);
+  const settings = integrationAppSettings(state, id);
 
   if (settings && settings.stores && settings.stores.length) {
     if (settings.stores.find(s => s.value === store)) {

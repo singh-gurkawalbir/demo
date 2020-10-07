@@ -1,28 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { Typography } from '@material-ui/core';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import { COMM_STATES } from '../../../reducers/comms/networkComms';
-import CommStatus from '../../CommStatus';
 import ModalDialog from '../../ModalDialog';
 import UserForm from './UserForm';
-import inferErrorMessage from '../../../utils/inferErrorMessage';
+import getRequestOptions from '../../../utils/requestOptions';
+import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
 
-export default function UserDialog({ open, userId, onClose, onSuccess }) {
-  const [errorMessage, setErrorMessage] = useState();
-  const [disableSave, setDisableSave] = useState(false);
-  const [actionsToClear, setActionsToClear] = useState();
+export default function UserDialog({ open, userId, onClose }) {
   const dispatch = useDispatch();
-  const handleClose = useCallback(() => {
-    setErrorMessage();
-
-    if (onClose) onClose();
-  }, [onClose]);
+  const { path, opts } = useMemo(() => getRequestOptions(userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE, {resourceId: userId }), [userId]);
   const handleSaveClick = useCallback(
     ({ email, accessLevel, integrationsToMonitor, integrationsToManage }) => {
       const aShareData = {
@@ -31,8 +22,6 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
         accessLevel,
         integrationAccessLevel: [],
       };
-
-      setDisableSave(true);
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
         integrationsToManage.forEach(_integrationId =>
@@ -67,58 +56,26 @@ export default function UserDialog({ open, userId, onClose, onSuccess }) {
     },
     [userId, dispatch]
   );
-  const commStatusHandler = useCallback(
-    objStatus => {
-      if (
-        objStatus &&
-        objStatus.createOrUpdate &&
-        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(
-          objStatus.createOrUpdate.status
-        )
-      ) {
-        if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
-          if (onSuccess) onSuccess();
 
-          setErrorMessage();
-        } else if (objStatus.createOrUpdate.status === COMM_STATES.ERROR) {
-          setErrorMessage(
-            inferErrorMessage(objStatus.createOrUpdate.message)[0]
-          );
-        }
-
-        setActionsToClear(['createOrUpdate']);
-        setDisableSave(false);
-      }
-    },
-    [onSuccess]
+  const { submitHandler, disableSave} = useSaveStatusIndicator(
+    {
+      path,
+      method: opts.method,
+      onSave: handleSaveClick,
+      onClose,
+    }
   );
 
   return (
     <>
-      <CommStatus
-        actionsToMonitor={{
-          createOrUpdate: {
-            action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
-            resourceId: userId,
-          },
-        }}
-        actionsToClear={actionsToClear}
-        commStatusHandler={commStatusHandler}
-      />
-
-      <ModalDialog show={open} onClose={handleClose}>
+      <ModalDialog show={open} onClose={onClose}>
         <div>{userId ? 'Change user permissions' : 'Invite user'}</div>
         <div>
-          {errorMessage && (
-            <Typography color="error" variant="body2">
-              {errorMessage}
-            </Typography>
-          )}
           <UserForm
             id={userId}
             disableSave={disableSave}
-            onSaveClick={handleSaveClick}
-            onCancelClick={handleClose}
+            onSaveClick={submitHandler(true)}
+            onCancelClick={onClose}
           />
         </div>
       </ModalDialog>

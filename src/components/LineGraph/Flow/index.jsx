@@ -18,7 +18,6 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
@@ -269,7 +268,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             type="number"
             ticks={ticks}
             allowDuplicatedCategory={false}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -336,7 +334,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   return (
     <div className={classes.root}>
-      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

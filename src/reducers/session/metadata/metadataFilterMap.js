@@ -178,6 +178,8 @@ export default {
         value: d.name,
         custom: d.custom,
         triggerable: d.triggerable,
+        type: d.type,
+        picklistValues: d.picklistValues,
       }))
       .sort(stringCompare('label')),
   'salesforce-sObjects-childReferenceTo': data =>

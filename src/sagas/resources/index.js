@@ -1,5 +1,5 @@
 import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
-import jsonPatch from 'fast-json-patch';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -107,6 +107,29 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   }
 }
 
+export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
+  const path = `/connection/${connectionId}/revoke`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      hidden: hideNetWorkSnackbar,
+      opts: {
+        method: 'GET',
+      },
+      message: 'Revoking Connection',
+    });
+
+    if (response && response.errors) {
+      yield put(
+        actions.api.failure(path, 'GET', JSON.stringify(response.errors), hideNetWorkSnackbar)
+      );
+    }
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -155,6 +178,16 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   }
 
   let updated;
+
+  // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
+  // number of active tokens on netsuite, revoking token when user updates token-auto connection.
+  if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
+    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
+
+    if (isTokenToBeRevoked) {
+      yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
+    }
+  }
 
   // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
   // and React we are forced to convert HTTP to REST doc for existing REST assistants since we don't want to build
@@ -354,6 +387,42 @@ export function* downloadFile({ resourceType, id }) {
   }
 }
 
+export function* normalizeFlow(flow) {
+  const isDataLoader = yield call(isDataLoaderFlow, flow);
+
+  if (!isDataLoader) return flow;
+
+  const newFlow = flow;
+
+  if (newFlow._importId) {
+    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
+    delete newFlow._importId;
+  }
+
+  if (newFlow._exportId) {
+    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    delete newFlow._exportId;
+  }
+
+  return newFlow;
+}
+export function* getResource({ resourceType, id, message }) {
+  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+
+  try {
+    let resource = yield call(apiCallWithRetry, { path, message });
+
+    if (resourceType === 'flows') {
+      resource = yield call(normalizeFlow, resource);
+    }
+
+    yield put(actions.resource.received(resourceType, resource));
+
+    return resource;
+  } catch (error) {
+    return undefined;
+  }
+}
 export function* updateIntegrationSettings({
   storeId,
   integrationId,
@@ -404,16 +473,6 @@ export function* updateIntegrationSettings({
   }
 
   if (response) {
-    yield put(
-      actions.integrationApp.settings.submitComplete({
-        storeId,
-        integrationId,
-        response,
-        flowId,
-        sectionId,
-      })
-    );
-
     // if flowId is present touch the flow to show changed lastModified date
     // note this is somewhat a hack
     // it is believed that in time resource level settings will render this obsolete
@@ -428,7 +487,7 @@ export function* updateIntegrationSettings({
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
-    yield put(actions.resource.request('integrations', integrationId));
+    yield call(getResource, { resourceType: 'integrations', id: integrationId });
 
     if (response._flowId) {
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
@@ -466,6 +525,16 @@ export function* updateIntegrationSettings({
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
       yield put(actions.resource.requestCollection('exports'));
     }
+
+    yield put(
+      actions.integrationApp.settings.submitComplete({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+        sectionId,
+      })
+    );
   }
 
   if (options.action === 'flowEnableDisable') {
@@ -491,8 +560,10 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
 
     if (!options.doNotRefetch) {
       const resource = yield select(selectors.resource, resourceType, id);
-      const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
-        .newDocument;
+
+      // applyPatch is not able to update the object as per patchSet as resource is
+      // selector's result and is not mutatable. Therefore deepcloning resource in args.
+      const resourceUpdated = jsonPatch.applyPatch(deepClone(resource), patchSet).newDocument;
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
@@ -501,44 +572,6 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
-  }
-}
-
-export function* normalizeFlow(flow) {
-  const isDataLoader = yield call(isDataLoaderFlow, flow);
-
-  if (!isDataLoader) return flow;
-
-  const newFlow = flow;
-
-  if (newFlow._importId) {
-    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
-    delete newFlow._importId;
-  }
-
-  if (newFlow._exportId) {
-    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
-    delete newFlow._exportId;
-  }
-
-  return newFlow;
-}
-
-export function* getResource({ resourceType, id, message }) {
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-
-  try {
-    let resource = yield call(apiCallWithRetry, { path, message });
-
-    if (resourceType === 'flows') {
-      resource = yield call(normalizeFlow, resource);
-    }
-
-    yield put(actions.resource.received(resourceType, resource));
-
-    return resource;
-  } catch (error) {
-    return undefined;
   }
 }
 
@@ -722,28 +755,6 @@ export function* updateTradingPartner({ connectionId }) {
     yield put(
       actions.connection.completeTradingPartner(response?._connectionIds || [])
     );
-  } catch (error) {
-    return undefined;
-  }
-}
-
-export function* requestRevoke({ connectionId }) {
-  const path = `/connection/${connectionId}/revoke`;
-
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'GET',
-      },
-      message: 'Revoking Connection',
-    });
-
-    if (response && response.errors) {
-      yield put(
-        actions.api.failure(path, 'GET', JSON.stringify(response.errors), false)
-      );
-    }
   } catch (error) {
     return undefined;
   }

@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Route,
@@ -25,6 +25,7 @@ import consolidatedActions from '../../../../../components/ResourceFormFactory/A
 import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import StatusCircle from '../../../../../components/StatusCircle';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,6 +53,10 @@ const useStyles = makeStyles(theme => ({
   configureSectionBtn: {
     padding: 0,
   },
+  flexContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 }));
 export const useActiveTab = () => {
   const [externalTabState, setExternalTabStateFn] = useState({activeTab: 0});
@@ -71,8 +76,6 @@ export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
     id: action?.id,
     mode: 'primary',
   })), [actions, actionProps]);
-
-  if (!actions || !actions.length) { return null; }
 
   return (
     <GenerateButtons
@@ -116,10 +119,12 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
+      {fieldMeta?.actions?.length && (
       <ActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
       />
+    )}
     </>
   );
 };
@@ -172,7 +177,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -202,6 +207,41 @@ function FlowList({ integrationId, storeId }) {
   );
 }
 
+const SectionTitle = ({integrationId, storeId, title, titleId}) => {
+  const classes = useStyles();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, storeId),
+  shallowEqual);
+
+  const errorCount = integrationErrorsPerSection[titleId];
+  const errorStatus = useMemo(() => {
+    if (errorCount === 0) {
+      return <StatusCircle size="small" variant="success" />;
+    }
+
+    return (
+      <div>
+        <StatusCircle size="small" variant="error" />
+        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      </div>
+    );
+  }, [errorCount]);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return title;
+  }
+
+  return (
+    <div className={classes.flexContainer}>
+      <div> { title }</div>
+      <div> {errorStatus} </div>
+    </div>
+  );
+};
+
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
@@ -230,7 +270,11 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  {title}
+                  <SectionTitle
+                    title={title}
+                    titleId={titleId}
+                    integrationId={integrationId}
+                    storeId={storeId} />
                 </NavLink>
               </ListItem>
             ))}

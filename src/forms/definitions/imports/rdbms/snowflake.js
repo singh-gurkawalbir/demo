@@ -86,7 +86,7 @@ export default {
       visibleWhen: [
         {
           field: 'rdbms.queryType',
-          is: ['INSERT', 'MERGE'],
+          is: ['INSERT', 'MERGE', 'COPY'],
         },
       ],
     },
@@ -107,6 +107,7 @@ export default {
             { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
             { label: 'Use SQL Query once per page of data', value: 'MERGE' },
+            { label: 'Use SQL Query once per flow run', value: 'COPY' },
           ],
         },
       ],
