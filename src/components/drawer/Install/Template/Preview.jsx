@@ -67,7 +67,7 @@ export default function TemplatePreview() {
     state => selectors.templateSetup(state, templateId) || emptyObject
   );
   const { isCloned, integrationId} = useSelector(
-    state => selectors.integrationAppClonedDetails(state, templateId),
+    state => selectors.integrationClonedDetails(state, templateId),
     (left, right) =>
       left &&
       right &&

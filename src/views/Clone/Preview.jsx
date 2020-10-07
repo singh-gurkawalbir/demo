@@ -97,7 +97,7 @@ export default function ClonePreview(props) {
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
   const { isCloned, integrationId, sandbox } = useSelector(
-    state => selectors.integrationAppClonedDetails(state, resource._id),
+    state => selectors.integrationClonedDetails(state, resource._id),
     (left, right) =>
       left &&
       right &&
@@ -137,7 +137,7 @@ export default function ClonePreview(props) {
   ];
 
   useEffect(() => {
-    if (isIAIntegration || resourceType === 'integrations') {
+    if (resourceType === 'integrations') {
       if (isCloned) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({

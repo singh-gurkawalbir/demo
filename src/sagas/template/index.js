@@ -61,7 +61,7 @@ export function* createComponents({ templateId, runKey }) {
           _stackId,
           sandbox,
           runKey,
-          name: `Copy ${(template || {}).name}`,
+          name: template ? `Copy ${(template || {}).name}` : undefined,
           newTemplateInstaller: true,
         },
       },
