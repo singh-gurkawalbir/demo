@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDrop } from 'react-dnd-cjs';
+import HTML5Backend from 'react-dnd-html5-backend-cjs';
+import {DndProvider, useDrop } from 'react-dnd-cjs';
 import { useSelector, useDispatch } from 'react-redux';
 import {selectors} from '../../reducers';
 import MappingRow from './MappingRow';
@@ -55,18 +56,21 @@ export default function DragContainer({ onDrop, ...props }) {
 
   return (
     <>
-      <div ref={drop}>
-        {tableData.map((mapping, index) => (
-          <MappingRow
-            index={index}
-            key={mapping.key}
-            mappingKey={mapping.key}
-            onMove={handleMove}
-            isDraggable
-            {...props}
+      <DndProvider backend={HTML5Backend}>
+        <div ref={drop}>
+
+          {tableData.map((mapping, index) => (
+            <MappingRow
+              index={index}
+              key={mapping.key}
+              mappingKey={mapping.key}
+              onMove={handleMove}
+              isDraggable
+              {...props}
           />
-        ))}
-      </div>
+          ))}
+        </div>
+      </DndProvider>
       <MappingRow
         key={`newMappingRow-${emptyRowIndex}`}
         index={emptyRowIndex}
