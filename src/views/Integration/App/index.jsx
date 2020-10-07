@@ -11,6 +11,7 @@ import FlowsIcon from '../../../components/icons/FlowsIcon';
 import CopyIcon from '../../../components/icons/CopyIcon';
 import AuditLogIcon from '../../../components/icons/AuditLogIcon';
 import DashboardIcon from '../../../components/icons/DashboardIcon';
+import GraphIcon from '../../../components/icons/GraphIcon';
 import ConnectionsIcon from '../../../components/icons/ConnectionsIcon';
 import NotificationsIcon from '../../../components/icons/NotificationsIcon';
 import IconTextButton from '../../../components/IconTextButton';
@@ -36,13 +37,13 @@ import SingleUserIcon from '../../../components/icons/SingleUserIcon';
 import CeligoSelect from '../../../components/CeligoSelect';
 import StatusCircle from '../../../components/StatusCircle';
 
-const allTabs = [
+const getAllTabs = isUserInErrMgtTwoDotZero => [
   { path: 'settings', label: 'Settings', Icon: SettingsIcon, Panel: SettingsPanel},
   { path: 'flows', label: 'Flows', Icon: FlowsIcon, Panel: FlowsPanel },
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: DashboardIcon,
+    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -77,6 +78,7 @@ const allTabs = [
   },
   { path: 'addons', label: 'Add-ons', Icon: AddIcon, Panel: AddOnsPanel },
 ];
+
 const useStyles = makeStyles(theme => ({
   tag: {
     marginLeft: theme.spacing(1),
@@ -262,7 +264,9 @@ export default function IntegrationApp(props) {
   if (!showAdminTab) {
     filterTabs.push('admin');
   }
+  const allTabs = useMemo(() => getAllTabs(isUserInErrMgtTwoDotZero), [isUserInErrMgtTwoDotZero]);
   const availableTabs = allTabs.filter(tab => !filterTabs.includes(tab.path));
+
   const handleTagChangeHandler = useCallback(
     tag => {
       const patchSet = tag ? [{ op: 'replace', path: '/tag', value: tag }] : [{ op: 'remove', path: '/tag'}];
