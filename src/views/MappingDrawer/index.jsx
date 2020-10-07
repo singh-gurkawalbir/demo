@@ -83,7 +83,7 @@ export default function MappingDrawerRoute(props) {
       <RightDrawer
         height="tall"
         width="default"
-        title="Select Query Type"
+        title="Select query type"
         variant="temporary"
         hideBackButton
         path="dbMapping/:flowId/:importId">
