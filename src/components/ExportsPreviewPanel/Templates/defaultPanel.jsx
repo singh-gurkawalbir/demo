@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { getFormattedPreviewData } from '../../../../../utils/exportPanel';
+import { getFormattedPreviewData } from '../../../utils/exportPanel';
 import ClipBoardPanel from './clipBoardPanel';
-import JsonContent from '../../../../JsonContent';
+import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
