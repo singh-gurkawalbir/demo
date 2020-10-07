@@ -7,9 +7,10 @@ export default function DynaCheckboxForResetFields(props) {
     fieldsToReset.forEach(field => {
       const { type, id: _id, value } = field;
 
-      const valueToBeSet = value || (type === 'checkbox' ? false : '');
+      const defValue = type === 'checkbox' ? false : '';
+      const resetValue = value in field ? value : defValue;
 
-      onFieldChange(_id, valueToBeSet, true);
+      onFieldChange(_id, resetValue, true);
     });
     onFieldChange(id, value);
   };
