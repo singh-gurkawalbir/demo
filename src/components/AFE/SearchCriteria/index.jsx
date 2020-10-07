@@ -145,8 +145,6 @@ export default function SearchCriteriaEditor(props) {
                   id={`operator-${r.index}`}
                   value={r.operator}
                   options={[{ items: operators.filter(op => (operatorsByFieldType[r.fieldType] || operatorsByFieldType.text).includes(op.value)) }]}
-                  labelName="name"
-                  valueName="value"
                   disabled={disabled}
                   onFieldChange={(id, _value) => {
                     handleFieldUpdate(r.index, _value, 'operator');

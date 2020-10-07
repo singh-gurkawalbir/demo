@@ -46,8 +46,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
   status: {
-    '& > * :hover': {
+    position: 'relative',
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
+    },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
     },
   },
 }));

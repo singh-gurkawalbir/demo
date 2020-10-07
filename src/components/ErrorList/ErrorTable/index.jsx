@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         '& > input': {
           width: '100%',
+          height: '100%',
         },
       },
     },
@@ -285,7 +286,7 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 color="secondary"
                 className={classes.btnActions}
                 onClick={handleDownload}>
-                Download all
+                Download
               </Button>
             </div>
           </div>
