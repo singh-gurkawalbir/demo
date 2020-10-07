@@ -233,6 +233,14 @@ export default function Panel(props) {
   }, [isNew]);
   const variant = match.isExact ? 'edit' : 'view';
 
+  const showPreviewPanel = useSelector(state => {
+    const shouldShow = selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+
+    const skipClose = selectors.resourceFormState(state, resourceType, id)?.skipClose;
+
+    return shouldShow && !skipClose;
+  });
+
   return (
     <>
       <div className={classes.root}>
@@ -285,7 +293,7 @@ export default function Panel(props) {
               showNotificationToaster={showNotificationToaster}
               onCloseNotificationToaster={onCloseNotificationToaster}
           />
-            {resourceType === 'exports' && (
+            {showPreviewPanel && (
               <ExportsPreviewPanel
                 className={classes.exportsPanel}
                 resourceId={id}
