@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-import React, { Fragment, useState } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import React, { useMemo, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -12,6 +12,7 @@ import { selectors } from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const metadata = {
   columns: (empty, actionProps) => {
@@ -104,14 +105,13 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const {
     supportsMultiStore,
     version,
     stores,
     storeLabel,
-  } = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
-
+  } = useMemo(() => {
     if (integration) {
       return {
         supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
@@ -122,7 +122,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
     }
 
     return emptyObject;
-  }, shallowEqual);
+  }, [integration]);
+
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
-import { Link, Redirect, generatePath, useHistory } from 'react-router-dom';
+import { Link, Redirect, generatePath, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import LoadResources from '../../../components/LoadResources';
@@ -44,7 +44,7 @@ import CeligoSelect from '../../../components/CeligoSelect';
 import GraphIcon from '../../../components/icons/GraphIcon';
 
 const useStyles = makeStyles(theme => ({
-  PageWrapper: {
+  pageWrapper: {
     padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
@@ -110,10 +110,11 @@ const getAllTabs = isUserInErrMgtTwoDotZero => [
 const emptyObj = {};
 const integrationsFilterConfig = { type: 'integrations' };
 
-export default function Integration(props) {
+export default function Integration() {
   const classes = useStyles();
   const history = useHistory();
-  const { integrationId, templateName, childId, tab, match } = props;
+  const match = useRouteMatch();
+  const { integrationId, templateName, childId, tab} = match;
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();
@@ -594,7 +595,7 @@ export default function Integration(props) {
         <IntegrationTabs
           tabs={availableTabs}
           match={match}
-          className={classes.PageWrapper}
+          className={classes.pageWrapper}
         />
       </LoadResources>
     </>

@@ -387,6 +387,42 @@ export function* downloadFile({ resourceType, id }) {
   }
 }
 
+export function* normalizeFlow(flow) {
+  const isDataLoader = yield call(isDataLoaderFlow, flow);
+
+  if (!isDataLoader) return flow;
+
+  const newFlow = flow;
+
+  if (newFlow._importId) {
+    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
+    delete newFlow._importId;
+  }
+
+  if (newFlow._exportId) {
+    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    delete newFlow._exportId;
+  }
+
+  return newFlow;
+}
+export function* getResource({ resourceType, id, message }) {
+  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+
+  try {
+    let resource = yield call(apiCallWithRetry, { path, message });
+
+    if (resourceType === 'flows') {
+      resource = yield call(normalizeFlow, resource);
+    }
+
+    yield put(actions.resource.received(resourceType, resource));
+
+    return resource;
+  } catch (error) {
+    return undefined;
+  }
+}
 export function* updateIntegrationSettings({
   storeId,
   integrationId,
@@ -437,16 +473,6 @@ export function* updateIntegrationSettings({
   }
 
   if (response) {
-    yield put(
-      actions.integrationApp.settings.submitComplete({
-        storeId,
-        integrationId,
-        response,
-        flowId,
-        sectionId,
-      })
-    );
-
     // if flowId is present touch the flow to show changed lastModified date
     // note this is somewhat a hack
     // it is believed that in time resource level settings will render this obsolete
@@ -461,7 +487,7 @@ export function* updateIntegrationSettings({
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
-    yield put(actions.resource.request('integrations', integrationId));
+    yield call(getResource, { resourceType: 'integrations', id: integrationId });
 
     if (response._flowId) {
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
@@ -499,6 +525,16 @@ export function* updateIntegrationSettings({
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
       yield put(actions.resource.requestCollection('exports'));
     }
+
+    yield put(
+      actions.integrationApp.settings.submitComplete({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+        sectionId,
+      })
+    );
   }
 
   if (options.action === 'flowEnableDisable') {
@@ -536,44 +572,6 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
-  }
-}
-
-export function* normalizeFlow(flow) {
-  const isDataLoader = yield call(isDataLoaderFlow, flow);
-
-  if (!isDataLoader) return flow;
-
-  const newFlow = flow;
-
-  if (newFlow._importId) {
-    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
-    delete newFlow._importId;
-  }
-
-  if (newFlow._exportId) {
-    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
-    delete newFlow._exportId;
-  }
-
-  return newFlow;
-}
-
-export function* getResource({ resourceType, id, message }) {
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-
-  try {
-    let resource = yield call(apiCallWithRetry, { path, message });
-
-    if (resourceType === 'flows') {
-      resource = yield call(normalizeFlow, resource);
-    }
-
-    yield put(actions.resource.received(resourceType, resource));
-
-    return resource;
-  } catch (error) {
-    return undefined;
   }
 }
 
