@@ -48,11 +48,14 @@ const useStyles = makeStyles(theme => ({
   },
   status: {
     position: 'relative',
-    '& > * :hover': {
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
     },
     '&:hover': {
-      backgroundColor: 'transparent',
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
     },
   },
   connectionDownRedDot: {
@@ -219,7 +222,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     selectors.licenses(state)
   );
 
-  const license = tile._connectorId && licenses.find(l => l._connectorId === tile._connectorId);
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   let licenseMessageContent = '';
   let expired = false;

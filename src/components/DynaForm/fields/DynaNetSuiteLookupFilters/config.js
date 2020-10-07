@@ -30,6 +30,12 @@ export default {
       apply_to: ['boolean', 'number', 'string'],
     },
     {
+      type: 'noneof',
+      nb_inputs: 1,
+      multiple: false,
+      apply_to: ['boolean', 'number', 'string'],
+    },
+    {
       type: 'isempty',
       nb_inputs: 0,
       multiple: false,
@@ -57,6 +63,8 @@ export default {
   lang: {
     operators: {
       equalto: 'equal to',
+      anyof: 'any of',
+      noneof: 'none of',
       isempty: 'empty',
       isnotempty: 'not empty',
       contains: 'contains',

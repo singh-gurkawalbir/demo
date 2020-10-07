@@ -1,5 +1,5 @@
 import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
-import jsonPatch from 'fast-json-patch';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -182,7 +182,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
   // number of active tokens on netsuite, revoking token when user updates token-auto connection.
   if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
-    const isTokenToBeRevoked = master.netsuite.authType === 'token-auto';
+    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
 
     if (isTokenToBeRevoked) {
       yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
@@ -524,8 +524,10 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
 
     if (!options.doNotRefetch) {
       const resource = yield select(selectors.resource, resourceType, id);
-      const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
-        .newDocument;
+
+      // applyPatch is not able to update the object as per patchSet as resource is
+      // selector's result and is not mutatable. Therefore deepcloning resource in args.
+      const resourceUpdated = jsonPatch.applyPatch(deepClone(resource), patchSet).newDocument;
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {

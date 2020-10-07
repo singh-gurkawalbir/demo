@@ -41,27 +41,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DynaEditor({
-  id,
-  resourceId,
-  resourceType,
-  patchKey,
-  mode,
-  expandMode = 'modal',
-  options,
-  onFieldChange,
-  value,
-  className,
-  label,
-  editorClassName,
-  disabled,
-  saveMode,
-  description,
-  errorMessages,
-  required,
-  isValid,
-  helpKey,
-}) {
+export default function DynaEditor(props) {
+  const {
+    id,
+    resourceId,
+    resourceType,
+    patchKey,
+    mode,
+    expandMode = 'modal',
+    options,
+    onFieldChange,
+    value,
+    className,
+    label,
+    editorClassName,
+    disabled,
+    saveMode,
+    description,
+    errorMessages,
+    required,
+    isValid,
+  } = props;
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const handleEditorClick = useCallback(() => {
@@ -137,7 +137,7 @@ export default function DynaEditor({
         />
         <div className={classes.dynaEditorTextLabelWrapper}>
           <FormLabel required={required} error={!isValid} >{label}</FormLabel>
-          {helpKey && <FieldHelp helpKey={helpKey} label={label} />}
+          <FieldHelp {...props} />
         </div>
 
         <div className={clsx(classes.inlineEditorContainer, editorClassName)}>
