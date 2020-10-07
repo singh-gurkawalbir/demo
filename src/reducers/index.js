@@ -1886,11 +1886,11 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
     integration.install.find(step => step.isClone);
   }
   const isFrameWork2 =
-    (
+    !!((
       integration.installSteps &&
       integration.installSteps.length) || (
       integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
+        integration.uninstallSteps.length)) ||
     isCloned;
 
   return isFrameWork2;
