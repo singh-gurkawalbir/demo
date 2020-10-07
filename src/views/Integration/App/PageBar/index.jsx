@@ -176,7 +176,7 @@ export default function PageBar() {
           onChange={handleStoreChange}
           IconComponent={ArrowDownIcon}
           value={storeId || ''}>
-          <MenuItem disabled value="">
+          <MenuItem value="">
             All {storeLabel}s
           </MenuItem>
 
