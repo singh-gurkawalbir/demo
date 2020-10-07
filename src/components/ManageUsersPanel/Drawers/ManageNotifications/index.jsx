@@ -32,7 +32,7 @@ export default function ManageNotificationsDrawer({ integrationId, storeId }) {
   return (
     <RightDrawer
       path=":userEmail/manageNotifications"
-      title="View notifications"
+      title="Manage notifications"
       variant="temporary"
       width="medium"
       hideBackButton>

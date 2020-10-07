@@ -7,6 +7,7 @@ import { USER_ACCESS_LEVELS, INTEGRATION_ACCESS_LEVELS } from '../../../utils/co
 import ManagePermissionsDrawer from '../Drawers/ManagePermissions';
 import InviteUserDrawer from '../Drawers/InviteUser';
 import ViewNotificationsDrawer from '../Drawers/ViewNotifications';
+import ManageNotificationsDrawer from '../Drawers/ManageNotifications';
 import LoadResources from '../../LoadResources';
 
 const manageIntegrationAccessLevels = [INTEGRATION_ACCESS_LEVELS.OWNER, INTEGRATION_ACCESS_LEVELS.MANAGE];
@@ -73,6 +74,8 @@ export default function UsersList({ integrationId, storeId }) {
       <InviteUserDrawer integrationId={integrationId} />
       <ManagePermissionsDrawer integrationId={integrationId} />
       { integrationId && <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} /> }
+      { integrationId && <ManageNotificationsDrawer integrationId={integrationId} storeId={storeId} /> }
+
     </>
   );
 }
