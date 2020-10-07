@@ -7,11 +7,7 @@ export default function Notifications({ user, integrationId, storeId }) {
   const match = useRouteMatch();
   const userEmail = user.sharedWithUser.email;
   const hasNotifications = useSelector(state => {
-    if (!integrationId) {
-      // account level
-      return !!selectors.subscribedNotifications(state, userEmail)?.length;
-    }
-    // integration level notifications
+    if (!integrationId) return false;
     const { flowValues = [], connectionValues = [] } = selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail});
 
     return flowValues.length || connectionValues.length;

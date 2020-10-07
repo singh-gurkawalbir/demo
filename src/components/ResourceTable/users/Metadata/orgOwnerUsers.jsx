@@ -13,7 +13,7 @@ import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
 
 export default {
-  columns: (r, { integrationId }) => {
+  columns: (r, { integrationId, isUserInErrMgtTwoDotZero }) => {
     const columns = [
       { heading: 'Name', value: r => r.sharedWithUser.name },
       { heading: 'Email', value: r => r.sharedWithUser.email },
@@ -32,7 +32,7 @@ export default {
         value: (r, { integrationId}) =>
           <EnableUser user={r} integrationId={integrationId} />,
       },
-      ...(integrationId ? [{
+      ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
@@ -41,17 +41,10 @@ export default {
 
     return columns;
   },
-  rowActions: (user, actionProps) => {
-    const { integrationId, isAccountOwner } = actionProps || {};
+  rowActions: (user, actionProps = {}) => {
+    const { integrationId } = actionProps;
     const actions = [];
 
-    if (!isAccountOwner) {
-      if (integrationId) {
-        actions.push(ManageNotifications);
-      }
-
-      return actions;
-    }
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
       actions.push(ManagePermissions, ManageNotifications);
     }

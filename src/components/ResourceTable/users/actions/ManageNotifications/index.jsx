@@ -17,5 +17,4 @@ export default {
 
     return null;
   },
-  useHasAccess: () => true,
 };
