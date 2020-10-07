@@ -95,11 +95,17 @@ export function* requestEditorSampleData({
   }
 
   if (!isEditorV2Supported) {
-    const _sampleData = {
-      data: sampleData || {
-        myField: 'sample',
-      },
-    };
+    let _sampleData = sampleData || {myField: 'sample'};
+
+    // TODO (Aditya/Ashu)
+    // Though getContext api returns result for 'idLockTemplate' and 'dataURITemplate' field for other adaptors (ex. Netsuite),
+    // but does it actually resolve to value while running flow?
+    // If its supported during run time, the same could be removed and logic could be added in isEditorV2Supported selector.
+    if (!['idLockTemplate', 'dataURITemplate'].includes(fieldType)) {
+      _sampleData = {
+        data: _sampleData,
+      };
+    }
 
     yield put(
       actions.editorSampleData.received({
