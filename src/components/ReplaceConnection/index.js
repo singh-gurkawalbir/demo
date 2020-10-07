@@ -16,7 +16,7 @@ const emptyObj = {};
 export default function ReplaceConnection(props) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const { onClose, flowId, integrationId } = props;
+  const { onClose, flowId, integrationId, childId, isFrameWork2 } = props;
 
   const { connId } = match.params;
   const connection = useSelector(
@@ -27,6 +27,7 @@ export default function ReplaceConnection(props) {
 
   let options = {};
   const expression = [];
+  const integratorExpression = [];
 
   expression.push({ _id: {$ne: connection._id} });
 
@@ -38,7 +39,11 @@ export default function ReplaceConnection(props) {
 
   if (connection._connectorId) {
     expression.push({ _connectorId: connection._connectorId});
-    expression.push({ _integrationId: integrationId});
+    if (!isFrameWork2 && childId) {
+      integratorExpression.push({ _integrationId: integrationId});
+      integratorExpression.push({ _integrationId: childId});
+      expression.push({ $or: integratorExpression });
+    } else { expression.push({ _integrationId: integrationId}); }
   } else {
     expression.push({ _connectorId: { $exists: false } });
   }
