@@ -90,7 +90,8 @@ export function* requestEditorSampleData({
     isEditorV2Supported = yield select(
       selectors.isEditorV2Supported,
       resourceId,
-      resourceType
+      resourceType,
+      fieldType
     );
   }
 
