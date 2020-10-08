@@ -9,6 +9,7 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
+import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
@@ -224,9 +225,10 @@ export default function Filters({
           ))}
         </CeligoSelect>
         <DateRangeSelector
-          value={dateRange || {startDate: null, endDate: null, preset: null}}
+          value={dateRange || {startDate: startOfDay(addDays(new Date(), -29)), endDate: endOfDay(new Date()), preset: null}}
           clearable
           customPresets={rangeFilters}
+          minDate={startOfDay(addDays(new Date(), -29))}
           onSave={handleDateRangeChange}
           showTime={false} />
         <div className={classes.hideLabel}>
