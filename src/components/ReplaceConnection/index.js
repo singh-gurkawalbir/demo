@@ -10,11 +10,13 @@ import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import { RDBMS_TYPES } from '../../utils/constants';
 import ResourceDrawer from '../drawer/Resource';
+import useConfirmDialog from '../ConfirmDialog';
 
 const emptyObj = {};
 
 export default function ReplaceConnection(props) {
   const match = useRouteMatch();
+  const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
   const { onClose, flowId, integrationId, childId, isFrameWork2 } = props;
 
@@ -74,6 +76,7 @@ export default function ReplaceConnection(props) {
         skipPingConnection: true,
         options,
         integrationId,
+        required: true,
       },
     },
     layout: {
@@ -87,8 +90,23 @@ export default function ReplaceConnection(props) {
   });
 
   const replace = useCallback(formVal => {
-    if (formVal._connectionId) { dispatch(actions.resource.replaceConnection(flowId, connection._id, formVal._connectionId)); }
-  }, [dispatch, flowId, connection._id]);
+    confirmDialog({
+      title: 'Confirm replace',
+      message: 'Are you sure you want to repalce this connection?',
+      buttons: [
+        {
+          label: 'Replace',
+          onClick: () => {
+            dispatch(actions.resource.replaceConnection(flowId, connection._id, formVal._connectionId));
+          },
+        },
+        {
+          label: 'Cancel',
+          color: 'secondary',
+        },
+      ],
+    });
+  }, [dispatch, flowId, connection._id, confirmDialog]);
 
   return (
     <div>

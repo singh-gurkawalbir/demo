@@ -51,7 +51,7 @@ export default {
     appTypeIsStatic: true,
     allowEdit: true,
     allowNew: true,
-    skipPingConnection: true,
+    skipDefault: true,
     _connectionId: r => r?._connectionId,
     visible: r => r?.adaptorType !== 'WebhookExport',
     defaultValue: r => r?._connectionId,

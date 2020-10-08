@@ -21,7 +21,7 @@ export default {
     appTypeIsStatic: true,
     allowEdit: true,
     allowNew: true,
-    skipPingConnection: true,
+    skipDefault: true,
     _connectionId: r => r?._connectionId,
     defaultValue: r => r?._connectionId,
     updateFilterandAppType: true,
