@@ -58,12 +58,12 @@ export default function DynaSalesforceLookup(props) {
   };
 
   const extractFields = useSelector(state =>
-    selectors.getSampleDataContext(state, {
+    selectors.getSampleData(state, {
       flowId,
       resourceId,
       resourceType: 'imports',
       stage: 'importMappingExtract',
-    }).data
+    })
   );
   let formattedExtractFields = [];
 
