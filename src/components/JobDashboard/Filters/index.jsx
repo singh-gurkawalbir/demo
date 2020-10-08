@@ -89,6 +89,11 @@ const rangeFilters = [
   {id: 'last30days', label: 'Last 30 Days'},
   {id: 'custom', label: 'Custom'},
 ];
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)),
+  endDate: endOfDay(new Date()),
+  preset: null,
+};
 
 export default function Filters({
   integrationId,
@@ -225,10 +230,11 @@ export default function Filters({
           ))}
         </CeligoSelect>
         <DateRangeSelector
-          value={dateRange || {startDate: startOfDay(addDays(new Date(), -29)), endDate: endOfDay(new Date()), preset: null}}
+          value={dateRange || defaultRange}
           clearable
           customPresets={rangeFilters}
-          minDate={startOfDay(addDays(new Date(), -29))}
+          clearValue={defaultRange}
+          fromDate={startOfDay(addDays(new Date(), -29))}
           onSave={handleDateRangeChange}
           showTime={false} />
         <div className={classes.hideLabel}>
