@@ -1883,11 +1883,11 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
     integration.install.find(step => step.isClone);
   }
   const isFrameWork2 =
-    (
+    !!((
       integration.installSteps &&
       integration.installSteps.length) || (
       integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
+        integration.uninstallSteps.length)) ||
     isCloned;
 
   return isFrameWork2;
@@ -3893,7 +3893,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
+      if (resource?.type === 'delta') {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
