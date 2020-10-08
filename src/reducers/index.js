@@ -2961,69 +2961,7 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.notificationResources = (state, _integrationId, storeId) => {
-  const diyFlows = selectors.resourceList(state, {
-    type: 'flows',
-    filter: {
-      $where() {
-        if (!_integrationId || ['none'].includes(_integrationId)) {
-          return !this._integrationId;
-        }
-
-        return this._integrationId === _integrationId;
-      },
-    },
-  }).resources;
-  const { _registeredConnectionIds = [], _connectorId } =
-    selectors.resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = selectors.resourceList(state, {
-    type: 'connections',
-    filter: {
-      _id: id =>
-        _registeredConnectionIds.includes(id) ||
-        ['none'].includes(_integrationId),
-    },
-  }).resources;
-  const notifications = selectors.subscribedNotifications(state);
-  const connections = _connectorId
-    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
-    : diyConnections;
-  const flows = _connectorId
-    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
-    : diyFlows;
-  const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
-  let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
-  const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
-  );
-
-  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
-    flowValues = [_integrationId, ...flows];
-  }
-
-  return {
-    connections,
-    flows,
-    connectionValues,
-    flowValues,
-  };
-};
-
-/**
- * selectors.getNotifications: given user id, return all notifications for that user
- * selectors.subscribedIntegrationResources:
- *  given integrationId : return { connections, flows, subscribedConnections, subscribedFlows }
- * selectors.isFlowSubscribed:
- *  given flowId - returns true/false whether flow is subscribed or not
- * selectors.subscribedFlowConnections
- *  given flowId - returns connections subscribed under this flow
- */
 /** Notification related selectors */
-
 selectors.subscribedNotifications = (state, userEmail) => {
   const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
   const notifications = selectors.resourceList(state, {
@@ -3089,6 +3027,13 @@ selectors.integrationNotificationResources = (state, _integrationId, options = {
     connectionValues,
     flowValues,
   };
+};
+
+selectors.isFlowSubscribedForNotification = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+  const subscribedFlows = selectors.integrationNotificationResources(state, flow._integrationId || 'none').flowValues;
+
+  return subscribedFlows.includes(flowId);
 };
 /** End of Notification selectors */
 selectors.auditLogs = (

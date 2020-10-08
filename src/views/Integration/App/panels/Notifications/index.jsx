@@ -79,30 +79,9 @@ export default function NotificationsSection({ integrationId, storeId }) {
   }, [flowHash, connHash]);
 
   const handleSubmit = formVal => {
-    const { connections: connList, flows: flowList } = formVal;
-    const notifications = [];
+    const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
 
-    notifications.push({
-      _integrationId: integrationId,
-      subscribed: flowList.includes(integrationId),
-    });
-
-    flows
-      .filter(f => f._id !== integrationId)
-      .forEach(flow => {
-        notifications.push({
-          _flowId: flow._id,
-          subscribed: flowList.includes(flow._id),
-        });
-      });
-    connections.forEach(connection => {
-      notifications.push({
-        _connectionId: connection._id,
-        subscribed: connList.includes(connection._id),
-      });
-    });
-
-    dispatch(actions.resource.notifications.update(notifications));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, storeId));
     setCount(count => count + 1);
   };
 

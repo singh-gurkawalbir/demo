@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
@@ -14,6 +14,7 @@ import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
+import LoadResources from '../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -35,6 +36,14 @@ export default function SettingsDrawer({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const [remountKey, setRemountKey] = useState(1);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const isFlowSubscribed = useSelector(state =>
+    selectors.isFlowSubscribedForNotification(state, flow._id)
+  );
+
   const nextDataFlows = useSelectorMemo(selectors.mkNextDataFlowsForFlow, flow);
   const handleClose = useCallback(() => history.goBack(), [history]);
   const fieldMeta = useMemo(
@@ -81,6 +90,13 @@ export default function SettingsDrawer({
             },
           ],
         },
+        notifyOnFlowError: {
+          id: 'notifyOnFlowError',
+          name: 'notifyOnFlowError',
+          type: 'celigoswitch',
+          defaultValue: isFlowSubscribed,
+          label: 'Notify me on flow errors',
+        },
         settings: {
           id: 'settings',
           name: 'settings',
@@ -97,7 +113,7 @@ export default function SettingsDrawer({
               {
                 collapsed: true,
                 label: 'General',
-                fields: ['name', 'description', '_runNextFlowIds'],
+                fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError'] : []), '_runNextFlowIds'],
               },
             ],
           },
@@ -107,7 +123,7 @@ export default function SettingsDrawer({
         ],
       },
     }),
-    [flow, nextDataFlows]
+    [flow, nextDataFlows, isUserInErrMgtTwoDotZero, isFlowSubscribed]
   );
   const validationHandler = field => {
     // Incase of invalid json throws error to be shown on the field
@@ -122,6 +138,13 @@ export default function SettingsDrawer({
       }
     }
   };
+
+  const updateFlowNotification = useCallback(formVal => {
+    console.log(formVal.notifyOnFlowError, 'is updated');
+    if (isFlowSubscribed !== formVal.notifyOnFlowError) {
+      dispatch(actions.resource.notifications.updateFlow(flow._id, formVal.notifyOnFlowError));
+    }
+  }, [dispatch, isFlowSubscribed, flow._id]);
 
   const handleSubmit = useCallback(
     formVal => {
@@ -159,10 +182,13 @@ export default function SettingsDrawer({
         });
       }
 
-      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      // dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+      // dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      if (isUserInErrMgtTwoDotZero) {
+        updateFlowNotification(formVal);
+      }
     },
-    [dispatch, integrationId, flow._id]
+    [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification]
   );
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
@@ -183,13 +209,18 @@ export default function SettingsDrawer({
     }
     submitHandler(closeOnSave)(formVal);
   }, [submitHandler]);
+
+  useEffect(() => {
+    setRemountKey(remountKey => remountKey + 1);
+  }, [isFlowSubscribed]);
+
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     integrationId,
     resourceType,
     resourceId,
     validationHandler,
-
+    remount: remountKey,
   });
 
   return (
@@ -198,33 +229,35 @@ export default function SettingsDrawer({
       title="Settings"
       width="medium">
       <div className={classes.scheduleContainer}>
-        <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
-        <ButtonGroup>
-          <DynaSubmit
+        <LoadResources required resources="notifications">
+          <DynaForm
             formKey={formKey}
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveFlowSettings"
-            onClick={validateAndSubmit()}
-            disabled={disableSave}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            resourceType={resourceType}
-            resourceId={resourceId}
-            data-test="saveAndCloseFlowSettings"
-            onClick={validateAndSubmit(true)}
-            disabled={disableSave}
-            color="secondary">
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button onClick={handleClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </ButtonGroup>
+            fieldMeta={fieldMeta} />
+          <ButtonGroup>
+            <DynaSubmit
+              formKey={formKey}
+              resourceType={resourceType}
+              resourceId={resourceId}
+              data-test="saveFlowSettings"
+              onClick={validateAndSubmit()}
+              disabled={disableSave}>
+              {defaultLabels.saveLabel}
+            </DynaSubmit>
+            <DynaSubmit
+              formKey={formKey}
+              resourceType={resourceType}
+              resourceId={resourceId}
+              data-test="saveAndCloseFlowSettings"
+              onClick={validateAndSubmit(true)}
+              disabled={disableSave}
+              color="secondary">
+              {defaultLabels.saveAndCloseLabel}
+            </DynaSubmit>
+            <Button onClick={handleClose} variant="text" color="primary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </LoadResources>
       </div>
     </RightDrawer>
   );

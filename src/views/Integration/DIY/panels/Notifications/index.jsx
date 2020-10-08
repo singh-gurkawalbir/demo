@@ -46,8 +46,9 @@ export default function NotificationsSection({ integrationId, childId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationNotificationResources(state, integrationId)
+      selectors.integrationNotificationResources(state, _integrationId)
     ) || {};
+
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
@@ -87,30 +88,13 @@ export default function NotificationsSection({ integrationId, childId }) {
   }, [flowHash, connHash]);
 
   const handleSubmit = formVal => {
-    const { connections: connList, flows: flowList } = formVal;
-    const notifications = [];
+    const resourcesToUpdate = {
+      subscribedConnections: formVal.connections,
+      subscribedFlows: formVal.flows,
+    };
 
-    notifications.push({
-      _integrationId,
-      subscribed: flowList.includes(_integrationId),
-    });
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, _integrationId));
 
-    flows
-      .filter(f => f._id !== _integrationId)
-      .forEach(flow => {
-        notifications.push({
-          _flowId: flow._id,
-          subscribed: flowList.includes(flow._id),
-        });
-      });
-    connections.forEach(connection => {
-      notifications.push({
-        _connectionId: connection._id,
-        subscribed: connList.includes(connection._id),
-      });
-    });
-
-    dispatch(actions.resource.notifications.update(notifications));
     setCount(count => count + 1);
   };
 
