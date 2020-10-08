@@ -41,7 +41,7 @@ export default function ReplaceConnection(props) {
 
   if (connection._connectorId) {
     expression.push({ _connectorId: connection._connectorId});
-    if (!isFrameWork2 && childId) {
+    if (isFrameWork2 && childId) {
       integratorExpression.push({ _integrationId: integrationId});
       integratorExpression.push({ _integrationId: childId});
       expression.push({ $or: integratorExpression });
