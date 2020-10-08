@@ -82,10 +82,10 @@ export default function TemplatePreview() {
           `/integrations/${integrationId}/setup`
         )
       );
+      dispatch(
+        actions.integrationApp.clone.clearIntegrationClonedStatus(templateId)
+      );
     }
-    dispatch(
-      actions.integrationApp.clone.clearIntegrationClonedStatus(templateId)
-    );
   }, [dispatch, integrationId, templateId, isCloned, history]);
 
   useEffect(() => {

@@ -71,6 +71,7 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
+  const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
@@ -388,7 +389,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -444,6 +445,8 @@ export default function ConnectorInstallation(props) {
         }
       }
       // handle Action step click
+    } else if (type === 'stack') {
+      if (!stackId) setShowStackDialog(generateNewId());
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -459,6 +462,19 @@ export default function ConnectorInstallation(props) {
         )
       );
     }
+  };
+  const handleStackSetupDone = stackId => {
+    dispatch(
+      actions.integrationApp.installer.scriptInstallStep(
+        integrationId, '', '', '', stackId,
+      )
+    );
+
+    setShowStackDialog(false);
+  };
+
+  const handleStackClose = () => {
+    setShowStackDialog(false);
   };
 
   const handleHelpUrlClick = e => {
@@ -517,6 +533,15 @@ export default function ConnectorInstallation(props) {
             addOrSelect={!_connectorId}
           />
         ))}
+      {stackId && (
+        <ResourceSetupDrawer
+          onClose={handleStackClose}
+          addOrSelect
+          resourceId={stackId}
+          resourceType="stacks"
+          onSubmitComplete={handleStackSetupDone}
+        />
+      )}
       {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}

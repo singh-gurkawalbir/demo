@@ -71,7 +71,7 @@ export default function AddOrSelect(props) {
   };
 
   const handleSubmitComplete = (connId, isAuthorized, connectionDoc = {}) => {
-    onSubmitComplete(connId, isAuthorized, connectionDoc);
+    onSubmitComplete(newId, isAuthorized, connectionDoc);
   };
 
   const fieldMeta = {
