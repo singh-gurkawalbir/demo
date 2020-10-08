@@ -54,7 +54,7 @@ function ResponseTransformationDrawer(props) {
   return (
     <TransformToggleEditorDrawer
       title="Define transformation"
-      helpTitle="Transform Rules"
+      helpTitle="Transform rules"
       helpKey="export.transform.rules"
       id={resourceId}
       disabled={isViewMode}
