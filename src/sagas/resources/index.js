@@ -728,29 +728,58 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
   }
 }
 
-// export function* updateFlowNotification({ flowId, isSubscribed }) {
-//   const flow = yield select(selectors.resource, 'flows', flowId);
-//   const integrationId = flow._integrationId || 'none';
-//   const {
-//     flowValues: subscribedFlows = [],
-//     connectionValues: subscribedConnections = [],
-//     flows: allFlows = [],
-//   } = yield select(selectors.integrationNotificationResources, integrationId);
-//   // const updatedFlows = [];
-//   // // case 1 : some flows selected, switch one of them
-//   // // case 2 : some flows selected, add one to this
-//   // // case 3 : all flows selected ,switch one of them
-//   // // case 4 : none selected, add one to this
-//   // const isAllFlowsSelectedPreviously = subscribedFlows.find(id => id === integrationId);
+export function* updateFlowNotification({ flowId, isSubscribed }) {
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const integrationId = flow._integrationId || 'none';
+  const { flowValues: subscribedFlows = [] } = yield select(selectors.integrationNotificationResources, integrationId);
+  const isAllFlowsSelectedPreviously = subscribedFlows.find(id => id === integrationId);
+  const notifications = [];
+  let response;
 
-//   // console.log(allFlows, subscribedFlows);
-//   // const resourcesToUpdate = {
-//   //   subscribedFlows,
-//   //   subscribedConnections,
-//   // };
+  if (isAllFlowsSelectedPreviously) {
+    if (isSubscribed) {
+      return;
+    }
+    notifications.push({
+      _integrationId: integrationId,
+      subscribed: false,
+    });
+    subscribedFlows
+      .filter(f => f._id !== integrationId && f !== integrationId)
+      .forEach(flow => {
+        notifications.push({
+          _flowId: flow._id,
+          subscribed: flow._id !== flowId,
+        });
+      });
+  } else {
+    notifications.push(
+      {
+        _integrationId: integrationId,
+        subscribed: false,
+      }, {
+        _flowId: flow._id,
+        subscribed: isSubscribed,
+      },
+    );
+  }
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: '/notifications',
+      opts: {
+        body: notifications,
+        method: 'PUT',
+      },
+      message: 'Updating notifications',
+    });
+  } catch (e) {
+    return undefined;
+  }
 
-//   // // yield call(updateTileNotifications, { resourcesToUpdate, integrationId });
-// }
+  if (response) {
+    yield put(actions.resource.requestCollection('notifications'));
+  }
+}
 
 export function* requestRegister({ connectionIds, integrationId }) {
   const path = `/integrations/${integrationId}/connections/register`;
@@ -931,7 +960,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
   takeEvery(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, updateTileNotifications),
-  // takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
+  takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),

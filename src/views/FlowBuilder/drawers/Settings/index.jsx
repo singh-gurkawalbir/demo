@@ -140,7 +140,6 @@ export default function SettingsDrawer({
   };
 
   const updateFlowNotification = useCallback(formVal => {
-    console.log(formVal.notifyOnFlowError, 'is updated');
     if (isFlowSubscribed !== formVal.notifyOnFlowError) {
       dispatch(actions.resource.notifications.updateFlow(flow._id, formVal.notifyOnFlowError));
     }
@@ -182,8 +181,8 @@ export default function SettingsDrawer({
         });
       }
 
-      // dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
-      // dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
+      dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
+      dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
       if (isUserInErrMgtTwoDotZero) {
         updateFlowNotification(formVal);
       }

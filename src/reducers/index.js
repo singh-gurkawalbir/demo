@@ -3031,9 +3031,10 @@ selectors.integrationNotificationResources = (state, _integrationId, options = {
 
 selectors.isFlowSubscribedForNotification = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
-  const subscribedFlows = selectors.integrationNotificationResources(state, flow._integrationId || 'none').flowValues;
+  const integrationId = flow._integrationId || 'none';
+  const subscribedFlows = selectors.integrationNotificationResources(state, integrationId).flowValues;
 
-  return subscribedFlows.includes(flowId);
+  return subscribedFlows.includes(integrationId) || subscribedFlows.includes(flowId);
 };
 /** End of Notification selectors */
 selectors.auditLogs = (
