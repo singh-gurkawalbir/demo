@@ -13,6 +13,7 @@ import usePushRightDrawer from '../../../../../hooks/usePushRightDrawer';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { generateNewId, isNewId } from '../../../../../utils/resource';
 import {useUpdateParentForm} from '../DynaCsvGenerate';
+import useSetSubFormShowValidations from '../../../../../hooks/useSetSubFormShowValidations';
 
 const getParserValue = ({
   resourcePath,
@@ -107,10 +108,11 @@ export default function DynaXmlParse({
   disabled,
   uploadSampleDataFieldName,
   label,
+  formKey: parentFormKey,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [formKey, setFormKey] = useState(1);
+  const [remountKey, setRemountKey] = useState(1);
   const handleOpenDrawer = usePushRightDrawer(id);
   const resourcePath = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)?.file?.xml?.resourcePath);
@@ -155,10 +157,10 @@ export default function DynaXmlParse({
       setCurrentOptions(getInitOptions(parsersValue));
 
       setForm(getForm(editorValues, resourceId));
-      setFormKey(formKey + 1);
+      setRemountKey(remountKey => remountKey + 1);
       onFieldChange(id, parsersValue);
     }
-  }, [formKey, getInitOptions, id, onFieldChange, resourceId]);
+  }, [getInitOptions, id, onFieldChange, resourceId]);
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -212,9 +214,10 @@ export default function DynaXmlParse({
   const [secondaryFormKey] = useState(generateNewId());
 
   useUpdateParentForm(secondaryFormKey, handleFormChange);
+  useSetSubFormShowValidations(parentFormKey, secondaryFormKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey: secondaryFormKey,
-    remount: formKey,
+    remount: remountKey,
     optionsHandler: form?.optionsHandler,
     disabled,
     fieldMeta: form,
