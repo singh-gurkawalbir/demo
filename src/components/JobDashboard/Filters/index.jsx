@@ -228,6 +228,7 @@ export default function Filters({
           value={dateRange || {startDate: startOfDay(addDays(new Date(), -29)), endDate: endOfDay(new Date()), preset: null}}
           clearable
           customPresets={rangeFilters}
+          minDate={startOfDay(addDays(new Date(), -29))}
           onSave={handleDateRangeChange}
           fromDate={startOfDay(addDays(new Date(), -29))}
           showTime={false} />

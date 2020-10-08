@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const StoreMenuItems = ({integration, integrationId, storeId}) => {
+const StoreMenuItems = ({ integration, integrationId }) => {
   const integrationErrorsPerStore = useSelector(state =>
     selectors.integrationErrorsPerStore(state, integrationId),
   shallowEqual
@@ -52,7 +52,7 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
   );
 
   return integration?.stores?.map(store => {
-    if (store.value === storeId || !isUserInErrMgtTwoDotZero) {
+    if (!isUserInErrMgtTwoDotZero) {
       return (
         <MenuItem key={store.value} value={store.value}>
           {store.label}
@@ -65,7 +65,7 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
       return (
         <MenuItem key={store.value} value={store.value}>
           <div> {store.label}</div>
-          <StatusCircle size="small" variant="success" />
+          <span><StatusCircle size="small" variant="success" /> Success</span>
         </MenuItem>
       );
     }
@@ -73,6 +73,10 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
     return (
       <MenuItem key={store.value} value={store.value}>
         <div> {store.label}</div>
+        <div>
+          <StatusCircle size="small" variant="error" />
+          <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+        </div>
       </MenuItem>
     );
   });
@@ -137,6 +141,12 @@ export default function PageBar() {
     );
   }, [history, integrationAppName, integrationId]);
 
+  const renderStoreLabel = useCallback(selectedStoreId =>
+    integration.stores?.find(store => store.value === selectedStoreId)?.label,
+  [integration]);
+
+  const storeItems = StoreMenuItems({ integration, integrationId });
+
   return (
     <CeligoPageBar
       title={integration.name}
@@ -174,17 +184,13 @@ export default function PageBar() {
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
           onChange={handleStoreChange}
+          renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
           value={storeId || ''}>
           <MenuItem value="">
             All {storeLabel}s
           </MenuItem>
-
-          <StoreMenuItems
-            integration={integration}
-            integrationId={integrationId}
-            storeId={storeId} />
-
+          {storeItems}
         </CeligoSelect>
       </div>
       )}

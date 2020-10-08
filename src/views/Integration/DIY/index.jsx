@@ -114,7 +114,8 @@ export default function Integration() {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId, templateName, childId, tab} = match?.params;
+  const { integrationId, templateName, storeId: childId, tab} = match?.params;
+
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const { confirmDialog } = useConfirmDialog();

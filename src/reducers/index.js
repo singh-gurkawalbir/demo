@@ -1940,11 +1940,11 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
     integration.install.find(step => step.isClone);
   }
   const isFrameWork2 =
-    (
+    !!((
       integration.installSteps &&
       integration.installSteps.length) || (
       integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
+        integration.uninstallSteps.length)) ||
     isCloned;
 
   return isFrameWork2;
@@ -2972,7 +2972,10 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
+selectors.isEditorV2Supported = (state, resourceId, resourceType, fieldId) => {
+  if (['idLockTemplate', 'dataURITemplate'].includes(fieldId)) {
+    return true;
+  }
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
