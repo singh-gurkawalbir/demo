@@ -229,7 +229,7 @@ export default function Filters({
           clearable
           customPresets={rangeFilters}
           onSave={handleDateRangeChange}
-          minDate={startOfDay(addDays(new Date(), -29))}
+          fromDate={startOfDay(addDays(new Date(), -29))}
           showTime={false} />
         <div className={classes.hideLabel}>
           <FormControlLabel

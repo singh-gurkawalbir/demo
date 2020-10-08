@@ -108,7 +108,7 @@ const useStyles = makeStyles(theme => ({
 export default function DateRangeSelector({
   value = {},
   onSave,
-  minDate,
+  fromDate,
   customPresets = [],
   showTime = true,
   clearable = false,
@@ -220,7 +220,7 @@ export default function DateRangeSelector({
                   direction="horizontal"
                   showTime={showTime}
                   maxDate={new Date()}
-                  minDate={minDate || addYears(new Date(), -1)}
+                  minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />
