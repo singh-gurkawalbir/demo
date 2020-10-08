@@ -236,7 +236,7 @@ function DynaSelectResource(props) {
     }
 
     return filteredResources.map(conn => ({
-      label: conn.name || conn._id,
+      label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
   }, [filter, options, resources]);

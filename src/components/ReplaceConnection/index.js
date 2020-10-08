@@ -92,7 +92,7 @@ export default function ReplaceConnection(props) {
   const replace = useCallback(formVal => {
     confirmDialog({
       title: 'Confirm replace',
-      message: 'Are you sure you want to repalce this connection?',
+      message: 'Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.',
       buttons: [
         {
           label: 'Replace',
