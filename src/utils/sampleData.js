@@ -512,4 +512,3 @@ export const processOneToManySampleData = (sampleData, resource) => {
 
   return processedSampleData;
 };
-
