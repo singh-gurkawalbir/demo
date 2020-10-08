@@ -25,7 +25,7 @@ export default function DynaRelativeUri({ value, arrayIndex, ...props }) {
   return (
     <DynaURI
       {...props}
-      // editorTitle="Build relative URI"
+      editorTitle="Build relative URI"
       value={inputValue}
       description={description}
     />

@@ -49,6 +49,7 @@ export default function DynaSqlQuery(props) {
     onFieldChange,
     value,
     label,
+    editorTitile,
     editorClassName,
     disabled,
     isValid,
@@ -104,7 +105,7 @@ export default function DynaSqlQuery(props) {
       </ActionButton>
       <div className={classes.container}>
         <SqlQueryBuilderEditorDrawer
-          title={label}
+          title={editorTitile}
           id={`${id}-inline`}
           rule={value}
           sampleData={JSON.stringify(sampleData, null, 2)}

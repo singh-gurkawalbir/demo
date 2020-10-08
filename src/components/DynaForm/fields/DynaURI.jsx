@@ -25,7 +25,7 @@ export default function DynaURI(props) {
     id,
     onFieldChange,
     value,
-    label,
+    editorTitle,
     resourceId,
     resourceType,
     flowId,
@@ -49,7 +49,7 @@ export default function DynaURI(props) {
       <div>
         <DynaEditorWithFlowSampleData
           formKey={formKey}
-          title={label}
+          title={editorTitle}
           fieldId={id}
           onSave={handleSave}
           editorType="uri"

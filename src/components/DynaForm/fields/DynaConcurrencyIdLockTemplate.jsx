@@ -7,7 +7,7 @@ export default function DynaConcurrencyIdLockTemplate(props) {
       {...props}
       showExtract={false}
       showLookup={false}
-      // editorTitle="Build concurrency ID lock template"
+      editorTitle="Build concurrency ID lock template"
     />
   );
 }
