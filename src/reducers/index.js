@@ -283,7 +283,6 @@ selectors.installSetup = (state, { resourceType, resourceId, templateId }) => fr
 
 selectors.templateSetup = (state, templateId) => fromSession.template(state && state.session, templateId);
 
-selectors.chol;
 selectors.templateInstallSteps = (state, templateId) => {
   const templateInstallSteps = fromSession.templateInstallSteps(
     state && state.session,
@@ -5248,13 +5247,12 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
 selectors.mkChildIntegration = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
-  createSelector(
+  return createSelector(
     (state, integrationId) => {
       const id = selectors.getChildIntegrationId(state, integrationId);
 
       return id && resourceSelector(state?.data?.resources, 'integrations', id);
     },
     childIntegration => childIntegration
-
   );
 };

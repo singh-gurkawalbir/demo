@@ -114,7 +114,6 @@ selectors.platformLicenseActionMessage = state => {
 };
 
 selectors.getChildIntegrationId = (state, parentId) => {
-  console.log('should be session ', state);
   if (!state || !state.parentChildMap) {
     return;
   }

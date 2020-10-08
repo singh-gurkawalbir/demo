@@ -52,7 +52,8 @@ export default function TabRedirection({children: componentChildren}) {
     return emptyObj;
   }, shallowEqual);
 
-  const childIntegration = selectors.mkChildIntegration(integrationId);
+  const childIntegration = useSelectorMemo(selectors.mkChildIntegration, integrationId);
+
   const integrationAppName = getIntegrationAppUrlName(name);
   const integrationChildAppName =
     childIntegration &&
