@@ -61,7 +61,8 @@ export function* createComponents({ templateId, runKey }) {
           _stackId,
           sandbox,
           runKey,
-          name: `Copy ${(template || {}).name}`,
+          name: template ? `Copy ${(template || {}).name}` : undefined,
+          newTemplateInstaller: true,
         },
       },
       message: 'Installing Template...',
@@ -70,6 +71,19 @@ export function* createComponents({ templateId, runKey }) {
     yield put(actions.template.failedInstall(templateId));
 
     return undefined;
+  }
+  if (components && components._integrationId) {
+    yield put(actions.resource.requestCollection('integrations'));
+    yield put(actions.resource.requestCollection('tiles'));
+    yield put(
+      actions.integrationApp.clone.receivedIntegrationClonedStatus(
+        templateId,
+        components._integrationId,
+        '',
+      )
+    );
+
+    return;
   }
 
   const dependentResources =
