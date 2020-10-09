@@ -1192,7 +1192,9 @@ selectors.integrationAppResourceList = (
 
   const flows = [];
   const flowIds = [];
-  const connections = integrationConnections;
+  const allFlowIds = [];
+  const connections = [];
+  const flowConnections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
@@ -1200,17 +1202,29 @@ selectors.integrationAppResourceList = (
   (selectedStore.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = selectors.resource(state, 'flows', fid) || {};
+
+    flowConnections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
 
   flowIds.forEach(fid => {
     const flow = selectors.resource(state, 'flows', fid) || {};
 
     flows.push({_id: flow._id, name: flow.name});
+    connections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
     exports.push(...getExportIdsFromFlow(state, flow));
     imports.push(...getImportIdsFromFlow(state, flow));
   });
 
   return {
-    connections,
+    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
     flows,
     exports,
     imports,

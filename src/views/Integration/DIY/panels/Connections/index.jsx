@@ -73,12 +73,12 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
-    if (newResourceId && !isStandalone) {
+    if (permission.register && newResourceId && !isStandalone) {
       dispatch(
         actions.connection.requestRegister([newResourceId], _integrationId)
       );
     }
-  }, [dispatch, _integrationId, newResourceId, isStandalone]);
+  }, [dispatch, _integrationId, newResourceId, isStandalone, permission.register]);
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(_integrationId));

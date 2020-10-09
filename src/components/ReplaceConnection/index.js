@@ -18,7 +18,8 @@ export default function ReplaceConnection(props) {
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const { onClose, flowId, integrationId, childId, isFrameWork2 } = props;
+  const { onClose, flowId, integrationId, childId } = props;
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   const { connId } = match.params;
   const connection = useSelector(
@@ -98,6 +99,7 @@ export default function ReplaceConnection(props) {
           label: 'Replace',
           onClick: () => {
             dispatch(actions.resource.replaceConnection(flowId, connection._id, formVal._connectionId));
+            onClose();
           },
         },
         {
@@ -120,7 +122,7 @@ export default function ReplaceConnection(props) {
           color="primary"
           disabled={false}
           data-test="replaceConnection">
-          Replace
+          Replace & close
         </DynaSubmit>
         <Button onClick={onClose} variant="text" color="primary">
           Cancel
