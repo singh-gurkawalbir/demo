@@ -1,76 +1,13 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
-import itemTypes from './itemTypes';
-import { generateNewId} from '../../utils/resource';
-import { isIntegrationApp, isFreeFlowResource } from '../../utils/flows';
+import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import actions from '../../actions';
+import { generateNewId } from '../../utils/resource';
+import itemTypes from './itemTypes';
 
-export const useIsFreeFlowResource = flowId => {
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
-
-  const isFreeFlow = isFreeFlowResource(flow);
-
-  return isFreeFlow;
-};
-export const useIsIAType = flowId => {
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
-  const isIAType = isIntegrationApp(flow);
-
-  return isIAType;
-};
-export const useIsViewMode = (integrationId, flowId) => {
-  const isIAType = useIsIAType(flowId);
-
-  const isMonitorLevelAccess = useSelector(state =>
-    selectors.isFormAMonitorLevelAccess(state, integrationId)
-  );
-
-  return isMonitorLevelAccess || isIAType;
-};
-
-export const useIsDataLoaderFlow = flowId => {
-  const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
-  const { pageGenerators = [] } = flow;
-
-  return flowDetails.isSimpleImport ||
-  (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
-};
-
-export const useShowAddPageProcessor = flowId => {
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
-
-  const { pageProcessors = [], pageGenerators = [] } = flow;
-  const isDataLoaderFlow = useIsDataLoaderFlow(flowId);
-
-  const showAddPageProcessor =
-    !isDataLoaderFlow ||
-    (pageProcessors.length === 0 &&
-      pageGenerators.length &&
-      pageGenerators[0]._exportId);
-
-  return showAddPageProcessor;
-};
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
   const dispatch = useDispatch();

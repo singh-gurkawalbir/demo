@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import { useHandleAddGenerator, useHandleDelete, useHandleMovePG, useIsFreeFlowResource, useIsViewMode } from '../../hooks';
+import { useHandleAddGenerator, useHandleDelete, useHandleMovePG } from '../../hooks';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
@@ -35,10 +35,9 @@ export default function PageGenerators({integrationId, flowId}) {
   const {
     data: flowErrorsMap,
   } = useSelector(state => selectors.errorMap(state, flowId));
+  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
 
-  const isFreeFlow = useIsFreeFlowResource(flowId);
-
-  const isViewMode = useIsViewMode(integrationId, flowId);
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
   const handleMovePG = useHandleMovePG(flowId);
   const handleAddGenerator = useHandleAddGenerator();

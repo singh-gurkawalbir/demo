@@ -17,7 +17,7 @@ import StatusCircle from '../../../../components/StatusCircle';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
-import { isNewFlowFn, useHandleExitClick, useIsDataLoaderFlow, useIsIAType, useIsViewMode, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
+import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
 
@@ -45,7 +45,7 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
     flowId
   ).merged;
 
-  const isViewMode = useIsViewMode(integrationId, flowId);
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   return (
@@ -126,6 +126,9 @@ const pageChildreUseStyles = makeStyles(theme => ({
   },
 
 }));
+
+const excludes = ['mapping', 'detach', 'audit', 'schedule'];
+
 const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
   const classes = pageChildreUseStyles();
   const match = useRouteMatch();
@@ -144,7 +147,6 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
     },
     [match.url, pushOrReplaceHistory]
   );
-  const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
@@ -165,12 +167,12 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
 
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId);
 
-  const isDataLoaderFlow = useIsDataLoaderFlow(flowId);
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
 
-  const isIAType = useIsIAType(flowId);
+  const isIAType = useSelector(state => selectors.isIAType(state, flowId));
   const handleExitClick = useHandleExitClick();
   const isNewFlow = isNewFlowFn(flowId);
 

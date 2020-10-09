@@ -5302,7 +5302,7 @@ selectors.isDataLoaderFlow = (state, flowId) => {
   return flowDetails.isSimpleImport ||
   (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
 };
-isDa;
+
 selectors.shouldShowAddPageProcessor = (state, flowId) => {
   const flow = selectors.resourceData(state,
     'flows',

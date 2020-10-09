@@ -2,14 +2,12 @@ import { IconButton, makeStyles, Typography, useTheme } from '@material-ui/core'
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  useHandleAddGenerator, useHandleAddProcessor,
-  useIsDataLoaderFlow, useIsFreeFlowResource,
-  useIsViewMode, useShowAddPageProcessor,
-} from '../hooks';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
 import useBottomDrawer from '../drawers/BottomDrawer/useBottomDrawer';
+import {
+  useHandleAddGenerator, useHandleAddProcessor,
+} from '../hooks';
 import PageBar from './PageBar';
 import PageGenerators from './PageGenerators';
 import PageProcessors from './PageProcessors';
@@ -79,19 +77,50 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Canvas({flowId, integrationId}) {
+function AddGenerator({flowId}) {
   const classes = useStyles();
-  const isDataLoaderFlow = useIsDataLoaderFlow(flowId);
-
-  const isFreeFlow = useIsFreeFlowResource(flowId);
-  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
-
-  const isViewMode = useIsViewMode(integrationId, flowId);
 
   const handleAddGenerator = useHandleAddGenerator();
-  const handleAddProcessor = useHandleAddProcessor();
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flowId));
 
-  const showAddPageProcessor = useShowAddPageProcessor(flowId);
+  return (
+
+    <IconButton
+      data-test="addGenerator"
+      disabled={isViewMode}
+      className={classes.roundBtn}
+      onClick={handleAddGenerator}>
+      <AddIcon />
+    </IconButton>
+  );
+}
+function AddProcessor({flowId}) {
+  const classes = useStyles();
+
+  const handleAddProcessor = useHandleAddProcessor();
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flowId));
+
+  return (
+    <IconButton
+      disabled={isViewMode}
+      data-test="addProcessor"
+      className={classes.roundBtn}
+      onClick={handleAddProcessor}>
+      <AddIcon />
+    </IconButton>
+  );
+}
+function Canvas({flowId, integrationId}) {
+  const classes = useStyles();
+
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+
+  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
+
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
+
+  const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
+
   const calcCanvasStyle = useCalcCanvasStyle();
 
   return (
@@ -112,13 +141,7 @@ function Canvas({flowId, integrationId}) {
             variant="overline">
             {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
             {!isDataLoaderFlow && !isFreeFlow && (
-            <IconButton
-              data-test="addGenerator"
-              disabled={isViewMode}
-              className={classes.roundBtn}
-              onClick={handleAddGenerator}>
-              <AddIcon />
-            </IconButton>
+              <AddGenerator flowId={flowId} />
             )}
           </Typography>
           <PageGenerators
@@ -136,13 +159,7 @@ function Canvas({flowId, integrationId}) {
               : 'DESTINATIONS & LOOKUPS '}
 
             {showAddPageProcessor && !isFreeFlow && (
-            <IconButton
-              disabled={isViewMode}
-              data-test="addProcessor"
-              className={classes.roundBtn}
-              onClick={handleAddProcessor}>
-              <AddIcon />
-            </IconButton>
+            <AddProcessor flowId={flowId} />
             )}
           </Typography>
           <PageProcessors

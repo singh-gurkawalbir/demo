@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import AppBlock from '../../AppBlock';
-import { useHandleAddProcessor, useHandleDelete, useHandleMovePP, useIsDataLoaderFlow, useIsFreeFlowResource, useIsViewMode, useShowAddPageProcessor } from '../../hooks';
+import { useHandleAddProcessor, useHandleDelete, useHandleMovePP } from '../../hooks';
 import itemTypes from '../../itemTypes';
 import PageProcessor from '../../PageProcessor';
 
@@ -40,14 +40,13 @@ export default function PageProcessors({integrationId, flowId}) {
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
+  const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
 
-  const isFreeFlow = useIsFreeFlowResource(flowId);
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
 
-  const isViewMode = useIsViewMode(integrationId, flowId);
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
-  const isDataLoaderFlow = useIsDataLoaderFlow(flowId);
-
-  const showAddPageProcessor = useShowAddPageProcessor(flowId);
+  const showAddPageProcessor = useSelector(state => selectors.shouldShowAddPageProcessor(state, flowId));
 
   return (
     <div className={classes.processorContainer}>
