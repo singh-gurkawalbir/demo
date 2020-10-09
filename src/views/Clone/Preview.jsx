@@ -115,7 +115,7 @@ export default function ClonePreview(props) {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);
 
-    return selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox;
+    return selectedAccount?.hasSandbox;
   });
   const { components } = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
