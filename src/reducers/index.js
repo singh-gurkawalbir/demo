@@ -59,7 +59,7 @@ import {
   isAS2Resource,
   adaptorTypeMap,
 } from '../utils/resource';
-import { processSampleData } from '../utils/sampleData';
+import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
@@ -2997,6 +2997,7 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     return !!restConnection.isHTTP;
   }
 
+  // TODO: consider snowflake which is not supported
   return [
     'HTTPImport',
     'HTTPExport',
@@ -3006,6 +3007,12 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     'AS2Export',
     'S3Import',
     'S3Export',
+    'RDBMSImport',
+    'RDBMSExport',
+    'MongodbImport',
+    'MongodbExport',
+    'DynamodbImport',
+    'DynamodbExport',
   ].includes(resource.adaptorType);
 };
 
@@ -3526,7 +3533,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   if (sampleData) {
     // Formats sample data into readable form
     return {
-      data: processSampleData(sampleData, resource),
+      data: convertFileDataToJSON(sampleData, resource),
       status: 'received',
     };
   }
@@ -3894,24 +3901,20 @@ selectors.isPreviewPanelAvailableForResource = (
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
 
-// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
-selectors.getSampleDataWrapper = createSelector(
+// This selector will pre-process the raw sample data to the proper stage for each AFE
+selectors.sampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
-    (state, params) => selectors.getSampleDataContext(state, params),
+    (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
         return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
       }
-
-      return undefined;
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
         return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
       }
-
-      return undefined;
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
@@ -3928,7 +3931,9 @@ selectors.getSampleDataWrapper = createSelector(
 
       return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
     },
-    (state, { stage }) => stage,
+    (_, { stage }) => stage,
+    (_, { fieldType }) => fieldType,
+    (state, { flowId, resourceId, resourceType }) => selectors.isPageGenerator(state, flowId, resourceId, resourceType),
   ],
   (
     sampleData,
@@ -3938,166 +3943,19 @@ selectors.getSampleDataWrapper = createSelector(
     integration,
     resource,
     connection,
-    stage
-  ) => {
-    const { status, data } = sampleData || {};
-    let resourceType = 'export';
-
-    if (
-      resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-    ) {
-      resourceType = 'import';
-    }
-
-    if (!status) {
-      return { status };
-    }
-
-    const contextFields = {};
-
-    if (['outputFilter', 'preSavePage'].includes(stage)) {
-      contextFields.pageIndex = 0;
-
-      if (resource?.type === 'delta') {
-        contextFields.lastExportDateTime = moment()
-          .startOf('day')
-          .add(-7, 'd')
-          .toISOString();
-        contextFields.currentExportDateTime = moment()
-          .startOf('day')
-          .add(-24, 'h')
-          .toISOString();
-      }
-    }
-
-    const resourceIds = {};
-
-    if (
-      [
-        'preSavePage',
-        'preMap',
-        'postMap',
-        'postSubmit',
-        'postAggregate',
-      ].includes(stage)
-    ) {
-      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
-        resource._id;
-      resourceIds._connectionId = connection._id;
-      resourceIds._flowId = flow._id;
-      resourceIds._integrationId = integration._id;
-    }
-
-    const settings = {
-      integration: integration.settings || {},
-      flow: flow.settings || {},
-      [resourceType]: resource.settings || {},
-      connection: connection.settings || {},
-    };
-
-    if (
-      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
-        stage
-      )
-    ) {
-      return {
-        status,
-        data: {
-          record: data || {},
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preSavePage'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          errors: [],
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postSubmit'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
-          responseData: [data].map(() => ({
-            statusCode: 200,
-            errors: [{ code: '', message: '', source: '' }],
-            ignored: false,
-            id: '',
-            _json: data || {},
-            dataURI: '',
-          })),
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postAggregate') {
-      return {
-        status: 'received',
-        data: {
-          postAggregateData: {
-            success: true,
-            _json: {},
-            code: '',
-            message: '',
-            source: '',
-          },
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postResponseMapHook') {
-      return {
-        status,
-        data: {
-          postResponseMapData: data || [],
-        },
-      };
-    }
-
-    // For all other stages, return basic sampleData
-    return { status, data };
-  }
+    stage,
+    fieldType,
+    isPageGenerator
+  ) => wrapSampleDataWithContext({sampleData,
+    preMapSampleData,
+    postMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage,
+    fieldType,
+    isPageGenerator})
 );
 
 /*
