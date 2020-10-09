@@ -192,6 +192,7 @@ function DynaSelectResource(props) {
   );
 
   if (updateFilterandAppType && connection?.assistant) {
+    // TODO: This code can be removed if all exports and imports are configured with assistant value.
     options.filter.$and.push({assistant: connection.assistant});
     options.appType = connection.assistant;
   }
