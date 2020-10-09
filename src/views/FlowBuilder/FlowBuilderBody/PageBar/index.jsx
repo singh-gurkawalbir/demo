@@ -127,6 +127,27 @@ const pageChildreUseStyles = makeStyles(theme => ({
 
 }));
 
+const RunFlowButtonWrapper = ({flowId, setTabValue}) => {
+  const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
+
+  const handleRunStart = useCallback(() => {
+    // Highlights Run Dashboard in the bottom drawer
+    setTabValue(0);
+
+    // Raising bottom drawer in cases where console is minimized
+    // and user can not see dashboard after running the flow
+    if (bottomDrawerHeight < 225) {
+      setBottomDrawerHeight(300);
+    }
+  }, [setTabValue, bottomDrawerHeight, setBottomDrawerHeight]);
+
+  return (
+
+    <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
+
+  );
+};
+
 const excludes = ['mapping', 'detach', 'audit', 'schedule'];
 
 const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
@@ -139,7 +160,6 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
   const pushOrReplaceHistory = usePushOrReplaceHistory();
-  const [bottomDrawerHeight, setBottomDrawerHeight] = useBottomDrawer();
 
   const handleDrawerOpen = useCallback(
     path => {
@@ -148,16 +168,6 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
     [match.url, pushOrReplaceHistory]
   );
 
-  const handleRunStart = useCallback(() => {
-    // Highlights Run Dashboard in the bottom drawer
-    setTabValue(0);
-
-    // Raising bottom drawer in cases where console is minimized
-    // and user can not see dashboard after running the flow
-    if (bottomDrawerHeight < 225) {
-      setBottomDrawerHeight(300);
-    }
-  }, [setTabValue, bottomDrawerHeight, setBottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);
@@ -193,7 +203,7 @@ const PageBarChildren = ({integrationId, flowId, setTabValue}) => {
         </div>
       )}
 
-      <RunFlowButton flowId={flowId} onRunStart={handleRunStart} />
+      <RunFlowButtonWrapper flowId={flowId} setTabValue={setTabValue} />
       {allowSchedule && (
         <IconButtonWithTooltip
           tooltipProps={tooltipSchedule}
@@ -242,11 +252,14 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
 
     total: totalErrors = 0,
   } = useSelector(state => selectors.errorMap(state, flowId));
-  const flow = useSelectorMemo(
-    selectors.makeResourceDataSelector,
-    'flows',
-    flowId
-  ).merged;
+
+  const description = useSelector(state => {
+    const flow = selectors.resourceData(state, 'flows',
+      flowId
+    ).merged;
+
+    return flow?.description;
+  });
 
   return (
     <CeligoPageBar
@@ -256,7 +269,7 @@ export default function PageBar({flowId, integrationId, setTabValue}) {
           flowId={flowId} integrationId={integrationId} />
 )}
       subtitle={<CalcPageBarSubtitle flowId={flowId} />}
-      infoText={flow.description}>
+      infoText={description}>
       {totalErrors ? (
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
