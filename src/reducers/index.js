@@ -2878,10 +2878,7 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType, fieldId) => {
-  if (['idLockTemplate', 'dataURITemplate'].includes(fieldId)) {
-    return true;
-  }
+selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
