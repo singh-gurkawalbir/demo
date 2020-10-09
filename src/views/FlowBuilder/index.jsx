@@ -11,6 +11,7 @@ import ChartsDrawer from './drawers/LineGraph';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import FlowBuilderBody from './FlowBuilderBody';
+import Redirection from './Redirection';
 
 function FBComponent({flowId, integrationId}) {
   const [tabValue, setTabValue] = useState(0);
@@ -43,27 +44,29 @@ function FlowBuilder() {
 
   return (
     <LoadResources required resources="imports, exports, flows">
-      <ResourceDrawer
-        flowId={flowId}
-        integrationId={integrationId}
+      <Redirection>
+        <ResourceDrawer
+          flowId={flowId}
+          integrationId={integrationId}
       />
 
-      <ScheduleDrawer flowId={flowId} />
-      <ChartsDrawer flowId={flowId} />
-      <SettingsDrawer
-        integrationId={integrationId}
-        resourceType="flows"
-        resourceId={flowId}
-        flowId={flowId}
+        <ScheduleDrawer flowId={flowId} />
+        <ChartsDrawer flowId={flowId} />
+        <SettingsDrawer
+          integrationId={integrationId}
+          resourceType="flows"
+          resourceId={flowId}
+          flowId={flowId}
       />
-      <QueuedJobsDrawer />
+        <QueuedJobsDrawer />
 
-      <ErrorDetailsDrawer flowId={flowId} />
+        <ErrorDetailsDrawer flowId={flowId} />
 
-      <FBComponent flowId={flowId} integrationId={integrationId} />
-      <MappingDrawerRoute
-        integrationId={integrationId}
+        <FBComponent flowId={flowId} integrationId={integrationId} />
+        <MappingDrawerRoute
+          integrationId={integrationId}
       />
+      </Redirection>
     </LoadResources>
   );
 }
