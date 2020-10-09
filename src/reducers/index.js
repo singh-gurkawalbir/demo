@@ -5308,3 +5308,16 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
     return storeErrorsMap;
   }, {});
 };
+
+selectors.mkChildIntegration = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => {
+      const id = selectors.getChildIntegrationId(state, integrationId);
+
+      return id && resourceSelector(state?.data?.resources, 'integrations', id);
+    },
+    childIntegration => childIntegration
+  );
+};

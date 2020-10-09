@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function UninstallSection({ storeId, integrationId }) {
+export default function UninstallSection({ childId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const match = useRouteMatch();
@@ -73,7 +73,7 @@ export default function UninstallSection({ storeId, integrationId }) {
               integration.settings.supportsMultiStore
             ) {
               history.push(
-                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${storeId}`)
+                getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/${childId}`)
               );
             } else {
               history.push(
