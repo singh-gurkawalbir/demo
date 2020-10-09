@@ -108,8 +108,8 @@ const useStyles = makeStyles(theme => ({
 export default function DateRangeSelector({
   value = {},
   onSave,
-  customPresets = [],
   fromDate,
+  customPresets = [],
   showTime = true,
   clearable = false,
   clearValue,
@@ -159,7 +159,7 @@ export default function DateRangeSelector({
     setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
     onSave && onSave(selectedRange);
     setAnchorEl(null);
-  }, []);
+  }, [onSave, selectedRange, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;

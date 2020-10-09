@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { makeStyles, Select, MenuItem } from '@material-ui/core';
+import { makeStyles, MenuItem } from '@material-ui/core';
 import { Link, Redirect, generatePath, useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -39,6 +39,9 @@ import { getIntegrationAppUrlName, getTopLevelTabs } from '../../../utils/integr
 import ArrowDownIcon from '../../../components/icons/ArrowDownIcon';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import ChipInput from '../../../components/ChipInput';
+import AddIcon from '../../../components/icons/AddIcon';
+import CeligoSelect from '../../../components/CeligoSelect';
+import GraphIcon from '../../../components/icons/GraphIcon';
 
 const useStyles = makeStyles(theme => ({
   pageWrapper: {
@@ -59,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     width: `calc(60vw - ${theme.drawerWidth + 24}px)`,
   },
 }));
-const tabs = [
+const getAllTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'settings',
     label: 'Settings',
@@ -70,7 +73,7 @@ const tabs = [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: DashboardIcon,
+    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -221,9 +224,12 @@ export default function Integration() {
   const integrationAppMetadata = useSelector(state =>
     selectors.integrationAppMappingMetadata(state, integrationId)
   );
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const isParent = childId === integrationId;
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs,
+    tabs: getAllTabs(isUserInErrMgtTwoDotZero),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -232,7 +238,15 @@ export default function Integration() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
+  }), [children,
+    hasAddOns,
+    hideSettingsTab,
+    integrationId,
+    isIntegrationApp,
+    isMonitorLevelUser,
+    isParent,
+    supportsChild,
+    isUserInErrMgtTwoDotZero]);
   const [isDeleting, setIsDeleting] = useState(false);
   const templateUrlName = useSelector(state => {
     if (templateId) {
@@ -550,25 +564,22 @@ export default function Integration() {
                 onClick={handleAddNewStore}
                 variant="text"
                 data-test="addNewStore">
-                <CopyIcon /> Add new child
+                <AddIcon /> Add new child
               </IconTextButton>
-              <Select
+              <CeligoSelect
                 displayEmpty
                 data-test="select Child"
                 className={classes.storeSelect}
                 onChange={handleStoreChange}
                 IconComponent={ArrowDownIcon}
                 value={childId}>
-                <MenuItem disabled value="">
-                  Select child
-                </MenuItem>
 
                 {children.map(s => (
                   <MenuItem key={s.value} value={s.value}>
                     {s.label}
                   </MenuItem>
                 ))}
-              </Select>
+              </CeligoSelect>
             </>
           )}
 
