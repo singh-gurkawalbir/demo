@@ -6,7 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -26,6 +26,8 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
+import { getEmptyMessage } from '../../../../../utils/integrationApps';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,10 +35,18 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  container: {
+    display: 'flex',
+  },
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
+  },
+  divider: {
+    marginRight: theme.spacing(1),
+    marginTop: '10px',
+    marginBottom: '10px',
   },
   content: {
     width: '100%',
@@ -245,6 +255,9 @@ const SectionTitle = ({integrationId, storeId, title, titleId}) => {
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+
+  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
@@ -252,9 +265,27 @@ export default function FlowsPanel({ storeId, integrationId }) {
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact && flowSections && flowSections.length) {
+  if (match.isExact && flowSections && flowSections.length && !isParentView) {
     return (
       <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
+    );
+  }
+
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <div className={classes.container}>
+          <Typography variant="h4">
+            Flows
+          </Typography>
+        </div>
+        <Divider className={classes.divider} />
+        <div className={classes.content}>
+          <span>
+            {getEmptyMessage(integration.settings?.storeLabel, 'view flows')}
+          </span>
+        </div>
+      </div>
     );
   }
 

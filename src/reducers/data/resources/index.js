@@ -497,11 +497,10 @@ selectors.integrationInstallSteps = (state, id) => {
 // need to pass the integration resource to the new util method for the transformation to take
 // effect.
 
-selectors.mkIntegrationAppSettings = () => {
+selectors.mkIntegrationAppSettings = subState => {
   const resourceSelector = selectors.makeResourceSelector();
 
-  return createSelector((state, id) => resourceSelector(state?.data?.resources, 'integrations', id) || null,
-
+  return createSelector((state, id) => resourceSelector(subState ? state : state?.data?.resources, 'integrations', id) || null,
     integration => {
       if (!integration) {
         return null;
@@ -511,11 +510,9 @@ selectors.mkIntegrationAppSettings = () => {
         if (!draft.settings) {
           draft.settings = emptyObject;
         }
-
         if (draft.settings.general) {
           draft.settings.hasGeneralSettings = true;
         }
-
         if (draft.settings.supportsMultiStore) {
           draft.stores = draft.settings.sections.map(s => ({
             label: s.title,
@@ -526,10 +523,9 @@ selectors.mkIntegrationAppSettings = () => {
         }
       });
     }
-
   );
 };
-const integrationAppSettings = selectors.mkIntegrationAppSettings();
+const integrationAppSettings = selectors.mkIntegrationAppSettings(true);
 
 selectors.defaultStoreId = (state, id, store) => {
   const settings = integrationAppSettings(state, id);

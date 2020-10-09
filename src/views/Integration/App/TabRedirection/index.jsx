@@ -17,10 +17,6 @@ export default function TabRedirection({children}) {
   // TODO: Note this selector should return undefined/null if no
   // integration exists. not a stubbed out complex object.
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-
-  const defaultStoreId = useSelector(state =>
-    selectors.defaultStoreId(state, integrationId, storeId)
-  );
   const currentStore = useSelectorMemo(selectors.mkIntegrationAppStore, integrationId, storeId);
 
   const redirectTo = useSelector(state =>
@@ -96,13 +92,13 @@ export default function TabRedirection({children}) {
   // or if no tab is selected, we rewrite the current url in the history to carry
   // this state information forward.
   if (supportsMultiStore) {
-    if (!storeId) {
+    if (!storeId && searchParamChildId) {
       return (
         <Redirect
           push={false}
           to={
             {
-              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamChildId || defaultStoreId}/${tab ||
+              pathname: getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${searchParamChildId}/${tab ||
             'flows'}`),
               search: location.search,
             }
