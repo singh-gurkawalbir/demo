@@ -570,6 +570,7 @@ selectors.permissions = (
       },
       connections: {
         edit: true,
+        create: true,
       },
       edit: true,
       delete: true,

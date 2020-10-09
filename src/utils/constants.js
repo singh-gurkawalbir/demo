@@ -579,8 +579,10 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.delta.lagOffset',
     'restlet.once.booleanField',
     'restlet.type',
+    '_connectionId',
   ],
   imports: [
+    '_connectionId',
     'lookups',
     'batchSize',
     'netsuite_da.batchSize',

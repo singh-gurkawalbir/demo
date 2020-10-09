@@ -201,7 +201,7 @@ function AppBlock({
 
     if (!activeConn || !resource) return false;
 
-    return activeConn === resource._id || activeConn === resource._connectionId;
+    return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
