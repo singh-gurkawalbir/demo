@@ -227,6 +227,9 @@ const flowMetrics = {
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId, resourceType) =>
@@ -893,13 +896,15 @@ const integrationApp = {
       integrationId,
       connectionId,
       connectionDoc,
-      formSubmission
+      formSubmission,
+      stackId
     ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
         formSubmission,
+        stackId,
       }),
     updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {

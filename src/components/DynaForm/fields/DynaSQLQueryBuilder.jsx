@@ -48,7 +48,6 @@ export default function DynaSQLQueryBuilder(props) {
     disabled,
     value,
     label,
-    title,
     ruleTitle,
     arrayIndex,
     resourceId,
@@ -264,7 +263,7 @@ export default function DynaSQLQueryBuilder(props) {
       <div className={classes.sqlContainer}>
         <SqlQueryBuilderEditorDrawer
           key={changeIdentifier}
-          title={title}
+          title={label}
           id={`${resourceId}-${id}`}
           rule={parsedRule}
           lookups={lookups}

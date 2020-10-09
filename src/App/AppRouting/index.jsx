@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
-import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
+import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
@@ -116,6 +116,10 @@ export default function AppRouting() {
         component={CloneSetup}
         />
       <Route
+        path={getRoutePath('/integrations/:integrationId/setup')}
+        component={IntegrationInstallation}
+        />
+      <Route
         path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId')}
         exact
         render={({ history, match }) =>
@@ -156,11 +160,11 @@ export default function AppRouting() {
 
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/setup')}
-        component={IntegrationAppInstallation}
+        component={IntegrationInstallation}
         />
       <Route
         path={getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId/setup')}
-        component={IntegrationAppInstallation}
+        component={IntegrationInstallation}
         />
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}

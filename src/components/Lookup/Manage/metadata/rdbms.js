@@ -25,7 +25,7 @@ export default {
           id: '_query',
           name: '_query',
           type: 'query',
-          label: 'Query',
+          label: 'Build SQL query',
           required: true,
           helpText: 'The query that fetches records to be exported.',
           sampleData,

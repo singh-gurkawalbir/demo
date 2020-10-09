@@ -10,6 +10,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ErroredMessageComponent from './ErroredMessageComponent';
 import CeligoSelect from '../../CeligoSelect';
 import FieldHelp from '../FieldHelp';
+import Tag from '../../HomePageCard/Footer/Tag';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -28,9 +29,6 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     padding: 0,
   },
-  chip: {
-    margin: 4,
-  },
   menuItems: {
     paddingRight: theme.spacing(1),
     paddingLeft: theme.spacing(1),
@@ -42,6 +40,45 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
 }));
+
+const chipUseStyles = makeStyles(theme => ({
+  chip: {
+    margin: 4,
+  },
+  // TODO: @azhar update the styling
+  tagWrapper: {
+    color: theme.palette.secondary.light,
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+  },
+}));
+
+const ChipLabel = ({label, tag}) => {
+  const classes = chipUseStyles();
+
+  if (!tag) return label;
+
+  return (
+    <>
+      {label}
+      <Tag className={classes.tagWrapper} variant={tag} />
+    </>
+  );
+};
+const SelectedValueChip = ({label, value, tag}) => {
+  const classes = chipUseStyles();
+  const newLabel = <ChipLabel label={label || value} tag={tag} />;
+
+  return (
+    <Chip
+      key={value}
+      label={newLabel}
+      className={classes.chip}
+    />
+  );
+};
 
 export default function DynaMultiSelect(props) {
   const {
@@ -99,6 +136,7 @@ export default function DynaMultiSelect(props) {
                 />
               )}
               <ListItemText primary={item.label || item.value} />
+              {item.tag && <Tag className={classes.tagWrapper} variant={item.tag} />}
             </MenuItem>
           );
         })
@@ -143,18 +181,6 @@ export default function DynaMultiSelect(props) {
     }
   }, [id, onFieldChange, selectAllIdentifier, value]);
 
-  const createChip = value => {
-    const fieldOption = options[0].items.find(option => option.value === value);
-
-    return fieldOption ? (
-      <Chip
-        key={value}
-        label={fieldOption.label || value}
-        className={classes.chip}
-      />
-    ) : null;
-  };
-
   return (
     <div className={classes.multislectWrapper}>
       <div className={classes.labelWrapper}>
@@ -187,7 +213,17 @@ export default function DynaMultiSelect(props) {
               <div className={classes.chips}>
                 {selected &&
                   typeof selected.map === 'function' &&
-                  selected.map(createChip)}
+                  selected.map(value => {
+                    const fieldProps = options?.[0]?.items?.find(option => option.value === value);
+
+                    return (fieldProps
+                      ? (
+                        <SelectedValueChip
+                          key={fieldProps.label}
+                          {...fieldProps} />
+                      ) : null
+                    );
+                  })}
               </div>
             )}>
           {items}

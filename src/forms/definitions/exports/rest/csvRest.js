@@ -105,59 +105,48 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
       {
-        type: 'collapse',
-        containers: [
-          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
-              return 'What would you like to export?';
-            },
-            containers: [
-              {
-                fields: [
-                  'rest.blobMethod',
-                  'rest.relativeURI',
-                  'rest.headers',
-                  'uploadFile',
-                ],
-              },
-              {
-                type: 'indent',
-                containers: [
-                  {fields: [
-                    'file.csv',
-                  ]},
-                ],
-              },
-              {
-                fields: [
-                  'rest.blobFormat',
-                ],
-              },
+          return 'What would you like to export?';
+        },
+        containers: [
+          {
+            fields: [
+              'rest.blobMethod',
+              'rest.relativeURI',
+              'rest.headers',
+              'uploadFile',
             ],
           },
           {
-            collapsed: true,
-            label: 'Non-standard API response patterns',
-            fields: ['rest.resourcePath'],
+            type: 'indent',
+            containers: [
+              {fields: [
+                'file.csv',
+              ]},
+            ],
           },
-          { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
+          {
+            fields: [
+              'rest.blobFormat',
+            ],
+          },
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: ['rest.resourcePath'],
       },
+      { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],
   },
 };

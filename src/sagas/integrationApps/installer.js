@@ -107,22 +107,29 @@ export function* installScriptStep({
   connectionId,
   connectionDoc,
   formSubmission,
+  stackId,
 }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
   // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
   // create a connection If step doesn't contain a connection Id.
+  let body = {};
+
+  if (stackId) {
+    body = {_stackId: stackId};
+  } else {
+    body = formSubmission ||
+    (connectionId
+      ? { _connectionId: connectionId }
+      : { connection: connectionDoc });
+  }
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body:
-          formSubmission ||
-          (connectionId
-            ? { _connectionId: connectionId }
-            : { connection: connectionDoc }),
+        body,
         method: 'POST',
       },
       hidden: true,

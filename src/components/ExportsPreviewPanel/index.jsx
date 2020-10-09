@@ -1,13 +1,12 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { deepClone } from 'fast-json-patch';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import actions from '../../../../actions';
-import { selectors } from '../../../../reducers';
-import { isNewId } from '../../../../utils/resource';
-import useFormContext from '../../../Form/FormContext';
+import actions from '../../actions';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../reducers';
+import { isNewId } from '../../utils/resource';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -47,15 +46,81 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DynaExportPanel(props) {
-  const { resourceId, formKey, resourceType, flowId } = props;
-  const formContext = useFormContext(formKey);
-  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
-  const classes = useStyles();
+// const resourceSampleData = {data: 1, status: 'received', error: 1};
+
+function PreviewInfo({
+  flowId,
+  resourceId,
+  formKey,
+  resourceType,
+  resourceSampleData,
+  previewStageDataList,
+  panelType,
+  isPreviewDisabled,
+}) {
+  const value = useSelector(
+    state => selectors.formState(state, formKey)?.value,
+    shallowEqual
+  );
+
   const dispatch = useDispatch();
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
   );
+  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
+
+  const fetchExportPreviewData = useCallback(() => {
+    // Just a fail safe condition not to request for sample data incase of not exports
+    if (resourceType !== 'exports') return;
+
+    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
+    if (!flowId || isPageGeneratorExport) {
+      dispatch(
+        actions.sampleData.request(resourceId, resourceType, value)
+      );
+    } else {
+      dispatch(
+        actions.sampleData.requestLookupPreview(
+          resourceId,
+          flowId,
+          value
+        )
+      );
+    }
+  }, [
+    isPageGeneratorExport,
+    dispatch,
+    resourceId,
+    resourceType,
+    value,
+    flowId,
+  ]);
+
+  useEffect(() => {
+    // Fetches preview data incase of initial load of an edit export mode
+    // Not fetched for online connections
+    // TODO @Raghu: should we make a offline preview call though connection is offline ?
+    // Needs a refactor to preview saga for that
+    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
+      setIsPreviewDataFetched(true);
+      fetchExportPreviewData();
+    }
+  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
+
+  return (
+    <Panels.PreviewInfo
+      fetchExportPreviewData={fetchExportPreviewData}
+      resourceSampleData={resourceSampleData}
+      previewStageDataList={previewStageDataList}
+      panelType={panelType}
+      disabled={isPreviewDisabled}
+  />
+  );
+}
+
+function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
+  const classes = useStyles();
+
   const isPreviewDisabled = useSelector(state =>
     selectors.isExportPreviewDisabled(state, resourceId, resourceType));
   const availablePreviewStages = useSelector(state =>
@@ -75,18 +140,10 @@ function DynaExportPanel(props) {
   // set the panel type with the default panel
   const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
-  const previewStageDataList = useSelector(state => {
-    const stageData = [];
+  const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-    availablePreviewStages.length &&
-      availablePreviewStages.forEach(({ value }) => {
-        stageData[value] = deepClone(
-          selectors.getResourceSampleDataWithStatus(state, resourceId, value)
-        );
-      });
+  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
 
-    return stageData;
-  }, shallowEqual);
   // get the default raw stage sampleData to track the status of the request
   // As the status is same for all the stages
   // TODO @Raghu : what if later on there is a need of individual status for each stage?
@@ -94,43 +151,6 @@ function DynaExportPanel(props) {
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
   shallowEqual
   );
-  const fetchExportPreviewData = useCallback(() => {
-    // Just a fail safe condition not to request for sample data incase of not exports
-    if (resourceType !== 'exports') return;
-
-    // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
-    if (!flowId || isPageGeneratorExport) {
-      dispatch(
-        actions.sampleData.request(resourceId, resourceType, formContext.value)
-      );
-    } else {
-      dispatch(
-        actions.sampleData.requestLookupPreview(
-          resourceId,
-          flowId,
-          formContext.value
-        )
-      );
-    }
-  }, [
-    isPageGeneratorExport,
-    dispatch,
-    resourceId,
-    resourceType,
-    formContext.value,
-    flowId,
-  ]);
-
-  useEffect(() => {
-    // Fetches preview data incase of initial load of an edit export mode
-    // Not fetched for online connections
-    // TODO @Raghu: should we make a offline preview call though connection is offline ?
-    // Needs a refactor to preview saga for that
-    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-      setIsPreviewDataFetched(true);
-      fetchExportPreviewData();
-    }
-  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 
   const handlePanelViewChange = useCallback(panelType => {
     setPanelType(panelType);
@@ -145,12 +165,12 @@ function DynaExportPanel(props) {
       <Typography className={classes.previewDataHeading}>
         Preview data
       </Typography>
-      <Panels.PreviewInfo
-        fetchExportPreviewData={fetchExportPreviewData}
+      <PreviewInfo
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
         panelType={panelType}
-        disabled={isPreviewDisabled}
+        isPreviewDisabled={isPreviewDisabled}
+        flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
       />
       <Panels.PreviewBody
         resourceSampleData={resourceSampleData}
@@ -166,4 +186,4 @@ function DynaExportPanel(props) {
   );
 }
 
-export default DynaExportPanel;
+export default ExportsPreviewPanel;

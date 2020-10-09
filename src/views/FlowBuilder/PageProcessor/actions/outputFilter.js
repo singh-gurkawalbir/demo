@@ -69,7 +69,7 @@ function OutputFilterDrawer({
     <OutputFilterToggleEditorDrawer
       title="Define output filter"
       helpKey="lookup.output.filter"
-      helpTitle="Filter Rules"
+      helpTitle="Filter rules"
       disabled={isViewMode}
       isMonitorLevelAccess={isMonitorLevelAccess}
       enableFilterForIA

@@ -219,7 +219,7 @@ export default function InstallationWizard(props) {
     props.history.goBack();
   };
 
-  const handleSubmitComplete = (connectionId, createdConnectionDoc, isAuthorized) => {
+  const handleSubmitComplete = (connectionId, isAuthorized, createdConnectionDoc) => {
     if (
       oAuthApplications.includes(
         getConnectionType(createdConnectionDoc)

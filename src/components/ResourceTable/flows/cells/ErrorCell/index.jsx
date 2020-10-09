@@ -9,7 +9,8 @@ import StatusCircle from '../../../../StatusCircle';
 const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 300,
-    wordWrap: 'break-word',
+    minWidth: 100,
+    wordBreak: 'break-word',
   },
   errorStatus: {
     justifyContent: 'center',
@@ -17,6 +18,12 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     marginRight: theme.spacing(1),
     fontSize: '14px',
+  },
+  errorStatusLink: {
+    color: theme.palette.primary.main,
+    '&:hover': {
+      color: theme.palette.primary.light,
+    },
   },
   success: {
     fontSize: '14px',
@@ -50,7 +57,7 @@ export default function RunCell({
       <div className={classes.root}>
         <span className={classes.errorStatus}>
           <StatusCircle variant="error" size="small" />
-          <Link to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
+          <Link className={classes.errorStatusLink} to={`${match.url}/${flowId}/errorsList`}>{flowErrorCount} {flowErrorCount === 1 ? 'error' : 'errors'}</Link>
         </span>
       </div>
     );

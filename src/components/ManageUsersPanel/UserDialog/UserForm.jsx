@@ -133,6 +133,7 @@ export default function UserForm({
             items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
+              tag: i.tag,
             })),
           },
         ],
@@ -162,6 +163,7 @@ export default function UserForm({
             items: integrations.filter(i => !i._parentId).map(i => ({
               label: `${i.name}${i.sandbox ? ' (SB)' : ''}`,
               value: i._id,
+              tag: i.tag,
             })),
           },
         ],
