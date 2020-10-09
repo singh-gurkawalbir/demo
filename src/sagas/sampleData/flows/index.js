@@ -38,6 +38,7 @@ import {
   getBlobResourceSampleData,
   isOneToManyResource,
   generatePostResponseMapData,
+  getAllDependentSampleDataStages,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -117,8 +118,10 @@ export function* requestSampleData({
   }
 
   if (refresh) {
+    const stagesToReset = getAllDependentSampleDataStages(stage, resourceType);
+
     // refresh prop resets the entire state from this resourceId in flow state to fetch again
-    yield put(actions.flowData.resetStages(flowId, resourceId));
+    yield put(actions.flowData.resetStages(flowId, resourceId, stagesToReset, 'refresh'));
   }
 
   // Updates preProcessedData for the processors

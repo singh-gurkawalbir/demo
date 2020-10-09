@@ -1311,8 +1311,8 @@ const flowData = {
       stage,
       refresh,
     }),
-  resetStages: (flowId, resourceId, stages = []) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
+  resetStages: (flowId, resourceId, stages = [], status) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, status}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>

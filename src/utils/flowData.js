@@ -185,7 +185,7 @@ export const reset = (flow, index, isPageGenerator) => {
   }
 };
 
-export const resetStagesForFlowResource = (flow, index, stages = [], isPageGenerator) => {
+export const resetStagesForFlowResource = (flow, index, stages = [], isPageGenerator, status) => {
   const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
@@ -194,8 +194,13 @@ export const resetStagesForFlowResource = (flow, index, stages = [], isPageGener
   if (resourceIds.includes(resourceId)) {
     stages.forEach(stage => {
       if (flow[resourceMap][resourceId][stage]) {
-        // eslint-disable-next-line no-param-reassign
-        flow[resourceMap][resourceId][stage] = {};
+        if (status) {
+          // eslint-disable-next-line no-param-reassign
+          flow[resourceMap][resourceId][stage].status = status;
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          flow[resourceMap][resourceId][stage] = {};
+        }
       }
     });
   }
