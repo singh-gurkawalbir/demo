@@ -783,6 +783,7 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success media type',
+    helpKey: 'connection.http.successMediaType',
     options: [
       {
         items: [
@@ -796,6 +797,7 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error media type',
+    helpKey: 'connection.http.errorMediaType',
     options: [
       {
         items: [

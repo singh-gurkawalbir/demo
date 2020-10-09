@@ -751,6 +751,8 @@ export default {
   'connection.rest.concurrencyLevel':
     "Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode.  With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency.  APIs like Google's are really great with burst mode, and can typically handle any types of volume.  Other APIs, like Zendesk or Shopify, are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.",
   'connection.http.mediaType': 'Specify the data format for all sent HTTP requests or received HTTP responses for the connected API. A single API usually supports only one format and publishes this info at the top of their API docs. If the media type for a request or response is different, you can use your export’s success and error media type fields to override the media type for specific endpoints.',
+  'connection.http.successMediaType': 'Specify the content-type of a successful response received from this endpoint. For HTTP exports and connections, we support content-types of XML, CSV, and JSON. For HTTP imports, we support XML and JSON.',
+  'connection.http.errorMediaType': 'Specify the content-type of an error (unsuccessful) response received from this endpoint. We support XML and JSON content-types.',
   'connection.http.baseURI': 'This common part of an API’s URL is used across all of the HTTP endpoints you invoke. A base URI makes it easier to configure exports and imports.',
   'connection.http.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> automatically adds the appropriate content-type header based on the mediaType value described in the connection associated with this request (typically application/json). Note that the request header value automatically includes the authentication method described in the associated connection if required. Use this header field in the rare case when an API requires additional headers other than application or JSON.',
   'connection.http.disableStrictSSL':
@@ -1821,11 +1823,11 @@ export default {
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
   'import.restImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.netsuiteImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.etailImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.mapping.lists.fields.useFirstRow': '',
   'import.mapping.lists.fields.useAsAnInitializeValue':
     'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) during create/transform of a record. Mark this check box if you would like to add this field during record initialization. \nExample: If you are trying to create a non inventory item and you want to specify the subtype as "Sale" or "Purchase" or "ReSale", this mapping has to be set during the initialization itself. In such cases, we mark the subtype mapping as an initialization parameter.',
@@ -2088,7 +2090,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
