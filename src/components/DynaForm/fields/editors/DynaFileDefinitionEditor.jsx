@@ -168,7 +168,7 @@ function DynaFileDefinitionEditor(props) {
       <div className={classes.fileDefinitionContainer}>
         <LoadResources resources="filedefinitions">
           <FileDefinitionEditorDrawer
-            title={label || 'File definition editor'}
+            title={label}
             id={id + resourceId}
             processor={processor}
             data={
