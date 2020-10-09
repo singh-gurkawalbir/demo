@@ -28,7 +28,7 @@ const DynaEditorWithFlowSampleData = ({
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, fieldId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType);
   });
   const {
     data: sampleData,

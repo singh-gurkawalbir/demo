@@ -112,6 +112,7 @@ export default function DateRangeSelector({
   customPresets = [],
   showTime = true,
   clearable = false,
+  clearValue,
 }) {
   const defaultValue = getSelectedRange({preset: 'last24hours'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -155,10 +156,10 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange({startDate: null, endDate: null, preset: null});
+    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
     onSave && onSave(selectedRange);
     setAnchorEl(null);
-  }, [onSave, selectedRange]);
+  }, [onSave, selectedRange, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;

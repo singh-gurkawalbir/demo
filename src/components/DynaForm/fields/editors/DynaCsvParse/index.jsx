@@ -200,7 +200,7 @@ export default function DynaCsvParse(props) {
     <>
       <div className={classes.container}>
         <CsvConfigEditorDrawer
-          title="CSV parser helper"
+          title={label}
           id={`csvParser-${id}-${resourceId}`}
           mode="csv"
           data={csvData}
