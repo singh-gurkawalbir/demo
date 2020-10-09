@@ -1531,6 +1531,60 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+selectors.makeIntegrationSectionFlows = () => createSelector(
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
+  (_1, _2, childId) => childId,
+  (_1, _2, _3, sectionId) => sectionId,
+  (integration, childId, sectionId) => {
+    let flows = [];
+    const { sections = [], supportsMultiStore } = integration.settings || {};
+
+    if (supportsMultiStore) {
+      if (Array.isArray(sections) && sections.length) {
+        if (childId) {
+          const child =
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
+
+          if (child) {
+            if (sectionId) {
+              const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+              if (selectedSection) {
+                flows = selectedSection.flows.map(f => f._id);
+              }
+            } else {
+              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+            }
+          }
+        } else {
+          sections.forEach(sec => {
+            if (sec.mode === 'settings') {
+              if (sectionId) {
+                const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
+
+                if (selectedSection) {
+                  flows.push(...selectedSection.flows.map(f => f._id));
+                }
+              } else {
+                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+              }
+            }
+          });
+        }
+      }
+    } else if (sectionId) {
+      const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+      if (selectedSection) {
+        flows = selectedSection.flows.map(f => f._id);
+      }
+    } else {
+      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+    }
+
+    return flows;
+  }
+);
 
 selectors.mkIntegrationAppFlowSections = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
@@ -1747,7 +1801,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
   const integration = selectors.integrationAppSettings(state, integrationId);
 
-  if (integration.stores && storeId) {
+  if (integration && integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
     const { flows } = selectors.integrationAppFlowSettings(
       state,
@@ -1916,8 +1970,8 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (integration?.settings?.supportsMultiStore) {
     const { stores } = selectors.integrationAppSettings(state, integrationId);
 
-    if (!flowId && stores?.length) {
-      return stores[0].value;
+    if (!flowId) {
+      return null;
     }
 
     return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
@@ -2685,8 +2739,7 @@ selectors.tiles = state => {
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
     } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
+      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (t.numError && t.numError > 0) {

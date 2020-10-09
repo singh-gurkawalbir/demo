@@ -896,13 +896,15 @@ const integrationApp = {
       integrationId,
       connectionId,
       connectionDoc,
-      formSubmission
+      formSubmission,
+      stackId
     ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
         formSubmission,
+        stackId,
       }),
     updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {

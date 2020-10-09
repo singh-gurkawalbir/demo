@@ -15,6 +15,7 @@ import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { getEmptyMessage } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +59,8 @@ export default function SettingsPanel({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
@@ -98,7 +101,7 @@ export default function SettingsPanel({
   // sections.
   if (match.isExact) {
     // no section provided.
-    if (availableSections.length === 0) {
+    if (availableSections.length === 0 || isParentView) {
       return (
         <div className={classes.root}>
           <div className={classes.container}>
@@ -109,7 +112,9 @@ export default function SettingsPanel({
           <Divider className={classes.divider} />
           <div className={classes.content}>
             <span>
-              You don&apos;t have any custom settings for this integration.
+              {isParentView
+                ? getEmptyMessage(integration.settings?.storeLabel, 'view settings')
+                : 'You don&apos;t have any custom settings for this integration.' }
             </span>
           </div>
         </div>
