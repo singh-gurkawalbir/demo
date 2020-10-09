@@ -502,7 +502,7 @@ selectors.mkIntegrationAppSettings = subState => {
 
   return createSelector((state, id) => resourceSelector(subState ? state : state?.data?.resources, 'integrations', id) || null,
     integration => {
-      if (!integration || !integration._connectorId) {
+      if (!integration) {
         return null;
       }
 
