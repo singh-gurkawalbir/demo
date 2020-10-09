@@ -1,10 +1,7 @@
 import React, { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
-import {
-  makeStyles,
-  Button,
-} from '@material-ui/core';
+import { makeStyles, Button } from '@material-ui/core';
 import RightDrawer from '../../../drawer/Right';
 import { selectors } from '../../../../reducers';
 import { useGetFlowOps } from '../../../../views/Integration/DIY/panels/Notifications';
@@ -14,6 +11,7 @@ import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import LoadResources from '../../../LoadResources';
 import actions from '../../../../actions';
+import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -26,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     height: 60,
     width: '90%',
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+  actionButton: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -73,19 +74,39 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
     dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId, userEmail }));
   }, [dispatch, integrationId, storeId, userEmail]);
 
+  const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
+    {
+      path: '/notifications',
+      method: 'PUT',
+      onSave: handleSubmit,
+      onClose,
+    }
+  );
+
   return (
     <>
       <LoadResources required resources="notifications,flows,connections">
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
         <div className={classes.footer}>
-          <DynaSubmit formKey={formKey} onClick={handleSubmit}>
-            Save
+          <DynaSubmit
+            formKey={formKey}
+            onClick={submitHandler()}
+            color="primary"
+            className={classes.actionButton}
+            data-test="saveFlowSchedule"
+            disabled={disableSave}>
+            {defaultLabels.saveLabel}
           </DynaSubmit>
-          <Button
-            data-test="cancelNotifications"
-            onClick={onClose}
-            variant="text"
-            color="primary">
+          <DynaSubmit
+            formKey={formKey}
+            onClick={submitHandler(true)}
+            className={classes.actionButton}
+            color="secondary"
+            data-test="saveAndCloseFlowSchedule"
+            disabled={disableSave}>
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button onClick={onClose} variant="text" color="primary">
             Cancel
           </Button>
         </div>
