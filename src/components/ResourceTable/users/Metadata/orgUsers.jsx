@@ -32,10 +32,17 @@ export default {
   },
   rowActions: (user, actionProps) => {
     const { integrationId, isUserInErrMgtTwoDotZero, hasManageIntegrationAccess, loggedInUserId } = actionProps || {};
+    const isActiveUser = !user.disabled && user.accepted;
 
     // org users only have integration level actions incase of EM2.0
+    // notifications can be managed only for active users
     // TODO @Raghu: have a useHasActions function to decide when to show actions column
-    if (!integrationId || !isUserInErrMgtTwoDotZero || user.sharedWithUser._id === loggedInUserId) return [];
+    if (
+      !integrationId ||
+      !isUserInErrMgtTwoDotZero ||
+      user.sharedWithUser._id === loggedInUserId ||
+      !isActiveUser
+    ) return [];
     // Only owner/manage users can have manageNotifications action
     if (hasManageIntegrationAccess) {
       return [ManageNotifications];

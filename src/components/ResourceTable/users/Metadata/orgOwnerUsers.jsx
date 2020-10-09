@@ -44,9 +44,13 @@ export default {
   rowActions: (user, actionProps = {}) => {
     const { integrationId } = actionProps;
     const actions = [];
+    const isActiveUser = !user.disabled && user.accepted;
 
     if (integrationId && user._id !== ACCOUNT_IDS.OWN) {
-      actions.push(ManagePermissions, ManageNotifications);
+      actions.push(ManagePermissions);
+      if (isActiveUser) {
+        actions.push(ManageNotifications);
+      }
     }
     if (!integrationId) {
       actions.push(ManagePermissions);
