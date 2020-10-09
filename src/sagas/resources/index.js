@@ -680,17 +680,18 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
   const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
   const {
     flows: availableFlows = [],
     connections: availableConnections = [],
-  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId });
+  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId, userEmail });
   const notifications = [];
 
   notifications.push({
     _integrationId: integrationId,
     subscribed: subscribedFlows.includes(integrationId),
+    ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
   });
 
   availableFlows
@@ -699,12 +700,14 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
       notifications.push({
         _flowId: flow._id,
         subscribed: subscribedFlows.includes(flow._id),
+        ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
       });
     });
   availableConnections.forEach(connection => {
     notifications.push({
       _connectionId: connection._id,
       subscribed: subscribedConnections.includes(connection._id),
+      ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
     });
   });
   let response;

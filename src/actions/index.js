@@ -415,8 +415,8 @@ const resource = {
     },
   },
   notifications: {
-    updateTile: (resourcesToUpdate, integrationId, storeId) =>
-      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, storeId }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
     updateFlow: (flowId, isSubscribed) =>
       action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },

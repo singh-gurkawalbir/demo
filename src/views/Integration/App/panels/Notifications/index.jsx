@@ -81,7 +81,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const handleSubmit = formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
 
-    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, storeId));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId }));
     setCount(count => count + 1);
   };
 

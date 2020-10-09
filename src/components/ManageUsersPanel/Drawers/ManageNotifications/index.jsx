@@ -1,19 +1,46 @@
 import React, { useCallback } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import {
+  makeStyles,
+  Button,
+} from '@material-ui/core';
 import RightDrawer from '../../../drawer/Right';
 import { selectors } from '../../../../reducers';
+import { useGetFlowOps } from '../../../../views/Integration/DIY/panels/Notifications';
+import notificationsMetadata from './metadata';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import LoadResources from '../../../LoadResources';
+import actions from '../../../../actions';
+
+const useStyles = makeStyles(theme => ({
+  actionContainer: {
+    display: 'flex',
+  },
+  footer: {
+    padding: theme.spacing(1),
+    position: 'absolute',
+    bottom: 120,
+    height: 60,
+    width: '90%',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+  },
+}));
 
 function ManageNotifications({ integrationId, storeId, onClose }) {
   const match = useRouteMatch();
+  const dispatch = useDispatch();
+  const classes = useStyles();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
   const notifications = useSelector(state =>
-    selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail}),
+    selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail }),
   shallowEqual
   );
 
-  const { flowValues = [], connectionValues = [] } = notifications;
+  const { flowValues = [], connectionValues = [], flows, connections } = notifications;
 
   const isValidUserEmail = !!users.find(user => user.sharedWithUser.email === userEmail);
 
@@ -21,7 +48,50 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
     onClose();
   }
 
-  return <div> Manage {flowValues.length} Flows and {connectionValues.length} connections </div>;
+  const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
+  const flowOps = useGetFlowOps({integrationId, flows});
+
+  const fieldMeta = notificationsMetadata({
+    connectionValues,
+    connectionOps,
+    flowValues,
+    flowOps,
+    integrationId,
+  });
+
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    integrationId,
+  });
+
+  const handleSubmit = useCallback(formVal => {
+    const resourcesToUpdate = {
+      subscribedConnections: formVal.connections,
+      subscribedFlows: formVal.flows,
+    };
+
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId, userEmail }));
+  }, [dispatch, integrationId, storeId, userEmail]);
+
+  return (
+    <>
+      <LoadResources required resources="notifications,flows,connections">
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <div className={classes.footer}>
+          <DynaSubmit formKey={formKey} onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+          <Button
+            data-test="cancelNotifications"
+            onClick={onClose}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </div>
+      </LoadResources>
+    </>
+  );
 }
 
 export default function ManageNotificationsDrawer({ integrationId, storeId }) {
