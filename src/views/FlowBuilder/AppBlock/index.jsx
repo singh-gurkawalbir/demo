@@ -199,7 +199,7 @@ function AppBlock({
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
 
-    if (!activeConn) return false;
+    if (!activeConn || !resource) return false;
 
     return activeConn === resource._id || activeConn === resource._connectionId;
   });

@@ -48,11 +48,14 @@ const useStyles = makeStyles(theme => ({
   },
   status: {
     position: 'relative',
-    '& > * :hover': {
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
     },
     '&:hover': {
-      backgroundColor: 'transparent',
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
     },
   },
   connectionDownRedDot: {
