@@ -3933,7 +3933,6 @@ selectors.sampleDataWrapper = createSelector(
     },
     (_, { stage }) => stage,
     (_, { fieldType }) => fieldType,
-    (state, { flowId, resourceId, resourceType }) => selectors.isPageGenerator(state, flowId, resourceId, resourceType),
   ],
   (
     sampleData,
@@ -3945,7 +3944,6 @@ selectors.sampleDataWrapper = createSelector(
     connection,
     stage,
     fieldType,
-    isPageGenerator
   ) => wrapSampleDataWithContext({sampleData,
     preMapSampleData,
     postMapSampleData,
@@ -3954,8 +3952,7 @@ selectors.sampleDataWrapper = createSelector(
     resource,
     connection,
     stage,
-    fieldType,
-    isPageGenerator})
+    fieldType})
 );
 
 /*

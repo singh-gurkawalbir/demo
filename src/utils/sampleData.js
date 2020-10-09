@@ -524,8 +524,7 @@ export const wrapSampleDataWithContext = ({
   resource,
   connection,
   stage,
-  fieldType,
-  isPageGenerator}) => {
+  fieldType}) => {
   const { status, data, templateVersion } = sampleData || {};
 
   let resourceType = 'export';
@@ -563,7 +562,7 @@ export const wrapSampleDataWithContext = ({
   };
   const contextFields = {};
 
-  if (isPageGenerator && isDeltaExport) {
+  if (isDeltaExport) {
     contextFields.lastExportDateTime = moment()
       .startOf('day')
       .add(-7, 'd')
