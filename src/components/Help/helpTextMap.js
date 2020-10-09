@@ -79,14 +79,14 @@ export default {
     'Please reach out to Pacejet support team for location header.',
   'connection.http.encrypted.pacejetLicenseKey':
     'Please reach out to Pacejet support team for License key. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your License key safe.',
-  'connection.integrator.region':
+  'integratorio.connection.integrator.region':
     'Please select your region here. Select North America if the account is created on https://api.integrator.io. Select Europe if the account is created on https://api.eu.integrator.io.',
-  'connection.integrator.token':
+  'integratorio.connection.http.auth.token.token':
     'Please enter your token here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Token safe. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.',
   'recharge.connection.http.auth.token.token':
     'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. Access to the API will need to be given by a member of the ReCharge team so reach out to their support team to enable this for you. Once this has been enabled for your store, you can go to Integrations and click on API tokens on the far right corner of your dashboard.',
-  'bconnection.http.bamboohrSubdomain':
-    'Please enter your company name here which you configured while signing up for a new BambooHR account.',
+  'bamboohr.connection.http.bamboohrSubdomain':
+    'Enter the unique portion of the bamboohr.com address that you visit to log in to your portal. For example, if your portal is found at https://personnel.bamboohr.com, then enter personnel for the subdomain.',
   'bamboohr.connection.http.encrypted.apiKey': 'Please enter your API key here. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe. To generate an API key for a given user, users should log in and click their name in the upper right hand corner of any page to get to the user context menu. There will be an "API Keys" option in that menu to go to the page.',
   'connection.http.oktaSubdomain':
     'Please enter your Okta subdomain here which you configured while signing up for a new Okta account.',
@@ -197,7 +197,8 @@ export default {
   'anaplan.connection.http.auth.basic.username':
     'The username of your Anaplan account.',
   'anaplan.connection.http.auth.basic.password':
-    'The password of your Anaplan account.',
+    'The password of your Anaplan account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'anaplan.connection.http.auth.type': 'Please select Authentication type.',
   'namely.connection.http.namelyCompanyName':
     'Your subdomain. For example, https://mysubdomain.namely.com',
   'namely.connection.http.auth.token.token':
@@ -612,7 +613,14 @@ export default {
   'jiraserver.connection.http.auth.basic.username':
     'Please enter the username of your Jira Server account.',
   'jiraserver.connection.http.auth.basic.password':
-    'Please enter the password of your Jira Server account.',
+    'Please enter the password of your Jira Server account. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'gainsight.connection.http.gainsightInstanceURL': 'Please enter the instance URI shown in your Gainsight CS account.For example, if https://test-domain.gainsightcloud.com/v1/ui/home is the URL after logging in,then the instance URI would be \'test-domain.gainsightcloud\'.',
+  'gainsight.connection.http.auth.token.token': 'Please enter the API key of Gainsight account here.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.<br><b>Steps to get API key:</b><br>1. Login to your Gainsight CS account<br>2. Navigate to Administration > Integrations > Connectors 2.0 > Connectors tab > Click on Gainsight API <br> 3.Click the Create Connection button and click GENERATE ACCESS KEY.<br><b> Note:</b>You can create a connection or edit the existing connection to retrieve the Access Key.',
+  'dotdigital.connection.http.auth.basic.username': 'Please enter the username from API user credentials of your Dotdigital account.To know how to create the API user, please follow the link <a href=https://developer.dotdigital.com/docs/getting-started-with-the-api#setting-up-your-api-user>https://developer.dotdigital.com/docs/getting-started-with-the-api#setting-up-your-api-user</a>.',
+  'dotdigital.connection.http.auth.basic.password': 'Please enter the password from API user credentials of your Dotdigital account.Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your Password safe.',
+  'dotdigital.connection.http.region': 'Please select your region.',
+  'checkout.connection.environment': 'Please select the environment of your Checkout.com account.',
+  'checkout.connection.http.auth.token.token': 'Please enter the API key of Checkout.com account here.Login to your Sandbox/Live account, under Settings > Channels, you will find your API keys. Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your API key safe.',
   'http.import.http.requestTypeCreate':
     'Please specify whether the record is being created or updated using this field.',
   'http.import.http.requestTypeUpdate':
@@ -743,6 +751,8 @@ export default {
   'connection.rest.concurrencyLevel':
     "Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode.  With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency.  APIs like Google's are really great with burst mode, and can typically handle any types of volume.  Other APIs, like Zendesk or Shopify, are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.",
   'connection.http.mediaType': 'Specify the data format for all sent HTTP requests or received HTTP responses for the connected API. A single API usually supports only one format and publishes this info at the top of their API docs. If the media type for a request or response is different, you can use your export’s success and error media type fields to override the media type for specific endpoints.',
+  'connection.http.successMediaType': 'Specify the content-type of a successful response received from this endpoint. For HTTP exports and connections, we support content-types of XML, CSV, and JSON. For HTTP imports, we support XML and JSON.',
+  'connection.http.errorMediaType': 'Specify the content-type of an error (unsuccessful) response received from this endpoint. We support XML and JSON content-types.',
   'connection.http.baseURI': 'This common part of an API’s URL is used across all of the HTTP endpoints you invoke. A base URI makes it easier to configure exports and imports.',
   'connection.http.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> automatically adds the appropriate content-type header based on the mediaType value described in the connection associated with this request (typically application/json). Note that the request header value automatically includes the authentication method described in the associated connection if required. Use this header field in the rare case when an API requires additional headers other than application or JSON.',
   'connection.http.disableStrictSSL':
@@ -810,7 +820,7 @@ export default {
   'connection.rdbms.database': 'The database schema to connect to.',
   'connection.rdbms.user': 'Username for authentication.',
   'connection.rdbms.password': 'The password for the specified Username.',
-  'snowflake.import.rdbms.queryType': 'Use “Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  Use “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. Use “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. You define the query command in Query Builder editor.',
+  'snowflake.import.rdbms.queryType': '“Use SQL Query” to insert, update, delete per record by providing a SQL statement in the Query Builder.  “Use bulk INSERT SQL Query” to insert multiple records. When you use bulk INSERT SQL Query option, you must complete field mapping. “Use SQL Query once per page of data” when you want to execute the query once per page such as MERGE query. “Use SQL Query once per flow run” when you want to execute the query once per run. You define the query command in Query Builder editor.',
   'connection.rdbms.snowflake.warehouse':
     'Warehouse used for executing compute process.',
   'connection.rdbms.snowflake.schema':
@@ -1813,11 +1823,11 @@ export default {
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
   'import.restImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.netsuiteImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.etailImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.mapping.lists.fields.useFirstRow': '',
   'import.mapping.lists.fields.useAsAnInitializeValue':
     'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) during create/transform of a record. Mark this check box if you would like to add this field during record initialization. \nExample: If you are trying to create a non inventory item and you want to specify the subtype as "Sale" or "Purchase" or "ReSale", this mapping has to be set during the initialization itself. In such cases, we mark the subtype mapping as an initialization parameter.',
@@ -2080,7 +2090,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
@@ -2108,6 +2118,8 @@ export default {
     `This drop-down has all the available helper methods that let you transform your field values. Once you make a selection, the function and placeholder values will be added to the expression text box below. You can then make any necessary changes by editing the complete expression.For a complete list and extended help of all helper methods, please see this article: <a target="blank" href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360039326071-Handlebars-Library">handlebars Helper Guide</a>`,
   'mapping.immutable':
     'By default, if a record fails to import into an application integrator.io will parse the error message from the import application, and if a specific field can be identified (in the error message) as the root cause for the import failing then that field will be removed, and the import will be retried again automatically. For most fields this is the desired behavior (i.e. so that single fields do not halt entire records from importing). However, there are some fields where it is mission critical that the field always get set, and for those fields you can use this Immutable setting to tell integrator.io never to remove the field for an automatic retry.',
+  'mapping.useAsInitializeValue':
+    'NetSuite allows certain fields to be initialized (preloaded on the NetSuite form) when the record is being created or transformed, known as record initialization. Check this box if you would like to add this field during record initialization. \nExample: To specify the subtype as Sale, Purchase, or Resale when creating a non-inventory item, you must set the mapping during the initialization process by checking this box.',
   'mapping.lookup.mode':
     'Use a dynamic search if you need to lookup data directly in the import application, e.g. if you have an email address in your export data and you want to run a search on the fly to find a system id value in the import application. Use a static value to value mapping when you know in advance all the possible values and how they should be translated. For example, if you are mapping a handful of shipping methods between two applications you can define them here.',
   'mapping.conditional.when':
@@ -2186,7 +2198,7 @@ export default {
   'salesforce.referencedFields': 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
   filterExpression: 'Use this field to filter out any reference list by entering the "where" clause of SOQL query. This expression will be added as a part of the SOQL query in the where clause while fetching the childSObjectType. If no filter is added, IO will send all the child SObjects in the export data. Ex: If you would like to only export Contacts whose LastName has "Bond" in it, set the expression as "LastName=`Bond` ".',
   orderBy: 'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
-  'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...",
+  'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the generic 'data' variable has been replaced by a set of more specific variable names to better represent the structure of data your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc…",
   'mapping.suitescript.netsuite.lookup.searchField': 'Field name that is provided to the lookups defined, using this field name the respective field from the record will be extracted out and provided for the respective field in the import system.',
   'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
   'mapping.lookup.default': 'This holds the default value to be set for the extract field.',

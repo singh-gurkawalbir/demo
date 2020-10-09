@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
+import { useHistory, useRouteMatch, useLocation, matchPath, generatePath } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
@@ -173,7 +173,7 @@ const tooltipSettings = {
 function FlowBuilder() {
   const match = useRouteMatch();
   const location = useLocation();
-  const { flowId, integrationId } = match.params;
+  const { flowId, integrationId, childId } = match.params;
   const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
   const classes = useStyles();
@@ -331,19 +331,16 @@ function FlowBuilder() {
     },
     [patchFlow]
   );
-  const handleErrors = useCallback(
-    resourceId => () => {
-      handleDrawerOpen(`errors/${resourceId}`);
-    },
-    [handleDrawerOpen]
-  );
   const handleRunStart = useCallback(() => {
     // Highlights Run Dashboard in the bottom drawer
     setTabValue(0);
 
-    // Raise Bottom Drawer height
-    setBottomDrawerHeight(500);
-  }, [setBottomDrawerHeight]);
+    // Raising bottom drawer in cases where console is minimized
+    // and user can not see dashboard after running the flow
+    if (bottomDrawerHeight < 225) {
+      setBottomDrawerHeight(300);
+    }
+  }, [setBottomDrawerHeight, bottomDrawerHeight]);
   const handleDrawerClick = useCallback(
     path => () => {
       handleDrawerOpen(path);
@@ -507,7 +504,6 @@ function FlowBuilder() {
         <PageGenerator
           {...pg}
           onDelete={handleDelete(itemTypes.PAGE_GENERATOR)}
-          onErrors={handleErrors(pg._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -534,7 +530,7 @@ function FlowBuilder() {
                 />
       )}
     </div>
-  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleErrors, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
+  ), [classes.generatorContainer, classes.newPG, flowErrorsMap, flowId, handleAddGenerator, handleDelete, handleMovePG, integrationId, isFreeFlow, isViewMode, pageGenerators]);
 
   const pps = useMemo(() => (
     <div className={classes.processorContainer}>
@@ -542,7 +538,6 @@ function FlowBuilder() {
         <PageProcessor
           {...pp}
           onDelete={handleDelete(itemTypes.PAGE_PROCESSOR)}
-          onErrors={handleErrors(pp._importId || pp._exportId)}
           flowId={flowId}
           integrationId={integrationId}
           openErrorCount={
@@ -581,7 +576,7 @@ function FlowBuilder() {
                   </Typography>
       )}
     </div>
-  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleErrors, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
+  ), [classes.dataLoaderHelp, classes.newPP, classes.processorContainer, flowErrorsMap, flowId, handleAddProcessor, handleDelete, handleMovePP, integrationId, isDataLoaderFlow, isFreeFlow, isMonitorLevelAccess, isViewMode, pageProcessors, showAddPageProcessor]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero || isNewFlow) return;
@@ -722,6 +717,8 @@ function FlowBuilder() {
         flowId={flowId}
         tabValue={tabValue}
         setTabValue={setTabValue}
+        integrationId={integrationId}
+        childId={childId}
       />
       <MappingDrawerRoute
         integrationId={integrationId}
@@ -730,4 +727,4 @@ function FlowBuilder() {
   );
 }
 
-export default withRouter(FlowBuilder);
+export default FlowBuilder;

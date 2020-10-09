@@ -581,7 +581,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
     const exportDoc = exports.find(e => e._id === flow._exportId);
 
     if (exportDoc) {
-      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId, type: 'exports' });
     }
   }
 
@@ -589,7 +589,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
     const importDoc = imports.find(e => e._id === flow._importId);
 
     if (importDoc) {
-      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId, type: 'imports' });
     }
   }
 
@@ -598,7 +598,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
       const exportDoc = exports.find(e => e._id === pg._exportId);
 
       if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId, type: 'exports' });
       }
     });
   }
@@ -609,13 +609,13 @@ export function getFlowResources(flows, exports, imports, flowId) {
         const importDoc = imports.find(e => e._id === pp._importId);
 
         if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId, type: 'imports' });
         }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = exports.find(e => e._id === pp._exportId);
 
         if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId, type: 'exports', isLookup: true });
         }
       }
     });

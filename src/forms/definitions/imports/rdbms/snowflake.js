@@ -42,12 +42,12 @@ export default {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
       querySetPos: 0,
-      label: 'Query builder',
       required: true,
+      label: 'Build SQL query',
       visibleWhen: [
         {
           field: 'rdbms.queryType',
-          is: ['INSERT', 'MERGE'],
+          is: ['INSERT', 'MERGE', 'COPY'],
         },
       ],
     },
@@ -68,6 +68,7 @@ export default {
             { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
             { label: 'Use SQL Query once per page of data', value: 'MERGE' },
+            { label: 'Use SQL Query once per flow run', value: 'COPY' },
           ],
         },
       ],

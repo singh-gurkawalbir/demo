@@ -16,6 +16,7 @@ import RefreshMetadata from './actions/RefreshMetadata';
 import TradingPartner from './actions/TradingPartner';
 import Revoke from './actions/Revoke';
 import actions from '../../../actions';
+import ReplaceConnection from './actions/ReplaceConnection';
 
 export default {
   columns: (r, actionProps) => {
@@ -95,6 +96,9 @@ export default {
     }
     if (r.type === 'ftp' && !r._connectorId && actionProps?.showTradingPartner) {
       actions.push(TradingPartner);
+    }
+    if (actionProps.type === 'flowBuilder') {
+      actions.push(ReplaceConnection);
     }
     if (!actionProps.integrationId && !r._connectorId && actionProps.type !== 'flowBuilder') {
       actions.push(Delete);

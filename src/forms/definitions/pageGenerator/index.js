@@ -82,6 +82,7 @@ export default {
       type: 'selectresourcetype',
       mode: 'source',
       label: 'What would you like to do?',
+      dataTest: 'exportType',
       required: true,
       defaultValue: '',
       placeholder: 'Please select',

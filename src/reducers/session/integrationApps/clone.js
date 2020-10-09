@@ -23,7 +23,7 @@ export default (state = {}, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.integrationAppClonedDetails = (state, id) => {
+selectors.integrationClonedDetails = (state, id) => {
   if (!(state && state[id])) {
     return defaultObject;
   }

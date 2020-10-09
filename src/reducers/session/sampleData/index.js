@@ -1,8 +1,10 @@
+
 /*
  * This state holds the entire stages of Export's Data flow
  * Involves the data in each and every stage
  */
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
@@ -79,16 +81,30 @@ export default function (state = {}, action) {
 
 export const selectors = {};
 
-selectors.getResourceSampleData = (state, resourceId, stage) => {
-  const resourceData = state[resourceId]?.data;
+const getResourceSampleData = (resourceIdSampleData, stage) => {
+  const resourceData = resourceIdSampleData?.data;
 
   if (!resourceData) return DEFAULT_VALUE;
 
   return resourceData[stage] || DEFAULT_VALUE;
 };
 
-selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => ({
-  data: selectors.getResourceSampleData(state, resourceId, stage),
-  status: state[resourceId]?.status,
-  error: state[resourceId]?.error,
+const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
+  data: getResourceSampleData(resourceIdSampleData, stage),
+  status: resourceIdSampleData?.status,
+  error: resourceIdSampleData?.error,
 });
+
+selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);
+
+selectors.mkPreviewStageDataList = () => createSelector(
+  (state, resourceId) => state?.session?.sampleData?.[resourceId],
+  (_1, _2, stages) => stages,
+  (resourceIdSampleData, stages) =>
+    stages.reduce((acc, stage) => {
+      acc[stage] = getResourceSampleDataWithStatus(resourceIdSampleData, stage);
+
+      return acc;
+    }, {})
+);
+

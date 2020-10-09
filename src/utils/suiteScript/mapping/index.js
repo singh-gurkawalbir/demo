@@ -256,16 +256,16 @@ export const getFormattedGenerateData = (importData,
 };
 
 export const getExtractPaths = (fields, jsonPath) => {
-  let extractPaths = getJSONPaths(pickFirstObject(fields));
+  const extractPaths = getJSONPaths(pickFirstObject(fields));
 
-  if (jsonPath) {
-    extractPaths = extractPaths
-      .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
-      .map(f => ({
-        ...f,
-        id: f.id.replace(`${jsonPath}[*].`, ''),
-      }));
+  if (!jsonPath || jsonPath === '$') {
+    return extractPaths;
   }
 
-  return extractPaths;
+  return extractPaths
+    .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+    .map(f => ({
+      ...f,
+      id: f.id.replace(`${jsonPath}[*].`, ''),
+    }));
 };

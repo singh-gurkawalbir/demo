@@ -43,6 +43,10 @@ export default function Licenses(props) {
   const { match, location, history } = props;
   const { connectorId } = match.params;
   const classes = useStyles();
+  const resourceStatus = useSelectorMemo(
+    selectors.makeAllResourceStatusSelector,
+    ['connectorLicenses']
+  );
   const sortFilterKey = 'connectorLicenses';
   const filter =
     useSelector(state => selectors.filter(state, sortFilterKey)) ||
@@ -64,6 +68,7 @@ export default function Licenses(props) {
     selectors.resource(state, 'connectors', connectorId)
   );
   const dispatch = useDispatch();
+  const resourceLoaded = useMemo(() => resourceStatus && resourceStatus[0].isReady, [resourceStatus]);
 
   useEffect(() => {
     dispatch(
@@ -80,7 +85,7 @@ export default function Licenses(props) {
 
   return (
     <>
-      <ResourceDrawer {...props} />
+      {resourceLoaded && <ResourceDrawer {...props} />}
       <CeligoPageBar
         history={history}
         title={`Licenses: ${connector.name}`}

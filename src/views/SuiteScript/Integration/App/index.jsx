@@ -21,7 +21,7 @@ import FlowsPanel from './panels/Flows';
 import SettingsPanel from './panels/Settings';
 
 const useStyles = makeStyles(theme => ({
-  PageWrapper: {
+  pageWrapper: {
     padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
@@ -103,7 +103,7 @@ export default function Integration({ match }) {
   // the need for parent components passing any props at all.
   return (
     <>
-      <ResourceDrawer match={match} />
+      <ResourceDrawer />
       <LoadResources required resources="integrations, connections">
         <LoadSuiteScriptResources
           required
@@ -141,7 +141,7 @@ export default function Integration({ match }) {
           <IntegrationTabs
             tabs={tabs}
             match={match}
-            className={classes.PageWrapper}
+            className={classes.pageWrapper}
         />
           {/* Add Suitescript flow related component */}
           <SuiteScriptMappingDrawer

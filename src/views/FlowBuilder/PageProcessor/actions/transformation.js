@@ -54,9 +54,9 @@ function TransformationDrawer({ flowId, resource, isViewMode, onClose }) {
 
   return (
     <TransformEditorDrawer
-      title="Transform record"
+      title="Define transformation"
       helpKey="export.transform.rules"
-      helpTitle="Transform Rules"
+      helpTitle="Transform rules"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}

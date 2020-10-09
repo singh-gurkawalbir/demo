@@ -52,7 +52,7 @@ export function* evaluateProcessor({ id }) {
         const errJSON = JSON.parse(e.message);
         // Receiving errors in different formats from BE, for now added below check
         // Can remove this once backend bug gets fixed (Id: IO-17172)
-        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message}`];
+        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
         let errorLine;
 
         if (errJSON.location) {

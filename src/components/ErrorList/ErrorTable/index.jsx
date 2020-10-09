@@ -1,7 +1,9 @@
 import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import KeywordSearch from '../../KeywordSearch';
 import RefreshCard from './RefreshCard';
 import ErrorActions from './ErrorActions';
@@ -24,6 +26,7 @@ const useStyles = makeStyles(theme => ({
         width: '100%',
         '& > input': {
           width: '100%',
+          height: '100%',
         },
       },
     },
@@ -34,9 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
   header: {
     paddingBottom: theme.spacing(3),
-    display: 'inline-flex',
-    justifyContent: 'space-between',
-    width: '68%',
+    display: 'flex',
   },
   tablePaginationRoot: {
     float: 'right',
@@ -51,6 +52,35 @@ const useStyles = makeStyles(theme => ({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+  },
+  refreshBtn: {
+    marginLeft: theme.spacing(2),
+  },
+  errorActions: {
+    position: 'relative',
+    marginRight: theme.spacing(2),
+    marginLeft: theme.spacing(1),
+    '&:after': {
+      content: "''",
+      position: 'absolute',
+      width: '1px',
+      height: '75%',
+      top: '15%',
+      backgroundColor: theme.palette.secondary.lightest,
+      right: theme.spacing(-2),
+    },
+  },
+  errorTableWrapper: {
+    position: 'relative',
+    height: '100%',
+  },
+  PaginationWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  filtersErrorTable: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 const defaultOpenErrorsFilter = {
@@ -67,6 +97,8 @@ const emptySet = [];
 
 export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
@@ -82,8 +114,12 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       resourceId,
     })
   );
+
   const dataFilter = useSelector(
     state => selectors.filter(state, errorType) || defaultFilter
+  );
+  const isFlowDisabled = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?.disabled
   );
   const errorConfig = useMemo(() => ({
     flowId,
@@ -92,6 +128,17 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
   }), [errorFilter, isResolved, flowId, resourceId]);
 
   const errorObj = useSelectorMemo(selectors.makeResourceErrorsSelector, errorConfig);
+
+  const hasErrors = useSelector(
+    state => {
+      const errors = selectors.getErrors(state, {
+        flowId,
+        resourceId,
+        errorType: isResolved ? 'resolved' : 'open',
+      })?.errors || [];
+
+      return !!errors.length;
+    });
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
@@ -106,8 +153,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
       flowId,
       actionInProgress: isAnyActionInProgress,
       isResolved,
+      isFlowDisabled,
     }),
-    [errorType, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved]
+    [errorType, flowId, isAnyActionInProgress, resourceId, defaultFilter, isResolved, isFlowDisabled]
   );
   const fetchErrors = useCallback(
     loadMore =>
@@ -132,6 +180,9 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
     (event, newPage) => setPage(newPage),
     []
   );
+  const handleDownload = useCallback(() => {
+    history.push(`${match.url}/download/${isResolved ? 'resolved' : 'open'}`);
+  }, [match.url, history, isResolved]);
 
   const paginationOptions = useMemo(
     () => ({
@@ -191,26 +242,34 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
 
   // TODO @Raghu: Refactor the pagination related code
   return (
-    <div className={clsx({ [classes.hide]: !show })}>
-      <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
+    <div className={clsx(classes.errorTableWrapper, { [classes.hide]: !show })}>
       {isFreshDataLoad ? (
         <SpinnerWrapper>
           <Spinner />
         </SpinnerWrapper>
       ) : (
         <>
-          <div className={classes.header}>
-            <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={errorType} defaultFilter={defaultFilter} />
-            </div>
-            {
-            !!errorObj.errors.length &&
-            <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} />
-          }
+          <div className={classes.filtersErrorTable}>
+            <div className={classes.header}>
+              {
+            hasErrors &&
+              (
+                <div className={classes.errorsKeywordSearch}>
+                  <KeywordSearch filterKey={errorType} defaultFilter={defaultFilter} />
+                </div>
+              )
+            }
+              {
+              !!errorObj.errors.length &&
+              <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} className={classes.errorActions} />
 
-          </div>
-          {errorObj.errors.length ? (
-            <>
+            }
+              <div className={classes.refreshBtn}>
+                <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
+              </div>
+            </div>
+            <div className={classes.PaginationWrapper}>
+              {!!errorObj.errors.length && (
               <CeligPagination
                 {...paginationOptions}
                 rowsPerPageOptions={rowsPerPageOptions}
@@ -221,13 +280,23 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
           />
-              <ResourceTable
-                resources={errorsInCurrentPage}
-                className={classes.errorDetailsTable}
-                resourceType={errorType}
-                actionProps={actionProps}
+              )}
+              <Button
+                variant="outlined"
+                color="secondary"
+                className={classes.btnActions}
+                onClick={handleDownload}>
+                Download
+              </Button>
+            </div>
+          </div>
+          {errorObj.errors.length ? (
+            <ResourceTable
+              resources={errorsInCurrentPage}
+              className={classes.errorDetailsTable}
+              resourceType={errorType}
+              actionProps={actionProps}
           />
-            </>
           ) : (
             <div className={classes.emptyRow}>{emptyRowsLabel || 'No Rows'} </div>
           )}

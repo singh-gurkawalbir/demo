@@ -70,7 +70,10 @@ export default {
     id: 'mongodb.document',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Document builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    label: 'Build MongoDB document',
+    ruleTitle:
+      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -82,7 +85,10 @@ export default {
     id: 'mongodb.update',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Document builder',
+    refreshOptionsOnChangesTo: ['mongodb.method'],
+    label: 'Build MongoDB document',
+    ruleTitle:
+      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -94,8 +100,9 @@ export default {
     id: 'mongodb.ignoreLookupFilter',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Filter builder',
-    title: 'MongoDB filter builder',
+    label: 'Build MongoDB filter',
+    ruleTitle:
+      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',
@@ -111,8 +118,9 @@ export default {
     id: 'mongodb.filter',
     type: 'sqlquerybuilder',
     hideDefaultData: true,
-    label: 'Filter builder',
-    title: 'MongoDB filter builder',
+    label: 'Build MongoDB filter',
+    ruleTitle:
+      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',

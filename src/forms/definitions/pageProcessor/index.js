@@ -61,6 +61,7 @@ export default {
       name: 'resourceType',
       type: 'selectresourcetype',
       mode: 'destination',
+      dataTest: 'exportType',
       label: 'What would you like to do?',
       refreshOptionsOnChangesTo: ['application'],
       required: true,

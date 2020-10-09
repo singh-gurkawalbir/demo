@@ -65,7 +65,7 @@ class AuditLog extends Component {
       resourceType,
       resourceId,
       onClick,
-      storeId,
+      childId,
     } = this.props;
     const { filters } = this.state;
 
@@ -86,9 +86,8 @@ class AuditLog extends Component {
             <AuditLogTable
               resourceType={resourceType}
               resourceId={resourceId}
-              resourceDetails={resourceDetails}
               filters={filters}
-              storeId={storeId}
+              childId={childId}
               onClick={onClick}
             />
           </div>

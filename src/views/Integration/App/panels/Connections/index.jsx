@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
-import shortid from 'shortid';
+import { useLocation, useHistory } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import RegisterConnections from '../../../../../components/RegisterConnections';
@@ -16,6 +15,7 @@ import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 import {
   isTradingPartnerSupported,
+  generateNewId,
 } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +32,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const [showRegister, setShowRegister] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
+  const history = useHistory();
   const filterKey = `${integrationId}${`+${storeId}` || ''}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
   const connections = useSelector(state =>
@@ -42,6 +43,15 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
       tableConfig
     )
   );
+
+  const applications = [];
+
+  connections.forEach(conn => {
+    if (!(applications.includes(conn.type))) {
+      applications.push(conn.assistant || conn.type);
+    }
+  });
+
   const permission = useSelector(
     state =>
       selectors.resourcePermissions(
@@ -88,10 +98,28 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
         <>
           {permission.create && (
             <IconTextButton
-              component={Link}
-              to={`${
-                location.pathname
-              }/add/connections/new-${shortid.generate()}`}>
+              onClick={() => {
+                const newId = generateNewId();
+
+                history.push(`${location.pathname}/add/connections/${newId}`);
+
+                const patchSet = [
+                  {
+                    op: 'add',
+                    path: '/_integrationId',
+                    value: integrationId,
+                  },
+                  {
+                    op: 'add',
+                    path: '/applications',
+                    value: applications,
+                  },
+                ];
+
+                dispatch(
+                  actions.resource.patchStaged(newId, patchSet, 'value')
+                );
+              }}>
               <AddIcon /> Create connection
             </IconTextButton>
           )}

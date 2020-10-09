@@ -35,6 +35,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -70,12 +71,15 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
+  const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const {
     name: integrationName,
     install = [],
@@ -86,26 +90,18 @@ export default function ConnectorInstallation(props) {
     _connectorId,
     initChild,
     parentId,
-  } = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
+  } = useMemo(() => integration ? {
+    name: integration.name,
+    initChild: integration.initChild,
+    install: integration.install,
+    mode: integration.mode,
+    stores: integration.stores,
+    supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+    _connectorId: integration._connectorId,
+    integrationInstallSteps: integration.installSteps,
+    parentId: integration._parentId,
+  } : emptyObject, [integration]);
 
-    if (integration) {
-      return {
-        name: integration.name,
-        initChild: integration.initChild,
-        install: integration.install,
-        mode: integration.mode,
-        stores: integration.stores,
-        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
-        _connectorId: integration._connectorId,
-        integrationInstallSteps: integration.installSteps,
-        parentId: integration._parentId,
-      };
-    }
-
-    return emptyObject;
-  }, shallowEqual
-  );
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -214,8 +210,8 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
-            connection && connection._connectionId,
-            connectionDoc
+             connection?._connectionId || connId,
+             connectionDoc
           )
         );
       } else {
@@ -266,9 +262,15 @@ export default function ConnectorInstallation(props) {
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
-          props.history.push(
-            getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
-          );
+          if (_connectorId) {
+            props.history.push(
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
+            );
+          } else {
+            props.history.push(
+              getRoutePath(`/integrations/${integrationId}/flows`)
+            );
+          }
         } else {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
@@ -278,6 +280,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch,
     mode,
+    _connectorId,
     integrationAppName,
     integrationId,
     isSetupComplete,
@@ -289,7 +292,7 @@ export default function ConnectorInstallation(props) {
     parentId,
     integrationInstallSteps]);
 
-  if (!installSteps || !_connectorId) {
+  if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
   }
 
@@ -386,7 +389,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -442,6 +445,8 @@ export default function ConnectorInstallation(props) {
         }
       }
       // handle Action step click
+    } else if (type === 'stack') {
+      if (!stackId) setShowStackDialog(generateNewId());
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -457,6 +462,19 @@ export default function ConnectorInstallation(props) {
         )
       );
     }
+  };
+  const handleStackSetupDone = stackId => {
+    dispatch(
+      actions.integrationApp.installer.scriptInstallStep(
+        integrationId, '', '', '', stackId,
+      )
+    );
+
+    setShowStackDialog(false);
+  };
+
+  const handleStackClose = () => {
+    setShowStackDialog(false);
   };
 
   const handleHelpUrlClick = e => {
@@ -483,6 +501,7 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
+          {_connectorId && (
           <IconTextButton
             data-test="uninstall"
             component={Link}
@@ -492,6 +511,7 @@ export default function ConnectorInstallation(props) {
             <CloseIcon />
             Uninstall
           </IconTextButton>
+          )}
 
         </div>
       </CeligoPageBar>
@@ -510,8 +530,18 @@ export default function ConnectorInstallation(props) {
             connectionType={connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
+            addOrSelect={!_connectorId}
           />
         ))}
+      {stackId && (
+        <ResourceSetupDrawer
+          onClose={handleStackClose}
+          addOrSelect
+          resourceId={stackId}
+          resourceType="stacks"
+          onSubmitComplete={handleStackSetupDone}
+        />
+      )}
       {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}

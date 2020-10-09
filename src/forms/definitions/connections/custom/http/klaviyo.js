@@ -9,6 +9,9 @@ export default {
     '/http/ping/method': 'GET',
     '/http/ping/relativeURI':
       '/v1/lists?api_key={{{connection.http.encrypted.apiKey}}}',
+    '/http/headers': [
+      { name: 'Accept', value: 'application/json' },
+    ],
   }),
   fieldMap: {
     name: { fieldId: 'name' },

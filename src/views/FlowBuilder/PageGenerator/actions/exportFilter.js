@@ -55,7 +55,7 @@ function ExportFilterDrawer({ flowId, resource, isViewMode, onClose }) {
   return (
     <ExportFilterToggleEditorDrawer
       title="Define output filter"
-      helpTitle="Filter Rules"
+      helpTitle="Filter rules"
       helpKey="export.filter.rules"
       disabled={isViewMode}
       id={resourceId}

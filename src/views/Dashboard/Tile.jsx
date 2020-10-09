@@ -47,9 +47,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
   status: {
-    '& > * :hover': {
+    position: 'relative',
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
     },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
+    },
+  },
+  connectionDownRedDot: {
+    width: theme.spacing(1),
+    height: theme.spacing(1),
+    position: 'absolute',
+    right: theme.spacing(-0.5),
+    top: 0,
   },
 }));
 
@@ -64,6 +78,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isCloned = integration?.install?.find(step => step?.isClone);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const defaultChildId = useSelector(state =>
+    selectors.defaultStoreId(state, tile._integrationId)
   );
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
@@ -94,13 +111,17 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    if (tile._connectorId) {
+      urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    } else {
+      urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+    }
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
@@ -150,11 +171,19 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     event => {
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
-        history.push(
-          getRoutePath(
-            `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
-          )
-        );
+        if (tile._connectorId) {
+          history.push(
+            getRoutePath(
+              `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
+            )
+          );
+        } else {
+          history.push(
+            getRoutePath(
+              `/integrations/${tile._integrationId}/setup`
+            )
+          );
+        }
       } else if (!isUserInErrMgtTwoDotZero) {
         event.stopPropagation();
         dispatch(
@@ -208,7 +237,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     selectors.licenses(state)
   );
 
-  const license = tile._connectorId && licenses.find(l => l._connectorId === tile._connectorId);
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
   const expiresInDays = license && remainingDays(license.expires);
   let licenseMessageContent = '';
   let expired = false;
@@ -244,7 +273,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
           {isConnectionDown && (
           <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
             <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
-              <ConnectionDownIcon />
+              <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
             </IconButton>
           </Tooltip>
           )}

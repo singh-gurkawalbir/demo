@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
-import { getRequestURL } from '../../../../../utils/exportPanel';
+import { selectors } from '../../../reducers';
+import { getRequestURL } from '../../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
