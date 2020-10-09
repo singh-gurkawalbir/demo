@@ -31,7 +31,7 @@ import {
   getIAFlowSettings,
   getFlowDetails,
   getFlowResources,
-  getFlowReferencesForResource,
+  getFlowReferencesForResource, isFreeFlowResource, isIntegrationApp,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -5256,3 +5256,69 @@ selectors.mkChildIntegration = () => {
     childIntegration => childIntegration
   );
 };
+
+// #region Flow builder selectors
+
+selectors.isFreeFlowResource = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const isFreeFlow = isFreeFlowResource(flow);
+
+  return isFreeFlow;
+};
+
+selectors.isIAType = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const isIAType = isIntegrationApp(flow);
+
+  return isIAType;
+};
+
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
+  const isIAType = selectors.isIAType(state, flowId);
+
+  const isMonitorLevelAccess =
+    selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+  return isMonitorLevelAccess || isIAType;
+};
+
+const selectorFlowDetails = selectors.mkFlowDetails();
+
+selectors.isDataLoaderFlow = (state, flowId) => {
+  const flowDetails = selectorFlowDetails(state, flowId);
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const { pageGenerators = [] } = flow;
+
+  return flowDetails.isSimpleImport ||
+  (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
+};
+isDa;
+selectors.shouldShowAddPageProcessor = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const { pageProcessors = [], pageGenerators = [] } = flow;
+  const isDataLoaderFlow = selectors.isDataLoaderFlow(state, flowId);
+
+  const showAddPageProcessor =
+    !isDataLoaderFlow ||
+    (pageProcessors.length === 0 &&
+      pageGenerators.length &&
+      pageGenerators[0]._exportId);
+
+  return showAddPageProcessor;
+};
+
+// #endregion Flow builder selectors
