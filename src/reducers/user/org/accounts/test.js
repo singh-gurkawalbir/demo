@@ -629,6 +629,7 @@ describe('account (ashares) reducers', () => {
                 edit: true,
               },
               connections: {
+                create: true,
                 edit: true,
               },
             },
@@ -749,6 +750,7 @@ describe('account (ashares) reducers', () => {
                 edit: true,
               },
               connections: {
+                create: true,
                 edit: true,
               },
             },
