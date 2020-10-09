@@ -6,6 +6,7 @@ import {
   getFlowUpdatesFromPatch,
   getResourceStageUpdatedFromPatch,
   getSubsequentStages,
+  isRawDataPatchSet,
 } from '../../../utils/flowData';
 
 function* updateResponseMapping({ flowId, resourceIndex }) {
@@ -69,12 +70,15 @@ export function* updateFlowOnResourceUpdate({
     const stagesToReset = [];
     const updatedStage = getResourceStageUpdatedFromPatch(patch);
 
+    // No need to update the resources if the patch set is a raw data patch set
+    if (!isRawDataPatchSet(patch)) {
     // If there is an updatedStage -> get list of all stages to update from that stage
-    if (updatedStage) {
-      stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));
+      if (updatedStage) {
+        stagesToReset.push(updatedStage, ...getSubsequentStages(updatedStage, resourceType));
+      }
+      // else go ahead and update the whole resource's state as stagesToReset is []
+      yield put(actions.flowData.updateFlowsForResource(resourceId, resourceType, stagesToReset));
     }
-    // else go ahead and update the whole resource's state as stagesToReset is []
-    yield put(actions.flowData.updateFlowsForResource(resourceId, resourceType, stagesToReset));
     if (context?.flowId) {
       yield call(updateFlowDoc, { flowId: context.flowId, resourceType, resourceId });
     }
