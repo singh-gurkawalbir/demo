@@ -235,17 +235,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     |> aggregateWindow(every: ${duration}, fn: sum)
     |> drop(columns: ["_start", "_stop"])
     |> pivot(rowKey: ["_time"], columnKey: ["_measurement"], valueColumn: "_value")
-    |> map(fn: (r) => ({
-      r with
-      time: r._time,
-      flowId: r.f,
-      success: r["s"],
-      error: r["e"],
-      ignored: r["i"],
-      resourceId: r["ei"],
-      averageTimeTaken: r["att"]
-    }))
-    |> drop(columns: ["_start", "_stop","ei","f","u","s","e","i"])
+   
   
     att = from(bucket: "${bucket}")
     |> range(start: ${start}, stop: ${end})
@@ -260,14 +250,7 @@ export const getFlowMetricsQuery = (flowId, userId, filters) => {
     |> set(key: "_field", value: outputField)
     |> rename(columns: {attph: "_value"})))
     |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-    |> map(fn: (r) => ({
-        r with
-        time: r._time,
-        flowId: r.f,
-        resourceId: r.ei,
-        averageTimeTaken: r["att"]
-      }))
-    |> drop(columns: ["_start", "_stop","ei","f","u"])
+    
     
     union(tables: [sei, att])
     |> group()`;
@@ -351,12 +334,12 @@ export const parseFlowMetricsJson = response => {
   const data = response
     .map(item => ({
       timeInMills: new Date(item._time).getTime(),
-      success: +item.success || 0,
-      error: +item.error || 0,
-      ignored: +item.ignored || 0,
-      averageTimeTaken: +item.averageTimeTaken || 0,
-      resourceId: item.resourceId,
-      flowId: item.flowId,
+      success: +item.s || 0,
+      error: +item.e || 0,
+      ignored: +item.i || 0,
+      averageTimeTaken: +item.att || 0,
+      resourceId: item.ei,
+      flowId: item.f,
       isAtt: !!item._measurement,
     }));
   const byFlow = groupBy(data, 'flowId');
