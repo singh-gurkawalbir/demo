@@ -72,7 +72,7 @@ function InputFilterDrawer({
   return (
     <InputFilterToggleEditorDrawer
       title="Define input filter"
-      helpTitle="Filter Rules"
+      helpTitle="Filter rules"
       helpKey={helpKey}
       disabled={isViewMode}
       isMonitorLevelAccess={isMonitorLevelAccess}

@@ -111,7 +111,7 @@ function TabPanel({ children, value, index, className }) {
 const connectionsFilterConfig = {
   type: 'connections',
 };
-
+const overrides = { useWorker: false };
 export default function BottomDrawer({
   flowId,
   setTabValue,
@@ -381,7 +381,7 @@ export default function BottomDrawer({
                         readOnly
                         value={connectionDebugLogs[connectionId]}
                         mode="javascript"
-                        overrides={{ useWorker: false }}
+                        overrides={overrides}
                       />
                     </>
                   </TabPanel>
