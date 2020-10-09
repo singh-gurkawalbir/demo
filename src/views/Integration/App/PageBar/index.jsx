@@ -1,4 +1,4 @@
-import { MenuItem, Select } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
+import CeligoSelect from '../../../../components/CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -41,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const StoreMenuItems = ({integration, integrationId, storeId}) => {
+const StoreMenuItems = ({ integration, integrationId }) => {
   const integrationErrorsPerStore = useSelector(state =>
     selectors.integrationErrorsPerStore(state, integrationId),
   shallowEqual
@@ -51,7 +52,7 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
   );
 
   return integration?.stores?.map(store => {
-    if (store.value === storeId || !isUserInErrMgtTwoDotZero) {
+    if (!isUserInErrMgtTwoDotZero) {
       return (
         <MenuItem key={store.value} value={store.value}>
           {store.label}
@@ -64,7 +65,7 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
       return (
         <MenuItem key={store.value} value={store.value}>
           <div> {store.label}</div>
-          <StatusCircle size="small" variant="success" />
+          <span><StatusCircle size="small" variant="success" /> Success</span>
         </MenuItem>
       );
     }
@@ -72,6 +73,10 @@ const StoreMenuItems = ({integration, integrationId, storeId}) => {
     return (
       <MenuItem key={store.value} value={store.value}>
         <div> {store.label}</div>
+        <div>
+          <StatusCircle size="small" variant="error" />
+          <span>{storeErrorCount > 9999 ? '9999+' : storeErrorCount}</span>
+        </div>
       </MenuItem>
     );
   });
@@ -113,12 +118,20 @@ export default function PageBar() {
     e => {
       const newStoreId = e.target.value;
 
-      // Redirect to current tab of new store
-      history.push(
-        getRoutePath(
-          `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
-        )
-      );
+      if (newStoreId) {
+        // Redirect to current tab of new store
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+          )
+        );
+      } else {
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/${tab}`
+          )
+        );
+      }
     },
     [history, integrationAppName, integrationId, tab]
   );
@@ -127,6 +140,12 @@ export default function PageBar() {
       getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/install/addNewStore`)
     );
   }, [history, integrationAppName, integrationId]);
+
+  const renderStoreLabel = useCallback(selectedStoreId =>
+    integration.stores?.find(store => store.value === selectedStoreId)?.label,
+  [integration]);
+
+  const storeItems = StoreMenuItems({ integration, integrationId });
 
   return (
     <CeligoPageBar
@@ -160,23 +179,19 @@ export default function PageBar() {
           <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
-        <Select
+        <CeligoSelect
           displayEmpty
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
           onChange={handleStoreChange}
+          renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
-          value={storeId}>
-          <MenuItem disabled value="">
-            Select {storeLabel}
+          value={storeId || ''}>
+          <MenuItem value="">
+            All {storeLabel}s
           </MenuItem>
-
-          <StoreMenuItems
-            integration={integration}
-            integrationId={integrationId}
-            storeId={storeId} />
-
-        </Select>
+          {storeItems}
+        </CeligoSelect>
       </div>
       )}
     </CeligoPageBar>

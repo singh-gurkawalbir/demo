@@ -173,7 +173,7 @@ const tooltipSettings = {
 function FlowBuilder() {
   const match = useRouteMatch();
   const location = useLocation();
-  const { flowId, integrationId } = match.params;
+  const { flowId, integrationId, childId } = match.params;
   const history = useHistory();
   const isNewFlow = !flowId || flowId.startsWith('new');
   const classes = useStyles();
@@ -717,6 +717,8 @@ function FlowBuilder() {
         flowId={flowId}
         tabValue={tabValue}
         setTabValue={setTabValue}
+        integrationId={integrationId}
+        childId={childId}
       />
       <MappingDrawerRoute
         integrationId={integrationId}

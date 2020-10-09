@@ -65,8 +65,7 @@ export default {
     hideDefaultData: true,
     ruleTitle:
       'Template (use handlebars expressions to map fields from your export data)',
-    label: 'Query builder',
-    title: 'DynamoDB Query Builder',
+    label: 'Build DynamoDB query',
     refreshOptionsOnChangesTo: ['dynamodb.method'],
     visibleWhen: [
       {

@@ -70,7 +70,7 @@ const emptyObj = {};
 
 export function useAvailableTabs() {
   const match = useRouteMatch();
-  const { integrationId, childId } = match?.params;
+  const { integrationId, storeId: childId } = match?.params;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
 
   const hideSettingsTab = useSelector(state => {

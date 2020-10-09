@@ -65,7 +65,7 @@ export default function DynaTransformEditor(props) {
     <>
       {showEditor && (
         <TransformEditorDrawer
-          title="Transform Mapping"
+          title={label}
           id={id + resourceId}
           data={preTransformData || sampleData}
           rule={firstRuleSet}

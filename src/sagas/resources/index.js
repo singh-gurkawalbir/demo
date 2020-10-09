@@ -862,6 +862,26 @@ export function* cancelQueuedJob({ jobId }) {
     return undefined;
   }
 }
+export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
+  const path = `/flows/${_resourceId}/replaceConnection`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {_connectionId, _newConnectionId},
+        method: 'PUT',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
+    return undefined;
+  }
+  yield put(actions.resource.requestCollection('flows'));
+  yield put(actions.resource.requestCollection('exports'));
+  yield put(actions.resource.requestCollection('imports'));
+}
 
 export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REQUEST, getResource),
@@ -889,6 +909,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
+  takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
 
   ...metadataSagas,
 ];
