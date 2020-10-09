@@ -8,9 +8,9 @@ import DynaSubmit from '../DynaForm/DynaSubmit';
 import ButtonGroup from '../ButtonGroup';
 import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
-import { RDBMS_TYPES } from '../../utils/constants';
 import ResourceDrawer from '../drawer/Resource';
 import useConfirmDialog from '../ConfirmDialog';
+import { getReplaceConectionExpression } from '../../utils/flows';
 
 const emptyObj = {};
 
@@ -28,44 +28,10 @@ export default function ReplaceConnection(props) {
       emptyObj
   );
 
-  let options = {};
-  const expression = [];
-  const integratorExpression = [];
-
-  expression.push({ _id: {$ne: connection._id} });
-
-  if (RDBMS_TYPES.includes(connection.type)) {
-    expression.push({ 'rdbms.type': connection.type });
-  } else {
-    expression.push({ type: connection.type });
-  }
-
-  if (connection._connectorId) {
-    expression.push({ _connectorId: connection._connectorId});
-    if (isFrameWork2 && childId) {
-      integratorExpression.push({ _integrationId: integrationId});
-      integratorExpression.push({ _integrationId: childId});
-      expression.push({ $or: integratorExpression });
-    } else { expression.push({ _integrationId: integrationId}); }
-  } else {
-    expression.push({ _connectorId: { $exists: false } });
-  }
-
-  if (connection.assistant) {
-    expression.push({ assistant: connection.assistant });
-
-    const andingExpressions = { $and: expression };
-
-    options = { filter: andingExpressions, appType: connection.assistant };
-  } else {
-    const andingExpressions = { $and: expression };
-
-    options = { filter: andingExpressions, appType: connection.type };
-  }
+  const options = getReplaceConectionExpression(connection, isFrameWork2, childId, integrationId);
 
   const fieldMeta = {
     fieldMap: {
-
       _connectionId: {
         id: '_connectionId',
         name: '_connectionId',
@@ -108,7 +74,7 @@ export default function ReplaceConnection(props) {
         },
       ],
     });
-  }, [dispatch, flowId, connection._id, confirmDialog]);
+  }, [dispatch, flowId, connection._id, confirmDialog, onClose]);
 
   return (
     <div>
