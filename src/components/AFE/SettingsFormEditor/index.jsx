@@ -54,6 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const overrides = { showGutter: false };
 export default function SettingsFormEditor({
   editorId,
   disabled,
@@ -165,7 +166,7 @@ export default function SettingsFormEditor({
             name="result"
             value={settingsPreview}
             mode="json"
-            overrides={{ showGutter: false }}
+            overrides={overrides}
             readOnly
           />
         ) : (

@@ -94,6 +94,10 @@ export default function SelectApplication(props) {
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
+  const data = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
+  const connectorApplications = data?.merged?.applications;
 
   const {fieldMeta} = useFormContext(formKey);
   const { operation } = match.params;
@@ -107,6 +111,12 @@ export default function SelectApplication(props) {
       }),
     [appType, fieldOptions, isDataLoader, resourceType]
   );
+
+  if (connectorApplications) {
+    groupedApps.forEach((groupedApp, i) => {
+      groupedApps[i].connectors = groupedApp.connectors.filter(connector => connectorApplications.includes(connector.assistant || connector.type));
+    });
+  }
 
   // Custom styles for Select Control
   const customStyles = {

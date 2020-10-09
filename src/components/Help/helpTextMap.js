@@ -751,6 +751,8 @@ export default {
   'connection.rest.concurrencyLevel':
     "Set this field to limit the number of concurrent HTTP requests allowed by the connection resource (at any one time), or leave this field blank to use burst mode.  With burst mode, integrator.io will make HTTP requests as fast as possible, with really high levels of concurrency.  APIs like Google's are really great with burst mode, and can typically handle any types of volume.  Other APIs, like Zendesk or Shopify, are much more strict when it comes to the number of API requests being sent to their servers, and burst mode may not be recommended.",
   'connection.http.mediaType': 'Specify the data format for all sent HTTP requests or received HTTP responses for the connected API. A single API usually supports only one format and publishes this info at the top of their API docs. If the media type for a request or response is different, you can use your export’s success and error media type fields to override the media type for specific endpoints.',
+  'connection.http.successMediaType': 'Specify the content-type of a successful response received from this endpoint. For HTTP exports and connections, we support content-types of XML, CSV, and JSON. For HTTP imports, we support XML and JSON.',
+  'connection.http.errorMediaType': 'Specify the content-type of an error (unsuccessful) response received from this endpoint. We support XML and JSON content-types.',
   'connection.http.baseURI': 'This common part of an API’s URL is used across all of the HTTP endpoints you invoke. A base URI makes it easier to configure exports and imports.',
   'connection.http.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> automatically adds the appropriate content-type header based on the mediaType value described in the connection associated with this request (typically application/json). Note that the request header value automatically includes the authentication method described in the associated connection if required. Use this header field in the rare case when an API requires additional headers other than application or JSON.',
   'connection.http.disableStrictSSL':
@@ -1821,11 +1823,11 @@ export default {
   'import.hooks.postAggregate.scriptFunction':
     'The name of the postAggregate hook function (in your script) that you want to invoke.',
   'import.restImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.netsuiteImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.etailImportFieldMappingSettings':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'import.mapping.lists.fields.useFirstRow': '',
   'import.mapping.lists.fields.useAsAnInitializeValue':
     'NetSuite allows certain fields to be initialized (pre-loaded on the NetSuite form) during create/transform of a record. Mark this check box if you would like to add this field during record initialization. \nExample: If you are trying to create a non inventory item and you want to specify the subtype as "Sale" or "Purchase" or "ReSale", this mapping has to be set during the initialization itself. In such cases, we mark the subtype mapping as an initialization parameter.',
@@ -2088,7 +2090,7 @@ export default {
   'mapping.discardIfEmpty':
     'Please check this checkbox if you would like to discard this mapping when the result of the mapping is empty. If you are mapping a list field and all the fields in the list are mapped to empty values then the whole list will be discarded.',
   'mapping.fieldMappingType':
-    `The type of field mapping that you want to perform. For more information refer to, the <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/> Field Reference Guide.</a>`,
+    `The type of field mapping that you want to perform. For more information, refer to <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360019506771" target="_blank"/>Map source record fields to destination</a>.`,
   'mapping.extract':
     'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'mapping.expression':
@@ -2196,7 +2198,7 @@ export default {
   'salesforce.referencedFields': 'Use this setting to add additional fields on the childSObject to the export data defined as lookup fields on Salesforce. Ex: If Contact is set as the childSObjectType, this setting allows users to pull data from the reference fields (such as Created By, Account Name) on the Contact sObject.',
   filterExpression: 'Use this field to filter out any reference list by entering the "where" clause of SOQL query. This expression will be added as a part of the SOQL query in the where clause while fetching the childSObjectType. If no filter is added, IO will send all the child SObjects in the export data. Ex: If you would like to only export Contacts whose LastName has "Bond" in it, set the expression as "LastName=`Bond` ".',
   orderBy: 'Use this field to specify how you would like to order the related list records. Ex: Use `CreatedDate` to order the records by date created. The default order is `Ascending order`. To change it to use descending order using the order by field as `CreatedDate DESC`.',
-  'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the dreaded AFE 1.0 'data' variable is gone, and in its place you will see a more specific variable name that highlights the exact context your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc...",
+  'afe.sampleDataSwitch': "Advanced Field Editor (AFE) 2.0 exposes an improved set of context variables, thus making it much easier to build dynamic values and/or complex structures. More specifically, the generic 'data' variable has been replaced by a set of more specific variable names to better represent the structure of data your template must work with. For example: 'record', 'rows[]', 'batch_of_records[]', etc…",
   'mapping.suitescript.netsuite.lookup.searchField': 'Field name that is provided to the lookups defined, using this field name the respective field from the record will be extracted out and provided for the respective field in the import system.',
   'mapping.suitescript.lookup.failWhenUniqueMatchNotFound': 'When this flag is set, if no results are found or the dynamic lookup fails, the lookup will silently fail(return empty string). Similarly, if multiple results are found (dynamic lookup) then the first value is chosen. In other words, if allowFailures is set to true, then no errors will be raised and the default lookup value will be used if the lookup fails.',
   'mapping.lookup.default': 'This holds the default value to be set for the extract field.',

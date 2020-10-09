@@ -486,7 +486,7 @@ export default {
       id: 'http.auth.oauth.refreshBody',
       type: 'httprequestbody',
       contentType: 'json',
-      label: 'Refresh token body',
+      label: 'Build refresh token body',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
         { field: 'http.auth.oauth.grantType', is: ['authorizecode'] },

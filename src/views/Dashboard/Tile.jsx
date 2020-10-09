@@ -79,6 +79,9 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const defaultChildId = useSelector(state =>
+    selectors.defaultStoreId(state, tile._integrationId)
+  );
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -108,13 +111,17 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    if (tile._connectorId) {
+      urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    } else {
+      urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+    }
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
@@ -164,11 +171,19 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     event => {
       if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         event.stopPropagation();
-        history.push(
-          getRoutePath(
-            `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
-          )
-        );
+        if (tile._connectorId) {
+          history.push(
+            getRoutePath(
+              `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
+            )
+          );
+        } else {
+          history.push(
+            getRoutePath(
+              `/integrations/${tile._integrationId}/setup`
+            )
+          );
+        }
       } else if (!isUserInErrMgtTwoDotZero) {
         event.stopPropagation();
         dispatch(
