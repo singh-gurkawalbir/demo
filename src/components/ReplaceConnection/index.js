@@ -10,7 +10,7 @@ import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceDrawer from '../drawer/Resource';
 import useConfirmDialog from '../ConfirmDialog';
-import { getReplaceConectionExpression } from '../../utils/flows';
+import { getReplaceConectionExpression } from '../../utils/connections';
 
 const emptyObj = {};
 
@@ -88,7 +88,7 @@ export default function ReplaceConnection(props) {
           color="primary"
           disabled={false}
           data-test="replaceConnection">
-          Replace & close
+          Replace
         </DynaSubmit>
         <Button onClick={onClose} variant="text" color="primary">
           Cancel
