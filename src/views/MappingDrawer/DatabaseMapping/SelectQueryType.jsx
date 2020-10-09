@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback } from 'react';
+import React, {Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -52,11 +52,11 @@ export default function SelectQueryType() {
     (left, right) => left && right && left.length === right.length
   );
 
-  const openQueryBuilder = useCallback(index => {
+  const openQueryBuilder = index => {
     const url = match.url.replace('/dbMapping', '/queryBuilder');
 
     return `${url}/${index}/view`;
-  }, [match.url]);
+  };
 
   // If there is only one query type then we can safely
   // take the user to the query builder relating to that Query Type

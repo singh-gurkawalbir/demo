@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, Fragment, useMemo } from 'react';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
@@ -41,7 +41,7 @@ export default function SelectImport() {
   const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
-  const getMappingUrl = useCallback(_impId => {
+  const getMappingUrl = _impId => {
     const importResource = imports.find(({_id}) => _id === _impId) || emptyObject;
 
     if (isQueryBuilderSupported(importResource)) {
@@ -51,7 +51,7 @@ export default function SelectImport() {
     }
 
     return importId ? `${match.url}/view` : `${match.url}/${_impId}/view`;
-  }, [importId, imports, match.url]);
+  };
 
   useEffect(() => {
     if (imports) {

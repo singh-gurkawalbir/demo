@@ -9,17 +9,6 @@ import { getUnionObject } from '../../../../utils/jsonPaths';
 import DynaLookupEditor from '../DynaLookupEditor';
 
 const ruleTitle = 'Template (use handlebars expressions to map fields from your export data)';
-const getEditorTitle = adaptorType => {
-  if (adaptorType === 'MongodbImport') {
-    return 'MongoDB document builder';
-  }
-  if (adaptorType === 'DynamodbImport') {
-    return 'DynamoDB query builder';
-  }
-  if (adaptorType === 'RDBMSImport') {
-    return 'SQL query builder';
-  }
-};
 export default function SQLQueryBuilderWrapper(props) {
   const {
     id,
@@ -37,7 +26,7 @@ export default function SQLQueryBuilderWrapper(props) {
     optionalSaveParams,
     patchOnSave,
     method,
-    title,
+    label,
   } = props;
   const dispatch = useDispatch();
   const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
@@ -98,7 +87,6 @@ export default function SQLQueryBuilderWrapper(props) {
       );
     }
   }, [dispatch, extractFields, flowId, resourceId]);
-  const defaultTitle = getEditorTitle(adaptorType);
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
@@ -170,7 +158,7 @@ export default function SQLQueryBuilderWrapper(props) {
   return (
     <>
       <SqlQueryBuilderEditorDrawer
-        title={title || defaultTitle}
+        title={label}
         id={`${resourceId}-${id}`}
         rule={parsedRule}
         sampleRule={sampleRule}

@@ -4,11 +4,22 @@ import { useRouteMatch } from 'react-router-dom';
 import SQLQueryBuilderWrapper from '../../../components/DynaForm/fields/DynaSQLQueryBuilder/SQLQueryBuilderWrapper';
 import { selectors } from '../../../reducers';
 
+const getEditorTitle = adaptorType => {
+  if (adaptorType === 'MongodbImport') {
+    return 'MongoDB document builder';
+  }
+  if (adaptorType === 'DynamodbImport') {
+    return 'DynamoDB query builder';
+  }
+  if (adaptorType === 'RDBMSImport') {
+    return 'SQL query builder';
+  }
+};
 const emptyObject = {};
 const SQLQueryBuilder = props => {
   const {flowId, importId, index, disabled} = props;
   const importResource = useSelector(state => selectors.resource(state, 'imports', importId));
-  const {value, title, ruleTitle, ...options} = useMemo(() => {
+  const {value, ruleTitle, ...options} = useMemo(() => {
     if (importResource.adaptorType === 'RDBMSImport') {
       return {
         lookups: importResource.rdbms.lookups,
@@ -64,6 +75,7 @@ const SQLQueryBuilder = props => {
   },
   [importId, importResource, index, value]
   );
+  const label = getEditorTitle(importResource.adaptorType);
 
   return (
     <SQLQueryBuilderWrapper
@@ -72,7 +84,7 @@ const SQLQueryBuilder = props => {
       onFieldChange={handleLookupUpdate}
       disabled={disabled}
       value={value}
-      title={title}
+      label={label}
       ruleTitle={ruleTitle}
       querySetPos={index}
       resourceId={importId}
