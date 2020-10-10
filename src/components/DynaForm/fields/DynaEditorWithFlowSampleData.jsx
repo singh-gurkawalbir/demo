@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { isEqual } from 'lodash';
 import HttpRequestBodyEditorDrawer from '../../AFE/HttpRequestBodyEditor/Drawer';
 import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
@@ -23,8 +24,11 @@ const DynaEditorWithFlowSampleData = ({
 }) => {
   const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
+  const isPageGenerator = useSelector(state => selectors.isPageGenerator(state, flowId, resourceId, resourceType));
+
   const isEditorV2Supported = useSelector(state => {
-    if (disableEditorV2) {
+    // no sample data for PGs except for dataURITemplate field
+    if (disableEditorV2 || (isPageGenerator && fieldId !== 'dataURITemplate')) {
       return false;
     }
 
@@ -34,13 +38,18 @@ const DynaEditorWithFlowSampleData = ({
     data: sampleData,
     status: sampleDataRequestStatus,
     templateVersion,
-  } = useSelector(state =>
-    selectors.getEditorSampleData(state, {
+  } = useSelector(state => {
+    const sampleData = selectors.editorSampleData(state, { flowId, resourceId, fieldType: fieldId });
+
+    return selectors.sampleDataWrapper(state, {
+      sampleData,
       flowId,
       resourceId,
+      resourceType,
       fieldType: fieldId,
-    })
-  );
+      stage: editorType !== 'csvGenerate' ? 'flowInput' : undefined,
+    });
+  }, isEqual);
   const loadEditorSampleData = useCallback(
     version => {
       dispatch(
@@ -51,7 +60,7 @@ const DynaEditorWithFlowSampleData = ({
           stage: 'flowInput',
           formValues: formContext.value,
           fieldType: fieldId,
-          isV2NotSupported: disableEditorV2,
+          isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
@@ -113,7 +122,6 @@ const DynaEditorWithFlowSampleData = ({
           {...props}
           /** rule to be passed as json */
           rule={formattedRule}
-          title="CSV generator helper"
           id={`${resourceId}-${fieldId}`}
           mode="csv"
           data={JSON.stringify(sampleData, null, 2)}
