@@ -345,7 +345,7 @@ export function* requestProcessorData({
     isInitialized: true,
   });
   // The below data is plain raw sample data stored in state
-  const preProcessedSampleData = yield select(selectors.getSampleData, {
+  const preProcessedSampleData = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,
@@ -363,7 +363,7 @@ export function* requestProcessorData({
       } else {
         // we use preProcessedSampleData instead of preProcessedData as transformation processor expects data without wrapper
         processorData = {
-          data: preProcessedSampleData,
+          data: preProcessedSampleData?.data,
           rule,
           processor: 'transform',
         };
@@ -512,7 +512,7 @@ export function* requestProcessorData({
     return yield call(updateStateForProcessorData, {
       flowId,
       resourceId,
-      processedData: { data: [preProcessedSampleData] },
+      processedData: { data: [preProcessedSampleData?.data] },
       stage,
     });
   }

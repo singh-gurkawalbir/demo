@@ -25,7 +25,7 @@ function PostResponseMapHookDrawer({
     return (flow?.pageProcessors?.[resourceIndex]) || emptyObj;
   }, shallowEqual);
 
-  const postResponseMapHook = pageProcessorsObject?.hooks?.postResponseMap || emptyObj;
+  const postResponseMapHook = useMemo(() => pageProcessorsObject?.hooks?.postResponseMap || emptyObj, [pageProcessorsObject]);
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
     selectors.sampleDataWrapper(state, {
       flowId,
