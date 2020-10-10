@@ -241,6 +241,17 @@ export default function DynaTypeableSelect(props) {
     onBlur(id, val);
   }, [onBlur]);
 
+  const handleKeyDown = useCallback(
+    evt => {
+      if (evt.key === 'Escape') {
+        setIsTyping(false);
+        setValue(propValue);
+        setIsFocused(false);
+      }
+    },
+    [propValue],
+  );
+
   const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') {
       setValue(newVal);
@@ -295,6 +306,7 @@ export default function DynaTypeableSelect(props) {
           onChange={handleChange}
           styles={customStyles}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           autoFocus
           openOnFocus
           components={components}
