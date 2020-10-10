@@ -93,6 +93,7 @@ describe('installConnector saga', () => {
         opts: {
           method: 'POST',
           body: { sandbox },
+          newTemplateInstaller: false,
         },
       })
     );
@@ -120,6 +121,7 @@ describe('installConnector saga', () => {
         opts: {
           method: 'POST',
           body: { sandbox },
+          newTemplateInstaller: false,
         },
       })
     );

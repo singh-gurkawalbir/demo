@@ -1,4 +1,6 @@
-import { isNewId } from '../../../../utils/resource';
+import { isNewId, adaptorTypeMap } from '../../../../utils/resource';
+
+import { RDBMS_TYPES } from '../../../../utils/constants';
 
 export default {
   name: { type: 'text', label: 'Name', required: true },
@@ -11,6 +13,42 @@ export default {
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+  },
+  _connectionId: {
+    type: 'selectresource',
+    resourceType: 'connections',
+    label: 'Connection',
+    appTypeIsStatic: true,
+    allowEdit: true,
+    allowNew: true,
+    skipDefault: true,
+    _connectionId: r => r?._connectionId,
+    defaultValue: r => r?._connectionId,
+    updateFilterandAppType: true,
+    options: r => {
+      let options = {};
+      const expression = [];
+
+      if (RDBMS_TYPES.includes(adaptorTypeMap[r.adaptorType])) {
+        expression.push({ 'rdbms.type': adaptorTypeMap[r.adaptorType] });
+      } else {
+        expression.push({ type: adaptorTypeMap[r.adaptorType] });
+      }
+
+      if (r._connectorId) {
+        expression.push({ _connectorId: r._connectorId});
+        // expression.push({ _integrationId: r._integrationId});
+      } else {
+        expression.push({ _connectorId: { $exists: false } });
+      }
+
+      const andingExpressions = { $and: expression };
+
+      options = { filter: andingExpressions, appType: adaptorTypeMap[r.adaptorType] };
+
+      return options;
+    },
+    integrationId: r => r?._integrationId,
   },
   apiIdentifier: {
     label: 'Invoke',

@@ -27,11 +27,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SettingsDrawer({
-  flow,
+  flowId,
   integrationId,
   resourceType,
   resourceId,
 }) {
+  const flow = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
+  ).merged;
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
