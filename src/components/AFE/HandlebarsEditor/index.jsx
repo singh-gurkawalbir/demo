@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -94,13 +94,7 @@ export default function HandlebarsEditor(props) {
     dispatch(actions.editor.evaluateRequest(editorId));
   };
 
-  const resultTitle = useMemo(
-    () =>
-      autoEvaluate
-        ? 'Evaluated handlebars template'
-        : 'Click preview to evaluate your handlebars template',
-    [autoEvaluate]
-  );
+  const resultTitle = autoEvaluate ? 'Evaluated handlebars template' : 'Click preview to evaluate your handlebars template';
 
   return (
     <Editor
