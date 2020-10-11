@@ -118,10 +118,14 @@ export function* requestSampleData({
   }
 
   if (refresh) {
-    const stagesToReset = getAllDependentSampleDataStages(stage, resourceType);
+    const stagesToRefresh = getAllDependentSampleDataStages(stage, resourceType);
 
-    // refresh prop resets the entire state from this resourceId in flow state to fetch again
-    yield put(actions.flowData.resetStages(flowId, resourceId, stagesToReset, 'refresh'));
+    // refresh prop updates dependent stages to refresh
+    // and resets sample data before this resourceId in flow state to fetch again from the root
+    // cases: NS/SF expects this refresh prop to fetch from NS/SF (refreshCache)
+    // Used currently for Mapping refresh ( stage - importMapping )
+    // TODO @Raghu: Figure out if this can be used else where to simplify the process
+    yield put(actions.flowData.resetStages(flowId, resourceId, stagesToRefresh, 'refresh'));
   }
 
   // Updates preProcessedData for the processors

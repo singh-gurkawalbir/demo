@@ -19,7 +19,7 @@ export default function (state = {}, action) {
     stage,
     stages,
     error,
-    status,
+    statusToUpdate,
   } = action;
 
   return produce(state, draft => {
@@ -202,7 +202,7 @@ export default function (state = {}, action) {
             reset(flow, pageGeneratorIndexToReset, true);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, true, status);
+            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, statusToUpdate, true);
             // then pass index+1 to reset everything
             reset(flow, pageGeneratorIndexToReset + 1, true);
           }
@@ -219,7 +219,7 @@ export default function (state = {}, action) {
             reset(flow, pageProcessorIndexToReset);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages, false, status);
+            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages, statusToUpdate);
             // then pass index+1 to reset everything for other resources
             reset(flow, pageProcessorIndexToReset + 1);
           }

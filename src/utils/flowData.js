@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /*
  * Utility functions related to sample data for flows
  */
@@ -166,11 +167,9 @@ export const reset = (flow, index, isPageGenerator) => {
     const pgIds = keys(flow.pageGeneratorsMap);
 
     pgIds.forEach(pgId => {
-      // eslint-disable-next-line no-param-reassign
       if (pgsToReset.includes(pgId)) flow.pageGeneratorsMap[pgId] = {};
     });
 
-    // eslint-disable-next-line no-param-reassign
     flow.pageProcessorsMap = {};
   } else {
     const ppsToReset = flow.pageProcessors
@@ -179,13 +178,12 @@ export const reset = (flow, index, isPageGenerator) => {
     const ppIds = keys(flow.pageProcessorsMap);
 
     ppIds.forEach(ppId => {
-      // eslint-disable-next-line no-param-reassign
       if (ppsToReset.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
     });
   }
 };
 
-export const resetStagesForFlowResource = (flow, index, stages = [], isPageGenerator, status) => {
+export const resetStagesForFlowResource = (flow, index, stages = [], statusToUpdate, isPageGenerator) => {
   const resource = isPageGenerator ? flow.pageGenerators[index] : flow.pageProcessors[index];
   const resourceId = resource._exportId || resource._importId;
   const resourceMap = isPageGenerator ? 'pageGeneratorsMap' : 'pageProcessorsMap';
@@ -194,11 +192,9 @@ export const resetStagesForFlowResource = (flow, index, stages = [], isPageGener
   if (resourceIds.includes(resourceId)) {
     stages.forEach(stage => {
       if (flow[resourceMap][resourceId][stage]) {
-        if (status) {
-          // eslint-disable-next-line no-param-reassign
-          flow[resourceMap][resourceId][stage].status = status;
+        if (statusToUpdate) {
+          flow[resourceMap][resourceId][stage].status = statusToUpdate;
         } else {
-          // eslint-disable-next-line no-param-reassign
           flow[resourceMap][resourceId][stage] = {};
         }
       }
@@ -321,7 +317,6 @@ export const generateDefaultExtractsObject = (resourceType, adaptorType) => {
   const defaultExtractsList = responseMappingUtil.getResponseMappingExtracts(resourceType, adaptorType);
 
   return defaultExtractsList.reduce((extractsObj, extractItem) => {
-    // eslint-disable-next-line no-param-reassign
     extractsObj[extractItem] = '';
 
     return extractsObj;
