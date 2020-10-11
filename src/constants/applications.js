@@ -117,6 +117,13 @@ const connectors = [
     group: 'db',
   },
   {
+    id: 'oracle',
+    name: 'Oracle DB (SQL)',
+    type: 'oracle',
+    keywords: 'database,rdbms,db',
+    group: 'db',
+  },
+  {
     id: 'postgresql',
     name: 'PostgreSQL',
     type: 'postgresql',
