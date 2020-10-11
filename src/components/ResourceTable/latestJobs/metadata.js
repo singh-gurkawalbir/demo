@@ -1,6 +1,6 @@
 import React from 'react';
-import JobStatus from '../../JobDashboard/JobStatus';
-import FlowStepName from './actions/FlowStepName';
+import FlowStepName from './cells/FlowStepName';
+import FlowStepStatus from './cells/FlowStepStatus';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
@@ -11,7 +11,7 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => <JobStatus job={r} />,
+      value: r => <FlowStepStatus job={r} />,
     },
     {
       heading: 'Success',

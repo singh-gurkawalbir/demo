@@ -3325,8 +3325,9 @@ selectors.flowDashboardJobs = createSelector(
     const dashboardSteps = [];
 
     latestFlowJobs?.data?.forEach(parentJob => {
-      // when the job is queued
-      if (parentJob.status === JOB_STATUS.QUEUED) {
+      // when the job is queued / when the parent job is in progress with no children created yet
+      if (parentJob.status === JOB_STATUS.QUEUED ||
+        (parentJob.status === JOB_STATUS.RUNNING && !parentJob?.children?.length)) {
         return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
       }
       if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
