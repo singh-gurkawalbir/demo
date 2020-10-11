@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { Fragment, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -12,32 +12,49 @@ import { selectors } from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const metadata = {
-  columns: [
-    {
-      heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && r.name}
-            <InfoIconButton info={r.description} size="xs" />
-          </>
-        );
+  columns: (empty, actionProps) => {
+    const { supportsMultiStore, storeId, storeLabel, stores } = actionProps;
+
+    let columns = [
+      {
+        heading: 'Name',
+        value: function NameWithInfoicon(r) {
+          return (
+            <>
+              {r && r.name}
+              <InfoIconButton info={r.description} size="xs" />
+            </>
+          );
+        },
       },
-    },
-    {
-      heading: 'Installed on',
-      value: r =>
-        r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
-    },
-    {
-      heading: 'Action',
-      value: function Installer(r) {
-        return <AddonInstallerButton resource={r} />;
+      {
+        heading: storeLabel,
+        value: function Store(r) {
+          return stores.find(s => s.value === r.storeId)?.label || r.storeId;
+        },
       },
-    },
-  ],
+      {
+        heading: 'Installed on',
+        value: r =>
+          r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+      },
+      {
+        heading: 'Action',
+        value: function Installer(r) {
+          return <AddonInstallerButton resource={r} />;
+        },
+      },
+    ];
+
+    if (!supportsMultiStore || storeId) {
+      columns = columns.filter(c => c.heading !== storeLabel);
+    }
+
+    return columns;
+  },
 };
 const useStyles = makeStyles(theme => ({
   header: {
@@ -82,17 +99,31 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '80%',
   },
 }));
+const emptyObject = {};
 
 export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const supportsMultiStore = !!storeId;
-  const version = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const {
+    supportsMultiStore,
+    version,
+    stores,
+    storeLabel,
+  } = useMemo(() => {
+    if (integration) {
+      return {
+        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+        version: integration.version,
+        stores: integration.stores,
+        storeLabel: integration.settings && integration.settings.storeLabel,
+      };
+    }
 
-    return integration && integration.version;
-  });
+    return emptyObject;
+  }, [integration]);
+
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
@@ -102,7 +133,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
   );
   const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
     if (supportsMultiStore) {
-      return model.storeId === storeId;
+      return storeId ? model.storeId === storeId : true;
     }
 
     return true;
@@ -229,7 +260,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOns} {...metadata} />
+            <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, storeId, storeLabel, stores }} />
           </>
         )}
       </div>

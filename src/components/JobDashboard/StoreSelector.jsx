@@ -1,8 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles, MenuItem } from '@material-ui/core';
 import { selectors } from '../../reducers';
 import CeligoSelect from '../CeligoSelect';
+import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(() => ({
   store: {
@@ -13,9 +13,8 @@ const useStyles = makeStyles(() => ({
 
 export default function StoreSelector({ integrationId, value = '', onChange }) {
   const classes = useStyles();
-  const integration = useSelector(state =>
-    selectors.integrationAppSettings(state, integrationId)
-  );
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+
   const { supportsMultiStore, storeLabel } = integration.settings || {};
 
   if (!supportsMultiStore) {

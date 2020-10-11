@@ -108,9 +108,11 @@ const useStyles = makeStyles(theme => ({
 export default function DateRangeSelector({
   value = {},
   onSave,
+  fromDate,
   customPresets = [],
   showTime = true,
   clearable = false,
+  clearValue,
 }) {
   const defaultValue = getSelectedRange({preset: 'last24hours'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
@@ -154,10 +156,10 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange({startDate: null, endDate: null, preset: null});
+    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
     onSave && onSave(selectedRange);
     setAnchorEl(null);
-  }, []);
+  }, [onSave, selectedRange, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
@@ -219,7 +221,7 @@ export default function DateRangeSelector({
                   direction="horizontal"
                   showTime={showTime}
                   maxDate={new Date()}
-                  minDate={addYears(new Date(), -1)}
+                  minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />

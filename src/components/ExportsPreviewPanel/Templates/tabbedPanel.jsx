@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import clsx from 'clsx';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
 import ClipBoardPanel from './clipBoardPanel';
-import { getBodyHeaderFieldsForPreviewData } from '../../../../../utils/exportPanel';
-import JsonContent from '../../../../JsonContent';
+import { getBodyHeaderFieldsForPreviewData } from '../../../utils/exportPanel';
+import JsonContent from '../../JsonContent';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -36,9 +36,9 @@ export default function TabbedPanel(props) {
   const classes = useStyles();
   const [tabValue, setTabValue] = useState('body');
 
-  function handleTabChange(event, newValue) {
+  const handleTabChange = useCallback((event, newValue) => {
     setTabValue(newValue);
-  }
+  }, []);
 
   const tabContent = useMemo(() => {
     const { body, headers, others } = getBodyHeaderFieldsForPreviewData(

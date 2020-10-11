@@ -9,6 +9,7 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
+import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
@@ -88,6 +89,11 @@ const rangeFilters = [
   {id: 'last30days', label: 'Last 30 Days'},
   {id: 'custom', label: 'Custom'},
 ];
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)),
+  endDate: endOfDay(new Date()),
+  preset: null,
+};
 
 export default function Filters({
   integrationId,
@@ -224,10 +230,12 @@ export default function Filters({
           ))}
         </CeligoSelect>
         <DateRangeSelector
-          value={dateRange || {startDate: null, endDate: null, preset: null}}
+          value={dateRange || defaultRange}
           clearable
           customPresets={rangeFilters}
+          clearValue={defaultRange}
           onSave={handleDateRangeChange}
+          fromDate={startOfDay(addDays(new Date(), -29))}
           showTime={false} />
         <div className={classes.hideLabel}>
           <FormControlLabel

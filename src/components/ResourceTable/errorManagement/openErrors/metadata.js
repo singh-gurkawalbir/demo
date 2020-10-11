@@ -22,7 +22,7 @@ export default {
     {
       heading: 'Message',
       width: '50%',
-      value: r => <OverflowWrapper message={r.message} />,
+      value: r => <OverflowWrapper message={r.message} containsHtml />,
     },
     {
       heading: 'Code',

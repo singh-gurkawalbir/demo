@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import RawHtml from '../../../RawHtml';
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -14,13 +15,13 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-export default function OverflowWrapper({ message }) {
+export default function OverflowWrapper({ message, containsHtml }) {
   const classes = useStyles();
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.message}>
-        {message}
+        {containsHtml ? <RawHtml html={message} /> : message}
       </div>
     </div>
   );

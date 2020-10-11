@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useRouteMatch, useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../reducers';
@@ -22,7 +22,6 @@ const useStyles = makeStyles(theme => ({
 export default function ApiTokenSection({ integrationId }) {
   const classes = useStyles();
   const location = useLocation();
-  const match = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
   const list = useSelector(state =>
@@ -34,7 +33,7 @@ export default function ApiTokenSection({ integrationId }) {
 
   return (
     <>
-      <ResourceDrawer match={match} />
+      <ResourceDrawer />
 
       <PanelHeader title="API tokens">
         <IconTextButton
