@@ -57,7 +57,7 @@ export default function MappingDrawerRoute(props) {
         height="tall"
         width={isMappingPreviewAvailable ? 'full' : 'default'}
         title="Edit mapping"
-        variant="temporary"
+        variant="persistent"
       >
         <Switch>
           <Route
