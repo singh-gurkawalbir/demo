@@ -98,8 +98,6 @@ function CeligoSelect({ className, children, ...props }) {
     PaperProps: {
       style: {
         maxHeight: 252,
-        minWidth: 250,
-        maxWidth: 840,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
