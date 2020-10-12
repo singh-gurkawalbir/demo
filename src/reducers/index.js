@@ -5351,6 +5351,15 @@ selectors.isIAType = (state, flowId) => {
   return isIAType;
 };
 
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
+};
+
 selectors.isFlowViewMode = (state, integrationId, flowId) => {
   const isIAType = selectors.isIAType(state, flowId);
 

@@ -49,11 +49,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
   });
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-
-    return !!(integration && integration._connectorId);
-  });
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const [flowCategory, setFlowCategory] = useState();
   const integrationSectionFlows = useSelectorMemo(selectors.makeIntegrationSectionFlows, integrationId, childId, flowCategory);
   const integrationAppFlowSections = useSelector(state => {
