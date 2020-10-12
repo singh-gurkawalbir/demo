@@ -458,7 +458,7 @@ function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <SpinnerWrapper>
-          <Spinner /> <span>Loading job errors...</span>
+          <Spinner /> <span>Loading job errors</span>
         </SpinnerWrapper>
       ) : (
         <>
@@ -469,8 +469,8 @@ function JobErrorTable({
               color="secondary"
               className={classes.btnErrorTable}
               onClick={handleRetryClick}
-              disabled={isJobInProgress || !hasRetriableErrors}>
-              {numSelectedRetriableErrors > 0
+              disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
+              { !job.flowDisabled && numSelectedRetriableErrors > 0
                 ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>

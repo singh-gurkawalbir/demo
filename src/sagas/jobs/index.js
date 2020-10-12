@@ -424,20 +424,38 @@ export function* retryFlowJob({ jobId }) {
   yield call(retrySelected, { jobs: jobsToRetry });
 }
 
-export function* retryAllCommit({ flowId, integrationId }) {
+export function* retryAllCommit({ flowId, storeId, integrationId }) {
+  let flowIds = [];
+
+  if (flowId) {
+    flowIds.push(flowId);
+  } else if (storeId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      integrationId,
+      storeId
+    );
+  }
+
   const requestOptions = getRequestOptions(
-    flowId
+    flowIds.length > 0
       ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
       : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
     {
-      resourceId: flowId || integrationId,
+      resourceId: flowIds.length > 0 ? flowIds : integrationId,
     }
   );
   const { path, opts } = requestOptions;
   let job;
 
   try {
-    job = yield call(apiCallWithRetry, { path, opts });
+    if (flowIds.length > 0) {
+      const response = yield call(apiCallWithRetry, { path, opts });
+
+      job = response.find(j => j.statusCode === 202).job;
+    } else {
+      job = yield call(apiCallWithRetry, { path, opts });
+    }
   } catch (error) {
     return true;
   }
@@ -446,7 +464,7 @@ export function* retryAllCommit({ flowId, integrationId }) {
   yield put(actions.job.requestInProgressJobStatus());
 }
 
-export function* retryAll({ flowId, integrationId }) {
+export function* retryAll({ flowId, storeId, integrationId }) {
   yield put(actions.job.retryAllPending());
 
   yield put(actions.job.retryAllInit());
@@ -464,7 +482,7 @@ export function* retryAll({ flowId, integrationId }) {
       actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(retryAllCommit, { flowId, integrationId });
+    yield call(retryAllCommit, { flowId, storeId, integrationId });
   }
 }
 

@@ -188,8 +188,8 @@ export default function getRequestOptions(
       };
     case actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT:
       return {
-        path: `/flows/${resourceId}/jobs/retry`,
-        opts: { method: 'PUT' },
+        path: '/flows/jobs/retry',
+        opts: { method: 'PUT', body: resourceId },
       };
     case actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT:
       return {

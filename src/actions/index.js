@@ -1592,8 +1592,8 @@ const job = {
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAll: ({ flowId, storeId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>

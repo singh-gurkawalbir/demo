@@ -105,7 +105,7 @@ export default function JobActionsMenu({
     }
 
     if (job.numError > 0) {
-      if (job.type === JOB_TYPES.FLOW || job.retriable) {
+      if (!job.flowDisabled && (job.type === JOB_TYPES.FLOW || job.retriable)) {
         menuOptions.push({
           label: isFlowJob ? 'Retry all' : 'Retry',
           action: 'retryJob',
