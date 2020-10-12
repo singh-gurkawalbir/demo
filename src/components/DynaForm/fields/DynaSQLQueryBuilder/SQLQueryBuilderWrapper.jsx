@@ -34,8 +34,11 @@ export default function SQLQueryBuilderWrapper(props) {
     : value,
   [querySetPos, value]);
 
-  const { merged: resourceData = {} } = useSelector(state => selectors.resourceData(state, 'imports', resourceId));
-  const { adaptorType} = resourceData;
+  const adaptorType = useSelector(state => {
+    const { merged: resourceData} = selectors.resourceData(state, 'imports', resourceId);
+
+    return resourceData?.adaptorType;
+  });
 
   const sampleRule = useSelector(state => selectors.sampleRuleForSQLQueryBuilder(
     state, {
