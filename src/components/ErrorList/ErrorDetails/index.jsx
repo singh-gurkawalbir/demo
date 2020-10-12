@@ -40,13 +40,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled }) => {
-  if (!retryId || recordMode === 'view' || isFlowDisabled) {
+const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled, isResolved }) => {
+  if (!retryId || recordMode === 'view' || isFlowDisabled || isResolved) {
     return (
       <ViewErrorDetails
         errorId={errorId}
         flowId={flowId}
         resourceId={resourceId}
+        isResolved={isResolved}
       />
     );
   }
