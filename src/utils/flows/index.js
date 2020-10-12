@@ -195,7 +195,6 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
@@ -203,7 +202,6 @@ export const isImportMappingAvailable = importResource => {
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
-
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
   if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
     return false;
