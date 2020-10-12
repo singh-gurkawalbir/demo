@@ -228,6 +228,9 @@ const flowMetrics = {
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId, resourceType) =>

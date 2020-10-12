@@ -31,7 +31,7 @@ import {
   getIAFlowSettings,
   getFlowDetails,
   getFlowResources,
-  getFlowReferencesForResource,
+  getFlowReferencesForResource, isFreeFlowResource, isIntegrationApp,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -1192,7 +1192,9 @@ selectors.integrationAppResourceList = (
 
   const flows = [];
   const flowIds = [];
+  const allFlowIds = [];
   const connections = [];
+  const flowConnections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
@@ -1200,6 +1202,17 @@ selectors.integrationAppResourceList = (
   (selectedStore.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = selectors.resource(state, 'flows', fid) || {};
+
+    flowConnections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
 
   flowIds.forEach(fid => {
     const flow = selectors.resource(state, 'flows', fid) || {};
@@ -1211,9 +1224,7 @@ selectors.integrationAppResourceList = (
   });
 
   return {
-    connections: integrationConnections.filter(c =>
-      connections.includes(c._id)
-    ),
+    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
     flows,
     exports,
     imports,
@@ -2495,6 +2506,7 @@ selectors.resourcePermissions = (
           },
           connections: {
             edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
           },
           edit: value.edit,
           delete: value.delete,
@@ -5302,3 +5314,82 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
     return storeErrorsMap;
   }, {});
 };
+
+selectors.mkChildIntegration = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => {
+      const id = selectors.getChildIntegrationId(state, integrationId);
+
+      return id && resourceSelector(state?.data?.resources, 'integrations', id);
+    },
+    childIntegration => childIntegration
+  );
+};
+
+// #region Flow builder selectors
+
+selectors.isFreeFlowResource = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const isFreeFlow = isFreeFlowResource(flow);
+
+  return isFreeFlow;
+};
+
+selectors.isIAType = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const isIAType = isIntegrationApp(flow);
+
+  return isIAType;
+};
+
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
+  const isIAType = selectors.isIAType(state, flowId);
+
+  const isMonitorLevelAccess =
+    selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+  return isMonitorLevelAccess || isIAType;
+};
+
+const selectorFlowDetails = selectors.mkFlowDetails();
+
+selectors.isDataLoaderFlow = (state, flowId) => {
+  const flowDetails = selectorFlowDetails(state, flowId);
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const { pageGenerators = [] } = flow;
+
+  return flowDetails.isSimpleImport ||
+  (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
+};
+
+selectors.shouldShowAddPageProcessor = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const { pageProcessors = [], pageGenerators = [] } = flow;
+  const isDataLoaderFlow = selectors.isDataLoaderFlow(state, flowId);
+
+  const showAddPageProcessor =
+    !isDataLoaderFlow ||
+    (pageProcessors.length === 0 &&
+      pageGenerators.length &&
+      pageGenerators[0]._exportId);
+
+  return showAddPageProcessor;
+};
+
+// #endregion Flow builder selectors

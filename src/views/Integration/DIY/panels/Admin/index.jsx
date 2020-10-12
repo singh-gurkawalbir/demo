@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Route,
   Switch,
@@ -118,18 +118,21 @@ export default function AdminPanel({ integrationId, childId }) {
     return emptyObj;
   }, shallowEqual);
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const sectionsToShow = getAdminLevelTabs({
-    integrationId,
-    children,
-    isIntegrationApp,
-    isParent,
-    supportsChild,
-    isMonitorLevelUser,
-  });
 
-  const availableSections = allSections.filter(
-    sec => sectionsToShow.includes(sec.id)
-  );
+  const availableSections = useMemo(() => {
+    const sectionsToShow = getAdminLevelTabs({
+      integrationId,
+      children,
+      isIntegrationApp,
+      isParent,
+      supportsChild,
+      isMonitorLevelUser,
+    });
+
+    return allSections.filter(
+      sec => sectionsToShow.includes(sec.id)
+    );
+  }, [children, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

@@ -22,6 +22,7 @@ import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
 
 const emptyArray = [];
+const emptyObj = {};
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -160,7 +161,6 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
-    options,
     filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
@@ -169,7 +169,10 @@ function DynaSelectResource(props) {
     resourceContext,
     skipPingConnection,
     integrationId,
+    _connectionId,
+    updateFilterandAppType,
   } = props;
+  const {options} = props;
   const classes = useStyles();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -182,6 +185,18 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', _connectionId) ||
+      emptyObj
+  );
+
+  if (updateFilterandAppType && connection?.assistant) {
+    // TODO: This code can be removed if all exports and imports are configured with assistant value.
+    options.filter.$and.push({assistant: connection.assistant});
+    options.appType = connection.assistant;
+  }
+
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -222,7 +237,7 @@ function DynaSelectResource(props) {
     }
 
     return filteredResources.map(conn => ({
-      label: conn.name || conn._id,
+      label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
   }, [filter, options, resources]);
@@ -235,7 +250,7 @@ function DynaSelectResource(props) {
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
-      assistant: merged.assistant,
+      assistant: merged?.assistant,
     }),
     [merged]
   );
