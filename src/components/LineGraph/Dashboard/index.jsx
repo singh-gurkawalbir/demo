@@ -70,11 +70,14 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   );
 
   const flowResources = useMemo(
-    () =>
-      resourceList.resources &&
+    () => {
+      const flows = resourceList.resources &&
       resourceList.resources.filter(flow =>
         (flow._integrationId === integrationId && !flow.disabled && (!isIntegrationApp || validFlows.includes(flow._id))))
-        .map(f => ({_id: f._id, name: f.name})),
+        .map(f => ({_id: f._id, name: f.name}));
+
+      return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+    },
     [resourceList.resources, integrationId, isIntegrationApp, validFlows]
   );
   const validResources = useMemo(() => {

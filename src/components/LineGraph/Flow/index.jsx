@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -118,6 +118,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
 
   const { startDate, endDate } = range;
+  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
 
   let dateTimeFormat;
   const userOwnPreferences = useSelector(
@@ -142,7 +143,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r);
+      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === 'resourceId' : d.resourceId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }

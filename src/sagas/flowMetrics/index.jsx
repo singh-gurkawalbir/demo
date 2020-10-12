@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 import * as d3 from 'd3';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -52,5 +52,5 @@ export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
 }
 
 export const flowMetricSagas = [
-  takeEvery(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
+  takeLatest(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
 ];
