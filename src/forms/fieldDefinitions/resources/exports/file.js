@@ -257,7 +257,7 @@ export default {
     ],
   },
   'file.xlsx.rowsPerRecord': {
-    type: 'checkbox',
+    type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
     visibleWhenAll: [
       {
@@ -269,6 +269,7 @@ export default {
         is: ['records'],
       },
     ],
+    fieldsToReset: [{ id: 'file.xlsx.keyColumns', value: [] }],
     defaultValue: r => !!(r && r.file && r.file.xlsx && r.file.xlsx.keyColumns),
   },
   'file.xlsx.keyColumns': {
