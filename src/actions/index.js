@@ -215,9 +215,10 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  request: (resourceId, resourceType, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceId,
+      resourceType,
       filters,
     }),
 

@@ -333,7 +333,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   useEffect(() => {
     if (sendQuery) {
-      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+      dispatch(actions.flowMetrics.request(integrationId, 'integrations', { range, selectedResources }));
       setSendQuery(false);
     }
   }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);

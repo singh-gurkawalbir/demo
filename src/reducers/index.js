@@ -1575,6 +1575,12 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
   }
 );
 
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
+);
+
 selectors.mkIntegrationAppFlowSections = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 

@@ -317,7 +317,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(flowId, { range }));
+      dispatch(actions.flowMetrics.request(flowId, 'flows', { range }));
     }
   }, [data, dispatch, flowId, range]);
 

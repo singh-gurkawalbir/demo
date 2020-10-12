@@ -29,14 +29,21 @@ function* requestMetric({query}) {
   }
 }
 
-export function* requestFlowMetrics({ flowId, filters }) {
+export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
   const userId = yield select(selectors.ownerUserId);
-  const query = getFlowMetricsQuery(flowId, userId, filters);
+  let flowIds = [];
+
+  if (resourceType === 'integrations') {
+    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    // eslint-disable-next-line no-param-reassign
+    filters.selectedResources = flowIds;
+  }
+  const query = getFlowMetricsQuery(resourceId, resourceType, userId, filters);
 
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(flowId, parseFlowMetricsJson(data)));
+    yield put(actions.flowMetrics.received(resourceId, parseFlowMetricsJson(data)));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
