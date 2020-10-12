@@ -2,9 +2,11 @@ import { useDispatch } from 'react-redux';
 import { useCallback, useEffect } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import CancelIcon from '../../../../icons/CancelIcon';
 
 export default {
   label: 'Cancel transfer',
+  icon: CancelIcon,
   component: function Cancel({ rowData: transfer }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();
