@@ -30,6 +30,7 @@ export default function CodePanel({
   errorLine,
   hasError,
   hasWarning,
+  onLoad,
 }) {
   const config = useMemo(() => ({
     ...defaults.global,
@@ -67,6 +68,7 @@ export default function CodePanel({
       errorLine={errorLine}
       hasError={hasError}
       hasWarning={hasWarning}
+      onLoad={onLoad}
     />
   );
 }
