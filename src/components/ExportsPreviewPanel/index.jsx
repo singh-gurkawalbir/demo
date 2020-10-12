@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     width: 654,
     float: 'left',
-    margin: [[24, 24, 0, 24]],
+    margin: [[24, 24, 0, 0]],
     [theme.breakpoints.up('xl')]: {
       width: `calc(100% - ${theme.spacing(3)}px)`,
     },
