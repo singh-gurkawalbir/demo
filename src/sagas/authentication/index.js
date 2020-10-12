@@ -297,9 +297,8 @@ export function* initializeApp() {
 
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
-      const p = yield select(selectors.userProfile);
 
-      if (getDomain() !== 'integrator.io' && !p?.disableTelemetry) {
+      if (getDomain() !== 'integrator.io') {
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
