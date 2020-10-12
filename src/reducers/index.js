@@ -74,8 +74,13 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getJobDuration } from './data/jobs/util';
 import getFilteredErrors from '../utils/errorManagement';
+import {
+  getFlowResourcesYetToBeCreated,
+  generateFlowSteps,
+  getRunConsoleJobSteps,
+  getParentJobSteps,
+} from '../utils/latestJobs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -3318,71 +3323,31 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+
 selectors.flowDashboardJobs = createSelector(
   (state, flowId) => selectors.latestFlowJobsList(state, flowId),
   state => fromData.resourceDetailsMap(state?.data),
-  (latestFlowJobs, resourceMap) => {
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
     const dashboardSteps = [];
 
     latestFlowJobs?.data?.forEach(parentJob => {
-      // when the job is queued / when the parent job is in progress with no children created yet
-      if (parentJob.status === JOB_STATUS.QUEUED ||
-        (parentJob.status === JOB_STATUS.RUNNING && !parentJob?.children?.length)) {
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
-        // In cases when job is cancelled while it is in queue, children are not yet created
-        // So show this job as the export step cancelled
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      const additionalProps = {
-        doneExporting: !!parentJob.doneExporting,
-        numPagesProcessed: 0,
-      };
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
 
-      if (!additionalProps.doneExporting) {
-        if (
-          [
-            JOB_STATUS.COMPLETED,
-            JOB_STATUS.CANCELED,
-            JOB_STATUS.FAILED,
-          ].includes(parentJob.status)
-        ) {
-          additionalProps.doneExporting = true;
-        }
-      }
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
       if (parentJob.children?.length) {
-        parentJob.children.forEach(cJob => {
-          const additionalChildProps = {
-            uiStatus: cJob.status,
-            duration: getJobDuration(cJob),
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          };
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-          // If parent job is cancelled, show child in progress jobs as cancelling
-          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
-            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
-          }
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generateFlowSteps(pendingChildren, resourceMap);
 
-          if (cJob.type === 'import') {
-            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
-              additionalChildProps.percentComplete = Math.floor(
-                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
-              );
-            } else {
-              additionalChildProps.percentComplete = 0;
-            }
-
-            additionalProps.numPagesProcessed += parseInt(
-              cJob.numPagesProcessed,
-              10
-            );
-          }
-
-          dashboardSteps.push({ ...cJob, ...additionalChildProps });
-        });
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }
     });
 
@@ -3390,8 +3355,7 @@ selectors.flowDashboardJobs = createSelector(
       status: latestFlowJobs?.status,
       data: dashboardSteps,
     };
-  }
-);
+  });
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
