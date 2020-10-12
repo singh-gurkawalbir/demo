@@ -26,7 +26,7 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
-import { getEmptyMessage } from '../../../../../utils/integrationApps';
+import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -256,8 +256,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-
-  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
+  const isParentView = isParentViewSelected(integration, storeId);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
