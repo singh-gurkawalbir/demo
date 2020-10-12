@@ -58,7 +58,7 @@ export function* getInProgressJobsStatus({ flowId }) {
 
 export function* pollForInProgressJobs({ flowId }) {
   while (true) {
-    yield delay(2 * 1000);
+    yield delay(5 * 1000);
 
     yield call(getInProgressJobsStatus, { flowId });
   }

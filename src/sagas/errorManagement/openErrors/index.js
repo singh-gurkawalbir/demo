@@ -87,7 +87,6 @@ function* pollForOpenErrors({ flowId }) {
   while (true) {
     yield call(requestFlowOpenErrors, { flowId });
     // Reduced delay from 5 sec to 2 sec to make it more responsive to user
-    // TODO @Raghu: Check if this impacts performance... this call happens when user is inside drawer
     yield delay(2 * 1000);
   }
 }
