@@ -15,20 +15,24 @@ const DynaEditorWithFlowSampleData = ({
   resourceId,
   resourceType,
   disableEditorV2,
+  enableEditorV2,
   rule,
   ...props
 }) => {
   const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
-  const isPageGenerator = useSelector(state => selectors.isPageGenerator(state, flowId, resourceId, resourceType));
-
   const isEditorV2Supported = useSelector(state => {
-    // no sample data for PGs except for dataURITemplate field
-    if (disableEditorV2 || (isPageGenerator && fieldId !== 'dataURITemplate')) {
+    // enableEditorV2 is to force fields to show editor when
+    // the whole adaptor is not yet supported
+    // TODO: we will not need all these conditions once all fields/adaptors support AFE2
+    if (enableEditorV2) {
+      return true;
+    }
+    if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
   });
   const {
     data: sampleData,
