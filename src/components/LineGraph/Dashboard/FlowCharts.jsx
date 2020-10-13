@@ -341,7 +341,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   useEffect(() => {
     if (sendQuery) {
-      dispatch(actions.flowMetrics.request(integrationId, 'integrations', { range, selectedResources }));
+      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
   }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);
