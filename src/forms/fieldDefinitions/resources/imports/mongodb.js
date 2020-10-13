@@ -72,8 +72,6 @@ export default {
     hideDefaultData: true,
     refreshOptionsOnChangesTo: ['mongodb.method'],
     label: 'Build MongoDB document',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -87,8 +85,6 @@ export default {
     hideDefaultData: true,
     refreshOptionsOnChangesTo: ['mongodb.method'],
     label: 'Build MongoDB document',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',
@@ -101,8 +97,6 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Build MongoDB filter',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhenAll: [
       {
         field: 'ignoreExisting',
@@ -119,8 +113,6 @@ export default {
     type: 'sqlquerybuilder',
     hideDefaultData: true,
     label: 'Build MongoDB filter',
-    ruleTitle:
-      'Template (use handlebars expressions to map fields from your export data)',
     visibleWhen: [
       {
         field: 'mongodb.method',

@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'move',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -40,6 +39,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   dragIcon: {
+    cursor: 'move',
     background: 'none',
   },
   mapField: {
@@ -130,17 +130,16 @@ export default function MappingRow({
       item.index = hoverIndex;
     },
   });
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     item: { type: 'MAPPING', index, key: mappingKey },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-
     canDrag: isDraggable,
   });
   const opacity = isDragging ? 0.2 : 1;
 
-  drag(drop(ref));
+  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
@@ -188,7 +187,7 @@ export default function MappingRow({
       style={{ opacity }}
       className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon}>
+        <div className={classes.dragIcon} ref={drag}>
           <GripperIcon />
         </div>
         <div

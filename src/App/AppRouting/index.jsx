@@ -13,6 +13,7 @@ import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
 import retry from '../../utils/retry';
 import UpgradeEM from '../../views/UpgradeErrorManagement';
+import ResourceListInfo from '../../views/ResourceList/infoText';
 
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
@@ -80,6 +81,14 @@ const SuiteScriptIntegrationAppInstallation = loadable(() =>
     /* webpackChunkName: 'SuiteScriptIntegrationAppInstallation' */ '../../views/SuiteScript/Integration/App/Install'
   ))
 );
+
+function ResourceListRouteCatcher(props) {
+  const {match} = props;
+
+  const isResource = !!ResourceListInfo[(match?.params?.resourceType || '')];
+
+  return <>{ isResource ? <ResourceList props={props} /> : <NotFound /> }</>;
+}
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
@@ -271,8 +280,9 @@ export default function AppRouting() {
         path={[...AMPERSAND_ROUTES]}
         component={AmpersandRoutesHandler}
       />
-      <Route path={getRoutePath('/:resourceType')} component={ResourceList} />
-      <Route component={NotFound} />
+      {/* we need this to differentiate between a valid resource path and a 404.
+          so resourceList and notfound are moved inside the catcher */}
+      <Route path={getRoutePath('/:resourceType')} component={ResourceListRouteCatcher} />
     </Switch>
   );
 }

@@ -38,13 +38,8 @@ export default {
   'rdbms.query': {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
+    querySetPos: 0,
     label: 'Build SQL query',
-    refreshOptionsOnChangesTo: [
-      'rdbms.lookups',
-      'rdbms.queryType',
-      'modelMetadata',
-    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',

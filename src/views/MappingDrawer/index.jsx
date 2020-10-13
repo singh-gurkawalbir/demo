@@ -6,12 +6,13 @@ import LoadResources from '../../components/LoadResources';
 import Mapping from '../../components/Mapping';
 import SelectImport from './SelectImport';
 import RightDrawer from '../../components/drawer/Right';
+import DatabaseMapping from './DatabaseMapping';
+import SelectQueryType from './DatabaseMapping/SelectQueryType';
 
 const MappingWrapper = ({integrationId}) => {
   const history = useHistory();
   const match = useRouteMatch();
   const { flowId, importId, subRecordMappingId } = match.params;
-
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const handleClose = useCallback(() => {
@@ -58,7 +59,6 @@ export default function MappingDrawerRoute(props) {
         title="Edit mapping"
         variant="persistent"
       >
-
         <Switch>
           <Route
             path={[
@@ -80,6 +80,22 @@ export default function MappingDrawerRoute(props) {
           </Route>
         </Switch>
       </RightDrawer>
+      <RightDrawer
+        height="tall"
+        width="default"
+        title="Select query type"
+        variant="temporary"
+        hideBackButton
+        path="dbMapping/:flowId/:importId">
+        <SelectQueryType />
+      </RightDrawer>
+      <Route
+        path={`${match.url}/queryBuilder/:flowId/:importId/:index/view`}>
+        <DatabaseMapping
+          integrationId={integrationId}
+          {...props}
+          />
+      </Route>
     </LoadResources>
   );
 }
