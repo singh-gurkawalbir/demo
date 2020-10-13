@@ -94,7 +94,7 @@ const getTimeMask = timeMask => {
 
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId} = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, skipTimezoneConversion} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -151,7 +151,7 @@ export default function DateTimePicker(props) {
     dataTimeValueFormatted.set('minute', moment(timeValue)?.get('minute') || 0);
     dataTimeValueFormatted.set('second', moment(timeValue)?.get('second') || 0);
     // suitescript connectors expect isostring format
-    if (isIAResource || isSuiteScriptConnector) {
+    if (isIAResource || isSuiteScriptConnector || skipTimezoneConversion) {
       formattedDate = dataTimeValueFormatted && moment(dataTimeValueFormatted).toISOString();
     } else {
       formattedDate = dataTimeValueFormatted && convertUtcToTimezone(
