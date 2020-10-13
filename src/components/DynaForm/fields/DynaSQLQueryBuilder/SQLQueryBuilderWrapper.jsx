@@ -1,14 +1,14 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { cloneDeep } from 'lodash';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { cloneDeep, isEqual } from 'lodash';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
 import { getDefaultData } from '../../../../utils/sampleData';
 import { getUnionObject } from '../../../../utils/jsonPaths';
 import DynaLookupEditor from '../DynaLookupEditor';
+import useFormContext from '../../../Form/FormContext';
 
-const ruleTitle = 'Template (use handlebars expressions to map fields from your export data)';
 export default function SQLQueryBuilderWrapper(props) {
   const {
     id,
@@ -22,12 +22,13 @@ export default function SQLQueryBuilderWrapper(props) {
     hideDefaultData,
     lookups,
     modelMetadata,
-    queryType,
     optionalSaveParams,
     patchOnSave,
-    method,
     label,
+    disableEditorV2,
+    enableEditorV2,
   } = props;
+  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
     ? value[querySetPos]
@@ -40,78 +41,71 @@ export default function SQLQueryBuilderWrapper(props) {
     return resourceData?.adaptorType;
   });
 
-  const sampleRule = useSelector(state => selectors.sampleRuleForSQLQueryBuilder(
-    state, {
-      importId: resourceId,
-      flowId,
-      method,
-      queryType,
+  const isEditorV2Supported = useSelector(state => {
+    if (enableEditorV2) {
+      return true;
     }
-  ));
+    if (disableEditorV2) {
+      return false;
+    }
 
-  const {data: sampleData, status: flowDataStatus} = useSelector(state =>
-    selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'flowInput',
-    }), shallowEqual);
-  const extractFields = useSelector(state =>
-    selectors.getSampleDataContext(state, {
-      flowId,
-      resourceId,
-      resourceType,
-      stage: 'importMappingExtract',
-    }).data,
-  shallowEqual);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+  });
+  const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType: id }), isEqual);
 
-  useEffect(() => {
-    if (flowId && !sampleData) {
+  const formattedSampleData = useSelector(state => selectors.sampleDataWrapper(state, {
+    sampleData,
+    flowId,
+    resourceId,
+    resourceType,
+    stage: 'flowInput',
+  })?.data, shallowEqual);
+
+  const loadEditorSampleData = useCallback(
+    (version, stage) => {
       dispatch(
-        actions.flowData.requestSampleData(
+        actions.editorSampleData.request({
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
-        )
+          stage: stage || 'flowInput',
+          formValues: formContext.value,
+          fieldType: id,
+          isEditorV2Supported,
+          requestedTemplateVersion: version,
+        })
       );
-    }
-  }, [dispatch, flowId, resourceId, resourceType, sampleData]);
+    },
+    [dispatch, flowId, resourceId, resourceType, formContext, id, isEditorV2Supported]
+  );
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      loadEditorSampleData(version);
+    },
+    [loadEditorSampleData]
+  );
 
   useEffect(() => {
-    if (flowId && !extractFields) {
-      dispatch(
-        actions.flowData.requestSampleData(
-          flowId,
-          resourceId,
-          'imports',
-          'importMappingExtract'
-        )
-      );
+    if (flowId) {
+      loadEditorSampleData();
     }
-  }, [dispatch, extractFields, flowId, resourceId]);
+  }, [flowId, loadEditorSampleData]);
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
-      return JSON.stringify({ data: modelMetadata }, null, 2);
+      return modelMetadata;
     }
     let defaultData = {};
+    const {data} = sampleData;
 
-    if (Array.isArray(sampleData) && sampleData.length && typeof sampleData[0] === 'object') {
-      defaultData = cloneDeep(getUnionObject(sampleData));
-    } else if (sampleData) {
-      defaultData = cloneDeep(sampleData);
+    if (Array.isArray(data) && data.length && typeof data[0] === 'object') {
+      defaultData = cloneDeep(getUnionObject(data));
+    } else if (data) {
+      defaultData = cloneDeep(data);
     }
 
-    return JSON.stringify(
-      { data: getDefaultData(defaultData) },
-      null,
-      2
-    );
+    return getDefaultData(defaultData);
   }, [modelMetadata, sampleData]);
-
-  // the behavior is different from ampersand where we were displaying sample data directly. It is to be wrapped as {data: sampleData}
-  const formattedSampleData = JSON.stringify({ data: sampleData }, null, 2);
 
   const handleSave = useCallback((shouldCommit, editorValues) => {
     if (shouldCommit) {
@@ -164,20 +158,21 @@ export default function SQLQueryBuilderWrapper(props) {
         title={label}
         id={`${resourceId}-${id}`}
         rule={parsedRule}
-        sampleRule={sampleRule}
         lookups={lookups}
-        sampleData={formattedSampleData}
-        defaultData={formattedDefaultData}
+        sampleData={JSON.stringify(formattedSampleData, null, 2)}
+        defaultData={JSON.stringify(formattedDefaultData, null, 2)}
         onFieldChange={onFieldChange}
         onSave={handleSave}
         action={lookupField}
         disabled={disabled}
         showDefaultData={!hideDefaultData}
-        ruleTitle={ruleTitle}
         path={id}
-        isSampleDataLoading={flowDataStatus === 'requested'}
+        isSampleDataLoading={sampleData.status === 'requested'}
         optionalSaveParams={optionalSaveParams}
         patchOnSave={patchOnSave}
+        showVersionToggle={isEditorV2Supported}
+        editorVersion={sampleData.templateVersion}
+        onVersionToggle={handleEditorVersionToggle}
         />
     </>
   );

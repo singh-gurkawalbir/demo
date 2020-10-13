@@ -78,8 +78,6 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getJSONPaths from '../utils/jsonPaths';
-import sqlUtil from '../utils/sql';
 import { getJobDuration } from './data/jobs/util';
 import getFilteredErrors from '../utils/errorManagement';
 
@@ -2989,7 +2987,14 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -3003,7 +3008,6 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     return !!restConnection.isHTTP;
   }
 
-  // TODO: consider snowflake which is not supported
   return [
     'HTTPImport',
     'HTTPExport',
@@ -5102,76 +5106,77 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
-selectors.sampleRuleForSQLQueryBuilder = createSelector([
-  (state, { importId}) => {
-    const {merged: importResource = {}} = selectors.resourceData(
-      'imports',
-      importId
-    );
+// DO NOT DELETE, might be needed later
+// selectors.sampleRuleForSQLQueryBuilder = createSelector([
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} = selectors.resourceData(
+//       'imports',
+//       importId
+//     );
 
-    return importResource.adaptorType;
-  },
-  (state, { importId}) => {
-    const {merged: importResource = {}} =
-      selectors.resourceData(
-        'imports',
-        importId
-      );
-    const {_connectionId} = importResource;
+//     return importResource.adaptorType;
+//   },
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} =
+//       selectors.resourceData(
+//         'imports',
+//         importId
+//       );
+//     const {_connectionId} = importResource;
 
-    return selectors.resource(state, 'connections', _connectionId);
-  },
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'flowInput',
-  }).data,
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'importMappingExtract',
-  }).data,
-  (state, {method}) => method,
-  (state, {queryType}) => queryType,
-], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
-  if (sampleData && extractFields) {
-    const extractPaths = getJSONPaths(extractFields, null, {
-      wrapSpecialChars: true,
-    });
+//     return selectors.resource(state, 'connections', _connectionId);
+//   },
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'flowInput',
+//   }).data,
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'importMappingExtract',
+//   }).data,
+//   (state, {method}) => method,
+//   (state, {queryType}) => queryType,
+// ], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+//   if (sampleData && extractFields) {
+//     const extractPaths = getJSONPaths(extractFields, null, {
+//       wrapSpecialChars: true,
+//     });
 
-    if (adaptorType === 'MongodbImport') {
-      return sqlUtil.getSampleMongoDbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'insertMany'
-      );
-    } if (
-      adaptorType === 'DynamodbImport'
-    ) {
-      return sqlUtil.getSampleDynamodbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'putItem'
-      );
-    } if (
-      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
-    ) {
-      return sqlUtil.getSampleSnowflakeTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    }
+//     if (adaptorType === 'MongodbImport') {
+//       return sqlUtil.getSampleMongoDbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'insertMany'
+//       );
+//     } if (
+//       adaptorType === 'DynamodbImport'
+//     ) {
+//       return sqlUtil.getSampleDynamodbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'putItem'
+//       );
+//     } if (
+//       adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+//     ) {
+//       return sqlUtil.getSampleSnowflakeTemplate(
+//         sampleData,
+//         extractPaths,
+//         queryType === 'INSERT'
+//       );
+//     }
 
-    return sqlUtil.getSampleSQLTemplate(
-      sampleData,
-      extractPaths,
-      queryType === 'INSERT'
-    );
-  }
-});
+//     return sqlUtil.getSampleSQLTemplate(
+//       sampleData,
+//       extractPaths,
+//       queryType === 'INSERT'
+//     );
+//   }
+// });
 
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
