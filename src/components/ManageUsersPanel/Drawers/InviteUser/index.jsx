@@ -2,7 +2,7 @@ import React from 'react';
 import RightDrawer from '../../../drawer/Right';
 import UserFormWrapper from '../../UserFormWrapper';
 
-export default function InviteUserDrawer({ integrationId }) {
+export default function InviteUserDrawer() {
   return (
     <RightDrawer
       path="invite"
@@ -10,7 +10,7 @@ export default function InviteUserDrawer({ integrationId }) {
       variant="temporary"
       width="medium"
       hideBackButton>
-      <UserFormWrapper integrationId={integrationId} />
+      <UserFormWrapper />
     </RightDrawer>
   );
 }

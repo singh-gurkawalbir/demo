@@ -71,7 +71,7 @@ export default function UsersList({ integrationId, storeId }) {
           actionProps={actionProps}
         />
       </LoadResources>
-      <InviteUserDrawer integrationId={integrationId} />
+      <InviteUserDrawer />
       <ManagePermissionsDrawer integrationId={integrationId} />
       { integrationId
         ? (
