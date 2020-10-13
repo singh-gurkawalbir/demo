@@ -62,7 +62,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
 
   const validFlows = useMemo(() => isIntegrationApp ? integrationSectionFlows : [], [integrationSectionFlows, isIntegrationApp]);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
-  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || []);
+  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || [integrationId]);
 
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,

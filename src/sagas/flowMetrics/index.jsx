@@ -4,10 +4,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
-import {
-  getFlowMetricsQuery,
-  parseFlowMetricsJson,
-} from '../../utils/flowMetrics';
+import { getFlowMetricsQuery } from '../../utils/flowMetrics';
 
 function* requestMetric({query}) {
   let csvResponse;
@@ -23,7 +20,7 @@ function* requestMetric({query}) {
       message: 'Loading',
     });
 
-    return d3.csvParse(csvResponse);
+    return d3.csvParse(csvResponse, d3.autoType);
   } catch (e) {
     return [];
   }
@@ -43,7 +40,7 @@ export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(resourceId, parseFlowMetricsJson(data)));
+    yield put(actions.flowMetrics.received(resourceId, data));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
