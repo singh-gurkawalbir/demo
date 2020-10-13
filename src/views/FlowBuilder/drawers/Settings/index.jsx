@@ -146,20 +146,9 @@ function Settings({
     [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification, hasFlowSettingsAccess]
   );
 
-  const getSettingsPath = useCallback(() => {
-    const settingsPath = `/flows/${flow._id}`;
-    const notificationsPath = '/notifications';
-
-    if (isUserInErrMgtTwoDotZero && !hasFlowSettingsAccess) {
-      return notificationsPath;
-    }
-
-    return settingsPath;
-  }, [flow._id, hasFlowSettingsAccess, isUserInErrMgtTwoDotZero]);
-
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
-      path: getSettingsPath(),
+      path: (isUserInErrMgtTwoDotZero && !hasFlowSettingsAccess) ? '/notifications' : `/flows/${flow._id}`,
       onSave: handleSubmit,
       onClose: handleClose,
     }
