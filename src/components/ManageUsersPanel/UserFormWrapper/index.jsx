@@ -55,6 +55,7 @@ export default function UserFormWrapper({ userId }) {
       } else {
         dispatch(actions.user.org.users.create(aShareData));
       }
+      setDisableSave(true);
     },
     [userId, dispatch]
   );
