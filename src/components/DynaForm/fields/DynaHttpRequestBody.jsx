@@ -144,11 +144,7 @@ const DynaHttpRequestBody = props => {
       <DynaEditorWithFlowSampleData
         formKey={formKey}
         contentType={contentType === 'json' ? 'json' : 'xml'}
-        title={`${
-          contentType === 'json'
-            ? 'Build JSON Document'
-            : 'Build XML Document'
-        }`}
+        title={label}
         fieldId={id}
         onFieldChange={onFieldChange}
         lookups={lookups}

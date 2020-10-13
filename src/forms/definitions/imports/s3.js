@@ -162,8 +162,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'XML document builder',
-      title: 'Build XML document',
+      label: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [

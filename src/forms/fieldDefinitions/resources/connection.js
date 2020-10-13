@@ -783,6 +783,7 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success media type',
+    helpKey: 'connection.http.successMediaType',
     options: [
       {
         items: [
@@ -796,6 +797,7 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error media type',
+    helpKey: 'connection.http.errorMediaType',
     options: [
       {
         items: [
@@ -1002,7 +1004,7 @@ export default {
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Access token body',
+    label: 'Build access token body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -1075,7 +1077,7 @@ export default {
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Revoke token body',
+    label: 'Build revoke token body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',

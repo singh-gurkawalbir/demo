@@ -52,7 +52,7 @@ export default function DashboardPanel({ integrationId, storeId }) {
       <LoadResources required resources="flows">
         <PanelHeader title="Dashboard" infoText={infoTextDashboard} />
         {isUserInErrMgtTwoDotZero
-          ? <ChartsDrawer integrationId={integrationId} />
+          ? <ChartsDrawer integrationId={integrationId} childId={storeId} />
           : <JobDashboard integrationId={integrationId} />}
       </LoadResources>
     </div>

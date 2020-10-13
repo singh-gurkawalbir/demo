@@ -1,4 +1,4 @@
-import { MenuItem, Select } from '@material-ui/core';
+import { MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -15,6 +15,7 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
+import CeligoSelect from '../../../../components/CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -117,12 +118,20 @@ export default function PageBar() {
     e => {
       const newStoreId = e.target.value;
 
-      // Redirect to current tab of new store
-      history.push(
-        getRoutePath(
-          `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
-        )
-      );
+      if (newStoreId) {
+        // Redirect to current tab of new store
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/child/${newStoreId}/${tab}`
+          )
+        );
+      } else {
+        history.push(
+          getRoutePath(
+            `integrationapps/${integrationAppName}/${integrationId}/${tab}`
+          )
+        );
+      }
     },
     [history, integrationAppName, integrationId, tab]
   );
@@ -170,19 +179,19 @@ export default function PageBar() {
           <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
-        <Select
+        <CeligoSelect
           displayEmpty
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
           onChange={handleStoreChange}
           renderValue={renderStoreLabel}
           IconComponent={ArrowDownIcon}
-          value={storeId}>
-          <MenuItem disabled value="">
-            Select {storeLabel}
+          value={storeId || ''}>
+          <MenuItem value="">
+            All {storeLabel}s
           </MenuItem>
           {storeItems}
-        </Select>
+        </CeligoSelect>
       </div>
       )}
     </CeligoPageBar>

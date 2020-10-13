@@ -31,7 +31,10 @@ import {
   getIAFlowSettings,
   getFlowDetails,
   getFlowResources,
+  isImportMappingAvailable,
   getFlowReferencesForResource,
+  isFreeFlowResource,
+  isIntegrationApp,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -58,6 +61,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   adaptorTypeMap,
+  isQueryBuilderSupported,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -74,6 +78,8 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
+import getJSONPaths from '../utils/jsonPaths';
+import sqlUtil from '../utils/sql';
 import { getJobDuration } from './data/jobs/util';
 import getFilteredErrors from '../utils/errorManagement';
 
@@ -1192,7 +1198,9 @@ selectors.integrationAppResourceList = (
 
   const flows = [];
   const flowIds = [];
+  const allFlowIds = [];
   const connections = [];
+  const flowConnections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
@@ -1200,6 +1208,17 @@ selectors.integrationAppResourceList = (
   (selectedStore.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = selectors.resource(state, 'flows', fid) || {};
+
+    flowConnections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
 
   flowIds.forEach(fid => {
     const flow = selectors.resource(state, 'flows', fid) || {};
@@ -1211,9 +1230,7 @@ selectors.integrationAppResourceList = (
   });
 
   return {
-    connections: integrationConnections.filter(c =>
-      connections.includes(c._id)
-    ),
+    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
     flows,
     exports,
     imports,
@@ -1520,6 +1537,60 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+selectors.makeIntegrationSectionFlows = () => createSelector(
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
+  (_1, _2, childId) => childId,
+  (_1, _2, _3, sectionId) => sectionId,
+  (integration, childId, sectionId) => {
+    let flows = [];
+    const { sections = [], supportsMultiStore } = integration.settings || {};
+
+    if (supportsMultiStore) {
+      if (Array.isArray(sections) && sections.length) {
+        if (childId) {
+          const child =
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
+
+          if (child) {
+            if (sectionId) {
+              const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+              if (selectedSection) {
+                flows = selectedSection.flows.map(f => f._id);
+              }
+            } else {
+              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+            }
+          }
+        } else {
+          sections.forEach(sec => {
+            if (sec.mode === 'settings') {
+              if (sectionId) {
+                const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
+
+                if (selectedSection) {
+                  flows.push(...selectedSection.flows.map(f => f._id));
+                }
+              } else {
+                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+              }
+            }
+          });
+        }
+      }
+    } else if (sectionId) {
+      const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+      if (selectedSection) {
+        flows = selectedSection.flows.map(f => f._id);
+      }
+    } else {
+      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+    }
+
+    return flows;
+  }
+);
 
 selectors.mkIntegrationAppFlowSections = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
@@ -1736,7 +1807,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
   const integration = selectors.integrationAppSettings(state, integrationId);
 
-  if (integration.stores && storeId) {
+  if (integration && integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
     const { flows } = selectors.integrationAppFlowSettings(
       state,
@@ -1905,8 +1976,8 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (integration?.settings?.supportsMultiStore) {
     const { stores } = selectors.integrationAppSettings(state, integrationId);
 
-    if (!flowId && stores?.length) {
-      return stores[0].value;
+    if (!flowId) {
+      return null;
     }
 
     return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
@@ -2435,6 +2506,7 @@ selectors.resourcePermissions = (
           },
           connections: {
             edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
           },
           edit: value.edit,
           delete: value.delete,
@@ -2673,8 +2745,7 @@ selectors.tiles = state => {
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
     } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
+      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
     } else if (t.numError && t.numError > 0) {
@@ -3409,7 +3480,7 @@ selectors.flowImports = (state, id) => {
   return getImportsFromFlow(flow, imports);
 };
 
-selectors.mkflowImportsList = () => createSelector(
+selectors.flowMappingsImportsList = () => createSelector(
   (state, flowId) => selectors.resource(state, 'flows', flowId),
   state => state?.data?.resources?.imports,
   (state, flowId, importId) => importId,
@@ -3420,7 +3491,9 @@ selectors.mkflowImportsList = () => createSelector(
       return [subRecordResource];
     }
 
-    return getImportsFromFlow(flow, imports);
+    const flowImports = getImportsFromFlow(flow, imports);
+
+    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
   }
 );
 
@@ -5197,6 +5270,77 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
+selectors.sampleRuleForSQLQueryBuilder = createSelector([
+  (state, { importId}) => {
+    const {merged: importResource = {}} = selectors.resourceData(
+      'imports',
+      importId
+    );
+
+    return importResource.adaptorType;
+  },
+  (state, { importId}) => {
+    const {merged: importResource = {}} =
+      selectors.resourceData(
+        'imports',
+        importId
+      );
+    const {_connectionId} = importResource;
+
+    return selectors.resource(state, 'connections', _connectionId);
+  },
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'flowInput',
+  }).data,
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'importMappingExtract',
+  }).data,
+  (state, {method}) => method,
+  (state, {queryType}) => queryType,
+], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+  if (sampleData && extractFields) {
+    const extractPaths = getJSONPaths(extractFields, null, {
+      wrapSpecialChars: true,
+    });
+
+    if (adaptorType === 'MongodbImport') {
+      return sqlUtil.getSampleMongoDbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'insertMany'
+      );
+    } if (
+      adaptorType === 'DynamodbImport'
+    ) {
+      return sqlUtil.getSampleDynamodbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'putItem'
+      );
+    } if (
+      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+    ) {
+      return sqlUtil.getSampleSnowflakeTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
+    }
+
+    return sqlUtil.getSampleSQLTemplate(
+      sampleData,
+      extractPaths,
+      queryType === 'INSERT'
+    );
+  }
+});
+
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
 
@@ -5297,3 +5441,82 @@ selectors.integrationErrorsPerStore = (state, integrationId) => {
     return storeErrorsMap;
   }, {});
 };
+
+selectors.mkChildIntegration = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => {
+      const id = selectors.getChildIntegrationId(state, integrationId);
+
+      return id && resourceSelector(state?.data?.resources, 'integrations', id);
+    },
+    childIntegration => childIntegration
+  );
+};
+
+// #region Flow builder selectors
+
+selectors.isFreeFlowResource = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const isFreeFlow = isFreeFlowResource(flow);
+
+  return isFreeFlow;
+};
+
+selectors.isIAType = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const isIAType = isIntegrationApp(flow);
+
+  return isIAType;
+};
+
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
+  const isIAType = selectors.isIAType(state, flowId);
+
+  const isMonitorLevelAccess =
+    selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+  return isMonitorLevelAccess || isIAType;
+};
+
+const selectorFlowDetails = selectors.mkFlowDetails();
+
+selectors.isDataLoaderFlow = (state, flowId) => {
+  const flowDetails = selectorFlowDetails(state, flowId);
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const { pageGenerators = [] } = flow;
+
+  return flowDetails.isSimpleImport ||
+  (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
+};
+
+selectors.shouldShowAddPageProcessor = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const { pageProcessors = [], pageGenerators = [] } = flow;
+  const isDataLoaderFlow = selectors.isDataLoaderFlow(state, flowId);
+
+  const showAddPageProcessor =
+    !isDataLoaderFlow ||
+    (pageProcessors.length === 0 &&
+      pageGenerators.length &&
+      pageGenerators[0]._exportId);
+
+  return showAddPageProcessor;
+};
+
+// #endregion Flow builder selectors

@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
-import templateUtil from '../../../../utils/template';
 import PreviewTable from '../common/PreviewTable';
+import getRoutePath from '../../../../utils/routePaths';
+
+const emptyObject = {};
 
 const useStyles = makeStyles(theme => ({
   installButton: {
@@ -23,30 +25,37 @@ const useStyles = makeStyles(theme => ({
 export default function IntegrationPreview() {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
   const match = useRouteMatch();
   const { templateId } = match.params;
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const {components} = useSelector(state =>
-    selectors.previewTemplate(state, templateId)
-  );
-  const installTemplate = () => {
-    const { installSteps, connectionMap } =
-      templateUtil.getInstallSteps(components) || {};
 
-    if (installSteps && installSteps.length) {
-      dispatch(
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          templateId
+  const { runKey } = useSelector(
+    state => selectors.templateSetup(state, templateId) || emptyObject
+  );
+  const { isCloned, integrationId} = useSelector(
+    state => selectors.integrationClonedDetails(state, templateId),
+    (left, right) =>
+      left &&
+      right &&
+      left.isCloned === right.isCloned &&
+      left.integrationId === right.integrationId
+  );
+
+  useEffect(() => {
+    if (isCloned) {
+      history.push(
+        getRoutePath(
+          `/integrations/${integrationId}/setup`
         )
       );
-      history.push(location.pathname.replace('/preview/', '/setup/'));
-    } else {
-      dispatch(actions.template.createComponents(templateId));
     }
+    dispatch(
+      actions.integrationApp.clone.clearIntegrationClonedStatus(templateId)
+    );
+  }, [dispatch, integrationId, templateId, isCloned, history]);
+  const installTemplate = () => {
+    dispatch(actions.template.createComponents(templateId, runKey));
   };
 
   const handleInstallIntegration = () => {
