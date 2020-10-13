@@ -541,8 +541,9 @@ export const wrapSampleDataWithContext = ({
     return { status };
   }
 
-  // there is no 'data' variable for these 2 fields for AFE1, return sample data as such
-  if ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate') && templateVersion === 1) {
+  // standalone resource should not wrap the data
+  // also there is no 'data' variable for these 2 fields for AFE1, return sample data as such
+  if (!flow._id || ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate') && templateVersion === 1)) {
     return { status, data, templateVersion };
   }
 
