@@ -4,7 +4,6 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
 import RightDrawer from '../../../drawer/Right';
 import { selectors } from '../../../../reducers';
-import { useGetFlowOps } from '../../../../views/Integration/DIY/panels/Notifications';
 import notificationsMetadata from './metadata';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../../DynaForm';
@@ -13,6 +12,7 @@ import LoadResources from '../../../LoadResources';
 import actions from '../../../../actions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -57,8 +57,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
 
   const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
 
-  const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = useGetFlowOps({integrationId, flows});
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = notificationsMetadata({
     connectionValues,

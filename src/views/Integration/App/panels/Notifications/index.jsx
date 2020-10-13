@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -8,7 +8,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import { useGetFlowOps } from '../../../DIY/panels/Notifications';
+import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -48,8 +48,8 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
-  const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = useGetFlowOps({integrationId, flows});
+
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = {
     fieldMap: {
@@ -84,12 +84,12 @@ export default function NotificationsSection({ integrationId, storeId }) {
     setCount(count => count + 1);
   }, [flowHash, connHash]);
 
-  const handleSubmit = formVal => {
+  const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
 
     dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId }));
     setCount(count => count + 1);
-  };
+  }, [integrationId, dispatch, storeId]);
 
   const infoTextNotifications =
 'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';

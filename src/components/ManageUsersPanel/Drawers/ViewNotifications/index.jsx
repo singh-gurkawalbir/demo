@@ -5,7 +5,7 @@ import RightDrawer from '../../../drawer/Right';
 import { selectors } from '../../../../reducers';
 import viewNotificationsMetadata from './metadata';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import { useGetFlowOps } from '../../../../views/Integration/DIY/panels/Notifications';
+import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
 
@@ -34,8 +34,8 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
   if (!isValidUserEmail) {
     onClose();
   }
-  const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = useGetFlowOps({integrationId, flows});
+
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = viewNotificationsMetadata({
     connectionValues,
