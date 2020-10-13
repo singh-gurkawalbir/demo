@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,10 +11,11 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
-import { STANDALONE_INTEGRATION } from '../../../../utils/constants';
+import { STANDALONE_INTEGRATION, USER_ACCESS_LEVELS } from '../../../../utils/constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
+import getSettingsMetadata from './metadata';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SettingsDrawer({
+function Settings({
   flowId,
   integrationId,
   resourceType,
@@ -45,91 +46,38 @@ export default function SettingsDrawer({
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+
+  // Note: This selector is used to determine when can user save settings fields
+  // As incase of EM2.0 we have a notification toggle to be shown, in which case we restrict calling settings api when not allowed
+  const hasFlowSettingsAccess = useSelector(state => {
+    const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+    if (isMonitorLevelAccess) return false;
+    const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
+      state,
+      'integrations',
+      integrationId
+    );
+    const isIntegrationApp = selectors.isIAType(state, flowId);
+
+    if (!isIntegrationApp) {
+      return true;
+    }
+    // Incase of Integration app, only owner & manage users have cLocked fields to edit
+    if ([USER_ACCESS_LEVELS.ACCOUNT_OWNER, USER_ACCESS_LEVELS.ACCOUNT_MANAGE].includes(accessLevelIntegration)) {
+      return true;
+    }
+
+    // IAs not accessible to other users
+    return false;
+  });
   const isFlowSubscribed = useSelector(state =>
     selectors.isFlowSubscribedForNotification(state, flow._id)
   );
 
   const nextDataFlows = useSelectorMemo(selectors.mkNextDataFlowsForFlow, flow);
   const handleClose = useCallback(() => history.goBack(), [history]);
-  const fieldMeta = useMemo(
-    () => ({
-      fieldMap: {
-        name: {
-          id: 'name',
-          name: 'name',
-          type: 'text',
-          helpKey: 'flow.name',
-          label: 'Name',
-          defaultValue: flow && flow.name,
-          required: true,
-        },
-        description: {
-          id: 'description',
-          name: 'description',
-          type: 'text',
-          helpKey: 'flow.description',
-          label: 'Description',
-          multiline: true,
-          defaultValue: flow && flow.description,
-        },
-        _runNextFlowIds: {
-          id: '_runNextFlowIds',
-          name: '_runNextFlowIds',
-          type: 'multiselect',
-          placeholder: 'Please select flow',
-          helpKey: 'flow._runNextFlowIds',
-          label: 'Next integration flow:',
-          displayEmpty: true,
-          defaultValue: (flow && flow._runNextFlowIds) || [],
-          options: [
-            {
-              items: nextDataFlows.length
-                ? nextDataFlows.map(i => ({ label: i.name, value: i._id }))
-                : [
-                  {
-                    label: "You don't have any other active flows",
-                    disabled: true,
-                    value: '',
-                  },
-                ],
-            },
-          ],
-        },
-        notifyOnFlowError: {
-          id: 'notifyOnFlowError',
-          name: 'notifyOnFlowError',
-          type: 'celigoswitch',
-          defaultValue: isFlowSubscribed,
-          label: 'Notify me on flow errors',
-        },
-        settings: {
-          id: 'settings',
-          name: 'settings',
-          type: 'settings',
-          label: 'Custom',
-          defaultValue: flow && flow.settings,
-        },
-      },
-      layout: {
-        containers: [
-          {
-            type: 'collapse',
-            containers: [
-              {
-                collapsed: true,
-                label: 'General',
-                fields: ['name', 'description', ...(isUserInErrMgtTwoDotZero ? ['notifyOnFlowError'] : []), '_runNextFlowIds'],
-              },
-            ],
-          },
-          {
-            fields: ['settings'],
-          },
-        ],
-      },
-    }),
-    [flow, nextDataFlows, isUserInErrMgtTwoDotZero, isFlowSubscribed]
-  );
+  const fieldMeta = getSettingsMetadata({ flow, nextDataFlows, isFlowSubscribed, isUserInErrMgtTwoDotZero});
   const validationHandler = field => {
     // Incase of invalid json throws error to be shown on the field
 
@@ -152,6 +100,12 @@ export default function SettingsDrawer({
 
   const handleSubmit = useCallback(
     formVal => {
+      if (isUserInErrMgtTwoDotZero) {
+        updateFlowNotification(formVal);
+      }
+      if (!hasFlowSettingsAccess) {
+        return;
+      }
       const patchSet = [
         {
           op: 'replace',
@@ -188,16 +142,24 @@ export default function SettingsDrawer({
 
       dispatch(actions.resource.patchStaged(flow._id, patchSet, 'value'));
       dispatch(actions.resource.commitStaged('flows', flow._id, 'value'));
-      if (isUserInErrMgtTwoDotZero) {
-        updateFlowNotification(formVal);
-      }
     },
-    [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification]
+    [dispatch, integrationId, flow._id, isUserInErrMgtTwoDotZero, updateFlowNotification, hasFlowSettingsAccess]
   );
+
+  const getSettingsPath = useCallback(() => {
+    const settingsPath = `/flows/${flow._id}`;
+    const notificationsPath = '/notifications';
+
+    if (isUserInErrMgtTwoDotZero && !hasFlowSettingsAccess) {
+      return notificationsPath;
+    }
+
+    return settingsPath;
+  }, [flow._id, hasFlowSettingsAccess, isUserInErrMgtTwoDotZero]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
-      path: `/flows/${flow._id}`,
+      path: getSettingsPath(),
       onSave: handleSubmit,
       onClose: handleClose,
     }
@@ -227,42 +189,56 @@ export default function SettingsDrawer({
     remount: remountKey,
   });
 
+  useEffect(() => {
+    if (formKey && isUserInErrMgtTwoDotZero) {
+      dispatch(
+        actions.form.forceFieldState(formKey)('notifyOnFlowError', { disabled: false })
+      );
+    }
+  }, [formKey, dispatch, isUserInErrMgtTwoDotZero]);
+
+  return (
+    <div className={classes.scheduleContainer}>
+      <LoadResources required resources="notifications">
+        <DynaForm
+          formKey={formKey}
+          fieldMeta={fieldMeta} />
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            data-test="saveFlowSettings"
+            onClick={validateAndSubmit()}
+            disabled={disableSave}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            formKey={formKey}
+            resourceType={resourceType}
+            resourceId={resourceId}
+            data-test="saveAndCloseFlowSettings"
+            onClick={validateAndSubmit(true)}
+            disabled={disableSave}
+            color="secondary">
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button onClick={handleClose} variant="text" color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </LoadResources>
+    </div>
+  );
+}
+
+export default function SettingsDrawer(props) {
   return (
     <RightDrawer
       path="settings"
       title="Settings"
       width="medium">
-      <div className={classes.scheduleContainer}>
-        <LoadResources required resources="notifications">
-          <DynaForm
-            formKey={formKey}
-            fieldMeta={fieldMeta} />
-          <ButtonGroup>
-            <DynaSubmit
-              formKey={formKey}
-              resourceType={resourceType}
-              resourceId={resourceId}
-              data-test="saveFlowSettings"
-              onClick={validateAndSubmit()}
-              disabled={disableSave}>
-              {defaultLabels.saveLabel}
-            </DynaSubmit>
-            <DynaSubmit
-              formKey={formKey}
-              resourceType={resourceType}
-              resourceId={resourceId}
-              data-test="saveAndCloseFlowSettings"
-              onClick={validateAndSubmit(true)}
-              disabled={disableSave}
-              color="secondary">
-              {defaultLabels.saveAndCloseLabel}
-            </DynaSubmit>
-            <Button onClick={handleClose} variant="text" color="primary">
-              Cancel
-            </Button>
-          </ButtonGroup>
-        </LoadResources>
-      </div>
+      <Settings {...props} />
     </RightDrawer>
   );
 }

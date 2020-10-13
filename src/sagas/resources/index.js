@@ -718,7 +718,7 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, sto
       path,
       opts: {
         body: notifications,
-        method: 'PUT',
+        method: 'put',
       },
       message: 'Updating notifications',
     });
@@ -771,7 +771,7 @@ export function* updateFlowNotification({ flowId, isSubscribed }) {
       path: '/notifications',
       opts: {
         body: notifications,
-        method: 'PUT',
+        method: 'put',
       },
       message: 'Updating notifications',
     });
