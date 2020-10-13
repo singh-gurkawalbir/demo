@@ -40,7 +40,7 @@ export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(resourceId, data));
+    yield put(actions.flowMetrics.received(resourceType, resourceId, data));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
