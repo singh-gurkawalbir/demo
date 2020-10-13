@@ -65,49 +65,6 @@ export default {
       ...retValues,
     };
   },
-  optionsHandler: (fieldId, fields) => {
-    if (
-      fieldId === 'rdbms.query' ||
-      fieldId === 'rdbms.queryUpdate' ||
-      fieldId === 'rdbms.queryInsert'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rdbms.lookups'
-      );
-      const queryTypeField = fields.find(
-        field => field.fieldId === 'rdbms.queryType'
-      );
-      const modelMetadataField = fields.find(
-        field => field.fieldId === 'modelMetadata'
-      );
-      let queryTypeVal;
-
-      if (queryTypeField) {
-        if (fieldId === 'rdbms.query') {
-          queryTypeVal = queryTypeField && queryTypeField.value;
-        } else if (fieldId === 'rdbms.queryUpdate') {
-          queryTypeVal = 'UPDATE';
-        } else if (fieldId === 'rdbms.queryInsert') {
-          queryTypeVal = 'INSERT';
-        }
-      }
-
-      return {
-        queryType: queryTypeVal,
-        modelMetadataFieldId: modelMetadataField.fieldId,
-        modelMetadata: modelMetadataField && modelMetadataField.value,
-        lookups: {
-          // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'SQL Query Builder'
-          fieldId: lookupField.fieldId,
-          data: lookupField && lookupField.value,
-        },
-      };
-    }
-
-    return null;
-  },
-
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },

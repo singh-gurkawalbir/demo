@@ -122,6 +122,14 @@ const SelectStyle = theme => ({
   }),
   input: () => ({
     color: theme.palette.secondary.light,
+    width: '100%',
+    '& > div': {
+      width: '100%',
+    },
+    '& * > input': {
+      width: '100% !important',
+      display: 'block !important',
+    },
   }),
   placeholder: () => ({
     color: theme.palette.secondary.light,
@@ -184,6 +192,7 @@ export default function DynaTypeableSelect(props) {
   } = props;
   const classes = useStyles();
   const ref = useRef(null);
+  const temp = true;
   const suggestions = useMemo(() => options.map(option => ({
     label: option[labelName],
     value: option[valueName]?.toString(), // convert values to String
@@ -291,7 +300,7 @@ export default function DynaTypeableSelect(props) {
       error={!isValid}
       disabled={disabled}
       className={classes.root}>
-      {isFocused && (
+      {temp && (
         <Select
           id={id}
           data-test={id}
@@ -315,7 +324,7 @@ export default function DynaTypeableSelect(props) {
           menuIsOpen
         />
       )}
-      {!isFocused &&
+      {!temp &&
         (TextComponent ? (
           <TextComponent
             {...props}

@@ -251,7 +251,7 @@ const routes = [
   { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
   {
     path: getRoutePath('/:resourceType'),
-    breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
+    breadcrumb: ({ resourceType }) => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '',
   },
 ];
 const commonChildRoutes = [
