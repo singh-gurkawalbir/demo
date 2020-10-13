@@ -26,7 +26,7 @@ function* requestMetric({query}) {
   }
 }
 
-export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
+export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   const userId = yield select(selectors.ownerUserId);
   let flowIds = [];
 
@@ -35,7 +35,7 @@ export function* requestFlowMetrics({ resourceId, resourceType, filters }) {
     // eslint-disable-next-line no-param-reassign
     filters.selectedResources = flowIds;
   }
-  const query = getFlowMetricsQuery(resourceId, resourceType, userId, filters);
+  const query = getFlowMetricsQuery(resourceType, resourceId, userId, filters);
 
   try {
     const data = yield call(requestMetric, { query });

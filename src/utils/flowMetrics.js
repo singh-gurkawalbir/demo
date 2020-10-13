@@ -153,7 +153,7 @@ export const getXAxisFormat = range => {
   return xAxisFormat;
 };
 
-const getFlowFilterExpression = (resourceId, resourceType, filters) => {
+const getFlowFilterExpression = (resourceType, resourceId, filters) => {
   const { selectedResources } = filters;
 
   if (resourceType === 'integrations') {
@@ -165,9 +165,9 @@ const getFlowFilterExpression = (resourceId, resourceType, filters) => {
 
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
-const getFlowMetricsQueryParams = (resourceId, resourceType, filters) => {
+const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
   const { range = {} } = filters;
-  const flowFilterExpression = getFlowFilterExpression(resourceId, resourceType, filters);
+  const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
   let end = '-1s';
 
@@ -213,14 +213,14 @@ const getFlowMetricsQueryParams = (resourceId, resourceType, filters) => {
   return { bucket, start, end, flowFilterExpression, duration };
 };
 
-export const getFlowMetricsQuery = (resourceId, resourceType, userId, filters) => {
+export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
   const {
     bucket,
     start,
     end,
     flowFilterExpression,
     duration,
-  } = getFlowMetricsQueryParams(resourceId, resourceType, filters);
+  } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
 
   if (resourceType === 'integrations') {
     return `import "math"
