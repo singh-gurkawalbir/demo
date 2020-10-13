@@ -12,6 +12,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import LoadResources from '../../../LoadResources';
 import actions from '../../../../actions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
+import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -34,6 +35,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
   const notifications = useSelector(state =>
@@ -48,6 +50,8 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   if (!isValidUserEmail) {
     onClose();
   }
+
+  const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
 
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
   const flowOps = useGetFlowOps({integrationId, flows});
@@ -74,12 +78,20 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
     dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, integrationId, { storeId, userEmail }));
   }, [dispatch, integrationId, storeId, userEmail]);
 
+  const handleNotificationUpdate = useCallback(() => {
+    enquesnackbar({
+      message: `Notifications for ${userName || userEmail} were successfully updated`,
+      variant: 'success',
+    });
+  }, [enquesnackbar, userEmail, userName]);
+
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
       path: '/notifications',
       method: 'PUT',
       onSave: handleSubmit,
       onClose,
+      onSuccess: handleNotificationUpdate,
     }
   );
 

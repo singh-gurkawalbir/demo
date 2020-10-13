@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -38,8 +38,14 @@ export default function NotificationsSection({ integrationId, storeId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationNotificationResources(state, integrationId, { storeId })
-    ) || {};
+      selectors.integrationNotificationResources(state, integrationId, { storeId }),
+    shallowEqual
+    );
+
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
@@ -63,7 +69,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: 'Notify me on job error',
+        label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
         selectAllIdentifier: integrationId,
