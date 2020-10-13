@@ -12,6 +12,7 @@ import {
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
 import { COMM_STATES } from './comms/networkComms';
+import { genSelectors } from './util';
 
 describe('global selectors', () => {
   describe('isProfileDataReady', () => {
@@ -4848,6 +4849,72 @@ describe('integrationApp Settings reducers', () => {
         showFlowSettings: false,
         showMatchRuleEngine: true,
       });
+    });
+  });
+});
+
+describe('utils', () => {
+  describe('sub selector generator', () => {
+    test('should work', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          method1: s => s.m1,
+        },
+        sub2: {
+          method2: s => s.m1,
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.method1(state)).toEqual(42);
+      expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should ignore default', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          default: s => s.m1,
+        },
+        sub2: {
+          method2: s => s.m1,
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.method1).toBeUndefined();
+      expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should throw error on duplication', () => {
+      const to = {};
+      const fr = {
+        sub1: {
+          method1: s => s.m1,
+        },
+        sub2: {
+          method1: s => s.m1,
+        },
+      };
+
+      expect(() => genSelectors(to, fr)).toThrow(new Error('duplicate selector name method1 from sub2!'));
     });
   });
 });
