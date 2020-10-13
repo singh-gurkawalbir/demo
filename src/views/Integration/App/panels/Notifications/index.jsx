@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
@@ -9,6 +9,7 @@ import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -31,16 +32,14 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const classes = useStyles();
-  const {
-    connections = [],
-    flows = [],
-    connectionValues = [],
-    flowValues = [],
-  } =
-    useSelector(state =>
-      selectors.integrationNotificationResources(state, integrationId, { storeId }),
-    shallowEqual
-    );
+
+  const notificationsConfig = useMemo(() => ({ storeId }), [storeId]);
+  const notifications = useSelectorMemo(
+    selectors.mkIntegrationNotificationResources,
+    integrationId,
+    notificationsConfig);
+
+  const { flowValues = [], connectionValues = [], flows, connections } = notifications;
 
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)

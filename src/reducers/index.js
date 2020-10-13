@@ -3045,60 +3045,73 @@ selectors.subscribedNotifications = (state, userEmail) => {
   return notifications;
 };
 
-selectors.integrationNotificationResources = (state, _integrationId, options = {}) => {
-  const { storeId, userEmail } = options;
-  const diyFlows = selectors.resourceList(state, {
-    type: 'flows',
-    filter: {
-      $where() {
-        if (!_integrationId || _integrationId === 'none') {
-          return !this._integrationId;
-        }
+selectors.diyFlows = (state, _integrationId) => selectors.resourceList(state, {
+  type: 'flows',
+  filter: {
+    $where() {
+      if (!_integrationId || _integrationId === 'none') {
+        return !this._integrationId;
+      }
 
-        return this._integrationId === _integrationId;
-      },
+      return this._integrationId === _integrationId;
     },
-  }).resources;
-  const { _registeredConnectionIds = [], _connectorId } =
+  },
+}).resources;
+
+selectors.diyConnections = (state, _integrationId) => {
+  const { _registeredConnectionIds = [] } =
     selectors.resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = selectors.resourceList(state, {
+
+  return selectors.resourceList(state, {
     type: 'connections',
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        _integrationId === 'none',
+          _integrationId === 'none',
     },
   }).resources;
-  const notifications = selectors.subscribedNotifications(state, userEmail);
-  const connections = _connectorId
-    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
-    : diyConnections;
-  let flows = _connectorId
-    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
-    : diyFlows;
-  const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
-  let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
-  const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
-  );
+};
 
-  if (_integrationId && _integrationId !== 'none') {
-    flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+selectors.mkIntegrationNotificationResources = () => createSelector(
+  (_1, _integrationId) => _integrationId,
+  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
+  selectors.diyFlows,
+  selectors.diyConnections,
+  (state, _integrationId, options) =>
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+  (state, _integrationId, options) =>
+  selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
+  (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
+  (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
+    const connections = _connectorId ? integrationAppConnections : diyConnections;
+    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const connectionValues = connections
+      .filter(c => !!notifications.find(n => n._connectionId === c._id))
+      .map(c => c._id);
+    let flowValues = flows
+      .filter(f => !!notifications.find(n => n._flowId === f._id))
+      .map(f => f._id);
+    const allFlowsSelected = !!notifications.find(
+      n => n._integrationId === _integrationId
+    );
 
-    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+    if (_integrationId && _integrationId !== 'none') {
+      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+
+      if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+    }
+
+    return {
+      connections,
+      flows,
+      connectionValues,
+      flowValues,
+    };
   }
 
-  return {
-    connections,
-    flows,
-    connectionValues,
-    flowValues,
-  };
-};
+);
+
+selectors.integrationNotificationResources = selectors.mkIntegrationNotificationResources();
 
 selectors.isFlowSubscribedForNotification = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);

@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
 import RightDrawer from '../../../drawer/Right';
 import { selectors } from '../../../../reducers';
@@ -13,6 +13,7 @@ import actions from '../../../../actions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   actionContainer: {
@@ -36,13 +37,15 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [count, setCount] = useState(0);
+  const [saveTriggered, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
-  const notifications = useSelector(state =>
-    selectors.integrationNotificationResources(state, integrationId, { storeId, userEmail }),
-  shallowEqual
-  );
+  const notificationsConfig = useMemo(() => ({ storeId, userEmail }), [storeId, userEmail]);
+  const notifications = useSelectorMemo(
+    selectors.mkIntegrationNotificationResources,
+    integrationId,
+    notificationsConfig);
 
   const { flowValues = [], connectionValues = [], flows, connections } = notifications;
 
@@ -74,6 +77,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   });
 
   const handleSubmit = useCallback(formVal => {
+    setSaveTriggered(true);
     const resourcesToUpdate = {
       subscribedConnections: formVal.connections,
       subscribedFlows: formVal.flows,
@@ -83,11 +87,14 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   }, [dispatch, integrationId, storeId, userEmail]);
 
   const handleNotificationUpdate = useCallback(() => {
-    enquesnackbar({
-      message: `Notifications for ${userName || userEmail} were successfully updated`,
-      variant: 'success',
-    });
-  }, [enquesnackbar, userEmail, userName]);
+    if (saveTriggered) {
+      enquesnackbar({
+        message: `Notifications for ${userName || userEmail} were successfully updated`,
+        variant: 'success',
+      });
+      setSaveTriggered(false);
+    }
+  }, [enquesnackbar, userEmail, userName, saveTriggered]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
