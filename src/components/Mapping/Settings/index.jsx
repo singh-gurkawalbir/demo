@@ -18,9 +18,11 @@ import ButtonGroup from '../../ButtonGroup';
 const useStyles = makeStyles(theme => ({
   mappingSettingDynaform: {
     minHeight: 'calc(100% - 48px)',
+    padding: 0,
   },
   mappingSettingsActions: {
     paddingTop: theme.spacing(2),
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 const emptySet = [];
