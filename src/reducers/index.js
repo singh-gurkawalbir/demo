@@ -920,7 +920,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment) &&
+            (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             (accessLevel === 'owner' || accessLevel === 'manage')
           );
