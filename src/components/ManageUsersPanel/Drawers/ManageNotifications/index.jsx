@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, Button } from '@material-ui/core';
@@ -35,6 +35,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [count, setCount] = useState(0);
   const [enquesnackbar] = useEnqueueSnackbar();
   const { userEmail } = match.params;
   const users = useSelector(state => selectors.availableUsersList(state, integrationId));
@@ -44,6 +45,9 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   );
 
   const { flowValues = [], connectionValues = [], flows, connections } = notifications;
+
+  const flowHash = flowValues.sort().join('');
+  const connHash = connectionValues.sort().join('');
 
   const isValidUserEmail = !!users.find(user => user.sharedWithUser.email === userEmail);
 
@@ -66,6 +70,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
 
   const formKey = useFormInitWithPermissions({
     fieldMeta,
+    remount: count,
     integrationId,
   });
 
@@ -88,12 +93,16 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
       path: '/notifications',
-      method: 'PUT',
+      method: 'put',
       onSave: handleSubmit,
       onClose,
       onSuccess: handleNotificationUpdate,
     }
   );
+
+  useEffect(() => {
+    setCount(count => count + 1);
+  }, [flowHash, connHash]);
 
   return (
     <LoadResources required resources="notifications,flows,connections">
