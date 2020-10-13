@@ -3051,7 +3051,7 @@ selectors.integrationNotificationResources = (state, _integrationId, options = {
     type: 'flows',
     filter: {
       $where() {
-        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+        if (!_integrationId || _integrationId === 'none') {
           return !this._integrationId;
         }
 
@@ -3066,7 +3066,7 @@ selectors.integrationNotificationResources = (state, _integrationId, options = {
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none', 'none-sb'].includes(_integrationId),
+        _integrationId === 'none',
     },
   }).resources;
   const notifications = selectors.subscribedNotifications(state, userEmail);
@@ -3086,7 +3086,7 @@ selectors.integrationNotificationResources = (state, _integrationId, options = {
     n => n._integrationId === _integrationId
   );
 
-  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
+  if (_integrationId && _integrationId !== 'none') {
     flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
 
     if (allFlowsSelected) flowValues = [_integrationId, ...flows];

@@ -58,10 +58,6 @@ export default {
           enquesnackbar({
             message: statusMessage,
             variant: status,
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'center',
-            },
           });
         }
       },

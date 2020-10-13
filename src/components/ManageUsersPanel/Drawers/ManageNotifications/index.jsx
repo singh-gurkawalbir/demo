@@ -96,34 +96,32 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   );
 
   return (
-    <>
-      <LoadResources required resources="notifications,flows,connections">
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-        <div className={classes.footer}>
-          <DynaSubmit
-            formKey={formKey}
-            onClick={submitHandler()}
-            color="primary"
-            className={classes.actionButton}
-            data-test="saveFlowSchedule"
-            disabled={disableSave}>
-            {defaultLabels.saveLabel}
-          </DynaSubmit>
-          <DynaSubmit
-            formKey={formKey}
-            onClick={submitHandler(true)}
-            className={classes.actionButton}
-            color="secondary"
-            data-test="saveAndCloseFlowSchedule"
-            disabled={disableSave}>
-            {defaultLabels.saveAndCloseLabel}
-          </DynaSubmit>
-          <Button onClick={onClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </div>
-      </LoadResources>
-    </>
+    <LoadResources required resources="notifications,flows,connections">
+      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <div className={classes.footer}>
+        <DynaSubmit
+          formKey={formKey}
+          onClick={submitHandler()}
+          color="primary"
+          className={classes.actionButton}
+          data-test="saveFlowSchedule"
+          disabled={disableSave}>
+          {defaultLabels.saveLabel}
+        </DynaSubmit>
+        <DynaSubmit
+          formKey={formKey}
+          onClick={submitHandler(true)}
+          className={classes.actionButton}
+          color="secondary"
+          data-test="saveAndCloseFlowSchedule"
+          disabled={disableSave}>
+          {defaultLabels.saveAndCloseLabel}
+        </DynaSubmit>
+        <Button onClick={onClose} variant="text" color="primary">
+          Cancel
+        </Button>
+      </div>
+    </LoadResources>
   );
 }
 

@@ -44,10 +44,6 @@ export default {
           enquesnackbar({
             message: `Deleting user ${userName} is failed due to the error "${message}"`,
             variant: status,
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'center',
-            },
           });
         }
       },

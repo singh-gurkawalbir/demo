@@ -73,8 +73,13 @@ export default function UsersList({ integrationId, storeId }) {
       </LoadResources>
       <InviteUserDrawer integrationId={integrationId} />
       <ManagePermissionsDrawer integrationId={integrationId} />
-      { integrationId && <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} /> }
-      { integrationId && <ManageNotificationsDrawer integrationId={integrationId} storeId={storeId} /> }
+      { integrationId
+        ? (
+          <>
+            <ViewNotificationsDrawer integrationId={integrationId} storeId={storeId} />
+            <ManageNotificationsDrawer integrationId={integrationId} storeId={storeId} />
+          </>
+        ) : null }
 
     </>
   );
