@@ -28,11 +28,12 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   mappingContainer: {
-    height: 'calc(100vh - 180px)',
-    padding: theme.spacing(1, 0, 3),
-    marginBottom: theme.spacing(1),
-    maxWidth: '100%',
     flex: '1 1 0',
+    width: 'calc(100% + 24px)',
+    overflow: 'hidden',
+    flexDirection: 'column',
+    display: 'flex',
+    marginLeft: -24,
   },
   mapCont: {
     width: '0px',
@@ -74,7 +75,6 @@ const useStyles = makeStyles(theme => ({
   mappingsBody: {
     height: 'calc(100% - 32px)',
     overflow: 'auto',
-    marginBottom: theme.spacing(2),
     paddingRight: theme.spacing(2),
   },
   refreshButton: {
@@ -97,11 +97,9 @@ const useStyles = makeStyles(theme => ({
   importMappingButtonGroup: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
-    padding: '16px 0px',
-    '& > button': {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
+    padding: theme.spacing(2, 1, 0, 0),
+    display: 'block',
+    marginLeft: theme.spacing(3),
   },
 
 }));
