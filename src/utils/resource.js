@@ -775,3 +775,34 @@ export const isQueryBuilderSupported = (importResource = {}) => {
 
   return false;
 };
+
+export const getUniqueFieldId = fieldId => {
+  if (!fieldId) { return ''; }
+
+  // some field types have same field ids
+  switch (fieldId) {
+    case 'rdbms.queryInsert':
+      return 'rdbms.query.1';
+    case 'rdbms.queryUpdate':
+      return 'rdbms.query.0';
+    case 'http.bodyCreate':
+      return 'http.body.1';
+    case 'http.bodyUpdate':
+      return 'http.body.0';
+    case 'http.relativeURIUpdate':
+      return 'http.relativeURI.0';
+    case 'http.relativeURICreate':
+      return 'http.relativeURI.1';
+    case 'rest.relativeURIUpdate':
+      return 'rest.relativeURI.0';
+    case 'rest.relativeURICreate':
+      return 'rest.relativeURI.1';
+    case 'rest.bodyUpdate':
+      return 'rest.body.0';
+    case 'rest.bodyCreate':
+      return 'rest.body.1';
+
+    default:
+      return fieldId;
+  }
+};

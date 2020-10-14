@@ -7,6 +7,7 @@ import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useFormContext from '../../Form/FormContext';
+import { getUniqueFieldId } from '../../../utils/resource';
 
 const DynaEditorWithFlowSampleData = ({
   fieldId,
@@ -19,6 +20,7 @@ const DynaEditorWithFlowSampleData = ({
   rule,
   ...props
 }) => {
+  const fieldType = getUniqueFieldId(fieldId);
   const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
@@ -39,14 +41,14 @@ const DynaEditorWithFlowSampleData = ({
     status: sampleDataRequestStatus,
     templateVersion,
   } = useSelector(state => {
-    const sampleData = selectors.editorSampleData(state, { flowId, resourceId, fieldType: fieldId });
+    const sampleData = selectors.editorSampleData(state, { flowId, resourceId, fieldType });
 
     return selectors.sampleDataWrapper(state, {
       sampleData,
       flowId,
       resourceId,
       resourceType,
-      fieldType: fieldId,
+      fieldType,
       stage: editorType !== 'csvGenerate' ? 'flowInput' : undefined,
     });
   }, isEqual);
@@ -59,14 +61,13 @@ const DynaEditorWithFlowSampleData = ({
           resourceType,
           stage: 'flowInput',
           formValues: formContext.value,
-          fieldType: fieldId,
+          fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [disableEditorV2, dispatch, fieldId, flowId, resourceId, resourceType]
+    [dispatch, fieldType, flowId, formContext.value, isEditorV2Supported, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {

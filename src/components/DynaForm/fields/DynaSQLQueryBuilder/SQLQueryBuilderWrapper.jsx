@@ -6,12 +6,14 @@ import actions from '../../../../actions';
 import SqlQueryBuilderEditorDrawer from '../../../AFE/SqlQueryBuilderEditor/Drawer';
 import { getDefaultData } from '../../../../utils/sampleData';
 import { getUnionObject } from '../../../../utils/jsonPaths';
+import { getUniqueFieldId } from '../../../../utils/resource';
 import DynaLookupEditor from '../DynaLookupEditor';
 import useFormContext from '../../../Form/FormContext';
 
 export default function SQLQueryBuilderWrapper(props) {
   const {
     id,
+    fieldId,
     onFieldChange,
     disabled,
     value,
@@ -28,6 +30,7 @@ export default function SQLQueryBuilderWrapper(props) {
     disableEditorV2,
     enableEditorV2,
   } = props;
+  const fieldType = getUniqueFieldId(id || fieldId);
   const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
@@ -51,13 +54,14 @@ export default function SQLQueryBuilderWrapper(props) {
 
     return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
   });
-  const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType: id }), isEqual);
+  const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType }), isEqual);
 
   const formattedSampleData = useSelector(state => selectors.sampleDataWrapper(state, {
     sampleData,
     flowId,
     resourceId,
     resourceType,
+    fieldType,
     stage: 'flowInput',
   })?.data, shallowEqual);
 
@@ -70,13 +74,13 @@ export default function SQLQueryBuilderWrapper(props) {
           resourceType,
           stage: stage || 'flowInput',
           formValues: formContext.value,
-          fieldType: id,
+          fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, flowId, resourceId, resourceType, formContext, id, isEditorV2Supported]
+    [dispatch, flowId, resourceId, resourceType, formContext.value, fieldType, isEditorV2Supported]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
