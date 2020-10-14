@@ -280,13 +280,18 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 onChangeRowsPerPage={handleChangeRowsPerPage}
           />
               )}
-              <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.btnActions}
-                onClick={handleDownload}>
-                Download
-              </Button>
+              {
+                hasErrors && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  className={classes.btnActions}
+                  onClick={handleDownload}>
+                  Download
+                </Button>
+                )
+              }
+
             </div>
           </div>
           {errorObj.errors.length ? (
