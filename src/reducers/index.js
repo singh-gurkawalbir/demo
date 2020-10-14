@@ -3491,18 +3491,19 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
-  if (adaptorType === 'NetSuiteDistributedImport') {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(adaptorType)) {
     // eslint-disable-next-line camelcase
-    const { _connectionId: connectionId, netsuite_da = {} } = resource;
-    const { recordType } = options;
+    const { _connectionId: connectionId} = resource;
     let commMetaPath;
+    // eslint-disable-next-line camelcase
+    const importRecordType = resource?.netsuite_da?.recordType || resource?.netsuite?.recordType;
 
-    if (recordType) {
+    if (options.recordType) {
       /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
        * in case of subrecord */
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${options.recordType}?parentRecordType=${importRecordType}`;
     } else {
-      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+      commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${importRecordType}`;
     }
 
     const { data, status } = selectors.metadataOptionsAndResources(state, {
@@ -4525,7 +4526,7 @@ selectors.mappingPreviewType = (state, importId) => {
   if (!importResource) return;
   const { adaptorType } = importResource;
 
-  if (adaptorType === 'NetSuiteDistributedImport') {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(adaptorType)) {
     return 'netsuite';
   } if (adaptorType === 'SalesforceImport') {
     const masterRecordTypeInfo = selectors.getSalesforceMasterRecordTypeInfo(
@@ -5231,7 +5232,8 @@ selectors.mappingNSRecordType = (state, importId, subRecordMappingId) => {
     return recordType;
   }
 
-  return importResource.netsuite_da.recordType;
+  // give precedence to netsuite_da
+  return importResource.netsuite_da?.recordType || importResource.netsuite?.recordType;
 };
 
 /** returns 1st Page generator for a flow */
