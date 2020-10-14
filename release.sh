@@ -9,7 +9,7 @@ echo "building version $1 and uploading source maps to logrocket..."
 NODE_ENV=production webpack --mode=production
 # bundle is build, we no longer need the version number left in
 # do logrocket uploads
-logrocket release $1 --apikey=$LR_API_KEY
-logrocket upload --release=$1 --apikey=$LR_API_KEY build/
+logrocket release $1 --apikey=$LOGROCKET_API_KEY
+logrocket upload --release=$1 --apikey=$LOGROCKET_API_KEY build/
 # move the source map files into a separate folder
 mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/

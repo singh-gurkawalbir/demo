@@ -1,2 +1,2 @@
-export LR_IDENT="foo/bar"
-export LR_API_KEY="foo:bar:aaaaaaaaa"
+export LOGROCKET_IDENTIFIER="foo/bar"
+export LOGROCKET_API_KEY="foo:bar:aaaaaaaaa"

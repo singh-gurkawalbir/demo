@@ -235,9 +235,9 @@ export function* initializeLogRocket() {
   const version = yield select(selectors.version);
   const p = yield select(selectors.userProfile);
 
-  // LR_IDENT is defined by webpack
+  // LOGROCKET_IDENTIFIER is defined by webpack
   // eslint-disable-next-line no-undef
-  LogRocket.init(LR_IDENT, {
+  LogRocket.init(LOGROCKET_IDENTIFIER, {
     release: version,
     console: {
       isEnabled: {
@@ -299,9 +299,9 @@ export function* initializeApp() {
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
 
-      // LR_IDENT is defined by webpack
+      // LOGROCKET_IDENTIFIER is defined by webpack
       // eslint-disable-next-line no-undef
-      if (LR_IDENT) {
+      if (LOGROCKET_IDENTIFIER) {
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
