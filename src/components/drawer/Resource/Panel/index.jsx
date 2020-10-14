@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme => ({
   },
   resourceFormWrapper: {
     flexDirection: 'row',
+    width: '100%',
     padding: theme.spacing(3, 3, 0, 3),
   },
   exportsPanel: {

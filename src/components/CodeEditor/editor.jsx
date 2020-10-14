@@ -72,6 +72,7 @@ export default function CodeEditor({
   hasError,
   hasWarning,
   errorLine,
+  onLoad,
 }) {
   const classes = useStyles();
   const aceEditor = useRef(null);
@@ -119,8 +120,10 @@ export default function CodeEditor({
           withstmt: true,
         }]);
       }
+
+      onLoad?.(editor);
     }),
-  [enableAutocomplete, mode]
+  [enableAutocomplete, mode, onLoad]
   );
   const handleChange = useCallback(
     value => {

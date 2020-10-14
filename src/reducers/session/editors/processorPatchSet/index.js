@@ -7,6 +7,7 @@ import outputFilter from './outputFilter';
 import responseTransform from './responseTransform';
 import settingsForm from './settingsForm';
 import readme from './readme';
+import databaseMapping from './databaseMapping';
 
 const logicMap = {
   transform,
@@ -18,6 +19,7 @@ const logicMap = {
   responseTransform,
   settingsForm,
   readme,
+  databaseMapping,
 };
 
 function getLogic(editor) {

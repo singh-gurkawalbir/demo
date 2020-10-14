@@ -61,8 +61,8 @@ const useStyles = makeStyles(theme => ({
   },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
-    minHeight: 38,
-    color: theme.palette.secondary.light,
+    minHeight: 36,
+    color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
   },
