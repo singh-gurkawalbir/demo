@@ -83,7 +83,7 @@ import sqlUtil from '../utils/sql';
 import getFilteredErrors from '../utils/errorManagement';
 import {
   getFlowResourcesYetToBeCreated,
-  generateFlowSteps,
+  generatePendingFlowSteps,
   getRunConsoleJobSteps,
   getParentJobSteps,
 } from '../utils/latestJobs';
@@ -3348,10 +3348,10 @@ selectors.flowDashboardJobs = createSelector(
 
         dashboardJobSteps.forEach(step => dashboardSteps.push(step));
       }
-      // If the parent job is queued/in progress, show dummy steps of flows
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
         const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
-        const pendingChildrenSteps = generateFlowSteps(pendingChildren, resourceMap);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
         pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }

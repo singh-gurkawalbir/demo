@@ -22,7 +22,7 @@ export const getFlowResourcesYetToBeCreated = (flow = {}, createdSteps = []) => 
   });
 };
 
-export const generateFlowSteps = (resources = [], resourceMap = {}) =>
+export const generatePendingFlowSteps = (resources = [], resourceMap = {}) =>
   resources.reduce((flowSteps, resource) => {
     const { type, _exportId, _importId } = resource;
 
