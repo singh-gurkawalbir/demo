@@ -15,7 +15,7 @@ export default (state = {}, action) => {
     errorIds,
     retryCount,
     resolveCount,
-    diff,
+    diff: errorCountDiff,
   } = action;
 
   return produce(state, draft => {
@@ -36,7 +36,6 @@ export default (state = {}, action) => {
         if (!loadMore) {
           delete draft[flowId][resourceId][errorType].nextPageURL;
           delete draft[flowId][resourceId][errorType].updated;
-          draft[flowId][resourceId].actions = {};
         }
 
         draft[flowId][resourceId][errorType].status = 'requested';
@@ -130,13 +129,12 @@ export default (state = {}, action) => {
         if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
         }
-        draft[flowId][resourceId].resolved.updated = true;
-        // If whatever count diff occured is because of errors resolved by this user
-        // in this case, don't notify open errors
-        const userActions = draft[flowId][resourceId].actions;
-        const errorsUpdatedByUser = (userActions.retry?.count || 0) + (userActions.resolve?.count || 0);
-
-        if (errorsUpdatedByUser !== Math.abs(diff)) {
+        // If the errors are reduced, it implies resolved errors increase
+        if (errorCountDiff < 0 && draft[flowId][resourceId].resolved?.status === 'received') {
+          draft[flowId][resourceId].resolved.updated = true;
+        }
+        // If the errors are increased, it implies open errors increase
+        if (errorCountDiff > 0 && draft[flowId][resourceId].open?.status === 'received') {
           draft[flowId][resourceId].open.updated = true;
         }
         break;

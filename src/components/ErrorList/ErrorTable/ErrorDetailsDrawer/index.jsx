@@ -12,7 +12,7 @@ import { selectors } from '../../../../reducers';
 
 const emptySet = [];
 
-export default function ErrorDetailsDrawer({ flowId, resourceId }) {
+export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const match = useRouteMatch();
   const { pathname } = useLocation();
   const history = useHistory();
@@ -21,6 +21,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
       selectors.resourceErrors(state, {
         flowId,
         resourceId,
+        options: { isResolved },
       }).errors || emptySet,
     shallowEqual
   );
@@ -64,6 +65,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
       <ErrorDetails
         flowId={flowId}
         resourceId={resourceId}
+        isResolved={isResolved}
         onClose={handleClose}
           />
     </RightDrawer>
