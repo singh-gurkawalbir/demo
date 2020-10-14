@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import JsonContent from '../../JsonContent';
+import { safeParse } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -23,11 +24,19 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorPanel(props) {
   const { resourceSampleData } = props;
   const classes = useStyles();
+  const error = useMemo(() => {
+    const sampleDataError = resourceSampleData.error;
+    const errorObj = sampleDataError[0];
+
+    errorObj.message = safeParse(errorObj.message);
+
+    return errorObj;
+  }, [resourceSampleData.error]);
 
   return (
     <div className={classes.sampleDataWrapper}>
       <div className={classes.sampleDataContainer}>
-        <JsonContent json={resourceSampleData.error} />
+        <JsonContent json={error} />
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export default function PreviewBody(props) {
       {resourceSampleData.status === 'requested' && (
         <PanelLoader />
       )}
-      {resourceSampleData.status === 'received' && (
+      {['received', 'error'].includes(resourceSampleData.status) && (
         <>
           <Templates.RequestUrlPanel
             previewStageDataList={previewStageDataList}
@@ -45,10 +45,11 @@ export default function PreviewBody(props) {
             panelType={panelType}
           />
           {previewBodyTemplate === 'default' && (
-            <Templates.DefaultPanel
-              previewStageDataList={previewStageDataList}
-              panelType={panelType}
-            />
+            <>
+              { resourceSampleData.status === 'error'
+                ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} />
+                : <Templates.DefaultPanel previewStageDataList={previewStageDataList} panelType={panelType} />}
+            </>
           )}
           {previewBodyTemplate === 'tab' && (
             <Templates.TabbedPanel
@@ -58,9 +59,6 @@ export default function PreviewBody(props) {
             />
           )}
         </>
-      )}
-      {resourceSampleData.status === 'error' && (
-        <Templates.ErrorPanel resourceSampleData={resourceSampleData} />
       )}
     </div>
   );
