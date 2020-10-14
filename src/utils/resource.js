@@ -605,6 +605,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
+            if (!fld.subRecordMapping) {
+              // eslint-disable-next-line no-param-reassign
+              fld.subRecordMapping = {};
+            }
             // eslint-disable-next-line no-param-reassign
             fld.subRecordMapping.recordType =
               subrecordsMap[fld.generate].recordType;
@@ -634,6 +638,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
               const fieldId = `${list.generate}[*].${fld.generate}`;
 
               if (subrecordsMap[fieldId]) {
+                if (!fld.subRecordMapping) {
+                  // eslint-disable-next-line no-param-reassign
+                  fld.subRecordMapping = {};
+                }
                 // eslint-disable-next-line no-param-reassign
                 fld.subRecordMapping.recordType =
                   subrecordsMap[fieldId].recordType;
