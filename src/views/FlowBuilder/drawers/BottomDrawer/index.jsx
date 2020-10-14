@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
   },
   inProgress: {
-    marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
   },
 }));
 // we use this to prevent the up and down resize buttons from passing mouse-down events
@@ -279,11 +279,11 @@ export default function BottomDrawer({
     if (isUserInErrMgtTwoDotZero) {
       return (
         <>
+          Run console
           {
             isFlowRunInProgress &&
             <Spinner color="primary" size={16} className={classes.inProgress} />
           }
-          Run console
         </>
       );
     }
