@@ -22,7 +22,6 @@ import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
-import { getDomain } from '../../utils/resource';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -302,7 +301,7 @@ export function* initializeApp() {
 
       // LR_IDENT is defined by webpack
       // eslint-disable-next-line no-undef
-      if (getDomain() !== 'integrator.io' && LR_IDENT) {
+      if (LR_IDENT) {
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
