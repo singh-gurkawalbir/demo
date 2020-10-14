@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HomePageCardContainer({ className, children, onClick, drag, isCardSelected = false }) {
+export default function HomePageCardContainer({ children, onClick, drag, isCardSelected = false }) {
   const classes = useStyles();
   const [showGripper, setShowGripper] = useState(false);
 
@@ -65,7 +65,7 @@ export default function HomePageCardContainer({ className, children, onClick, dr
               onMouseEnter={() => setShowGripper(true)}
               onMouseLeave={() => setShowGripper(false)}>
               <Paper
-                className={clsx(classes.wrapper, className)}
+                className={classes.wrapper}
                 elevation={0}
                 onClick={onClick} >
                 <div>
