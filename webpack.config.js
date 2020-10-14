@@ -106,6 +106,11 @@ module.exports = (env, argv) => {
       /^redux-logger$/,
       './utils/dummy.js'
     ));
+    // define LR_IDENT for logrocket
+    config.plugins.push(new webpack.DefinePlugin({
+      LR_IDENT: JSON.stringify(process.env.LR_IDENT),
+    }));
+
     if (process.env.NODE_ENV === 'analyze') {
       config.plugins.push(new BundleAnalyzerPlugin());
     } else if (config.mode === 'production') {

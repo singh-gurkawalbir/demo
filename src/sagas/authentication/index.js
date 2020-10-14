@@ -236,7 +236,9 @@ export function* initializeLogRocket() {
   const version = yield select(selectors.version);
   const p = yield select(selectors.userProfile);
 
-  LogRocket.init('yb95vd/glad', {
+  // LR_IDENT is defined by webpack
+  // eslint-disable-next-line no-undef
+  LogRocket.init(LR_IDENT, {
     release: version,
     console: {
       isEnabled: {
@@ -298,7 +300,9 @@ export function* initializeApp() {
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
 
-      if (getDomain() !== 'integrator.io') {
+      // LR_IDENT is defined by webpack
+      // eslint-disable-next-line no-undef
+      if (getDomain() !== 'integrator.io' && LR_IDENT) {
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
