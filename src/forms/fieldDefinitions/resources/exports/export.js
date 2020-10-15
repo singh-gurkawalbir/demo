@@ -1,6 +1,4 @@
-import { isNewId, adaptorTypeMap } from '../../../../utils/resource';
-
-import { RDBMS_TYPES } from '../../../../utils/constants';
+import { isNewId } from '../../../../utils/resource';
 
 const dateTimeOptions = [
   { label: 'YYYY-MM-DDTHH:mm:ss z', value: 'YYYY-MM-DDTHH:mm:ss z' },
@@ -45,40 +43,17 @@ export default {
     label: 'Description',
   },
   _connectionId: {
-    type: 'selectresource',
+    type: 'dynareplaceconnection',
     resourceType: 'connections',
     label: 'Connection',
     appTypeIsStatic: true,
     allowEdit: true,
     allowNew: true,
     skipDefault: true,
-    _connectionId: r => r?._connectionId,
+    connectionId: r => r?._connectionId,
+    connectorId: r => r?._connectorId,
     visible: r => r?.adaptorType !== 'WebhookExport',
     defaultValue: r => r?._connectionId,
-    updateFilterandAppType: true,
-    options: r => {
-      let options = {};
-      const expression = [];
-
-      if (RDBMS_TYPES.includes(adaptorTypeMap[r.adaptorType])) {
-        expression.push({ 'rdbms.type': adaptorTypeMap[r.adaptorType] });
-      } else {
-        expression.push({ type: adaptorTypeMap[r.adaptorType] });
-      }
-
-      if (r._connectorId) {
-        expression.push({ _connectorId: r._connectorId});
-        // expression.push({ _integrationId: r._integrationId});
-      } else {
-        expression.push({ _connectorId: { $exists: false } });
-      }
-
-      const andingExpressions = { $and: expression };
-
-      options = { filter: andingExpressions, appType: adaptorTypeMap[r.adaptorType] };
-
-      return options;
-    },
     integrationId: r => r?._integrationId,
   },
 
