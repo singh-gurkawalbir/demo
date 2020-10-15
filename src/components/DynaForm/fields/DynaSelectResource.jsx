@@ -22,7 +22,6 @@ import StatusCircle from '../../StatusCircle';
 import { stringCompare } from '../../../utils/sort';
 
 const emptyArray = [];
-const emptyObj = {};
 const handleAddNewResource = args => {
   const {
     dispatch,
@@ -169,8 +168,6 @@ function DynaSelectResource(props) {
     resourceContext,
     skipPingConnection,
     integrationId,
-    _connectionId,
-    updateFilterandAppType,
   } = props;
   const {options} = props;
   const classes = useStyles();
@@ -185,17 +182,6 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
-  const connection = useSelector(
-    state =>
-      selectors.resource(state, 'connections', _connectionId) ||
-      emptyObj
-  );
-
-  if (updateFilterandAppType && connection?.assistant) {
-    // TODO: This code can be removed if all exports and imports are configured with assistant value.
-    options.filter.$and.push({assistant: connection.assistant});
-    options.appType = connection.assistant;
-  }
 
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,

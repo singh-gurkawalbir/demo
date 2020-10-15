@@ -1,7 +1,6 @@
 import React from 'react';
-import ErrorLink from './actions/ErrorLink';
-import JobStatus from '../../JobDashboard/JobStatus';
-import FlowStepName from './actions/FlowStepName';
+import FlowStepName from './cells/FlowStepName';
+import FlowStepStatus from './cells/FlowStepStatus';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 
 export default {
@@ -12,7 +11,7 @@ export default {
     },
     {
       heading: 'Status',
-      value: r => <JobStatus job={r} />,
+      value: r => <FlowStepStatus job={r} />,
     },
     {
       heading: 'Success',
@@ -22,7 +21,7 @@ export default {
       heading: 'Ignored',
       value: r => r.numIgnore,
     },
-    { heading: 'Errors', value: r => <ErrorLink job={r} /> },
+    { heading: 'Errors', value: r => r.numError },
     {
       heading: 'Pages',
       value: r => r.type === 'export' ? r.numPagesGenerated : r.numPagesProcessed,

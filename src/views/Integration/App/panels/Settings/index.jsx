@@ -15,7 +15,7 @@ import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import { getEmptyMessage } from '../../../../../utils/integrationApps';
+import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,7 +60,7 @@ export default function SettingsPanel({
   const classes = useStyles();
   const match = useRouteMatch();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
+  const isParentView = isParentViewSelected(integration, storeId);
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );

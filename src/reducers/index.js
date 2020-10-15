@@ -31,7 +31,10 @@ import {
   getIAFlowSettings,
   getFlowDetails,
   getFlowResources,
-  getFlowReferencesForResource, isFreeFlowResource, isIntegrationApp,
+  isImportMappingAvailable,
+  getFlowReferencesForResource,
+  isFreeFlowResource,
+  isIntegrationApp,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -58,6 +61,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   adaptorTypeMap,
+  isQueryBuilderSupported,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -74,8 +78,15 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import { getJobDuration } from './data/jobs/util';
+import getJSONPaths from '../utils/jsonPaths';
+import sqlUtil from '../utils/sql';
 import getFilteredErrors from '../utils/errorManagement';
+import {
+  getFlowResourcesYetToBeCreated,
+  generatePendingFlowSteps,
+  getRunConsoleJobSteps,
+  getParentJobSteps,
+} from '../utils/latestJobs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -1584,6 +1595,12 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
 
     return flows;
   }
+);
+
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
 );
 
 selectors.mkIntegrationAppFlowSections = () => {
@@ -3318,70 +3335,31 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+
 selectors.flowDashboardJobs = createSelector(
   (state, flowId) => selectors.latestFlowJobsList(state, flowId),
   state => fromData.resourceDetailsMap(state?.data),
-  (latestFlowJobs, resourceMap) => {
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
     const dashboardSteps = [];
 
     latestFlowJobs?.data?.forEach(parentJob => {
-      // when the job is queued
-      if (parentJob.status === JOB_STATUS.QUEUED) {
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
-        // In cases when job is cancelled while it is in queue, children are not yet created
-        // So show this job as the export step cancelled
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      const additionalProps = {
-        doneExporting: !!parentJob.doneExporting,
-        numPagesProcessed: 0,
-      };
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
 
-      if (!additionalProps.doneExporting) {
-        if (
-          [
-            JOB_STATUS.COMPLETED,
-            JOB_STATUS.CANCELED,
-            JOB_STATUS.FAILED,
-          ].includes(parentJob.status)
-        ) {
-          additionalProps.doneExporting = true;
-        }
-      }
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
       if (parentJob.children?.length) {
-        parentJob.children.forEach(cJob => {
-          const additionalChildProps = {
-            uiStatus: cJob.status,
-            duration: getJobDuration(cJob),
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          };
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-          // If parent job is cancelled, show child in progress jobs as cancelling
-          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
-            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
-          }
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
-          if (cJob.type === 'import') {
-            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
-              additionalChildProps.percentComplete = Math.floor(
-                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
-              );
-            } else {
-              additionalChildProps.percentComplete = 0;
-            }
-
-            additionalProps.numPagesProcessed += parseInt(
-              cJob.numPagesProcessed,
-              10
-            );
-          }
-
-          dashboardSteps.push({ ...cJob, ...additionalChildProps });
-        });
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }
     });
 
@@ -3389,8 +3367,7 @@ selectors.flowDashboardJobs = createSelector(
       status: latestFlowJobs?.status,
       data: dashboardSteps,
     };
-  }
-);
+  });
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
@@ -3451,7 +3428,7 @@ selectors.flowImports = (state, id) => {
   return getImportsFromFlow(flow, imports);
 };
 
-selectors.mkflowImportsList = () => createSelector(
+selectors.flowMappingsImportsList = () => createSelector(
   (state, flowId) => selectors.resource(state, 'flows', flowId),
   state => state?.data?.resources?.imports,
   (state, flowId, importId) => importId,
@@ -3462,7 +3439,9 @@ selectors.mkflowImportsList = () => createSelector(
       return [subRecordResource];
     }
 
-    return getImportsFromFlow(flow, imports);
+    const flowImports = getImportsFromFlow(flow, imports);
+
+    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
   }
 );
 
@@ -5239,6 +5218,77 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
+selectors.sampleRuleForSQLQueryBuilder = createSelector([
+  (state, { importId}) => {
+    const {merged: importResource = {}} = selectors.resourceData(
+      'imports',
+      importId
+    );
+
+    return importResource.adaptorType;
+  },
+  (state, { importId}) => {
+    const {merged: importResource = {}} =
+      selectors.resourceData(
+        'imports',
+        importId
+      );
+    const {_connectionId} = importResource;
+
+    return selectors.resource(state, 'connections', _connectionId);
+  },
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'flowInput',
+  }).data,
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'importMappingExtract',
+  }).data,
+  (state, {method}) => method,
+  (state, {queryType}) => queryType,
+], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+  if (sampleData && extractFields) {
+    const extractPaths = getJSONPaths(extractFields, null, {
+      wrapSpecialChars: true,
+    });
+
+    if (adaptorType === 'MongodbImport') {
+      return sqlUtil.getSampleMongoDbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'insertMany'
+      );
+    } if (
+      adaptorType === 'DynamodbImport'
+    ) {
+      return sqlUtil.getSampleDynamodbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'putItem'
+      );
+    } if (
+      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+    ) {
+      return sqlUtil.getSampleSnowflakeTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
+    }
+
+    return sqlUtil.getSampleSQLTemplate(
+      sampleData,
+      extractPaths,
+      queryType === 'INSERT'
+    );
+  }
+});
+
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
 
@@ -5343,6 +5393,15 @@ selectors.isIAType = (state, flowId) => {
   const isIAType = isIntegrationApp(flow);
 
   return isIAType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
 };
 
 selectors.isFlowViewMode = (state, integrationId, flowId) => {

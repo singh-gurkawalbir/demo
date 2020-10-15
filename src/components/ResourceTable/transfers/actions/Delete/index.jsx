@@ -2,9 +2,11 @@ import { useDispatch } from 'react-redux';
 import { useCallback, useEffect } from 'react';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
+import TrashIcon from '../../../../icons/TrashIcon';
 
 export default {
   label: 'Delete transfer',
+  icon: TrashIcon,
   component: function Delete({ rowData: transfer }) {
     const dispatch = useDispatch();
     const { confirmDialog } = useConfirmDialog();

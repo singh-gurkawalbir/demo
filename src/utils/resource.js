@@ -589,6 +589,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
+            if (!fld.subRecordMapping) {
+              // eslint-disable-next-line no-param-reassign
+              fld.subRecordMapping = {};
+            }
             // eslint-disable-next-line no-param-reassign
             fld.subRecordMapping.recordType =
               subrecordsMap[fld.generate].recordType;
@@ -618,6 +622,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
               const fieldId = `${list.generate}[*].${fld.generate}`;
 
               if (subrecordsMap[fieldId]) {
+                if (!fld.subRecordMapping) {
+                  // eslint-disable-next-line no-param-reassign
+                  fld.subRecordMapping = {};
+                }
                 // eslint-disable-next-line no-param-reassign
                 fld.subRecordMapping.recordType =
                   subrecordsMap[fieldId].recordType;
@@ -763,3 +771,15 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
 export function isNetSuiteBatchExport(exportRes) {
   return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
 }
+export const isQueryBuilderSupported = (importResource = {}) => {
+  const {adaptorType} = importResource;
+
+  if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {
+    return true;
+  }
+  if (adaptorType === 'RDBMSImport' && !importResource.rdbms.queryType.find(q => ['BULK INSERT', 'MERGE'].includes(q))) {
+    return true;
+  }
+
+  return false;
+};

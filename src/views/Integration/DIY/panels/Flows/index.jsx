@@ -57,11 +57,7 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-
-    return !!(integration && integration._connectorId);
-  });
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,

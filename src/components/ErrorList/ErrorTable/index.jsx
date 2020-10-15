@@ -8,7 +8,6 @@ import KeywordSearch from '../../KeywordSearch';
 import RefreshCard from './RefreshCard';
 import ErrorActions from './ErrorActions';
 import Spinner from '../../Spinner';
-import ErrorDetailsDrawer from './ErrorDetailsDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -281,13 +280,18 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
                 onChangeRowsPerPage={handleChangeRowsPerPage}
           />
               )}
-              <Button
-                variant="outlined"
-                color="secondary"
-                className={classes.btnActions}
-                onClick={handleDownload}>
-                Download
-              </Button>
+              {
+                hasErrors && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  className={classes.btnActions}
+                  onClick={handleDownload}>
+                  Download
+                </Button>
+                )
+              }
+
             </div>
           </div>
           {errorObj.errors.length ? (
@@ -302,7 +306,6 @@ export default function ErrorTable({ flowId, resourceId, show, isResolved }) {
           )}
         </>
       )}
-      { !isResolved && <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} /> }
     </div>
   );
 }

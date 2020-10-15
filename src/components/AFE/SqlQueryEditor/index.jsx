@@ -8,6 +8,7 @@ import ErrorGridItem from '../ErrorGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
 import SqlDataTabPanel from './SqlDataTabPanel';
 import layouts from '../layout/defaultDialogLayout';
+import PanelLoader from '../../PanelLoader';
 
 const styles = layouts;
 const Editor = props => {
@@ -30,6 +31,7 @@ const Editor = props => {
     enableAutocomplete,
     showDefaultData,
     disabled,
+    isSampleDataLoading,
   } = props;
 
   useEffect(() => {
@@ -53,14 +55,18 @@ const Editor = props => {
           enableAutocomplete={enableAutocomplete}
         />
       </PanelGridItem>
-      <PanelGridItem gridArea="data">
-        <SqlDataTabPanel
-          processor="merge"
-          showDefaultData={showDefaultData}
-          sampleData={sampleData}
-          defaultData={defaultData}
-          handleChange={handleChange}
+      <PanelGridItem gridArea="data" key={isSampleDataLoading}>
+        {isSampleDataLoading ? (
+          <PanelLoader />
+        ) : (
+          <SqlDataTabPanel
+            processor="merge"
+            showDefaultData={showDefaultData}
+            sampleData={sampleData}
+            defaultData={defaultData}
+            handleChange={handleChange}
         />
+        )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">

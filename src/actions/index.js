@@ -101,7 +101,8 @@ const auth = {
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagas: () => action(actionTypes.ABORT_ALL_SAGAS),
+  abortAllSagasAndInitLR: () => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -215,15 +216,16 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
@@ -1323,8 +1325,8 @@ const flowData = {
       stage,
       refresh,
     }),
-  resetStages: (flowId, resourceId, stages = []) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
+  resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
