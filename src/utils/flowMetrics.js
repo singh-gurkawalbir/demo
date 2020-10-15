@@ -307,21 +307,18 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
 
   return `import "math"
 
-    data1 = from(bucket: "${bucket}")
+    seiBaseData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
         |> filter(fn: (r) => r.f == "${resourceId}")
         |> filter(fn: (r) => r._field == "c")
         |> aggregateWindow(every: ${duration}, fn: sum)
+
+    data1 = seiBaseData
         |> group()
         |> pivot(rowKey: ["_time", "u", "f", "ei"], columnKey: ["_measurement"], valueColumn: "_value")
 
-    data2 = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
-        |> filter(fn: (r) => r._field == "c")
-        |> aggregateWindow(every: ${duration}, fn: sum)
+    data2 = seiBaseData
         |> group(columns: ["_time", "_measurement", "u"])
         |> sum()
         |> group()
@@ -332,7 +329,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.f then r.f else "_flowId",
-        resourceId: if exists r.ei then r.ei else "resourceId",
+        resourceId: if exists r.ei then r.ei else "_flowId",
         success: if exists r.s then r.s else 0.0,
         error: if exists r.e then r.e else 0.0,
         ignored: if exists r.i then r.i else 0.0,
@@ -352,7 +349,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
             |> set(key: "_field", value: "attph")
             |> rename(columns: {attph: "_value"}))
 
-    data3 = from(bucket: "${bucket}")
+    attBaseData = from(bucket: "${bucket}")
         |> range(start: ${start}, stop: ${end})
         |> filter(fn: (r) => r.u == "${userId}")
         |> filter(fn: (r) => r.f == "${resourceId}")
@@ -363,19 +360,11 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
         |> set(key: "_field", value: outputField)
         |> rename(columns: {attph: "_value"})))
+
+    data3 = attBaseData
         |> group()
 
-    data4 = from(bucket: "${bucket}")
-        |> range(start: ${start}, stop: ${end})
-        |> filter(fn: (r) => r.u == "${userId}")
-        |> filter(fn: (r) => r.f == "${resourceId}")
-        |> filter(fn: (r) => (r._measurement == "s"))
-        |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
-        |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
-        (tables
-        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
-        |> set(key: "_field", value: outputField)
-        |> rename(columns: {attph: "_value"})))
+    data4 = attBaseData
         |> group(columns: ["_time", "f", "u"])
         |> calculateAttPerHour()
         |> group()
@@ -385,7 +374,7 @@ export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) =
         _time: r._time,
         timeInMills: int(v: r._time)/1000000,
         flowId: if exists r.ei then r.f else "_flowId",
-        resourceId: if exists r.ei then r.ei else "resourceId",
+        resourceId: if exists r.ei then r.ei else "_flowId",
         success: if exists r.s then r.s else 0.0,
         error: if exists r.e then r.e else 0.0,
         ignored: if exists r.i then r.i else 0.0,

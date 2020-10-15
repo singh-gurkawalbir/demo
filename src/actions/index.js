@@ -216,6 +216,9 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
+  // only 'integrations and flows are valid resourceTypes. The metrics are always related to flows as of now.
+  // when resourceType is integrations, fetch metrics of all enabled flows in integration
+  // when resourceType is flow, fetch specific flow metrics
   request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
       resourceType,

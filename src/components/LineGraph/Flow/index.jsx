@@ -143,7 +143,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === 'resourceId' : d.resourceId === r) && d.type === type);
+      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
