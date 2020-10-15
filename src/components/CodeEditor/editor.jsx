@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import ace from 'ace-builds/src-noconflict/ace';
 import AceEditor from 'react-ace';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import ReactResizeDetector from 'react-resize-detector';
@@ -15,8 +16,17 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/ext-searchbox';
 import 'ace-builds/src-noconflict/ext-beautify';
 import { useSelector } from 'react-redux';
+import jsonWorkerUrl from 'ace-builds/src-noconflict/worker-json';
+import javascriptWorkerUrl from 'ace-builds/src-noconflict/worker-javascript';
+import cssWorkerUrl from 'ace-builds/src-noconflict/worker-css';
+import xmlWorkerUrl from 'ace-builds/src-noconflict/worker-xml';
 import { selectors } from '../../reducers';
 import handlebarCompleterSetup from '../AFE/editorSetup/editorCompleterSetup/index';
+
+ace.config.setModuleUrl('ace/mode/css_worker', cssWorkerUrl);
+ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
+ace.config.setModuleUrl('ace/mode/javascript_worker', javascriptWorkerUrl);
+ace.config.setModuleUrl('ace/mode/xml_worker', xmlWorkerUrl);
 
 const useStyles = makeStyles(theme => ({
   editorErrorWrapper: {
@@ -25,6 +35,14 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.error.dark,
     '& > .ace_gutter': {
       color: `${theme.palette.error.dark} !important`,
+    },
+  },
+  editorWarningWrapper: {
+    background: `${fade(theme.palette.warning.main, 0.06)} !important`,
+    border: '1px solid',
+    borderColor: theme.palette.warning.main,
+    '& > .ace_gutter': {
+      color: `${theme.palette.warning.main} !important`,
     },
   },
   errorMarker: {
@@ -38,7 +56,7 @@ const editorProp = { $blockScrolling: true };
 export default function CodeEditor({
   name,
   value = '',
-  mode,
+  mode = 'text',
   readOnly,
   width,
   height,
@@ -52,7 +70,9 @@ export default function CodeEditor({
   onChange,
   skipDelay = false,
   hasError,
+  hasWarning,
   errorLine,
+  onLoad,
 }) {
   const classes = useStyles();
   const aceEditor = useRef(null);
@@ -100,8 +120,10 @@ export default function CodeEditor({
           withstmt: true,
         }]);
       }
+
+      onLoad?.(editor);
     }),
-  [enableAutocomplete, mode]
+  [enableAutocomplete, mode, onLoad]
   );
   const handleChange = useCallback(
     value => {
@@ -141,11 +163,14 @@ export default function CodeEditor({
     if (aceEditor?.current) {
       if (hasError) {
         aceEditor.current.editor.setStyle(classes.editorErrorWrapper);
+      } else if (hasWarning) {
+        aceEditor.current.editor.setStyle(classes.editorWarningWrapper);
       } else {
         aceEditor.current.editor.unsetStyle(classes.editorErrorWrapper);
+        aceEditor.current.editor.unsetStyle(classes.editorWarningWrapper);
       }
     }
-  }, [classes.editorErrorWrapper, hasError]);
+  }, [classes.editorErrorWrapper, classes.editorWarningWrapper, hasError, hasWarning]);
 
   return (
     <>

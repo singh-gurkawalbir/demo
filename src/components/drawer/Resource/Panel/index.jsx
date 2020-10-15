@@ -9,6 +9,7 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { generateNewId, isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
+import ExportsPreviewPanel from '../../../ExportsPreviewPanel';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import Back from '../../../icons/BackArrowIcon';
 import Close from '../../../icons/CloseIcon';
@@ -38,8 +39,16 @@ const useStyles = makeStyles(theme => ({
     overflowY: props => (props.match.isExact ? 'auto' : 'hidden'),
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
+  baseForm: {
+    display: 'flex',
+  },
   resourceFormWrapper: {
+    flexDirection: 'row',
+    width: '100%',
     padding: theme.spacing(3, 3, 0, 3),
+  },
+  exportsPanel: {
+    flexDirection: 'row',
   },
   appLogo: {
     paddingRight: theme.spacing(2),
@@ -180,8 +189,14 @@ export default function Panel(props) {
   // peeking into the patch set from the first step in PP/PG creation.
   // The patch set should have a value for /adaptorType which
   // contains [*Import|*Export].
-  const stagedProcessor = useSelector(state =>
-    selectors.stagedResource(state, id)
+  const isTechAdaptorForm = useSelector(state => {
+    const staggedPatches = selectors.stagedResource(state, id)?.patch;
+
+    return !!staggedPatches?.find(
+      p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
+    )?.value;
+  }
+
   );
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   // Incase of a multi step resource, with isNew flag indicates first step and shows Next button
@@ -213,26 +228,20 @@ export default function Panel(props) {
   // using isNew as dependency and this will be false for export/import form
   useEffect(() => {
     if (!isNew) {
-      const useTechAdaptorForm = stagedProcessor?.patch?.find(
-        p => p.op === 'replace' && p.path === '/useTechAdaptorForm'
-      );
-
-      setShowNotificationToaster(!!useTechAdaptorForm?.value);
+      setShowNotificationToaster(isTechAdaptorForm);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isNew]);
   const variant = match.isExact ? 'edit' : 'view';
 
-  // useTraceUpdate({
-  //   variant,
-  //   isNew,
-  //   resourceType,
-  //   flowId,
-  //   integrationId,
-  //   handleSubmitComplete,
-  //   showNotificationToaster,
-  //   onCloseNotificationToaster,
-  // });
+  const showPreviewPanel = useSelector(state => {
+    const shouldShow = selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+
+    const skipClose = selectors.resourceFormState(state, resourceType, id)?.skipClose;
+
+    // when skipClose is false that indicates the last step in multistep form building process
+    return shouldShow && !skipClose;
+  });
 
   return (
     <>
@@ -267,20 +276,35 @@ export default function Panel(props) {
           </IconButton>
         </div>
         <LoadResources required resources={requiredResources}>
-          <ResourceFormWithStatusPanel
-            formKey={newId}
-            className={classes.resourceFormWrapper}
-            variant={variant}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            flowId={flowId}
-            integrationId={integrationId}
-            isFlowBuilderView={!!flowId}
-            onSubmitComplete={handleSubmitComplete}
-            showNotificationToaster={showNotificationToaster}
-            onCloseNotificationToaster={onCloseNotificationToaster}
+          <div
+            className={clsx({
+              [classes.baseForm]: resourceType === 'exports',
+            })}
+          >
+            <ResourceFormWithStatusPanel
+              formKey={newId}
+              className={classes.resourceFormWrapper}
+              variant={variant}
+              isNew={isNew}
+              resourceType={resourceType}
+              resourceId={id}
+              flowId={flowId}
+              integrationId={integrationId}
+              isFlowBuilderView={!!flowId}
+              onSubmitComplete={handleSubmitComplete}
+              showNotificationToaster={showNotificationToaster}
+              onCloseNotificationToaster={onCloseNotificationToaster}
           />
+            {showPreviewPanel && (
+              <ExportsPreviewPanel
+                className={classes.exportsPanel}
+                resourceId={id}
+                formKey={newId}
+                resourceType={resourceType}
+                flowId={flowId}
+          />
+            )}
+          </div>
           <ResourceFormActionsPanel
             formKey={newId}
             isNew={isNew}

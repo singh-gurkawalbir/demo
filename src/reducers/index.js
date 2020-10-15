@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import deepClone from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
@@ -30,7 +31,10 @@ import {
   getIAFlowSettings,
   getFlowDetails,
   getFlowResources,
+  isImportMappingAvailable,
   getFlowReferencesForResource,
+  isFreeFlowResource,
+  isIntegrationApp,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -57,6 +61,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   adaptorTypeMap,
+  isQueryBuilderSupported,
 } from '../utils/resource';
 import { processSampleData } from '../utils/sampleData';
 import {
@@ -73,7 +78,15 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getRequestOptions from '../utils/requestOptions';
+import getJSONPaths from '../utils/jsonPaths';
+import sqlUtil from '../utils/sql';
+import getFilteredErrors from '../utils/errorManagement';
+import {
+  getFlowResourcesYetToBeCreated,
+  generatePendingFlowSteps,
+  getRunConsoleJobSteps,
+  getParentJobSteps,
+} from '../utils/latestJobs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -399,6 +412,7 @@ selectors.isAuthenticated = state => !!(state && state.auth && state.auth.authen
 selectors.isDefaultAccountSet = state => !!(state && state.auth && state.auth.defaultAccountSet);
 
 selectors.isAuthInitialized = state => !!(state && state.auth && state.auth.initialized);
+selectors.isUserLoggedInDifferentTab = state => !!(state && state.auth && state.auth.userLoggedInDifferentTab);
 
 selectors.authenticationErrored = state => state && state.auth && state.auth.failure;
 
@@ -911,7 +925,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment) &&
+            (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             (accessLevel === 'owner' || accessLevel === 'manage')
           );
@@ -981,6 +995,8 @@ selectors.marketplaceConnectors = (
     })
     .sort(stringCompare('name'));
 };
+
+selectors.integrationAppSettings = selectors.mkIntegrationAppSettings();
 
 selectors.makeMarketPlaceConnectorsSelector = () =>
   createSelector(
@@ -1167,7 +1183,7 @@ selectors.integrationAppResourceList = (
   if (!state) return { connections: emptySet, flows: emptySet };
 
   const integrationResource =
-    fromData.integrationAppSettings(state.data, integrationId) || {};
+    selectors.integrationAppSettings(state, integrationId) || {};
   const { supportsMultiStore, sections } = integrationResource.settings || {};
   const { resources: integrationConnections } = selectors.resourceList(state, {
     type: 'connections',
@@ -1187,7 +1203,9 @@ selectors.integrationAppResourceList = (
 
   const flows = [];
   const flowIds = [];
+  const allFlowIds = [];
   const connections = [];
+  const flowConnections = [];
   const exports = [];
   const imports = [];
   const selectedStore = (sections || []).find(s => s.id === storeId) || {};
@@ -1195,6 +1213,17 @@ selectors.integrationAppResourceList = (
   (selectedStore.sections || []).forEach(sec => {
     flowIds.push(...map(sec.flows, '_id'));
   });
+  (sections || []).forEach(store => {
+    (store.sections || []).forEach(sec => {
+      allFlowIds.push(...map(sec.flows, '_id'));
+    });
+  });
+  allFlowIds.forEach(fid => {
+    const flow = selectors.resource(state, 'flows', fid) || {};
+
+    flowConnections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
+  });
+  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
 
   flowIds.forEach(fid => {
     const flow = selectors.resource(state, 'flows', fid) || {};
@@ -1206,27 +1235,29 @@ selectors.integrationAppResourceList = (
   });
 
   return {
-    connections: integrationConnections.filter(c =>
-      connections.includes(c._id)
-    ),
+    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
     flows,
     exports,
     imports,
   };
 };
 
-selectors.integrationAppStore = (state, integrationId, storeId) => {
-  const integration = fromData.integrationAppSettings(
-    state && state.data,
-    integrationId
-  );
+selectors.mkIntegrationAppStore = () => {
+  const integrationSettings = selectors.mkIntegrationAppSettings();
 
-  if (!integration || !integration.stores || !integration.stores.length) {
-    return emptyObject;
-  }
+  return createSelector(
+    (state, integrationId) => integrationSettings(state, integrationId),
+    (_1, _2, storeId) => storeId,
+    (integration, storeId) => {
+      if (!integration || !integration.stores || !integration.stores.length) {
+        return emptyObject;
+      }
 
-  return (
-    integration.stores.find(store => store.value === storeId) || emptyObject
+      return (
+        integration.stores.find(store => store.value === storeId) || emptyObject
+      );
+    }
+
   );
 };
 
@@ -1429,6 +1460,20 @@ selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   };
 };
 
+selectors.integrationAppName = () => createSelector(
+  state => state?.data?.resources.integrations,
+  (state, integrationId) => integrationId,
+  (integrations, integrationId) => {
+    const integration = integrations.find(i => i._id === integrationId);
+
+    if (integration && integration._connectorId && integration.name) {
+      return getIntegrationAppUrlName(integration.name);
+    }
+
+    return null;
+  }
+);
+
 selectors.integrationChildren = (state, integrationId) => {
   if (!state) return null;
   const children = [];
@@ -1446,9 +1491,26 @@ selectors.integrationChildren = (state, integrationId) => {
   return children;
 };
 
+selectors.mkIntegrationChildren = () => createSelector(
+  state => state?.data?.resources?.integrations,
+  (state, integrationId) => integrationId,
+  (integrations = [], integrationId) => {
+    const children = [];
+    const integration = integrations.find(int => int._id === integrationId) || {};
+    const childIntegrations = integrations.filter(int => int._parentId === integrationId);
+
+    children.push({ value: integrationId, label: integration.name });
+    childIntegrations.forEach(ci => {
+      children.push({ value: ci._id, label: ci.name, mode: ci.mode });
+    });
+
+    return children;
+  }
+);
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
-  const integrationResource = fromData.integrationAppSettings(state.data, id);
+  const integrationResource = selectors.integrationAppSettings(state, id);
   const { connectorEdition: edition } = integrationResource.settings || {};
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
@@ -1480,64 +1542,140 @@ selectors.integrationAppLicense = (state, id) => {
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
   };
 };
+selectors.makeIntegrationSectionFlows = () => createSelector(
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId) || emptyObject,
+  (_1, _2, childId) => childId,
+  (_1, _2, _3, sectionId) => sectionId,
+  (integration, childId, sectionId) => {
+    let flows = [];
+    const { sections = [], supportsMultiStore } = integration.settings || {};
 
-selectors.integrationAppFlowSections = (state, id, store) => {
-  if (!state) return emptySet;
-  let flowSections = [];
-  const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
-  const { sections = [], supportsMultiStore } =
-    integrationResource.settings || {};
+    if (supportsMultiStore) {
+      if (Array.isArray(sections) && sections.length) {
+        if (childId) {
+          const child =
+            (sections.find(sec => sec.id === childId) || {}).sections || [];
 
-  if (supportsMultiStore) {
-    if (Array.isArray(sections) && sections.length) {
-      if (store) {
-        flowSections =
-          (sections.find(sec => sec.id === store) || {}).sections || [];
-      } else {
-        flowSections =
-          (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+          if (child) {
+            if (sectionId) {
+              const selectedSection = child.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+              if (selectedSection) {
+                flows = selectedSection.flows.map(f => f._id);
+              }
+            } else {
+              child.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
+            }
+          }
+        } else {
+          sections.forEach(sec => {
+            if (sec.mode === 'settings') {
+              if (sectionId) {
+                const selectedSection = sec.sections.find(s => getTitleIdFromSection(s) === sectionId);
+
+                if (selectedSection) {
+                  flows.push(...selectedSection.flows.map(f => f._id));
+                }
+              } else {
+                sec.sections.forEach(s => flows.push(...s.flows.map(f => f._id)));
+              }
+            }
+          });
+        }
       }
+    } else if (sectionId) {
+      const selectedSection = sections.find(sec => getTitleIdFromSection(sec) === sectionId);
+
+      if (selectedSection) {
+        flows = selectedSection.flows.map(f => f._id);
+      }
+    } else {
+      sections.forEach(sec => flows.push(...sec.flows.map(f => f._id)));
     }
-  } else {
-    flowSections = sections;
-  }
 
-  return flowSections.map(sec => ({
-    ...sec,
-    titleId: getTitleIdFromSection(sec),
-  }));
+    return flows;
+  }
+);
+
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
+);
+
+selectors.mkIntegrationAppFlowSections = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
+
+  return createSelector(
+    (state, id) => (state && integrationSettingsSelector(state, id)) || emptyObject,
+    (_1, _2, store) => store,
+    (integrationResource, store) => {
+      let flowSections = [];
+      const { sections = [], supportsMultiStore } =
+      integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        if (Array.isArray(sections) && sections.length) {
+          if (store) {
+            flowSections =
+            (sections.find(sec => sec.id === store) || {}).sections || [];
+          } else {
+            flowSections =
+            (sections.find(sec => sec.mode !== 'install') || {}).sections || [];
+          }
+        }
+      } else {
+        flowSections = sections;
+      }
+
+      return flowSections.map(sec => ({
+        ...sec,
+        titleId: getTitleIdFromSection(sec),
+      }));
+    });
 };
 
-selectors.integrationAppGeneralSettings = (state, id, storeId) => {
-  if (!state) return emptyObject;
-  let fields;
-  let subSections;
-  const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
-  const { supportsMultiStore, general } = integrationResource.settings || {};
+selectors.integrationAppFlowSections = selectors.mkIntegrationAppFlowSections();
 
-  if (supportsMultiStore) {
-    const storeSection = (general || []).find(s => s.id === storeId) || {};
+selectors.mkIntegrationAppGeneralSettings = () => {
+  const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
-    ({ fields, sections: subSections } = storeSection);
-  } else if (Array.isArray(general)) {
-    ({ fields, sections: subSections } =
+  return createSelector(
+
+    (state, id) => (state && integrationSettingsSelector(state, id)),
+    (_1, _2, storeId) => storeId,
+    (integrationResource, storeId) => {
+      if (!integrationResource) return emptyObject;
+      let fields;
+      let subSections;
+      const { supportsMultiStore, general } = integrationResource.settings || {};
+
+      if (supportsMultiStore) {
+        const storeSection = (general || []).find(s => s.id === storeId) || {};
+
+        ({ fields, sections: subSections } = storeSection);
+      } else if (Array.isArray(general)) {
+        ({ fields, sections: subSections } =
       general.find(s => s.title === 'General') || {});
-  } else {
-    ({ fields, sections: subSections } = general || {});
-  }
+      } else {
+        ({ fields, sections: subSections } = general || {});
+      }
 
-  return {
-    fields,
-    sections: subSections,
-  };
+      return {
+        fields,
+        sections: subSections,
+      };
+    }
+
+  );
 };
+
+selectors.integrationAppGeneralSettings = selectors.mkIntegrationAppGeneralSettings();
 
 selectors.hasGeneralSettings = (state, integrationId, storeId) => {
   if (!state) return false;
   const integrationResource =
-    fromData.integrationAppSettings(state.data, integrationId) || {};
+    selectors.integrationAppSettings(state, integrationId) || {};
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
@@ -1550,46 +1688,44 @@ selectors.hasGeneralSettings = (state, integrationId, storeId) => {
   return !isEmpty(general);
 };
 
-selectors.integrationAppSectionMetadata = (
-  state,
-  integrationId,
-  section,
-  storeId
-) => {
-  if (!state) {
-    return emptyObject;
-  }
+selectors.mkIntegrationAppSectionMetadata = () => {
+  const integrationSettings = selectors.mkIntegrationAppSettings();
 
-  const integrationResource = fromData.integrationAppSettings(
-    state.data,
-    integrationId
-  );
-  const { supportsMultiStore, sections = [] } =
-    integrationResource.settings || {};
-  let allSections = sections;
+  return createSelector(
+    (state, integrationId) => integrationSettings(state, integrationId),
+    (_1, _2, section) => section,
+    (_1, _2, _3, storeId) => storeId,
+    (integrationResource, section, storeId) => {
+      if (!integrationResource) return emptyObject;
 
-  if (supportsMultiStore) {
-    if (storeId) {
-      // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      const { supportsMultiStore, sections = [] } = integrationResource.settings || {};
+      let allSections = sections;
 
-      allSections = store.sections || [];
-    }
-  }
+      if (supportsMultiStore) {
+        if (storeId) {
+          // If storeId passed, return sections from that store
+          const store = sections.find(s => s.id === storeId) || {};
 
-  const selectedSection =
+          allSections = store.sections || [];
+        }
+      }
+
+      const selectedSection =
     allSections.find(
       sec =>
         getTitleIdFromSection(sec) === section
     ) || {};
 
-  return selectedSection;
+      return selectedSection;
+    }
+
+  );
 };
 
-selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
+selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
   if (!state) return emptyObject;
   const integrationResource =
-    fromData.integrationAppSettings(state.data, id) || emptyObject;
+    selectors.integrationAppSettings(state, id) || emptyObject;
   const {
     supportsMultiStore,
     supportsMatchRuleEngine: showMatchRuleEngine,
@@ -1599,6 +1735,7 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
   let hasNSInternalIdLookup = false;
   let showFlowSettings = false;
   let hasDescription = false;
+  let sectionFlows;
   let allSections = sections;
 
   if (supportsMultiStore) {
@@ -1624,10 +1761,12 @@ selectors.integrationAppFlowSettings = (state, id, section, storeId) => {
 
   if (!section) {
     allSections.forEach(sec => {
-      requiredFlows.push(...map(sec.flows, '_id'));
+      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+      requiredFlows.push(...map(sectionFlows, '_id'));
     });
   } else {
-    requiredFlows = map(selectedSection.flows, '_id');
+    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+    requiredFlows = map(sectionFlows, '_id');
   }
   hasNSInternalIdLookup = some(
     selectedSection.flows,
@@ -1676,9 +1815,10 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
     type: 'flows',
     filter: { _integrationId: integrationId },
   }).resources;
+
   const integration = selectors.integrationAppSettings(state, integrationId);
 
-  if (integration.stores && storeId) {
+  if (integration && integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
     const { flows } = selectors.integrationAppFlowSettings(
       state,
@@ -1791,7 +1931,7 @@ selectors.addNewStoreSteps = (state, integrationId) => {
 };
 
 selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
-  const integration = fromData.integrationAppSettings(state.data, integrationId);
+  const integration = selectors.integrationAppSettings(state, integrationId);
 
   if (!integration) return true;
   if (integration.mode !== 'uninstall') return false;
@@ -1828,11 +1968,11 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
     integration.install.find(step => step.isClone);
   }
   const isFrameWork2 =
-    (
+    !!((
       integration.installSteps &&
       integration.installSteps.length) || (
       integration.uninstallSteps &&
-        integration.uninstallSteps.length) ||
+        integration.uninstallSteps.length)) ||
     isCloned;
 
   return isFrameWork2;
@@ -1847,8 +1987,8 @@ selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
   if (integration?.settings?.supportsMultiStore) {
     const { stores } = selectors.integrationAppSettings(state, integrationId);
 
-    if (!flowId && stores?.length) {
-      return stores[0].value;
+    if (!flowId) {
+      return null;
     }
 
     return stores.find(store => selectors.integrationAppFlowIds(state, integrationId, store?.value)?.includes(flowId))?.value;
@@ -2219,24 +2359,42 @@ const getParentsResourceId = (state, resourceType, resourceId) => {
   return null;
 };
 
-selectors.getResourceEditUrl = (state, resourceType, resourceId) => {
-  if (resourceType === 'flows') {
-    const integrationId = getParentsResourceId(state, resourceType, resourceId);
-    const { _connectorId, name } =
+selectors.getResourceEditUrl = (state, resourceType, resourceId, childId) => {
+  let integrationId = resourceType === 'integrations' ? resourceId : getParentsResourceId(state, resourceType, resourceId);
+  // eslint-disable-next-line prefer-const
+  let { name: integrationName, _parentId } = selectors.resource(state, 'integrations', integrationId) || {};
+
+  // fetch parent integration name and id to append in the url
+  if (_parentId) {
+    const name = selectors.resource(state, 'integrations', _parentId)?.name;
+
+    integrationName = name;
+    integrationId = _parentId;
+  }
+  // to handle standalone integrations
+  integrationId = integrationId || 'none';
+
+  const { _connectorId } =
       selectors.resource(state, resourceType, resourceId) || {};
 
-    // if _connectorId its an integrationApp
-    if (_connectorId) {
-      return getRoutePath(
-        `/integrationapps/${getIntegrationAppUrlName(
-          name
-        )}/${integrationId}/flowBuilder/${resourceId}`
-      );
-    }
+  let iaUrlPrefix;
 
-    return getRoutePath(
-      `/integrations/${integrationId}/flowBuilder/${resourceId}`
-    );
+  if (_connectorId) {
+    if (childId) {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}/child/${childId}`;
+    } else {
+      iaUrlPrefix = `/integrationapps/${getIntegrationAppUrlName(integrationName)}/${integrationId}`;
+    }
+  }
+
+  if (resourceType === 'flows') {
+    const isDataLoader = selectors.isDataLoader(state, resourceId);
+    const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+    return getRoutePath(`${iaUrlPrefix || `/integrations/${integrationId}`}/${flowBuilderPathName}/${resourceId}`);
+  }
+  if (resourceType === 'integrations') {
+    return getRoutePath(`${iaUrlPrefix || `/integrations/${resourceId}`}/flows`);
   }
 
   return getRoutePath(`${resourceType}/edit/${resourceType}/${resourceId}`);
@@ -2359,6 +2517,7 @@ selectors.resourcePermissions = (
           },
           connections: {
             edit: value.connections && value.connections.edit,
+            create: value.connections && value.connections.create,
           },
           edit: value.edit,
           delete: value.delete,
@@ -2597,12 +2756,9 @@ selectors.tiles = state => {
     if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
       status = TILE_STATUS.UNINSTALL;
     } else if (
-      t._connectorId &&
-      integration.mode !== INTEGRATION_MODES.SETTINGS
+      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
     ) {
       status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.offlineConnections && t.offlineConnections.length > 0) {
-      status = TILE_STATUS.HAS_OFFLINE_CONNECTIONS;
     } else if (t.numError && t.numError > 0) {
       status = TILE_STATUS.HAS_ERRORS;
     } else {
@@ -2887,12 +3043,12 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.integrationResources = (state, _integrationId, storeId) => {
+selectors.notificationResources = (state, _integrationId, storeId) => {
   const diyFlows = selectors.resourceList(state, {
     type: 'flows',
     filter: {
       $where() {
-        if (!_integrationId || ['none', 'none-sb'].includes(_integrationId)) {
+        if (!_integrationId || ['none'].includes(_integrationId)) {
           return !this._integrationId;
         }
 
@@ -2907,7 +3063,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none', 'none-sb'].includes(_integrationId),
+        ['none'].includes(_integrationId),
     },
   }).resources;
   const notifications = selectors.resourceList(state, { type: 'notifications' })
@@ -2915,7 +3071,7 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
   const connections = _connectorId
     ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
     : diyConnections;
-  let flows = _connectorId
+  const flows = _connectorId
     ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
     : diyFlows;
   const connectionValues = connections
@@ -2928,10 +3084,8 @@ selectors.integrationResources = (state, _integrationId, storeId) => {
     n => n._integrationId === _integrationId
   );
 
-  if (_integrationId && !['none', 'none-sb'].includes(_integrationId)) {
-    flows = [{ _id: _integrationId, name: '---All Flows---' }, ...flows];
-
-    if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
+    flowValues = [_integrationId, ...flows];
   }
 
   return {
@@ -3182,53 +3336,38 @@ selectors.flowJobs = (state, options = {}) => {
   });
 };
 
-selectors.latestFlowJobs = createSelector(
-  state => selectors.flowJobs(state),
-  jobList => {
-    const queuedJobs = jobList.filter(job => job.status === JOB_STATUS.QUEUED);
-    const inProgressJobs = jobList.filter(job => job.status === JOB_STATUS.RUNNING);
+selectors.flowDashboardJobs = createSelector(
+  (state, flowId) => selectors.latestFlowJobsList(state, flowId),
+  state => fromData.resourceDetailsMap(state?.data),
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
+    const dashboardSteps = [];
 
-    // If there are any in progress jobs too, show them with queued jobs if exist
-    if (inProgressJobs.length) {
-      return [...queuedJobs, ...inProgressJobs];
-    }
-    // show queued jobs if exist
-    if (queuedJobs.length) {
-      return queuedJobs;
-    }
+    latestFlowJobs?.data?.forEach(parentJob => {
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
 
-    // If there are no in progress / queued jobs, show the latest job
-    // TODO : Discuss on this use case on what to show
-    return jobList[0] ? [jobList[0]] : emptySet;
-  });
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
+      if (parentJob.children?.length) {
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-selectors.flowDashboardDetails = createSelector(
-  state => selectors.latestFlowJobs(state),
-  latestJobs => {
-    if (!latestJobs.length) return emptySet;
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
-    const childJobDetails = [];
-
-    latestJobs.forEach(job => {
-      if (job.status === JOB_STATUS.QUEUED) {
-        childJobDetails.push(job);
-      } else if (job.children?.length) {
-        job.children.forEach(childJob => childJob && childJobDetails.push(childJob));
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }
     });
 
-    return childJobDetails;
+    return {
+      status: latestFlowJobs?.status,
+      data: dashboardSteps,
+    };
   });
-
-selectors.areFlowJobsLoading = (state, filters = {}) => {
-  const { path, opts} = getRequestOptions(actionTypes.JOB.REQUEST_COLLECTION, {
-    filters,
-  }) || {};
-
-  const commKey = commKeyGen(path, opts.method);
-
-  return fromComms.isLoading(state.comms, commKey);
-};
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
@@ -3250,21 +3389,19 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
   };
 };
 
-selectors.flowJobConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-  const connections = [];
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-    ignoreBorrowedConnections: true,
-  });
+selectors.flowJobConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, flowId) => {
+    const flow = selectors.resource(state, 'flows', flowId);
 
-  connectionIds.forEach(c => {
-    const conn = selectors.resource(state, 'connections', c);
+    const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
+      ignoreBorrowedConnections: true,
+    });
 
-    connections.push({ id: conn._id, name: conn.name });
-  });
-
-  return connections;
-};
+    return connectionIds;
+  },
+  (connections = [], connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+);
 
 selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
   let connectionIdsToRegister = [];
@@ -3290,6 +3427,23 @@ selectors.flowImports = (state, id) => {
 
   return getImportsFromFlow(flow, imports);
 };
+
+selectors.flowMappingsImportsList = () => createSelector(
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  state => state?.data?.resources?.imports,
+  (state, flowId, importId) => importId,
+  (flow, imports, importId) => {
+    if (importId) {
+      const subRecordResource = imports.find(i => i._id === importId);
+
+      return [subRecordResource];
+    }
+
+    const flowImports = getImportsFromFlow(flow, imports);
+
+    return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
+  }
+);
 
 // TODO: The selector below should be deprecated and the above selector
 // should be used instead.
@@ -3384,17 +3538,12 @@ selectors.isAnyFlowConnectionOffline = (state, flowId) => {
   return connectionList.some(c => c.offline);
 };
 
-selectors.flowConnectionList = (state, flow) => {
+selectors.flowConnectionList = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
   const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
   const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
 
   return connectionList;
-};
-
-selectors.flowConnections = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  return selectors.flowConnectionList(state, flow);
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
@@ -3790,7 +3939,7 @@ selectors.getSampleDataWrapper = createSelector(
     if (['outputFilter', 'preSavePage'].includes(stage)) {
       contextFields.pageIndex = 0;
 
-      if (!isRealTimeOrDistributedResource(resource, resourceType)) {
+      if (resource?.type === 'delta') {
         contextFields.lastExportDateTime = moment()
           .startOf('day')
           .add(-7, 'd')
@@ -5068,3 +5217,232 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
 
   return emptyObject;
 };
+
+selectors.sampleRuleForSQLQueryBuilder = createSelector([
+  (state, { importId}) => {
+    const {merged: importResource = {}} = selectors.resourceData(
+      'imports',
+      importId
+    );
+
+    return importResource.adaptorType;
+  },
+  (state, { importId}) => {
+    const {merged: importResource = {}} =
+      selectors.resourceData(
+        'imports',
+        importId
+      );
+    const {_connectionId} = importResource;
+
+    return selectors.resource(state, 'connections', _connectionId);
+  },
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'flowInput',
+  }).data,
+  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+    flowId,
+    resourceId: importId,
+    resourceType: 'imports',
+    stage: 'importMappingExtract',
+  }).data,
+  (state, {method}) => method,
+  (state, {queryType}) => queryType,
+], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+  if (sampleData && extractFields) {
+    const extractPaths = getJSONPaths(extractFields, null, {
+      wrapSpecialChars: true,
+    });
+
+    if (adaptorType === 'MongodbImport') {
+      return sqlUtil.getSampleMongoDbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'insertMany'
+      );
+    } if (
+      adaptorType === 'DynamodbImport'
+    ) {
+      return sqlUtil.getSampleDynamodbTemplate(
+        sampleData,
+        extractPaths,
+        method === 'putItem'
+      );
+    } if (
+      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+    ) {
+      return sqlUtil.getSampleSnowflakeTemplate(
+        sampleData,
+        extractPaths,
+        queryType === 'INSERT'
+      );
+    }
+
+    return sqlUtil.getSampleSQLTemplate(
+      sampleData,
+      extractPaths,
+      queryType === 'INSERT'
+    );
+  }
+});
+
+selectors.errorDetails = (state, params) => {
+  const { flowId, resourceId, options = {} } = params;
+
+  return selectors.getErrors(state, {
+    flowId,
+    resourceId,
+    errorType: options.isResolved ? 'resolved' : 'open',
+  });
+};
+
+selectors.makeResourceErrorsSelector = () => createSelector(
+  selectors.errorDetails,
+  (_1, params) => params.options,
+  (errorDetails, options) => ({
+    ...errorDetails,
+    errors: getFilteredErrors(errorDetails.errors, options),
+  })
+);
+
+selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+/**
+ * Returns error count per category in a store for IA 1.0
+ * A map of titleId and total errors on that category
+ */
+selectors.integrationErrorsPerSection = createSelector(
+  selectors.integrationAppFlowSections,
+  (state, integrationId) => selectors.errorMap(state, integrationId)?.data || emptyObject,
+  state => selectors.resourceList(state, { type: 'flows' }).resources,
+  (flowSections, integrationErrors, flowsList) =>
+    // go through all sections and aggregate error counts of all the flows per sections against titleId
+    flowSections.reduce((errorsMap, section) => {
+      const { flows = [], titleId } = section;
+
+      errorsMap[titleId] = flows.reduce((total, flow) => {
+        const isFlowDisabled = !!flowsList.find(flowObj => flowObj._id === flow._id)?.disabled;
+
+        // we consider enabled flows to show total count per section
+        if (!isFlowDisabled) {
+          total += (integrationErrors[flow._id] || 0);
+        }
+
+        return total;
+      }, 0);
+
+      return errorsMap;
+    }, {})
+);
+
+/**
+ * Returns error count per Store in an Integration for IA 1.0
+ * A map of storeId and total errors on that Store
+ */
+selectors.integrationErrorsPerStore = (state, integrationId) => {
+  const integrationAppSettings = selectors.integrationAppSettings(state, integrationId);
+  const { supportsMultiStore, sections: stores = [] } = integrationAppSettings.settings || {};
+
+  if (!supportsMultiStore) return emptyObject;
+
+  return stores.reduce((storeErrorsMap, store) => {
+    const sectionErrorsMap = selectors.integrationErrorsPerSection(state, integrationId, store.id);
+
+    storeErrorsMap[store.id] = Object.values(sectionErrorsMap).reduce(
+      (total, count) => total + count,
+      0);
+
+    return storeErrorsMap;
+  }, {});
+};
+
+selectors.mkChildIntegration = () => {
+  const resourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, integrationId) => {
+      const id = selectors.getChildIntegrationId(state, integrationId);
+
+      return id && resourceSelector(state?.data?.resources, 'integrations', id);
+    },
+    childIntegration => childIntegration
+  );
+};
+
+// #region Flow builder selectors
+
+selectors.isFreeFlowResource = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const isFreeFlow = isFreeFlowResource(flow);
+
+  return isFreeFlow;
+};
+
+selectors.isIAType = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const isIAType = isIntegrationApp(flow);
+
+  return isIAType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
+};
+
+selectors.isFlowViewMode = (state, integrationId, flowId) => {
+  const isIAType = selectors.isIAType(state, flowId);
+
+  const isMonitorLevelAccess =
+    selectors.isFormAMonitorLevelAccess(state, integrationId);
+
+  return isMonitorLevelAccess || isIAType;
+};
+
+const selectorFlowDetails = selectors.mkFlowDetails();
+
+selectors.isDataLoaderFlow = (state, flowId) => {
+  const flowDetails = selectorFlowDetails(state, flowId);
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+  const { pageGenerators = [] } = flow;
+
+  return flowDetails.isSimpleImport ||
+  (pageGenerators.length && pageGenerators[0].application === 'dataLoader');
+};
+
+selectors.shouldShowAddPageProcessor = (state, flowId) => {
+  const flow = selectors.resourceData(state,
+    'flows',
+    flowId
+  ).merged;
+
+  const { pageProcessors = [], pageGenerators = [] } = flow;
+  const isDataLoaderFlow = selectors.isDataLoaderFlow(state, flowId);
+
+  const showAddPageProcessor =
+    !isDataLoaderFlow ||
+    (pageProcessors.length === 0 &&
+      pageGenerators.length &&
+      pageGenerators[0]._exportId);
+
+  return showAddPageProcessor;
+};
+
+// #endregion Flow builder selectors

@@ -54,7 +54,6 @@ export default function ManageUsersPanel({ integrationId }) {
           open={showDialog}
           userId={userId}
           onClose={handleCloseDialog}
-          onSuccess={handleCloseDialog}
         />
       )}
       <PanelHeader title="Users" infoText={infoTextUsers}>

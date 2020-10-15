@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Typography, Tooltip, makeStyles } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -19,9 +19,11 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
+import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS, SUITESCRIPT_CONNECTORS } from '../../utils/constants';
 import {
   tileStatus,
+  isTileStatusConnectionDown,
   dragTileConfig,
   dropTileConfig,
 } from './util';
@@ -44,8 +46,15 @@ const useStyles = makeStyles(theme => ({
     },
   },
   status: {
-    '& > * :hover': {
+    position: 'relative',
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
+    },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
     },
   },
 }));
@@ -56,6 +65,7 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
   const ssLinkedConnection = useSelector(state => selectors.resource(state, 'connections', tile.ssLinkedConnectionId));
   const connector = SUITESCRIPT_CONNECTORS.find(c => c._id === tile._connectorId);
   const status = tileStatus(tile);
+  const isConnectionDown = isTileStatusConnectionDown(tile);
   let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
@@ -66,13 +76,15 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
     urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile.urlName}/${tile._integrationId}/flows`;
   }
 
+  const handleConnectionDownStatusClick = useCallback(event => {
+    event.stopPropagation();
+    // TODO - open connection edit
+  }, []);
+
   const handleStatusClick = useCallback(
     event => {
       event.stopPropagation();
-
-      if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        // TODO - open connection edit
-      } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
         history.push(
           getRoutePath(
             `/suitescript/${tile.ssLinkedConnectionId}/integrationapps/${tile._connectorId}/setup`
@@ -116,6 +128,13 @@ function SuiteScriptTile({ tile, history, onMove, onDrop, index }) {
             className={classes.status}>
             <StatusCircle variant={status.variant} />
           </Status>
+          {isConnectionDown && (
+          <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
+            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
+              <ConnectionDownIcon />
+            </IconButton>
+          </Tooltip>
+          )}
         </Header>
         <Content>
           <CardTitle>

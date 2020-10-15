@@ -6,6 +6,7 @@ import { selectors } from '../../../../../reducers';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../forms/utils';
 import PanelHeader from '../../../../../components/PanelHeader';
 import { IAFormStateManager, useActiveTab} from '../Flows';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,8 +30,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
   // have selectors that do too much and as such, they are wasteful and
   // hard to understand and reuse. In this example, this component doesn't
   // need the flows returned by the selector.
-  const generalSectionMetadata = useSelector(state =>
-    selectors.integrationAppGeneralSettings(state, integrationId, storeId)
+
+  const generalSectionMetadata = useSelectorMemo(
+    selectors.mkIntegrationAppGeneralSettings, integrationId
   );
   const hasGeneralSettings = useSelector(state =>
     selectors.hasGeneralSettings(state, integrationId, storeId)
@@ -42,9 +44,9 @@ export default function GeneralPanel({ integrationId, storeId }) {
         integrationId,
         true
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [integrationId, storeId]
+    [generalSectionMetadata, integrationId]
   );
+
   const formState = useSelector(
     state => selectors.integrationAppSettingsFormState(state, integrationId),
     shallowEqual

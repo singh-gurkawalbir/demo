@@ -187,6 +187,10 @@ import lexbizz from './lexbizz';
 import microsoftdynamics365financeandoperation from './microsoftdynamics365financeandoperation';
 import precisely from './precisely';
 import shipengine from './shipengine';
+import jiraserver from './jiraserver';
+import gainsight from './gainsight';
+import dotdigital from './dotdigital';
+import checkout from './checkout';
 
 export default {
   concurexpense,
@@ -377,4 +381,8 @@ export default {
   microsoftdynamics365financeandoperation,
   precisely,
   shipengine,
+  jiraserver,
+  gainsight,
+  dotdigital,
+  checkout,
 };

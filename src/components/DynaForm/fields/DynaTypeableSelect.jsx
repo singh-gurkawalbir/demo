@@ -122,6 +122,14 @@ const SelectStyle = theme => ({
   }),
   input: () => ({
     color: theme.palette.secondary.light,
+    width: '100%',
+    '& > div': {
+      width: '100%',
+    },
+    '& * > input': {
+      width: '100% !important',
+      display: 'block !important',
+    },
   }),
   placeholder: () => ({
     color: theme.palette.secondary.light,
@@ -188,21 +196,29 @@ export default function DynaTypeableSelect(props) {
     label: option[labelName],
     value: option[valueName]?.toString(), // convert values to String
     filterType: option.filterType,
-  })), [labelName, options, valueName]);
+  })).filter(opt => opt.label && opt.value), [labelName, options, valueName]);
 
   const [value, setValue] = useState(propValue?.toString());
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
-  const handleFocusIn = useCallback(() => {
+  const handleFocusIn = useCallback(evt => {
+    // this component is a combo of textArea and react-select. trigger focus in when user tries to focus in textarea
+    if (evt.target.type !== 'textarea') {
+      return;
+    }
     if (!isFocused) { setIsFocused(true); }
-  }, [isFocused]);
-  const handleFocusOut = useCallback(() => {
-    if (isFocused) { setIsFocused(false); }
     if (onTouch) {
       onTouch(id);
     }
   }, [id, isFocused, onTouch]);
+  const handleFocusOut = useCallback(evt => {
+    // this component is a combo of textArea and react-select. trigger focus out when user tries to focus out of react-select
+    if (evt.target.type === 'textarea') {
+      return;
+    }
+    if (isFocused) { setIsFocused(false); }
+  }, [isFocused]);
 
   useEffect(() => {
     const div = ref.current;
@@ -232,6 +248,17 @@ export default function DynaTypeableSelect(props) {
     setValue(val);
     onBlur(id, val);
   }, [onBlur]);
+
+  const handleKeyDown = useCallback(
+    evt => {
+      if (evt.key === 'Escape') {
+        setIsTyping(false);
+        setValue(propValue);
+        setIsFocused(false);
+      }
+    },
+    [propValue],
+  );
 
   const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') {
@@ -287,6 +314,7 @@ export default function DynaTypeableSelect(props) {
           onChange={handleChange}
           styles={customStyles}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           autoFocus
           openOnFocus
           components={components}

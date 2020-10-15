@@ -1,9 +1,8 @@
-import { Drawer, IconButton, Tab, Tabs } from '@material-ui/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
@@ -17,30 +16,29 @@ import WarningIcon from '../../../../components/icons/WarningIcon';
 import { selectors } from '../../../../reducers';
 import ConnectionPanel from './panels/Connection';
 import RunDashboardPanel from './panels/Dashboard/RunDashboardPanel';
-import RunDashboardV2Panel from './panels/Dashboard/RunDashboardV2Panel';
+import RunDashboardV2 from '../../../../components/JobDashboard/RunDashboardV2';
 import AuditPanel from './panels/Audit';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
+import useBottomDrawer from './useBottomDrawer';
+import ReplaceConnection from '../../../../components/ReplaceConnection';
+import RightDrawer from '../../../../components/drawer/Right';
+import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
-  drawer: {
-    // none needed so far.
-  },
   drawerPaper: {
     marginLeft: theme.drawerWidthMinimized,
     padding: theme.spacing(0),
-    transition: theme.transitions.create(['height', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
   },
   drawerPaperShift: {
     marginLeft: theme.drawerWidth,
+  },
+  drawerTransition: {
     transition: theme.transitions.create(['height', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
+      duration: theme.transitions.duration.leavingScreen,
     }),
   },
   actionsContainer: {
@@ -56,6 +54,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    cursor: 'ns-resize',
   },
   tabPanel: {
     overflow: 'auto',
@@ -87,15 +86,24 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginRight: theme.spacing(1),
   },
+  inProgress: {
+    marginLeft: theme.spacing(1),
+  },
 }));
+// we use this to prevent the up and down resize buttons from passing mouse-down events
+// to the parent draggable re-sizeable tab bar. The combination of events disrupts UX.
+const preventEvent = e => {
+  // console.log('stop prop');
+  e.stopPropagation();
+};
 
-function TabPanel({ children, value, index, classes }) {
+function TabPanel({ children, value, index, className }) {
   const hidden = value !== index;
 
   return (
     <div
       role="tabpanel"
-      className={classes.tabPanel}
+      className={className}
       hidden={hidden}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}>
@@ -107,24 +115,42 @@ function TabPanel({ children, value, index, classes }) {
 const connectionsFilterConfig = {
   type: 'connections',
 };
-
+const overrides = { useWorker: false };
 export default function BottomDrawer({
-  size,
-  setSize,
-  flow,
+  flowId,
   setTabValue,
   tabValue,
+  integrationId,
+  childId,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const [isDragging, setIsDragging] = useState(null);
+  const [startY, setStartY] = useState(0);
+  const [dragY, setDragY] = useState(0);
+  const [drawerHeight, setDrawerHeight] = useBottomDrawer();
+  const [connName, setConnName] = useState('');
+
+  const history = useHistory();
+
+  const match = useRouteMatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
-    selectors.isAnyFlowConnectionOffline(state, flow._id)
+    selectors.isAnyFlowConnectionOffline(state, flowId)
   );
+  const isFlowRunInProgress = useSelector(state =>
+    !!selectors.getInProgressLatestJobs(state, flowId).length
+  );
+
+  const parentUrl = match.url;
+
+  const handleClose = useCallback(() => {
+    history.push(parentUrl);
+  }, [history, parentUrl]);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-
   const connectionDebugLogs = useSelector(state => selectors.debugLogs(state));
   const connections = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -138,24 +164,54 @@ export default function BottomDrawer({
     return resourceIdNameMap;
   }, [connections]);
   const [clearConnectionLogs, setClearConnectionLogs] = useState(true);
-  const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
-  const handleSizeChange = useCallback(
-    direction => () => {
-      if (size === maxStep && direction === 1) return setSize(0);
+  const minDrawerHeight = 41;
+  const maxHeight = window.innerHeight - theme.appBarHeight - theme.pageBarHeight + 1; // border 1px
+  const stepSize = parseInt((maxHeight - minDrawerHeight) / 4, 10);
 
-      if (size === 0 && direction === -1) return setSize(maxStep);
+  let tempDrawerHeight = drawerHeight + (startY - dragY);
 
-      setSize(size + direction);
-    },
-    [setSize, size]
+  if (tempDrawerHeight > maxHeight) tempDrawerHeight = maxHeight;
+
+  const handleSizeUp = useCallback(() => {
+    if (drawerHeight + stepSize >= maxHeight) return setDrawerHeight(maxHeight);
+
+    setDrawerHeight(drawerHeight + stepSize);
+  },
+  [maxHeight, setDrawerHeight, drawerHeight, stepSize]
   );
+
+  const handleSizeDown = useCallback(() => {
+    if (drawerHeight - stepSize < minDrawerHeight) return setDrawerHeight(minDrawerHeight);
+
+    setDrawerHeight(drawerHeight - stepSize);
+  },
+  [setDrawerHeight, drawerHeight, stepSize]
+  );
+
+  const handleDragEnd = useCallback(() => setIsDragging(false), []);
+
+  const trackMouseY = useCallback(e => {
+    if (e.movementY === 0) return; // skip x axis movement
+
+    setDragY(e.clientY);
+  }, []);
+
+  const handleMouseDown = useCallback(e => {
+    setIsDragging(true);
+    setStartY(e.nativeEvent.clientY);
+    setDragY(e.nativeEvent.clientY);
+
+    window.addEventListener('mouseup', handleDragEnd);
+    window.addEventListener('mousemove', trackMouseY);
+  }, [trackMouseY, handleDragEnd]);
+
   const handleTabChange = useCallback(
     (event, newValue) => {
       setTabValue(newValue);
 
-      if (size === 0) setSize(1);
+      if (drawerHeight < minDrawerHeight) setDrawerHeight(minDrawerHeight);
     },
-    [setSize, setTabValue, size]
+    [setDrawerHeight, setTabValue, drawerHeight]
   );
   const handleDebugLogsClose = useCallback(
     connectionId => event => {
@@ -183,52 +239,95 @@ export default function BottomDrawer({
     }
   }, [clearConnectionLogs, connectionDebugLogs, dispatch]);
 
-  const tabProps = useCallback(
-    index => ({
-      id: `tab-${index}`,
-      'aria-controls': `tabpanel-${index}`,
-    }),
-    []
-  );
+  useEffect(() => {
+    if (isDragging === false) {
+      // console.log('drag end: ', tempDrawerHeight);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('mousemove', trackMouseY);
 
-  // TODO @Raghu: For all the components used below , cant we just pass flowId rather than the whole flow object
-  // Go through each and update the components
+      setIsDragging(false);
+
+      if (drawerHeight !== tempDrawerHeight) {
+        setDrawerHeight(tempDrawerHeight);
+      }
+      setStartY(0);
+      setDragY(0);
+    }
+  },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [isDragging]);
+
+  const tabProps = index => ({
+    id: `tab-${index}`, 'aria-controls': `tabpanel-${index}`,
+  });
+
+  const drawerClasses = useMemo(() => ({ paper: clsx(classes.drawerPaper, {
+    [classes.drawerPaperShift]: drawerOpened,
+    [classes.noScroll]: drawerHeight === 0,
+    [classes.drawerTransition]: !isDragging,
+  })}), [
+    classes.drawerPaper,
+    classes.drawerPaperShift,
+    classes.drawerTransition,
+    classes.noScroll,
+    drawerHeight, drawerOpened, isDragging,
+  ]);
+  const drawerPaperProps = useMemo(() =>
+    ({ style: { height: tempDrawerHeight } }),
+  [tempDrawerHeight]);
+
+  const dashboardLabel = useMemo(() => {
+    if (isUserInErrMgtTwoDotZero) {
+      return (
+        <>
+          Run console
+          {
+            isFlowRunInProgress &&
+            <Spinner color="primary" size={16} className={classes.inProgress} />
+          }
+        </>
+      );
+    }
+
+    return 'Dashboard';
+  }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
+
   return (
-    <Drawer
-      open
-      className={classes.drawer}
-      classes={{
-        paper: clsx(classes.drawerPaper, {
-          [classes.drawerPaperShift]: drawerOpened,
-          [classes.noScroll]: size === 0,
-        }),
-      }}
-      PaperProps={{ style: { height: size ? `${size * 25}%` : '41px' } }}
-      variant="persistent"
-      anchor="bottom">
-      <div className={classes.tabBar}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example">
-          <Tab {...tabProps(0)} icon={<DashboardIcon />} label="Dashboard" />
-          <Tab
-            {...tabProps(1)}
-            icon={
+    <div>
+      <Drawer
+        open
+        classes={drawerClasses}
+        PaperProps={drawerPaperProps}
+        variant="persistent"
+        anchor="bottom">
+        <div
+          className={classes.tabBar}
+          onMouseDown={handleMouseDown}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example">
+            <Tab
+              {...tabProps(0)}
+              icon={<DashboardIcon />}
+              label={dashboardLabel} />
+            <Tab
+              {...tabProps(1)}
+              icon={
                 isAnyFlowConnectionOffline ? (
                   <WarningIcon className={classes.connectionWarning} />
                 ) : (
                   <ConnectionsIcon />
                 )
               }
-            label="Connections"
+              label="Connections"
             />
-          <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
-          {connectionDebugLogs &&
+            <Tab {...tabProps(2)} icon={<AuditLogIcon />} label="Audit log" />
+            {connectionDebugLogs &&
               Object.keys(connectionDebugLogs).map(
                 (connectionId, cIndex) =>
                   connectionDebugLogs[connectionId] && (
@@ -251,39 +350,41 @@ export default function BottomDrawer({
                     />
                   )
               )}
-        </Tabs>
-        {
+          </Tabs>
+          {
          isUserInErrMgtTwoDotZero && tabValue === 0 &&
-         <RunDashboardActions flowId={flow._id} />
+         <RunDashboardActions flowId={flowId} />
         }
-        <div className={classes.actionsContainer}>
-          <IconButton
-            data-test="increaseFlowBuilderBottomDrawer"
-            size="small"
-            onClick={handleSizeChange(1)}>
-            <ArrowUpIcon />
-          </IconButton>
-          <IconButton
-            data-test="decreaseFlowBuilderBottomDrawer"
-            size="small"
-            onClick={handleSizeChange(-1)}>
-            <ArrowDownIcon />
-          </IconButton>
+          <div className={classes.actionsContainer}>
+            <IconButton
+              data-test="increaseFlowBuilderBottomDrawer"
+              size="small"
+              onMouseDown={preventEvent}
+              onClick={handleSizeUp}>
+              <ArrowUpIcon />
+            </IconButton>
+            <IconButton
+              data-test="decreaseFlowBuilderBottomDrawer"
+              size="small"
+              onMouseDown={preventEvent}
+              onClick={handleSizeDown}>
+              <ArrowDownIcon />
+            </IconButton>
+          </div>
         </div>
-      </div>
-      <>
-        <TabPanel value={tabValue} index={0} classes={classes}>
-          { isUserInErrMgtTwoDotZero
-            ? <RunDashboardV2Panel flow={flow} />
-            : <RunDashboardPanel flow={flow} />}
-        </TabPanel>
-        <TabPanel value={tabValue} index={1} classes={classes}>
-          <ConnectionPanel flow={flow} />
-        </TabPanel>
-        <TabPanel value={tabValue} index={2} classes={classes}>
-          <AuditPanel flow={flow} />
-        </TabPanel>
-        {connectionDebugLogs &&
+        <>
+          <TabPanel value={tabValue} index={0} className={classes.tabPanel}>
+            { isUserInErrMgtTwoDotZero
+              ? <RunDashboardV2 flowId={flowId} />
+              : <RunDashboardPanel flowId={flowId} />}
+          </TabPanel>
+          <TabPanel value={tabValue} index={1} className={classes.tabPanel}>
+            <ConnectionPanel flowId={flowId} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2} className={classes.tabPanel}>
+            <AuditPanel flowId={flowId} />
+          </TabPanel>
+          {connectionDebugLogs &&
             Object.keys(connectionDebugLogs).map(
               (connectionId, cIndex) =>
                 connectionDebugLogs[connectionId] && (
@@ -291,7 +392,7 @@ export default function BottomDrawer({
                     value={tabValue}
                     key={connectionId}
                     index={cIndex + 3}
-                    classes={classes}>
+                    className={classes.tabPanel}>
                     <>
                       <div className={classes.rightActionContainer}>
                         <IconTextButton
@@ -305,13 +406,23 @@ export default function BottomDrawer({
                         readOnly
                         value={connectionDebugLogs[connectionId]}
                         mode="javascript"
-                        overrides={{ useWorker: false }}
+                        overrides={overrides}
                       />
                     </>
                   </TabPanel>
                 )
             )}
-      </>
-    </Drawer>
+        </>
+      </Drawer>
+      <RightDrawer
+        path="replaceConnection/:connId"
+        height="tall"
+        title={`Replace connection: ${connName}`}
+        onClose={handleClose}>
+        <ReplaceConnection
+          flowId={flowId} integrationId={integrationId} childId={childId} setConnName={setConnName}
+          onClose={handleClose} />
+      </RightDrawer>
+    </div>
   );
 }

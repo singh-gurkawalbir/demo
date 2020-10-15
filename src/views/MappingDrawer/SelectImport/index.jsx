@@ -1,11 +1,12 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, Fragment, useMemo } from 'react';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import { getNetSuiteSubrecordImports } from '../../../utils/resource';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
 
+const emptyObject = {};
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -29,24 +30,28 @@ const useStyles = makeStyles(theme => ({
 
 export default function SelectImport() {
   const match = useRouteMatch();
-  const {flowId, importId} = match.params;
-
+  const { flowId, importId } = match.params;
   const classes = useStyles();
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const imports = useSelector(
-    state => {
-      if (importId) {
-        const subRecordResource = selectors.resource(state, 'imports', importId);
-
-        return [subRecordResource];
-      }
-
-      return selectors.flowImports(state, flowId);
-    },
-    (left, right) => left && right && left.length === right.length
+  const { merged: flow = {} } = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    'flows',
+    flowId
   );
+  const flowImports = useSelectorMemo(selectors.flowMappingsImportsList, flowId, importId);
+  const imports = useMemo(() => flowImports.filter(i => !i.blobKeyPath), [flowImports]);
   const [subrecordImports, setSubrecordImports] = useState();
   const [selectedImportId, setSelectedImportId] = useState();
+  const getMappingUrl = _impId => {
+    const importResource = imports.find(({_id}) => _id === _impId) || emptyObject;
+
+    if (isQueryBuilderSupported(importResource)) {
+      const url = match.url.replace('/mapping', '/dbMapping');
+
+      return importId ? url : `${url}/${_impId}`;
+    }
+
+    return importId ? `${match.url}/view` : `${match.url}/${_impId}/view`;
+  };
 
   useEffect(() => {
     if (imports) {
@@ -64,7 +69,6 @@ export default function SelectImport() {
           }));
         }
       });
-
       if (srImports) {
         setSubrecordImports(srImports);
       } else if (imports.length === 1) {
@@ -81,7 +85,7 @@ export default function SelectImport() {
   // If there is only one import then we can safely
   // take the user to the mapping of that import
   if (selectedImportId) {
-    return <Redirect push={false} to={importId ? `${match.url}/view` : `${match.url}/${selectedImportId}/view`} />;
+    return <Redirect push={false} to={getMappingUrl(selectedImportId)} />;
   }
   imports.sort((i1, i2) => {
     const i1index = flow.pageProcessors?.findIndex(i => i.type === 'import' && i._importId === i1._id);
@@ -112,7 +116,7 @@ export default function SelectImport() {
             data-key="mapping"
             className={classes.button}
             component={Link}
-            to={importId ? `${match.url}/view` : `${match.url}/${i._id}/view`}>
+            to={getMappingUrl(i._id)}>
             <Typography variant="h6" color="primary">
               {i.name || i._id}
             </Typography>

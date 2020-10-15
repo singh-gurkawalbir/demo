@@ -50,7 +50,7 @@ export default (state = {}, action) => {
         };
         break;
       case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD:
-        draft.mapping.lastModifiedRowKey = key;
+        draft.mapping.lastModifiedRowKey = key || 'new';
         break;
       case actionTypes.MAPPING.DELETE: {
         const mappingToDelete = draft.mapping.mappings.find(m => m.key === key);
@@ -75,26 +75,20 @@ export default (state = {}, action) => {
 
           const mapping = draft.mapping.mappings[index];
 
-          let inputValue = value;
-
           if (field === 'extract') {
-            if (inputValue.indexOf('"') === 0) {
-              if (inputValue.charAt(inputValue.length - 1) !== '"') inputValue += '"';
+            if (value.indexOf('"') === 0) {
               delete mapping.extract;
-              mapping.hardCodedValue = inputValue.substr(
-                1,
-                inputValue.length - 2
-              );
+              mapping.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete mapping.hardCodedValue;
-              mapping.extract = inputValue;
+              mapping.extract = value;
             }
           } else {
-            mapping[field] = inputValue;
+            mapping[field] = value;
 
             if (
               !draft.mapping.isCsvOrXlsxResource &&
-              inputValue.indexOf('[*].') === -1
+              value.indexOf('[*].') === -1
             ) {
               if ('isKey' in mapping) {
                 delete mapping.isKey;
@@ -110,11 +104,16 @@ export default (state = {}, action) => {
           draft.mapping.lastModifiedRowKey = mapping.key;
         } else if (value) {
           const newKey = shortid.generate();
-
-          draft.mapping.mappings.push({
-            [field]: value,
+          const newRow = {
             key: newKey,
-          });
+          };
+
+          if (field === 'extract' && value.indexOf('"') === 0) {
+            newRow.hardCodedValue = value.replace(/(^")|("$)/g, '');
+          } else {
+            newRow[field] = value;
+          }
+          draft.mapping.mappings.push(newRow);
           draft.mapping.lastModifiedRowKey = newKey;
         }
 
@@ -211,7 +210,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.MAPPING.SET_NS_ASSISTANT_FORM_LOADED:
-        draft.mapping.isNSAssistantFormLoaded = value;
+        if (draft.mapping) { draft.mapping.isNSAssistantFormLoaded = value; }
         break;
       case actionTypes.MAPPING.UPDATE_LIST:
         if (draft.mapping) {

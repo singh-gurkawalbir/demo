@@ -12,6 +12,7 @@ import {
   SUITESCRIPT_CONNECTORS,
 } from '../utils/constants';
 import { COMM_STATES } from './comms/networkComms';
+import { genSelectors } from './util';
 
 describe('global selectors', () => {
   describe('isProfileDataReady', () => {
@@ -648,7 +649,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration1',
@@ -679,7 +680,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration4',
@@ -690,7 +691,7 @@ describe('tiles', () => {
         integration: {
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration5',
@@ -740,7 +741,7 @@ describe('tiles', () => {
           mode: 'settings',
           permissions: expectedIntegrationPermissions,
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration8',
@@ -861,7 +862,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration1',
@@ -892,7 +893,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration4',
@@ -903,7 +904,7 @@ describe('tiles', () => {
         integration: {
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.SUCCESS,
       },
       {
         _integrationId: 'integration5',
@@ -953,7 +954,7 @@ describe('tiles', () => {
           mode: 'settings',
           permissions: {},
         },
-        status: TILE_STATUS.HAS_OFFLINE_CONNECTIONS,
+        status: TILE_STATUS.HAS_ERRORS,
       },
       {
         _integrationId: 'integration8',
@@ -1416,9 +1417,6 @@ describe('matchingConnectionList selector', () => {
       'some_action'
     );
 
-    expect(
-      selectors.matchingConnectionList(state, { type: 'netsuite' })
-    ).toEqual([validNetsuiteConnection]);
     expect(
       selectors.matchingConnectionList(state, { type: 'salesforce' })
     ).toEqual([salesforceConnection]);
@@ -4848,6 +4846,72 @@ describe('integrationApp Settings reducers', () => {
         showFlowSettings: false,
         showMatchRuleEngine: true,
       });
+    });
+  });
+});
+
+describe('utils', () => {
+  describe('sub selector generator', () => {
+    test('should work', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          method1: s => s.m1,
+        },
+        sub2: {
+          method2: s => s.m1,
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.method1(state)).toEqual(42);
+      expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should ignore default', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          default: s => s.m1,
+        },
+        sub2: {
+          method2: s => s.m1,
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.method1).toBeUndefined();
+      expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should throw error on duplication', () => {
+      const to = {};
+      const fr = {
+        sub1: {
+          method1: s => s.m1,
+        },
+        sub2: {
+          method1: s => s.m1,
+        },
+      };
+
+      expect(() => genSelectors(to, fr)).toThrow(new Error('duplicate selector name method1 from sub2!'));
     });
   });
 });

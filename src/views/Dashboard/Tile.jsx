@@ -2,8 +2,9 @@ import React, { useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Truncate from 'react-truncate';
-import { Typography, Tooltip, makeStyles, Zoom, Button } from '@material-ui/core';
+import { Typography, Tooltip, makeStyles, Zoom, Button, IconButton } from '@material-ui/core';
 import { useDrag, useDrop } from 'react-dnd-cjs';
+import moment from 'moment';
 import { selectors } from '../../reducers';
 import HomePageCardContainer from '../../components/HomePageCard/HomePageCardContainer';
 import Header from '../../components/HomePageCard/Header';
@@ -21,12 +22,14 @@ import Tag from '../../components/HomePageCard/Footer/Tag';
 import Manage from '../../components/HomePageCard/Footer/Manage';
 import PermissionsManageIcon from '../../components/icons/PermissionsManageIcon';
 import PermissionsMonitorIcon from '../../components/icons/PermissionsMonitorIcon';
+import ConnectionDownIcon from '../../components/icons/unLinkedIcon';
 import { INTEGRATION_ACCESS_LEVELS, TILE_STATUS } from '../../utils/constants';
-import { tileStatus, dragTileConfig, dropTileConfig } from './util';
+import { tileStatus, isTileStatusConnectionDown, dragTileConfig, dropTileConfig } from './util';
 import getRoutePath from '../../utils/routePaths';
 import actions from '../../actions';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
+import TrialExpireNotification from '../../components/HomePageCard/TrialExpireNotification';
 
 const useStyles = makeStyles(theme => ({
   tileName: {
@@ -44,9 +47,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
   status: {
-    '& > * :hover': {
+    position: 'relative',
+    '& span': {
+      fontSize: '14px',
       color: theme.palette.primary.main,
     },
+    '&:hover': {
+      '& * > span.MuiTypography-root': {
+        color: theme.palette.primary.light,
+      },
+    },
+  },
+  connectionDownRedDot: {
+    width: theme.spacing(1),
+    height: theme.spacing(1),
+    position: 'absolute',
+    right: theme.spacing(-0.5),
+    top: 0,
   },
 }));
 
@@ -59,6 +76,12 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     selectors.resource(state, 'integrations', tile && tile._integrationId)
   );
   const isCloned = integration?.install?.find(step => step?.isClone);
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const defaultChildId = useSelector(state =>
+    selectors.defaultStoreId(state, tile._integrationId)
+  );
   const templateName = useSelector(state => {
     if (integration && integration._templateId) {
       const template = selectors.resource(
@@ -77,6 +100,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     tile.integration.permissions &&
     tile.integration.permissions.accessLevel;
   const status = tileStatus(tile);
+  const isConnectionDown = isTileStatusConnectionDown(tile);
   const integrationAppTileName =
     tile._connectorId && tile.name ? getIntegrationAppUrlName(tile.name) : '';
   let urlToIntegrationSettings = templateName
@@ -87,13 +111,17 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     : `/integrations/${tile._integrationId}/users`;
 
   if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-    urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    if (tile._connectorId) {
+      urlToIntegrationSettings = `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`;
+    } else {
+      urlToIntegrationSettings = `integrations/${tile._integrationId}/setup`;
+    }
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile.status === TILE_STATUS.UNINSTALL) {
     urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
     urlToIntegrationUsers = urlToIntegrationSettings;
   } else if (tile._connectorId) {
-    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+    urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}${defaultChildId ? `/child/${defaultChildId}` : ''}`;
     urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
   }
 
@@ -117,32 +145,47 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     }
   }
 
+  const handleConnectionDownStatusClick = useCallback(event => {
+    event.stopPropagation();
+    if (tile._connectorId) {
+      history.push(
+        getRoutePath(
+          `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
+        )
+      );
+    } else {
+      history.push(
+        getRoutePath(
+          `/integrations/${tile._integrationId}/connections`
+        )
+      );
+    }
+  }, [
+    history,
+    integrationAppTileName,
+    tile._connectorId,
+    tile._integrationId,
+  ]);
+
   const handleStatusClick = useCallback(
     event => {
-      event.stopPropagation();
-
-      if (tile.status === TILE_STATUS.HAS_OFFLINE_CONNECTIONS) {
-        // https://celigo.atlassian.net/browse/IO-16798. Need to remove fix connection drawer changes.
+      if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
+        event.stopPropagation();
         if (tile._connectorId) {
           history.push(
             getRoutePath(
-              `/integrationapps/${integrationAppTileName}/${tile._integrationId}/connections`
+              `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
             )
           );
         } else {
           history.push(
             getRoutePath(
-              `/integrations/${tile._integrationId}/connections`
+              `/integrations/${tile._integrationId}/setup`
             )
           );
         }
-      } else if (tile.status === TILE_STATUS.IS_PENDING_SETUP) {
-        history.push(
-          getRoutePath(
-            `${isCloned ? '/clone' : ''}/integrationapps/${integrationAppTileName}/${tile._integrationId}/setup`
-          )
-        );
-      } else {
+      } else if (!isUserInErrMgtTwoDotZero) {
+        event.stopPropagation();
         dispatch(
           actions.patchFilter('jobs', {
             status: status.variant === 'error' ? 'error' : 'all',
@@ -165,6 +208,7 @@ function Tile({ tile, history, onMove, onDrop, index }) {
     [
       dispatch,
       history,
+      isUserInErrMgtTwoDotZero,
       integrationAppTileName,
       status.variant,
       tile._connectorId,
@@ -182,10 +226,28 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const handleTileClick = useCallback(
     event => {
       event.stopPropagation();
+
       history.push(getRoutePath(urlToIntegrationSettings));
     },
     [history, urlToIntegrationSettings]
   );
+  const remainingDays = date =>
+    Math.ceil((moment(date) - moment()) / 1000 / 60 / 60 / 24);
+  const licenses = useSelector(state =>
+    selectors.licenses(state)
+  );
+
+  const license = tile._connectorId && tile._integrationId && licenses.find(l => l._integrationId === tile._integrationId);
+  const expiresInDays = license && remainingDays(license.expires);
+  let licenseMessageContent = '';
+  let expired = false;
+
+  if (expiresInDays <= 0) {
+    expired = true;
+    licenseMessageContent = `Your license expired on ${moment(license.expires).format('MMM Do, YYYY')}. Contact sales to renew your license`;
+  } else if (expiresInDays > 0 && expiresInDays <= 30) {
+    licenseMessageContent = `Your license will expire in ${expiresInDays} day${expiresInDays === 1 ? '' : 's'}. Contact sales to renew your license.`;
+  }
 
   // #region Drag&Drop related
   const ref = useRef(null);
@@ -208,6 +270,13 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             className={classes.status}>
             <StatusCircle variant={status.variant} />
           </Status>
+          {isConnectionDown && (
+          <Tooltip title="Connection down" placement="bottom" className={classes.tooltip}>
+            <IconButton size="small" color="inherit" onClick={handleConnectionDownStatusClick} className={classes.status}>
+              <span><StatusCircle size="small" className={classes.connectionDownRedDot} variant="error" /></span><ConnectionDownIcon />
+            </IconButton>
+          </Tooltip>
+          )}
         </Header>
         <Content>
           <CardTitle>
@@ -286,10 +355,16 @@ function Tile({ tile, history, onMove, onDrop, index }) {
             variant={tile._connectorId ? 'Integration app' : numFlowsText}
             label={tile.connector && tile.connector.owner}
             />
-        </Footer>
+        </Footer>{
+          tile._connectorId && licenseMessageContent && (
+          <TrialExpireNotification
+            content={licenseMessageContent} expired={expired} connectorId={tile._connectorId}
+            licenseId={license._id}
+            single />
+          )
+        }
       </HomePageCardContainer>
     </div>
   );
 }
-
 export default withRouter(Tile);

@@ -143,33 +143,6 @@ export default {
       },
     ],
   },
-  'rest.requestType': {
-    type: 'select',
-    label: 'Request type',
-    options: [
-      {
-        items: [
-          {
-            label: 'CREATE',
-            value: 'CREATE',
-          },
-          {
-            label: 'UPDATE',
-            value: 'UPDATE',
-          },
-        ],
-      },
-    ],
-
-    defaultValue: r =>
-      r && r.rest && r.rest.requestType && r.rest.requestType[0],
-    visibleWhen: [
-      {
-        field: 'rest.method',
-        is: ['POST', 'PUT', 'DELETE', 'PATCH'],
-      },
-    ],
-  },
   'rest.body': {
     type: 'httprequestbody',
     defaultValue: r =>

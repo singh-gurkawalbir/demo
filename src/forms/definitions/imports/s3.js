@@ -84,28 +84,6 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 's3.fileKey') {
-      const fileNameField = fields.find(field => field.fieldId === fieldId);
-      const fileName = fileNameField.value;
-
-      if (!fileName) return;
-      const fileTypeField = fields.find(field => field.fieldId === 'file.type');
-      const newExtension = [
-        'filedefinition',
-        'fixed',
-        'delimited/edifact',
-      ].includes(fileTypeField.value)
-        ? 'edi'
-        : fileTypeField.value;
-
-      if (newExtension) {
-        const lastDotIndex = fileName.lastIndexOf('.');
-        const fileNameWithoutExt =
-          lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
-
-        fileNameField.value = `${fileNameWithoutExt}.${newExtension}`;
-      }
-    }
     if (fieldId === 'uploadFile') {
       const uploadFileField = fields.find(
         field => field.fieldId === 'uploadFile'
@@ -184,8 +162,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'XML document builder',
-      title: 'Build XML document',
+      label: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [

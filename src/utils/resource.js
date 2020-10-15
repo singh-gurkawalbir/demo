@@ -1,7 +1,5 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
-import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
 
@@ -27,55 +25,6 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   pageProcessor: 'Destination / lookup',
   apis: 'My API',
 });
-
-/**
- * @param resourceDetails Details about the resource.
- * @param resourceDetails.type The type of the resource.
- * @param resourceDetails.id The id of the resource.
- * @param resourceDetails._integrationId _integrationId of the resource.
- */
-export default function getExistingResourcePagePath(resourceDetails = {}) {
-  let { type } = resourceDetails;
-  const { id, _integrationId } = resourceDetails;
-  let path;
-
-  if (type) {
-    if (RESOURCE_TYPE_SINGULAR_TO_PLURAL[type]) {
-      type = RESOURCE_TYPE_SINGULAR_TO_PLURAL[type];
-    }
-
-    const routeMap = {
-      accesstokens: 'tokens',
-    };
-
-    switch (type) {
-      case 'exports':
-      case 'imports':
-      case 'stacks':
-        path = `/${type}/edit/${type}/${id}`;
-        break;
-
-      case 'accesstokens':
-      case 'connections':
-        path = `/${routeMap[type] || type}?_id=${id}`;
-        break;
-
-      case 'flows':
-        path = `/integrations/${_integrationId ||
-          'none'}/settings/${type}/${id}/edit`;
-        break;
-
-      case 'integrations':
-        path = `/${type}/${id}/flows`;
-        break;
-
-      default:
-        path = undefined;
-    }
-  }
-
-  return getRoutePath(path);
-}
 
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
@@ -349,6 +298,41 @@ export function isRealTimeOrDistributedResource(
   return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
 }
 
+export function resourceCategory(resource = {}, isLookup, isImport) {
+  // eslint-disable-next-line no-nested-ternary
+  let blockType = isImport ? 'Import' : isLookup ? 'Lookup' : 'Export';
+
+  if (!isImport && !isLookup) {
+    blockType = isRealTimeOrDistributedResource(resource)
+      ? 'Listener'
+      : 'Export';
+  }
+
+  if (resource.adaptorType === 'SimpleExport') {
+    blockType = 'Data Loader';
+  }
+
+  if (
+    (['RESTExport', 'HTTPExport', 'NetSuiteExport', 'SalesforceExport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.type === 'blob') ||
+    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  } else if (
+    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.blobKeyPath) ||
+    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  }
+
+  return blockType;
+}
+
 // All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
 export const isBlobTypeResource = (resource = {}) =>
   resource && (resource.type === 'blob' || !!resource.blobKeyPath);
@@ -605,6 +589,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
+            if (!fld.subRecordMapping) {
+              // eslint-disable-next-line no-param-reassign
+              fld.subRecordMapping = {};
+            }
             // eslint-disable-next-line no-param-reassign
             fld.subRecordMapping.recordType =
               subrecordsMap[fld.generate].recordType;
@@ -634,6 +622,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
               const fieldId = `${list.generate}[*].${fld.generate}`;
 
               if (subrecordsMap[fieldId]) {
+                if (!fld.subRecordMapping) {
+                  // eslint-disable-next-line no-param-reassign
+                  fld.subRecordMapping = {};
+                }
                 // eslint-disable-next-line no-param-reassign
                 fld.subRecordMapping.recordType =
                   subrecordsMap[fieldId].recordType;
@@ -779,3 +771,15 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
 export function isNetSuiteBatchExport(exportRes) {
   return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
 }
+export const isQueryBuilderSupported = (importResource = {}) => {
+  const {adaptorType} = importResource;
+
+  if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {
+    return true;
+  }
+  if (adaptorType === 'RDBMSImport' && !importResource.rdbms.queryType.find(q => ['BULK INSERT', 'MERGE'].includes(q))) {
+    return true;
+  }
+
+  return false;
+};

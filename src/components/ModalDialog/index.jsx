@@ -64,6 +64,7 @@ export default function ModalDialog({
   minWidth,
   fullScreen,
   children,
+  className,
 }) {
   const classes = useStyles();
 
@@ -100,7 +101,7 @@ export default function ModalDialog({
           )}
         </DialogTitle>
       )}
-      {children[1] && <DialogContent className={classes.dialogContent}>{children[1]}</DialogContent>}
+      {children[1] && <DialogContent className={clsx(classes.dialogContent, className)}>{children[1]}</DialogContent>}
       {children[2] && (
         <DialogActions className={classes.actions}>{children[2]}</DialogActions>
       )}

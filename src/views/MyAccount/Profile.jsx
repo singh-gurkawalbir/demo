@@ -224,6 +224,7 @@ export default function ProfileComponent() {
         id: 'developer',
         name: 'developer',
         type: 'checkbox',
+        helpKey: 'myaccount.developer',
         label: 'Developer Mode',
         defaultValue: preferences && preferences.developer,
       },

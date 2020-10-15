@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+
+const emptyObject = {};
 
 export default function EditRetryData({
   retryId,
@@ -11,8 +13,9 @@ export default function EditRetryData({
   onChange,
 }) {
   const dispatch = useDispatch();
-  const { status, data: retryData = {} } = useSelector(state =>
-    selectors.retryDataContext(state, retryId)
+  const { status, data: retryData = emptyObject } = useSelector(state =>
+    selectors.retryDataContext(state, retryId),
+  shallowEqual
   );
 
   useEffect(() => {

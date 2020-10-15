@@ -1,5 +1,5 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
-import jsonPatch from 'fast-json-patch';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
+import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean } from 'lodash';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -107,6 +107,29 @@ export function* linkUnlinkSuiteScriptIntegrator({ connectionId, link }) {
   }
 }
 
+export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
+  const path = `/connection/${connectionId}/revoke`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      hidden: hideNetWorkSnackbar,
+      opts: {
+        method: 'GET',
+      },
+      message: 'Revoking Connection',
+    });
+
+    if (response && response.errors) {
+      yield put(
+        actions.api.failure(path, 'GET', JSON.stringify(response.errors), hideNetWorkSnackbar)
+      );
+    }
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export function* commitStagedChanges({resourceType, id, scope, options, context}) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
@@ -126,6 +149,63 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   if (!isNew && resourceType.startsWith('integrations/')) {
     // eslint-disable-next-line no-param-reassign
     resourceType = resourceType.split('/').pop();
+  }
+
+  let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
+
+  // only updates need to check for conflicts.
+  if (!isNew) {
+    const resp = yield call(resourceConflictDetermination, {
+      path,
+      merged,
+      id,
+      scope,
+      resourceType,
+      master,
+    });
+
+    if (resp && (resp.error || resp.conflict)) return resp;
+    // eslint-disable-next-line prefer-destructuring
+    merged = resp.merged;
+  } else if (
+    ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
+      resourceType
+    ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
+  ) {
+    // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
+    // For all other cases, set the sandbox property to current environment
+    if (merged && !Object.prototype.hasOwnProperty.call(merged, 'sandbox')) merged.sandbox = isSandbox;
+  }
+
+  let updated;
+
+  // netsuite tba-auto creates new tokens on every save and authorize. As there is limit on
+  // number of active tokens on netsuite, revoking token when user updates token-auto connection.
+  if (resourceType === 'connections' && !isNew && merged.type === 'netsuite') {
+    const isTokenToBeRevoked = master.netsuite?.authType === 'token-auto';
+
+    if (isTokenToBeRevoked) {
+      yield call(requestRevoke, {connectionId: master._id, hideNetWorkSnackbar: true});
+    }
+  }
+
+  // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
+  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we don't want to build
+  // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
+  // remove this code and let all docs be built on HTTP adaptor.
+  if (
+    // if it matches integrations/<id>/connections when creating a connection
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
+    merged.assistant &&
+    REST_ASSISTANTS.indexOf(merged.assistant) > -1
+  ) {
+    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
+  }
+  // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
+  // and connection will be auto registered to the integration.
+  // This is required for tile level monitor access users
+  if (resourceType === 'connections' && merged.integrationId && isNew) {
+    path = `/integrations/${merged.integrationId}/connections`;
   }
 
   // #region Temp Data loader code
@@ -163,53 +243,6 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
     delete merged.flowConvertedToNewSchema;
   }
   // #endregion
-
-  let path = isNew ? `/${resourceType}` : `/${resourceType}/${id}`;
-
-  // only updates need to check for conflicts.
-  if (!isNew) {
-    const resp = yield call(resourceConflictDetermination, {
-      path,
-      merged,
-      id,
-      scope,
-      resourceType,
-      master,
-    });
-
-    if (resp && (resp.error || resp.conflict)) return resp;
-    // eslint-disable-next-line prefer-destructuring
-    merged = resp.merged;
-  } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations'].includes(
-      resourceType
-    ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
-  ) {
-    // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
-    // For all other cases, set the sandbox property to current environment
-    if (merged && !Object.prototype.hasOwnProperty.call(merged, 'sandbox')) merged.sandbox = isSandbox;
-  }
-
-  let updated;
-
-  // We built all connection assistants on HTTP adaptor on React. With recent changes to decouple REST deprecation
-  // and React we are forced to convert HTTP to REST doc for existing REST assistants since we don't want to build
-  // 150 odd connection assistants again. Once React becomes the only app and when assistants are migrated we would
-  // remove this code and let all docs be built on HTTP adaptor.
-  if (
-    // if it matches integrations/<id>/connections when creating a connection
-    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
-    merged.assistant &&
-    REST_ASSISTANTS.indexOf(merged.assistant) > -1
-  ) {
-    merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
-  }
-  // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
-  // and connection will be auto registered to the integration.
-  // This is required for tile level monitor access users
-  if (resourceType === 'connections' && merged.integrationId && isNew) {
-    path = `/integrations/${merged.integrationId}/connections`;
-  }
 
   try {
     updated = yield call(apiCallWithRetry, {
@@ -354,6 +387,42 @@ export function* downloadFile({ resourceType, id }) {
   }
 }
 
+export function* normalizeFlow(flow) {
+  const isDataLoader = yield call(isDataLoaderFlow, flow);
+
+  if (!isDataLoader) return flow;
+
+  const newFlow = flow;
+
+  if (newFlow._importId) {
+    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
+    delete newFlow._importId;
+  }
+
+  if (newFlow._exportId) {
+    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
+    delete newFlow._exportId;
+  }
+
+  return newFlow;
+}
+export function* getResource({ resourceType, id, message }) {
+  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
+
+  try {
+    let resource = yield call(apiCallWithRetry, { path, message });
+
+    if (resourceType === 'flows') {
+      resource = yield call(normalizeFlow, resource);
+    }
+
+    yield put(actions.resource.received(resourceType, resource));
+
+    return resource;
+  } catch (error) {
+    return undefined;
+  }
+}
 export function* updateIntegrationSettings({
   storeId,
   integrationId,
@@ -404,16 +473,6 @@ export function* updateIntegrationSettings({
   }
 
   if (response) {
-    yield put(
-      actions.integrationApp.settings.submitComplete({
-        storeId,
-        integrationId,
-        response,
-        flowId,
-        sectionId,
-      })
-    );
-
     // if flowId is present touch the flow to show changed lastModified date
     // note this is somewhat a hack
     // it is believed that in time resource level settings will render this obsolete
@@ -428,7 +487,7 @@ export function* updateIntegrationSettings({
     }
 
     // integration doc will be update by IA team, need to refetch to get latest copy from db.
-    yield put(actions.resource.request('integrations', integrationId));
+    yield call(getResource, { resourceType: 'integrations', id: integrationId });
 
     if (response._flowId) {
       // when Save button on section triggers a flow on integrationApp, it will send back _flowId in the response.
@@ -466,6 +525,16 @@ export function* updateIntegrationSettings({
       // Salesforce IA modifies exports when relatedlists, referenced fields are saved. CAM modifies exports based on flow settings.
       yield put(actions.resource.requestCollection('exports'));
     }
+
+    yield put(
+      actions.integrationApp.settings.submitComplete({
+        storeId,
+        integrationId,
+        response,
+        flowId,
+        sectionId,
+      })
+    );
   }
 
   if (options.action === 'flowEnableDisable') {
@@ -491,8 +560,10 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
 
     if (!options.doNotRefetch) {
       const resource = yield select(selectors.resource, resourceType, id);
-      const resourceUpdated = jsonPatch.applyPatch(resource, patchSet)
-        .newDocument;
+
+      // applyPatch is not able to update the object as per patchSet as resource is
+      // selector's result and is not mutatable. Therefore deepcloning resource in args.
+      const resourceUpdated = jsonPatch.applyPatch(deepClone(resource), patchSet).newDocument;
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
@@ -501,44 +572,6 @@ export function* patchResource({ resourceType, id, patchSet, options = {} }) {
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
     // violates some API business rules?
-  }
-}
-
-export function* normalizeFlow(flow) {
-  const isDataLoader = yield call(isDataLoaderFlow, flow);
-
-  if (!isDataLoader) return flow;
-
-  const newFlow = flow;
-
-  if (newFlow._importId) {
-    newFlow.pageProcessors = [{ _importId: flow._importId, type: 'import' }];
-    delete newFlow._importId;
-  }
-
-  if (newFlow._exportId) {
-    newFlow.pageGenerators = [{ _exportId: flow._exportId }];
-    delete newFlow._exportId;
-  }
-
-  return newFlow;
-}
-
-export function* getResource({ resourceType, id, message }) {
-  const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
-
-  try {
-    let resource = yield call(apiCallWithRetry, { path, message });
-
-    if (resourceType === 'flows') {
-      resource = yield call(normalizeFlow, resource);
-    }
-
-    yield put(actions.resource.received(resourceType, resource));
-
-    return resource;
-  } catch (error) {
-    return undefined;
   }
 }
 
@@ -727,28 +760,6 @@ export function* updateTradingPartner({ connectionId }) {
   }
 }
 
-export function* requestRevoke({ connectionId }) {
-  const path = `/connection/${connectionId}/revoke`;
-
-  try {
-    const response = yield call(apiCallWithRetry, {
-      path,
-      opts: {
-        method: 'GET',
-      },
-      message: 'Revoking Connection',
-    });
-
-    if (response && response.errors) {
-      yield put(
-        actions.api.failure(path, 'GET', JSON.stringify(response.errors), false)
-      );
-    }
-  } catch (error) {
-    return undefined;
-  }
-}
-
 export function* requestDebugLogs({ connectionId }) {
   let response;
   const path = `/connections/${connectionId}/debug`;
@@ -820,6 +831,20 @@ export function* requestQueuedJobs({ connectionId }) {
   yield put(actions.connection.receivedQueuedJobs(response, connectionId));
 }
 
+function* startPollingForQueuedJobs({ connectionId }) {
+  const watcher = yield fork(requestQueuedJobs, { connectionId });
+
+  yield take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
+function* startPollingForConnectionStatus({ integrationId }) {
+  const watcher = yield fork(refreshConnectionStatus, { integrationId });
+
+  yield take(actionTypes.CONNECTION.STATUS_CANCEL_POLL);
+  yield cancel(watcher);
+}
+
 export function* cancelQueuedJob({ jobId }) {
   const path = `/jobs/${jobId}/cancel`;
 
@@ -836,6 +861,26 @@ export function* cancelQueuedJob({ jobId }) {
 
     return undefined;
   }
+}
+export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
+  const path = `/flows/${_resourceId}/replaceConnection`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: {
+        body: {_connectionId, _newConnectionId},
+        method: 'PUT',
+      },
+    });
+  } catch (error) {
+    yield put(actions.api.failure(path, 'PUT', error && error.message, false));
+
+    return undefined;
+  }
+  yield put(actions.resource.requestCollection('flows'));
+  yield put(actions.resource.requestCollection('exports'));
+  yield put(actions.resource.requestCollection('imports'));
 }
 
 export const resourceSagas = [
@@ -859,9 +904,12 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.RECEIVED, receivedResource),
   takeEvery(actionTypes.CONNECTION.AUTHORIZED, authorizedConnection),
   takeEvery(actionTypes.CONNECTION.REVOKE_REQUEST, requestRevoke),
+  takeLatest(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, startPollingForQueuedJobs),
+  takeLatest(actionTypes.CONNECTION.STATUS_REQUEST_POLL, startPollingForConnectionStatus),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, requestQueuedJobs),
   takeEvery(actionTypes.CONNECTION.QUEUED_JOB_CANCEL, cancelQueuedJob),
   takeEvery(actionTypes.SUITESCRIPT.CONNECTION.LINK_INTEGRATOR, linkUnlinkSuiteScriptIntegrator),
+  takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
 
   ...metadataSagas,
 ];

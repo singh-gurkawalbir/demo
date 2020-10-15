@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -18,11 +18,9 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
-  getAxisLabelPosition,
   getLegend,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
@@ -120,6 +118,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
 
   const { startDate, endDate } = range;
+  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
 
   let dateTimeFormat;
   const userOwnPreferences = useSelector(
@@ -144,7 +143,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r);
+      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -260,7 +259,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
           margin={{
             top: 5,
             right: 30,
-            left: 20,
+            left: 40,
             bottom: 5,
           }}>
           <XAxis
@@ -270,7 +269,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             type="number"
             ticks={ticks}
             allowDuplicatedCategory={false}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -279,7 +277,9 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             label={{
               value: getAxisLabel(id),
               angle: -90,
-              position: getAxisLabelPosition(id),
+              offset: -20,
+              position: 'insideLeft',
+              style: { textAnchor: 'middle' },
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -318,7 +318,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(flowId, { range }));
+      dispatch(actions.flowMetrics.request('flows', flowId, { range }));
     }
   }, [data, dispatch, flowId, range]);
 
@@ -335,7 +335,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   return (
     <div className={classes.root}>
-      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

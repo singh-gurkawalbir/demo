@@ -77,6 +77,7 @@ export default {
     data.map(item => ({
       label: item.name,
       value: item.id,
+      type: item.type,
     })),
   'suitescript-itemCustomNumberColumn': data =>
     data
@@ -177,6 +178,8 @@ export default {
         value: d.name,
         custom: d.custom,
         triggerable: d.triggerable,
+        type: d.type,
+        picklistValues: d.picklistValues,
       }))
       .sort(stringCompare('label')),
   'salesforce-sObjects-childReferenceTo': data =>

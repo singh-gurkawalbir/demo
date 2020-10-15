@@ -8,6 +8,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import { useGetFlowOps } from '../../../DIY/panels/Notifications';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -37,12 +38,13 @@ export default function NotificationsSection({ integrationId, storeId }) {
     flowValues = [],
   } =
     useSelector(state =>
-      selectors.integrationResources(state, integrationId, storeId)
+      selectors.notificationResources(state, integrationId, storeId)
     ) || {};
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
   const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = flows.map(c => ({ value: c._id, label: c.name }));
+  const flowOps = useGetFlowOps({integrationId, flows});
+
   const fieldMeta = {
     fieldMap: {
       connections: {
@@ -64,6 +66,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
         label: 'Notify me on job error',
         defaultValue: flowValues,
         options: [{ items: flowOps }],
+        selectAllIdentifier: integrationId,
       },
     },
     layout: {

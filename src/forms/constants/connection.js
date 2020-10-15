@@ -105,6 +105,10 @@ export default {
     'concurinvoice',
     'g2',
     'shipengine',
+    'jiraserver',
+    'gainsight',
+    'dotdigital',
+    'checkout',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

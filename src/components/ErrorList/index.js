@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import OpenErrors from './OpenErrors';
-import ResolvedErrors from './ResolvedErrors';
 import actions from '../../actions';
+import ErrorTable from './ErrorTable';
+import DownloadErrorsDrawer from './DownloadErrorsDrawer';
+import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
 
 export default function ErrorList({ flowId, errorType }) {
   const match = useRouteMatch();
@@ -18,16 +19,19 @@ export default function ErrorList({ flowId, errorType }) {
 
   return (
     <>
-      <OpenErrors
+      <ErrorTable
         flowId={flowId}
         resourceId={resourceId}
         show={errorType === 'open'}
       />
-      <ResolvedErrors
+      <ErrorTable
         flowId={flowId}
         resourceId={resourceId}
         show={errorType === 'resolved'}
+        isResolved
       />
+      <DownloadErrorsDrawer flowId={flowId} resourceId={resourceId} />
+      <ErrorDetailsDrawer flowId={flowId} resourceId={resourceId} isResolved={errorType === 'resolved'} />
     </>
   );
 }

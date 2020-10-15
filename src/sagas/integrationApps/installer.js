@@ -5,6 +5,7 @@ import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
+import { isJsonString } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
 import { INSTALL_STEP_TYPES } from '../../utils/constants';
@@ -106,27 +107,51 @@ export function* installScriptStep({
   connectionId,
   connectionDoc,
   formSubmission,
+  stackId,
 }) {
   const path = `/integrations/${id}/installSteps`;
   let stepCompleteResponse;
   // connectionDoc will be included only in IA2.0 only. UI needs to send a complete connetion doc to backend to
   // create a connection If step doesn't contain a connection Id.
+  let body = {};
+
+  if (stackId) {
+    body = {_stackId: stackId};
+  } else {
+    body = formSubmission ||
+    (connectionId
+      ? { _connectionId: connectionId }
+      : { connection: connectionDoc });
+  }
 
   try {
     stepCompleteResponse = yield call(apiCallWithRetry, {
       path,
       timeout: 5 * 60 * 1000,
       opts: {
-        body:
-          formSubmission ||
-          (connectionId
-            ? { _connectionId: connectionId }
-            : { connection: connectionDoc }),
+        body,
         method: 'POST',
       },
       hidden: true,
     }) || {};
   } catch (error) {
+    const parsedError = isJsonString(error.message)
+      ? JSON.parse(error.message)
+      : error.message;
+
+    if (parsedError?.steps) {
+      // BE can return updated steps in case of errors also, eg
+      // connectionId got updated in the installSteps but IA installer threw some error
+      yield put(
+        actions.integrationApp.installer.completedStepInstall(
+          { stepsToUpdate: parsedError.steps },
+          id
+        )
+      );
+      if (connectionId || !isEmpty(connectionDoc)) {
+        yield put(actions.resource.requestCollection('connections'));
+      }
+    }
     yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
     yield put(actions.api.failure(path, 'PUT', error.message, false));
 

@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
-import IntegrationAppInstallation from '../../views/Integration/App/drawers/Install';
+import IntegrationInstallation from '../../views/Integration/App/drawers/Install';
 import IntegrationAppAddNewStore from '../../views/Integration/App/drawers/AddStore';
 import IntegrationAppUninstallation from '../../views/Integration/App/drawers/Uninstall/index';
 import Marketplace from '../../views/MarketPlace';
@@ -12,6 +12,8 @@ import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES } from '../../utils/constants';
 import retry from '../../utils/retry';
+import UpgradeEM from '../../views/UpgradeErrorManagement';
+import ResourceListInfo from '../../views/ResourceList/infoText';
 
 const RecycleBin = loadable(() =>
   retry(() => import(/* webpackChunkName: 'RecycleBin' */ '../../views/RecycleBin'))
@@ -80,6 +82,14 @@ const SuiteScriptIntegrationAppInstallation = loadable(() =>
   ))
 );
 
+function ResourceListRouteCatcher(props) {
+  const {match} = props;
+
+  const isResource = !!ResourceListInfo[(match?.params?.resourceType || '')];
+
+  return <>{ isResource ? <ResourceList props={props} /> : <NotFound /> }</>;
+}
+
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
   return (
@@ -102,12 +112,21 @@ export default function AppRouting() {
         )}
         />
       <Route
+        path={getRoutePath('/migrate')}
+        exact
+        component={UpgradeEM}
+        />
+      <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/preview')}
         component={ClonePreview}
         />
       <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/setup')}
         component={CloneSetup}
+        />
+      <Route
+        path={getRoutePath('/integrations/:integrationId/setup')}
+        component={IntegrationInstallation}
         />
       <Route
         path={getRoutePath('/templates/:templateName([\\w-]{5,})/:integrationId')}
@@ -150,11 +169,11 @@ export default function AppRouting() {
 
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/setup')}
-        component={IntegrationAppInstallation}
+        component={IntegrationInstallation}
         />
       <Route
         path={getRoutePath('/clone/integrationapps/:integrationAppName/:integrationId/setup')}
-        component={IntegrationAppInstallation}
+        component={IntegrationInstallation}
         />
       <Route
         path={getRoutePath('/integrationapps/:integrationAppName/:integrationId/install/addNewStore')}
@@ -261,8 +280,9 @@ export default function AppRouting() {
         path={[...AMPERSAND_ROUTES]}
         component={AmpersandRoutesHandler}
       />
-      <Route path={getRoutePath('/:resourceType')} component={ResourceList} />
-      <Route component={NotFound} />
+      {/* we need this to differentiate between a valid resource path and a 404.
+          so resourceList and notfound are moved inside the catcher */}
+      <Route path={getRoutePath('/:resourceType')} component={ResourceListRouteCatcher} />
     </Switch>
   );
 }

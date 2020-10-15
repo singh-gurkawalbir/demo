@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
   Route,
@@ -6,7 +6,7 @@ import {
   Redirect,
   useRouteMatch,
 } from 'react-router-dom';
-import { makeStyles, Grid, List, ListItem } from '@material-ui/core';
+import { makeStyles, Grid, List, ListItem, Typography, Divider } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -23,7 +23,11 @@ import { generateNewId } from '../../../../../utils/resource';
 import {ActionsFactory as GenerateButtons} from '../../../../../components/drawer/Resource/Panel/ResourceFormActionsPanel';
 import consolidatedActions from '../../../../../components/ResourceFormFactory/Actions';
 import MappingDrawer from '../../../../MappingDrawer';
+import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import StatusCircle from '../../../../../components/StatusCircle';
+import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,10 +35,18 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  container: {
+    display: 'flex',
+  },
   subNav: {
     minWidth: 200,
     borderRight: `solid 1px ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(2),
+  },
+  divider: {
+    marginRight: theme.spacing(1),
+    marginTop: '10px',
+    marginBottom: '10px',
   },
   content: {
     width: '100%',
@@ -50,6 +62,10 @@ const useStyles = makeStyles(theme => ({
   },
   configureSectionBtn: {
     padding: 0,
+  },
+  flexContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 export const useActiveTab = () => {
@@ -70,8 +86,6 @@ export const ActionsPanel = ({actions, fieldMap, actionProps}) => {
     id: action?.id,
     mode: 'primary',
   })), [actions, actionProps]);
-
-  if (!actions || !actions.length) { return null; }
 
   return (
     <GenerateButtons
@@ -115,10 +129,12 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
+      {fieldMeta?.actions?.length && (
       <ActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
       />
+    )}
     </>
   );
 };
@@ -132,7 +148,8 @@ function FlowList({ integrationId, storeId }) {
       state,
       integrationId,
       sectionId,
-      storeId
+      storeId,
+      { excludeHiddenFlows: true }
     )
   );
   const flowSections = useSelector(state =>
@@ -148,9 +165,11 @@ function FlowList({ integrationId, storeId }) {
     if (!isUserInErrMgtTwoDotZero) return;
 
     dispatch(actions.errorManager.integrationLatestJobs.requestPoll({ integrationId }));
+    dispatch(actions.errorManager.integrationErrors.requestPoll({ integrationId }));
 
     return () => {
       dispatch(actions.errorManager.integrationLatestJobs.cancelPoll());
+      dispatch(actions.errorManager.integrationErrors.cancelPoll());
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
@@ -168,6 +187,7 @@ function FlowList({ integrationId, storeId }) {
         // storeId={storeId}
         // sectionId={sectionId}
       />
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={storeId} />}
       <CategoryMappingDrawer
         integrationId={integrationId}
         storeId={storeId}
@@ -197,9 +217,46 @@ function FlowList({ integrationId, storeId }) {
   );
 }
 
+const SectionTitle = ({integrationId, storeId, title, titleId}) => {
+  const classes = useStyles();
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+  const integrationErrorsPerSection = useSelector(state =>
+    selectors.integrationErrorsPerSection(state, integrationId, storeId),
+  shallowEqual);
+
+  const errorCount = integrationErrorsPerSection[titleId];
+  const errorStatus = useMemo(() => {
+    if (errorCount === 0) {
+      return <StatusCircle size="small" variant="success" />;
+    }
+
+    return (
+      <div>
+        <StatusCircle size="small" variant="error" />
+        <span>{errorCount > 9999 ? '9999+' : errorCount}</span>
+      </div>
+    );
+  }, [errorCount]);
+
+  if (!isUserInErrMgtTwoDotZero) {
+    return title;
+  }
+
+  return (
+    <div className={classes.flexContainer}>
+      <div> { title }</div>
+      <div> {errorStatus} </div>
+    </div>
+  );
+};
+
 export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+  const isParentView = isParentViewSelected(integration, storeId);
   const flowSections = useSelector(state =>
     selectors.integrationAppFlowSections(state, integrationId, storeId)
   );
@@ -207,9 +264,27 @@ export default function FlowsPanel({ storeId, integrationId }) {
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
   // not hard-code this because different sections exist across IAs.
-  if (match.isExact && flowSections && flowSections.length) {
+  if (match.isExact && flowSections && flowSections.length && !isParentView) {
     return (
       <Redirect push={false} to={`${match.url}/${flowSections[0].titleId}`} />
+    );
+  }
+
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <div className={classes.container}>
+          <Typography variant="h4">
+            Flows
+          </Typography>
+        </div>
+        <Divider className={classes.divider} />
+        <div className={classes.content}>
+          <span>
+            {getEmptyMessage(integration.settings?.storeLabel, 'view flows')}
+          </span>
+        </div>
+      </div>
     );
   }
 
@@ -225,7 +300,11 @@ export default function FlowsPanel({ storeId, integrationId }) {
                   activeClassName={classes.activeListItem}
                   to={titleId}
                   data-test={titleId}>
-                  {title}
+                  <SectionTitle
+                    title={title}
+                    titleId={titleId}
+                    integrationId={integrationId}
+                    storeId={storeId} />
                 </NavLink>
               </ListItem>
             ))}

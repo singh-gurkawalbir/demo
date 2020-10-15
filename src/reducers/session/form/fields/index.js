@@ -109,13 +109,14 @@ export default function fields(state = {}, action) {
           return console.warn('Field ID not there', id);
         }
         delete fieldsRef[id].forceComputation;
+        getNextStateFromFields(draft[formKey]);
+
         break;
       case actionTypes.FORM.FIELD.ON_FIELD_BLUR:
         if (!fieldsRef[id]) {
           // eslint-disable-next-line no-console
           return console.warn('Field ID not there', id);
         }
-        fieldsRef[id].touched = true;
 
         fieldsRef[id].touched = true;
         getNextStateFromFields(draft[formKey]);

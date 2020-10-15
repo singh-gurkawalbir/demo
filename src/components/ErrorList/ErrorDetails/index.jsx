@@ -40,13 +40,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange }) => {
-  if (!retryId || recordMode === 'view') {
+const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled, isResolved }) => {
+  if (!retryId || recordMode === 'view' || isFlowDisabled || isResolved) {
     return (
       <ViewErrorDetails
         errorId={errorId}
         flowId={flowId}
         resourceId={resourceId}
+        isResolved={isResolved}
       />
     );
   }
@@ -62,12 +63,15 @@ const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange
   );
 };
 
-export default function ErrorDetails({ flowId, resourceId, onClose }) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const { mode, errorId } = match.params;
   const [retryData, setRetryData] = useState();
   const [recordMode, setRecordMode] = useState(mode);
+  const isFlowDisabled = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?.disabled
+  );
   const retryId = useSelector(state => {
     const errorDoc =
       selectors.resourceError(state, { flowId, resourceId, errorId }) || {};
@@ -87,7 +91,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   return (
     <div className={classes.root}>
       <div className={classes.detailsContainer}>
-        {retryId ? (
+        {(retryId && !isFlowDisabled && !isResolved) ? (
           <Tabs
             className={classes.tabHeader}
             value={recordMode}
@@ -95,7 +99,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
             textColor="primary"
             indicatorColor="primary">
             <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
-            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
+            <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
           </Tabs>
         ) : (
           <Tabs
@@ -105,7 +109,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
             textColor="primary"
             indicatorColor="primary">
 
-            <Tab label="View error details" value="view" id="tab-1" aria-controls="tab-1" />
+            <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
           </Tabs>
         )}
         <div className={classes.tabContent}>
@@ -116,6 +120,8 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
             errorId={errorId}
             onChange={onRetryDataChange}
             recordMode={recordMode}
+            isFlowDisabled={isFlowDisabled}
+            isResolved={isResolved}
           />
         </div>
       </div>
@@ -126,6 +132,8 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
           resourceId={resourceId}
           errorId={errorId}
           onClose={onClose}
+          mode={recordMode}
+          isResolved={isResolved}
         />
       </div>
     </div>

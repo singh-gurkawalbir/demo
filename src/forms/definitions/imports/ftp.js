@@ -98,7 +98,9 @@ export default {
     };
   },
   optionsHandler: (fieldId, fields) => {
-    if (fieldId === 'ftp.fileName') {
+    // DO NOT REMOVE below commented code as it might be required later for ref (same for as2 and s3 import also)
+
+    /* if (fieldId === 'ftp.fileName') {
       const fileNameField = fields.find(field => field.fieldId === fieldId);
       const fileName = fileNameField.value;
 
@@ -113,7 +115,7 @@ export default {
         : fileTypeField.value;
 
       if (newExtension) {
-        const lastDotIndex = fileName.lastIndexOf('.');
+        const lastDotIndex = fileName.lastIndexOf('.'); // fix this logic for multiple dots filename eg {{data.0.name}}
         const fileNameWithoutExt =
           lastDotIndex !== -1 ? fileName.substring(0, lastDotIndex) : fileName;
 
@@ -153,7 +155,7 @@ export default {
 
         inprogressFileNameField.value = `${fileNameWithoutExt}.${newExtension}.tmp`;
       }
-    }
+    } */
 
     if (fieldId === 'uploadFile') {
       const uploadFileField = fields.find(
@@ -208,8 +210,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'XML document builder',
-      title: 'Build XML document',
+      label: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [

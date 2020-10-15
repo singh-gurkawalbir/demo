@@ -42,6 +42,20 @@ export default {
     type: 'text',
     label: 'Description',
   },
+  _connectionId: {
+    type: 'dynareplaceconnection',
+    resourceType: 'connections',
+    label: 'Connection',
+    appTypeIsStatic: true,
+    allowEdit: true,
+    allowNew: true,
+    skipDefault: true,
+    connectionId: r => r?._connectionId,
+    connectorId: r => r?._connectorId,
+    visible: r => r?.adaptorType !== 'WebhookExport',
+    defaultValue: r => r?._connectionId,
+    integrationId: r => r?._integrationId,
+  },
 
   // UI Specific field
   formView: {
@@ -99,7 +113,6 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
   },
   oneToMany: {
     type: 'radiogroup',
@@ -571,9 +584,6 @@ export default {
   sampleData: {
     type: 'sampledata',
     label: 'Sample data',
-  },
-  exportPanel: {
-    type: 'exportpanel',
   },
   skipRetries: {
     type: 'skipRetries',

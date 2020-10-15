@@ -43,7 +43,7 @@ export default function Lookup(props) {
     options,
   } = props;
   const classes = useStyles();
-  const [value, setValue] = useState(lookups);
+  const [value, setValue] = useState(lookups || []);
   const [showListView, setShowListView] = useState(true);
   const [selectedLookup, setSelectedLookup] = useState({});
   const [error, setError] = useState();

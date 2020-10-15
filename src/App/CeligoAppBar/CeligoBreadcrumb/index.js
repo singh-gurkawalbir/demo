@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-import { matchPath, Link } from 'react-router-dom';
+import { matchPath, Link, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Breadcrumbs, Typography } from '@material-ui/core';
 import { MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
@@ -248,9 +248,10 @@ const routes = [
   { path: getRoutePath('/resources'), breadcrumb: 'Resources' },
   { path: getRoutePath('/editors'), breadcrumb: 'Dev playground' },
   { path: getRoutePath('/permissions'), breadcrumb: 'Permission explorer' },
+  { path: getRoutePath('/migrate'), breadcrumb: 'Our new error management' },
   {
     path: getRoutePath('/:resourceType'),
-    breadcrumb: ({ resourceType }) => `${MODEL_PLURAL_TO_LABEL[resourceType]}s`,
+    breadcrumb: ({ resourceType }) => MODEL_PLURAL_TO_LABEL[resourceType] ? `${MODEL_PLURAL_TO_LABEL[resourceType]}s` : '',
   },
 ];
 const commonChildRoutes = [
@@ -333,15 +334,17 @@ function parseUrl(pathname, routes, url = '', params = {}) {
   return crumbs;
 }
 
-export default function CeligoBreadcrumb({ location }) {
+export default function CeligoBreadcrumb() {
+  const { pathname } = useLocation();
+
   const classes = useStyles();
   const shouldShowAppRouting = useSelector(state =>
     selectors.shouldShowAppRouting(state)
   );
-  const breadcrumbs = [
+  const breadcrumbs = useMemo(() => [
     { url: getRoutePath(''), breadcrumb: 'Home' },
-    ...parseUrl(location, shouldShowAppRouting ? routes : []),
-  ];
+    ...parseUrl(pathname, shouldShowAppRouting ? routes : []),
+  ], [pathname, shouldShowAppRouting]);
 
   return (
     <Breadcrumbs

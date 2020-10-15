@@ -26,8 +26,14 @@ const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, id)
   );
-  const stagedProcessor = useSelector(state =>
-    selectors.stagedResource(state, id)
+  const resourceId = useSelector(state => {
+    const stagedProcessor = selectors.stagedResource(state, id);
+    const resourceIdPatch = stagedProcessor?.patch?.find(
+      p => p.op === 'replace' && p.path === '/resourceId'
+    );
+
+    return resourceIdPatch?.value;
+  }
   );
   const isMultiStepSaveResource = multiStepSaveResourceTypes.includes(resourceType);
 
@@ -46,11 +52,6 @@ const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
           getRoutePath(`/${resourceType}/${newResourceId}/flows`)
         );
       }
-
-      const resourceIdPatch = stagedProcessor.patch.find(
-        p => p.op === 'replace' && p.path === '/resourceId'
-      );
-      const resourceId = resourceIdPatch ? resourceIdPatch.value : null;
 
       if (isMultiStepSaveResource) {
         if (!resourceId) {
@@ -91,7 +92,7 @@ const useHandleSubmitCompleteFn = (resourceType, id, onClose) => {
 
       onClose();
     }
-  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceType, skipFormClose, stagedProcessor.patch]);
+  }, [dispatch, editUrl, history, id, isMultiStepSaveResource, isNew, match.path, newResourceId, onClose, operation, resourceId, resourceType, skipFormClose]);
 
   return handleSubmitComplete;
 };

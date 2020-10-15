@@ -55,6 +55,7 @@ import DynaSalesforceRefreshableSelect from './DynaSalesforceRefreshableSelect';
 import DynaRefreshableIntegrationAppSetting from './DynaRefreshableSelect/RefreshableIntegrationAppSetting';
 import DynaDate from './dateTime/DynaDate';
 import DynaDateTime from './dateTime/DynaDateTime';
+import DynaExpiryTime from './DynaExpiryTime';
 import DynaToggle from './DynaToggle';
 import DynaSQLQueryBuilder from './DynaSQLQueryBuilder';
 import Salesforce from './DynaSalesforceExportComponents';
@@ -80,7 +81,6 @@ import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
-import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
@@ -116,6 +116,7 @@ import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
+import DynaReplaceConnection from './DynaReplaceConnection';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -166,6 +167,7 @@ export default {
   filedefinitionselect: DynaFileDefinitionSelect,
   filedefinitioneditor: DynaFileDefinitionEditor,
   tokengen: DynaTokenGenerator,
+  expirytime: DynaExpiryTime,
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
@@ -204,6 +206,7 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  dynareplaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
   sqlquery: DynaSqlQuery,
@@ -214,7 +217,6 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
-  exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
   groupedButton: cronBuilderComponents.groupedButton,

@@ -12,12 +12,11 @@ import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
-    padding: 10,
+    padding: [[0, 10]],
   },
 });
 
 export default function NetSuiteMappingAssistant({
-  mappingId,
   netSuiteConnectionId,
   netSuiteRecordType,
   data,
@@ -29,7 +28,7 @@ export default function NetSuiteMappingAssistant({
     selectors.resource(state, 'connections', netSuiteConnectionId)
   );
   const isNSAssistantFormLoaded = useSelector(state => {
-    const { isNSAssistantFormLoaded } = selectors.mapping(state, mappingId);
+    const { isNSAssistantFormLoaded } = selectors.mapping(state);
 
     return !!isNSAssistantFormLoaded;
   });
@@ -60,9 +59,9 @@ export default function NetSuiteMappingAssistant({
 
   const setNSAssistantFormLoaded = useCallback(
     value => {
-      dispatch(actions.mapping.setNSAssistantFormLoaded(mappingId, value));
+      dispatch(actions.mapping.setNSAssistantFormLoaded(value));
     },
-    [dispatch, mappingId]
+    [dispatch]
   );
   const handleMessageReceived = useCallback(
     e => {

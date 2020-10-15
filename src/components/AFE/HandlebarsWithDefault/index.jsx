@@ -16,9 +16,10 @@ export default function HandlebarsWithDefaults(props) {
     templateClassName,
     resultTitle,
     disabled,
-    lookups = [],
+    optionalSaveParams,
+    sampleRule,
   } = props;
-  const { template, sampleData, defaultData, result, error } = useSelector(
+  const { template, sampleData, defaultData, result, error, isSampleDataLoading, lookups } = useSelector(
     state => selectors.editor(state, editorId)
   );
   const violations = useSelector(state =>
@@ -27,10 +28,11 @@ export default function HandlebarsWithDefaults(props) {
   const handlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state)
   );
-  const _lookups = Array.isArray(lookups) ? lookups : [];
 
-  completers.handleBarsCompleters.setLookupCompleter(_lookups);
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
+  useEffect(() => {
+    completers.handleBarsCompleters.setLookupCompleter(lookups || []);
+  }, [lookups]);
   useEffect(() => {
     if (!violations) {
       const jsonData = JSON.stringify(
@@ -55,22 +57,38 @@ export default function HandlebarsWithDefaults(props) {
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
         autoEvaluateDelay: 300,
-        template: props.rule,
+        template: props.rule || sampleRule,
         _init_template: props.rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
+        isSampleDataLoading: props.isSampleDataLoading,
+        lookups: props.lookups,
+        optionalSaveParams,
       })
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [
-    dispatch,
-    editorId,
-    props.defaultData,
-    props.rule,
-    props.sampleData,
-    props.strict,
-  ]);
+  }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict, sampleRule]);
+
+  useEffect(() => {
+    if (props.lookups) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          lookups: props.lookups,
+        })
+      );
+    }
+  }, [dispatch, editorId, props.lookups]);
+
+  useEffect(() => {
+    if (template === undefined && sampleRule) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          template: sampleRule,
+        })
+      );
+    }
+  }, [dispatch, editorId, sampleRule, template]);
 
   return (
     <Editor
@@ -94,6 +112,7 @@ export default function HandlebarsWithDefaults(props) {
       result={result ? result.data : ''}
       error={error}
       enableAutocomplete
+      isSampleDataLoading={isSampleDataLoading}
     />
   );
 }

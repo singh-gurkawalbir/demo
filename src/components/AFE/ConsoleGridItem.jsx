@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const overrides = { wrap: true };
 export default function ConsoleGridItem(props) {
   const { logs } = props;
   const classes = useStyles(props);
@@ -42,7 +43,7 @@ export default function ConsoleGridItem(props) {
         </PanelTitle>
         <CodePanel
           readOnly
-          overrides={{ wrap: true }}
+          overrides={overrides}
           mode="text"
           name="error"
           value={logsText}

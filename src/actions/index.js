@@ -99,7 +99,10 @@ const auth = {
     action(actionTypes.USER_LOGOUT, {
       isExistingSessionInvalid,
     }),
+  userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
+  abortAllSagasAndInitLR: () => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -119,6 +122,8 @@ const api = {
 };
 // #region Resource Actions
 const connection = {
+  setActive: connectionId => action(actionTypes.CONNECTION.ACTIVE_SET, { connectionId }),
+
   requestRegister: (connectionIds, integrationId) =>
     action(actionTypes.CONNECTION.REGISTER_REQUEST, {
       connectionIds,
@@ -169,6 +174,10 @@ const connection = {
     action(actionTypes.CONNECTION.MADE_ONLINE, { connectionId }),
   requestQueuedJobs: connectionId =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST, { connectionId }),
+  requestQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_REQUEST_POLL, {connectionId}),
+  cancelQueuedJobsPoll: connectionId =>
+    action(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL, {connectionId}),
   receivedQueuedJobs: (queuedJobs, connectionId) =>
     action(actionTypes.CONNECTION.QUEUED_JOBS_RECEIVED, {
       queuedJobs,
@@ -207,18 +216,25 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  // only 'integrations and flows are valid resourceTypes. The metrics are always related to flows as of now.
+  // when resourceType is integrations, fetch metrics of all enabled flows in integration
+  // when resourceType is flow, fetch specific flow metrics
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId, resourceType) =>
@@ -326,7 +342,10 @@ const resource = {
         resourceId,
         values,
       }),
-
+    requestStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_REQUEST_POLL, {integrationId}),
+    cancelStatusPoll: integrationId =>
+      action(actionTypes.CONNECTION.STATUS_CANCEL_POLL, {integrationId}),
     testErrored: (resourceId, message) =>
       action(actionTypes.CONNECTION.TEST_ERRORED, {
         resourceId,
@@ -381,6 +400,13 @@ const resource = {
         action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
           connectionId,
           values,
+          hideNotificationMessage: true,
+        }),
+      testConnection: (connectionId, values) =>
+        action(actionTypes.NETSUITE_USER_ROLES.REQUEST, {
+          connectionId,
+          values,
+          hideNotificationMessage: false,
         }),
       receivedUserRoles: (connectionId, userRoles) =>
         action(actionTypes.NETSUITE_USER_ROLES.RECEIVED, {
@@ -875,13 +901,15 @@ const integrationApp = {
       integrationId,
       connectionId,
       connectionDoc,
-      formSubmission
+      formSubmission,
+      stackId
     ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
         formSubmission,
+        stackId,
       }),
     updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -1176,8 +1204,8 @@ const user = {
         action(actionTypes.LICENSE_TRIAL_ISSUED, message),
       requestLicenseUpgrade: () =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST, {}),
-      requestUpdate: actionType =>
-        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType }),
+      requestUpdate: (actionType, connectorId, licenseId) =>
+        action(actionTypes.LICENSE_UPDATE_REQUEST, { actionType, connectorId, licenseId}),
       licenseUpgradeRequestSubmitted: message =>
         action(actionTypes.LICENSE_UPGRADE_REQUEST_SUBMITTED, { message }),
       leave: id => action(actionTypes.ACCOUNT_LEAVE_REQUEST, { id }),
@@ -1300,8 +1328,8 @@ const flowData = {
       stage,
       refresh,
     }),
-  resetStages: (flowId, resourceId, stages = []) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
+  resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -1374,6 +1402,8 @@ const mapping = {
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
+  patchGenerateThroughAssistant: value =>
+    action(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, { value }),
   addLookup: ({value, isConditionalLookup}) =>
     action(actionTypes.MAPPING.ADD_LOOKUP, { value, isConditionalLookup }),
   updateLookup: ({oldValue, newValue, isConditionalLookup}) =>
@@ -1546,8 +1576,6 @@ const job = {
 
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
-  cancelLatest: ({ jobId }) =>
-    action(actionTypes.JOB.CANCEL_LATEST, { jobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
   resolve: ({ jobId, parentJobId }) =>
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
@@ -1681,6 +1709,37 @@ const errorManager = {
     cancelPoll: () =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL),
   },
+  latestFlowJobs: {
+    request: ({ flowId, refresh = false }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST, {
+        flowId,
+        refresh,
+      }),
+    received: ({flowId, latestJobs}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED, {
+        flowId, latestJobs,
+      }),
+    requestJobFamily: ({ flowId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_JOB_FAMILY, {
+        flowId, jobId,
+      }),
+    receivedJobFamily: ({ flowId, job}) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.RECEIVED_JOB_FAMILY, {
+        flowId, job,
+      }),
+    requestInProgressJobsPoll: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.REQUEST_IN_PROGRESS_JOBS_POLL, {
+        flowId,
+      }),
+    noInProgressJobs: () =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.NO_IN_PROGRESS_JOBS),
+    clear: ({ flowId }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CLEAR, {
+        flowId,
+      }),
+    cancelLatestJobs: ({ flowId, jobIds }) =>
+      action(actionTypes.ERROR_MANAGER.FLOW_LATEST_JOBS.CANCEL, { flowId, jobIds}),
+  },
   integrationErrors: {
     requestPoll: ({ integrationId }) =>
       action(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.REQUEST_FOR_POLL, { integrationId }),
@@ -1810,6 +1869,12 @@ const errorManager = {
         resourceId,
         diff,
       }),
+    download: ({ flowId, resourceId, isResolved, filters }) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST, {
+      flowId,
+      resourceId,
+      isResolved,
+      filters,
+    }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

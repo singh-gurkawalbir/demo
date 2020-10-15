@@ -10,11 +10,12 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { List, ListItem, Divider } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import { isEqual } from 'lodash';
 import { selectors } from '../../../../../reducers';
 import GeneralSection from './sections/General';
 import ConfigureSettings from './sections/ConfigureSettings';
 import PanelHeader from '../../../../../components/PanelHeader';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,13 +59,17 @@ export default function SettingsPanel({
 }) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
+  const isParentView = isParentViewSelected(integration, storeId);
   const hideGeneralTab = useSelector(
     state => !selectors.hasGeneralSettings(state, integrationId, storeId)
   );
-  const flowSections = useSelector(state => {
-    const sections = selectors.integrationAppFlowSections(state, integrationId, storeId);
 
-    return sections.reduce((newArray, s) => {
+  const sections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
+
+  const filterTabs = useMemo(() => hideGeneralTab ? ['common'] : [], [hideGeneralTab]);
+  const availableSections = useMemo(() => {
+    const flowSections = sections.reduce((newArray, s) => {
       if (!!s.fields || !!s.sections) {
         newArray.push({
           path: s.titleId,
@@ -76,27 +81,19 @@ export default function SettingsPanel({
 
       return newArray;
     }, []);
-  }, isEqual);
 
-  const allSections = useMemo(() => ([
-    {
+    const allSections = [{
       path: 'common',
       label: 'General',
       Section: GeneralSection,
       id: 'common',
     },
-    ...flowSections,
-  ]), [flowSections]);
+    ...flowSections];
 
-  const filterTabs = [];
-
-  if (hideGeneralTab) {
-    filterTabs.push('common');
-  }
-
-  const availableSections = useMemo(() => allSections.filter(sec =>
-    !filterTabs.includes(sec.id)
-  ), [allSections, filterTabs]);
+    return allSections.filter(sec =>
+      !filterTabs.includes(sec.id)
+    );
+  }, [filterTabs, sections]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can
@@ -104,7 +101,7 @@ export default function SettingsPanel({
   // sections.
   if (match.isExact) {
     // no section provided.
-    if (availableSections.length === 0) {
+    if (availableSections.length === 0 || isParentView) {
       return (
         <div className={classes.root}>
           <div className={classes.container}>
@@ -115,7 +112,9 @@ export default function SettingsPanel({
           <Divider className={classes.divider} />
           <div className={classes.content}>
             <span>
-              You don&apos;t have any custom settings for this integration.
+              {isParentView
+                ? getEmptyMessage(integration.settings?.storeLabel, 'view settings')
+                : 'You don&apos;t have any custom settings for this integration.' }
             </span>
           </div>
         </div>
@@ -156,7 +155,6 @@ export default function SettingsPanel({
                       integrationId={integrationId}
                       storeId={storeId}
                       sectionId={path}
-                      parentUrl={match.url}
                       />
                   </>
                 ) : (

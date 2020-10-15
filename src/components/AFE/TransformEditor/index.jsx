@@ -93,7 +93,7 @@ export default function TransformEditor(props) {
   return (
     <PanelGrid key={editorId} className={classes[`${layout}Template`]}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title="Transform rules" />
+        <PanelTitle title="Rules" />
         <TransformPanel
           keyName={keyName}
           valueName={valueName}
@@ -104,7 +104,7 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="data">
-        <PanelTitle title="Incoming data" />
+        <PanelTitle title="Input" />
         {isSampleDataLoading ? (
           <PanelLoader />
         ) : (
@@ -112,7 +112,6 @@ export default function TransformEditor(props) {
             name="data"
             value={data}
             mode="json"
-            overrides={{ showGutter: false }}
             onChange={handleDataChange}
             readOnly={disabled}
             hasError={!!violations?.dataError}
@@ -121,10 +120,9 @@ export default function TransformEditor(props) {
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
-        <PanelTitle title="Transformed data" />
+        <PanelTitle title="Output" />
         <CodePanel
           name="result"
-          overrides={{ showGutter: false }}
           value={parsedData || ''}
           mode="json"
           readOnly

@@ -8,6 +8,7 @@ import {
   isFileAdaptor,
 } from '../resource';
 import { emptyList, emptyObject, STANDALONE_INTEGRATION } from '../constants';
+import getRoutePath from '../routePaths';
 
 export const actionsMap = {
   as2Routing: 'as2Routing',
@@ -79,7 +80,10 @@ const isActionUsed = (resource, resourceType, flowNode, action) => {
     }
 
     case actionsMap.importMapping: {
-      const mappings = mappingUtil.getMappingFromResource(resource, true);
+      const mappings = mappingUtil.getMappingFromResource({
+        importResource: resource,
+        isFieldMapping: true,
+      });
       const { fields = [], lists = [] } = mappings || {};
 
       return !!(fields.length || lists.length);
@@ -191,7 +195,6 @@ export const isImportMappingAvailable = importResource => {
   if (isBlobTypeResource(importResource)) {
     return false;
   }
-
   const { adaptorType, rdbms = {}, file = {} } = importResource;
   const appType = adaptorTypeMap[adaptorType];
 
@@ -199,7 +202,6 @@ export const isImportMappingAvailable = importResource => {
   if (isFileAdaptor(importResource) && file.type === 'xml') return false;
   // if apptype is mongodb then mapping should not be shown
   if (appType === 'mongodb') return false;
-
   // if apptype is rdbms and querytype is not bulk insert then mapping shouldnot be shown
   if (appType === 'rdbms' && rdbms.queryType.indexOf('BULK INSERT') === -1) {
     return false;
@@ -300,6 +302,24 @@ export function isSimpleImportFlow(flow, exports) {
   const exp = getFirstExportFromFlow(flow, exports);
 
   return exp && exp.type === 'simple';
+}
+
+export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationApp, isDataLoader, appName}) {
+  const flowBuilderPathName = isDataLoader ? 'dataLoader' : 'flowBuilder';
+
+  let flowBuilderTo;
+
+  if (isIntegrationApp) {
+    if (childId) {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/child/${childId}/${flowBuilderPathName}/${flowId}`);
+    } else {
+      flowBuilderTo = getRoutePath(`/integrationapps/${appName}/${integrationId}/${flowBuilderPathName}/${flowId}`);
+    }
+  } else {
+    flowBuilderTo = getRoutePath(`/integrations/${integrationId || 'none'}/${flowBuilderPathName}/${flowId}`);
+  }
+
+  return flowBuilderTo;
 }
 
 export function showScheduleIcon(flow, exports) {
@@ -561,7 +581,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
     const exportDoc = exports.find(e => e._id === flow._exportId);
 
     if (exportDoc) {
-      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId });
+      resources.push({ _id: flow._exportId, name: exportDoc.name || flow._exportId, type: 'exports' });
     }
   }
 
@@ -569,7 +589,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
     const importDoc = imports.find(e => e._id === flow._importId);
 
     if (importDoc) {
-      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId});
+      resources.push({ _id: flow._importId, name: importDoc.name || flow._importId, type: 'imports' });
     }
   }
 
@@ -578,7 +598,7 @@ export function getFlowResources(flows, exports, imports, flowId) {
       const exportDoc = exports.find(e => e._id === pg._exportId);
 
       if (exportDoc) {
-        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId });
+        resources.push({ _id: pg._exportId, name: exportDoc.name || pg._exportId, type: 'exports' });
       }
     });
   }
@@ -589,13 +609,13 @@ export function getFlowResources(flows, exports, imports, flowId) {
         const importDoc = imports.find(e => e._id === pp._importId);
 
         if (importDoc) {
-          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId });
+          resources.push({ _id: pp._importId, name: importDoc.name || pp._importId, type: 'imports' });
         }
       } else if (pp.type === 'export' && pp._exportId) {
         const exportDoc = exports.find(e => e._id === pp._exportId);
 
         if (exportDoc) {
-          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId });
+          resources.push({ _id: pp._exportId, name: exportDoc.name || pp._exportId, type: 'exports', isLookup: true });
         }
       }
     });

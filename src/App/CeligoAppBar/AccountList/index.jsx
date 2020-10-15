@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
   currentContainer: {
     fontSize: 13,
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     padding: 0,
     paddingRight: theme.spacing(1),

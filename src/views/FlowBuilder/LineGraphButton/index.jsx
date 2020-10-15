@@ -1,13 +1,14 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import GraphIcon from '../../../components/icons/GraphIcon';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   chartsIcon: {
-    padding: 0,
+    padding: theme.spacing(1, 0),
     marginRight: 12,
     color: theme.palette.secondary.main,
     '&:hover': {
@@ -29,20 +30,21 @@ export default function LineGraphButton({flowId, onClickHandler}) {
     flowId
   ).merged;
   const flowJobExists = useSelector(state => {
-    const latestJobs = selectors.latestFlowJobs(state) || [];
+    const latestJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
-    return !!latestJobs.find(job => job._flowId === flowId);
+    return !!latestJobs.length;
   });
 
-  const disableButton = !flow.lastExecuted && !flowJobExists;
+  const disableButton = !flow.lastExecutedAt && !flowJobExists;
 
   return (
-    <IconButton
+    <IconButtonWithTooltip
       disabled={disableButton}
       className={classes.chartsIcon}
       data-test="charts"
+      tooltipProps={{title: 'Dashboard'}}
       onClick={onClickHandler('charts')}>
       <GraphIcon className={classes.iconGraph} />
-    </IconButton>
+    </IconButtonWithTooltip>
   );
 }

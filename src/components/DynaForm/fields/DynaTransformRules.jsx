@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '20vh',
-    width: '50vh',
+    width: '100%',
   },
   actions: {
     flexDirection: 'row !important',
@@ -66,7 +66,7 @@ export default function DynaTransformRules(props) {
   return (
     <div>
       <TransformEditorDrawer
-        title="Transform Mapping"
+        title={label}
         id={id + resourceId}
         data=""
         rule={rule && rule[0]}

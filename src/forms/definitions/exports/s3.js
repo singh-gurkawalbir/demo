@@ -181,6 +181,7 @@ export default {
           ],
         },
       ],
+      visible: r => !(r && r.isLookup),
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -191,6 +192,14 @@ export default {
 
       defaultValue: r => {
         const isNew = isNewId(r._id);
+
+        if (r && r.isLookup) {
+          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
+            return 'records';
+          }
+
+          return 'blob';
+        }
 
         // if its create
         if (isNew) return 'records';
@@ -321,70 +330,59 @@ export default {
       fieldId: 'skipRetries',
     },
     apiIdentifier: { fieldId: 'apiIdentifier' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'General',
-            fields: ['common', 'outputMode'],
-          },
-          {
-            collapsed: true,
-            label: 'How would you like to parse files?',
-            fields: [
-              'file.type',
-              'uploadFile',
-              'file.json.resourcePath',
-              'file.xlsx.hasHeaderRow',
-              'file.xlsx.rowsPerRecord',
-              'file.xlsx.keyColumns',
-              'edix12.format',
-              'fixed.format',
-              'edifact.format',
-              'file.filedefinition.rules'],
-            type: 'indent',
-            containers: [{fields: [
-              'parsers',
-              'file.csv',
-            ]}],
-          },
-          {
-            collapsed: true,
-            label: 'Where would you like to transfer from?',
-            fields: [
-              's3.region',
-              's3.bucket',
-              's3.keyStartsWith',
-              's3.keyEndsWith',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: [
-              'file.decompressFiles',
-              'file.compressionFormat',
-              'file.skipDelete',
-              'fileMetadata',
-              's3.backupBucket',
-              'file.encoding',
-              'pageSize',
-              'dataURITemplate',
-              'skipRetries',
-              'apiIdentifier'],
-          },
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'outputMode'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: [
+          'file.type',
+          'uploadFile',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+          'edix12.format',
+          'fixed.format',
+          'edifact.format',
+          'file.filedefinition.rules'],
+        type: 'indent',
+        containers: [{fields: [
+          'parsers',
+          'file.csv',
+        ]}],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like to transfer from?',
+        fields: [
+          's3.region',
+          's3.bucket',
+          's3.keyStartsWith',
+          's3.keyEndsWith',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'file.decompressFiles',
+          'file.compressionFormat',
+          'file.skipDelete',
+          'fileMetadata',
+          's3.backupBucket',
+          'file.encoding',
+          'pageSize',
+          'dataURITemplate',
+          'skipRetries',
+          'apiIdentifier'],
       },
     ],
   },

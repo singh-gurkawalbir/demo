@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import groupBy from 'lodash/groupBy';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
 import {
@@ -19,11 +18,9 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
-  getAxisLabelPosition,
   getLegend,
 } from '../../../utils/flowMetrics';
 import { selectors } from '../../../reducers';
@@ -112,6 +109,7 @@ const DataIcon = ({index}) => {
   );
 };
 const flowsConfig = { type: 'flows' };
+
 const Chart = ({ id, integrationId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
@@ -122,10 +120,16 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     selectors.makeResourceListSelector,
     flowsConfig
   );
+  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const flowResources = useMemo(
-    () =>
-      resourceList.resources &&
-      resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
+    () => {
+      const flows = resourceList.resources &&
+      resourceList.resources.filter(flow =>
+        (flow._integrationId === integrationId))
+        .map(f => ({_id: f._id, name: f.name}));
+
+      return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+    },
     [resourceList.resources, integrationId]
   );
   const { startDate, endDate } = range;
@@ -153,20 +157,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      const fData = data.filter(d => d.flowId === r);
-
-      flowData[r] = Object.entries(groupBy(fData, 'timeInMills')).map(e => ({
-        timeInMills: e[0],
-        ...e[1].reduce((acc, cur) => ({
-          ...cur,
-          success: (acc.success || 0) + (cur.success || 0),
-          error: (acc.error || 0) + (cur.error || 0),
-          ignored: (acc.ignored || 0) + (cur.ignored || 0),
-          averageTimeTaken: Math.floor(((acc.averageTimeTaken || 0) + acc.sum) / acc.count),
-          sum: acc.sum + (cur.averageTimeTaken || 0),
-          count: acc.count + 1,
-        }), {count: 1, sum: 0}),
-      }));
+      flowData[r] = data.filter(d => (r === integrationId ? d.flowId === '_integrationId' : d.flowId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -177,6 +168,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     }
     const resourceId = name.split('-')[0];
     let modifiedName = resourceId;
+
     const resource = flowResources.find(r => r._id === resourceId);
 
     if (resource) {
@@ -292,7 +284,6 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
             type="number"
             allowDuplicatedCategory={false}
             ticks={ticks}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -302,7 +293,8 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
               value: getAxisLabel(id),
               angle: -90,
               offset: -20,
-              position: getAxisLabelPosition(id),
+              position: 'insideLeft',
+              style: { textAnchor: 'middle' },
             }}
             domain={[() => 0, dataMax => dataMax + 10]}
           />
@@ -330,7 +322,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
   );
 };
 
-export default function FlowCharts({ integrationId, range, selectedResources }) {
+export default function FlowCharts({ integrationId, range, selectedResources, refresh }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [sendQuery, setSendQuery] = useState(!!selectedResources.length);
@@ -345,11 +337,11 @@ export default function FlowCharts({ integrationId, range, selectedResources }) 
     if (selectedResources.length) {
       setSendQuery(true);
     }
-  }, [selectedResources, range]);
+  }, [selectedResources, range, refresh]);
 
   useEffect(() => {
     if (sendQuery) {
-      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
   }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);
@@ -367,7 +359,7 @@ export default function FlowCharts({ integrationId, range, selectedResources }) 
 
   return (
     <div className={classes.root}>
-      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

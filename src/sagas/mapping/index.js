@@ -215,14 +215,14 @@ export function* mappingInit({
     formattedMappings = subRecordMapping;
     lookups = subrecordLookups;
   } else {
-    formattedMappings = mappingUtil.getMappingFromResource(
+    formattedMappings = mappingUtil.getMappingFromResource({
       importResource,
-      false,
+      isFieldMapping: false,
       isGroupedSampleData,
-      options.recordType,
+      netsuiteRecordType: options.recordType,
       options,
-      exportResource
-    );
+      exportResource,
+    });
     lookups = lookupUtil.getLookupFromResource(importResource) || [];
   }
   // adding conditional lookup
@@ -552,12 +552,27 @@ export function* updateImportSampleData() {
   yield put(actions.mapping.updateMappings(modifiedMappings));
 }
 
+export function* patchGenerateThroughAssistant({value}) {
+  const {
+    lastModifiedRowKey,
+  } = yield select(selectors.mapping);
+
+  // trigger patch only when user has touched some field.On touch of last field lastModifiedRowKey = 'new'
+  if (lastModifiedRowKey) {
+    yield put(actions.mapping.patchField('generate',
+      lastModifiedRowKey,
+      value)
+    );
+  }
+}
+
 export const mappingSagas = [
   takeEvery(actionTypes.MAPPING.INIT, mappingInit),
   takeEvery(actionTypes.MAPPING.SAVE, saveMappings),
   takeEvery(actionTypes.MAPPING.PREVIEW_REQUESTED, previewMappings),
   takeLatest(actionTypes.MAPPING.REFRESH_GENERATES, refreshGenerates),
   takeLatest(actionTypes.MAPPING.PATCH_FIELD, checkForIncompleteSFGenerateWhilePatch),
+  takeLatest(actionTypes.MAPPING.PATCH_GENERATE_THROUGH_ASSISTANT, patchGenerateThroughAssistant),
   takeLatest(actionTypes.METADATA.RECEIVED, updateImportSampleData),
   takeLatest([
     actionTypes.MAPPING.DELETE,

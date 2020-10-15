@@ -21,6 +21,7 @@ export default {
       );
 
       return {
+        sObjectType: sObjectTypeField?.value,
         commMetaPath: sObjectTypeField
           ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
           : '',
@@ -288,78 +289,67 @@ export default {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
     },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'General',
-            fields: [
-              'common',
-              'outputMode',
-              'exportOneToMany',
-              'salesforce.executionType',
-            ],
-          },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-                return 'What would you like to transfer?';
-              }
-              if (
-                r.resourceType === 'realtime' ||
-                r.type === 'distributed'
-              ) {
-                return 'Configure real-time export in source application';
-              }
-
-              return 'What would you like to export?';
-            },
-            fields: [
-              'salesforce.sObjectType',
-              'salesforce.objectType',
-              'salesforce.distributed.requiredTrigger',
-              'salesforce.distributed.referencedFields',
-              'salesforce.distributed.relatedLists',
-              'salesforce.distributed.qualifier',
-              'salesforce.soql',
-              'salesforce.id',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: [
-              'type',
-              'delta.dateField',
-              'delta.lagOffset',
-              'once.booleanField',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: [
-              'pageSize',
-              'salesforce.distributed.batchSize',
-              'salesforce.distributed.skipExportFieldId',
-              'dataURITemplate',
-              'skipRetries',
-              'apiIdentifier',
-            ],
-          },
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'salesforce.executionType',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+            return 'What would you like to transfer?';
+          }
+          if (
+            r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+          ) {
+            return 'Configure real-time export in source application';
+          }
+
+          return 'What would you like to export?';
+        },
+        fields: [
+          'salesforce.sObjectType',
+          'salesforce.objectType',
+          'salesforce.distributed.requiredTrigger',
+          'salesforce.distributed.referencedFields',
+          'salesforce.distributed.relatedLists',
+          'salesforce.distributed.qualifier',
+          'salesforce.soql',
+          'salesforce.id',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: [
+          'type',
+          'delta.dateField',
+          'delta.lagOffset',
+          'once.booleanField',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'pageSize',
+          'salesforce.distributed.batchSize',
+          'salesforce.distributed.skipExportFieldId',
+          'dataURITemplate',
+          'skipRetries',
+          'apiIdentifier',
+        ],
       },
     ],
   },

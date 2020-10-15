@@ -360,7 +360,7 @@ function FlowBuilder() {
             {/* CANVAS END */}
             <BottomDrawer
               ssLinkedConnectionId={ssLinkedConnectionId}
-              flow={flow}
+              flowId={flowId}
               size={bottomDrawerSize}
               setSize={setBottomDrawerSize}
               tabValue={tabValue}

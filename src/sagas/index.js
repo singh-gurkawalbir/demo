@@ -7,6 +7,7 @@ import {
   select,
   race,
   delay,
+  spawn,
   cancelled,
 } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
@@ -29,7 +30,7 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas } from './authentication';
+import { authenticationSagas, initializeLogRocket } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -54,7 +55,8 @@ import { suiteScriptSagas } from './suiteScript';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
-import latestJobsSagas from './errorManagement/latestJobs';
+import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
+import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
@@ -114,7 +116,7 @@ export function* apiCallWithRetry(args) {
   }
 }
 
-export default function* rootSaga() {
+function* allSagas() {
   yield createRequestInstance({
     driver: createDriver(window.fetch, {
       // AbortController Not supported in IE installed this polyfill package
@@ -159,10 +161,29 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
-    ...latestJobsSagas,
+    ...latestIntegrationJobsSagas,
+    ...latestFlowJobsSagas,
     ...errorRetrySagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
   ]);
+}
+// this saga basically restarts the root saga
+export default function* rootSaga() {
+  // both logout and logrocket init requires to abort all sagas and start over
+  const {logrocket, logout} = yield race({
+    mainSaga: call(allSagas),
+    logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+  });
+
+  if (logrocket || logout) {
+    // logrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
+    if (logrocket) yield call(initializeLogRocket);
+    // logout requires also reset the store
+    if (logout) yield put(actions.auth.clearStore());
+    // restart the root saga again
+    yield spawn(rootSaga);
+  }
 }

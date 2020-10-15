@@ -5,12 +5,16 @@ import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { subHours } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
+import util from '../../../../utils/array';
 import actions from '../../../../actions';
 import RightDrawer from '../../../../components/drawer/Right';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
-import DynaMultiSelect from '../../../../components/LineGraph/MultiSelect';
+import SelectResource from '../../../../components/LineGraph/SelectResource';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import IconTextButton from '../../../../components/IconTextButton';
+import { getSelectedRange } from '../../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
@@ -29,6 +33,22 @@ const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
 
   return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
 };
+
+const defaultPresets = [
+  {id: 'last1hour', label: 'Last 1 hour'},
+  {id: 'last4hours', label: 'Last 4 hours'},
+  {id: 'last24hours', label: 'Last 24 hours'},
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
+  {id: 'last3months', label: 'Last 3 months'},
+  {id: 'last6months', label: 'Last 6 months'},
+  {id: 'last9months', label: 'Last 9 months'},
+  {id: 'lastyear', label: 'Last year'},
+  {id: 'custom', label: 'Custom'},
+];
 
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
@@ -72,11 +92,12 @@ export default function LineGraphDrawer({ flowId }) {
 
       return [{
         label: 'Last run',
+        id: 'lastrun',
         range: () => ({
           startDate,
           endDate,
         }),
-      }];
+      }, ...defaultPresets];
     }
 
     return [];
@@ -94,45 +115,47 @@ export default function LineGraphDrawer({ flowId }) {
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(flowId));
-      setRange(Array.isArray(range) ? range[0] : range);
+      setRange(getSelectedRange(range));
     },
     [dispatch, flowId]
   );
+  const handleRefresh = useCallback(() => {
+    dispatch(actions.flowMetrics.clear(flowId));
+  }, [dispatch, flowId]);
+
   const handleResourcesChange = useCallback(
-    (id, val) => {
-      setSelectedResources(val);
+    val => {
+      if (!util.areArraysEqual(val, selectedResources, {ignoreOrder: true})) {
+        dispatch(actions.flowMetrics.clear(flowId));
+        setSelectedResources(val);
+      }
     },
-    []
+    [dispatch, flowId, selectedResources]
   );
 
   const action = useMemo(
     () => (
       <>
+        <IconTextButton onClick={handleRefresh}>
+          <RefreshIcon /> Refresh
+        </IconTextButton>
         <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
-        <DynaMultiSelect
-          name="flowResources"
-          value={selectedResources}
-          placeholder="Please select resources"
-          options={[
-            {
-              items: flowResources.map(r => ({
-                value: r._id,
-                label: r.name || r.id,
-              })),
-            },
-          ]}
-          onFieldChange={handleResourcesChange}
+        <SelectResource
+          selectedResources={selectedResources}
+          flowResources={flowResources}
+          isFlow
+          onSave={handleResourcesChange}
         />
       </>
     ),
-    [flowResources, handleDateRangeChange, handleResourcesChange, selectedResources, customPresets]
+    [handleRefresh, handleDateRangeChange, customPresets, selectedResources, flowResources, handleResourcesChange]
   );
 
   return (
     <RightDrawer
       anchor="right"
       title="Dashboard"
-      height="tall"
+      height="short"
       width="full"
       actions={action}
       variant="permanent"

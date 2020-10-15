@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import LoadResources from '../LoadResources';
 import { selectors } from '../../reducers';
@@ -11,6 +12,15 @@ import CommStatus from '../CommStatus';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { UNDO_TIME } from './util';
 import { hashCode } from '../../utils/string';
+import { isNewId } from '../../utils/resource';
+
+const useStyles = makeStyles(({
+  jobTable: {
+    height: '100%',
+    overflow: 'auto',
+    paddingBottom: 115,
+  },
+}));
 
 export default function JobDashboard({
   integrationId,
@@ -19,6 +29,8 @@ export default function JobDashboard({
   isFlowBuilderView,
 }) {
   const filterKey = 'jobs';
+  const classes = useStyles();
+
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
   const userPermissionsOnIntegration = useSelector(state =>
@@ -43,6 +55,7 @@ export default function JobDashboard({
     },
     [dispatch]
   );
+
   const clearFilter = useCallback(() => {
     dispatch(actions.clearFilter(filterKey));
   }, [dispatch]);
@@ -75,7 +88,7 @@ export default function JobDashboard({
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {
-    if (jobs.length === 0) {
+    if (!isNewId(flowId) && jobs.length === 0) {
       dispatch(
         actions.job.requestCollection({
           integrationId,
@@ -397,6 +410,7 @@ export default function JobDashboard({
         disableActions={disableActions}
       />
       <JobTable
+        classes={classes.jobTable}
         onSelectChange={handleSelectChange}
         jobsInCurrentPage={jobs}
         selectedJobs={selectedJobs}

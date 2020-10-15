@@ -38,6 +38,7 @@ import {
   getBlobResourceSampleData,
   isOneToManyResource,
   generatePostResponseMapData,
+  getAllDependentSampleDataStages,
 } from '../../../utils/flowData';
 import { exportPreview, pageProcessorPreview } from '../utils/previewCalls';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -117,8 +118,14 @@ export function* requestSampleData({
   }
 
   if (refresh) {
-    // refresh prop resets the entire state from this resourceId in flow state to fetch again
-    yield put(actions.flowData.resetStages(flowId, resourceId));
+    const stagesToRefresh = getAllDependentSampleDataStages(stage, resourceType);
+
+    // refresh prop updates dependent stages to refresh
+    // and resets sample data before this resourceId in flow state to fetch again from the root
+    // cases: NS/SF expects this refresh prop to fetch from NS/SF (refreshCache)
+    // Used currently for Mapping refresh ( stage - importMapping )
+    // TODO @Raghu: Figure out if this can be used else where to simplify the process
+    yield put(actions.flowData.resetStages(flowId, resourceId, stagesToRefresh, 'refresh'));
   }
 
   // Updates preProcessedData for the processors
@@ -432,7 +439,10 @@ export function* requestProcessorData({
     hasNoRulesToProcess = true;
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
-    const mappings = mappingUtil.getMappingFromResource(resource, true);
+    const mappings = mappingUtil.getMappingFromResource({
+      importResource: resource,
+      isFieldMapping: true,
+    });
 
     // Incase of no fields/lists inside mappings , no need to make a processor call
     if (
