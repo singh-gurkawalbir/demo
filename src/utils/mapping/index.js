@@ -916,9 +916,8 @@ export default {
     /* TODO: With support for different application being adding up,
       path for mapping to be updated below */
     let mappings = {};
-    const { adaptorType } = importResource;
 
-    if (adaptorType === 'NetSuiteDistributedImport') {
+    if (importResource.adaptorType === 'NetSuiteDistributedImport') {
       mappings = importResource.netsuite_da?.mapping || {};
     } else {
       mappings = importResource.mapping || {};
