@@ -481,8 +481,10 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
   if (integrationId && integrations.find(i => i._id === integrationId)) {
     connectorId = integrations.find(i => i._id === integrationId)._connectorId;
 
-    if (getHelpUrlForConnector(connectorId, marketplaceConnectors)) {
-      helpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
+    const connectorHelpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
+
+    if (connectorHelpUrl) {
+      helpUrl = connectorHelpUrl;
     }
     // Link https://celigosuccess.zendesk.com/hc/en-us/categories/203820768 seems to be broken recently.So we set https://celigosuccess.zendesk.com/hc/en-us as a default url in integration context.
     // else if (connectorId) {
