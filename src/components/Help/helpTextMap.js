@@ -1047,7 +1047,7 @@ export default {
   'export.test.limit':
     'For testing purpose, records exported will be limited to the number specified',
   'export.delta.dateField':
-    "Please select a date field from the export application that integrator.io can use to keep track of records that have changed since the last time the export was run.  It is recommended that you pick a system generated field.  For example, many applications maintain a standard 'Date Last Modified' (or 'Last Modified Date', etc...) field that always contains the date and time that a record was last changed.  You can also select a non system generated field if you have your own logic in place (in the export application) to set the field accordingly whenever a relevant change is made to a record.",
+    'Please select one or more date fields from the export application, and integrator.io will use these date fields to process records that were created and/or modified since the last time the flow was run.  If you are using multiple date fields, please use commas to separate the different values.  For example, \'createdAt,lastModified\' will first export \'createdAt\' records, and then \'lastModified\' records.',
   'export.delta.dateFormat':
     'This field ONLY needs to be set if the standard ISO8601 date format is not supported by the source application. If this is the case, then there are multiple non-standard formats to pick from, or you can define a completely custom format. For instructions on how to specify custom formats, please visit <a class="sc-dEfkYy jDnahj" href="https://momentjs.com/docs/#/displaying/" title="https://momentjs.com/docs/#/displaying/">https://momentjs.com/docs/#/displaying/</a>',
   'export.delta.startDate':
