@@ -1418,9 +1418,6 @@ describe('matchingConnectionList selector', () => {
     );
 
     expect(
-      selectors.matchingConnectionList(state, { type: 'netsuite' })
-    ).toEqual([validNetsuiteConnection]);
-    expect(
       selectors.matchingConnectionList(state, { type: 'salesforce' })
     ).toEqual([salesforceConnection]);
     expect(selectors.matchingConnectionList(state, { type: 'rest' })).toEqual([

@@ -76,6 +76,14 @@ export default {
         }
       });
     let index;
+    let isPrevOperationAttachOrDetach = false;
+
+    if (resource && (resource.netsuite_da?.operation === 'attach' || resource.netsuite_da?.operation === 'detach')) {
+      index = toReturn.findIndex(
+        mapping => (mapping.generate === 'celigo_nlobjAttachToId' || mapping.generate === 'celigo_nlobjDetachFromId')
+      );
+      if (index >= 0) { isPrevOperationAttachOrDetach = true; }
+    }
 
     if (resource && resource.netsuite_da?.operation === 'attach') {
       toReturn = toReturn.filter(m => (!['celigo_nlobjDetachFromId', 'celigo_nlobjDetachedType', 'celigo_nlobjDetachedId'].includes(m.generate)));
@@ -156,7 +164,7 @@ export default {
       toReturn = toReturn.filter(m => (!['celigo_nlobjAttachToId', 'celigo_nlobjDetachFromId', 'celigo_nlobjAttachedType', 'celigo_nlobjDetachedType', 'celigo_nlobjAttachedId', 'celigo_nlobjDetachedId'].includes(m.generate)));
     }
 
-    if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation)) {
+    if (['attach', 'detach'].includes(resource && resource.netsuite_da?.operation) && !isPrevOperationAttachOrDetach) {
       index = toReturn.findIndex(
         mapping => mapping.generate === 'celigo_nlobjAttachDetachAttributesRole'
       );
