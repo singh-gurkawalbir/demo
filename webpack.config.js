@@ -80,6 +80,10 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
+    // define LOGROCKET_IDENTIFIER for logrocket
+    new webpack.DefinePlugin({
+      LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
+    }),
   ],
   output: {
     publicPath: '/',
@@ -106,10 +110,6 @@ module.exports = (env, argv) => {
       /^redux-logger$/,
       './utils/dummy.js'
     ));
-    // define LOGROCKET_IDENTIFIER for logrocket
-    config.plugins.push(new webpack.DefinePlugin({
-      LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
-    }));
 
     if (process.env.NODE_ENV === 'analyze') {
       config.plugins.push(new BundleAnalyzerPlugin());
