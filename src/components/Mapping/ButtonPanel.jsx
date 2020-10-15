@@ -10,12 +10,9 @@ const useStyles = makeStyles(theme => ({
   importMappingButtonGroup: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     width: '100%',
-    padding: theme.spacing(2, 1, 1, 0),
+    padding: theme.spacing(2, 1, 0, 0),
     display: 'block',
-    '& > button': {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-    },
+    marginLeft: theme.spacing(3),
   },
   previewButton: {
     float: 'right',

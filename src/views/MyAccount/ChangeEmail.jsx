@@ -10,10 +10,8 @@ import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   container: {
-    padding: 10,
-    backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
     height: '100%',
     width: '100%',
@@ -21,7 +19,7 @@ const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
     },
   },
-}));
+});
 const changeEmailFieldMeta = {
   fieldMap: {
     newEmail: {
@@ -99,7 +97,6 @@ export default function ChangeEmail({ show, onClose }) {
       {!success && (
         <div className={classes.container}>
           <DynaForm
-
             formKey={formKey}
             fieldMeta={changeEmailFieldMeta} />
           <DynaSubmit

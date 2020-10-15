@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'move',
+    cursor: 'grab',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
     width: '40%',
+    flex: 1,
   },
   disableChildRow: {
     cursor: 'not-allowed',
