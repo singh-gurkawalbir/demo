@@ -1597,6 +1597,12 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
   }
 );
 
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
+);
+
 selectors.mkIntegrationAppFlowSections = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
@@ -5387,6 +5393,15 @@ selectors.isIAType = (state, flowId) => {
   const isIAType = isIntegrationApp(flow);
 
   return isIAType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
 };
 
 selectors.isFlowViewMode = (state, integrationId, flowId) => {

@@ -216,15 +216,16 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {

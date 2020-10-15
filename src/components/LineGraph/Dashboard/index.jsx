@@ -49,11 +49,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
     startDate: subHours(new Date(), 24).toISOString(),
     endDate: new Date().toISOString(),
   });
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-
-    return !!(integration && integration._connectorId);
-  });
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const [flowCategory, setFlowCategory] = useState();
   const integrationSectionFlows = useSelectorMemo(selectors.makeIntegrationSectionFlows, integrationId, childId, flowCategory);
   const integrationAppFlowSections = useSelector(state => {
@@ -66,7 +62,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
 
   const validFlows = useMemo(() => isIntegrationApp ? integrationSectionFlows : [], [integrationSectionFlows, isIntegrationApp]);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
-  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || []);
+  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || [integrationId]);
 
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -74,11 +70,14 @@ export default function LineGraphDrawer({ integrationId, childId }) {
   );
 
   const flowResources = useMemo(
-    () =>
-      resourceList.resources &&
+    () => {
+      const flows = resourceList.resources &&
       resourceList.resources.filter(flow =>
         (flow._integrationId === integrationId && !flow.disabled && (!isIntegrationApp || validFlows.includes(flow._id))))
-        .map(f => ({_id: f._id, name: f.name})),
+        .map(f => ({_id: f._id, name: f.name}));
+
+      return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+    },
     [resourceList.resources, integrationId, isIntegrationApp, validFlows]
   );
   const validResources = useMemo(() => {
