@@ -1,19 +1,21 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import UserForm from './UserForm';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../utils/constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import ModalDialog from '../../ModalDialog';
-import UserForm from './UserForm';
-import getRequestOptions from '../../../utils/requestOptions';
-import useSaveStatusIndicator from '../../../hooks/useSaveStatusIndicator';
+import { COMM_STATES } from '../../../reducers/comms/networkComms';
+import CommStatus from '../../CommStatus';
 
-export default function UserDialog({ open, userId, onClose }) {
+export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
-  const { path, opts } = useMemo(() => getRequestOptions(userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE, {resourceId: userId }), [userId]);
+  const history = useHistory();
+  const [actionsToClear, setActionsToClear] = useState();
+  const [disableSave, setDisableSave] = useState(false);
   const handleSaveClick = useCallback(
     ({ email, accessLevel, integrationsToMonitor, integrationsToManage }) => {
       const aShareData = {
@@ -53,32 +55,48 @@ export default function UserDialog({ open, userId, onClose }) {
       } else {
         dispatch(actions.user.org.users.create(aShareData));
       }
+      setDisableSave(true);
     },
     [userId, dispatch]
   );
 
-  const { submitHandler, disableSave} = useSaveStatusIndicator(
-    {
-      path,
-      method: opts.method,
-      onSave: handleSaveClick,
-      onClose,
-    }
+  const handleClose = useCallback(() => history.goBack(), [history]);
+
+  const commStatusHandler = useCallback(
+    objStatus => {
+      if (
+        objStatus?.createOrUpdate &&
+        [COMM_STATES.SUCCESS, COMM_STATES.ERROR].includes(objStatus.createOrUpdate.status) &&
+        disableSave
+      ) {
+        setActionsToClear(['createOrUpdate']);
+        setDisableSave(false);
+        if (objStatus.createOrUpdate.status === COMM_STATES.SUCCESS) {
+          handleClose();
+        }
+      }
+    },
+    [handleClose, disableSave]
   );
 
   return (
     <>
-      <ModalDialog show={open} onClose={onClose}>
-        <div>{userId ? 'Change user permissions' : 'Invite user'}</div>
-        <div>
-          <UserForm
-            id={userId}
-            disableSave={disableSave}
-            onSaveClick={submitHandler(true)}
-            onCancelClick={onClose}
-          />
-        </div>
-      </ModalDialog>
+      <CommStatus
+        actionsToMonitor={{
+          createOrUpdate: {
+            action: userId ? actionTypes.USER_UPDATE : actionTypes.USER_CREATE,
+            resourceId: userId,
+          },
+        }}
+        actionsToClear={actionsToClear}
+        commStatusHandler={commStatusHandler}
+      />
+      <UserForm
+        id={userId}
+        disableSave={disableSave}
+        onSaveClick={handleSaveClick}
+        onCancelClick={handleClose}
+    />
     </>
   );
 }

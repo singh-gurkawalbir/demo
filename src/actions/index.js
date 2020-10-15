@@ -423,8 +423,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
