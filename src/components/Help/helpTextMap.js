@@ -175,7 +175,7 @@ export default {
   'amazonmws.connection.http.unencrypted.sellerId': 'The account ID for the Amazon seller account you are integrating with. You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you do not know this value you can find it in the "Settings" section in Amazon Seller Central.',
   'amazonmws.connection.http.unencrypted.mwsAuthToken':
     'The MWS authorization token.',
-  'amazonmws.connection.http.unencrypted.marketplaceId': 'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
+  'amazonmws.connection.http.unencrypted.marketplaceId': 'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amazon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
   'amazonmws.connection.http.unencrypted.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'amazonmws.connection.http._iClientId': `Integrator IO uses Celigo’s Developer keys to connect to Amazon. You'll need to give Celigo permission to access your Amazon account. For help with authorization, refer to (<a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360035639851-Enable-Developer-Access-for-Celigo-in-Amazon-Seller-Central-Registration-">Developer Access</a>).<br>If you want to use your own developer keys instead of Celigo, add the iClient which lets you configure your developer and secret keys for your marketplace region.`,
@@ -1930,7 +1930,7 @@ export default {
     "Enter the username for your Salesforce Account for 'JWT Bearer Token' authentication.",
   'connection.amazonmws.authToken': 'The MWS authorization token.',
   'connection.amazonmws.marketplaceId':
-    "Please specify the Amazon MWS 'MarketplaceId' for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS 'MarketplaceId' selected, else your Amazon MWS calls will fail.",
+    "Please specify the Amazon MWS 'MarketplaceId' for this connection. This value is required for specific Amazon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS 'MarketplaceId' selected, else your Amazon MWS calls will fail.",
   'connection.threedcart.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.threedcart.rest.threedcartSecureUrl':
     "3dcart merchant's Secure URL.",
