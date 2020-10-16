@@ -72,6 +72,7 @@ export default function DynaFileKeyColumn(props) {
       data: csvData,
       rule: options,
       autoEvaluate: true,
+      isSuiteScriptData: true,
     }));
   }, [csvData, dispatch, id, options]);
 

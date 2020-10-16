@@ -513,6 +513,12 @@ export const processOneToManySampleData = (sampleData, resource) => {
   return processedSampleData;
 };
 
+/**
+ * This util adds "page_of_records" on records/rows based on the sampleData structure
+ * Ideally, we should be using a BE API for this structure
+ * For the time being this is used for csv/xml export sample data view
+ * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
+ */
 export const wrapExportFileSampleData = records => {
   // eslint-disable-next-line camelcase
   const page_of_records = [];

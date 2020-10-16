@@ -40,7 +40,8 @@ const init = editor => {
   };
 };
 
-const processResult = (_, result) => {
+const processResult = ({ isSuiteScriptData }, result) => {
+  if (isSuiteScriptData) return result;
   const formattedData = wrapExportFileSampleData(result?.data);
 
   return {...result, data: formattedData, columnsData: result?.data};

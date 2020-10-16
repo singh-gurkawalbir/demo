@@ -36,6 +36,7 @@ export default function CsvParseEditor(props) {
       data: props.data,
       rule: props.rule,
       autoEvaluate: true,
+      isSuiteScriptData: true,
     };
 
     dispatch(actions.editor.init(editorId, 'csvParser', options));
