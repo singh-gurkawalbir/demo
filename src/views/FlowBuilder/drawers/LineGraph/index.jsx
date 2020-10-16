@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import { subHours } from 'date-fns';
+import { startOfDay, addDays } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import util from '../../../../utils/array';
@@ -49,7 +49,11 @@ const defaultPresets = [
   {id: 'lastyear', label: 'Last year'},
   {id: 'custom', label: 'Custom'},
 ];
-
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
+  endDate: new Date().toISOString(),
+  preset: 'last30days',
+};
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
@@ -57,12 +61,6 @@ export default function LineGraphDrawer({ flowId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [selectedResources, setSelectedResources] = useState([flowId]);
-  const [range, setRange] = useState({
-    startDate: subHours(new Date(), 24).toISOString(),
-    endDate: new Date().toISOString(),
-  });
-
   const latestJobDetails = useSelector(state => selectors.latestJobMap(state, integrationId));
   const latestJob = useMemo(() => {
     if (latestJobDetails && latestJobDetails.data) {
@@ -70,7 +68,17 @@ export default function LineGraphDrawer({ flowId }) {
     }
   }, [flowId, latestJobDetails]);
   const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const { rangePreference, resourcePreference } = useMemo(() => {
+    const preference = preferences[flowId] || {};
 
+    return {
+      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
+      resourcePreference: preference.resource || [flowId],
+    };
+  }, [flowId, preferences]);
+  const [selectedResources, setSelectedResources] = useState(resourcePreference);
+  const [range, setRange] = useState(rangePreference);
   const customPresets = useMemo(() => {
     if (latestJob) {
       const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
@@ -116,8 +124,19 @@ export default function LineGraphDrawer({ flowId }) {
     range => {
       dispatch(actions.flowMetrics.clear(flowId));
       setRange(getSelectedRange(range));
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [flowId]: {
+              range,
+              resource: selectedResources,
+            },
+          },
+        })
+      );
     },
-    [dispatch, flowId]
+    [dispatch, flowId, preferences, selectedResources]
   );
   const handleRefresh = useCallback(() => {
     dispatch(actions.flowMetrics.clear(flowId));
@@ -128,9 +147,20 @@ export default function LineGraphDrawer({ flowId }) {
       if (!util.areArraysEqual(val, selectedResources, {ignoreOrder: true})) {
         dispatch(actions.flowMetrics.clear(flowId));
         setSelectedResources(val);
+        dispatch(
+          actions.user.preferences.update({
+            linegraphs: {
+              ...preferences,
+              [flowId]: {
+                range,
+                resource: val,
+              },
+            },
+          })
+        );
       }
     },
-    [dispatch, flowId, selectedResources]
+    [dispatch, flowId, integrationId, preferences, range, selectedResources]
   );
 
   const action = useMemo(
@@ -139,7 +169,14 @@ export default function LineGraphDrawer({ flowId }) {
         <IconTextButton onClick={handleRefresh}>
           <RefreshIcon /> Refresh
         </IconTextButton>
-        <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
+        <DateRangeSelector
+          onSave={handleDateRangeChange}
+          customPresets={customPresets}
+          value={{
+            startDate: new Date(rangePreference.startDate),
+            endDate: new Date(rangePreference.endDate),
+            preset: rangePreference.preset,
+          }} />
         <SelectResource
           selectedResources={selectedResources}
           flowResources={flowResources}
@@ -148,7 +185,7 @@ export default function LineGraphDrawer({ flowId }) {
         />
       </>
     ),
-    [handleRefresh, handleDateRangeChange, customPresets, selectedResources, flowResources, handleResourcesChange]
+    [handleRefresh, handleDateRangeChange, customPresets, rangePreference.startDate, rangePreference.endDate, rangePreference.preset, selectedResources, flowResources, handleResourcesChange]
   );
 
   return (
