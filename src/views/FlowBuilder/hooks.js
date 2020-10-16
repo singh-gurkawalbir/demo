@@ -177,9 +177,15 @@ export const useHandleExitClick = () => {
   const location = useLocation();
 
   const handleExitClick = useCallback(() => {
-    // Note that our App init must do some internal redirects because of that our browser
-    // history stack also varies. Hence, we have to parse the location
-    // and return the user to the integration details page.
+    // Note that our App init must do some internal redirects since
+    // a new browser tab session always has a history depth of 3!
+    // if depth is more than 3, we are safe to just go back in the history queue.
+    if (history.length > 3) {
+      return history.goBack();
+    }
+
+    // Otherwise parse the location and return the user to the integration
+    // details page.
     const parts = location.pathname.split('/');
 
     if (parts[1].toLowerCase() === 'integrationapps') {
