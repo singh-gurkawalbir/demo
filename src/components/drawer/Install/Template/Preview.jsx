@@ -154,7 +154,7 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <div className={classes.appLogos}>
+      <div data-public className={classes.appLogos}>
         <ApplicationImg markOnly size="small" type={template.applications[0]} />
         {template.applications[1] && (
           <>
@@ -168,9 +168,9 @@ export default function TemplatePreview() {
         )}
       </div>
 
-      <Typography variant="h2">{name}</Typography>
+      <Typography data-public variant="h2">{name}</Typography>
 
-      <div className={classes.container}>
+      <div data-public className={classes.container}>
         <div className={classes.appDetails}>
           <Button
             variant="outlined"

@@ -120,7 +120,7 @@ selectors.isOwnerUserInErrMgtTwoDotZero = createSelector(
     }
 
     /* When the user belongs to an org, we need to return the isErrMgtTwoDotZero from org owner profile. */
-    const { accounts: orgAccounts = {} } = org;
+    const { accounts: orgAccounts = [] } = org;
     const currentAccount = orgAccounts.find(
       a => a._id === defaultAShareId
     );

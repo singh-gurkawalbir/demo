@@ -48,9 +48,9 @@ export default function MergeEditor(props) {
       handleRuleChange={handleRuleChange}
       handleDataChange={handleDataChange}
       handleInit={handleInit}
-      ruleTitle="Default Object"
-      dataTitle="Merge Target"
-      resultTitle="Final Object"
+      ruleTitle="Default object"
+      dataTitle="Merge target"
+      resultTitle="Final object"
     />
   );
 }

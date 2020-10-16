@@ -316,6 +316,7 @@ export function* deleteUser({ _id }) {
       path,
       opts,
       message: 'Deleting User',
+      hidden: true, // showing error is being handling by component
     });
   } catch (e) {
     return true;
@@ -354,6 +355,7 @@ export function* makeOwner({ email }) {
       path,
       opts,
       message: 'Requesting account transfer',
+      hidden: true, // showing error is being handling by component
     });
   } catch (e) {
     return true;

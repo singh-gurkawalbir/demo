@@ -423,8 +423,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
@@ -2033,7 +2035,7 @@ const editorSampleData = {
     formValues,
     fieldType,
     requestedTemplateVersion,
-    isV2NotSupported,
+    isEditorV2Supported,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
@@ -2043,7 +2045,7 @@ const editorSampleData = {
       formValues,
       fieldType,
       requestedTemplateVersion,
-      isV2NotSupported,
+      isEditorV2Supported,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {

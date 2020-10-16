@@ -1,5 +1,4 @@
 import { isNewId } from '../../../utils/resource';
-import { isProduction } from '../../utils';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -307,10 +306,8 @@ export default {
           ],
         },
       ],
-      visible: !isProduction(),
-      visibleWhenAll: !isProduction()
-        ? [{ field: 'netsuite.api.type', is: ['restlet'] }, { field: 'netsuite.execution.type', is: ['scheduled'] },
-          { field: 'outputMode', is: ['records'] }] : [],
+      visibleWhenAll: [{ field: 'netsuite.api.type', is: ['restlet'] }, { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] }],
       isNew: r => isNewId(r._id),
       connectionId: r => r?._connectionId,
       resourceType: 'exports',

@@ -368,7 +368,7 @@ export function* getFlowStageData({
   stage,
   isInitialized,
 }) {
-  let flowStageData = yield select(selectors.getSampleDataWrapper, {
+  let flowStageData = yield select(selectors.sampleDataWrapper, {
     flowId,
     resourceId,
     resourceType,
@@ -385,7 +385,7 @@ export function* getFlowStageData({
       stage,
       isInitialized,
     });
-    flowStageData = yield select(selectors.getSampleDataWrapper, {
+    flowStageData = yield select(selectors.sampleDataWrapper, {
       flowId,
       resourceId,
       resourceType,
