@@ -4,9 +4,14 @@ import { formatErrorDetails } from '../../../../utils/errorManagement';
 import CodeEditor from '../../../CodeEditor';
 import { selectors } from '../../../../reducers';
 
-export default function ViewErrorDetails({ flowId, resourceId, errorId }) {
+export default function ViewErrorDetails({ flowId, resourceId, errorId, isResolved }) {
   const errorDoc = useSelector(
-    state => selectors.resourceError(state, { flowId, resourceId, errorId }) || {},
+    state => selectors.resourceError(state, {
+      flowId,
+      resourceId,
+      errorId,
+      options: {isResolved},
+    }) || {},
     shallowEqual
   );
   const errorDetails = useMemo(() => formatErrorDetails(errorDoc), [errorDoc]);

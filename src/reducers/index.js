@@ -80,8 +80,13 @@ import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sam
 import { genSelectors } from './util';
 import getJSONPaths from '../utils/jsonPaths';
 import sqlUtil from '../utils/sql';
-import { getJobDuration } from './data/jobs/util';
 import getFilteredErrors from '../utils/errorManagement';
+import {
+  getFlowResourcesYetToBeCreated,
+  generatePendingFlowSteps,
+  getRunConsoleJobSteps,
+  getParentJobSteps,
+} from '../utils/latestJobs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -920,7 +925,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment) &&
+            (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             (accessLevel === 'owner' || accessLevel === 'manage')
           );
@@ -1590,6 +1595,12 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
 
     return flows;
   }
+);
+
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
 );
 
 selectors.mkIntegrationAppFlowSections = () => {
@@ -3032,59 +3043,95 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.notificationResources = (state, _integrationId, storeId) => {
-  const diyFlows = selectors.resourceList(state, {
-    type: 'flows',
+/** Notification related selectors */
+selectors.subscribedNotifications = (state, userEmail) => {
+  const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
+  const notifications = selectors.resourceList(state, {
+    type: 'notifications',
     filter: {
-      $where() {
-        if (!_integrationId || ['none'].includes(_integrationId)) {
-          return !this._integrationId;
-        }
-
-        return this._integrationId === _integrationId;
-      },
+      subscribedByUser: subscribedByUser => subscribedByUser.email === emailIdToFilter,
     },
-  }).resources;
-  const { _registeredConnectionIds = [], _connectorId } =
+  }).resources || [];
+
+  return notifications;
+};
+
+selectors.diyFlows = (state, _integrationId) => selectors.resourceList(state, {
+  type: 'flows',
+  filter: {
+    $where() {
+      if (!_integrationId || _integrationId === 'none') {
+        return !this._integrationId;
+      }
+
+      return this._integrationId === _integrationId;
+    },
+  },
+}).resources;
+
+selectors.diyConnections = (state, _integrationId) => {
+  const { _registeredConnectionIds = [] } =
     selectors.resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = selectors.resourceList(state, {
+
+  return selectors.resourceList(state, {
     type: 'connections',
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none'].includes(_integrationId),
+          _integrationId === 'none',
     },
   }).resources;
-  const notifications = selectors.resourceList(state, { type: 'notifications' })
-    .resources;
-  const connections = _connectorId
-    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
-    : diyConnections;
-  const flows = _connectorId
-    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
-    : diyFlows;
-  const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
-  let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
-  const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
-  );
-
-  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
-    flowValues = [_integrationId, ...flows];
-  }
-
-  return {
-    connections,
-    flows,
-    connectionValues,
-    flowValues,
-  };
 };
 
+selectors.mkIntegrationNotificationResources = () => createSelector(
+  (_1, _integrationId) => _integrationId,
+  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
+  selectors.diyFlows,
+  selectors.diyConnections,
+  (state, _integrationId, options) =>
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+  (state, _integrationId, options) =>
+  selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
+  (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
+  (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
+    const connections = _connectorId ? integrationAppConnections : diyConnections;
+    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const connectionValues = connections
+      .filter(c => !!notifications.find(n => n._connectionId === c._id))
+      .map(c => c._id);
+    let flowValues = flows
+      .filter(f => !!notifications.find(n => n._flowId === f._id))
+      .map(f => f._id);
+    const allFlowsSelected = !!notifications.find(
+      n => n._integrationId === _integrationId
+    );
+
+    if (_integrationId && _integrationId !== 'none') {
+      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+
+      if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+    }
+
+    return {
+      connections,
+      flows,
+      connectionValues,
+      flowValues,
+    };
+  }
+
+);
+
+selectors.integrationNotificationResources = selectors.mkIntegrationNotificationResources();
+
+selectors.isFlowSubscribedForNotification = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+  const integrationId = flow._integrationId || 'none';
+  const subscribedFlows = selectors.integrationNotificationResources(state, integrationId).flowValues;
+
+  return subscribedFlows.includes(integrationId) || subscribedFlows.includes(flowId);
+};
+/** End of Notification selectors */
 selectors.auditLogs = (
   state,
   resourceType,
@@ -3324,70 +3371,31 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+
 selectors.flowDashboardJobs = createSelector(
   (state, flowId) => selectors.latestFlowJobsList(state, flowId),
   state => fromData.resourceDetailsMap(state?.data),
-  (latestFlowJobs, resourceMap) => {
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
     const dashboardSteps = [];
 
     latestFlowJobs?.data?.forEach(parentJob => {
-      // when the job is queued
-      if (parentJob.status === JOB_STATUS.QUEUED) {
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
-        // In cases when job is cancelled while it is in queue, children are not yet created
-        // So show this job as the export step cancelled
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      const additionalProps = {
-        doneExporting: !!parentJob.doneExporting,
-        numPagesProcessed: 0,
-      };
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
 
-      if (!additionalProps.doneExporting) {
-        if (
-          [
-            JOB_STATUS.COMPLETED,
-            JOB_STATUS.CANCELED,
-            JOB_STATUS.FAILED,
-          ].includes(parentJob.status)
-        ) {
-          additionalProps.doneExporting = true;
-        }
-      }
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
       if (parentJob.children?.length) {
-        parentJob.children.forEach(cJob => {
-          const additionalChildProps = {
-            uiStatus: cJob.status,
-            duration: getJobDuration(cJob),
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          };
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-          // If parent job is cancelled, show child in progress jobs as cancelling
-          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
-            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
-          }
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
-          if (cJob.type === 'import') {
-            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
-              additionalChildProps.percentComplete = Math.floor(
-                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
-              );
-            } else {
-              additionalChildProps.percentComplete = 0;
-            }
-
-            additionalProps.numPagesProcessed += parseInt(
-              cJob.numPagesProcessed,
-              10
-            );
-          }
-
-          dashboardSteps.push({ ...cJob, ...additionalChildProps });
-        });
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }
     });
 
@@ -3395,8 +3403,7 @@ selectors.flowDashboardJobs = createSelector(
       status: latestFlowJobs?.status,
       data: dashboardSteps,
     };
-  }
-);
+  });
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
@@ -5339,6 +5346,37 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
 
+selectors.availableUsersList = (state, integrationId) => {
+  const permissions = selectors.userPermissions(state);
+  let _users = [];
+
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (integrationId) {
+      _users = selectors.integrationUsersForOwner(state, integrationId);
+    } else {
+      _users = selectors.usersList(state);
+    }
+  } else if (integrationId) {
+    _users = selectors.integrationUsers(state, integrationId);
+  }
+
+  if (integrationId && _users && _users.length > 0) {
+    const accountOwner = selectors.accountOwner(state);
+
+    _users = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accepted: true,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+        sharedWithUser: accountOwner,
+      },
+      ..._users,
+    ];
+  }
+
+  return _users;
+};
+
 /**
  * Returns error count per category in a store for IA 1.0
  * A map of titleId and total errors on that category
@@ -5422,6 +5460,15 @@ selectors.isIAType = (state, flowId) => {
   const isIAType = isIntegrationApp(flow);
 
   return isIAType;
+};
+
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
 };
 
 selectors.isFlowViewMode = (state, integrationId, flowId) => {

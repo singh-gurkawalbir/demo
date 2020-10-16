@@ -13,7 +13,7 @@ import SettingsDrawer from './drawers/Settings';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
 
-function FBComponent({flowId, integrationId}) {
+function FBComponent({flowId, integrationId, childId}) {
   const [tabValue, setTabValue] = useState(0);
 
   return (
@@ -28,6 +28,8 @@ function FBComponent({flowId, integrationId}) {
         flowId={flowId}
         tabValue={tabValue}
         setTabValue={setTabValue}
+        integrationId={integrationId}
+        childId={childId}
 />
     </>
   );
@@ -35,7 +37,7 @@ function FBComponent({flowId, integrationId}) {
 function FlowBuilder() {
   const match = useRouteMatch();
 
-  const { flowId, integrationId } = match.params;
+  const { flowId, integrationId, childId } = match.params;
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.
@@ -62,7 +64,7 @@ function FlowBuilder() {
 
         <ErrorDetailsDrawer flowId={flowId} />
 
-        <FBComponent flowId={flowId} integrationId={integrationId} />
+        <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
         <MappingDrawerRoute
           integrationId={integrationId}
       />

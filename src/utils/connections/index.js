@@ -1,11 +1,11 @@
 import { RDBMS_TYPES } from '../constants';
 
-export const getReplaceConectionExpression = (connection, isFrameWork2, childId, integrationId) => {
+export const getReplaceConnectionExpression = (connection, isFrameWork2, childId, integrationId, connectorId, hideOwnConnection) => {
   let options = {};
   const expression = [];
   const integratorExpression = [];
 
-  expression.push({ _id: {$ne: connection._id} });
+  if (hideOwnConnection) { expression.push({ _id: {$ne: connection._id} }); }
 
   if (RDBMS_TYPES.includes(connection.type)) {
     expression.push({ 'rdbms.type': connection.type });
@@ -13,8 +13,8 @@ export const getReplaceConectionExpression = (connection, isFrameWork2, childId,
     expression.push({ type: connection.type });
   }
 
-  if (connection._connectorId) {
-    expression.push({ _connectorId: connection._connectorId});
+  if (connectorId) {
+    expression.push({ _connectorId: connectorId});
     if (isFrameWork2 && childId) {
       integratorExpression.push({ _integrationId: integrationId});
       integratorExpression.push({ _integrationId: childId});

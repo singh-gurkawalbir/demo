@@ -1,13 +1,10 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 import * as d3 from 'd3';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
-import {
-  getFlowMetricsQuery,
-  parseFlowMetricsJson,
-} from '../../utils/flowMetrics';
+import { getFlowMetricsQuery } from '../../utils/flowMetrics';
 
 function* requestMetric({query}) {
   let csvResponse;
@@ -23,20 +20,27 @@ function* requestMetric({query}) {
       message: 'Loading',
     });
 
-    return d3.csvParse(csvResponse);
+    return d3.csvParse(csvResponse, d3.autoType);
   } catch (e) {
     return [];
   }
 }
 
-export function* requestFlowMetrics({ flowId, filters }) {
+export function* requestFlowMetrics({resourceType, resourceId, filters }) {
   const userId = yield select(selectors.ownerUserId);
-  const query = getFlowMetricsQuery(flowId, userId, filters);
+  let flowIds = [];
+
+  if (resourceType === 'integrations') {
+    flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    // eslint-disable-next-line no-param-reassign
+    filters.selectedResources = flowIds;
+  }
+  const query = getFlowMetricsQuery(resourceType, resourceId, userId, filters);
 
   try {
     const data = yield call(requestMetric, { query });
 
-    yield put(actions.flowMetrics.received(flowId, parseFlowMetricsJson(data)));
+    yield put(actions.flowMetrics.received(resourceType, resourceId, data));
   } catch (e) {
     yield put(actions.flowMetrics.failed(e));
 
@@ -45,5 +49,5 @@ export function* requestFlowMetrics({ flowId, filters }) {
 }
 
 export const flowMetricSagas = [
-  takeEvery(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
+  takeLatest(actionTypes.FLOW_METRICS.REQUEST, requestFlowMetrics),
 ];

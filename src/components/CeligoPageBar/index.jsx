@@ -64,6 +64,7 @@ export default function CeligoPageBar(props) {
       <SlideOnScroll threshold={250}>
         <ElevateOnScroll threshold={0}>
           <Paper
+            data-public
             className={clsx(classes.pageHeader, className, {
               [classes.pageHeaderShift]: drawerOpened,
             })}

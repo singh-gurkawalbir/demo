@@ -22,7 +22,7 @@ export default function PanelHeader({ title, children, infoText, className }) {
   const classes = useStyles();
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div data-public className={clsx(classes.root, className)}>
       <Typography variant="h4" className={classes.panelHeaderTitle}>
         {title}
         {infoText && (

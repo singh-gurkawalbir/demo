@@ -7,7 +7,6 @@ import {
   isSuiteScriptHooksSupportedForResource,
   getImportSuiteScriptHooksList,
 } from '../../utils/hooks';
-import { isProduction } from '../../forms/utils';
 
 const attachSuiteScriptHooks = (metadata, resourceType, defaultValues, isNSApiVersion2Selected) => {
   const fieldMap = {
@@ -18,7 +17,7 @@ const attachSuiteScriptHooks = (metadata, resourceType, defaultValues, isNSApiVe
       label: `SuiteScript Hooks (NetSuite ${
         resourceType === 'exports' ? 'Exports' : 'Imports'
       } Only)`,
-      helpText: !isProduction() ? `When writing your SuiteScript hooks, make sure to use the scripting language for the SuiteScript version your hook is intended for. For example, if your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use the SuiteScript 2.0 APIs, then your script should be a SuiteScript 2.0 script as well. SuiteScript 1.0 and 2.0 are not compatible, so if this is not configured correctly your flows will fail when run.` : null,
+      helpText: `When writing your SuiteScript hooks, make sure to use the scripting language for the SuiteScript version your hook is intended for. For example, if your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use the SuiteScript 2.0 APIs, then your script should be a SuiteScript 2.0 script as well. SuiteScript 1.0 and 2.0 are not compatible, so if this is not configured correctly your flows will fail when run.`,
     },
   };
   const layoutFields = ['suiteScript-header'];

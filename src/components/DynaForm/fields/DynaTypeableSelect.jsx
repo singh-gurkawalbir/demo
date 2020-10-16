@@ -122,6 +122,14 @@ const SelectStyle = theme => ({
   }),
   input: () => ({
     color: theme.palette.secondary.light,
+    width: '100%',
+    '& > div': {
+      width: '100%',
+    },
+    '& * > input': {
+      width: '100% !important',
+      display: 'block !important',
+    },
   }),
   placeholder: () => ({
     color: theme.palette.secondary.light,

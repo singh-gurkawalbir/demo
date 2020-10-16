@@ -12,7 +12,7 @@ import SpinnerWrapper from '../SpinnerWrapper';
 
 const useStyles = makeStyles({
   NetsuiteRules: {
-    padding: 10,
+    padding: [[0, 10]],
   },
 });
 
