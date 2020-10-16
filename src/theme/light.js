@@ -399,6 +399,12 @@ export default {
         },
       },
     },
+    MuiListItemText: {
+      root: {
+        flex: 'unset',
+        marginRight: 16,
+      },
+    },
     MuiTableRow: {
       root: {
         background: colors.celigoWhite,

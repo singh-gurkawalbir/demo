@@ -12,7 +12,7 @@ import LoadResources from '../../LoadResources';
 
 const manageIntegrationAccessLevels = [INTEGRATION_ACCESS_LEVELS.OWNER, INTEGRATION_ACCESS_LEVELS.MANAGE];
 
-export default function UsersList({ integrationId, storeId }) {
+export default function UsersList({ integrationId, storeId, className }) {
   const dispatch = useDispatch();
   const isAccountOwner = useSelector(state =>
     selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER
@@ -67,6 +67,7 @@ export default function UsersList({ integrationId, storeId }) {
       <LoadResources required resources="integrations, connections, notifications">
         <ResourceTable
           resources={users}
+          className={className}
           resourceType={isAccountOwner ? 'orgOwnerUsers' : 'orgUsers'}
           actionProps={actionProps}
         />
