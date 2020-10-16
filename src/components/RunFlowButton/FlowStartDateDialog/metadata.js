@@ -48,6 +48,7 @@ export default {
           defaultDisabled: true,
           defaultValue: startDate,
           visibleWhen: [{ field: 'deltaType', is: ['automatic'] }],
+          skipTimezoneConversion: true,
           format,
         },
         startDateCustom: {
@@ -58,6 +59,7 @@ export default {
           defaultValue: startDate,
           requiredWhen: [{ field: 'deltaType', is: ['custom'] }],
           visibleWhen: [{ field: 'deltaType', is: ['custom'] }],
+          skipTimezoneConversion: true,
           format,
         },
       },

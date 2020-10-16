@@ -13,26 +13,26 @@ function updateStatus(state, flowId, status) {
 }
 
 export default (state = {}, action) => {
-  const { type, flowId, response } = action;
+  const { type, resourceId, response } = action;
 
   switch (type) {
     case actionTypes.FLOW_METRICS.REQUEST:
-      return updateStatus(state, flowId, 'requested');
+      return updateStatus(state, resourceId, 'requested');
     case actionTypes.FLOW_METRICS.RECEIVED:
       return produce(state, draft => {
-        if (!draft[flowId]) {
-          draft[flowId] = {};
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
         }
 
-        draft[flowId].status = 'received';
-        draft[flowId].data = response;
+        draft[resourceId].status = 'received';
+        draft[resourceId].data = response;
       });
     case actionTypes.FLOW_METRICS.FAILED:
-      return updateStatus(state, flowId, 'failed');
+      return updateStatus(state, resourceId, 'failed');
 
     case actionTypes.FLOW_METRICS.CLEAR:
       return produce(state, draft => {
-        delete draft[flowId];
+        delete draft[resourceId];
       });
 
     default:
@@ -45,13 +45,13 @@ export const selectors = {};
 
 selectors.flowMetricsData = createSelector(
   state => state,
-  (_, flowId) => flowId,
-  (state, flowId) => {
-    if (!state || !state[flowId]) {
+  (_, resourceId) => resourceId,
+  (state, resourceId) => {
+    if (!state || !state[resourceId]) {
       return null;
     }
 
-    return state[flowId];
+    return state[resourceId];
   });
 
 // #endregion

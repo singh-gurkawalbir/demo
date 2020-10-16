@@ -93,6 +93,7 @@ export default function CeligoAppBar() {
     <SlideOnScroll threshold={500}>
       <ElevateOnScroll threshold={250}>
         <AppBar
+          data-public
           color="inherit"
           position="fixed"
           className={clsx(classes.appBar, {

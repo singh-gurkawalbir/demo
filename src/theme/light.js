@@ -805,5 +805,38 @@ export default {
       disableRipple: true,
       color: 'primary',
     },
+    MuiButton: {
+      'data-public': true,
+    },
+    MuiFormLabel: {
+      'data-public': true,
+    },
+    MuiExpansionPanelSummary: {
+      'data-public': true,
+    },
+    MuiTooltip: {
+      'data-public': true,
+    },
+    MuiTabs: {
+      'data-public': true,
+    },
+    MuiCard: {
+      'data-public': true,
+    },
+    MuiDialogTitle: {
+      'data-public': true,
+    },
+    MuiDialogContent: {
+      'data-public': true,
+    },
+    MuiTablePagination: {
+      'data-public': true,
+    },
+    MuiSnackbarContent: {
+      'data-public': true,
+    },
+    MuiMenuItem: {
+      'data-public': true,
+    },
   },
 };

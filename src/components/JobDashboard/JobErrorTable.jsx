@@ -429,11 +429,11 @@ function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-        <div className={classes.spinner}>
+        <div data-public className={classes.spinner}>
           <Spinner size={20} /> <span>Uploading...</span>
         </div>
       )}
-      <ul className={classes.statusWrapper}>
+      <ul data-public className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
         </li>

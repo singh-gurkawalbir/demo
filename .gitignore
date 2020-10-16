@@ -13,3 +13,5 @@ dep-tree
 .vscode
 .DS_Store
 package-lock.json
+.lr_staging
+.lr_production
