@@ -4,11 +4,11 @@ export function convertUtcToTimezone(
   date,
   dateFormat = 'MM/DD/YYYY',
   timeFormat = 'h:mm:ss a',
-  timeZone = 'GMT',
+  timeZone,
   dateOnly
 ) {
   const utcMoment = moment.utc(date, moment.ISO_8601);
-  const timeZoneDate = utcMoment.tz(timeZone);
+  const timeZoneDate = utcMoment.tz(timeZone || 'GMT');
 
   return dateOnly ? timeZoneDate.format(`${dateFormat}`) : timeZoneDate.format(`${dateFormat} ${timeFormat}`);
 }
