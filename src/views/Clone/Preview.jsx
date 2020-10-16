@@ -97,7 +97,7 @@ export default function ClonePreview(props) {
       selectors.cloneData(state, resourceType, resourceId)
     ) || {};
   const { isCloned, integrationId, sandbox } = useSelector(
-    state => selectors.integrationAppClonedDetails(state, resource._id),
+    state => selectors.integrationClonedDetails(state, resource._id),
     (left, right) =>
       left &&
       right &&
@@ -115,7 +115,7 @@ export default function ClonePreview(props) {
     const accounts = selectors.accountSummary(state);
     const selectedAccount = accounts && accounts.find(a => a.selected);
 
-    return selectedAccount?.hasSandbox;
+    return selectedAccount?.hasSandbox || selectedAccount?.hasConnectorSandbox;
   });
   const { components } = useSelector(state =>
     selectors.clonePreview(state, resourceType, resourceId)
@@ -137,7 +137,7 @@ export default function ClonePreview(props) {
   ];
 
   useEffect(() => {
-    if (isIAIntegration) {
+    if (resourceType === 'integrations') {
       if (isCloned) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
@@ -157,7 +157,7 @@ export default function ClonePreview(props) {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
                   props.history.push(
                     getRoutePath(
-                      `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+                      `${resourceType === 'integrations' ? '' : '/clone'}/${resourceType}/${integrationId}/setup`
                     )
                   );
                 },
@@ -167,7 +167,7 @@ export default function ClonePreview(props) {
         } else {
           props.history.push(
             getRoutePath(
-              `/clone/integrationapps/${integrationAppName}/${integrationId}/setup`
+              `${resourceType === 'integrations' ? '' : '/clone'}/${resourceType}/${integrationId}/setup`
             )
           );
         }
@@ -189,6 +189,7 @@ export default function ClonePreview(props) {
     confirmDialog,
     sandbox,
     preferences.environment,
+    resourceType,
   ]);
 
   useEffect(() => {

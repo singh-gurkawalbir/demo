@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditLogTable({ resourceType, resourceId, filters, storeId, resourceDetails }) {
+export default function AuditLogTable({ resourceType, resourceId, filters, childId }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const { take = 100 } = useSelector(state => selectors.filter(state, filterKey));
@@ -26,10 +26,10 @@ export default function AuditLogTable({ resourceType, resourceId, filters, store
       resourceType,
       resourceId,
       filters,
-      {storeId, take}
+      {storeId: childId, take}
     ));
 
-  const actionProps = useMemo(() => ({ resourceDetails }), [resourceDetails]);
+  const actionProps = useMemo(() => ({ childId }), [childId]);
 
   return (
     <div className={classes.root}>

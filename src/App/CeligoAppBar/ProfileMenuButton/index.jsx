@@ -140,7 +140,7 @@ export default function ProfileMenuButton() {
         placement="bottom-end"
         open={open}
         onClose={handleClose}>
-        <div className={classes.profileArea}>
+        <div data-public className={classes.profileArea}>
           <div>
             <Avatar alt={name} src={avatarUrl} className={classes.bigAvatar} />
           </div>

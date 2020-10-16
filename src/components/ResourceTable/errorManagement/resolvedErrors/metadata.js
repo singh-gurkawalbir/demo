@@ -1,10 +1,11 @@
 import React from 'react';
 import Retry from '../actions/Retry';
+import ViewErrorDetails from '../actions/ViewErrorDetails';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
-import ErrorMessage from '../cells/ErrorMessage';
+import OverflowWrapper from '../cells/OverflowWrapper';
 
 export default {
   columns: [
@@ -20,27 +21,44 @@ export default {
     {
       heading: 'Message',
       width: '30%',
-      value: r => <ErrorMessage message={r.message} />,
+      value: r => <OverflowWrapper message={r.message} />,
     },
     {
       heading: 'Code',
-      value: r => r.code,
-    },
-    { heading: 'Source', value: r => r.source },
-    {
-      heading: 'Time stamp',
-      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
+      width: '20%',
+      value: r => <OverflowWrapper message={r.code} />,
     },
     {
-      heading: 'Resolved By',
+      heading: 'Source',
+      width: '10%',
+      value: r => <OverflowWrapper message={r.source} />,
+    },
+    {
+      heading: 'Timestamp',
+      width: '10%',
+      value: r => <CeligoTimeAgo date={r.occurredAt} />,
+    },
+    {
+      heading: 'Resolved by',
+      width: '15%',
       value: r => <UserName userId={r.resolvedBy} />,
+    },
+    {
+      heading: 'Resolved at',
+      width: '10%',
+      value: r => <CeligoTimeAgo date={r.resolvedAt} />,
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {
-    if (actionInProgress) return [];
+    const actions = [];
 
-    if (retryDataKey) return [Retry];
+    if (actionInProgress) return actions;
 
-    return [];
+    if (retryDataKey) {
+      actions.push(Retry);
+    }
+    actions.push(ViewErrorDetails);
+
+    return actions;
   },
 };

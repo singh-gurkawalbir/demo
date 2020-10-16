@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     gridTemplateAreas: '"data rule result" "error error error"',
   },
 });
-const overrides = { showGutter: false };
+
 export default function FilterEditor(props) {
   const { editorId, disabled, layout = 'column', optionalSaveParams, isToggleScreen } = props;
   const classes = useStyles(props);
@@ -72,6 +72,7 @@ export default function FilterEditor(props) {
       dispatch(actions.editor.patch(editorId, {
         isSampleDataLoading: false,
         data: props.data,
+        lastValidData: props.data,
       }));
     }
   }, [dispatch, editorId, isSampleDataLoading, props.data, props.isSampleDataLoading]);
@@ -109,7 +110,6 @@ export default function FilterEditor(props) {
             readOnly={disabled}
             value={data}
             mode="json"
-            overrides={overrides}
             onChange={handleDataChange}
             hasError={!!violations?.dataError}
         />
@@ -120,17 +120,16 @@ export default function FilterEditor(props) {
         <PanelTitle title="Output" />
         <CodePanel
           name="result"
-          overrides={overrides}
           value={outputMessage}
           mode="text"
           readOnly
         />
       </PanelGridItem>
 
-      <ErrorGridItem
-        error={error}
-        violations={violations}
-      />
+      {/* Hide error panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        <ErrorGridItem error={error} violations={violations} />
+      )}
     </PanelGrid>
   );
 }

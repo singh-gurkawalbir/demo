@@ -10,14 +10,13 @@ import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
 import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
-import MappingConnectorIcon from '../icons/MappingConnectorIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
-    width: '46%',
+    // width: '46%',
     '& > div': {
       width: '100%',
     },
@@ -29,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'move',
+    cursor: 'grab',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -40,12 +39,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   dragIcon: {
+    cursor: 'move',
     background: 'none',
   },
   mapField: {
     display: 'flex',
     position: 'relative',
-    width: '40%',
+    // width: '40%',
+    flex: 1,
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -69,8 +70,26 @@ const useStyles = makeStyles(theme => ({
     width: 0,
   },
   mappingIcon: {
-    color: theme.palette.secondary.lightest,
-    fontSize: 38,
+    background: theme.palette.secondary.lightest,
+    width: 16,
+    height: 1,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actionsMapping: {
+    display: 'flex',
+    minWidth: 36,
+    maxWidth: 64,
+  },
+  deleteMappingRow: {
+    width: theme.spacing(4),
+    marginRight: theme.spacing(1),
+
+  },
+  rowContainer: {
+    '&:hover': {
+
+    },
   },
 }));
 const emptyObject = {};
@@ -109,7 +128,6 @@ export default function MappingRow({
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-  const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
 
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -131,17 +149,16 @@ export default function MappingRow({
       item.index = hoverIndex;
     },
   });
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     item: { type: 'MAPPING', index, key: mappingKey },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-
     canDrag: isDraggable,
   });
   const opacity = isDragging ? 0.2 : 1;
 
-  drag(drop(ref));
+  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
@@ -159,17 +176,9 @@ export default function MappingRow({
         }
       }
       dispatch(actions.mapping.patchField(field, mappingKey, value));
-
-      return;
-    }
-
-    if (lastModifiedRowKey !== mappingKey) {
-      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
-
-      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
     }
   },
-  [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
+  [dispatch, extract, generate, mapping, mappingKey]
   );
 
   const handleExtractBlur = useCallback((_id, value) => {
@@ -181,12 +190,8 @@ export default function MappingRow({
   }, [handleBlur]);
 
   const handleFieldTouch = useCallback(() => {
-    if (!lastModifiedRowKey || lastModifiedRowKey !== mappingKey) {
-      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
-
-      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
-    }
-  }, [dispatch, lastModifiedRowKey, mappingKey]);
+    dispatch(actions.mapping.updateLastFieldTouched(mappingKey));
+  }, [dispatch, mappingKey]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.mapping.delete(mappingKey));
@@ -201,7 +206,7 @@ export default function MappingRow({
       style={{ opacity }}
       className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon}>
+        <div className={classes.dragIcon} ref={drag}>
           <GripperIcon />
         </div>
         <div
@@ -227,7 +232,7 @@ export default function MappingRow({
             </span>
           )}
         </div>
-        <MappingConnectorIcon className={classes.mappingIcon} />
+        <span className={classes.mappingIcon} />
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
@@ -258,32 +263,34 @@ export default function MappingRow({
             </Tooltip>
           )}
         </div>
-        <div
-          className={clsx({
-            [classes.disableChildRow]: isSubRecordMapping,
-          })}>
-          <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${index}`}
-            mappingKey={mappingKey}
-            disabled={disabled}
-            subRecordMappingId={subRecordMappingId}
-            importId={importId}
-            flowId={flowId}
+        <div className={classes.actionsMapping}>
+          <div
+            className={clsx({
+              [classes.disableChildRow]: isSubRecordMapping,
+            })}>
+            <MappingSettingsButton
+              dataTest={`fieldMappingSettings-${index}`}
+              mappingKey={mappingKey}
+              disabled={disabled}
+              subRecordMappingId={subRecordMappingId}
+              importId={importId}
+              flowId={flowId}
           />
-        </div>
-        <div
-          key="delete_button"
-          className={clsx({
-            [classes.disableChildRow]: isSubRecordMapping,
-          })}>
-          <ActionButton
-            data-test={`fieldMappingRemove-${index}`}
-            aria-label="delete"
-            disabled={disableDelete}
-            onClick={handleDeleteClick}
-            className={classes.deleteBtn}>
-            <TrashIcon />
-          </ActionButton>
+          </div>
+          <div
+            key="delete_button"
+            className={clsx(classes.deleteMappingRow, {
+              [classes.disableChildRow]: isSubRecordMapping,
+            })}>
+            <ActionButton
+              data-test={`fieldMappingRemove-${index}`}
+              aria-label="delete"
+              disabled={disableDelete}
+              onClick={handleDeleteClick}
+              className={classes.deleteBtn}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
         </div>
       </div>
     </div>

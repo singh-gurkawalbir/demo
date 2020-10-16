@@ -1,13 +1,51 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
-import getRoutePath from '../../utils/routePaths';
+import { useHistory } from 'react-router-dom';
+import { makeStyles, Typography, Button } from '@material-ui/core';
+import { getHelpUrl } from '../../utils/resource';
+import { SUBMIT_TICKET_URL } from '../../utils/constants';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: '20vh',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: 80,
+  },
+  subtitle: {
+    margin: theme.spacing(2),
+  },
+  button: {
+    marginTop: theme.spacing(5),
+  },
+}));
 
 export default function NotFound() {
+  const classes = useStyles();
+  const history = useHistory();
+  const helpUrl = getHelpUrl();
+
   return (
-    <>
-      <Typography variant="h4">404: Page not found</Typography>
-      <Link to={getRoutePath('')}>Home</Link>
-    </>
+    <div className={classes.root}>
+      <Typography variant="h1" className={classes.title}>404</Typography>
+
+      <Typography variant="h3" className={classes.subtitle}>
+        This is not the page that you&apos;re looking for...
+      </Typography>
+
+      <Typography variant="body">
+        We can&apos;t find the page you&apos;re looking for.
+        But don&apos;t worry! You can either return
+        <br />
+        to the previous page, <a href={SUBMIT_TICKET_URL}>submit a ticket</a>,
+        or <a href={helpUrl}>check our Help Center</a>.
+      </Typography>
+
+      <div className={classes.button}>
+        <Button color="primary" variant="outlined" onClick={() => history.goBack()}>
+          Go back and prosper!
+        </Button>
+      </div>
+    </div>
   );
 }

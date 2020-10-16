@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Divider } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -19,6 +19,8 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import MappingDrawerRoute from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
+import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
+import Spinner from '../../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +47,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const tilesFilterConfig = { type: 'tiles'};
+
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -53,11 +57,8 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-
-    return !!(integration && integration._connectorId);
-  });
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -87,10 +88,17 @@ export default function FlowsPanel({ integrationId, childId }) {
   );
   const {
     data: integrationErrorsMap = {},
+    status: flowErrorCountStatus,
   } = useSelector(state => selectors.errorMap(state, integrationId));
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const allTiles = useSelectorMemo(
+    selectors.makeResourceListSelector,
+    tilesFilterConfig
+  ).resources;
+  const currentTileErrorCount = isUserInErrMgtTwoDotZero ? allTiles.find(t => t._integrationId === integrationId)?.numError : 0;
+
   let totalErrors = 0;
 
   flows.forEach(flow => {
@@ -114,25 +122,54 @@ export default function FlowsPanel({ integrationId, childId }) {
     };
   }, [dispatch, integrationId, isUserInErrMgtTwoDotZero]);
 
-  const infoTextFlow =
-    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
   const title = useMemo(
     () => (
       <span className={classes.flowsPanelWithStatus}>
         Integration flows
-        {totalErrors ? (
+        {(totalErrors || currentTileErrorCount) ? (
           <>
             <span className={classes.divider} />
             <span className={classes.errorStatus}>
               <StatusCircle variant="error" size="small" />
-              <span>{totalErrors} errors</span>
+              <span>{totalErrors || currentTileErrorCount} errors</span>
             </span>
           </>
         ) : null}
       </span>
     ),
-    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, totalErrors]
+    [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
   );
+  const actionProps = useMemo(() => (
+    {
+      parentId: integrationId,
+      storeId: childId,
+      resourceType: 'flows',
+      isUserInErrMgtTwoDotZero,
+    }), [childId, integrationId, isUserInErrMgtTwoDotZero]);
+
+  if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
+    return (
+      <SpinnerWrapper>
+        <Spinner />
+      </SpinnerWrapper>
+    );
+  }
+  const infoTextFlow =
+    'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
+
+  if (isFrameWork2 && childId === integrationId && isIntegrationApp) {
+    return (
+      <div className={classes.root}>
+        <PanelHeader title="Integration flows" />
+        <Divider />
+        <div className={classes.content}>
+          <span>
+            Choose a child from the drop-down to view flows.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.root}>
@@ -143,7 +180,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
       )}
       <MappingDrawerRoute integrationId={integrationId} />
-      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer />}
+      {isUserInErrMgtTwoDotZero && <ErrorsListDrawer integrationId={integrationId} childId={childId} />}
       <ScheduleDrawer />
       <QueuedJobsDrawer />
 
@@ -179,7 +216,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           data={flows}
           filterKey={filterKey}
           {...flowTableMeta}
-          actionProps={{ parentId: integrationId, storeId: childId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
+          actionProps={actionProps}
         />
       </LoadResources>
     </div>

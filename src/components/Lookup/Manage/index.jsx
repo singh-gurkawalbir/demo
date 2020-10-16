@@ -37,13 +37,14 @@ export default function ManageLookup({
 
   const { _connectionId: connectionId } = resource;
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType,
       stage: 'flowInput',
-    })
+    }).data
   );
+  // TODO: @aditya, check if we can get rid of getFormattedSampleData and use wrapSampleDataWithContext instead
   const formattedSampleData = useMemo(
     () =>
       JSON.stringify(

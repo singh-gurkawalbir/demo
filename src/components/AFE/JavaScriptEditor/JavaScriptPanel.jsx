@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -44,6 +44,7 @@ const scriptFilterConfig = { type: 'scripts' };
 export default function JavaScriptPanel(props) {
   const { editorId, disabled, insertStubKey, errorLine, hasError } = props;
   const classes = useStyles(props);
+  const aceEditor = useRef(null);
   const editor = useSelector(state => selectors.editor(state, editorId));
   const {
     code = '',
@@ -89,12 +90,12 @@ export default function JavaScriptPanel(props) {
     [patchEditor]
   );
   const handleInsertStubClick = useCallback(() => {
-    // Fetches stub and appends it to current script content
-    const updatedScriptContent = code + getScriptHookStub(insertStubKey);
+    const editor = aceEditor.current;
+    const pos = editor?.getCursorPosition();
 
-    // Updated this new script content on editor
-    patchEditor({ code: updatedScriptContent });
-  }, [code, insertStubKey, patchEditor]);
+    // Fetches stub and insert it at the cursor position
+    editor?.session?.insert(pos, getScriptHookStub(insertStubKey));
+  }, [insertStubKey]);
 
   useEffect(() => {
     if (fetchScriptContent && scriptContent !== undefined) {
@@ -134,10 +135,14 @@ export default function JavaScriptPanel(props) {
     </MenuItem>
   ));
 
+  const handleAceEditorLoad = useCallback(e => {
+    aceEditor.current = e;
+  }, []);
+
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div>
+        <div data-public >
           <FormControl className={classes.textField}>
             <InputLabel className={classes.label} htmlFor="scriptId">
               Script
@@ -190,6 +195,7 @@ export default function JavaScriptPanel(props) {
               onChange={handleCodeChange}
               errorLine={errorLine}
               hasError={hasError}
+              onLoad={handleAceEditorLoad}
             />
           )}
         </div>

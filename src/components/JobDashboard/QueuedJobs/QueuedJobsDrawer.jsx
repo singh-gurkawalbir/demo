@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
-import { Button, Typography, makeStyles } from '@material-ui/core';
+import { Typography, makeStyles } from '@material-ui/core';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -47,18 +47,19 @@ const metadata = {
   rowActions: [
     {
       label: 'Cancel',
-      component: function CancelQueuedJobAction({ resource }) {
+      icon: CancelIcon,
+      component: function CancelQueuedJobAction({ rowData = {} }) {
         const dispatch = useDispatch();
-        const resourceId = resource?._id;
+        const resourceId = rowData?._id;
         const handleCancelJob = useCallback(() => {
           dispatch(actions.connection.cancelQueuedJob(resourceId));
         }, [dispatch, resourceId]);
 
-        return (
-          <Button onClick={handleCancelJob}>
-            <CancelIcon />
-          </Button>
-        );
+        useEffect(() => {
+          handleCancelJob();
+        }, [handleCancelJob]);
+
+        return null;
       },
     },
   ],
@@ -188,8 +189,8 @@ export default function QueuedJobsDrawer() {
     }
   }, [connectionId, connections]);
   const handleClose = useCallback(() => {
-    history.push(match.url);
-  }, [history, match.url]);
+    history.goBack();
+  }, [history]);
 
   const action = useMemo(
     () => (
@@ -217,6 +218,7 @@ export default function QueuedJobsDrawer() {
         width="full"
         actions={action}
         variant="permanent"
+        hideBackButton
         onClose={handleClose}
         path={paths}>
         <QueuedJobs connectionId={connectionId} />

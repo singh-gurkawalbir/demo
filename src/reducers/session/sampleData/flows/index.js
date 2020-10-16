@@ -19,6 +19,7 @@ export default function (state = {}, action) {
     stage,
     stages,
     error,
+    statusToUpdate,
   } = action;
 
   return produce(state, draft => {
@@ -201,7 +202,7 @@ export default function (state = {}, action) {
             reset(flow, pageGeneratorIndexToReset, true);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, true);
+            resetStagesForFlowResource(flow, pageGeneratorIndexToReset, stages, statusToUpdate, true);
             // then pass index+1 to reset everything
             reset(flow, pageGeneratorIndexToReset + 1, true);
           }
@@ -218,7 +219,7 @@ export default function (state = {}, action) {
             reset(flow, pageProcessorIndexToReset);
           } else {
             // at this index, reset resource for all the passed stages
-            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages);
+            resetStagesForFlowResource(flow, pageProcessorIndexToReset, stages, statusToUpdate);
             // then pass index+1 to reset everything for other resources
             reset(flow, pageProcessorIndexToReset + 1);
           }
@@ -281,27 +282,6 @@ selectors.getFlowDataState = (state, flowId, resourceId) => {
     : flow.pageProcessorsMap;
 
   return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
-};
-
-selectors.getSampleData = (
-  state,
-  { flowId, resourceId, resourceType, stage }
-) => {
-  // returns input data for that stage to populate
-  const flow = state[flowId];
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
-
-  if (!flow || !sampleDataStage || !resourceId) return;
-  const resourceMap = isPageGeneratorResource(flow, resourceId)
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-
-  return (
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage] &&
-    resourceMap[resourceId][sampleDataStage].data
-  );
 };
 
 selectors.getSampleDataContext = (

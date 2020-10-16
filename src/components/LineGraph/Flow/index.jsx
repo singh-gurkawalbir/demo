@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import moment from 'moment';
@@ -18,7 +18,6 @@ import PanelHeader from '../../PanelHeader';
 import {
   getLabel,
   getAxisLabel,
-  getInterval,
   getXAxisFormat,
   getTicks,
   getLineColor,
@@ -119,6 +118,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
 
   const { startDate, endDate } = range;
+  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
 
   let dateTimeFormat;
   const userOwnPreferences = useSelector(
@@ -143,7 +143,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.resourceId === r);
+      flowData[r] = data.filter(d => (r === flowId ? d.resourceId === '_flowId' : d.resourceId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -269,7 +269,6 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
             type="number"
             ticks={ticks}
             allowDuplicatedCategory={false}
-            interval={getInterval(range)}
             tickFormatter={unixTime => unixTime ? moment(unixTime).format(getXAxisFormat(range)) : ''}
           />
           <YAxis
@@ -319,7 +318,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   useEffect(() => {
     if (!data.data && !data.status) {
-      dispatch(actions.flowMetrics.request(flowId, { range }));
+      dispatch(actions.flowMetrics.request('flows', flowId, { range }));
     }
   }, [data, dispatch, flowId, range]);
 
@@ -336,7 +335,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
 
   return (
     <div className={classes.root}>
-      {['error', 'success', 'averageTimeTaken', 'ignored'].map(m => (
+      {['success', 'averageTimeTaken', 'error', 'ignored'].map(m => (
         <Chart
           key={m}
           id={m}

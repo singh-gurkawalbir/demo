@@ -160,7 +160,6 @@ function DynaSelectResource(props) {
     resourceType,
     allowNew,
     allowEdit,
-    options,
     filter,
     hideOnEmptyList = false,
     appTypeIsStatic = false,
@@ -170,6 +169,7 @@ function DynaSelectResource(props) {
     skipPingConnection,
     integrationId,
   } = props;
+  const {options} = props;
   const classes = useStyles();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -182,6 +182,7 @@ function DynaSelectResource(props) {
     }),
     [ignoreEnvironmentFilter, resourceType]
   );
+
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -222,7 +223,7 @@ function DynaSelectResource(props) {
     }
 
     return filteredResources.map(conn => ({
-      label: conn.name || conn._id,
+      label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
     }));
   }, [filter, options, resources]);
@@ -235,7 +236,7 @@ function DynaSelectResource(props) {
   const { expConnId, assistant } = useMemo(
     () => ({
       expConnId: merged && merged._connectionId,
-      assistant: merged.assistant,
+      assistant: merged?.assistant,
     }),
     [merged]
   );

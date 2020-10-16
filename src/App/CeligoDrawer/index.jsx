@@ -258,6 +258,7 @@ export default function CeligoDrawer() {
   // that needs an active state as well?
   return (
     <Drawer
+      data-public
       variant="permanent"
       anchor="left"
       className={clsx(classes.drawer, {
@@ -318,18 +319,19 @@ export default function CeligoDrawer() {
                   data-test={label}
                   onClick={children ? handleExpandClick(label) : null}>
                   <ListItemIcon classes={{ root: classes.itemIconRoot }}>
-                    {drawerOpened ? <Icon />
-                      : (
-                        <Tooltip placement="right-end" enterDelay={0} title={label}>
-                          <div>
-                            <Icon />
-                          </div>
-                        </Tooltip>
-                      )}
+                    <>
+                      {drawerOpened ? <Icon />
+                        : (
+                          <Tooltip placement="right-end" enterDelay={0} title={label}>
+                            <div>
+                              <Icon />
+                            </div>
+                          </Tooltip>
+                        )}
 
-                    {(!drawerOpened && children) &&
+                      {(!drawerOpened && children) &&
                     (expand === label && !drawerOpened ? <ArrowUpIcon className={classes.collapsedArrowIcon} /> : <ArrowDownIcon className={classes.collapsedArrowIcon} />)}
-
+                    </>
                   </ListItemIcon>
                   <ListItemText
                     primaryTypographyProps={{

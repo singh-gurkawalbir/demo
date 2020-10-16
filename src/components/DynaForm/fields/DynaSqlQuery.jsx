@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles, FormLabel, FormHelperText} from '@material-ui/core';
 import clsx from 'clsx';
+import { isEqual } from 'lodash';
 import CodeEditor from '../../CodeEditor';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -10,6 +11,8 @@ import ExitIcon from '../../icons/ExitIcon';
 import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import useFormContext from '../../Form/FormContext';
+import { getUniqueFieldId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -49,45 +52,81 @@ export default function DynaSqlQuery(props) {
     onFieldChange,
     value,
     label,
+    editorTitile,
     editorClassName,
     disabled,
     isValid,
     errorMessages,
+    disableEditorV2,
+    enableEditorV2,
   } = props;
+  const fieldType = getUniqueFieldId(id);
+  const formContext = useFormContext(props.formKey);
   const handleOpenDrawer = usePushRightDrawer(id);
 
-  const isPageGenerator = useSelector(state =>
-    selectors.isPageGenerator(state, flowId, resourceId, resourceType)
-  );
-  const { data: sampleData } = useSelector(state =>
-    selectors.getSampleDataContext(state, {
+  const isEditorV2Supported = useSelector(state => {
+    if (enableEditorV2) {
+      return true;
+    }
+    if (disableEditorV2) {
+      return false;
+    }
+
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+  });
+  const {
+    data: sampleData,
+    status: sampleDataRequestStatus,
+    templateVersion,
+  } = useSelector(state => {
+    const sampleData = selectors.editorSampleData(state, { flowId, resourceId, fieldType });
+
+    return selectors.sampleDataWrapper(state, {
+      sampleData,
       flowId,
       resourceId,
       resourceType,
+      fieldType,
       stage: 'flowInput',
-    })
-  );
-
-  useEffect(() => {
-    if (flowId && !sampleData && !isPageGenerator) {
+    });
+  }, isEqual);
+  const loadEditorSampleData = useCallback(
+    (version, stage) => {
       dispatch(
-        actions.flowData.requestSampleData(
+        actions.editorSampleData.request({
           flowId,
           resourceId,
           resourceType,
-          'flowInput'
-        )
+          stage: stage || 'flowInput',
+          formValues: formContext.value,
+          fieldType,
+          isEditorV2Supported,
+          requestedTemplateVersion: version,
+        })
       );
-    }
-  }, [dispatch, flowId, isPageGenerator, resourceId, resourceType, sampleData]);
+    },
+    [dispatch, flowId, formContext, fieldType, isEditorV2Supported, resourceId, resourceType]
+  );
+  const handleEditorVersionToggle = useCallback(
+    version => {
+      loadEditorSampleData(version);
+    },
+    [loadEditorSampleData]
+  );
 
-  const handleSave = (shouldCommit, editorVal) => {
+  useEffect(() => {
+    if (flowId) {
+      loadEditorSampleData();
+    }
+  }, [flowId, loadEditorSampleData]);
+
+  const handleSave = useCallback((shouldCommit, editorVal) => {
     if (shouldCommit) {
       const { template } = editorVal;
 
       onFieldChange(id, template);
     }
-  };
+  }, [id, onFieldChange]);
 
   const onChange = useCallback(value => onFieldChange(id, value), [
     id,
@@ -104,7 +143,7 @@ export default function DynaSqlQuery(props) {
       </ActionButton>
       <div className={classes.container}>
         <SqlQueryBuilderEditorDrawer
-          title="SQL Query"
+          title={editorTitile}
           id={`${id}-inline`}
           rule={value}
           sampleData={JSON.stringify(sampleData, null, 2)}
@@ -112,6 +151,10 @@ export default function DynaSqlQuery(props) {
           disabled={disabled}
           showDefaultData={false}
           path={id}
+          isSampleDataLoading={sampleDataRequestStatus === 'requested'}
+          showVersionToggle={isEditorV2Supported}
+          editorVersion={templateVersion}
+          onVersionToggle={handleEditorVersionToggle}
         />
 
         <div className={classes.dynaSqlQueryWrapper}>

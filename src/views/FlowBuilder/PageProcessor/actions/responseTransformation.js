@@ -11,7 +11,7 @@ function ResponseTransformationDrawer(props) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { responseTransform } = resource;
-  const { status, data: sampleResponseData } = useSelector(state => selectors.getSampleDataWrapper(state, {
+  const { status, data: sampleResponseData } = useSelector(state => selectors.sampleDataWrapper(state, {
     flowId,
     resourceId,
     resourceType: 'imports',
@@ -53,7 +53,9 @@ function ResponseTransformationDrawer(props) {
 
   return (
     <TransformToggleEditorDrawer
-      title="Transform response"
+      title="Define transformation"
+      helpTitle="Transform rules"
+      helpKey="export.transform.rules"
       id={resourceId}
       disabled={isViewMode}
       data={sampleResponseData}

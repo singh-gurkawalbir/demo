@@ -58,7 +58,6 @@ const PageGenerator = ({
   isViewMode,
   onDelete,
   onMove,
-  onErrors,
   openErrorCount,
   ...pg
 }) => {
@@ -240,6 +239,7 @@ const PageGenerator = ({
       };
     }
 
+    // TODO: move this logic to util function and use "resourceCategory" function
     let blockType;
 
     if (!pending || resourceId) {
@@ -353,7 +353,6 @@ const PageGenerator = ({
         integrationId={integrationId}
         name={blockName}
         onDelete={!isDataLoader && onDelete(blockName)}
-        onErrors={onErrors}
         isViewMode={isViewMode}
         onBlockClick={handleBlockClick}
         connectorType={connectorType}

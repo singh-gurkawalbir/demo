@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Drawer } from '@material-ui/core';
 import LoadResources from '../LoadResources';
@@ -44,10 +44,8 @@ export default function ResourceSetupDrawer(props) {
     if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
-  const title = useMemo(
-    () => `Setup ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`,
-    [resourceType]
-  );
+  const title = `Setup ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
+
   const [newId] = useState(generateNewId());
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
@@ -8,6 +8,8 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useGetNotificationOptions from '../../../../../hooks/useGetNotificationOptions';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -28,19 +30,21 @@ export default function NotificationsSection({ integrationId, childId }) {
   const [count, setCount] = useState(0);
   const classes = useStyles();
   const _integrationId = childId || integrationId;
-  const {
-    connections = [],
-    flows = [],
-    connectionValues = [],
-    flowValues = [],
-  } =
-    useSelector(state =>
-      selectors.integrationResources(state, _integrationId)
-    ) || {};
+  const notifications = useSelectorMemo(
+    selectors.mkIntegrationNotificationResources,
+    _integrationId);
+
+  const { flowValues = [], connectionValues = [], flows, connections } = notifications;
+
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
+
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
-  const connectionOps = connections.map(c => ({ value: c._id, label: c.name }));
-  const flowOps = flows.map(c => ({ value: c._id, label: c.name }));
+
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+
   const fieldMeta = {
     fieldMap: {
       connections: {
@@ -59,7 +63,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: 'Notify me on job error',
+        label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
         selectAllIdentifier: _integrationId,
@@ -74,33 +78,15 @@ export default function NotificationsSection({ integrationId, childId }) {
     setCount(count => count + 1);
   }, [flowHash, connHash]);
 
-  const handleSubmit = formVal => {
-    const { connections: connList, flows: flowList } = formVal;
-    const notifications = [];
+  const handleSubmit = useCallback(formVal => {
+    const resourcesToUpdate = {
+      subscribedConnections: formVal.connections,
+      subscribedFlows: formVal.flows,
+    };
 
-    notifications.push({
-      _integrationId,
-      subscribed: flowList.includes(_integrationId),
-    });
-
-    flows
-      .filter(f => f._id !== _integrationId)
-      .forEach(flow => {
-        notifications.push({
-          _flowId: flow._id,
-          subscribed: flowList.includes(flow._id),
-        });
-      });
-    connections.forEach(connection => {
-      notifications.push({
-        _connectionId: connection._id,
-        subscribed: connList.includes(connection._id),
-      });
-    });
-
-    dispatch(actions.resource.notifications.update(notifications));
+    dispatch(actions.resource.notifications.updateTile(resourcesToUpdate, _integrationId));
     setCount(count => count + 1);
-  };
+  }, [_integrationId, dispatch]);
 
   const infoTextNotifications =
 'Get notified via email if your flow encounters an error, or if a connection goes offline. These notifications will only be sent to you. If any other users in your account wish to receive the same notifications, then they will need to subscribe from their account.';

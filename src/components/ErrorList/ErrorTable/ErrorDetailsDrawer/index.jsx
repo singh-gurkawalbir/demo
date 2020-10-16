@@ -12,7 +12,7 @@ import { selectors } from '../../../../reducers';
 
 const emptySet = [];
 
-export default function ErrorDetailsDrawer({ flowId, resourceId }) {
+export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const match = useRouteMatch();
   const { pathname } = useLocation();
   const history = useHistory();
@@ -21,6 +21,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
       selectors.resourceErrors(state, {
         flowId,
         resourceId,
+        options: { isResolved },
       }).errors || emptySet,
     shallowEqual
   );
@@ -32,7 +33,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
         path: `${match.url}/details/:errorId/:mode`,
       });
 
-      if (!matchErrorPath || !matchErrorPath.params) return false;
+      if (!matchErrorPath || !matchErrorPath.params) return true;
       const { errorId } = matchErrorPath.params;
 
       if (!errorId) return false;
@@ -58,12 +59,13 @@ export default function ErrorDetailsDrawer({ flowId, resourceId }) {
   return (
     <RightDrawer
       path="details/:errorId/:mode"
-      title="Edit record"
+      title="View error details"
       variant="temporary"
       hideBackButton>
       <ErrorDetails
         flowId={flowId}
         resourceId={resourceId}
+        isResolved={isResolved}
         onClose={handleClose}
           />
     </RightDrawer>

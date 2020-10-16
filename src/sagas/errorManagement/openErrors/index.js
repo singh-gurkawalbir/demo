@@ -61,6 +61,7 @@ function* requestIntegrationErrors({ integrationId }) {
       opts: {
         method: 'GET',
       },
+      hidden: true,
     });
 
     yield put(
@@ -85,7 +86,8 @@ function* pollForOpenErrors({ flowId }) {
   yield put(actions.errorManager.openFlowErrors.request({ flowId }));
   while (true) {
     yield call(requestFlowOpenErrors, { flowId });
-    yield delay(5 * 1000);
+    // Reduced delay from 5 sec to 2 sec to make it more responsive to user
+    yield delay(2 * 1000);
   }
 }
 

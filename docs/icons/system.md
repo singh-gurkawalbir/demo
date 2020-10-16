@@ -2,6 +2,10 @@ Icons Components
 ```js
 const colors = require('../../src/theme/colors.js').default;
 const AddIcon = require('../../src/components/icons/AddIcon').default;
+const HardCodedIcon = require('../../src/components/icons/HardCodedIcon').default;
+const LookupLetterIcon = require('../../src/components/icons/LookupLetterIcon').default;
+const MultiFieldIcon = require('../../src/components/icons/MultiFieldIcon').default;
+const ReplaceIcon = require('../../src/components/icons/ReplaceIcon').default;
 const AdjustInventoryIcon = require('../../src/components/icons/AdjustInventoryIcon').default;
 const AdminIcon = require('../../src/components/icons/AdminIcon').default;
 const AppBuilderIcon = require('../../src/components/icons/AppBuilderIcon').default;
@@ -159,6 +163,22 @@ const icon = {
     <div style={wrapper}>
         <AddIcon style={icon}/>
         <p>Add</p>
+    </div>
+    <div style={wrapper}>
+        <HardCodedIcon style={icon}/>
+        <p>HardCoded</p>
+    </div>
+    <div style={wrapper}>
+        <LookupLetterIcon style={icon}/>
+        <p>LookupLetter</p>
+    </div>
+    <div style={wrapper}>
+        <MultiFieldIcon style={icon}/>
+        <p>MultiField</p>
+    </div>
+    <div style={wrapper}>
+        <ReplaceIcon style={icon}/>
+        <p>Replace</p>
     </div>
     <div style={wrapper}>
       <AdjustInventoryIcon style={icon}/> 

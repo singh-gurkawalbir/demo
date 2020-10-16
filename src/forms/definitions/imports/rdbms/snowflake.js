@@ -20,41 +20,6 @@ export default {
 
     return newValues;
   },
-  optionsHandler: (fieldId, fields) => {
-    if (
-      fieldId === 'rdbms.query'
-    ) {
-      const lookupField = fields.find(
-        field => field.fieldId === 'rdbms.lookups'
-      );
-      const queryTypeField = fields.find(
-        field => field.id === 'rdbms.queryType'
-      );
-      const modelMetadataField = fields.find(
-        field => field.fieldId === 'modelMetadata'
-      );
-      let queryTypeVal;
-
-      if (queryTypeField) {
-        queryTypeVal = queryTypeField && queryTypeField.value;
-      }
-
-      return {
-        queryType: queryTypeVal,
-        modelMetadataFieldId: modelMetadataField.fieldId,
-        modelMetadata: modelMetadataField && modelMetadataField.value,
-        lookups: {
-          // passing lookupId fieldId and data since we will be modifying lookups
-          //  from 'Manage lookups' option inside 'SQL Query Builder'
-          fieldId: lookupField.fieldId,
-          data: lookupField && lookupField.value,
-        },
-      };
-    }
-
-    return null;
-  },
-
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
@@ -76,17 +41,13 @@ export default {
     'rdbms.query': {
       id: 'rdbms.query',
       type: 'sqlquerybuilder',
-      arrayIndex: 0,
-      label: 'Query builder',
+      querySetPos: 0,
       required: true,
-      title: 'SQL Query Builder',
-      refreshOptionsOnChangesTo: ['rdbms.lookups',
-        'rdbms.queryType',
-        'modelMetadata'],
+      label: 'Build SQL query',
       visibleWhen: [
         {
           field: 'rdbms.queryType',
-          is: ['INSERT', 'MERGE'],
+          is: ['INSERT', 'MERGE', 'COPY'],
         },
       ],
     },
@@ -107,6 +68,7 @@ export default {
             { label: 'Use bulk INSERT SQL Query', value: 'BULK INSERT' },
             { label: 'Use SQL Query', value: 'INSERT' },
             { label: 'Use SQL Query once per page of data', value: 'MERGE' },
+            { label: 'Use SQL Query once per flow run', value: 'COPY' },
           ],
         },
       ],

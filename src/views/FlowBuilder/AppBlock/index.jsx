@@ -16,11 +16,10 @@ import AddIcon from '../../../components/icons/AddIcon';
 import ActionIconButton from '../ActionIconButton';
 import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
-import StatusCircle from '../../../components/StatusCircle';
-import Status from '../../../components/Status';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
+import ErrorStatus from '../ErrorStatus';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -139,14 +138,6 @@ const useStyles = makeStyles(theme => ({
     // marginTop: -theme.spacing(1),
     // marginLeft: -theme.spacing(1),
   },
-  status: {
-    justifyContent: 'center',
-    height: 'unset',
-    marginTop: theme.spacing(1),
-    '& span': {
-      fontSize: '12px',
-    },
-  },
   tooltipNameFB: {
     wordWrap: 'break-word',
   },
@@ -208,9 +199,9 @@ function AppBlock({
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
 
-    if (!activeConn) return false;
+    if (!activeConn || !resource) return false;
 
-    return activeConn === resource._id || activeConn === resource._connectionId;
+    return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
@@ -388,14 +379,11 @@ function AppBlock({
             ) : null}
           </div>
         </div>
-        {openErrorCount ? (
-          <Status
-            className={classes.status}
-            onClick={onErrors}
-            label={`${openErrorCount} errors`}>
-            <StatusCircle variant="error" size="small" />
-          </Status>
-        ) : null}
+        <ErrorStatus
+          count={openErrorCount}
+          isNew={isNew}
+          flowId={flowId}
+          resourceId={resource?._id} />
       </div>
       <div className={clsx(classes.name, {[classes.pgContainerName]: isPageGenerator})}>
         <Typography className={classes.containerName}>

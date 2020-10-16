@@ -246,83 +246,72 @@ export default {
         },
       ],
     },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
     formView: { fieldId: 'formView' },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
+      { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
       {
-        type: 'collapse',
-        containers: [
-          { collapsed: true, label: 'General', fields: ['common', 'outputMode', 'exportOneToMany', 'formView'] },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') return 'What would you like to transfer?';
 
-              return 'What would you like to export?';
-            },
-            fields: [
-              'rest.method',
-              'rest.blobMethod',
-              'rest.headers',
-              'rest.relativeURI',
-              'rest.postBody',
-              'rest.blobFormat',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: [
-              'type',
-              'delta.dateFormat',
-              'delta.lagOffset',
-              'once.booleanField',
-              'rest.once.relativeURI',
-              'rest.once.method',
-              'rest.once.postBody',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Does this API support paging?',
-            fields: [
-              'rest.pagingMethod',
-              'rest.nextPagePath',
-              'rest.linkHeaderRelation',
-              'rest.skipArgument',
-              'rest.nextPageRelativeURI',
-              'rest.pageArgument',
-              'rest.pagingPostBody',
-              'rest.maxPagePath',
-              'rest.maxCountPath',
-              'rest.lastPageStatusCode',
-              'rest.lastPagePath',
-              'rest.lastPageValue',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Non-standard API response patterns',
-            fields: [
-              'rest.resourcePath',
-              'rest.successPath',
-              'rest.successValues',
-            ],
-          },
-          {
-            collapsed: 'true',
-            label: 'Advanced',
-            fields: ['advancedSettings'],
-          },
+          return 'What would you like to export?';
+        },
+        fields: [
+          'rest.method',
+          'rest.blobMethod',
+          'rest.headers',
+          'rest.relativeURI',
+          'rest.postBody',
+          'rest.blobFormat',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Configure export type',
+        fields: [
+          'type',
+          'delta.dateFormat',
+          'delta.lagOffset',
+          'once.booleanField',
+          'rest.once.relativeURI',
+          'rest.once.method',
+          'rest.once.postBody',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Does this API support paging?',
+        fields: [
+          'rest.pagingMethod',
+          'rest.nextPagePath',
+          'rest.linkHeaderRelation',
+          'rest.skipArgument',
+          'rest.nextPageRelativeURI',
+          'rest.pageArgument',
+          'rest.pagingPostBody',
+          'rest.maxPagePath',
+          'rest.maxCountPath',
+          'rest.lastPageStatusCode',
+          'rest.lastPagePath',
+          'rest.lastPageValue',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Non-standard API response patterns',
+        fields: [
+          'rest.resourcePath',
+          'rest.successPath',
+          'rest.successValues',
+        ],
+      },
+      {
+        collapsed: 'true',
+        label: 'Advanced',
+        fields: ['advancedSettings'],
       },
     ],
   },

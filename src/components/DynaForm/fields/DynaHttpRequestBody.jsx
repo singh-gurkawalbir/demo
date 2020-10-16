@@ -65,6 +65,7 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     supportLookup = true,
     disableEditorV2 = false,
+    enableEditorV2 = false,
     formKey,
   } = props;
   const classes = useStyles();
@@ -144,11 +145,7 @@ const DynaHttpRequestBody = props => {
       <DynaEditorWithFlowSampleData
         formKey={formKey}
         contentType={contentType === 'json' ? 'json' : 'xml'}
-        title={`${
-          contentType === 'json'
-            ? 'Build JSON Document'
-            : 'Build XML Document'
-        }`}
+        title={label}
         fieldId={id}
         onFieldChange={onFieldChange}
         lookups={lookups}
@@ -159,6 +156,7 @@ const DynaHttpRequestBody = props => {
         resourceId={resourceId}
         resourceType={resourceType}
         disableEditorV2={disableEditorV2}
+        enableEditorV2={enableEditorV2}
         rule={formattedRule}
         path={id}
         />

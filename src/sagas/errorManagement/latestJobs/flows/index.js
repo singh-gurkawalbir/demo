@@ -31,7 +31,7 @@ export function* getJobFamily({ flowId, jobId }) {
   const { path, opts } = requestOptions;
 
   try {
-    const job = yield call(apiCallWithRetry, { path, opts });
+    const job = yield call(apiCallWithRetry, { path, opts, hidden: true });
     const latestJobsState = yield select(selectors.latestFlowJobsList, flowId) || {};
 
     yield put(actions.errorManager.latestFlowJobs.receivedJobFamily({flowId, job }));

@@ -81,7 +81,6 @@ import DynaFileKeyColumn from './DynaFileKeyColumn';
 import DynaRadioGroupForResetFields from './radiogroup/DynaRadioGroupForResetFields';
 import DynaTextWithFlowContext from './text/DynaTextWithFlowContext';
 import DynaCheckboxForResetFields from './checkbox/DynaCheckboxForResetFields';
-import DynaExportPanel from './DynaExportPanel';
 import cronBuilderComponents from './cronBuilderComponents';
 import DynaCronGenerator from './DynaCronGenerator';
 import DynaNSSearchCriteria from './editors/DynaNSSearchCriteria';
@@ -117,6 +116,8 @@ import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
+import DynaCeligoSwitch from './DynaCeligoSwitch';
+import DynaReplaceConnection from './DynaReplaceConnection';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -206,6 +207,7 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  dynareplaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
   sqlquery: DynaSqlQuery,
@@ -216,7 +218,6 @@ export default {
   radiogroupforresetfields: DynaRadioGroupForResetFields,
   textwithflowcontext: DynaTextWithFlowContext,
   checkboxforresetfields: DynaCheckboxForResetFields,
-  exportpanel: DynaExportPanel,
   crongenerator: DynaCronGenerator,
   slider: cronBuilderComponents.slider,
   groupedButton: cronBuilderComponents.groupedButton,
@@ -247,4 +248,5 @@ export default {
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   as2Mode: DynaAs2Mode,
+  celigoswitch: DynaCeligoSwitch,
 };

@@ -81,6 +81,7 @@ export default {
       retValues['/test'] = undefined;
       delete retValues['/test/limit'];
       delete retValues['/once/booleanField'];
+      retValues['/delta/dateField'] = retValues['/delta/dateField'] && Array.isArray(retValues['/delta/dateField']) ? retValues['/delta/dateField'].join(',') : retValues['/delta/dateField'];
     } else if (retValues['/type'] === 'once') {
       retValues['/delta'] = undefined;
       retValues['/test'] = undefined;
@@ -189,7 +190,8 @@ export default {
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
-      label: 'Date field',
+      label: 'Date field(s)',
+      multiselect: true,
       placeholder: 'Please select a date field',
       fieldName: 'deltaExportDateFields',
       filterKey: 'salesforce-recordType',
@@ -197,6 +199,7 @@ export default {
       refreshOptionsOnChangesTo: ['salesforce.soql', 'delta.dateField'],
       required: true,
       visibleWhen: [{ field: 'type', is: ['delta'] }],
+      defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
@@ -286,78 +289,67 @@ export default {
       formId: 'advancedSettings',
       visibleWhenAll: [{ field: 'outputMode', is: ['records'] }],
     },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'General',
-            fields: [
-              'common',
-              'outputMode',
-              'exportOneToMany',
-              'salesforce.executionType',
-            ],
-          },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-                return 'What would you like to transfer?';
-              }
-              if (
-                r.resourceType === 'realtime' ||
-                r.type === 'distributed'
-              ) {
-                return 'Configure real-time export in source application';
-              }
-
-              return 'What would you like to export?';
-            },
-            fields: [
-              'salesforce.sObjectType',
-              'salesforce.objectType',
-              'salesforce.distributed.requiredTrigger',
-              'salesforce.distributed.referencedFields',
-              'salesforce.distributed.relatedLists',
-              'salesforce.distributed.qualifier',
-              'salesforce.soql',
-              'salesforce.id',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: [
-              'type',
-              'delta.dateField',
-              'delta.lagOffset',
-              'once.booleanField',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: [
-              'pageSize',
-              'salesforce.distributed.batchSize',
-              'salesforce.distributed.skipExportFieldId',
-              'dataURITemplate',
-              'skipRetries',
-              'apiIdentifier',
-            ],
-          },
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'salesforce.executionType',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+            return 'What would you like to transfer?';
+          }
+          if (
+            r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+          ) {
+            return 'Configure real-time export in source application';
+          }
+
+          return 'What would you like to export?';
+        },
+        fields: [
+          'salesforce.sObjectType',
+          'salesforce.objectType',
+          'salesforce.distributed.requiredTrigger',
+          'salesforce.distributed.referencedFields',
+          'salesforce.distributed.relatedLists',
+          'salesforce.distributed.qualifier',
+          'salesforce.soql',
+          'salesforce.id',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: [
+          'type',
+          'delta.dateField',
+          'delta.lagOffset',
+          'once.booleanField',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'pageSize',
+          'salesforce.distributed.batchSize',
+          'salesforce.distributed.skipExportFieldId',
+          'dataURITemplate',
+          'skipRetries',
+          'apiIdentifier',
+        ],
       },
     ],
   },

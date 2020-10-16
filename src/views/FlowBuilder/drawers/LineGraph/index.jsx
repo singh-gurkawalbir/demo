@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
-import { subHours } from 'date-fns';
+import { startOfDay, addDays } from 'date-fns';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import util from '../../../../utils/array';
@@ -34,6 +34,26 @@ const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
   return new Date(isFloor ? (Math.floor(d.getTime() / ms) * ms) : (Math.ceil(d.getTime() / ms) * ms));
 };
 
+const defaultPresets = [
+  {id: 'last1hour', label: 'Last 1 hour'},
+  {id: 'last4hours', label: 'Last 4 hours'},
+  {id: 'last24hours', label: 'Last 24 hours'},
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
+  {id: 'last3months', label: 'Last 3 months'},
+  {id: 'last6months', label: 'Last 6 months'},
+  {id: 'last9months', label: 'Last 9 months'},
+  {id: 'lastyear', label: 'Last year'},
+  {id: 'custom', label: 'Custom'},
+];
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
+  endDate: new Date().toISOString(),
+  preset: 'last30days',
+};
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
@@ -41,12 +61,6 @@ export default function LineGraphDrawer({ flowId }) {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const [selectedResources, setSelectedResources] = useState([flowId]);
-  const [range, setRange] = useState({
-    startDate: subHours(new Date(), 24).toISOString(),
-    endDate: new Date().toISOString(),
-  });
-
   const latestJobDetails = useSelector(state => selectors.latestJobMap(state, integrationId));
   const latestJob = useMemo(() => {
     if (latestJobDetails && latestJobDetails.data) {
@@ -54,7 +68,17 @@ export default function LineGraphDrawer({ flowId }) {
     }
   }, [flowId, latestJobDetails]);
   const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
+  const { rangePreference, resourcePreference } = useMemo(() => {
+    const preference = preferences[flowId] || {};
 
+    return {
+      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
+      resourcePreference: preference.resource || [flowId],
+    };
+  }, [flowId, preferences]);
+  const [selectedResources, setSelectedResources] = useState(resourcePreference);
+  const [range, setRange] = useState(rangePreference);
   const customPresets = useMemo(() => {
     if (latestJob) {
       const startDate = getRoundedDate(new Date(latestJob.createdAt), 1, true);
@@ -76,11 +100,12 @@ export default function LineGraphDrawer({ flowId }) {
 
       return [{
         label: 'Last run',
+        id: 'lastrun',
         range: () => ({
           startDate,
           endDate,
         }),
-      }];
+      }, ...defaultPresets];
     }
 
     return [];
@@ -99,8 +124,19 @@ export default function LineGraphDrawer({ flowId }) {
     range => {
       dispatch(actions.flowMetrics.clear(flowId));
       setRange(getSelectedRange(range));
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [flowId]: {
+              range,
+              resource: selectedResources,
+            },
+          },
+        })
+      );
     },
-    [dispatch, flowId]
+    [dispatch, flowId, preferences, selectedResources]
   );
   const handleRefresh = useCallback(() => {
     dispatch(actions.flowMetrics.clear(flowId));
@@ -111,9 +147,20 @@ export default function LineGraphDrawer({ flowId }) {
       if (!util.areArraysEqual(val, selectedResources, {ignoreOrder: true})) {
         dispatch(actions.flowMetrics.clear(flowId));
         setSelectedResources(val);
+        dispatch(
+          actions.user.preferences.update({
+            linegraphs: {
+              ...preferences,
+              [flowId]: {
+                range,
+                resource: val,
+              },
+            },
+          })
+        );
       }
     },
-    [dispatch, flowId, selectedResources]
+    [dispatch, flowId, integrationId, preferences, range, selectedResources]
   );
 
   const action = useMemo(
@@ -122,7 +169,14 @@ export default function LineGraphDrawer({ flowId }) {
         <IconTextButton onClick={handleRefresh}>
           <RefreshIcon /> Refresh
         </IconTextButton>
-        <DateRangeSelector onSave={handleDateRangeChange} customPresets={customPresets} />
+        <DateRangeSelector
+          onSave={handleDateRangeChange}
+          customPresets={customPresets}
+          value={{
+            startDate: new Date(rangePreference.startDate),
+            endDate: new Date(rangePreference.endDate),
+            preset: rangePreference.preset,
+          }} />
         <SelectResource
           selectedResources={selectedResources}
           flowResources={flowResources}
@@ -131,14 +185,14 @@ export default function LineGraphDrawer({ flowId }) {
         />
       </>
     ),
-    [handleRefresh, handleDateRangeChange, customPresets, selectedResources, flowResources, handleResourcesChange]
+    [handleRefresh, handleDateRangeChange, customPresets, rangePreference.startDate, rangePreference.endDate, rangePreference.preset, selectedResources, flowResources, handleResourcesChange]
   );
 
   return (
     <RightDrawer
       anchor="right"
       title="Dashboard"
-      height="tall"
+      height="short"
       width="full"
       actions={action}
       variant="permanent"
