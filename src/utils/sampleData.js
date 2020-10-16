@@ -513,6 +513,24 @@ export const processOneToManySampleData = (sampleData, resource) => {
   return processedSampleData;
 };
 
+export const wrapExportFileSampleData = records => {
+  // eslint-disable-next-line camelcase
+  const page_of_records = [];
+
+  if (!records) return { page_of_records };
+
+  if (Array.isArray(records)) {
+    const rows = [];
+
+    records.forEach(record => rows.push(record));
+    page_of_records.push({rows});
+  } else {
+    page_of_records.push({ record: records });
+  }
+
+  return { page_of_records };
+};
+
 // this util method will wrap the sample data with correct context fields
 // according to the 'stage' passed. This will be used for all the editors sample data
 export const wrapSampleDataWithContext = ({
