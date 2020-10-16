@@ -11,11 +11,11 @@ export const getIntegrationAppUrlName = integrationAppName => {
 export const getEmptyMessage = (storeLabel = '', action) => {
   switch (storeLabel.toLowerCase()) {
     case 'amazon account':
-      return `Choose an account from the account drop-down to ${action}.`;
+      return `Choose an Amazon account from the account drop-down to ${action}.`;
     case 'bank':
       return `Choose a bank from the bank drop-down to ${action}.`;
     case 'shopify store':
-      return `Choose a store from the store drop-down to ${action}.`;
+      return `Choose a Shopify store from the store drop-down to ${action}.`;
     default:
       return `Choose a ${storeLabel} from the ${storeLabel} drop-down to ${action}.`;
   }
