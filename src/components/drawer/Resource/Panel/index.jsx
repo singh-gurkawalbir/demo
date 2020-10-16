@@ -255,7 +255,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>
           )}
-          <div className={classes.titleImgBlock}>
+          <div data-public className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>

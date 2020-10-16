@@ -258,6 +258,7 @@ export default function CeligoDrawer() {
   // that needs an active state as well?
   return (
     <Drawer
+      data-public
       variant="permanent"
       anchor="left"
       className={clsx(classes.drawer, {

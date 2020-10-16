@@ -21,7 +21,7 @@ export default function RunDashboardPanel({ flowId }) {
   });
 
   return (
-    <div className={classes.root}>
+    <div data-public className={classes.root}>
       <JobDashboard
         integrationId={integrationId}
         flowId={flowId}
