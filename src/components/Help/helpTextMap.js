@@ -175,7 +175,7 @@ export default {
   'amazonmws.connection.http.unencrypted.sellerId': 'The account ID for the Amazon seller account you are integrating with. You do not need to include it in your relativeURI; integrator.io will automatically add it to all request parameters. If you do not know this value you can find it in the "Settings" section in Amazon Seller Central.',
   'amazonmws.connection.http.unencrypted.mwsAuthToken':
     'The MWS authorization token.',
-  'amazonmws.connection.http.unencrypted.marketplaceId': 'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
+  'amazonmws.connection.http.unencrypted.marketplaceId': 'Please specify the Amazon MWS "MarketplaceId" for this connection. This value is required for specific Amazon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS "MarketplaceId" selected, else your Amazon MWS calls will fail.',
   'amazonmws.connection.http.unencrypted.marketplaceRegion':
     'Please specify the Amazon MWS Region for this connection. Please note that you must be registered to sell in the Amazon MWS Region selected, else your Amazon MWS calls will fail.',
   'amazonmws.connection.http._iClientId': `Integrator IO uses Celigo’s Developer keys to connect to Amazon. You'll need to give Celigo permission to access your Amazon account. For help with authorization, refer to (<a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360035639851-Enable-Developer-Access-for-Celigo-in-Amazon-Seller-Central-Registration-">Developer Access</a>).<br>If you want to use your own developer keys instead of Celigo, add the iClient which lets you configure your developer and secret keys for your marketplace region.`,
@@ -1048,7 +1048,7 @@ export default {
   'export.test.limit':
     'For testing purpose, records exported will be limited to the number specified',
   'export.delta.dateField':
-    "Please select a date field from the export application that integrator.io can use to keep track of records that have changed since the last time the export was run.  It is recommended that you pick a system generated field.  For example, many applications maintain a standard 'Date Last Modified' (or 'Last Modified Date', etc...) field that always contains the date and time that a record was last changed.  You can also select a non system generated field if you have your own logic in place (in the export application) to set the field accordingly whenever a relevant change is made to a record.",
+    'Please select one or more date fields from the export application, and integrator.io will use these date fields to process records that were created and/or modified since the last time the flow was run.  If you are using multiple date fields, please use commas to separate the different values.  For example, \'createdAt,lastModified\' will first export \'createdAt\' records, and then \'lastModified\' records.',
   'export.delta.dateFormat':
     'This field ONLY needs to be set if the standard ISO8601 date format is not supported by the source application. If this is the case, then there are multiple non-standard formats to pick from, or you can define a completely custom format. For instructions on how to specify custom formats, please visit <a class="sc-dEfkYy jDnahj" href="https://momentjs.com/docs/#/displaying/" title="https://momentjs.com/docs/#/displaying/">https://momentjs.com/docs/#/displaying/</a>',
   'export.delta.startDate':
@@ -1931,7 +1931,7 @@ export default {
     "Enter the username for your Salesforce Account for 'JWT Bearer Token' authentication.",
   'connection.amazonmws.authToken': 'The MWS authorization token.',
   'connection.amazonmws.marketplaceId':
-    "Please specify the Amazon MWS 'MarketplaceId' for this connection. This value is required for specific Amzaon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS 'MarketplaceId' selected, else your Amazon MWS calls will fail.",
+    "Please specify the Amazon MWS 'MarketplaceId' for this connection. This value is required for specific Amazon MWS requests to succeed. Please note that you must be registered to sell in the Amazon MWS 'MarketplaceId' selected, else your Amazon MWS calls will fail.",
   'connection.threedcart.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.threedcart.rest.threedcartSecureUrl':
     "3dcart merchant's Secure URL.",

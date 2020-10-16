@@ -87,7 +87,7 @@ export default function ApplicationsList({ filter }) {
   return (
     <>
       {applications.length > 0 ? (
-        <div className={classes.root}>
+        <div data-public className={classes.root}>
           {applications.map(id => (
             <NavLink
               className={classes.tile}
@@ -103,7 +103,7 @@ export default function ApplicationsList({ filter }) {
           ))}
         </div>
       ) : (
-        <Typography component="div" className={classes.resultContainer}>
+        <Typography data-public component="div" className={classes.resultContainer}>
           Your search didn’t return any matching results. Try expanding your
           search criteria.
         </Typography>

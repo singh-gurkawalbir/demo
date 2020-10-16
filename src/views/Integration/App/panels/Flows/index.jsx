@@ -26,7 +26,7 @@ import MappingDrawer from '../../../../MappingDrawer';
 import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import StatusCircle from '../../../../../components/StatusCircle';
-import { getEmptyMessage } from '../../../../../utils/integrationApps';
+import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
@@ -143,18 +143,8 @@ function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
   const dispatch = useDispatch();
-  const { flows } = useSelector(state =>
-    selectors.integrationAppFlowSettings(
-      state,
-      integrationId,
-      sectionId,
-      storeId,
-      { excludeHiddenFlows: true }
-    )
-  );
-  const flowSections = useSelector(state =>
-    selectors.integrationAppFlowSections(state, integrationId, storeId)
-  );
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, {excludeHiddenFlows: true});
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -256,11 +246,8 @@ export default function FlowsPanel({ storeId, integrationId }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-
-  const isParentView = useMemo(() => !!(integration.settings && integration.settings.supportsMultiStore && !storeId), [integration.settings, storeId]);
-  const flowSections = useSelector(state =>
-    selectors.integrationAppFlowSections(state, integrationId, storeId)
-  );
+  const isParentView = isParentViewSelected(integration, storeId);
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
 
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

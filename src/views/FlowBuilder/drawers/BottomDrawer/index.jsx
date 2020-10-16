@@ -130,6 +130,7 @@ export default function BottomDrawer({
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
+  const [connName, setConnName] = useState('');
 
   const history = useHistory();
 
@@ -416,10 +417,10 @@ export default function BottomDrawer({
       <RightDrawer
         path="replaceConnection/:connId"
         height="tall"
-        title="Replace connection"
+        title={`Replace connection: ${connName}`}
         onClose={handleClose}>
         <ReplaceConnection
-          flowId={flowId} integrationId={integrationId} childId={childId}
+          flowId={flowId} integrationId={integrationId} childId={childId} setConnName={setConnName}
           onClose={handleClose} />
       </RightDrawer>
     </div>

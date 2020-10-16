@@ -1,4 +1,3 @@
-import { isProduction } from '../../../utils';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
@@ -7,8 +6,6 @@ export default {
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
-    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp: 'Please install the <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> to access NetSuite`s RESTlet APIs.',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
@@ -101,7 +98,6 @@ export default {
     ],
     isNew: r => isNewId(r._id),
     connectionId: r => r?._connectionId,
-    visible: !isProduction(),
     resourceType: 'imports',
     resourceId: r => r?._id,
   },

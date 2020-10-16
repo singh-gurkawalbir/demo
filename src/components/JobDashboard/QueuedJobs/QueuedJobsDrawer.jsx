@@ -189,8 +189,8 @@ export default function QueuedJobsDrawer() {
     }
   }, [connectionId, connections]);
   const handleClose = useCallback(() => {
-    history.push(match.url);
-  }, [history, match.url]);
+    history.goBack();
+  }, [history]);
 
   const action = useMemo(
     () => (

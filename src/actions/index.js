@@ -216,15 +216,19 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  // only 'integrations and flows are valid resourceTypes. The metrics are always related to flows as of now.
+  // when resourceType is integrations, fetch metrics of all enabled flows in integration
+  // when resourceType is flow, fetch specific flow metrics
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
@@ -419,8 +423,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
