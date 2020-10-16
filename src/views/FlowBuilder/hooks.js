@@ -180,7 +180,7 @@ export const useHandleExitClick = () => {
     // Note that our App init must do some internal redirects since
     // a new browser tab session always has a history depth of 3!
     // if depth is more than 3, we are safe to just go back in the history queue.
-    if (history.length > 3) {
+    if (history.length > 2) {
       return history.goBack();
     }
 
