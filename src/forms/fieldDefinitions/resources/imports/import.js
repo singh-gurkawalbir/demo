@@ -1,6 +1,4 @@
-import { isNewId, adaptorTypeMap } from '../../../../utils/resource';
-
-import { RDBMS_TYPES } from '../../../../utils/constants';
+import { isNewId } from '../../../../utils/resource';
 
 export default {
   name: { type: 'text', label: 'Name', required: true },
@@ -15,40 +13,17 @@ export default {
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   _connectionId: {
-    type: 'selectresource',
+    type: 'dynareplaceconnection',
     resourceType: 'connections',
     label: 'Connection',
     appTypeIsStatic: true,
     allowEdit: true,
     allowNew: true,
     skipDefault: true,
-    _connectionId: r => r?._connectionId,
+    connectionId: r => r?._connectionId,
     defaultValue: r => r?._connectionId,
-    updateFilterandAppType: true,
-    options: r => {
-      let options = {};
-      const expression = [];
-
-      if (RDBMS_TYPES.includes(adaptorTypeMap[r.adaptorType])) {
-        expression.push({ 'rdbms.type': adaptorTypeMap[r.adaptorType] });
-      } else {
-        expression.push({ type: adaptorTypeMap[r.adaptorType] });
-      }
-
-      if (r._connectorId) {
-        expression.push({ _connectorId: r._connectorId});
-        // expression.push({ _integrationId: r._integrationId});
-      } else {
-        expression.push({ _connectorId: { $exists: false } });
-      }
-
-      const andingExpressions = { $and: expression };
-
-      options = { filter: andingExpressions, appType: adaptorTypeMap[r.adaptorType] };
-
-      return options;
-    },
     integrationId: r => r?._integrationId,
+    connectorId: r => r?._connectorId,
   },
   apiIdentifier: {
     label: 'Invoke',
@@ -85,11 +60,12 @@ export default {
   idLockTemplate: {
     type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
+    enableEditorV2: true,
   },
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',

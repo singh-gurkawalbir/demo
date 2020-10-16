@@ -13,8 +13,9 @@ export default function FlowStepName({ job }) {
   // In that case, we show that parent job with PG's name similar to Queued job
   // flowJobId exists on job if it is a child job
   const isCancelledParentJob = job.status === JOB_STATUS.CANCELED && job._exportId && !job._flowJobId;
+  const isInProgressParentJob = job.status === JOB_STATUS.RUNNING && job._exportId && !job._flowJobId;
 
-  if (job.status === JOB_STATUS.QUEUED || isCancelledParentJob) {
+  if (job.status === JOB_STATUS.QUEUED || isCancelledParentJob || isInProgressParentJob) {
     return exportName;
   }
 

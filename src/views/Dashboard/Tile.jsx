@@ -253,16 +253,16 @@ function Tile({ tile, history, onMove, onDrop, index }) {
   const ref = useRef(null);
   // isOver is set to true when hover happens over component
   const [, drop] = useDrop(dropTileConfig(ref, index, onMove));
-  const [{ isDragging }, drag] = useDrag(dragTileConfig(index, onDrop, ref));
+  const [{ isDragging }, drag, preview] = useDrag(dragTileConfig(index, onDrop, ref));
   // need to show different style for selected tile
   const isCardSelected = !!isDragging;
 
-  drag(drop(ref));
+  drop(preview(ref));
   // #endregion
 
   return (
     <div ref={ref}>
-      <HomePageCardContainer onClick={handleTileClick} isCardSelected={isCardSelected}>
+      <HomePageCardContainer onClick={handleTileClick} drag={drag} isCardSelected={isCardSelected} >
         <Header>
           <Status
             label={status.label}

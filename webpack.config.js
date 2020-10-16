@@ -80,6 +80,10 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
     }),
+    // define LOGROCKET_IDENTIFIER for logrocket
+    new webpack.DefinePlugin({
+      LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
+    }),
   ],
   output: {
     publicPath: '/',
@@ -98,8 +102,21 @@ module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
   const runOptimizedLocal = argv && argv.runOptimizedLocal;
 
-  if (config.mode === 'production' && process.env.NODE_ENV === 'analyze') {
-    config.plugins.push(new BundleAnalyzerPlugin());
+  if (config.mode === 'production') {
+    // replace modules not needed in actual builds with dummy
+    // all modules that are only used inside the NODE_ENV === 'development' guard
+    // should be replaced here
+    config.plugins.push(new webpack.NormalModuleReplacementPlugin(
+      /^redux-logger$/,
+      './utils/dummy.js'
+    ));
+
+    if (process.env.NODE_ENV === 'analyze') {
+      config.plugins.push(new BundleAnalyzerPlugin());
+    } else if (config.mode === 'production') {
+      // generate source map for logrocket
+      config.devtool = 'source-map';
+    }
   } else if (config.mode === 'development' || runOptimizedLocal) {
     if (!runOptimizedLocal) {
       config.plugins.push(new ReactRefreshWebpackPlugin());

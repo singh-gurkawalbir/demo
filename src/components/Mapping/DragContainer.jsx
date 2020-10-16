@@ -56,6 +56,7 @@ export default function DragContainer({ onDrop, ...props }) {
   return (
     <>
       <div ref={drop}>
+
         {tableData.map((mapping, index) => (
           <MappingRow
             index={index}

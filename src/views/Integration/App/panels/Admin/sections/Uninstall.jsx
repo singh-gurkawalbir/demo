@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,7 +6,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
-import { getEmptyMessage, getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
@@ -37,8 +37,7 @@ export default function UninstallSection({ storeId, integrationId }) {
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-  const isParentView = useMemo(() => !!(integration && integration.settings && integration.settings.supportsMultiStore && !storeId), [integration, storeId]);
-
+  const isParentView = isParentViewSelected(integration, storeId);
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({

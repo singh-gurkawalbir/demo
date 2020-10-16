@@ -1433,6 +1433,7 @@ export default {
   },
   'ftp.pgpEncryptKey': {
     type: 'text',
+    multiline: true,
     label: 'PGP public key',
     requiredWhen: [
       {
@@ -1465,6 +1466,7 @@ export default {
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP private key',
+    multiline: true,
     requiredWhen: [
       {
         field: 'ftp.pgpEncryptKey',

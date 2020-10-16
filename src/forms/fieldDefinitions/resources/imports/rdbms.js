@@ -38,13 +38,8 @@ export default {
   'rdbms.query': {
     id: 'rdbms.query',
     type: 'sqlquerybuilder',
-    arrayIndex: 0,
+    querySetPos: 0,
     label: 'Build SQL query',
-    refreshOptionsOnChangesTo: [
-      'rdbms.lookups',
-      'rdbms.queryType',
-      'modelMetadata',
-    ],
     visibleWhen: [
       {
         field: 'rdbms.queryType',
@@ -68,6 +63,7 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
     label: 'Build SQL query (for inserts)',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -84,6 +80,7 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
     label: 'Build SQL query (for updates)',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',

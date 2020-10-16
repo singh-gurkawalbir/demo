@@ -126,6 +126,7 @@ function Canvas({flowId, integrationId}) {
   return (
 
     <div
+      data-public
       className={clsx(classes.canvasContainer, {
         [classes.canvasShift]: drawerOpened,
       })}
