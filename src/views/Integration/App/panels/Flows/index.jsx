@@ -143,18 +143,8 @@ function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
   const dispatch = useDispatch();
-  const { flows } = useSelector(state =>
-    selectors.integrationAppFlowSettings(
-      state,
-      integrationId,
-      sectionId,
-      storeId,
-      { excludeHiddenFlows: true }
-    )
-  );
-  const flowSections = useSelector(state =>
-    selectors.integrationAppFlowSections(state, integrationId, storeId)
-  );
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, {excludeHiddenFlows: true});
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -257,9 +247,7 @@ export default function FlowsPanel({ storeId, integrationId }) {
   const classes = useStyles();
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
   const isParentView = isParentViewSelected(integration, storeId);
-  const flowSections = useSelector(state =>
-    selectors.integrationAppFlowSections(state, integrationId, storeId)
-  );
+  const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
 
   // If someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

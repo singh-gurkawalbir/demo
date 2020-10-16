@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { some, map, isEmpty } from 'lodash';
+import { map, isEmpty } from 'lodash';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -1720,91 +1720,65 @@ selectors.mkIntegrationAppSectionMetadata = () => {
   );
 };
 
-selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
-  if (!state) return emptyObject;
-  const integrationResource =
-    selectors.integrationAppSettings(state, id) || emptyObject;
-  const {
-    supportsMultiStore,
-    supportsMatchRuleEngine: showMatchRuleEngine,
-    sections = [],
-  } = integrationResource.settings || {};
-  let requiredFlows = [];
-  let hasNSInternalIdLookup = false;
-  let showFlowSettings = false;
-  let hasDescription = false;
-  let sectionFlows;
-  let allSections = sections;
+selectors.makeIntegrationAppSectionFlows = () =>
+  createSelector(
+    selectors.integrationAppSettings,
+    state => state?.data?.resources?.flows,
+    (_, integrationId) => integrationId,
+    (_1, _2, section) => section,
+    (_1, _2, _3, childId) => childId,
+    (_1, _2, _3, _4, options) => options,
+    (integration, flows = [], integrationId, section, childId, options = {}) => {
+      if (!integration) {
+        return emptySet;
+      }
+      const {
+        supportsMultiStore,
+        sections = [],
+      } = integration.settings || {};
+      let requiredFlows = [];
+      let sectionFlows;
+      let allSections = sections;
 
-  if (supportsMultiStore) {
-    if (storeId) {
-      // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      if (supportsMultiStore) {
+        if (childId) {
+          // If storeId passed, return sections from that store
+          const store = sections.find(s => s.id === childId) || {};
 
-      allSections = store.sections || [];
-    } else {
-      // If no storeId is passed, return all sections from all stores
-      allSections = [];
-      sections.forEach(sec => {
-        allSections.push(...sec.sections);
-      });
+          allSections = store.sections || [];
+        } else {
+          // If no storeId is passed, return all sections from all stores
+          allSections = [];
+          sections.forEach(sec => {
+            allSections.push(...sec.sections);
+          });
+        }
+      }
+
+      const selectedSection =
+        allSections.find(
+          sec =>
+            getTitleIdFromSection(sec) === section
+        ) || {};
+
+      if (!section) {
+        allSections.forEach(sec => {
+          sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+          requiredFlows.push(...map(sectionFlows, '_id'));
+        });
+      } else {
+        sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+        requiredFlows = map(sectionFlows, '_id');
+      }
+
+      return flows
+        .filter(f => f._integrationId === integrationId && requiredFlows.includes(f._id))
+        .sort(
+          (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
+        );
     }
-  }
-
-  const selectedSection =
-    allSections.find(
-      sec =>
-        getTitleIdFromSection(sec) === section
-    ) || {};
-
-  if (!section) {
-    allSections.forEach(sec => {
-      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-      requiredFlows.push(...map(sectionFlows, '_id'));
-    });
-  } else {
-    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
-    requiredFlows = map(sectionFlows, '_id');
-  }
-  hasNSInternalIdLookup = some(
-    selectedSection.flows,
-    f => f.showNSInternalIdLookup
   );
-  hasDescription = some(selectedSection.flows, f => {
-    const flow = selectors.resource(state, 'flows', f._id) || {};
-
-    return !!flow.description;
-  });
-  showFlowSettings = some(
-    selectedSection.flows,
-    f =>
-      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
-  );
-  const { fields, sections: subSections } = selectedSection;
-  let flows = selectors.flowListWithMetadata(state, {
-    type: 'flows',
-    filter: {
-      _integrationId: id,
-    },
-  }).resources;
-
-  flows = flows
-    .filter(f => requiredFlows.includes(f._id))
-    .sort(
-      (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
-    );
-
-  return {
-    flows,
-    fields,
-    flowSettings: selectedSection.flows,
-    sections: subSections,
-    hasNSInternalIdLookup,
-    hasDescription,
-    showFlowSettings,
-    showMatchRuleEngine,
-  };
-};
+selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
@@ -1818,7 +1792,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
   if (integration && integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
-    const { flows } = selectors.integrationAppFlowSettings(
+    const flows = selectors.integrationAppSectionFlows(
       state,
       integrationId,
       null,
