@@ -27,8 +27,7 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'http.concurrencyLevel': {
-      id: 'http.concurrencyLevel',
-      name: '/http/concurrencyLevel',
+      fieldId: 'http.concurrencyLevel',
       label: 'Concurrency level',
       type: 'select',
       options: [
