@@ -142,7 +142,7 @@ export default function JavaScriptPanel(props) {
   return (
     <LoadResources required resources={['scripts']}>
       <div className={classes.container}>
-        <div>
+        <div data-public >
           <FormControl className={classes.textField}>
             <InputLabel className={classes.label} htmlFor="scriptId">
               Script

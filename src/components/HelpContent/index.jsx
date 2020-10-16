@@ -111,7 +111,7 @@ function HelpContent(props) {
   }, []);
 
   return (
-    <div className={classes.wrapper}>
+    <div data-public className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>
