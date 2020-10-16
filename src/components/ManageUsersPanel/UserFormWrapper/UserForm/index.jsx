@@ -2,17 +2,17 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { selectors } from '../../../reducers';
-import DynaForm from '../../DynaForm';
-import DynaSubmit from '../../DynaForm/DynaSubmit';
+import { selectors } from '../../../../reducers';
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../utils/constants';
-import LoadResources from '../../LoadResources';
-import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import ButtonGroup from '../../ButtonGroup';
+} from '../../../../utils/constants';
+import LoadResources from '../../../LoadResources';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import ButtonGroup from '../../../ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
   factionButton: {
@@ -21,6 +21,8 @@ const useStyles = makeStyles(theme => ({
   },
   btnGroupInviteUser: {
     paddingLeft: theme.spacing(1),
+    position: 'absolute',
+    bottom: 150,
   },
 }));
 const integrationsFilterConfig = {

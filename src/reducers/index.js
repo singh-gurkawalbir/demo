@@ -63,7 +63,7 @@ import {
   adaptorTypeMap,
   isQueryBuilderSupported,
 } from '../utils/resource';
-import { processSampleData } from '../utils/sampleData';
+import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
@@ -78,8 +78,6 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getJSONPaths from '../utils/jsonPaths';
-import sqlUtil from '../utils/sql';
 import getFilteredErrors from '../utils/errorManagement';
 import {
   getFlowResourcesYetToBeCreated,
@@ -2974,7 +2972,14 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -2997,6 +3002,12 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     'AS2Export',
     'S3Import',
     'S3Export',
+    'RDBMSImport',
+    'RDBMSExport',
+    'MongodbImport',
+    'MongodbExport',
+    'DynamodbImport',
+    'DynamodbExport',
   ].includes(resource.adaptorType);
 };
 
@@ -3017,59 +3028,95 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.notificationResources = (state, _integrationId, storeId) => {
-  const diyFlows = selectors.resourceList(state, {
-    type: 'flows',
+/** Notification related selectors */
+selectors.subscribedNotifications = (state, userEmail) => {
+  const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
+  const notifications = selectors.resourceList(state, {
+    type: 'notifications',
     filter: {
-      $where() {
-        if (!_integrationId || ['none'].includes(_integrationId)) {
-          return !this._integrationId;
-        }
-
-        return this._integrationId === _integrationId;
-      },
+      subscribedByUser: subscribedByUser => subscribedByUser.email === emailIdToFilter,
     },
-  }).resources;
-  const { _registeredConnectionIds = [], _connectorId } =
+  }).resources || [];
+
+  return notifications;
+};
+
+selectors.diyFlows = (state, _integrationId) => selectors.resourceList(state, {
+  type: 'flows',
+  filter: {
+    $where() {
+      if (!_integrationId || _integrationId === 'none') {
+        return !this._integrationId;
+      }
+
+      return this._integrationId === _integrationId;
+    },
+  },
+}).resources;
+
+selectors.diyConnections = (state, _integrationId) => {
+  const { _registeredConnectionIds = [] } =
     selectors.resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = selectors.resourceList(state, {
+
+  return selectors.resourceList(state, {
     type: 'connections',
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none'].includes(_integrationId),
+          _integrationId === 'none',
     },
   }).resources;
-  const notifications = selectors.resourceList(state, { type: 'notifications' })
-    .resources;
-  const connections = _connectorId
-    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
-    : diyConnections;
-  const flows = _connectorId
-    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
-    : diyFlows;
-  const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
-  let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
-  const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
-  );
-
-  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
-    flowValues = [_integrationId, ...flows];
-  }
-
-  return {
-    connections,
-    flows,
-    connectionValues,
-    flowValues,
-  };
 };
 
+selectors.mkIntegrationNotificationResources = () => createSelector(
+  (_1, _integrationId) => _integrationId,
+  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
+  selectors.diyFlows,
+  selectors.diyConnections,
+  (state, _integrationId, options) =>
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+  (state, _integrationId, options) =>
+  selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
+  (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
+  (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
+    const connections = _connectorId ? integrationAppConnections : diyConnections;
+    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const connectionValues = connections
+      .filter(c => !!notifications.find(n => n._connectionId === c._id))
+      .map(c => c._id);
+    let flowValues = flows
+      .filter(f => !!notifications.find(n => n._flowId === f._id))
+      .map(f => f._id);
+    const allFlowsSelected = !!notifications.find(
+      n => n._integrationId === _integrationId
+    );
+
+    if (_integrationId && _integrationId !== 'none') {
+      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+
+      if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+    }
+
+    return {
+      connections,
+      flows,
+      connectionValues,
+      flowValues,
+    };
+  }
+
+);
+
+selectors.integrationNotificationResources = selectors.mkIntegrationNotificationResources();
+
+selectors.isFlowSubscribedForNotification = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+  const integrationId = flow._integrationId || 'none';
+  const subscribedFlows = selectors.integrationNotificationResources(state, integrationId).flowValues;
+
+  return subscribedFlows.includes(integrationId) || subscribedFlows.includes(flowId);
+};
+/** End of Notification selectors */
 selectors.auditLogs = (
   state,
   resourceType,
@@ -3479,7 +3526,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   if (sampleData) {
     // Formats sample data into readable form
     return {
-      data: processSampleData(sampleData, resource),
+      data: convertFileDataToJSON(sampleData, resource),
       status: 'received',
     };
   }
@@ -3847,24 +3894,20 @@ selectors.isPreviewPanelAvailableForResource = (
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
 
-// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
-selectors.getSampleDataWrapper = createSelector(
+// This selector will pre-process the raw sample data to the proper stage for each AFE
+selectors.sampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
-    (state, params) => selectors.getSampleDataContext(state, params),
+    (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
         return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
       }
-
-      return undefined;
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
         return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
       }
-
-      return undefined;
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
@@ -3881,7 +3924,8 @@ selectors.getSampleDataWrapper = createSelector(
 
       return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
     },
-    (state, { stage }) => stage,
+    (_, { stage }) => stage,
+    (_, { fieldType }) => fieldType,
   ],
   (
     sampleData,
@@ -3891,166 +3935,17 @@ selectors.getSampleDataWrapper = createSelector(
     integration,
     resource,
     connection,
-    stage
-  ) => {
-    const { status, data } = sampleData || {};
-    let resourceType = 'export';
-
-    if (
-      resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-    ) {
-      resourceType = 'import';
-    }
-
-    if (!status) {
-      return { status };
-    }
-
-    const contextFields = {};
-
-    if (['outputFilter', 'preSavePage'].includes(stage)) {
-      contextFields.pageIndex = 0;
-
-      if (resource?.type === 'delta') {
-        contextFields.lastExportDateTime = moment()
-          .startOf('day')
-          .add(-7, 'd')
-          .toISOString();
-        contextFields.currentExportDateTime = moment()
-          .startOf('day')
-          .add(-24, 'h')
-          .toISOString();
-      }
-    }
-
-    const resourceIds = {};
-
-    if (
-      [
-        'preSavePage',
-        'preMap',
-        'postMap',
-        'postSubmit',
-        'postAggregate',
-      ].includes(stage)
-    ) {
-      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
-        resource._id;
-      resourceIds._connectionId = connection._id;
-      resourceIds._flowId = flow._id;
-      resourceIds._integrationId = integration._id;
-    }
-
-    const settings = {
-      integration: integration.settings || {},
-      flow: flow.settings || {},
-      [resourceType]: resource.settings || {},
-      connection: connection.settings || {},
-    };
-
-    if (
-      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
-        stage
-      )
-    ) {
-      return {
-        status,
-        data: {
-          record: data || {},
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preSavePage'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          errors: [],
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postSubmit'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
-          responseData: [data].map(() => ({
-            statusCode: 200,
-            errors: [{ code: '', message: '', source: '' }],
-            ignored: false,
-            id: '',
-            _json: data || {},
-            dataURI: '',
-          })),
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postAggregate') {
-      return {
-        status: 'received',
-        data: {
-          postAggregateData: {
-            success: true,
-            _json: {},
-            code: '',
-            message: '',
-            source: '',
-          },
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postResponseMapHook') {
-      return {
-        status,
-        data: {
-          postResponseMapData: data || [],
-        },
-      };
-    }
-
-    // For all other stages, return basic sampleData
-    return { status, data };
-  }
+    stage,
+    fieldType,
+  ) => wrapSampleDataWithContext({sampleData,
+    preMapSampleData,
+    postMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage,
+    fieldType})
 );
 
 /*
@@ -5192,76 +5087,77 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
-selectors.sampleRuleForSQLQueryBuilder = createSelector([
-  (state, { importId}) => {
-    const {merged: importResource = {}} = selectors.resourceData(
-      'imports',
-      importId
-    );
+// DO NOT DELETE, might be needed later
+// selectors.sampleRuleForSQLQueryBuilder = createSelector([
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} = selectors.resourceData(
+//       'imports',
+//       importId
+//     );
 
-    return importResource.adaptorType;
-  },
-  (state, { importId}) => {
-    const {merged: importResource = {}} =
-      selectors.resourceData(
-        'imports',
-        importId
-      );
-    const {_connectionId} = importResource;
+//     return importResource.adaptorType;
+//   },
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} =
+//       selectors.resourceData(
+//         'imports',
+//         importId
+//       );
+//     const {_connectionId} = importResource;
 
-    return selectors.resource(state, 'connections', _connectionId);
-  },
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'flowInput',
-  }).data,
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'importMappingExtract',
-  }).data,
-  (state, {method}) => method,
-  (state, {queryType}) => queryType,
-], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
-  if (sampleData && extractFields) {
-    const extractPaths = getJSONPaths(extractFields, null, {
-      wrapSpecialChars: true,
-    });
+//     return selectors.resource(state, 'connections', _connectionId);
+//   },
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'flowInput',
+//   }).data,
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'importMappingExtract',
+//   }).data,
+//   (state, {method}) => method,
+//   (state, {queryType}) => queryType,
+// ], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+//   if (sampleData && extractFields) {
+//     const extractPaths = getJSONPaths(extractFields, null, {
+//       wrapSpecialChars: true,
+//     });
 
-    if (adaptorType === 'MongodbImport') {
-      return sqlUtil.getSampleMongoDbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'insertMany'
-      );
-    } if (
-      adaptorType === 'DynamodbImport'
-    ) {
-      return sqlUtil.getSampleDynamodbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'putItem'
-      );
-    } if (
-      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
-    ) {
-      return sqlUtil.getSampleSnowflakeTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    }
+//     if (adaptorType === 'MongodbImport') {
+//       return sqlUtil.getSampleMongoDbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'insertMany'
+//       );
+//     } if (
+//       adaptorType === 'DynamodbImport'
+//     ) {
+//       return sqlUtil.getSampleDynamodbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'putItem'
+//       );
+//     } if (
+//       adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+//     ) {
+//       return sqlUtil.getSampleSnowflakeTemplate(
+//         sampleData,
+//         extractPaths,
+//         queryType === 'INSERT'
+//       );
+//     }
 
-    return sqlUtil.getSampleSQLTemplate(
-      sampleData,
-      extractPaths,
-      queryType === 'INSERT'
-    );
-  }
-});
+//     return sqlUtil.getSampleSQLTemplate(
+//       sampleData,
+//       extractPaths,
+//       queryType === 'INSERT'
+//     );
+//   }
+// });
 
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
@@ -5283,6 +5179,37 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.availableUsersList = (state, integrationId) => {
+  const permissions = selectors.userPermissions(state);
+  let _users = [];
+
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (integrationId) {
+      _users = selectors.integrationUsersForOwner(state, integrationId);
+    } else {
+      _users = selectors.usersList(state);
+    }
+  } else if (integrationId) {
+    _users = selectors.integrationUsers(state, integrationId);
+  }
+
+  if (integrationId && _users && _users.length > 0) {
+    const accountOwner = selectors.accountOwner(state);
+
+    _users = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accepted: true,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+        sharedWithUser: accountOwner,
+      },
+      ..._users,
+    ];
+  }
+
+  return _users;
+};
 
 /**
  * Returns error count per category in a store for IA 1.0

@@ -63,6 +63,7 @@ export default {
   'rdbms.queryInsert': {
     id: 'rdbms.queryInsert',
     type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
     label: 'Build SQL query (for inserts)',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',
@@ -79,6 +80,7 @@ export default {
   'rdbms.queryUpdate': {
     id: 'rdbms.queryUpdate',
     type: 'sqlquerybuilder',
+    helpKey: 'import.rdbms.query',
     label: 'Build SQL query (for updates)',
     refreshOptionsOnChangesTo: [
       'rdbms.lookups',

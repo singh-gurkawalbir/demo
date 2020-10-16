@@ -17,7 +17,7 @@ export default function PanelTitle(props) {
   const classes = useStyles(props);
 
   return (
-    <div className={clsx(classes.title, className)}>
+    <div data-public className={clsx(classes.title, className)}>
       {title ? <Typography variant="body1" className={className}>{title}</Typography> : children}
     </div>
   );

@@ -19,7 +19,7 @@ const emptyObject = {};
 const SQLQueryBuilder = props => {
   const {flowId, importId, index, disabled} = props;
   const importResource = useSelector(state => selectors.resource(state, 'imports', importId));
-  const {value, ruleTitle, ...options} = useMemo(() => {
+  const {value, fieldId, ruleTitle, ...options} = useMemo(() => {
     if (importResource.adaptorType === 'RDBMSImport') {
       return {
         lookups: importResource.rdbms.lookups,
@@ -27,6 +27,7 @@ const SQLQueryBuilder = props => {
         modelMetadata: importResource.modelMetadata,
         value: importResource.rdbms.query,
         hideDefaultData: false,
+        fieldId: 'rdbms.query',
       };
     }
     if (importResource.adaptorType === 'MongodbImport') {
@@ -34,6 +35,7 @@ const SQLQueryBuilder = props => {
         method: importResource.mongodb.method,
         value: importResource.mongodb.method === 'insertMany' ? importResource.mongodb.document : importResource.mongodb.update,
         hideDefaultData: true,
+        fieldId: importResource.mongodb.method === 'insertMany' ? 'mongodb.document' : 'mongodb.update',
       };
     }
     if (importResource.adaptorType === 'DynamodbImport') {
@@ -41,6 +43,7 @@ const SQLQueryBuilder = props => {
         method: importResource.dynamodb.method,
         value: importResource.dynamodb.method === 'putItem' && importResource.dynamodb.itemDocument,
         hideDefaultData: true,
+        fieldId: importResource.dynamodb.method === 'putItem' && 'dynamodb.itemDocument',
       };
     }
 
@@ -81,6 +84,7 @@ const SQLQueryBuilder = props => {
     <SQLQueryBuilderWrapper
     // id is empty to match url
       id=""
+      fieldId={fieldId}
       onFieldChange={handleLookupUpdate}
       disabled={disabled}
       value={value}
