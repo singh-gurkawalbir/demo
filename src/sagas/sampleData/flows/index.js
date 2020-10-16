@@ -352,7 +352,7 @@ export function* requestProcessorData({
     isInitialized: true,
   });
   // The below data is plain raw sample data stored in state
-  const preProcessedSampleData = yield select(selectors.getSampleData, {
+  const {data: preProcessedSampleData} = yield select(selectors.getSampleDataContext, {
     flowId,
     resourceId,
     resourceType,

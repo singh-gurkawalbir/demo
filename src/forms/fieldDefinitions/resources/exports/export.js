@@ -113,6 +113,7 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',

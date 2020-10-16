@@ -1,10 +1,12 @@
 import React, { useMemo, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../../components/icons/HookIcon';
 import JavaScriptEditorDrawer from '../../../../components/AFE/JavaScriptEditor/Drawer';
 import { hooksToFunctionNamesMap } from '../../../../utils/hooks';
+
+const emptyObj = {};
 
 function PostResponseMapHookDrawer({
   flowId,
@@ -17,15 +19,15 @@ function PostResponseMapHookDrawer({
   const dispatch = useDispatch();
   const hookStage = 'postResponseMap';
   const resourceId = resource._id;
-  const flow = useSelector(state => selectors.resource(state, 'flows', flowId));
-  const pageProcessorsObject =
-    (flow && flow.pageProcessors && flow.pageProcessors[resourceIndex]) || {};
-  const postResponseMapHook =
-    (pageProcessorsObject.hooks &&
-      pageProcessorsObject.hooks.postResponseMap) ||
-    {};
+  const pageProcessorsObject = useSelector(state => {
+    const flow = selectors.resource(state, 'flows', flowId);
+
+    return (flow?.pageProcessors?.[resourceIndex]) || emptyObj;
+  }, shallowEqual);
+
+  const postResponseMapHook = useMemo(() => pageProcessorsObject?.hooks?.postResponseMap || emptyObj, [pageProcessorsObject]);
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
-    selectors.getSampleDataWrapper(state, {
+    selectors.sampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,

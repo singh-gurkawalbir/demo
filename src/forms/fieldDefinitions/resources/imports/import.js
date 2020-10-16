@@ -60,11 +60,12 @@ export default {
   idLockTemplate: {
     type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
+    enableEditorV2: true,
   },
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',

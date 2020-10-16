@@ -1,7 +1,7 @@
 import { makeStyles, MenuItem } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useCallback, useState, useMemo } from 'react';
-import { subHours } from 'date-fns';
+import { addDays, startOfDay } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { getSelectedRange } from '../../../utils/flowMetrics';
@@ -40,15 +40,16 @@ const useStyles = makeStyles(theme => ({
 }));
 const flowsConfig = { type: 'flows'};
 const emptySet = [];
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)).toISOString(),
+  endDate: new Date().toISOString(),
+  preset: 'last30days',
+};
 
 export default function LineGraphDrawer({ integrationId, childId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState();
-  const [range, setRange] = useState({
-    startDate: subHours(new Date(), 24).toISOString(),
-    endDate: new Date().toISOString(),
-  });
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const [flowCategory, setFlowCategory] = useState();
   const integrationSectionFlows = useSelectorMemo(selectors.makeIntegrationSectionFlows, integrationId, childId, flowCategory);
@@ -62,7 +63,17 @@ export default function LineGraphDrawer({ integrationId, childId }) {
 
   const validFlows = useMemo(() => isIntegrationApp ? integrationSectionFlows : [], [integrationSectionFlows, isIntegrationApp]);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
-  const [selectedResources, setSelectedResources] = useState(preferences[integrationId] || [integrationId]);
+  const { rangePreference, resourcePreference } = useMemo(() => {
+    const preference = preferences[integrationId] || {};
+
+    return {
+      rangePreference: preference.range ? getSelectedRange(preference.range) : defaultRange,
+      resourcePreference: preference.resource || [integrationId],
+    };
+  }, [integrationId, preferences]);
+
+  const [selectedResources, setSelectedResources] = useState(resourcePreference);
+  const [range, setRange] = useState(rangePreference);
 
   const resourceList = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -97,6 +108,17 @@ export default function LineGraphDrawer({ integrationId, childId }) {
     range => {
       dispatch(actions.flowMetrics.clear(integrationId));
       setRange(getSelectedRange(range));
+      dispatch(
+        actions.user.preferences.update({
+          linegraphs: {
+            ...preferences,
+            [integrationId]: {
+              range,
+              resource: selectedResources,
+            },
+          },
+        })
+      );
     },
     [dispatch, integrationId]
   );
@@ -107,7 +129,10 @@ export default function LineGraphDrawer({ integrationId, childId }) {
         actions.user.preferences.update({
           linegraphs: {
             ...preferences,
-            [integrationId]: val,
+            [integrationId]: {
+              range,
+              resource: val,
+            },
           },
         })
       );
@@ -124,7 +149,14 @@ export default function LineGraphDrawer({ integrationId, childId }) {
             <RefreshIcon /> Refresh
           </IconTextButton>
 
-          <DateRangeSelector onSave={handleDateRangeChange} />
+          <DateRangeSelector
+            onSave={handleDateRangeChange}
+            value={{
+              startDate: new Date(rangePreference.startDate),
+              endDate: new Date(rangePreference.endDate),
+              preset: rangePreference.preset,
+            }}
+           />
           {isIntegrationApp && (
           <CeligoSelect
             data-test="selectFlowCategory"

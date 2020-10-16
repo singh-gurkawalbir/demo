@@ -114,7 +114,7 @@ export default function DateRangeSelector({
   clearable = false,
   clearValue,
 }) {
-  const defaultValue = getSelectedRange({preset: 'last24hours'});
+  const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {

@@ -11,7 +11,7 @@ function ResponseTransformationDrawer(props) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { responseTransform } = resource;
-  const { status, data: sampleResponseData } = useSelector(state => selectors.getSampleDataWrapper(state, {
+  const { status, data: sampleResponseData } = useSelector(state => selectors.sampleDataWrapper(state, {
     flowId,
     resourceId,
     resourceType: 'imports',

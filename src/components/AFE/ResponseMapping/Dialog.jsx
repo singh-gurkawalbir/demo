@@ -114,12 +114,12 @@ export default function ResponseMappingDialog(props) {
     ? 'import.response.mapping'
     : 'lookup.response.mapping';
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
       resourceType: 'imports',
-    })
+    }).data
   );
 
   useEffect(() => {
