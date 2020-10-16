@@ -57,12 +57,12 @@ export default function DynaHook(props) {
     }
 
     // Fetch corresponding data for specific hookStage ('preSavePage',  'preMap', 'postMap', 'postSubmit')
-    const { data: sampleData } = selectors.getSampleDataWrapper(state, {
+    const sampleData = selectors.sampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
       stage: hookStage,
-    });
+    }).data;
 
     return sampleData;
   };
@@ -82,7 +82,7 @@ export default function DynaHook(props) {
     }
 
     // returns status of sampleData state for this hookStage
-    return selectors.getSampleDataWrapper(state, {
+    return selectors.sampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,

@@ -70,7 +70,7 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.getEditorSampleData = (state, { flowId, resourceId, fieldType }) => {
+selectors.editorSampleData = (state, { flowId, resourceId, fieldType }) => {
   if (!state) return emptyObj;
 
   if (
