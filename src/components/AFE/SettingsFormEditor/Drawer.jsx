@@ -211,7 +211,7 @@ export default function EditorDrawer({
       height="tall"
       width="xl"
       // type="paper"
-      title="Edit settings form"
+      title="Form builder"
       variant="temporary"
       actions={drawerActions}
       onClose={handleCancelClick}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import CodeEditor from '../../CodeEditor';
 
 const defaults = {
@@ -30,12 +30,14 @@ export default function CodePanel({
   errorLine,
   hasError,
   hasWarning,
+  onLoad,
 }) {
-  const config = {
+  const config = useMemo(() => ({
     ...defaults.global,
     ...defaults[mode],
     ...overrides,
-  };
+  }), [mode, overrides]);
+
   let safeValue = '';
 
   if (value) {
@@ -66,6 +68,7 @@ export default function CodePanel({
       errorLine={errorLine}
       hasError={hasError}
       hasWarning={hasWarning}
+      onLoad={onLoad}
     />
   );
 }

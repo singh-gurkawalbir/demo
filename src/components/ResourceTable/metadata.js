@@ -15,6 +15,8 @@ import auditLogs from './auditLog/metadata';
 import openErrors from './errorManagement/openErrors/metadata';
 import resolvedErrors from './errorManagement/resolvedErrors/metadata';
 import latestJobs from './latestJobs/metadata';
+import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
+import orgUsers from './users/Metadata/orgUsers';
 
 const metadata = {
   agents,
@@ -33,6 +35,8 @@ const metadata = {
   openErrors,
   resolvedErrors,
   latestJobs,
+  orgOwnerUsers,
+  orgUsers,
 };
 
 export default function (resourceType) {

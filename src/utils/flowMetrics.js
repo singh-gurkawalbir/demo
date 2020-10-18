@@ -4,9 +4,6 @@ import endOfDay from 'date-fns/endOfDay';
 import addHours from 'date-fns/addHours';
 import moment from 'moment';
 import * as d3 from 'd3';
-import groupBy from 'lodash/groupBy';
-import flatMap from 'lodash/flatMap';
-import forOwn from 'lodash/forOwn';
 import addMonths from 'date-fns/addMonths';
 
 const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
@@ -156,21 +153,21 @@ export const getXAxisFormat = range => {
   return xAxisFormat;
 };
 
-const getFlowFilterExpression = (flowId, filters) => {
+const getFlowFilterExpression = (resourceType, resourceId, filters) => {
   const { selectedResources } = filters;
 
-  if (selectedResources && selectedResources.length) {
+  if (resourceType === 'integrations') {
     return `|> filter(fn: (r) => ${selectedResources.map(r => `r.f == "${r}"`).join(' or ')})`;
   }
 
-  return `|> filter(fn: (r) => r.f == "${flowId}")`;
+  return `|> filter(fn: (r) => r.f == "${resourceId}")`;
 };
 
 const getISODateString = date => isDate(date) ? date.toISOString() : date;
 
-const getFlowMetricsQueryParams = (flowId, filters) => {
+const getFlowMetricsQueryParams = (resourceType, resourceId, filters) => {
   const { range = {} } = filters;
-  const flowFilterExpression = getFlowFilterExpression(flowId, filters);
+  const flowFilterExpression = getFlowFilterExpression(resourceType, resourceId, filters);
   let start = '-1d';
   let end = '-1s';
 
@@ -205,9 +202,9 @@ const getFlowMetricsQueryParams = (flowId, filters) => {
 
   if (hours < 5 && startDateFromToday < 7) {
     duration = '1m';
-  } else if (days > 4 && days < 90) {
+  } else if (days > 4 && days < 180) {
     duration = '1d';
-  } else if (days > 90) {
+  } else if (days > 180) {
     duration = '1mo';
   } else {
     duration = '1h';
@@ -216,61 +213,176 @@ const getFlowMetricsQueryParams = (flowId, filters) => {
   return { bucket, start, end, flowFilterExpression, duration };
 };
 
-export const getFlowMetricsQuery = (flowId, userId, filters) => {
+export const getFlowMetricsQuery = (resourceType, resourceId, userId, filters) => {
   const {
     bucket,
     start,
     end,
     flowFilterExpression,
     duration,
-  } = getFlowMetricsQueryParams(flowId, filters);
+  } = getFlowMetricsQueryParams(resourceType, resourceId, filters);
+
+  if (resourceType === 'integrations') {
+    return `import "math"
+
+    baseData = from(bucket: "${bucket}")
+        |> range(start: ${start}, stop: ${end})
+        |> filter(fn: (r) => r.u == "${userId}")
+        ${flowFilterExpression}
+        |> filter(fn: (r) => r._field == "c")
+        |> aggregateWindow(every: ${duration}, fn: sum)
+        |> fill(value: 0.0)
+        |> group(columns: ["_time", "f", "u", "_measurement"], mode: "by")
+        |> sum()
+
+    data1 = baseData
+        |> group()
+        |> pivot(rowKey: ["_time", "u", "f"], columnKey: ["_measurement"], valueColumn: "_value")
+    data2 = baseData
+        |> group(columns: ["_time", "_measurement", "u"], mode: "by")
+        |> sum()
+        |> group()
+        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
+
+    seiData = union(tables: [data1, data2])
+        |> map(fn: (r) => ({
+            _time: r._time,
+            timeInMills: int(v: r._time)/1000000,
+            flowId: if exists r.f then r.f else "_integrationId",
+            success: if exists r.s then r.s else 0.0,
+            error: if exists r.e then r.e else 0.0,
+            ignored: if exists r.i then r.i else 0.0,
+            averageTimeTaken: if exists r._value then r._value else 0.0,
+            type: "sei"
+          }))
+
+    calculateAttPerHour = (tables=<-) =>
+        (tables
+            |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
+                ({
+                  tc: accumulator.tc + r.tc,
+                  tt: accumulator.tt + r._value * r.tc,
+                  attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
+                })
+                )
+            |> set(key: "_field", value: "attph")
+            |> rename(columns: {attph: "_value"}))
+
+    attBaseData = from(bucket: "${bucket}")
+        |> range(start: ${start}, stop: ${end})
+        |> filter(fn: (r) => r.u == "${userId}")
+        ${flowFilterExpression}
+        |> filter(fn: (r) => (r._measurement == "s"))
+        |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
+        |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
+        (tables
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> set(key: "_field", value: outputField)
+        |> rename(columns: {attph: "_value"})))
+        |> group(columns: ["_time", "f", "u"])
+        |> calculateAttPerHour()
+
+    data3 = attBaseData
+        |> group()
+
+    data4 = attBaseData
+        |> group(columns:["_time", "u"])
+        |> calculateAttPerHour()
+        |> group()
+
+    attData = union(tables: [data3, data4])
+    |> map(fn: (r) => ({
+            _time: r._time,
+            timeInMills: int(v: r._time)/1000000,
+            flowId: if exists r.f then r.f else "_integrationId",
+            success: if exists r.s then r.s else 0.0,
+            error: if exists r.e then r.e else 0.0,
+            ignored: if exists r.i then r.i else 0.0,
+            averageTimeTaken: if exists r._value then r._value else 0.0,
+            type: "att"
+          }))
+
+    union(tables: [seiData, attData])`;
+  }
 
   return `import "math"
 
-  sei = from(bucket: "${bucket}")
-    |> range(start: ${start}, stop: ${end})
-    |> filter(fn: (r) => r.u == "${userId}")
-    ${flowFilterExpression}
-    |> filter(fn: (r) => r._field == "c")
-    |> aggregateWindow(every: ${duration}, fn: sum)
-    |> drop(columns: ["_start", "_stop"])
-    |> pivot(rowKey: ["_time"], columnKey: ["_measurement"], valueColumn: "_value")
+    seiBaseData = from(bucket: "${bucket}")
+        |> range(start: ${start}, stop: ${end})
+        |> filter(fn: (r) => r.u == "${userId}")
+        |> filter(fn: (r) => r.f == "${resourceId}")
+        |> filter(fn: (r) => r._field == "c")
+        |> aggregateWindow(every: ${duration}, fn: sum)
+
+    data1 = seiBaseData
+        |> group()
+        |> pivot(rowKey: ["_time", "u", "f", "ei"], columnKey: ["_measurement"], valueColumn: "_value")
+
+    data2 = seiBaseData
+        |> group(columns: ["_time", "_measurement", "u"])
+        |> sum()
+        |> group()
+        |> pivot(rowKey: ["_time", "u"], columnKey: ["_measurement"], valueColumn: "_value")
+
+    seiData = union(tables: [data1, data2])
     |> map(fn: (r) => ({
-      r with
-      time: r._time,
-      flowId: r.f,
-      success: r["s"],
-      error: r["e"],
-      ignored: r["i"],
-      resourceId: r["ei"],
-      averageTimeTaken: r["att"]
-    }))
-    |> drop(columns: ["_start", "_stop","ei","f","u","s","e","i"])
-  
-    att = from(bucket: "${bucket}")
-    |> range(start: ${start}, stop: ${end})
-    |> filter(fn: (r) => r.u == "${userId}")
-    ${flowFilterExpression}
-    |> filter(fn: (r) => (r._measurement == "s"))
-    |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
-    |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
-    (tables
-    |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
-    |> drop(columns: ["tc", "tt"])
-    |> set(key: "_field", value: outputField)
-    |> rename(columns: {attph: "_value"})))
-    |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-    |> map(fn: (r) => ({
-        r with
-        time: r._time,
-        flowId: r.f,
-        resourceId: r.ei,
-        averageTimeTaken: r["att"]
+        _time: r._time,
+        timeInMills: int(v: r._time)/1000000,
+        flowId: if exists r.f then r.f else "_flowId",
+        resourceId: if exists r.ei then r.ei else "_flowId",
+        success: if exists r.s then r.s else 0.0,
+        error: if exists r.e then r.e else 0.0,
+        ignored: if exists r.i then r.i else 0.0,
+        averageTimeTaken: if exists r._value then r._value else 0.0,
+        type: "sei"
       }))
-    |> drop(columns: ["_start", "_stop","ei","f","u"])
     
-    union(tables: [sei, att])
-    |> group()`;
+    calculateAttPerHour = (tables=<-) =>
+        (tables
+            |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) =>
+                ({
+                  tc: accumulator.tc + r.tc,
+                  tt: accumulator.tt + r._value * r.tc,
+                  attph: if (accumulator.tc + r.tc) > 0.0 then math.floor(x: (accumulator.tt + r._value * r.tc) / (accumulator.tc + r.tc)) else 0.0 
+                })
+                )
+            |> set(key: "_field", value: "attph")
+            |> rename(columns: {attph: "_value"}))
+
+    attBaseData = from(bucket: "${bucket}")
+        |> range(start: ${start}, stop: ${end})
+        |> filter(fn: (r) => r.u == "${userId}")
+        |> filter(fn: (r) => r.f == "${resourceId}")
+        |> filter(fn: (r) => (r._measurement == "s"))
+        |> pivot(rowKey: ["_start", "_stop", "_time", "u", "f", "ei"], columnKey: ["_field"], valueColumn: "_value")
+        |> aggregateWindow(every: ${duration}, fn: (column, tables=<-, outputField="att") =>
+        (tables
+        |> reduce(identity: {tc: 0.0, tt: 0.0, attph: 0.0}, fn: (r, accumulator) => ({tc: accumulator.tc + r.c, tt: accumulator.tt + r.att * r.c,  attph: math.floor(x: (accumulator.tt + r.att * r.c) / (accumulator.tc + r.c))}))
+        |> set(key: "_field", value: outputField)
+        |> rename(columns: {attph: "_value"})))
+
+    data3 = attBaseData
+        |> group()
+
+    data4 = attBaseData
+        |> group(columns: ["_time", "f", "u"])
+        |> calculateAttPerHour()
+        |> group()
+
+    attData = union(tables: [data3, data4])
+    |> map(fn: (r) => ({
+        _time: r._time,
+        timeInMills: int(v: r._time)/1000000,
+        flowId: if exists r.ei then r.f else "_flowId",
+        resourceId: if exists r.ei then r.ei else "_flowId",
+        success: if exists r.s then r.s else 0.0,
+        error: if exists r.e then r.e else 0.0,
+        ignored: if exists r.i then r.i else 0.0,
+        averageTimeTaken: if exists r._value then r._value else 0.0,
+        type: "att"
+    }))
+
+    union(tables: [seiData, attData])`;
 };
 
 export const getLabel = key => {
@@ -299,83 +411,3 @@ export const getAxisLabel = key => {
   }
 };
 
-const add = (a = 0, b = 0) => a + b;
-
-const addFlowEntry = (data = []) => {
-  const [seiData, attData] = data.reduce((acc, cur) => {
-    acc[cur.isAtt ? 1 : 0].push(cur);
-
-    return acc;
-  }, [[], []]);
-
-  attData.forEach(item => {
-    const seiItem = seiData.find(d => d.resourceId === item.resourceId);
-
-    seiItem.averageTimeTaken = +item.averageTimeTaken || 0;
-  });
-
-  const flowEntry = seiData.reduce((acc, item) => {
-    acc.type = 'flow';
-    acc.resourceId = item.flowId;
-    acc.timeInMills = item.timeInMills;
-    acc.success = add(item.success, acc.success);
-    acc.error = add(item.error, acc.error);
-    acc.ignored = add(item.ignored, acc.ignored);
-    acc.flowId = item.flowId;
-    acc.tc += item.success;
-    acc.tt += item.averageTimeTaken * item.success;
-    acc.averageTimeTaken = Math.floor((acc.tt + item.averageTimeTaken * item.success) / (acc.tc + item.success));
-
-    return acc;
-  }, {tc: 0, tt: 0, attph: 0});
-
-  seiData.push(flowEntry);
-
-  return seiData;
-};
-const addFlowLevelCounts = data => {
-  const groupedByTime = groupBy(data, 'timeInMills');
-
-  Object.keys(groupedByTime).forEach(key => {
-    groupedByTime[key] = addFlowEntry(groupedByTime[key]);
-  });
-
-  return flatMap(groupedByTime);
-};
-
-export const parseFlowMetricsJson = response => {
-  if (!response || !response.length) {
-    return [];
-  }
-  // remove unwanted fields
-  const data = response
-    .map(item => ({
-      timeInMills: new Date(item._time).getTime(),
-      success: +item.success || 0,
-      error: +item.error || 0,
-      ignored: +item.ignored || 0,
-      averageTimeTaken: +item.averageTimeTaken || 0,
-      resourceId: item.resourceId,
-      flowId: item.flowId,
-      isAtt: !!item._measurement,
-    }));
-  const byFlow = groupBy(data, 'flowId');
-  const allFlows = [];
-
-  forOwn(byFlow, (v, k) => {
-    if (k) {
-      allFlows.push(...addFlowLevelCounts(v));
-    }
-  });
-
-  return allFlows.map(item => ({
-    timeInMills: item.timeInMills,
-    success: +item.success || 0,
-    error: +item.error || 0,
-    ignored: +item.ignored || 0,
-    averageTimeTaken: +item.averageTimeTaken || 0,
-    resourceId: item.resourceId,
-    flowId: item.flowId,
-    type: item.type,
-  }));
-};

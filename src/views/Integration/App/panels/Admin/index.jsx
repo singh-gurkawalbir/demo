@@ -71,7 +71,7 @@ export default function AdminPanel({
   const classes = useStyles();
   const match = useRouteMatch();
   const showAPITokens = useSelector(
-    state => selectors.resourcePermissions(state, 'accesstokens').view
+    state => selectors.resourcePermissions(state, 'accesstokens').view && !storeId
   );
   const canUninstall = useSelector(state => !selectors.isFormAMonitorLevelAccess(state, integrationId));
   const filterTabs = [];

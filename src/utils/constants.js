@@ -249,7 +249,6 @@ export const JOB_TYPES = Object.freeze({
 export const JOB_STATUS = Object.freeze({
   COMPLETED: 'completed',
   CANCELED: 'canceled',
-  CANCELLING: 'cancelling',
   FAILED: 'failed',
   QUEUED: 'queued',
   RUNNING: 'running',
@@ -579,8 +578,10 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'restlet.delta.lagOffset',
     'restlet.once.booleanField',
     'restlet.type',
+    '_connectionId',
   ],
   imports: [
+    '_connectionId',
     'lookups',
     'batchSize',
     'netsuite_da.batchSize',

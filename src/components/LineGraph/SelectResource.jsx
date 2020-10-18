@@ -1,4 +1,4 @@
-import { Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Button, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, Tooltip } from '@material-ui/core';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useState, useMemo } from 'react';
@@ -46,8 +46,8 @@ const useStyles = makeStyles(theme => ({
   },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
-    minHeight: 38,
-    color: theme.palette.secondary.light,
+    minHeight: 36,
+    color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
     '&:hover': {
@@ -107,6 +107,13 @@ export default function SelectResource(props) {
     return `${filterChecked.length} ${isFlow ? 'resources' : 'flows'} selected`;
   }, [checked, isFlow, flowResources]);
 
+  const getTooltip = useCallback(id => {
+    if (checked.includes(id) || isFlow || checked.length < 8) {
+      return '';
+    }
+
+    return 'Only 8 flows can be selected at the same time';
+  }, [checked, isFlow]);
   const handleFlowSelect = id => event => {
     event.stopPropagation();
     setChecked(checked => {
@@ -147,20 +154,21 @@ export default function SelectResource(props) {
                   )}
                   <FormGroup className={classes.formGroup}>
                     {flowResources.map(m => (
-                      <FormControlLabel
-                        key={m.id}
-                        className={classes.selectResourceItem}
-                        control={(
-                          <Checkbox
-                            color="primary"
-                            checked={checked.includes(m._id)}
-                            onChange={handleFlowSelect(m._id)}
-                            value="required"
-                            className={classes.selectResourceCheck}
-                      />
-                    )}
-                        label={m.name}
-                  />
+                      <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
+                        <FormControlLabel
+                          className={classes.selectResourceItem}
+                          control={(
+                            <Checkbox
+                              color="primary"
+                              checked={checked.includes(m._id)}
+                              onChange={handleFlowSelect(m._id)}
+                              value="required"
+                              className={classes.selectResourceCheck}
+                            />
+                          )}
+                          label={m.name}
+                        />
+                      </Tooltip>
                     ))}
 
                   </FormGroup>

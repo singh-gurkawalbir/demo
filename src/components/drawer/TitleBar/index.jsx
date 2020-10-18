@@ -63,7 +63,7 @@ export default function DrawerTitleBar({
   }, [history, onClose]);
 
   return (
-    <div className={classes.titleBar}>
+    <div data-public className={classes.titleBar}>
       {backToParent && (
         <IconButton
           data-test="back"

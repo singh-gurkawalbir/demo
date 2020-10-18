@@ -1,14 +1,14 @@
 import React, { useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography, Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import ApplicationImg from '../../../icons/ApplicationImg';
 import useConfirmDialog from '../../../ConfirmDialog';
-import templateUtil from '../../../../utils/template';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
+import getRoutePath from '../../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -48,11 +48,11 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.hint,
   },
 }));
+const emptyObject = {};
 
 export default function TemplatePreview() {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
   const match = useRouteMatch();
   const { templateId } = match.params;
   const dispatch = useDispatch();
@@ -62,7 +62,31 @@ export default function TemplatePreview() {
   );
   const { components: origComponents, status} =
     useSelector(state => selectors.previewTemplate(state, templateId)) || {};
-  const { objects: components, stackRequired } = origComponents || {};
+  const { objects: components } = origComponents || {};
+  const { runKey } = useSelector(
+    state => selectors.templateSetup(state, templateId) || emptyObject
+  );
+  const { isCloned, integrationId} = useSelector(
+    state => selectors.integrationClonedDetails(state, templateId),
+    (left, right) =>
+      left &&
+      right &&
+      left.isCloned === right.isCloned &&
+      left.integrationId === right.integrationId
+  );
+
+  useEffect(() => {
+    if (isCloned) {
+      history.push(
+        getRoutePath(
+          `/integrations/${integrationId}/setup`
+        )
+      );
+      dispatch(
+        actions.integrationApp.clone.clearIntegrationClonedStatus(templateId)
+      );
+    }
+  }, [dispatch, integrationId, templateId, isCloned, history]);
 
   useEffect(() => {
     if (!template) {
@@ -89,22 +113,7 @@ export default function TemplatePreview() {
   const { name, description, user } = template;
   const { name: username, company } = user || {};
   const installTemplate = () => {
-    const { installSteps, connectionMap } =
-      templateUtil.getInstallSteps({ objects: components, stackRequired }) ||
-      {};
-
-    if (installSteps && installSteps.length) {
-      dispatch(
-        actions.template.installStepsReceived(
-          installSteps,
-          connectionMap,
-          templateId
-        )
-      );
-      history.push(location.pathname.replace('/preview/', '/setup/'));
-    } else {
-      dispatch(actions.template.createComponents(templateId));
-    }
+    dispatch(actions.template.createComponents(templateId, runKey));
   };
 
   const handleReadMeClick = () => {
@@ -145,7 +154,7 @@ export default function TemplatePreview() {
 
   return (
     <>
-      <div className={classes.appLogos}>
+      <div data-public className={classes.appLogos}>
         <ApplicationImg markOnly size="small" type={template.applications[0]} />
         {template.applications[1] && (
           <>
@@ -159,9 +168,9 @@ export default function TemplatePreview() {
         )}
       </div>
 
-      <Typography variant="h2">{name}</Typography>
+      <Typography data-public variant="h2">{name}</Typography>
 
-      <div className={classes.container}>
+      <div data-public className={classes.container}>
         <div className={classes.appDetails}>
           <Button
             variant="outlined"

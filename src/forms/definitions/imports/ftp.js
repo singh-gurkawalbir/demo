@@ -210,8 +210,7 @@ export default {
       id: 'file.xml.body',
       type: 'httprequestbody',
       connectionId: r => r && r._connectionId,
-      label: 'XML document builder',
-      title: 'Build XML document',
+      label: 'Build XML document',
       refreshOptionsOnChangesTo: ['file.type'],
       required: true,
       visibleWhenAll: [
@@ -284,6 +283,9 @@ export default {
     'ftp.blobInProgressFileName': {
       fieldId: 'ftp.blobInProgressFileName',
     },
+    'file.encoding': {
+      fieldId: 'file.encoding',
+    },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
       visibleWhen: [
@@ -343,6 +345,7 @@ export default {
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
           'ftp.backupDirectoryPath',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

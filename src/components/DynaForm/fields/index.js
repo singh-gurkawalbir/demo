@@ -116,6 +116,8 @@ import DynaRefreshableText from './SuiteScript/DynaRefreshableText';
 import DynaAs2Mode from './DynaAs2Mode';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
+import DynaCeligoSwitch from './DynaCeligoSwitch';
+import DynaReplaceConnection from './DynaReplaceConnection';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -205,6 +207,7 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
+  dynareplaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
   sqlquery: DynaSqlQuery,
@@ -245,4 +248,5 @@ export default {
   suitescriptuploadfile: DynaSuiteScriptUploadFile,
   ftpfilenamewitheditor: DynaFTPFileNameWithEditor,
   as2Mode: DynaAs2Mode,
+  celigoswitch: DynaCeligoSwitch,
 };

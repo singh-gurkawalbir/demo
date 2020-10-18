@@ -1,5 +1,6 @@
 import React from 'react';
 import Retry from '../actions/Retry';
+import ViewErrorDetails from '../actions/ViewErrorDetails';
 import SelectError from '../cells/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
@@ -49,10 +50,15 @@ export default {
     },
   ],
   rowActions: ({ retryDataKey }, { actionInProgress }) => {
-    if (actionInProgress) return [];
+    const actions = [];
 
-    if (retryDataKey) return [Retry];
+    if (actionInProgress) return actions;
 
-    return [];
+    if (retryDataKey) {
+      actions.push(Retry);
+    }
+    actions.push(ViewErrorDetails);
+
+    return actions;
   },
 };

@@ -17,7 +17,7 @@ function InputFilterDrawer({
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
-    selectors.getSampleDataWrapper(state, {
+    selectors.sampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType,
@@ -72,7 +72,7 @@ function InputFilterDrawer({
   return (
     <InputFilterToggleEditorDrawer
       title="Define input filter"
-      helpTitle="Filter Rules"
+      helpTitle="Filter rules"
       helpKey={helpKey}
       disabled={isViewMode}
       isMonitorLevelAccess={isMonitorLevelAccess}

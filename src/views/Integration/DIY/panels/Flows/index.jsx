@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Divider } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -57,11 +57,8 @@ export default function FlowsPanel({ integrationId, childId }) {
   const filterKey = `${integrationId}-flows`;
   const flowFilter = useSelector(state => selectors.filter(state, filterKey));
   const flowsFilterConfig = useMemo(() => ({ ...flowFilter, type: 'flows' }), [flowFilter]);
-  const isIntegrationApp = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', integrationId);
-
-    return !!(integration && integration._connectorId);
-  });
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
+  const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const allFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
@@ -159,6 +156,20 @@ export default function FlowsPanel({ integrationId, childId }) {
   }
   const infoTextFlow =
     'You can see the status, scheduling info, and when a flow was last modified, as well as mapping fields, enabling, and running your flow. You can view any changes to a flow, as well as what is contained within the flow, and even clone or download a flow.';
+
+  if (isFrameWork2 && childId === integrationId && isIntegrationApp) {
+    return (
+      <div className={classes.root}>
+        <PanelHeader title="Integration flows" />
+        <Divider />
+        <div className={classes.content}>
+          <span>
+            Choose a child from the drop-down to view flows.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.root}>

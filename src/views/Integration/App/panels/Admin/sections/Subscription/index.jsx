@@ -1,45 +1,13 @@
 // eslint-disable-next-line no-unused-vars
-import React, { Fragment, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useRouteMatch, Link } from 'react-router-dom';
-import moment from 'moment';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { Button, Grid, Divider, Typography } from '@material-ui/core';
+import { Button, Grid, Divider, Typography, makeStyles } from '@material-ui/core';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import actions from '../../../../../../../actions';
 import { selectors } from '../../../../../../../reducers';
-import CeligoTable from '../../../../../../../components/CeligoTable';
-import AddonInstallerButton from './AddonInstallerButton';
-import InfoIconButton from '../../../../../../../components/InfoIconButton';
 import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
+import Addons from './Addons';
 
-const metadata = {
-  columns: [
-    {
-      heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && r.name}
-            <InfoIconButton info={r.description} size="xs" />
-          </>
-        );
-      },
-    },
-    {
-      heading: 'Installed on',
-      value: r =>
-        r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
-    },
-    {
-      heading: 'Action',
-      value: function Installer(r) {
-        return <AddonInstallerButton resource={r} />;
-      },
-    },
-  ],
-};
 const useStyles = makeStyles(theme => ({
   header: {
     background: theme.palette.background.paper,
@@ -87,44 +55,13 @@ const useStyles = makeStyles(theme => ({
 export default function SubscriptionSection({ storeId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const match = useRouteMatch();
-  const supportsMultiStore = !!storeId;
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const version = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId)?.version;
   const [upgradeSettingsRequested, setUpgradeSettingsRequested] = useState(false);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
-  const addOnState = useSelector(state =>
-    selectors.integrationAppAddOnState(state, integrationId)
-  );
-  const subscribedAddOns = addOnState?.addOns?.addOnLicenses?.filter(model => {
-    if (supportsMultiStore) {
-      return model.storeId === storeId;
-    }
 
-    return true;
-  });
-
-  if (subscribedAddOns) {
-    subscribedAddOns.forEach((f, i) => {
-      const addon = addOnState?.addOns?.addOnMetaData?.find(addOn => addOn.id === f.id);
-
-      subscribedAddOns[i]._id = i;
-      subscribedAddOns[i].integrationId = integrationId;
-      subscribedAddOns[i].name = addon ? addon.name : f.id;
-      subscribedAddOns[i].description = addon ? addon.description : '';
-      subscribedAddOns[i].uninstallerFunction = addon
-        ? addon.uninstallerFunction
-        : '';
-      subscribedAddOns[i].installerFunction = addon
-        ? addon.installerFunction
-        : '';
-    });
-  }
-
-  const hasSubscribedAddOns = subscribedAddOns?.length > 0;
-  const hasAddOns = addOnState?.addOns?.addOnMetaData?.length > 0;
   const {
     plan,
     createdText,
@@ -160,7 +97,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
               </Grid>
               <Grid item xs={4}>
                 <Typography data-test="iaVersion" className={classes.item}>
-                  {`Version ${version}`}
+                  {`Version ${integration.version}`}
                 </Typography>
                 <Typography data-test="integrationId" className={classes.item}>
                   {`Integration ID ${integrationId}`}
@@ -191,45 +128,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        {hasAddOns && !hasSubscribedAddOns && (
-          <div className={classes.customisedBlock}>
-            <div className={classes.leftBlock}>
-              <Typography variant="h4" className={classes.heading}>
-                Add-ons
-              </Typography>
-              <Typography className={classes.message}>
-                You don`t have any add-ons yet. Add-ons let you customize
-                subscription to meet your specific business requirements.
-              </Typography>
-            </div>
-            <div>
-              <Button
-                variant="outlined"
-                color="primary"
-                className={classes.button}
-                component={Link}
-                to={match.url.replace('admin/subscription', 'addons')}>
-                GET ADD-ONS
-              </Button>
-            </div>
-          </div>
-        )}
-        {hasAddOns && hasSubscribedAddOns && (
-          <>
-            <div className={classes.header}>
-              <Typography variant="h4" className={classes.heading}>
-                Add-ons
-              </Typography>
-              <Typography variant="body2">
-                Add-ons let you customize your subscription to meet your
-                specific business requirements. They will expire when your
-                Integration App subscription expires.
-              </Typography>
-            </div>
-
-            <CeligoTable data={subscribedAddOns} {...metadata} />
-          </>
-        )}
+        <Addons storeId={storeId} integrationId={integrationId} />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import PanelHeader from '../../../../../../components/PanelHeader';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { selectors } from '../../../../../../reducers';
 import DeleteIcon from '../../../../../../components/icons/TrashIcon';
-import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApps';
+import { getEmptyMessage, getIntegrationAppUrlName, isParentViewSelected } from '../../../../../../utils/integrationApps';
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 
@@ -36,9 +36,8 @@ export default function UninstallSection({ storeId, integrationId }) {
   const classes = useStyles();
   const history = useHistory();
   const { confirmDialog } = useConfirmDialog();
-
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId) || {};
-
+  const isParentView = isParentViewSelected(integration, storeId);
   const integrationAppName = getIntegrationAppUrlName(integration.name);
   const handleUninstall = () => {
     confirmDialog({
@@ -69,6 +68,20 @@ export default function UninstallSection({ storeId, integrationId }) {
       ],
     });
   };
+
+  if (isParentView) {
+    return (
+      <div className={classes.root}>
+        <PanelHeader title="Uninstall" />
+        <Divider />
+        <div className={classes.content}>
+          <span>
+            {getEmptyMessage(integration?.settings?.storeLabel, 'uninstall')}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

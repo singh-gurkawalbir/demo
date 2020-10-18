@@ -32,6 +32,7 @@ export default function DynaURI(props) {
     description,
     formKey,
     disableEditorV2 = false,
+    enableEditorV2 = false,
   } = props;
   const classes = useStyles();
   const handleOpenDrawer = usePushRightDrawer(id);
@@ -59,6 +60,7 @@ export default function DynaURI(props) {
           disableEditorV2={disableEditorV2}
           rule={value}
           path={id}
+          enableEditorV2={enableEditorV2}
           />
       </div>
 

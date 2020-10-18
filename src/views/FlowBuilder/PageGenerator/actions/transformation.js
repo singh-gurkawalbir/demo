@@ -10,7 +10,7 @@ function TransformationDrawer({ flowId, resource, onClose, isViewMode }) {
   const dispatch = useDispatch();
   const exportId = resource._id;
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
-    selectors.getSampleDataWrapper(state, {
+    selectors.sampleDataWrapper(state, {
       flowId,
       resourceId: exportId,
       resourceType: 'exports',
@@ -53,9 +53,9 @@ function TransformationDrawer({ flowId, resource, onClose, isViewMode }) {
 
   return (
     <TransformToggleEditorDrawer
-      title="Transform record"
+      title="Define transformation"
       helpKey="export.transform.rules"
-      helpTitle="Transform record"
+      helpTitle="Transform rules"
       id={exportId}
       disabled={isViewMode}
       data={sampleData}

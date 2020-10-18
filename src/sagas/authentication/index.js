@@ -6,6 +6,8 @@ import {
   all,
   select,
 } from 'redux-saga/effects';
+import LogRocket from 'logrocket';
+import setupLogRocketReact from 'logrocket-react';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
@@ -133,14 +135,30 @@ export function* validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid(
   return yield select(selectors.getOneValidSharedAccountId);
 }
 
+export function* fetchUIVersion() {
+  let resp;
+
+  try {
+    resp = yield call(apiCallWithRetry, {
+      path: '/ui/version?app=react',
+    });
+  // eslint-disable-next-line no-empty
+  } catch (e) {
+  }
+  if (resp?.version) {
+    yield put(actions.app.updateUIVersion(resp.version));
+  }
+}
+
 export function* retrieveAppInitializationResources() {
   yield all([
     call(retrievingOrgDetails),
     call(retrievingUserDetails),
     call(retrievingAssistantDetails),
+    // change it to this way because logrocket init requires the version to be known at init
+    call(fetchUIVersion),
   ]);
 
-  yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -203,7 +221,6 @@ export function* auth({ email, password }) {
     yield put(actions.auth.complete());
 
     yield call(retrieveAppInitializationResources);
-
     if (isExpired) {
       // remount the component
       yield put(actions.app.reload());
@@ -211,6 +228,58 @@ export function* auth({ email, password }) {
   } catch (error) {
     yield put(actions.auth.failure('Authentication Failure'));
     yield put(actions.user.profile.delete());
+  }
+}
+
+export function* initializeLogRocket() {
+  const version = yield select(selectors.version);
+  const p = yield select(selectors.userProfile);
+
+  // LOGROCKET_IDENTIFIER is defined by webpack
+  // eslint-disable-next-line no-undef
+  LogRocket.init(LOGROCKET_IDENTIFIER, {
+    release: version,
+    console: {
+      isEnabled: {
+        debug: false,
+        log: false,
+      },
+    },
+    dom: {
+    // Yang: this is an overkill
+    // but it is the safest, we need to tag input/text tags with data-public attributes to allow them to be captured
+    // however, it might not be easy to do for components coming from other packages
+      inputSanitizer: true,
+      textSanitizer: true,
+    },
+    network: {
+      requestSanitizer: req => {
+        if (req.url.search(/aptrinsic\.com/) > -1) return null;
+        // Yang: this is likely too broad
+        // we may want to track non-sensitive/error request data later
+        // eslint-disable-next-line no-param-reassign
+        req.body = null;
+
+        return req;
+      },
+      responseSanitizer: response => {
+        // Yang: this is likely too broad
+        // we may want to track non-sensitive/error response data later
+        response.body = null;
+
+        return response;
+      },
+    },
+  });
+  setupLogRocketReact(LogRocket);
+  // identify user with LogRocket
+  if (p?._id) {
+    LogRocket.identify(p._id, {
+      name: p.name,
+      email: p.email,
+      company: p.company,
+      developer: !!p.developer,
+    });
   }
 }
 
@@ -229,6 +298,13 @@ export function* initializeApp() {
 
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
+
+      // LOGROCKET_IDENTIFIER is defined by webpack
+      // eslint-disable-next-line no-undef
+      if (LOGROCKET_IDENTIFIER) {
+        // stop sagas, init logrocket, and restart sagas
+        yield put(actions.auth.abortAllSagasAndInitLR());
+      }
     } else {
       // existing session is invalid
       yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
@@ -261,7 +337,7 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   // clear the store
   yield call(removeCSRFToken);
   yield put(actions.auth.clearStore());
-  yield put(actions.auth.abortAllSagas());
+  yield put(actions.auth.abortAllSagasAndReset());
 }
 
 export function* signInWithGoogle({ returnTo }) {
@@ -307,20 +383,6 @@ export function* linkWithGoogle({ returnTo }) {
   document.body.removeChild(form);
 }
 
-export function* fetchUIVersion() {
-  let resp;
-
-  try {
-    resp = yield call(apiCallWithRetry, {
-      path: '/ui/version?app=react',
-    });
-  // eslint-disable-next-line no-empty
-  } catch (e) {
-  }
-  if (resp?.version) {
-    yield put(actions.app.updateUIVersion(resp.version));
-  }
-}
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
   takeEvery(actionTypes.INIT_SESSION, initializeApp),

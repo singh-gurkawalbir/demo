@@ -13,17 +13,25 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(1.5),
     alignItems: 'center',
-    padding: theme.spacing(0, 0, 0, 1),
-    paddingLeft: theme.spacing(3.25),
-    '& > div': {
-      width: '46%',
-      display: 'flex',
-    },
+  },
+  headerChild: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flex: 1,
+    marginLeft: theme.spacing(3),
+  },
+  headerChildRight: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(8),
   },
   refreshButton: {
     marginLeft: theme.spacing(1),
     marginRight: 0,
     padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.primary.main,
+    },
   },
   topHeading: {
     fontFamily: 'Roboto500',
@@ -32,13 +40,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     width: theme.spacing(3),
     height: theme.spacing(3),
-  },
-  childHeader: {
-    // width: '46%',
-    paddingLeft: theme.spacing(1),
-    '& > div': {
-      width: '100%',
-    },
   },
 }));
 
@@ -113,10 +114,10 @@ export default function TopPanel({
 
   return (
     <div className={classes.header}>
-      <div>
+      <div className={classes.headerChild}>
         <Typography
           variant="h5"
-          className={clsx(classes.childHeader, classes.topHeading, {
+          className={clsx(classes.topHeading, {
           // [classes.topHeadingCustomWidth]: mappingPreviewType,
           })}>
           {extractLabel}
@@ -133,11 +134,11 @@ export default function TopPanel({
         <SpinnerLoader className={classes.spinner} />
         )}
       </div>
-      <div>
+      <div className={clsx(classes.headerChild, classes.headerChildRight)}>
 
         <Typography
           variant="h5"
-          className={clsx(classes.childHeader, classes.topHeading)}>
+          className={clsx(classes.topHeading)}>
           {generateLabel}
         </Typography>
         {isGenerateRefreshSupported && !isGeneratesLoading && (

@@ -12,6 +12,19 @@ export default {
     visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
+  _connectionId: {
+    type: 'dynareplaceconnection',
+    resourceType: 'connections',
+    label: 'Connection',
+    appTypeIsStatic: true,
+    allowEdit: true,
+    allowNew: true,
+    skipDefault: true,
+    connectionId: r => r?._connectionId,
+    defaultValue: r => r?._connectionId,
+    integrationId: r => r?._integrationId,
+    connectorId: r => r?._connectorId,
+  },
   apiIdentifier: {
     label: 'Invoke',
     helpKey: 'apiIdentifier',
@@ -47,11 +60,12 @@ export default {
   idLockTemplate: {
     type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
+    enableEditorV2: true,
   },
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',

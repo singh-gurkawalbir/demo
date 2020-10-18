@@ -66,7 +66,7 @@ export default function DynaTransformRules(props) {
   return (
     <div>
       <TransformEditorDrawer
-        title="Transform Mapping"
+        title={label}
         id={id + resourceId}
         data=""
         rule={rule && rule[0]}

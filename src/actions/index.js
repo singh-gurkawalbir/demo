@@ -101,7 +101,8 @@ const auth = {
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagas: () => action(actionTypes.ABORT_ALL_SAGAS),
+  abortAllSagasAndInitLR: () => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
@@ -215,18 +216,25 @@ const recycleBin = {
     action(actionTypes.RECYCLEBIN.PURGE, { resourceType, resourceId }),
 };
 const flowMetrics = {
-  request: (flowId, filters) =>
+  // only 'integrations and flows are valid resourceTypes. The metrics are always related to flows as of now.
+  // when resourceType is integrations, fetch metrics of all enabled flows in integration
+  // when resourceType is flow, fetch specific flow metrics
+  request: (resourceType, resourceId, filters) =>
     action(actionTypes.FLOW_METRICS.REQUEST, {
-      flowId,
+      resourceType,
+      resourceId,
       filters,
     }),
 
-  received: (flowId, response) =>
-    action(actionTypes.FLOW_METRICS.RECEIVED, { flowId, response }),
-  clear: flowId => action(actionTypes.FLOW_METRICS.CLEAR, { flowId }),
+  received: (resourceType, resourceId, response) =>
+    action(actionTypes.FLOW_METRICS.RECEIVED, { resourceType, resourceId, response }),
+  clear: resourceId => action(actionTypes.FLOW_METRICS.CLEAR, { resourceId }),
   failed: error => action(actionTypes.FLOW_METRICS.FAILED, { error }),
 };
 const resource = {
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
   created: (id, tempId, resourceType) =>
@@ -415,8 +423,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
@@ -893,13 +903,15 @@ const integrationApp = {
       integrationId,
       connectionId,
       connectionDoc,
-      formSubmission
+      formSubmission,
+      stackId
     ) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST, {
         id: integrationId,
         connectionId,
         connectionDoc,
         formSubmission,
+        stackId,
       }),
     updateStep: (integrationId, installerFunction, update, formMeta) =>
       action(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.UPDATE, {
@@ -1318,8 +1330,8 @@ const flowData = {
       stage,
       refresh,
     }),
-  resetStages: (flowId, resourceId, stages = []) =>
-    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages}),
+  resetStages: (flowId, resourceId, stages = [], statusToUpdate) =>
+    action(actionTypes.FLOW_DATA.RESET_STAGES, { flowId, resourceId, stages, statusToUpdate}),
   resetFlowSequence: (flowId, updatedFlow) =>
     action(actionTypes.FLOW_DATA.FLOW_SEQUENCE_RESET, { flowId, updatedFlow }),
   updateFlowsForResource: (resourceId, resourceType, stagesToReset = []) =>
@@ -2023,7 +2035,7 @@ const editorSampleData = {
     formValues,
     fieldType,
     requestedTemplateVersion,
-    isV2NotSupported,
+    isEditorV2Supported,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
@@ -2033,7 +2045,7 @@ const editorSampleData = {
       formValues,
       fieldType,
       requestedTemplateVersion,
-      isV2NotSupported,
+      isEditorV2Supported,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {

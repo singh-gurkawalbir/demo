@@ -122,6 +122,14 @@ const SelectStyle = theme => ({
   }),
   input: () => ({
     color: theme.palette.secondary.light,
+    width: '100%',
+    '& > div': {
+      width: '100%',
+    },
+    '& * > input': {
+      width: '100% !important',
+      display: 'block !important',
+    },
   }),
   placeholder: () => ({
     color: theme.palette.secondary.light,
@@ -241,6 +249,17 @@ export default function DynaTypeableSelect(props) {
     onBlur(id, val);
   }, [onBlur]);
 
+  const handleKeyDown = useCallback(
+    evt => {
+      if (evt.key === 'Escape') {
+        setIsTyping(false);
+        setValue(propValue);
+        setIsFocused(false);
+      }
+    },
+    [propValue],
+  );
+
   const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') {
       setValue(newVal);
@@ -295,6 +314,7 @@ export default function DynaTypeableSelect(props) {
           onChange={handleChange}
           styles={customStyles}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           autoFocus
           openOnFocus
           components={components}

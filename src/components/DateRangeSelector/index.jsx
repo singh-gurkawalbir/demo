@@ -61,8 +61,8 @@ const useStyles = makeStyles(theme => ({
   },
   dateRangePopperBtn: {
     borderColor: theme.palette.secondary.lightest,
-    minHeight: 38,
-    color: theme.palette.secondary.light,
+    minHeight: 36,
+    color: theme.palette.secondary.main,
     fontFamily: 'source sans pro',
     fontSize: 15,
   },
@@ -108,12 +108,13 @@ const useStyles = makeStyles(theme => ({
 export default function DateRangeSelector({
   value = {},
   onSave,
+  fromDate,
   customPresets = [],
-  minDate,
   showTime = true,
   clearable = false,
+  clearValue,
 }) {
-  const defaultValue = getSelectedRange({preset: 'last24hours'});
+  const defaultValue = getSelectedRange({preset: 'last30days'});
   const { startDate = defaultValue.startDate, endDate = defaultValue.endDate, preset = defaultValue.preset } = value;
   const [initalValue, setInitialValue] = useState(
     {
@@ -155,10 +156,10 @@ export default function DateRangeSelector({
   }, [initalValue]);
 
   const handleClear = useCallback(() => {
-    setSelectedRange({startDate: null, endDate: null, preset: null});
+    setSelectedRange(clearValue || {startDate: null, endDate: null, preset: null});
     onSave && onSave(selectedRange);
     setAnchorEl(null);
-  }, []);
+  }, [onSave, selectedRange, clearValue]);
 
   const handleDateRangeSelection = useCallback(range => {
     let { startDate, endDate } = range;
@@ -220,7 +221,7 @@ export default function DateRangeSelector({
                   direction="horizontal"
                   showTime={showTime}
                   maxDate={new Date()}
-                  minDate={minDate || addYears(new Date(), -1)}
+                  minDate={fromDate || addYears(new Date(), -1)}
                   inputRanges={[]}
                   showPreview={false}
                 />

@@ -13,13 +13,14 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
     return null;
   }
   const disabledActionTitle = disabledActionText?.({ ...actionProps, rowData });
+  const actionIcon = Icon ? <Icon /> : null;
 
   if (disabledActionTitle) {
     return (
       <Tooltip key={label} title={disabledActionTitle} placement="bottom" >
         <div>
           <MenuItem disabled>
-            <Icon />
+            {actionIcon}
             {label}
           </MenuItem>
         </div>
@@ -29,7 +30,7 @@ const Action = ({ label, Icon, disabledActionText, useHasAccess, actionProps, ro
 
   return (
     <MenuItem key={label} onClick={handleActionClick}>
-      <Icon />
+      {actionIcon}
       {label}
     </MenuItem>
   );
