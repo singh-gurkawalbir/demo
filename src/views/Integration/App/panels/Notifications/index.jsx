@@ -52,16 +52,6 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
   const fieldMeta = {
     fieldMap: {
-      connections: {
-        id: 'connections',
-        helpKey: 'notifications.connections',
-        name: 'connections',
-        type: 'multiselect',
-        valueDelimiter: ',',
-        label: 'Notify me when connection goes offline',
-        defaultValue: connectionValues,
-        options: [{ items: connectionOps }],
-      },
       flows: {
         id: 'flows',
         helpKey: 'notifications.jobErrors',
@@ -72,6 +62,16 @@ export default function NotificationsSection({ integrationId, storeId }) {
         defaultValue: flowValues,
         options: [{ items: flowOps }],
         selectAllIdentifier: integrationId,
+      },
+      connections: {
+        id: 'connections',
+        helpKey: 'notifications.connections',
+        name: 'connections',
+        type: 'multiselect',
+        valueDelimiter: ',',
+        label: 'Notify me when connection goes offline',
+        defaultValue: connectionValues,
+        options: [{ items: connectionOps }],
       },
     },
     layout: {
@@ -95,7 +95,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     remount: count,
-    integrationId,
+    skipMonitorLevelAccessCheck: true,
   });
 
   return (

@@ -195,7 +195,7 @@ describe('apiCallWithRetry saga', () => {
       };
       const raceBetweenApiCallAndLogoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(2 * 60 * 1000),
@@ -222,7 +222,7 @@ describe('apiCallWithRetry saga', () => {
       };
       const raceBetweenApiCallAndLogoutEffect = race([
         call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         take(actionsTypes.USER_LOGOUT),
       ]);
@@ -249,7 +249,7 @@ describe('apiCallWithRetry saga', () => {
       };
       const raceBetweenApiCallAndLogoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(120000),
@@ -277,7 +277,7 @@ describe('apiCallWithRetry saga', () => {
       };
       const raceBetweenApiCallAndLogoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(120000),
@@ -305,7 +305,7 @@ describe('apiCallWithRetry saga', () => {
       };
       const raceBetweenApiCallAndLogoutEffect = race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(120000),
@@ -344,7 +344,7 @@ describe('apiCallWithRetry saga', () => {
         };
         const raceBetweenApiCallAndLogoutEffect = race({
           apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: true,
+            dispatchRequestAction: false,
           }),
           logout: take(actionsTypes.USER_LOGOUT),
           timeoutEffect: delay(2 * 60 * 1000),
@@ -385,7 +385,7 @@ describe('apiCallWithRetry saga', () => {
         };
         const raceBetweenApiCallAndLogoutEffect = race({
           apiResp: call(sendRequest, apiRequestAction, {
-            dispatchRequestAction: true,
+            dispatchRequestAction: false,
           }),
           logout: take(actionsTypes.USER_LOGOUT),
           timeoutEffect: delay(2 * 60 * 1000),
@@ -425,7 +425,7 @@ describe('apiCallWithRetry saga', () => {
         request: { url: logoutPath, args },
       };
       const sendRequestEffect = call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: true,
+        dispatchRequestAction: false,
       });
       const resp = { response: { data: 'some response' } };
 
