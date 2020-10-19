@@ -35,7 +35,7 @@ export function AppRoutingWithAuth(props) {
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
       if (currentRoute !== getRoutePath('signin')) {
-        history.push({
+        history.replace({
           search,
           state: { attemptedRoute: currentRoute, search },
         });
@@ -67,7 +67,7 @@ export function AppRoutingWithAuth(props) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
 
-      return <Redirect to={{ pathname: redirectedTo, search: routeState?.search }} />;
+      return <Redirect push={false} to={{ pathname: redirectedTo, search: routeState?.search }} />;
     }
 
     return children;
@@ -76,6 +76,7 @@ export function AppRoutingWithAuth(props) {
   if (!isSessionExpired && !isSignInRoute) {
     return (
       <Redirect
+        push={false}
         to={{
           pathname: getRoutePath('signin'),
           state: location.state,
