@@ -80,7 +80,7 @@ import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sam
 import { genSelectors } from './util';
 import getFilteredErrors from '../utils/errorManagement';
 import {
-  getFlowResourcesYetToBeCreated,
+  getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
   getRunConsoleJobSteps,
   getParentJobSteps,
@@ -3377,7 +3377,7 @@ selectors.flowDashboardJobs = createSelector(
       }
       // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
-        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildren = getFlowStepsYetToBeCreated(flowObj, parentJob.children);
         const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
         pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
