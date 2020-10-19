@@ -4,7 +4,6 @@ import Status from '../cells/Status';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
 import StatusHeader from '../cells/StatusHeader';
-import ManageNotifications from '../actions/ManageNotifications';
 
 export default {
   columns: (r, {integrationId, isUserInErrMgtTwoDotZero}) => {
@@ -29,25 +28,5 @@ export default {
     ];
 
     return columns;
-  },
-  rowActions: (user, actionProps) => {
-    const { integrationId, isUserInErrMgtTwoDotZero, hasManageIntegrationAccess, loggedInUserId } = actionProps || {};
-    const isActiveUser = !user.disabled && user.accepted;
-
-    // org users only have integration level actions incase of EM2.0
-    // notifications can be managed only for active users
-    // TODO @Raghu: have a useHasActions function to decide when to show actions column
-    if (
-      !integrationId ||
-      !isUserInErrMgtTwoDotZero ||
-      user.sharedWithUser._id === loggedInUserId ||
-      !isActiveUser
-    ) return [];
-    // Only owner/manage users can have manageNotifications action
-    if (hasManageIntegrationAccess) {
-      return [ManageNotifications];
-    }
-
-    return [];
   },
 };
