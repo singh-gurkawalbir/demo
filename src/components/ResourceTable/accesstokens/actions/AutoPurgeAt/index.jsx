@@ -1,9 +1,9 @@
 import React from 'react';
-import TimeAgo from 'react-timeago';
+import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 
 export default function AutoPurgeAt({ accessToken }) {
   if (accessToken && accessToken.autoPurgeAt) {
-    return <TimeAgo date={accessToken.autoPurgeAt} />;
+    return <CeligoTimeAgo date={accessToken.autoPurgeAt} />;
   }
 
   return 'Never';
