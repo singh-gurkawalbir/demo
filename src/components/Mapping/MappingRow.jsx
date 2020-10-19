@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,9 @@ import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
 import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
+import LookupIcon from '../icons/LookUpIcon';
+import MultiFieldIcon from '../icons/MultiFieldIcon';
+import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
@@ -58,6 +61,9 @@ const useStyles = makeStyles(theme => ({
       cursor: 'not-allowed',
       pointerEvents: 'none',
     },
+  },
+  hide: {
+    display: 'none',
   },
   lockIcon: {
     position: 'absolute',
@@ -117,14 +123,15 @@ export default function MappingRow({
     extract,
     generate,
     hardCodedValue,
+    lookupName,
   } = mapping;
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [isActive, setIsActive] = useState(false);
   const ref = useRef(null);
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
-
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
@@ -181,6 +188,16 @@ export default function MappingRow({
   [dispatch, extract, generate, mapping, mappingKey]
   );
 
+  const RightIcon = ({title, Icon}) => (
+    <Tooltip
+      title={title}
+      placement="top">
+      <span className={classes.lockIcon}>
+        <Icon />
+      </span>
+    </Tooltip>
+  );
+
   const handleExtractBlur = useCallback((_id, value) => {
     handleBlur('extract', value);
   }, [handleBlur]);
@@ -197,12 +214,25 @@ export default function MappingRow({
     dispatch(actions.mapping.delete(mappingKey));
   }, [dispatch, mappingKey]);
 
+  const handleOnMouseEnter = useCallback(() => {
+    setIsActive(true);
+  }, []);
+  const handleOnMouseLeave = useCallback(() => {
+    setIsActive(false);
+  }, []);
+
+  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
+  const isLookup = !!lookupName;
+  const isMultiField = handlebarRegex.test(extract);
+  const isHardCodedValue = !!hardCodedValue;
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const disableDelete = !mappingKey || isRequired || isNotEditable || disabled;
 
   return (
     <div
       ref={ref}
+      onMouseEnter={handleOnMouseEnter}
+      onMouseLeave={handleOnMouseLeave}
       style={{ opacity }}
       className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
@@ -249,18 +279,17 @@ export default function MappingRow({
             onBlur={handleGenerateBlur}
             onTouch={handleFieldTouch}
           />
+          {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
+          {isMultiField && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
+          {isHardCodedValue && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
           {(isSubRecordMapping || isRequired) && (
-            <Tooltip
+            <RightIcon
               title={`${
                 isSubRecordMapping
                   ? 'Subrecord mapping'
                   : 'This field is required by the application you are importing into'
               }`}
-              placement="top">
-              <span className={classes.lockIcon}>
-                <LockIcon />
-              </span>
-            </Tooltip>
+              Icon={LockIcon} />
           )}
         </div>
         <div className={classes.actionsMapping}>
@@ -287,7 +316,9 @@ export default function MappingRow({
               aria-label="delete"
               disabled={disableDelete}
               onClick={handleDeleteClick}
-              className={classes.deleteBtn}>
+              className={clsx(classes.deleteBtn, {
+                [classes.hide]: !isActive,
+              })}>
               <TrashIcon />
             </ActionButton>
           </div>
