@@ -283,6 +283,9 @@ export default {
     'ftp.blobInProgressFileName': {
       fieldId: 'ftp.blobInProgressFileName',
     },
+    'file.encoding': {
+      fieldId: 'file.encoding',
+    },
     deleteAfterImport: {
       fieldId: 'deleteAfterImport',
       visibleWhen: [
@@ -342,6 +345,7 @@ export default {
           'ftp.blobUseTempFile',
           'ftp.blobInProgressFileName',
           'ftp.backupDirectoryPath',
+          'file.encoding',
           'blobKeyPath',
           'fileAdvancedSettings',
           'deleteAfterImport',

@@ -32,6 +32,11 @@ export function* requestFlowMetrics({resourceType, resourceId, filters }) {
 
   if (resourceType === 'integrations') {
     flowIds = yield select(selectors.integrationEnabledFlowIds, resourceId);
+    if (!flowIds || !flowIds.length) {
+      yield put(actions.flowMetrics.received(resourceType, resourceId, []));
+
+      return;
+    }
     // eslint-disable-next-line no-param-reassign
     filters.selectedResources = flowIds;
   }

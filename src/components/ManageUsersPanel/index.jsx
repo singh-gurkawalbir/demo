@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     overflow: 'visible',
   },
+  userListWrapper: {
+    overflowX: 'auto',
+  },
 }));
 
 const infoTextUsers =
@@ -47,8 +50,8 @@ export default function ManageUsersPanel({ integrationId, storeId }) {
           </IconTextButton>
         )}
       </PanelHeader>
+      <UsersList integrationId={integrationId} storeId={storeId} className={classes.userListWrapper} />
 
-      <UsersList integrationId={integrationId} storeId={storeId} />
     </div>
   );
 }
