@@ -32,9 +32,6 @@ export default function notificationsMetadata(props) {
           selectAllIdentifier: integrationId,
         },
       },
-      layout: {
-        fields: ['flows', 'connections'],
-      },
     }
   );
 }
