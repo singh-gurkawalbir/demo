@@ -5347,3 +5347,24 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 };
 
 // #endregion Flow builder selectors
+
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const isAccountOwner = selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const userPermissions = selectors.userPermissions(state);
+  const integrationPermissions = userPermissions.integrations;
+
+  if (!integrationId) {
+    return manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel);
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
+};
