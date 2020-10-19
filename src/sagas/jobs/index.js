@@ -44,6 +44,8 @@ export function* getJobFamily({ jobId, type }) {
 export function* getInProgressJobsStatus() {
   const inProgressJobIds = yield select(selectors.inProgressJobIds);
 
+  console.log('inProgressJobIds', inProgressJobIds);
+
   if (
     inProgressJobIds.flowJobs.length === 0 &&
     inProgressJobIds.bulkRetryJobs.length === 0
@@ -437,6 +439,8 @@ export function* retryAllCommit({ flowId, storeId, integrationId }) {
     );
   }
 
+  // flowIds = ['5f8c67b0025c315f30472f32', '5f8c1da6025c315f30472ae4'];
+
   const requestOptions = getRequestOptions(
     flowIds.length > 0
       ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
@@ -452,15 +456,15 @@ export function* retryAllCommit({ flowId, storeId, integrationId }) {
     if (flowIds.length > 0) {
       const response = yield call(apiCallWithRetry, { path, opts });
 
-      job = response.find(j => j.statusCode === 202).job;
+      yield all(response.filter(j => j.statusCode === 202).map(j => put(actions.job.receivedFamily(j))));
     } else {
       job = yield call(apiCallWithRetry, { path, opts });
+      yield put(actions.job.receivedFamily({ job }));
     }
   } catch (error) {
     return true;
   }
 
-  yield put(actions.job.receivedFamily({ job }));
   yield put(actions.job.requestInProgressJobStatus());
 }
 
