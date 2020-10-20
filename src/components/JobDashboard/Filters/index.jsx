@@ -176,7 +176,7 @@ export default function Filters({
           <MenuItem value="" disabled>
             Retry
           </MenuItem>
-          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >All enabled flow jobs</MenuItem>
+          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![null, undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >All enabled flow jobs</MenuItem>
           <MenuItem disabled={numRetriableJobsSelected === 0} value="retrySelected">
             {numRetriableJobsSelected} selected enabled flow jobs
           </MenuItem>

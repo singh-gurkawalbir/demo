@@ -3412,6 +3412,8 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
   };
 };
 
+selectors.allJobs = (state, { type }) => fromData.allJobs(state.data, { type });
+
 selectors.flowJobConnections = () => createSelector(
   state => state?.data?.resources?.connections,
   (state, flowId) => {

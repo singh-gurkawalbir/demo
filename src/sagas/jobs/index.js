@@ -273,18 +273,42 @@ export function* resolveCommit({ jobs = [] }) {
   yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
 }
 
-export function* resolveAllCommit({ flowId, integrationId }) {
-  const { path, opts } = getRequestOptions(
-    flowId
-      ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
-      : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
-    {
-      resourceId: flowId || integrationId,
-    }
-  );
+export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobsOnly }) {
+  let flowIds = [];
+  let jobIds = [];
+
+  if (filteredJobsOnly) {
+    const filteredJobs = yield select(selectors.allJobs, { type: 'flowJobs' });
+
+    jobIds = filteredJobs.filter(j => j?.__original?.numError > 0).map(j => j._id);
+  } else if (flowId) {
+    flowIds.push(flowId);
+  } else if (storeId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      integrationId,
+      storeId
+    );
+  }
+
+  let requestOptions;
+
+  if (jobIds.length > 0) {
+    requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT);
+    requestOptions.opts.body = jobIds;
+  } else {
+    requestOptions = getRequestOptions(
+      flowIds.length > 0
+        ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
+        : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
+      {
+        resourceId: flowIds.length > 0 ? flowIds : integrationId,
+      }
+    );
+  }
 
   try {
-    yield call(apiCallWithRetry, { path, opts });
+    yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
     return true;
   }
@@ -319,7 +343,7 @@ export function* resolveSelected({ jobs }) {
   }
 }
 
-export function* resolveAll({ flowId, integrationId }) {
+export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }) {
   yield put(actions.job.resolveAllPending());
 
   yield put(actions.job.resolveAllInit());
@@ -335,7 +359,7 @@ export function* resolveAll({ flowId, integrationId }) {
       actionTypes.JOB.RESOLVE_ALL_PENDING,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(resolveAllCommit, { flowId, integrationId });
+    yield call(resolveAllCommit, { flowId, storeId, integrationId, filteredJobsOnly });
   }
 }
 

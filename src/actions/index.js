@@ -1583,8 +1583,8 @@ const job = {
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
   resolveSelected: ({ jobs }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
-  resolveAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
+  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),

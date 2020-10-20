@@ -174,7 +174,9 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, integrationId }));
+    const filteredJobsOnly = ![undefined, 'all', 'error'].includes(filters.status) || ![null, undefined, 'last30days'].includes(filters.dateRange?.[0]?.preset);
+
+    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, filteredJobsOnly }));
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
       showUndo: true,
@@ -193,6 +195,7 @@ export default function JobDashboard({
           actions.job.resolveAllCommit({
             flowId: selectedFlowId,
             integrationId,
+            filteredJobsOnly,
           })
         );
         setActionsToMonitor({
@@ -210,6 +213,9 @@ export default function JobDashboard({
     dispatch,
     enqueueSnackbar,
     filters.flowId,
+    filters.storeId,
+    filters.dateRange,
+    filters.status,
     flowId,
     integrationId,
     jobs,

@@ -590,7 +590,7 @@ describe('job sagas', () => {
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT,
         {
-          resourceId: dataIn.flowId,
+          resourceId: [dataIn.flowId],
         }
       );
 

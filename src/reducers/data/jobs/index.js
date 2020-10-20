@@ -716,6 +716,14 @@ selectors.flowJobs = createSelector(
   }
 );
 
+selectors.allJobs = (state, { type }) => {
+  if (!state) {
+    return undefined;
+  }
+
+  return state[type === JOB_TYPES.BULK_RETRY ? 'bulkRetryJobs' : 'flowJobs'];
+};
+
 selectors.inProgressJobIds = createSelector(
   state => state && state.paging,
   state => state && state.flowJobs,
