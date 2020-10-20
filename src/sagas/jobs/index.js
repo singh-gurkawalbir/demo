@@ -453,6 +453,7 @@ export function* retryAllCommit({ flowId, storeId, integrationId }) {
       const response = yield call(apiCallWithRetry, { path, opts });
 
       job = response.find(j => j.statusCode === 202);
+      job = job?.job;
     } else {
       job = yield call(apiCallWithRetry, { path, opts });
     }
@@ -461,7 +462,7 @@ export function* retryAllCommit({ flowId, storeId, integrationId }) {
   }
 
   if (job) {
-    yield put(actions.patchFilter('jobs', {refreshAt: new Date().getTime()}));
+    yield put(actions.patchFilter('jobs', {refreshAt: job._id}));
   }
 }
 

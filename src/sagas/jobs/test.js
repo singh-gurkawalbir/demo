@@ -1155,7 +1155,7 @@ describe('job sagas', () => {
       };
 
       expect(saga.next(bulkRetryJob).value).toEqual(
-        put(actions.patchFilter('jobs', {refreshAt: new Date().getTime()}))
+        put(actions.patchFilter('jobs', {refreshAt: bulkRetryJob._id}))
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -1187,7 +1187,7 @@ describe('job sagas', () => {
       ];
 
       expect(saga.next(bulkRetryJob).value).toEqual(
-        put(actions.patchFilter('jobs', {refreshAt: new Date().getTime()}))
+        put(actions.patchFilter('jobs', {refreshAt: bulkRetryJob[0].job._id}))
       );
       expect(saga.next().done).toEqual(true);
     });
