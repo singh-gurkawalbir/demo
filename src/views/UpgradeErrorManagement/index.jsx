@@ -9,7 +9,9 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useConfirmDialog from '../../components/ConfirmDialog';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { USER_ACCESS_LEVELS, ERROR_MANAGEMENT_DOC_URL } from '../../utils/constants';
+import LoadResources from '../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -41,6 +43,7 @@ export default function UpgradeErrorManagement() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
     const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
@@ -48,6 +51,10 @@ export default function UpgradeErrorManagement() {
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;
   });
+  const canUserUpgradeToErrMgtTwoDotZero = useSelector(state =>
+    selectors.canUserUpgradeToErrMgtTwoDotZero(state)
+  );
+
   const commStatus = useSelector(state =>
     selectors.commStatusPerPath(state, '/profile', 'PUT')
   );
@@ -110,11 +117,21 @@ export default function UpgradeErrorManagement() {
     if (!isMigrationPageAccessible && !upgradeRequested) {
       // This page is not accessible to EM 2.0 / if not an Account owner.. so redirect him to dashboard page
       redirectToDashboard();
+
+      return;
     }
-  }, [isMigrationPageAccessible, upgradeRequested, redirectToDashboard]);
+    if (canUserUpgradeToErrMgtTwoDotZero) {
+      // If the account has at least one IA , we redirect him to dashboard showing below notification
+      enqueueSnackbar({
+        message: 'The new error management is being rolled out on an opt-in basis (excluding accounts with Integration Apps at present).',
+        variant: 'error',
+      });
+      redirectToDashboard();
+    }
+  }, [isMigrationPageAccessible, upgradeRequested, redirectToDashboard, canUserUpgradeToErrMgtTwoDotZero, enqueueSnackbar]);
 
   return (
-    <>
+    <LoadResources resources="integrations">
       <CeligoPageBar title="We&apos;ve a new and enhanced way to manage errors!" />
       <Paper className={classes.upgradeContainer} elevation={0}>
         <Typography variant="root" component="div" className={classes.introErrorManagement}>
@@ -163,6 +180,6 @@ export default function UpgradeErrorManagement() {
         </div>
 
       </Paper>
-    </>
+    </LoadResources>
   );
 }

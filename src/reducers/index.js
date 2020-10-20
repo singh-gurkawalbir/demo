@@ -5368,3 +5368,11 @@ selectors.hasManageIntegrationAccess = (state, integrationId) => {
 
   return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
 };
+
+selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
+  const integrations = selectors.resourceList(state, {
+    type: 'integrations',
+  }).resources;
+
+  return !integrations.some(integration => !!integration._connectorId);
+};
