@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, LinearProgress, Drawer} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
+import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DrawerTitleBar from '../../../components/drawer/TitleBar';
+import PanelHeader from '../../../components/PanelHeader';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -102,6 +104,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     display: 'flex',
     flexDirection: 'column',
+  },
+  upgradeBlock: {
+    marginBottom: 0,
   },
 }));
 
@@ -283,9 +288,7 @@ export default function Subscription() {
         )}
         {licenseActionDetails && (
         <>
-          <Typography variant="h4" className={classes.heading}>
-            Subscription
-          </Typography>
+          <PanelHeader title="Subscription" />
           <div className={classes.block}>
             <Typography variant="h5" className={classes.subHeading}>
               Details
@@ -400,7 +403,7 @@ export default function Subscription() {
                 licenseActionDetails.subscriptionActions &&
                 licenseActionDetails.subscriptionActions.actions &&
                 licenseActionDetails.subscriptionActions.actions.length > 0 && (
-                  <div className={classes.block}>
+                  <div className={clsx(classes.block, classes.upgradeBlock)}>
                     <Typography variant="h4" className={classes.subHeading}>
                       Want to upgrade ?
                     </Typography>

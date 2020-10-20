@@ -59,7 +59,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
         data-test="runFlow"
 
         onClick={onRunClick}>
-        <RunIcon />
+        <RunIcon color="secondary" />
       </IconButtonWithTooltip>
     );
   }
@@ -71,7 +71,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
         variant="text"
         data-test="runFlow"
         onClick={onRunClick}>
-        <RunIcon /> {label}
+        <RunIcon color="secondary" /> {label}
       </IconTextButton>
     );
   }
