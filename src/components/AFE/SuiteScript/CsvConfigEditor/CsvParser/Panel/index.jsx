@@ -11,18 +11,7 @@ import { selectors } from '../../../../../../reducers';
 import CeligoSelect from '../../../../../CeligoSelect';
 import options from '../../options';
 import DynaMultiSelect from '../../../../../DynaForm/fields/DynaMultiSelect';
-
-const getColumns = result => {
-  if (!result || !result.data || !result.data.length) {
-    return [];
-  }
-
-  const sampleRecord = Array.isArray(result.data[0])
-    ? result.data[0][0]
-    : result.data[0];
-
-  return Object.keys(sampleRecord);
-};
+import { getFileColumns } from '../../../../../../utils/file';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -79,7 +68,7 @@ export default function CsvParsePanel(props) {
     if (!showKeyColumnsOptions) {
       return [];
     }
-    const options = getColumns(result);
+    const options = getFileColumns(result);
 
     if (Array.isArray(keyColumns)) {
       keyColumns.forEach(val => {
