@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
   fbContDrawer: {
     width: '100%',
     overflowX: 'hidden',
-    paddingTop: theme.spacing(2),
   },
   actionButtons: {
     padding: theme.spacing(3, 0),
