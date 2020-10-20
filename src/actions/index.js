@@ -1599,7 +1599,7 @@ const job = {
     action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
   retryInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
-  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
+  retryAllInit: ({ flowIds }) => action(actionTypes.JOB.RETRY_ALL_INIT, { flowIds }),
   retryUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),

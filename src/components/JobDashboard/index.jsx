@@ -43,8 +43,6 @@ export default function JobDashboard({
     selectors.isBulkRetryInProgress(state)
   );
   const filters = useSelector(state => selectors.filter(state, filterKey));
-
-  console.log('filters', filters);
   const jobs = useSelector(state => selectors.flowJobs(state));
   const numJobsWithErrors = jobs ? jobs.filter(j => j.numError > 0).length : 0;
   const numRetriableJobs = jobs ? jobs.filter(j => j.numError > 0 && !j.flowDisabled).length : 0;
@@ -116,8 +114,6 @@ export default function JobDashboard({
   useEffect(() => {
     let jobsSelected = 0;
     let retriableJobsSelected = 0;
-
-    console.log('selectedJobs', selectedJobs);
 
     Object.keys(selectedJobs).forEach(jobId => {
       if (
@@ -328,6 +324,7 @@ export default function JobDashboard({
     dispatch,
     enqueueSnackbar,
     filters.flowId,
+    filters.storeId,
     flowId,
     integrationId,
     jobs,

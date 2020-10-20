@@ -120,7 +120,6 @@ export default function Filters({
     dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
 
-  window.ABCD = [status, dateRange, storeId];
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;

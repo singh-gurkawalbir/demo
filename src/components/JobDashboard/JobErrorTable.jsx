@@ -232,7 +232,7 @@ function JobErrorTable({
         })
       );
       enqueueSnackbar({
-        message: `${
+        message: `${job.numError} ${
           job.numError === '1' ? 'error retried.' : 'errors retried.'
         }`,
         showUndo: true,

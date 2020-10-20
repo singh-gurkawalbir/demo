@@ -515,11 +515,12 @@ export default (state = DEFAULT_STATE, action) => {
     return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RETRY_ALL_INIT) {
     const { bulkRetryJobs } = state;
+    const { flowIds } = action;
 
     return {
       ...state,
       bulkRetryJobs: [
-        { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+        { type: 'bulk_retry', status: JOB_STATUS.QUEUED, _flowIds: flowIds },
         ...bulkRetryJobs,
       ],
     };
