@@ -13,12 +13,11 @@ export function* initSettingsForm({ resourceType, resourceId }) {
   let initScriptId; let
     initFunc;
 
-  if (resource.settingsForm &&
-    resource.settingsForm.init) {
+  if (resource.settingsForm?.init) {
     initScriptId = resource.settingsForm.init._scriptId;
     initFunc = resource.settingsForm.init.function;
   }
-  let metadata = resource.settingsForm && resource.settingsForm.form;
+  let metadata = resource.settingsForm?.form;
 
   if (initFunc) {
     // If so, make an API call to initialize the form,
