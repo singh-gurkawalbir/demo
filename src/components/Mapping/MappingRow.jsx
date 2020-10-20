@@ -10,7 +10,7 @@ import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
 import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
-import LookupIcon from '../icons/LookUpIcon';
+import LookupIcon from '../icons/LookupLetterIcon';
 import MultiFieldIcon from '../icons/MultiFieldIcon';
 import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
