@@ -118,6 +118,7 @@ import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
 import DynaNetSuiteAPIVersion from './DynaNetSuiteAPIVersion';
 import DynaCeligoSwitch from './DynaCeligoSwitch';
 import DynaReplaceConnection from './DynaReplaceConnection';
+import DynaSelectRequestMediaType from './DynaSelectRequestMediaType';
 
 export default {
   suitescriptsettings: DynaRefreshableSettings,
@@ -172,6 +173,7 @@ export default {
   apiidentifier: DynaApiIdentifier,
   labelvalue: DynaLabelValueElement,
   netsuiteuserroles: DynaNetsuiteUserRolesOptions,
+  selectrequestmediatype: DynaSelectRequestMediaType,
   nssavedsearch: DynaNSSavedSearch,
   nswssavedsearch: DynaNSWSSavedSearch,
   webhooksampledata: DynaWebHookSampleData,
