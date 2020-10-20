@@ -5,6 +5,7 @@ import { selectors } from '../../../../reducers';
 import DynaMultiSelect from '../DynaMultiSelect';
 import actions from '../../../../actions';
 import Spinner from '../../../Spinner';
+import { getFileColumns } from '../../../../utils/file';
 
 const useStyles = makeStyles(theme => ({
   keyColumnFormWrapper: {
@@ -18,17 +19,6 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'flex-start',
   },
 }));
-const getColumns = result => {
-  if (!result || !result.data || !result.data.length) {
-    return [];
-  }
-
-  const sampleRecord = Array.isArray(result.data[0])
-    ? result.data[0][0]
-    : result.data[0];
-
-  return Object.keys(sampleRecord).map(name => ({ label: name, value: name }));
-};
 
 export default function DynaFileKeyColumn(props) {
   const {
@@ -63,7 +53,8 @@ export default function DynaFileKeyColumn(props) {
   }));
 
   const multiSelectOptions = useMemo(() => {
-    const options = getColumns(result);
+    const columns = getFileColumns(result);
+    const options = columns.map(name => ({ label: name, value: name }));
 
     if (Array.isArray(value)) {
       value.forEach(val => {
@@ -81,6 +72,7 @@ export default function DynaFileKeyColumn(props) {
       data: csvData,
       rule: options,
       autoEvaluate: true,
+      isSuiteScriptData: true,
     }));
   }, [csvData, dispatch, id, options]);
 
