@@ -167,3 +167,17 @@ export const generateCSVFields = (data, options = {}) => {
 
   return fields;
 };
+
+export const getFileColumns = result => {
+  const columnsData = result?.columnsData || result?.data;
+
+  if (!columnsData?.length) {
+    return [];
+  }
+
+  const sampleRecord = Array.isArray(columnsData[0])
+    ? columnsData[0][0]
+    : columnsData[0];
+
+  return Object.keys(sampleRecord);
+};

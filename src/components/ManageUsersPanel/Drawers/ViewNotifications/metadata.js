@@ -30,9 +30,6 @@ export default function viewNotificationsMetadata(props) {
           selectAllIdentifier: integrationId,
         },
       },
-      layout: {
-        fields: ['flows', 'connections'],
-      },
     }
   );
 }

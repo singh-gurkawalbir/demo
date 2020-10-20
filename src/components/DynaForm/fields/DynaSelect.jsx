@@ -31,14 +31,14 @@ const getLabel = (items, value) => {
 const optionSearch = search => ({label, optionSearch}) => search && (
   (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
  (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
-const useAutoScrollOption = (items, open, listRef, value) => {
+const useAutoScrollOption = (items, open, setOpen, listRef, id, value, onFieldChange) => {
   const label = getLabel(items, value) || '';
   const [search, setSearch] = useState(label);
-  const [scrolIndex, setScrolIndex] = useState(-1);
+  const [scrollIndex, setScrollIndex] = useState(-1);
 
   useEffect(() => {
     setSearch(label);
-    setScrolIndex(-1);
+    setScrollIndex(-1);
   }, [open, label]);
 
   useEffect(() => {
@@ -50,31 +50,41 @@ const useAutoScrollOption = (items, open, listRef, value) => {
     };
   }, [search]);
   const keydownListener = useCallback(e => {
+    if (e.keyCode === 13) {
+      onFieldChange(id, items[scrollIndex].value);
+      setOpen(false);
+
+      return;
+    }
+
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
     }
+
     if (e.keyCode === 38) {
-      if (scrolIndex <= 0) { return; }
-      setScrolIndex(index => index - 1);
+      if (scrollIndex <= 0) { return; }
+      setScrollIndex(index => index - 1);
 
       return;
     }
+
     if (e.keyCode === 40) {
-      if (scrolIndex >= items.length) { return; }
-      setScrolIndex(index => index + 1);
+      if (scrollIndex >= items.length) { return; }
+      setScrollIndex(index => index + 1);
 
       return;
     }
+
     if (e.key) {
       setSearch(str => str + e.key);
     }
-  }, [items.length, scrolIndex]);
+  }, [onFieldChange, id, items, scrollIndex, setOpen]);
 
   useEffect(() => {
     const matchingIndex = items.findIndex(optionSearch(search));
 
     if (matchingIndex > 0) {
-      setScrolIndex(matchingIndex);
+      setScrollIndex(matchingIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
@@ -88,17 +98,17 @@ const useAutoScrollOption = (items, open, listRef, value) => {
   }, [keydownListener, open]);
 
   useEffect(() => {
-    if (scrolIndex > 0) {
-      if (scrolIndex + NO_OF_OPTIONS / 2 < items.length) {
-        listRef?.current?.scrollToItem(scrolIndex + (NO_OF_OPTIONS / 2));
+    if (scrollIndex > 0) {
+      if (scrollIndex + NO_OF_OPTIONS / 2 < items.length) {
+        listRef?.current?.scrollToItem(scrollIndex + (NO_OF_OPTIONS / 2));
       } else {
-        listRef?.current?.scrollToItem(scrolIndex);
+        listRef?.current?.scrollToItem(scrollIndex);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrolIndex]);
+  }, [scrollIndex]);
 
-  return scrolIndex;
+  return scrollIndex;
 };
 
 const useStyles = makeStyles(theme => ({
@@ -138,6 +148,7 @@ const Row = ({ index, style, data }) => {
       })}
       style={style}
       selected={value === finalTextValue}
+
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
@@ -225,7 +236,7 @@ export default function DynaSelect(props) {
     return items;
   }, [options, isSubHeader, skipSort, placeholder, skipDefault]);
 
-  const matchMenuIndex = useAutoScrollOption(items, open, listRef, value);
+  const matchMenuIndex = useAutoScrollOption(items, open, setOpen, listRef, id, value, onFieldChange);
   let finalTextValue;
 
   if (value === undefined || value === null) {

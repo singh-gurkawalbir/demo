@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(3, 3, 1, 3),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   subRecordDynaForm: {
     minHeight: 'calc(100% - 56px)',

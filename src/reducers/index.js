@@ -80,7 +80,7 @@ import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sam
 import { genSelectors } from './util';
 import getFilteredErrors from '../utils/errorManagement';
 import {
-  getFlowResourcesYetToBeCreated,
+  getFlowStepsYetToBeCreated,
   generatePendingFlowSteps,
   getRunConsoleJobSteps,
   getParentJobSteps,
@@ -3377,7 +3377,7 @@ selectors.flowDashboardJobs = createSelector(
       }
       // If the parent job is queued/in progress, show dummy steps of flows as waiting status
       if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
-        const pendingChildren = getFlowResourcesYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildren = getFlowStepsYetToBeCreated(flowObj, parentJob.children);
         const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
         pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
@@ -5347,3 +5347,24 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 };
 
 // #endregion Flow builder selectors
+
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const isAccountOwner = selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const userPermissions = selectors.userPermissions(state);
+  const integrationPermissions = userPermissions.integrations;
+
+  if (!integrationId) {
+    return manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel);
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
+};

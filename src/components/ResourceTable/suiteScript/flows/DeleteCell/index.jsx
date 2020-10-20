@@ -54,7 +54,7 @@ export default function DeleteCell({ssLinkedConnectionId, flow, isFlowBuilderVie
           tooltipProps={{title: 'Delete', placement: 'bottom'}}
           onClick={handleClick}
           disabled={!isManageLevelUser}>
-          <TrashIcon />
+          <TrashIcon color="secondary" />
         </IconButtonWithTooltip>
       </RemoveMargin>
     </>

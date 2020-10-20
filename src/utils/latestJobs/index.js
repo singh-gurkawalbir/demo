@@ -6,7 +6,7 @@ const FLOW_STEP_STATUS = {
   CANCELLING: 'CANCELLING',
 };
 
-export const getFlowResourcesYetToBeCreated = (flow = {}, createdSteps = []) => {
+export const getFlowStepsYetToBeCreated = (flow = {}, createdSteps = []) => {
   const { pageProcessors: pps = []} = flow;
 
   return pps.filter(pp => {

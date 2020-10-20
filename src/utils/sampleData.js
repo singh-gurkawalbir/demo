@@ -513,6 +513,30 @@ export const processOneToManySampleData = (sampleData, resource) => {
   return processedSampleData;
 };
 
+/**
+ * This util adds "page_of_records" on records/rows based on the sampleData structure
+ * Ideally, we should be using a BE API for this structure
+ * For the time being this is used for csv/xml export sample data view
+ * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
+ */
+export const wrapExportFileSampleData = records => {
+  // eslint-disable-next-line camelcase
+  const page_of_records = [];
+
+  if (!records) return { page_of_records };
+
+  if (Array.isArray(records)) {
+    const rows = [];
+
+    records.forEach(record => rows.push(record));
+    page_of_records.push({rows});
+  } else {
+    page_of_records.push({ record: records });
+  }
+
+  return { page_of_records };
+};
+
 // this util method will wrap the sample data with correct context fields
 // according to the 'stage' passed. This will be used for all the editors sample data
 export const wrapSampleDataWithContext = ({
