@@ -110,9 +110,9 @@ function CeligoSelect({ className, children, ...props }) {
     MenuListProps: {
       style: {
         overflowY: 'auto',
-        '& > div:first-child': {
-          overflow: 'hidden !important',
-        },
+        // '& > div:firstChild': {
+        //   overflow: 'hidden !important',
+        // },
       },
     },
   // eslint-disable-next-line react-hooks/exhaustive-deps

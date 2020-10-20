@@ -83,14 +83,14 @@ export function* apiCallWithRetry(args) {
     if (path !== logoutParams.path) {
       ({ apiResp, logout, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(timeout),
       }));
     } else {
       apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: true,
+        dispatchRequestAction: false,
       });
     }
 

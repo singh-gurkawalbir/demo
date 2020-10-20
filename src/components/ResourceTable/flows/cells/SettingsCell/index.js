@@ -25,7 +25,7 @@ export default function SettingsCell({flowId, name}) {
         component={Link}
         data-test={`flowSettings-${name}`}
         to={`${history.location.pathname}/${flowId}/settings`}>
-        <SettingsIcon />
+        <SettingsIcon color="secondary" />
       </IconButtonWithTooltip>
     </RemoveMargin>
   );

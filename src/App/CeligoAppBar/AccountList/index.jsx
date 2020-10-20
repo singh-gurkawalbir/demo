@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(1),
     marginRight: theme.spacing(-1),
     '& svg': {
-      color: theme.palette.secondary.light,
       marginLeft: theme.spacing(0.5),
     },
     '&:hover': {
@@ -197,7 +196,7 @@ export default function AccountList() {
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true">
         {selectedAccount && selectedAccount.company}
-        <ArrowDownIcon />
+        <ArrowDownIcon color="secondary" />
       </IconTextButton>
 
       <ArrowPopper
