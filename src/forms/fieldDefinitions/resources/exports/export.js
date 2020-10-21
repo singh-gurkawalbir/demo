@@ -43,12 +43,10 @@ export default {
     label: 'Description',
   },
   _connectionId: {
-    type: 'dynareplaceconnection',
+    type: 'replaceconnection',
     resourceType: 'connections',
     label: 'Connection',
     appTypeIsStatic: true,
-    allowEdit: true,
-    allowNew: true,
     skipDefault: true,
     connectionId: r => r?._connectionId,
     connectorId: r => r?._connectorId,

@@ -209,7 +209,7 @@ export default {
   useremail: DynaUserEmail,
   userpassword: DynaUserPassword,
   dynaiclient: DynaIclient,
-  dynareplaceconnection: DynaReplaceConnection,
+  replaceconnection: DynaReplaceConnection,
   netsuitequalifier: DynaNetSuiteQualifier,
   query: DynaQuery,
   sqlquery: DynaSqlQuery,
