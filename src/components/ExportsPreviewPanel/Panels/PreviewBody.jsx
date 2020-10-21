@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import PanelLoader from '../../PanelLoader';
 import Templates from '../Templates';
-import { getPreviewBodyTemplateType } from '../../../utils/exportPanel';
+import { getPreviewBodyTemplateType, HTTP_STAGES } from '../../../utils/exportPanel';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
@@ -25,14 +25,17 @@ export default function PreviewBody(props) {
     if (resourceSampleData.status === 'received') {
       handlePanelViewChange(defaultPanel);
     }
-  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange]);
+    if (resourceSampleData.status === 'error' && availablePreviewStages === HTTP_STAGES) {
+      handlePanelViewChange('raw');
+    }
+  }, [resourceSampleData.status, defaultPanel, handlePanelViewChange, availablePreviewStages]);
 
   return (
     <div>
       {resourceSampleData.status === 'requested' && (
         <PanelLoader />
       )}
-      {resourceSampleData.status === 'received' && (
+      {['received', 'error'].includes(resourceSampleData.status) && (
         <>
           <Templates.RequestUrlPanel
             previewStageDataList={previewStageDataList}
@@ -45,10 +48,11 @@ export default function PreviewBody(props) {
             panelType={panelType}
           />
           {previewBodyTemplate === 'default' && (
-            <Templates.DefaultPanel
-              previewStageDataList={previewStageDataList}
-              panelType={panelType}
-            />
+            <>
+                { resourceSampleData.status === 'error'
+                  ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />
+                  : <Templates.DefaultPanel previewStageDataList={previewStageDataList} panelType={panelType} />}
+            </>
           )}
           {previewBodyTemplate === 'tab' && (
             <Templates.TabbedPanel
@@ -58,9 +62,6 @@ export default function PreviewBody(props) {
             />
           )}
         </>
-      )}
-      {resourceSampleData.status === 'error' && (
-        <Templates.ErrorPanel resourceSampleData={resourceSampleData} />
       )}
     </div>
   );

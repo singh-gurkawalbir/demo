@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import RefreshIcon from '../../../../components/icons/RefreshIcon';
+import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   status: {
@@ -12,9 +12,8 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(0.5),
     color: theme.palette.secondary.main,
   },
-  icon: {
-    height: theme.spacing(3),
-    width: theme.spacing(2),
+  spinnerWrapper: {
+    margin: theme.spacing(0.5, 0, 0, 1),
   },
   divider: {
     width: 1,
@@ -53,7 +52,7 @@ export default function ErrorDrawerTitle({ flowId }) {
           <>
             <div className={classes.divider} />
             <div className={classes.flexContainer}>
-              <RefreshIcon className={classes.icon} />
+              <Spinner size={16} className={classes.spinnerWrapper} />
               <Typography variant="body2" component="div" className={classes.status}>  Retrying errors...</Typography>
             </div>
           </>

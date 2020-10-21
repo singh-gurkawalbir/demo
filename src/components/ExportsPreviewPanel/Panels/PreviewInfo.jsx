@@ -78,7 +78,7 @@ export default function PreviewInfo(props) {
     if (status === 'received') return <Typography variant="body2"> Success! </Typography>;
 
     if (status === 'error') {
-      const errorCount = error?.errors?.length || 0;
+      const errorCount = error?.length || 0;
 
       return (
         <ErroredMessageComponent

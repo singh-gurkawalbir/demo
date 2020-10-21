@@ -43,6 +43,8 @@ export function getFlowJobIdsThatArePartOfABulkRetryJob(
 
     if (bulkRetryJob._flowId) {
       flowIdMatch = job._flowId === bulkRetryJob._flowId;
+    } else if (bulkRetryJob._flowIds) {
+      flowIdMatch = bulkRetryJob._flowIds.includes(job._flowId);
     }
 
     if (flowIdMatch) {
