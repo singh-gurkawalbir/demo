@@ -178,18 +178,20 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
 
   if (adaptorType) {
     switch (adaptorType) {
+      case 'NetSuiteImport':
       case 'NetSuiteDistributedImport': {
         // eslint-disable-next-line camelcase
-        const { _connectionId: connectionId, netsuite_da = {} } = resource;
-        const { recordType } = options;
+        const { _connectionId: connectionId } = resource;
         let commMetaPath;
+        // eslint-disable-next-line camelcase
+        const importRecordType = resource?.netsuite_da?.recordType || resource?.netsuite?.recordType;
 
-        if (recordType) {
+        if (options.recordType) {
           /** special case of netsuite/metadata/suitescript/connections/5c88a4bb26a9676c5d706324/recordTypes/inventorydetail?parentRecordType=salesorder
            * in case of subrecord */
-          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}?parentRecordType=${netsuite_da.recordType}`;
+          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${options.recordType}?parentRecordType=${importRecordType}`;
         } else {
-          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${netsuite_da.recordType}`;
+          commMetaPath = `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${importRecordType}`;
         }
 
         yield call(getNetsuiteOrSalesforceMeta, {connectionId, commMetaPath, addInfo: { refreshCache }});
