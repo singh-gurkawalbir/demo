@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { some, map, isEmpty } from 'lodash';
+import { map, isEmpty } from 'lodash';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -63,7 +63,7 @@ import {
   adaptorTypeMap,
   isQueryBuilderSupported,
 } from '../utils/resource';
-import { processSampleData } from '../utils/sampleData';
+import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
   getAvailablePreviewStages,
   isPreviewPanelAvailable,
@@ -78,10 +78,13 @@ import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { getFormattedGenerateData } from '../utils/suiteScript/mapping';
 import {getSuiteScriptNetsuiteRealTimeSampleData} from '../utils/suiteScript/sampleData';
 import { genSelectors } from './util';
-import getJSONPaths from '../utils/jsonPaths';
-import sqlUtil from '../utils/sql';
-import { getJobDuration } from './data/jobs/util';
 import getFilteredErrors from '../utils/errorManagement';
+import {
+  getFlowStepsYetToBeCreated,
+  generatePendingFlowSteps,
+  getRunConsoleJobSteps,
+  getParentJobSteps,
+} from '../utils/latestJobs';
 
 const emptySet = [];
 const emptyObject = {};
@@ -920,7 +923,7 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
           return (
             this.type === 'netsuite' &&
             !this._connectorId &&
-            (this.netsuite.account && this.netsuite.environment) &&
+            (this.netsuite.account) &&
             (!environment || !!this.sandbox === (environment === 'sandbox')) &&
             (accessLevel === 'owner' || accessLevel === 'manage')
           );
@@ -1592,6 +1595,12 @@ selectors.makeIntegrationSectionFlows = () => createSelector(
   }
 );
 
+selectors.integrationEnabledFlowIds = createSelector(
+  state => state?.data?.resources?.flows,
+  (state, integrationId) => integrationId,
+  (flows = [], integrationId) => flows.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id)
+);
+
 selectors.mkIntegrationAppFlowSections = () => {
   const integrationSettingsSelector = selectors.mkIntegrationAppSettings();
 
@@ -1711,91 +1720,65 @@ selectors.mkIntegrationAppSectionMetadata = () => {
   );
 };
 
-selectors.integrationAppFlowSettings = (state, id, section, storeId, options = {}) => {
-  if (!state) return emptyObject;
-  const integrationResource =
-    selectors.integrationAppSettings(state, id) || emptyObject;
-  const {
-    supportsMultiStore,
-    supportsMatchRuleEngine: showMatchRuleEngine,
-    sections = [],
-  } = integrationResource.settings || {};
-  let requiredFlows = [];
-  let hasNSInternalIdLookup = false;
-  let showFlowSettings = false;
-  let hasDescription = false;
-  let sectionFlows;
-  let allSections = sections;
+selectors.makeIntegrationAppSectionFlows = () =>
+  createSelector(
+    selectors.integrationAppSettings,
+    state => state?.data?.resources?.flows,
+    (_, integrationId) => integrationId,
+    (_1, _2, section) => section,
+    (_1, _2, _3, childId) => childId,
+    (_1, _2, _3, _4, options) => options,
+    (integration, flows = [], integrationId, section, childId, options = {}) => {
+      if (!integration) {
+        return emptySet;
+      }
+      const {
+        supportsMultiStore,
+        sections = [],
+      } = integration.settings || {};
+      let requiredFlows = [];
+      let sectionFlows;
+      let allSections = sections;
 
-  if (supportsMultiStore) {
-    if (storeId) {
-      // If storeId passed, return sections from that store
-      const store = sections.find(s => s.id === storeId) || {};
+      if (supportsMultiStore) {
+        if (childId) {
+          // If storeId passed, return sections from that store
+          const store = sections.find(s => s.id === childId) || {};
 
-      allSections = store.sections || [];
-    } else {
-      // If no storeId is passed, return all sections from all stores
-      allSections = [];
-      sections.forEach(sec => {
-        allSections.push(...sec.sections);
-      });
+          allSections = store.sections || [];
+        } else {
+          // If no storeId is passed, return all sections from all stores
+          allSections = [];
+          sections.forEach(sec => {
+            allSections.push(...sec.sections);
+          });
+        }
+      }
+
+      const selectedSection =
+        allSections.find(
+          sec =>
+            getTitleIdFromSection(sec) === section
+        ) || {};
+
+      if (!section) {
+        allSections.forEach(sec => {
+          sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
+          requiredFlows.push(...map(sectionFlows, '_id'));
+        });
+      } else {
+        sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
+        requiredFlows = map(sectionFlows, '_id');
+      }
+
+      return flows
+        .filter(f => f._integrationId === integrationId && requiredFlows.includes(f._id))
+        .sort(
+          (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
+        );
     }
-  }
-
-  const selectedSection =
-    allSections.find(
-      sec =>
-        getTitleIdFromSection(sec) === section
-    ) || {};
-
-  if (!section) {
-    allSections.forEach(sec => {
-      sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
-      requiredFlows.push(...map(sectionFlows, '_id'));
-    });
-  } else {
-    sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
-    requiredFlows = map(sectionFlows, '_id');
-  }
-  hasNSInternalIdLookup = some(
-    selectedSection.flows,
-    f => f.showNSInternalIdLookup
   );
-  hasDescription = some(selectedSection.flows, f => {
-    const flow = selectors.resource(state, 'flows', f._id) || {};
-
-    return !!flow.description;
-  });
-  showFlowSettings = some(
-    selectedSection.flows,
-    f =>
-      !!((f.settings && f.settings.length) || (f.sections && f.sections.length))
-  );
-  const { fields, sections: subSections } = selectedSection;
-  let flows = selectors.flowListWithMetadata(state, {
-    type: 'flows',
-    filter: {
-      _integrationId: id,
-    },
-  }).resources;
-
-  flows = flows
-    .filter(f => requiredFlows.includes(f._id))
-    .sort(
-      (a, b) => requiredFlows.indexOf(a._id) - requiredFlows.indexOf(b._id)
-    );
-
-  return {
-    flows,
-    fields,
-    flowSettings: selectedSection.flows,
-    sections: subSections,
-    hasNSInternalIdLookup,
-    hasDescription,
-    showFlowSettings,
-    showMatchRuleEngine,
-  };
-};
+selectors.integrationAppSectionFlows = selectors.makeIntegrationAppSectionFlows();
 
 // This selector is used in dashboard, it shows all the flows including the flows not in sections.
 // Integration App settings page should not use this selector.
@@ -1809,7 +1792,7 @@ selectors.integrationAppFlowIds = (state, integrationId, storeId) => {
 
   if (integration && integration.stores && storeId) {
     const store = integration.stores.find(store => store.value === storeId);
-    const { flows } = selectors.integrationAppFlowSettings(
+    const flows = selectors.integrationAppSectionFlows(
       state,
       integrationId,
       null,
@@ -2989,7 +2972,14 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -3012,6 +3002,12 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType) => {
     'AS2Export',
     'S3Import',
     'S3Export',
+    'RDBMSImport',
+    'RDBMSExport',
+    'MongodbImport',
+    'MongodbExport',
+    'DynamodbImport',
+    'DynamodbExport',
   ].includes(resource.adaptorType);
 };
 
@@ -3032,59 +3028,95 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
   return field;
 };
 
-selectors.notificationResources = (state, _integrationId, storeId) => {
-  const diyFlows = selectors.resourceList(state, {
-    type: 'flows',
+/** Notification related selectors */
+selectors.subscribedNotifications = (state, userEmail) => {
+  const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
+  const notifications = selectors.resourceList(state, {
+    type: 'notifications',
     filter: {
-      $where() {
-        if (!_integrationId || ['none'].includes(_integrationId)) {
-          return !this._integrationId;
-        }
-
-        return this._integrationId === _integrationId;
-      },
+      subscribedByUser: subscribedByUser => subscribedByUser.email === emailIdToFilter,
     },
-  }).resources;
-  const { _registeredConnectionIds = [], _connectorId } =
+  }).resources || [];
+
+  return notifications;
+};
+
+selectors.diyFlows = (state, _integrationId) => selectors.resourceList(state, {
+  type: 'flows',
+  filter: {
+    $where() {
+      if (!_integrationId || _integrationId === 'none') {
+        return !this._integrationId;
+      }
+
+      return this._integrationId === _integrationId;
+    },
+  },
+}).resources;
+
+selectors.diyConnections = (state, _integrationId) => {
+  const { _registeredConnectionIds = [] } =
     selectors.resource(state, 'integrations', _integrationId) || {};
-  const diyConnections = selectors.resourceList(state, {
+
+  return selectors.resourceList(state, {
     type: 'connections',
     filter: {
       _id: id =>
         _registeredConnectionIds.includes(id) ||
-        ['none'].includes(_integrationId),
+          _integrationId === 'none',
     },
   }).resources;
-  const notifications = selectors.resourceList(state, { type: 'notifications' })
-    .resources;
-  const connections = _connectorId
-    ? selectors.integrationAppConnectionList(state, _integrationId, storeId)
-    : diyConnections;
-  const flows = _connectorId
-    ? selectors.integrationAppResourceList(state, _integrationId, storeId).flows
-    : diyFlows;
-  const connectionValues = connections
-    .filter(c => !!notifications.find(n => n._connectionId === c._id))
-    .map(c => c._id);
-  let flowValues = flows
-    .filter(f => !!notifications.find(n => n._flowId === f._id))
-    .map(f => f._id);
-  const allFlowsSelected = !!notifications.find(
-    n => n._integrationId === _integrationId
-  );
-
-  if (_integrationId && !['none'].includes(_integrationId) && allFlowsSelected) {
-    flowValues = [_integrationId, ...flows];
-  }
-
-  return {
-    connections,
-    flows,
-    connectionValues,
-    flowValues,
-  };
 };
 
+selectors.mkIntegrationNotificationResources = () => createSelector(
+  (_1, _integrationId) => _integrationId,
+  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
+  selectors.diyFlows,
+  selectors.diyConnections,
+  (state, _integrationId, options) =>
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+  (state, _integrationId, options) =>
+  selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
+  (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
+  (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
+    const connections = _connectorId ? integrationAppConnections : diyConnections;
+    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const connectionValues = connections
+      .filter(c => !!notifications.find(n => n._connectionId === c._id))
+      .map(c => c._id);
+    let flowValues = flows
+      .filter(f => !!notifications.find(n => n._flowId === f._id))
+      .map(f => f._id);
+    const allFlowsSelected = !!notifications.find(
+      n => n._integrationId === _integrationId
+    );
+
+    if (_integrationId && _integrationId !== 'none') {
+      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
+
+      if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+    }
+
+    return {
+      connections,
+      flows,
+      connectionValues,
+      flowValues,
+    };
+  }
+
+);
+
+selectors.integrationNotificationResources = selectors.mkIntegrationNotificationResources();
+
+selectors.isFlowSubscribedForNotification = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+  const integrationId = flow._integrationId || 'none';
+  const subscribedFlows = selectors.integrationNotificationResources(state, integrationId).flowValues;
+
+  return subscribedFlows.includes(integrationId) || subscribedFlows.includes(flowId);
+};
+/** End of Notification selectors */
 selectors.auditLogs = (
   state,
   resourceType,
@@ -3295,6 +3327,7 @@ selectors.flowJobs = (state, options = {}) => {
           name: cJob._exportId
             ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
             : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId].disabled,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3306,6 +3339,7 @@ selectors.flowJobs = (state, options = {}) => {
         resourceMap.flows &&
         resourceMap.flows[job._flowId] &&
         resourceMap.flows[job._flowId].name,
+      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId].disabled,
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {
@@ -3324,70 +3358,31 @@ selectors.flowJobs = (state, options = {}) => {
     return { ...job, ...additionalProps };
   });
 };
+
 selectors.flowDashboardJobs = createSelector(
   (state, flowId) => selectors.latestFlowJobsList(state, flowId),
   state => fromData.resourceDetailsMap(state?.data),
-  (latestFlowJobs, resourceMap) => {
+  (state, flowId) => selectors.resourceData(state, 'flows', flowId).merged,
+  (latestFlowJobs, resourceMap, flowObj) => {
     const dashboardSteps = [];
 
     latestFlowJobs?.data?.forEach(parentJob => {
-      // when the job is queued
-      if (parentJob.status === JOB_STATUS.QUEUED) {
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      if (parentJob.status === JOB_STATUS.CANCELED && parentJob?.children?.length === 0) {
-        // In cases when job is cancelled while it is in queue, children are not yet created
-        // So show this job as the export step cancelled
-        return dashboardSteps.push({...parentJob, uiStatus: parentJob.status});
-      }
-      const additionalProps = {
-        doneExporting: !!parentJob.doneExporting,
-        numPagesProcessed: 0,
-      };
+      // parent job steps are special cases like waiting / cancelled jobs to show a dashboard step
+      const parentJobSteps = getParentJobSteps(parentJob);
 
-      if (!additionalProps.doneExporting) {
-        if (
-          [
-            JOB_STATUS.COMPLETED,
-            JOB_STATUS.CANCELED,
-            JOB_STATUS.FAILED,
-          ].includes(parentJob.status)
-        ) {
-          additionalProps.doneExporting = true;
-        }
-      }
+      parentJobSteps.forEach(step => dashboardSteps.push(step));
+      // Show flow steps if the parent job has children
       if (parentJob.children?.length) {
-        parentJob.children.forEach(cJob => {
-          const additionalChildProps = {
-            uiStatus: cJob.status,
-            duration: getJobDuration(cJob),
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          };
+        const dashboardJobSteps = getRunConsoleJobSteps(parentJob, parentJob.children, resourceMap);
 
-          // If parent job is cancelled, show child in progress jobs as cancelling
-          if (parentJob.status === JOB_STATUS.CANCELED && cJob.status === JOB_STATUS.RUNNING) {
-            additionalChildProps.uiStatus = JOB_STATUS.CANCELLING;
-          }
+        dashboardJobSteps.forEach(step => dashboardSteps.push(step));
+      }
+      // If the parent job is queued/in progress, show dummy steps of flows as waiting status
+      if ([JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(parentJob.status)) {
+        const pendingChildren = getFlowStepsYetToBeCreated(flowObj, parentJob.children);
+        const pendingChildrenSteps = generatePendingFlowSteps(pendingChildren, resourceMap);
 
-          if (cJob.type === 'import') {
-            if (additionalProps.doneExporting && parentJob.numPagesGenerated > 0) {
-              additionalChildProps.percentComplete = Math.floor(
-                (cJob.numPagesProcessed * 100) / parentJob.numPagesGenerated
-              );
-            } else {
-              additionalChildProps.percentComplete = 0;
-            }
-
-            additionalProps.numPagesProcessed += parseInt(
-              cJob.numPagesProcessed,
-              10
-            );
-          }
-
-          dashboardSteps.push({ ...cJob, ...additionalChildProps });
-        });
+        pendingChildrenSteps.forEach(pendingChildStep => dashboardSteps.push(pendingChildStep));
       }
     });
 
@@ -3395,8 +3390,7 @@ selectors.flowDashboardJobs = createSelector(
       status: latestFlowJobs?.status,
       data: dashboardSteps,
     };
-  }
-);
+  });
 
 selectors.flowJob = (state, ops = {}) => {
   const jobList = selectors.flowJobs(state, ops);
@@ -3417,6 +3411,8 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
     name: resourceMap.flows[j._flowId] && resourceMap.flows[j._flowId].name,
   };
 };
+
+selectors.allJobs = (state, { type }) => fromData.allJobs(state.data, { type });
 
 selectors.flowJobConnections = () => createSelector(
   state => state?.data?.resources?.connections,
@@ -3534,7 +3530,7 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   if (sampleData) {
     // Formats sample data into readable form
     return {
-      data: processSampleData(sampleData, resource),
+      data: convertFileDataToJSON(sampleData, resource),
       status: 'received',
     };
   }
@@ -3902,24 +3898,20 @@ selectors.isPreviewPanelAvailableForResource = (
   return isPreviewPanelAvailable(resourceObj, resourceType, connectionObj);
 };
 
-// TODO @Raghu:  Revisit this selector once stabilized as it can be simplified
-selectors.getSampleDataWrapper = createSelector(
+// This selector will pre-process the raw sample data to the proper stage for each AFE
+selectors.sampleDataWrapper = createSelector(
   [
     // eslint-disable-next-line no-use-before-define
-    (state, params) => selectors.getSampleDataContext(state, params),
+    (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
         return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
       }
-
-      return undefined;
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
         return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
       }
-
-      return undefined;
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
     (state, { flowId }) => {
@@ -3936,7 +3928,8 @@ selectors.getSampleDataWrapper = createSelector(
 
       return selectors.resource(state, 'connections', res._connectionId) || emptyObject;
     },
-    (state, { stage }) => stage,
+    (_, { stage }) => stage,
+    (_, { fieldType }) => fieldType,
   ],
   (
     sampleData,
@@ -3946,166 +3939,17 @@ selectors.getSampleDataWrapper = createSelector(
     integration,
     resource,
     connection,
-    stage
-  ) => {
-    const { status, data } = sampleData || {};
-    let resourceType = 'export';
-
-    if (
-      resource &&
-      resource.adaptorType &&
-      resource.adaptorType.includes('Import')
-    ) {
-      resourceType = 'import';
-    }
-
-    if (!status) {
-      return { status };
-    }
-
-    const contextFields = {};
-
-    if (['outputFilter', 'preSavePage'].includes(stage)) {
-      contextFields.pageIndex = 0;
-
-      if (resource?.type === 'delta') {
-        contextFields.lastExportDateTime = moment()
-          .startOf('day')
-          .add(-7, 'd')
-          .toISOString();
-        contextFields.currentExportDateTime = moment()
-          .startOf('day')
-          .add(-24, 'h')
-          .toISOString();
-      }
-    }
-
-    const resourceIds = {};
-
-    if (
-      [
-        'preSavePage',
-        'preMap',
-        'postMap',
-        'postSubmit',
-        'postAggregate',
-      ].includes(stage)
-    ) {
-      resourceIds[resourceType === 'import' ? '_importId' : '_exportId'] =
-        resource._id;
-      resourceIds._connectionId = connection._id;
-      resourceIds._flowId = flow._id;
-      resourceIds._integrationId = integration._id;
-    }
-
-    const settings = {
-      integration: integration.settings || {},
-      flow: flow.settings || {},
-      [resourceType]: resource.settings || {},
-      connection: connection.settings || {},
-    };
-
-    if (
-      ['sampleResponse', 'transform', 'outputFilter', 'inputFilter'].includes(
-        stage
-      )
-    ) {
-      return {
-        status,
-        data: {
-          record: data || {},
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preSavePage'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          errors: [],
-          ...resourceIds,
-          ...contextFields,
-          settings,
-        },
-      };
-    }
-
-    if (['preMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          data: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postMap'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: data ? [data] : [],
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (['postSubmit'].includes(stage)) {
-      return {
-        status,
-        data: {
-          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
-          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
-          responseData: [data].map(() => ({
-            statusCode: 200,
-            errors: [{ code: '', message: '', source: '' }],
-            ignored: false,
-            id: '',
-            _json: data || {},
-            dataURI: '',
-          })),
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postAggregate') {
-      return {
-        status: 'received',
-        data: {
-          postAggregateData: {
-            success: true,
-            _json: {},
-            code: '',
-            message: '',
-            source: '',
-          },
-          ...resourceIds,
-          settings,
-        },
-      };
-    }
-
-    if (stage === 'postResponseMapHook') {
-      return {
-        status,
-        data: {
-          postResponseMapData: data || [],
-        },
-      };
-    }
-
-    // For all other stages, return basic sampleData
-    return { status, data };
-  }
+    stage,
+    fieldType,
+  ) => wrapSampleDataWithContext({sampleData,
+    preMapSampleData,
+    postMapSampleData,
+    flow,
+    integration,
+    resource,
+    connection,
+    stage,
+    fieldType})
 );
 
 /*
@@ -5247,76 +5091,77 @@ selectors.firstFlowPageGenerator = (state, flowId) => {
   return emptyObject;
 };
 
-selectors.sampleRuleForSQLQueryBuilder = createSelector([
-  (state, { importId}) => {
-    const {merged: importResource = {}} = selectors.resourceData(
-      'imports',
-      importId
-    );
+// DO NOT DELETE, might be needed later
+// selectors.sampleRuleForSQLQueryBuilder = createSelector([
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} = selectors.resourceData(
+//       'imports',
+//       importId
+//     );
 
-    return importResource.adaptorType;
-  },
-  (state, { importId}) => {
-    const {merged: importResource = {}} =
-      selectors.resourceData(
-        'imports',
-        importId
-      );
-    const {_connectionId} = importResource;
+//     return importResource.adaptorType;
+//   },
+//   (state, { importId}) => {
+//     const {merged: importResource = {}} =
+//       selectors.resourceData(
+//         'imports',
+//         importId
+//       );
+//     const {_connectionId} = importResource;
 
-    return selectors.resource(state, 'connections', _connectionId);
-  },
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'flowInput',
-  }).data,
-  (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId: importId,
-    resourceType: 'imports',
-    stage: 'importMappingExtract',
-  }).data,
-  (state, {method}) => method,
-  (state, {queryType}) => queryType,
-], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
-  if (sampleData && extractFields) {
-    const extractPaths = getJSONPaths(extractFields, null, {
-      wrapSpecialChars: true,
-    });
+//     return selectors.resource(state, 'connections', _connectionId);
+//   },
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'flowInput',
+//   }).data,
+//   (state, {importId, flowId}) => selectors.getSampleDataContext(state, {
+//     flowId,
+//     resourceId: importId,
+//     resourceType: 'imports',
+//     stage: 'importMappingExtract',
+//   }).data,
+//   (state, {method}) => method,
+//   (state, {queryType}) => queryType,
+// ], (adaptorType, connection, sampleData, extractFields, method, queryType) => {
+//   if (sampleData && extractFields) {
+//     const extractPaths = getJSONPaths(extractFields, null, {
+//       wrapSpecialChars: true,
+//     });
 
-    if (adaptorType === 'MongodbImport') {
-      return sqlUtil.getSampleMongoDbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'insertMany'
-      );
-    } if (
-      adaptorType === 'DynamodbImport'
-    ) {
-      return sqlUtil.getSampleDynamodbTemplate(
-        sampleData,
-        extractPaths,
-        method === 'putItem'
-      );
-    } if (
-      adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
-    ) {
-      return sqlUtil.getSampleSnowflakeTemplate(
-        sampleData,
-        extractPaths,
-        queryType === 'INSERT'
-      );
-    }
+//     if (adaptorType === 'MongodbImport') {
+//       return sqlUtil.getSampleMongoDbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'insertMany'
+//       );
+//     } if (
+//       adaptorType === 'DynamodbImport'
+//     ) {
+//       return sqlUtil.getSampleDynamodbTemplate(
+//         sampleData,
+//         extractPaths,
+//         method === 'putItem'
+//       );
+//     } if (
+//       adaptorType === 'RDBMSImport' && connection?.rdbms?.type === 'snowflake'
+//     ) {
+//       return sqlUtil.getSampleSnowflakeTemplate(
+//         sampleData,
+//         extractPaths,
+//         queryType === 'INSERT'
+//       );
+//     }
 
-    return sqlUtil.getSampleSQLTemplate(
-      sampleData,
-      extractPaths,
-      queryType === 'INSERT'
-    );
-  }
-});
+//     return sqlUtil.getSampleSQLTemplate(
+//       sampleData,
+//       extractPaths,
+//       queryType === 'INSERT'
+//     );
+//   }
+// });
 
 selectors.errorDetails = (state, params) => {
   const { flowId, resourceId, options = {} } = params;
@@ -5338,6 +5183,37 @@ selectors.makeResourceErrorsSelector = () => createSelector(
 );
 
 selectors.resourceErrors = selectors.makeResourceErrorsSelector();
+
+selectors.availableUsersList = (state, integrationId) => {
+  const permissions = selectors.userPermissions(state);
+  let _users = [];
+
+  if (permissions.accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
+    if (integrationId) {
+      _users = selectors.integrationUsersForOwner(state, integrationId);
+    } else {
+      _users = selectors.usersList(state);
+    }
+  } else if (integrationId) {
+    _users = selectors.integrationUsers(state, integrationId);
+  }
+
+  if (integrationId && _users && _users.length > 0) {
+    const accountOwner = selectors.accountOwner(state);
+
+    _users = [
+      {
+        _id: ACCOUNT_IDS.OWN,
+        accepted: true,
+        accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
+        sharedWithUser: accountOwner,
+      },
+      ..._users,
+    ];
+  }
+
+  return _users;
+};
 
 /**
  * Returns error count per category in a store for IA 1.0
@@ -5424,6 +5300,15 @@ selectors.isIAType = (state, flowId) => {
   return isIAType;
 };
 
+selectors.isIntegrationApp = (state, integrationId) => {
+  const integration = selectors.resourceData(state,
+    'integrations',
+    integrationId
+  ).merged;
+
+  return !!(integration && integration._connectorId);
+};
+
 selectors.isFlowViewMode = (state, integrationId, flowId) => {
   const isIAType = selectors.isIAType(state, flowId);
 
@@ -5466,3 +5351,32 @@ selectors.shouldShowAddPageProcessor = (state, flowId) => {
 };
 
 // #endregion Flow builder selectors
+
+selectors.hasManageIntegrationAccess = (state, integrationId) => {
+  const isAccountOwner = selectors.userPermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
+
+  if (isAccountOwner) {
+    return true;
+  }
+  const manageIntegrationAccessLevels = [
+    INTEGRATION_ACCESS_LEVELS.OWNER,
+    INTEGRATION_ACCESS_LEVELS.MANAGE,
+  ];
+
+  const userPermissions = selectors.userPermissions(state);
+  const integrationPermissions = userPermissions.integrations;
+
+  if (!integrationId) {
+    return manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel);
+  }
+
+  return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
+};
+
+selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
+  const integrations = selectors.resourceList(state, {
+    type: 'integrations',
+  }).resources;
+
+  return !integrations.some(integration => !!integration._connectorId);
+};

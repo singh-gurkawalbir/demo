@@ -189,12 +189,16 @@ export default function QueuedJobsDrawer() {
     }
   }, [connectionId, connections]);
   const handleClose = useCallback(() => {
-    history.push(match.url);
-  }, [history, match.url]);
+    history.goBack();
+  }, [history]);
 
+  const rightActionsQueuedJobs = {
+    display: 'flex',
+    alignSelf: 'flex-end',
+  };
   const action = useMemo(
     () => (
-      <>
+      <div style={rightActionsQueuedJobs}>
         <DynaSelect
           id="queuedJobs_connection"
           value={connectionId}
@@ -204,7 +208,7 @@ export default function QueuedJobsDrawer() {
             { items: connections.map(c => ({ label: c.name, value: c.id })) },
           ]}
         />
-      </>
+      </div>
     ),
     [connectionId, connections, handleConnectionChange]
   );

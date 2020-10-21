@@ -40,13 +40,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled }) => {
-  if (!retryId || recordMode === 'view' || isFlowDisabled) {
+const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled, isResolved }) => {
+  if (!retryId || recordMode === 'view' || isFlowDisabled || isResolved) {
     return (
       <ViewErrorDetails
         errorId={errorId}
         flowId={flowId}
         resourceId={resourceId}
+        isResolved={isResolved}
       />
     );
   }
@@ -62,7 +63,7 @@ const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange
   );
 };
 
-export default function ErrorDetails({ flowId, resourceId, onClose }) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const { mode, errorId } = match.params;
@@ -90,7 +91,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
   return (
     <div className={classes.root}>
       <div className={classes.detailsContainer}>
-        {(retryId && !isFlowDisabled) ? (
+        {(retryId && !isFlowDisabled && !isResolved) ? (
           <Tabs
             className={classes.tabHeader}
             value={recordMode}
@@ -120,6 +121,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
             onChange={onRetryDataChange}
             recordMode={recordMode}
             isFlowDisabled={isFlowDisabled}
+            isResolved={isResolved}
           />
         </div>
       </div>
@@ -131,6 +133,7 @@ export default function ErrorDetails({ flowId, resourceId, onClose }) {
           errorId={errorId}
           onClose={onClose}
           mode={recordMode}
+          isResolved={isResolved}
         />
       </div>
     </div>

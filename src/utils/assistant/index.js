@@ -121,8 +121,20 @@ export function routeToRegExp(route) {
   return new RegExp(`^${updatedRoute}(?:\\?([\\s\\S]*))?$`);
 }
 
-export function extractParameters(route, fragment) {
-  const params = route.exec(fragment).slice(1);
+export function extractParameters(routeRegex, fragment, route) {
+  const params = routeRegex.exec(fragment).slice(1);
+
+  if (route && route.indexOf('?') > -1) {
+    const qsPart = route.substr(route.indexOf('?') + 1);
+    const qsParamsWithPlaceHolders = (qsPart.match(new RegExp(':_', 'g')) || []).length;
+
+    if (qsParamsWithPlaceHolders > 0 && params[params.length - 2]) {
+      const queryParams = params[params.length - 2].split(/[?&]/);
+
+      params[params.length - 2] = queryParams.shift();
+      params[params.length - 1] = undefined;
+    }
+  }
 
   return params.map((param, i) => {
     // Don't decode the search params.
@@ -143,7 +155,7 @@ export function getMatchingRoute(routes, url) {
     regexpRoute = routeToRegExp(routes[i]);
 
     if (regexpRoute.test(url)) {
-      urlParts = extractParameters(regexpRoute, url);
+      urlParts = extractParameters(regexpRoute, url, routes[i]);
       toReturn = {
         urlMatch: routes[i],
         urlParts,

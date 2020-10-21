@@ -1,6 +1,8 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../reducers';
+import commKeyGen from '../utils/commKeyGenerator';
+import actions from '../actions';
 
 export default function useSaveStatusIndicator(props) {
   const {
@@ -9,7 +11,10 @@ export default function useSaveStatusIndicator(props) {
     onSave,
     disabled = false,
     onClose,
+    onSuccess,
+    onFailure,
   } = props;
+  const dispatch = useDispatch();
   // Local states
   const [disableSave, setDisableSave] = useState(disabled);
   const [saveInProgress, setSaveInProgress] = useState(false);
@@ -41,11 +46,24 @@ export default function useSaveStatusIndicator(props) {
     [handleSave, handleSaveClose],
   );
 
+  const clearCommState = useCallback(() => {
+    const key = commKeyGen(path, method);
+
+    dispatch(actions.clearCommByKey(key));
+  }, [dispatch, method, path]);
+
   useEffect(() => {
     // watches for commStatus and updates states
     if (['success', 'error'].includes(commStatus)) {
       setSaveInProgress(false);
       setDisableSave(false);
+      clearCommState(); // Once API call is done (success/error), clears the comm state
+    }
+    if (commStatus === 'success' && onSuccess) {
+      onSuccess();
+    }
+    if (commStatus === 'error' && onFailure) {
+      onFailure();
     }
     if (commStatus === 'success' && closeOnSuccess && onClose) {
       onClose();

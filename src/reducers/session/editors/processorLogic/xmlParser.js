@@ -1,3 +1,5 @@
+import { wrapExportFileSampleData } from '../../../../utils/sampleData';
+
 const parseNodes = nodesAsText => nodesAsText?.split('\n');
 
 const requestBody = editor => {
@@ -46,7 +48,17 @@ const validate = editor => ({
     (!editor.data || !editor.data.length) && 'Must provide some sample data.',
 });
 
+const processResult = ({ isSuiteScriptData }, result) => {
+  if (isSuiteScriptData) return result;
+
+  // xml parse output is expected to be wrapped inside data[0]
+  const formattedData = wrapExportFileSampleData(result?.data?.[0]);
+
+  return {...result, data: [formattedData]};
+};
+
 export default {
   validate,
   requestBody,
+  processResult,
 };

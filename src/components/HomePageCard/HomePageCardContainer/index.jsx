@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles, fade } from '@material-ui/core/styles';
@@ -38,22 +38,47 @@ const useStyles = makeStyles(theme => ({
   },
   gripper: {
     color: theme.palette.primary.main,
+    position: 'absolute',
+    cursor: 'grab',
+    left: '8px',
+    top: '8px',
+  },
+  tileGripperWrapper: {
+    display: 'flex',
+  },
+  testWrapper: {
+    display: 'flex',
   },
 }));
 
-export default function HomePageCardContainer({ children, onClick, isCardSelected = false }) {
+export default function HomePageCardContainer({ children, onClick, drag, isCardSelected = false }) {
   const classes = useStyles();
+  const [showGripper, setShowGripper] = useState(false);
 
   return (
     <>
       {!isCardSelected
         ? (
-          <Paper
-            className={classes.wrapper}
-            elevation={0}
-            onClick={onClick}>
-            <div>{children}</div>
-          </Paper>
+          <>
+            <div
+              className={classes.tileGripperWrapper}
+              onMouseEnter={() => setShowGripper(true)}
+              onMouseLeave={() => setShowGripper(false)}>
+              <Paper
+                className={classes.wrapper}
+                elevation={0}
+                onClick={onClick} >
+                <div>
+                  {showGripper && (
+                  <div className={classes.gripper} ref={drag}>
+                    <GripperIcon />
+                  </div>
+                  )}
+                  {children}
+                </div>
+              </Paper>
+            </div>
+          </>
         )
         : (
           <Paper

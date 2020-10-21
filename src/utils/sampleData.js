@@ -78,7 +78,7 @@ export function getDefaultData(obj) {
   return _obj;
 }
 
-export function processSampleData(sampleData, resource) {
+export function convertFileDataToJSON(sampleData, resource) {
   if (!resource || !sampleData || isEmpty(sampleData)) return sampleData;
 
   // All file type's sample data logic handled here
@@ -511,4 +511,222 @@ export const processOneToManySampleData = (sampleData, resource) => {
   };
 
   return processedSampleData;
+};
+
+/**
+ * This util adds "page_of_records" on records/rows based on the sampleData structure
+ * Ideally, we should be using a BE API for this structure
+ * For the time being this is used for csv/xml export sample data view
+ * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
+ */
+export const wrapExportFileSampleData = records => {
+  // eslint-disable-next-line camelcase
+  const page_of_records = [];
+
+  if (!records) return { page_of_records };
+
+  if (Array.isArray(records)) {
+    const rows = [];
+
+    records.forEach(record => rows.push(record));
+    page_of_records.push({rows});
+  } else {
+    page_of_records.push({ record: records });
+  }
+
+  return { page_of_records };
+};
+
+// this util method will wrap the sample data with correct context fields
+// according to the 'stage' passed. This will be used for all the editors sample data
+export const wrapSampleDataWithContext = ({
+  sampleData,
+  preMapSampleData,
+  postMapSampleData,
+  flow,
+  integration,
+  resource,
+  connection,
+  stage,
+  fieldType}) => {
+  const { status, data, templateVersion } = sampleData || {};
+
+  let resourceType = 'export';
+
+  if (
+    resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+  ) {
+    resourceType = 'import';
+  }
+
+  if (!status || status === 'requested') {
+    return { status };
+  }
+
+  // standalone resource should not wrap the data
+  // also there is no 'data' variable for these 2 fields for AFE1, return sample data as such
+  if (!flow._id || ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate') && templateVersion === 1)) {
+    return { status, data, templateVersion };
+  }
+
+  const isDeltaExport = resource.type === 'delta';
+  const settings = {
+    integration: integration.settings || {},
+    flow: flow.settings || {},
+    [resourceType]: resource.settings || {},
+    connection: connection.settings || {},
+  };
+
+  const resourceIds = {
+    [resourceType === 'import' ? '_importId' : '_exportId']: resource._id,
+    _connectionId: connection._id,
+    _flowId: flow._id,
+    _integrationId: integration._id,
+  };
+  const contextFields = {};
+
+  if (isDeltaExport) {
+    contextFields.lastExportDateTime = moment()
+      .startOf('day')
+      .add(-7, 'd')
+      .toISOString();
+    contextFields.currentExportDateTime = moment()
+      .startOf('day')
+      .add(-24, 'h')
+      .toISOString();
+  }
+
+  switch (stage) {
+    case 'flowInput': {
+      const processedData = {
+        ...data,
+        ...contextFields,
+        settings,
+      };
+
+      // add connection object for http exports and imports, only for AFE2
+      if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
+        processedData.connection = {
+          name: connection.name,
+          http: {
+            unencrypted: connection.http.unencrypted,
+            encrypted: connection.http.encrypted,
+          },
+        };
+      }
+      // add paging sub-object for both HTTP and REST API "exports" (i.e. Lookups, Exports -- but NOT transfers).
+      if ((resource.adaptorType?.includes('HTTP') || resource.adaptorType?.includes('REST')) && resourceType === 'export' &&
+      resource.http?.paging) {
+        processedData.export = {
+          http: {
+            paging: {...resource.http.paging},
+          },
+        };
+      }
+
+      return {
+        data: processedData,
+        status,
+        templateVersion,
+      };
+    }
+    case 'transform':
+    case 'sampleResponse':
+    case 'inputFilter':
+      return {
+        status,
+        data: {
+          record: data || {},
+          settings,
+        },
+      };
+    case 'outputFilter':
+      contextFields.pageIndex = 0;
+
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...contextFields,
+          settings,
+        },
+      };
+    case 'preSavePage':
+      contextFields.pageIndex = 0;
+
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    case 'preMap':
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postMap':
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postSubmit':
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
+          responseData: [data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: data || {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postAggregate':
+      return {
+        status: 'received',
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postResponseMapHook':
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
+        },
+      };
+    default:
+      // For all other stages, return basic sampleData
+      return { status, data, templateVersion };
+  }
 };

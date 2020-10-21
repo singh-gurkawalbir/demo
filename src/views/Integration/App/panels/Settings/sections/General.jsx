@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   configureform: {
     padding: theme.spacing(2, 3),
     overflow: 'visible',
-    minHeight: 250,
+    minHeight: 300,
     '& + div': {
       padding: theme.spacing(2, 0),
       margin: theme.spacing(0, 3),

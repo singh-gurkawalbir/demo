@@ -30,7 +30,7 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas } from './authentication';
+import { authenticationSagas, initializeLogRocket } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -83,14 +83,14 @@ export function* apiCallWithRetry(args) {
     if (path !== logoutParams.path) {
       ({ apiResp, logout, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(timeout),
       }));
     } else {
       apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: true,
+        dispatchRequestAction: false,
       });
     }
 
@@ -171,19 +171,19 @@ function* allSagas() {
 }
 // this saga basically restarts the root saga
 export default function* rootSaga() {
-  // when i see ABORT_ALL_SAGAS i cancel all existing sagas
-  // ABORT_ALL_SAGAS is the last action dispatched during logout
-  const {logout} = yield race({
+  // both logout and logrocket init requires to abort all sagas and start over
+  const {logrocket, logout} = yield race({
     mainSaga: call(allSagas),
-    logout: take(actionsTypes.ABORT_ALL_SAGAS),
-
+    logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
   });
 
-  if (logout) {
-    // over here i clean up the redux state
-    yield put(actions.auth.clearStore());
-
-    // restart this saga over here
+  if (logrocket || logout) {
+    // logrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
+    if (logrocket) yield call(initializeLogRocket);
+    // logout requires also reset the store
+    if (logout) yield put(actions.auth.clearStore());
+    // restart the root saga again
     yield spawn(rootSaga);
   }
 }

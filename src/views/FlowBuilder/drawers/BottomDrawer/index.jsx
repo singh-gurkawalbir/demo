@@ -25,6 +25,7 @@ import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
 import ReplaceConnection from '../../../../components/ReplaceConnection';
 import RightDrawer from '../../../../components/drawer/Right';
+import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -85,6 +86,9 @@ const useStyles = makeStyles(theme => ({
   refreshButton: {
     marginRight: theme.spacing(1),
   },
+  inProgress: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 // we use this to prevent the up and down resize buttons from passing mouse-down events
 // to the parent draggable re-sizeable tab bar. The combination of events disrupts UX.
@@ -126,6 +130,7 @@ export default function BottomDrawer({
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
+  const [connName, setConnName] = useState('');
 
   const history = useHistory();
 
@@ -134,6 +139,10 @@ export default function BottomDrawer({
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flowId)
   );
+  const isFlowRunInProgress = useSelector(state =>
+    !!selectors.getInProgressLatestJobs(state, flowId).length
+  );
+
   const parentUrl = match.url;
 
   const handleClose = useCallback(() => {
@@ -267,6 +276,22 @@ export default function BottomDrawer({
     ({ style: { height: tempDrawerHeight } }),
   [tempDrawerHeight]);
 
+  const dashboardLabel = useMemo(() => {
+    if (isUserInErrMgtTwoDotZero) {
+      return (
+        <>
+          Run console
+          {
+            isFlowRunInProgress &&
+            <Spinner color="primary" size={16} className={classes.inProgress} />
+          }
+        </>
+      );
+    }
+
+    return 'Dashboard';
+  }, [isUserInErrMgtTwoDotZero, classes.inProgress, isFlowRunInProgress]);
+
   return (
     <div>
       <Drawer
@@ -289,7 +314,7 @@ export default function BottomDrawer({
             <Tab
               {...tabProps(0)}
               icon={<DashboardIcon />}
-              label={isUserInErrMgtTwoDotZero ? 'Run console' : 'Dashboard'} />
+              label={dashboardLabel} />
             <Tab
               {...tabProps(1)}
               icon={
@@ -392,10 +417,10 @@ export default function BottomDrawer({
       <RightDrawer
         path="replaceConnection/:connId"
         height="tall"
-        title="Replace connection"
+        title={`Replace connection: ${connName}`}
         onClose={handleClose}>
         <ReplaceConnection
-          flowId={flowId} integrationId={integrationId} childId={childId}
+          flowId={flowId} integrationId={integrationId} childId={childId} setConnName={setConnName}
           onClose={handleClose} />
       </RightDrawer>
     </div>

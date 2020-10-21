@@ -78,14 +78,7 @@ export default function RunCell({
     } else {
       history.push(getRoutePath(`/integrations/${integrationId || 'none'}/dashboard`));
     }
-  }, [
-    appName,
-    history,
-    integrationId,
-    isIntegrationApp,
-    storeId,
-    templateName,
-  ]);
+  }, [appName, history, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, storeId, templateName]);
 
   return (
     <RemoveMargin>

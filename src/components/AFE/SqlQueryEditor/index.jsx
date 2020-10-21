@@ -5,6 +5,7 @@ import PanelGrid from '../PanelGrid';
 import PanelTitle from '../PanelTitle';
 import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
+import WarningGridItem from '../WarningGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
 import SqlDataTabPanel from './SqlDataTabPanel';
 import layouts from '../layout/defaultDialogLayout';
@@ -19,6 +20,7 @@ const Editor = props => {
     templateClassName,
     rule,
     ruleMode,
+    dataMode,
     ruleTitle,
     sampleData,
     defaultData,
@@ -27,11 +29,13 @@ const Editor = props => {
     resultTitle,
     error,
     violations,
-    handleChange,
+    handleRuleChange,
+    handleDataChange,
     enableAutocomplete,
     showDefaultData,
     disabled,
     isSampleDataLoading,
+    resultWarning,
   } = props;
 
   useEffect(() => {
@@ -49,10 +53,9 @@ const Editor = props => {
           value={rule}
           readOnly={disabled}
           mode={ruleMode}
-          onChange={data => {
-            handleChange('template', data);
-          }}
+          onChange={handleRuleChange}
           enableAutocomplete={enableAutocomplete}
+          hasError={!!error}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
@@ -64,17 +67,25 @@ const Editor = props => {
             showDefaultData={showDefaultData}
             sampleData={sampleData}
             defaultData={defaultData}
-            handleChange={handleChange}
+            dataMode={dataMode}
+            handleChange={handleDataChange}
         />
         )}
       </PanelGridItem>
 
       <PanelGridItem gridArea="result">
         <PanelTitle title={resultTitle} />
-        <CodePanel name="result" value={result} mode={resultMode} readOnly />
+        <CodePanel
+          name="result" value={result} mode={resultMode} readOnly
+          hasWarning={!!resultWarning} />
       </PanelGridItem>
 
-      <ErrorGridItem error={error} violations={violations} />
+      {/* Hide error/warning panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        (error || violations)
+          ? <ErrorGridItem error={error} violations={violations} />
+          : <WarningGridItem warning={resultWarning} />
+      ) }
     </PanelGrid>
   );
 };

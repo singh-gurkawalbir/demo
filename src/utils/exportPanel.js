@@ -4,6 +4,7 @@
 import deepClone from 'lodash/cloneDeep';
 import { adaptorTypeMap } from './resource';
 import { isJsonString } from './string';
+import { wrapExportFileSampleData } from './sampleData';
 
 // Applications list which include Preview panel as part of the resource drawer
 
@@ -81,24 +82,6 @@ export const isPreviewPanelAvailable = (resource, resourceType) => {
   return applicationsWithPreviewPanel.includes(appType);
 };
 
-const formatPreviewData = records => {
-  // eslint-disable-next-line camelcase
-  const page_of_records = [];
-
-  if (!records) return { page_of_records };
-
-  if (Array.isArray(records)) {
-    const rows = [];
-
-    records.forEach(record => rows.push(record));
-    page_of_records.push({rows});
-  } else {
-    page_of_records.push({ record: records });
-  }
-
-  return { page_of_records };
-};
-
 /*
  * Incase of Raw stage, previewData contains body which is a JSON string
  * Need to be parsed to show in Preview panel
@@ -126,7 +109,7 @@ const formatBodyForRawStage = previewData => {
 /*
  * Used by View layer to show the preview data
  */
-export const getFormattedPreviewData = previewData => formatPreviewData(previewData?.data);
+export const getFormattedPreviewData = previewData => wrapExportFileSampleData(previewData?.data);
 
 export const getPreviewDataPageSizeInfo = previewData => {
   if (!previewData || !previewData.data) return '1 Page 0 Records';

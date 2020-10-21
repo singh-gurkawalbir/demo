@@ -1,4 +1,6 @@
 
+import { wrapExportFileSampleData } from '../../../../utils/sampleData';
+
 const requestBody = editor => {
   const rules = {
     columnDelimiter: editor.columnDelimiter,
@@ -38,8 +40,16 @@ const init = editor => {
   };
 };
 
+const processResult = ({ isSuiteScriptData }, result) => {
+  if (isSuiteScriptData) return result;
+  const formattedData = wrapExportFileSampleData(result?.data);
+
+  return {...result, data: formattedData, columnsData: result?.data};
+};
+
 export default {
   validate,
   requestBody,
   init,
+  processResult,
 };

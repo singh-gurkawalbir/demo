@@ -82,7 +82,7 @@ selectors.latestFlowJobsList = (state, flowId) => {
 
 selectors.getInProgressLatestJobs = (state, flowId, considerChildJobs = false) => {
   if (!state || !flowId || !state[flowId]) return [];
-  const jobsList = state[flowId].data;
+  const jobsList = state[flowId].data || [];
 
   if (!considerChildJobs) {
     return jobsList.filter(job => [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(

@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import { selectors } from '../../reducers';
 import DynaForm from '../DynaForm';
 import DynaSubmit from '../DynaForm/DynaSubmit';
@@ -10,7 +10,7 @@ import actions from '../../actions';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 import ResourceDrawer from '../drawer/Resource';
 import useConfirmDialog from '../ConfirmDialog';
-import { getReplaceConectionExpression } from '../../utils/connections';
+import { getReplaceConnectionExpression } from '../../utils/connections';
 
 const emptyObj = {};
 
@@ -18,7 +18,7 @@ export default function ReplaceConnection(props) {
   const match = useRouteMatch();
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
-  const { onClose, flowId, integrationId, childId } = props;
+  const { onClose, flowId, integrationId, childId, setConnName } = props;
   const isFrameWork2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   const { connId } = match.params;
@@ -28,7 +28,11 @@ export default function ReplaceConnection(props) {
       emptyObj
   );
 
-  const options = getReplaceConectionExpression(connection, isFrameWork2, childId, integrationId);
+  const options = getReplaceConnectionExpression(connection, isFrameWork2, childId, integrationId, connection?._connectorId, true);
+
+  useEffect(() => {
+    setConnName(connection?.name);
+  }, [connection, setConnName]);
 
   const fieldMeta = {
     fieldMap: {

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import DebugIcon from '../../../../icons/DebugIcon';
+import ReplaceIcon from '../../../../icons/ReplaceIcon';
 
 export default {
   label: 'Replace connection',
-  icon: DebugIcon,
+  icon: ReplaceIcon,
   component: function ReplaceConnections({ rowData = {} }) {
     const { _id: connectionId } = rowData;
     const history = useHistory();

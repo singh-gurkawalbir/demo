@@ -109,6 +109,7 @@ const DataIcon = ({index}) => {
   );
 };
 const flowsConfig = { type: 'flows' };
+
 const Chart = ({ id, integrationId, range, selectedResources }) => {
   const classes = useStyles();
   const [opacity, setOpacity] = useState({});
@@ -119,10 +120,16 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     selectors.makeResourceListSelector,
     flowsConfig
   );
+  const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
   const flowResources = useMemo(
-    () =>
-      resourceList.resources &&
-      resourceList.resources.filter(flow => flow._integrationId === integrationId).map(f => ({_id: f._id, name: f.name})),
+    () => {
+      const flows = resourceList.resources &&
+      resourceList.resources.filter(flow =>
+        (flow._integrationId === integrationId))
+        .map(f => ({_id: f._id, name: f.name}));
+
+      return [{_id: integrationId, name: 'Integration-level'}, ...flows];
+    },
     [resourceList.resources, integrationId]
   );
   const { startDate, endDate } = range;
@@ -150,7 +157,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
 
   if (Array.isArray(data)) {
     selectedResources.forEach(r => {
-      flowData[r] = data.filter(d => d.type === 'flow' && d.flowId === r);
+      flowData[r] = data.filter(d => (r === integrationId ? d.flowId === '_integrationId' : d.flowId === r) && d.type === type);
       flowData[r] = sortBy(flowData[r], ['timeInMills']);
     });
   }
@@ -161,6 +168,7 @@ const Chart = ({ id, integrationId, range, selectedResources }) => {
     }
     const resourceId = name.split('-')[0];
     let modifiedName = resourceId;
+
     const resource = flowResources.find(r => r._id === resourceId);
 
     if (resource) {
@@ -333,7 +341,7 @@ export default function FlowCharts({ integrationId, range, selectedResources, re
 
   useEffect(() => {
     if (sendQuery) {
-      dispatch(actions.flowMetrics.request(integrationId, { range, selectedResources }));
+      dispatch(actions.flowMetrics.request('integrations', integrationId, { range, selectedResources }));
       setSendQuery(false);
     }
   }, [data, dispatch, integrationId, range, sendQuery, selectedResources]);
