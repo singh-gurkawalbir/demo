@@ -1,12 +1,14 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import DynaForm from '../../../../components/DynaForm';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import actions from '../../../../actions';
-import RightDrawer from '../../../../components/drawer/Right';
+import RightDrawer from '../../../../components/drawer/Right/V2';
+import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
+import DrawerFooter from '../../../../components/drawer/Right/V2/DrawerFooter';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../reducers';
 import { isJsonString } from '../../../../utils/string';
@@ -16,17 +18,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import LoadResources from '../../../../components/LoadResources';
 import getSettingsMetadata from './metadata';
-
-const useStyles = makeStyles(theme => ({
-  scheduleContainer: {
-    width: '100%',
-    overflowX: 'hidden',
-    '& > div:first-child': {
-      marginLeft: theme.spacing(-1),
-      paddingRight: 0,
-    },
-  },
-}));
 
 function Settings({
   flowId,
@@ -39,7 +30,6 @@ function Settings({
     'flows',
     flowId
   ).merged;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const [remountKey, setRemountKey] = useState(1);
@@ -48,7 +38,8 @@ function Settings({
   );
 
   // Note: This selector is used to determine when can user save settings fields
-  // As incase of EM2.0 we have a notification toggle to be shown, in which case we restrict calling settings api when not allowed
+  // As incase of EM2.0 we have a notification toggle to be shown, in which case
+  // we restrict calling settings api when not allowed
   const hasFlowSettingsAccess = useSelector(state => {
     const isMonitorLevelAccess = selectors.isFormAMonitorLevelAccess(state, integrationId);
 
@@ -187,11 +178,12 @@ function Settings({
   }, [formKey, dispatch, isUserInErrMgtTwoDotZero]);
 
   return (
-    <div className={classes.scheduleContainer}>
-      <LoadResources required resources="notifications">
-        <DynaForm
-          formKey={formKey}
-          fieldMeta={fieldMeta} />
+    <LoadResources required resources="notifications">
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
+
+      <DrawerFooter>
         <ButtonGroup>
           <DynaSubmit
             formKey={formKey}
@@ -216,8 +208,8 @@ function Settings({
             Cancel
           </Button>
         </ButtonGroup>
-      </LoadResources>
-    </div>
+      </DrawerFooter>
+    </LoadResources>
   );
 }
 
@@ -225,8 +217,8 @@ export default function SettingsDrawer(props) {
   return (
     <RightDrawer
       path="settings"
-      title="Settings"
       width="medium">
+      <DrawerHeader title="Settings" />
       <Settings {...props} />
     </RightDrawer>
   );

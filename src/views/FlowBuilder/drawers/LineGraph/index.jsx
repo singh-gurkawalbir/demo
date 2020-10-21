@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
@@ -15,18 +14,6 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RefreshIcon from '../../../../components/icons/RefreshIcon';
 import IconTextButton from '../../../../components/IconTextButton';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
-
-const useStyles = makeStyles(theme => ({
-  scheduleContainer: {
-    width: '100%',
-    overflowX: 'hidden',
-    marginTop: -1,
-    padding: theme.spacing(-1),
-    '& > div': {
-      padding: theme.spacing(3, 0),
-    },
-  },
-}));
 
 const getRoundedDate = (d = new Date(), offsetInMins, isFloor) => {
   const ms = 1000 * 60 * offsetInMins; // convert minutes to ms
@@ -58,7 +45,6 @@ export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
   const parentUrl = match.url;
-  const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
   const latestJobDetails = useSelector(state => selectors.latestJobMap(state, integrationId));
@@ -202,7 +188,6 @@ export default function LineGraphDrawer({ flowId }) {
         flowId={flowId}
         selectedResources={selectedResources}
         range={range}
-        className={classes.scheduleContainer}
       />
     </RightDrawer>
   );

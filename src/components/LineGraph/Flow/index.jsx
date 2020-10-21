@@ -330,7 +330,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error occured</Typography>;
+    return <Typography>Error occurred</Typography>;
   }
 
   return (
