@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     boxShadow: 'none',
     marginBottom: theme.spacing(2),
     borderRadius: theme.spacing(0.5),
-    // backgroundColor: theme.palette.background.paper2
+    minHeight: 319,
   },
 }));
 

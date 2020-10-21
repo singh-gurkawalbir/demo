@@ -12,6 +12,7 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     wordBreak: 'break-word',
     padding: '0px',
+    color: theme.palette.primary.main,
   },
   optionImg: {
     minWidth: '120px',
@@ -98,6 +99,7 @@ const SelectStyle = theme => ({
     backgroundColor: theme.palette.background.paper,
     alignItems: 'center',
     cursor: 'default',
+    color: theme.palette.secondary.main,
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -106,6 +108,9 @@ const SelectStyle = theme => ({
     boxSizing: 'borderBox',
     transition: 'all 100ms ease 0s',
     outline: '0px !important',
+    fontSize: 15,
+    lineHeight: '24px',
+    fontFamily: 'source sans pro !important',
     '&:hover': {
       borderColor: theme.palette.primary.main,
     },
@@ -121,7 +126,7 @@ const SelectStyle = theme => ({
     borderRadius: theme.spacing(0, 0, 0.5, 0.5),
   }),
   input: () => ({
-    color: theme.palette.secondary.light,
+    color: theme.palette.secondary.main,
     width: '100%',
     '& > div': {
       width: '100%',
@@ -129,6 +134,7 @@ const SelectStyle = theme => ({
     '& * > input': {
       width: '100% !important',
       display: 'block !important',
+      fontFamily: 'source sans pro !important',
     },
   }),
   placeholder: () => ({
@@ -165,9 +171,9 @@ const SelectStyle = theme => ({
   singleValue: (provided, state) => {
     const opacity = state.isDisabled ? 0.5 : 1;
     const transition = 'opacity 300ms';
-    const color = theme.palette.secondary.light;
+    const color = theme.palette.secondary.main;
 
-    return { ...provided, opacity, transition, color };
+    return { ...provided, opacity, transition, color};
   },
 });
 export default function DynaTypeableSelect(props) {
@@ -259,7 +265,6 @@ export default function DynaTypeableSelect(props) {
     },
     [propValue],
   );
-
   const handleInputChange = useCallback((newVal, event) => {
     if (event.action === 'input-change') {
       setValue(newVal);
@@ -300,27 +305,27 @@ export default function DynaTypeableSelect(props) {
       disabled={disabled}
       className={classes.root}>
       {isFocused && (
-        <Select
-          id={id}
-          data-test={id}
-          inputValue={inputVal}
-          isDisabled={disabled}
-          value={selectedValue}
+      <Select
+        id={id}
+        data-test={id}
+        inputValue={inputVal}
+        isDisabled={disabled}
+        value={selectedValue}
           // restricting selection of 1st suggestion on tabout
-          tabSelectsValue={false}
-          noOptionsMessage={() => null}
-          placeholder={placeholder || ''}
-          onInputChange={handleInputChange}
-          onChange={handleChange}
-          styles={customStyles}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          autoFocus
-          openOnFocus
-          components={components}
-          options={suggestions}
-          filterOption={filterOption}
-          menuIsOpen
+        tabSelectsValue={false}
+        noOptionsMessage={() => null}
+        placeholder={placeholder || ''}
+        onInputChange={handleInputChange}
+        onChange={handleChange}
+        styles={customStyles}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        autoFocus
+        openOnFocus
+        components={components}
+        options={suggestions}
+        filterOption={filterOption}
+        menuIsOpen
         />
       )}
       {!isFocused &&

@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
   listItem: {
     color: theme.palette.secondary.main,
+    width: '100%',
   },
   activeListItem: {
     color: theme.palette.primary.main,

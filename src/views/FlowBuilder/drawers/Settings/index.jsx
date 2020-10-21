@@ -20,7 +20,7 @@ import getSettingsMetadata from './metadata';
 const useStyles = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
-    overflowX: 'hidden',
+    // overflowX: 'hidden',
     '& > div:first-child': {
       marginLeft: theme.spacing(-1),
       paddingRight: 0,

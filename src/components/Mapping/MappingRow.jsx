@@ -31,7 +31,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'grab',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -191,7 +190,7 @@ export default function MappingRow({
   const RightIcon = ({title, Icon}) => (
     <Tooltip
       title={title}
-      placement="top">
+      placement="bottom">
       <span className={classes.lockIcon}>
         <Icon />
       </span>
