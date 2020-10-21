@@ -713,6 +713,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
+            hidden: true,
           }),
         );
         expect(saga.next({}).value).toEqual(
@@ -733,6 +734,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
+            hidden: true,
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
@@ -816,6 +818,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
+            hidden: true,
           }),
         );
         expect(saga.next().done).toEqual(true);
@@ -833,6 +836,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
+            hidden: true,
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);

@@ -513,9 +513,9 @@ describe('jobs reducer', () => {
     test('should update the state properly for init', () => {
       const state = reducer(undefined, jobsReceivedAction);
       const state2 = reducer(state, jobFamilyReceivedAction);
-      const state3 = reducer(state2, actions.job.retryAllInit());
+      const state3 = reducer(state2, actions.job.retryAllInit({ flowIds: ['f1', 'f2'] }));
       const expectedBulkRetryJobs = [
-        { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+        { type: 'bulk_retry', status: JOB_STATUS.QUEUED, _flowIds: ['f1', 'f2'] },
         ...bulkRetryJobs,
       ];
 
@@ -528,7 +528,7 @@ describe('jobs reducer', () => {
     test('should update the state properly for undo', () => {
       const state = reducer(undefined, jobsReceivedAction);
       const state2 = reducer(state, jobFamilyReceivedAction);
-      const state3 = reducer(state2, actions.job.retryAllInit());
+      const state3 = reducer(state2, actions.job.retryAllInit({}));
       const state4 = reducer(state3, actions.job.retryAllUndo());
 
       expect(state4).toEqual(state2);

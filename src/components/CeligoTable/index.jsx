@@ -171,7 +171,7 @@ export default function CeligoTable({
   return (
     <div className={clsx(className)}>
       {selectedAction}
-      <Table className={classes.table}>
+      <Table data-public className={classes.table}>
         <TableHead>
           <TableRow>
             {selectableRows && (

@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.default,
+    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',
@@ -255,7 +255,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>
           )}
-          <div className={classes.titleImgBlock}>
+          <div data-public className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>

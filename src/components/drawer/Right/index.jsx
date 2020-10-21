@@ -180,7 +180,7 @@ export default function RightDrawer({
           }}
           onClose={handleClose}>
           <div className={classes.childrenWrapper}>
-            <div className={classes.titleBar}>
+            <div data-public className={classes.titleBar}>
               {showBackButton && (
                 <IconButton
                   size="small"

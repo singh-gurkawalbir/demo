@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import * as completers from '../editorSetup/completers';
@@ -10,23 +10,24 @@ const { merge } = require('lodash');
 export default function HandlebarsWithDefaults(props) {
   const {
     editorId,
-    ruleTitle,
     layout,
     showDefaultData,
     templateClassName,
-    resultTitle,
     disabled,
     optionalSaveParams,
-    sampleRule,
+    editorVersion,
+    rule,
   } = props;
-  const { template, sampleData, defaultData, result, error, isSampleDataLoading, lookups } = useSelector(
-    state => selectors.editor(state, editorId)
+  const dispatch = useDispatch();
+  const { template, autoEvaluate, sampleData, defaultData, result, error, isSampleDataLoading, v1template,
+    v2template, lookups } = useSelector(
+    state => selectors.editor(state, editorId), shallowEqual
   );
   const violations = useSelector(state =>
-    selectors.editorViolations(state, editorId)
+    selectors.editorViolations(state, editorId), shallowEqual
   );
   const handlebarHelperFunction = useSelector(state =>
-    selectors.editorHelperFunctions(state)
+    selectors.editorHelperFunctions(state), shallowEqual
   );
 
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
@@ -47,20 +48,44 @@ export default function HandlebarsWithDefaults(props) {
     }
   }, [defaultData, sampleData, violations]);
 
-  const dispatch = useDispatch();
-  const handleChange = (field, value) => {
-    dispatch(actions.editor.patch(editorId, { [field]: value }));
-  };
+  useEffect(() => {
+    if (props.isSampleDataLoading !== isSampleDataLoading) {
+      dispatch(
+        actions.editor.patch(editorId, {
+          isSampleDataLoading: props.isSampleDataLoading,
+        })
+      );
+    }
+  }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
+
+  const handleRuleChange = useCallback(newRule => {
+    if (editorVersion === 2) {
+      dispatch(actions.editor.patch(editorId, { template: newRule, v2template: newRule }));
+    } else {
+      dispatch(actions.editor.patch(editorId, { template: newRule, v1template: newRule }));
+    }
+  }, [dispatch, editorId, editorVersion]);
+
+  const handleDataChange = useCallback((field, newData) => {
+    dispatch(actions.editor.patch(editorId, { [field]: newData}));
+  }, [dispatch, editorId]);
 
   const handleInit = useCallback(() => {
+    let template = editorVersion === 2 ? v2template : v1template;
+
+    if (!template && rule) {
+      template = typeof rule === 'string' ? rule : JSON.stringify(rule, null, 2);
+    }
     dispatch(
       actions.editor.init(editorId, 'sql', {
         props: props.strict,
         autoEvaluateDelay: 300,
-        template: props.rule || sampleRule,
-        _init_template: props.rule,
+        template,
+        _init_template: rule,
         defaultData: props.defaultData || '',
         sampleData: props.sampleData,
+        v1template,
+        v2template,
         isSampleDataLoading: props.isSampleDataLoading,
         lookups: props.lookups,
         optionalSaveParams,
@@ -68,7 +93,7 @@ export default function HandlebarsWithDefaults(props) {
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [dispatch, editorId, optionalSaveParams, props.defaultData, props.isSampleDataLoading, props.lookups, props.rule, props.sampleData, props.strict, sampleRule]);
+  }, [editorVersion, v2template, v1template, rule, dispatch, editorId, props.strict, props.defaultData, props.sampleData, props.isSampleDataLoading, props.lookups, optionalSaveParams]);
 
   useEffect(() => {
     if (props.lookups) {
@@ -80,21 +105,12 @@ export default function HandlebarsWithDefaults(props) {
     }
   }, [dispatch, editorId, props.lookups]);
 
-  useEffect(() => {
-    if (template === undefined && sampleRule) {
-      dispatch(
-        actions.editor.patch(editorId, {
-          template: sampleRule,
-        })
-      );
-    }
-  }, [dispatch, editorId, sampleRule, template]);
-
   return (
     <Editor
       editorId={editorId}
       handleInit={handleInit}
-      handleChange={handleChange}
+      handleRuleChange={handleRuleChange}
+      handleDataChange={handleDataChange}
       disabled={disabled}
       processor="sql"
       ruleMode="handlebars"
@@ -102,14 +118,14 @@ export default function HandlebarsWithDefaults(props) {
       resultMode="text"
       layout={layout}
       templateClassName={templateClassName}
-      ruleTitle={ruleTitle}
-      resultTitle={resultTitle}
+      ruleTitle="Type your handlebars template here"
+      resultTitle={autoEvaluate ? 'Evaluated handlebars template' : 'Click preview to evaluate your handlebars template'}
       violations={violations}
       showDefaultData={showDefaultData}
       rule={template}
       sampleData={sampleData}
       defaultData={defaultData || ''}
-      result={result ? result.data : ''}
+      result={result?.data || ''}
       error={error}
       enableAutocomplete
       isSampleDataLoading={isSampleDataLoading}

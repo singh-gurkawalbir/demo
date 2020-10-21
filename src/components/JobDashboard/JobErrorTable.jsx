@@ -232,7 +232,7 @@ function JobErrorTable({
         })
       );
       enqueueSnackbar({
-        message: `${
+        message: `${job.numError} ${
           job.numError === '1' ? 'error retried.' : 'errors retried.'
         }`,
         showUndo: true,
@@ -429,11 +429,11 @@ function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-        <div className={classes.spinner}>
+        <div data-public className={classes.spinner}>
           <Spinner size={20} /> <span>Uploading...</span>
         </div>
       )}
-      <ul className={classes.statusWrapper}>
+      <ul data-public className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
         </li>
@@ -458,7 +458,7 @@ function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <SpinnerWrapper>
-          <Spinner /> <span>Loading job errors...</span>
+          <Spinner /> <span>Loading job errors</span>
         </SpinnerWrapper>
       ) : (
         <>
@@ -469,8 +469,8 @@ function JobErrorTable({
               color="secondary"
               className={classes.btnErrorTable}
               onClick={handleRetryClick}
-              disabled={isJobInProgress || !hasRetriableErrors}>
-              {numSelectedRetriableErrors > 0
+              disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
+              { !job.flowDisabled && numSelectedRetriableErrors > 0
                 ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>

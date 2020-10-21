@@ -1,3 +1,7 @@
+// DO NOT DELETE
+// This file is unused right now but we might need
+// this logic later when a sample template needs to be shown
+// for HTTP body editor
 import { times } from 'lodash';
 import getJSONPaths from '../../../utils/jsonPaths';
 

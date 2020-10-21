@@ -129,7 +129,10 @@ export default function TransformEditor(props) {
         />
       </PanelGridItem>
 
-      <ErrorGridItem error={error} violations={violations} />
+      {/* Hide error panel when sample data is loading */}
+      {!isSampleDataLoading && (
+        <ErrorGridItem error={error} violations={violations} />
+      )}
     </PanelGrid>
   );
 }

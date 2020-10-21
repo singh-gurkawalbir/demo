@@ -18,10 +18,11 @@ import ConnectionsPanel from './panels/Connections';
 import DashboardPanel from './panels/Dashboard';
 import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
+import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
-const tabs = [
+const getTabs = isUserInErrMgtTwoDotZero => [
   {
     path: 'settings',
     label: 'Settings',
@@ -32,7 +33,7 @@ const tabs = [
   {
     path: 'dashboard',
     label: 'Dashboard',
-    Icon: DashboardIcon,
+    Icon: isUserInErrMgtTwoDotZero ? GraphIcon : DashboardIcon,
     Panel: DashboardPanel,
   },
   {
@@ -72,7 +73,9 @@ export function useAvailableTabs() {
   const match = useRouteMatch();
   const { integrationId, storeId: childId } = match?.params;
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-
+  const isUserInErrMgtTwoDotZero = useSelector(state =>
+    selectors.isOwnerUserInErrMgtTwoDotZero(state)
+  );
   const hideSettingsTab = useSelector(state => {
     const canEditSettingsForm =
           selectors.canEditSettingsForm(state, 'integrations', integrationId, (childId || integrationId));
@@ -114,7 +117,7 @@ export function useAvailableTabs() {
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
 
   const availableTabs = useMemo(() => getTopLevelTabs({
-    tabs,
+    tabs: getTabs(isUserInErrMgtTwoDotZero),
     isIntegrationApp,
     isParent,
     integrationId,
@@ -123,7 +126,7 @@ export function useAvailableTabs() {
     children,
     isMonitorLevelUser,
     hideSettingsTab,
-  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
+  }), [children, hasAddOns, hideSettingsTab, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero, isMonitorLevelUser, isParent, supportsChild]);
 
   return availableTabs;
 }

@@ -66,24 +66,8 @@ export default {
     label: 'Configure HTTP headers',
   },
   'http.requestMediaType': {
-    type: 'select',
+    type: 'selectrequestmediatype',
     label: 'Request media type',
-    visibleWhen: [
-      {
-        field: 'inputMode',
-        is: ['records'],
-      },
-    ],
-    options: [
-      {
-        items: [
-          { label: 'XML', value: 'xml' },
-          { label: 'JSON', value: 'json' },
-          { label: 'CSV', value: 'csv' },
-          { label: 'URL Encoded', value: 'urlencoded' },
-        ],
-      },
-    ],
     defaultValue: r => (r && r.http ? r && r.http.requestMediaType : 'json'),
   },
   'http.compositeType': {

@@ -148,4 +148,23 @@ export default {
     type: 'text',
     label: 'File file definition _file definition id',
   },
+  'file.encoding': {
+    type: 'select',
+    label: 'File encoding',
+    visibleWhenAll: [
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
+    ],
+    options: [
+      {
+        items: [
+          { label: 'UTF-8', value: 'utf8' },
+          { label: 'Windows-1252', value: 'win1252' },
+          { label: 'UTF-16LE', value: 'utf-16le' },
+        ],
+      },
+    ],
+  },
 };

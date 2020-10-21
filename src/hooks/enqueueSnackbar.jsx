@@ -18,6 +18,7 @@ export default function useEnqueueSnackbar() {
       enqueueSnackbar(message, {
         variant,
         persist,
+        style: { whiteSpace: 'pre-line' },
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
