@@ -273,18 +273,42 @@ export function* resolveCommit({ jobs = [] }) {
   yield all(uniqueParentJobIds.map(jobId => call(getJobFamily, { jobId })));
 }
 
-export function* resolveAllCommit({ flowId, integrationId }) {
-  const { path, opts } = getRequestOptions(
-    flowId
-      ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
-      : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
-    {
-      resourceId: flowId || integrationId,
-    }
-  );
+export function* resolveAllCommit({ flowId, storeId, integrationId, filteredJobsOnly }) {
+  let flowIds = [];
+  let jobIds = [];
+
+  if (filteredJobsOnly) {
+    const filteredJobs = yield select(selectors.allJobs, { type: 'flowJobs' });
+
+    jobIds = filteredJobs.filter(j => j?.__original?.numError > 0).map(j => j._id);
+  } else if (flowId) {
+    flowIds.push(flowId);
+  } else if (storeId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      integrationId,
+      storeId
+    );
+  }
+
+  let requestOptions;
+
+  if (jobIds.length > 0) {
+    requestOptions = getRequestOptions(actionTypes.JOB.RESOLVE_COMMIT);
+    requestOptions.opts.body = jobIds;
+  } else {
+    requestOptions = getRequestOptions(
+      flowIds.length > 0
+        ? actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT
+        : actionTypes.JOB.RESOLVE_ALL_IN_INTEGRATION_COMMIT,
+      {
+        resourceId: flowIds.length > 0 ? flowIds : integrationId,
+      }
+    );
+  }
 
   try {
-    yield call(apiCallWithRetry, { path, opts });
+    yield call(apiCallWithRetry, requestOptions);
   } catch (error) {
     return true;
   }
@@ -319,7 +343,7 @@ export function* resolveSelected({ jobs }) {
   }
 }
 
-export function* resolveAll({ flowId, integrationId }) {
+export function* resolveAll({ flowId, storeId, integrationId, filteredJobsOnly }) {
   yield put(actions.job.resolveAllPending());
 
   yield put(actions.job.resolveAllInit());
@@ -335,7 +359,7 @@ export function* resolveAll({ flowId, integrationId }) {
       actionTypes.JOB.RESOLVE_ALL_PENDING,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(resolveAllCommit, { flowId, integrationId });
+    yield call(resolveAllCommit, { flowId, storeId, integrationId, filteredJobsOnly });
   }
 }
 
@@ -424,32 +448,74 @@ export function* retryFlowJob({ jobId }) {
   yield call(retrySelected, { jobs: jobsToRetry });
 }
 
-export function* retryAllCommit({ flowId, integrationId }) {
+export function* retryAllCommit({ flowId, storeId, integrationId }) {
+  let flowIds = [];
+
+  if (flowId) {
+    flowIds.push(flowId);
+  } else if (storeId) {
+    flowIds = yield select(
+      selectors.integrationAppFlowIds,
+      integrationId,
+      storeId
+    );
+  }
+
   const requestOptions = getRequestOptions(
-    flowId
+    flowIds.length > 0
       ? actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT
       : actionTypes.JOB.RETRY_ALL_IN_INTEGRATION_COMMIT,
     {
-      resourceId: flowId || integrationId,
+      resourceId: flowIds.length > 0 ? flowIds : integrationId,
     }
   );
   const { path, opts } = requestOptions;
   let job;
 
   try {
-    job = yield call(apiCallWithRetry, { path, opts });
+    if (flowIds.length > 0) {
+      const response = yield call(apiCallWithRetry, { path, opts });
+
+      job = response.find(j => j.statusCode === 202);
+      job = job?.job;
+    } else {
+      job = yield call(apiCallWithRetry, { path, opts });
+    }
   } catch (error) {
     return true;
   }
 
-  yield put(actions.job.receivedFamily({ job }));
-  yield put(actions.job.requestInProgressJobStatus());
+  if (job) {
+    yield put(actions.patchFilter('jobs', {refreshAt: job._id}));
+  }
 }
 
-export function* retryAll({ flowId, integrationId }) {
+export function* retryAll({ flowId, storeId, integrationId }) {
   yield put(actions.job.retryAllPending());
 
-  yield put(actions.job.retryAllInit());
+  let flowIds = [];
+
+  if (flowId) {
+    flowIds.push(flowId);
+  } else {
+    const allFlows = yield select(selectors.resourceList, { type: 'flows' });
+
+    if (allFlows?.resources) {
+      if (storeId) {
+        const storeFlowIds = yield select(
+          selectors.integrationAppFlowIds,
+          integrationId,
+          storeId
+        );
+
+        flowIds = allFlows.resources.filter(f => storeFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
+      } else {
+        flowIds = allFlows.resources.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id);
+      }
+    }
+  }
+
+  yield put(actions.job.retryAllInit({ flowIds }));
   const undoOrCommitAction = yield take([
     actionTypes.JOB.RETRY_ALL_COMMIT,
     actionTypes.JOB.RETRY_ALL_UNDO,
@@ -464,7 +530,7 @@ export function* retryAll({ flowId, integrationId }) {
       actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
     ].includes(undoOrCommitAction.type)
   ) {
-    yield call(retryAllCommit, { flowId, integrationId });
+    yield call(retryAllCommit, { flowId, storeId, integrationId });
   }
 }
 

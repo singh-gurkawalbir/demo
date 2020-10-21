@@ -672,6 +672,7 @@ selectors.resourceDetailsMap = createSelector(
               ].numImports = resource.pageProcessors
                 ? resource.pageProcessors.length
                 : 1;
+              allResources[resourceType][resource._id].disabled = resource.disabled;
             }
           });
         }
