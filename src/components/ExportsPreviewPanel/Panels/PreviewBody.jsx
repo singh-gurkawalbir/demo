@@ -46,9 +46,9 @@ export default function PreviewBody(props) {
           />
           {previewBodyTemplate === 'default' && (
             <>
-              { resourceSampleData.status === 'error'
-                ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} />
-                : <Templates.DefaultPanel previewStageDataList={previewStageDataList} panelType={panelType} />}
+                { resourceSampleData.status === 'error'
+                  ? <Templates.ErrorPanel resourceSampleData={resourceSampleData} availablePreviewStages={availablePreviewStages} />
+                  : <Templates.DefaultPanel previewStageDataList={previewStageDataList} panelType={panelType} />}
             </>
           )}
           {previewBodyTemplate === 'tab' && (

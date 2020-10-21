@@ -22,7 +22,7 @@ const applicationsWithPreviewPanel = [
 ];
 const emptyList = [];
 
-const HTTP_STAGES = [
+export const HTTP_STAGES = [
   { label: 'HTTP request', value: 'request' },
   { label: 'HTTP response', value: 'raw' },
   { label: 'Parsed output', value: 'parse' },
