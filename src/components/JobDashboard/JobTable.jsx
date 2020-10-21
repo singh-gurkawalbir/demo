@@ -123,6 +123,7 @@ function JobTable({
       const job = jobIds[jobId] || {};
 
       job.selected = checked;
+      job.flowDisabled = selectableJobsInCurrentPage.find(j => j._id === jobId)?.flowDisabled;
 
       if (!checked) {
         job.selectedChildJobIds = [];

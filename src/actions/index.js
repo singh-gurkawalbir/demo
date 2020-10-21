@@ -1583,8 +1583,8 @@ const job = {
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
   resolveSelected: ({ jobs }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
-  resolveAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
+  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1599,13 +1599,13 @@ const job = {
     action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
   retryInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
-  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
+  retryAllInit: ({ flowIds }) => action(actionTypes.JOB.RETRY_ALL_INIT, { flowIds }),
   retryUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAll: ({ flowId, storeId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>

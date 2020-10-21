@@ -515,11 +515,12 @@ export default (state = DEFAULT_STATE, action) => {
     return { ...state, flowJobs: newCollection };
   } else if (type === actionTypes.JOB.RETRY_ALL_INIT) {
     const { bulkRetryJobs } = state;
+    const { flowIds } = action;
 
     return {
       ...state,
       bulkRetryJobs: [
-        { type: 'bulk_retry', status: JOB_STATUS.QUEUED },
+        { type: 'bulk_retry', status: JOB_STATUS.QUEUED, _flowIds: flowIds },
         ...bulkRetryJobs,
       ],
     };
@@ -714,6 +715,14 @@ selectors.flowJobs = createSelector(
     });
   }
 );
+
+selectors.allJobs = (state, { type }) => {
+  if (!state) {
+    return undefined;
+  }
+
+  return state[type === JOB_TYPES.BULK_RETRY ? 'bulkRetryJobs' : 'flowJobs'];
+};
 
 selectors.inProgressJobIds = createSelector(
   state => state && state.paging,
