@@ -916,27 +916,11 @@ export default {
     /* TODO: With support for different application being adding up,
       path for mapping to be updated below */
     let mappings = {};
-    const { adaptorType } = importResource;
 
-    switch (adaptorTypeMap[adaptorType]) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings =
-          (importResource.netsuite_da && importResource.netsuite_da.mapping) || {};
-        break;
-      case adaptorTypeMap.RESTImport:
-      case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.FTPImport:
-      case adaptorTypeMap.SalesforceImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.S3Import:
-      case adaptorTypeMap.RDBMSImport:
-        mappings = importResource.mapping || {};
-        break;
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.DynamodbImport:
-      default:
+    if (importResource.adaptorType === 'NetSuiteDistributedImport') {
+      mappings = importResource.netsuite_da?.mapping || {};
+    } else {
+      mappings = importResource.mapping || {};
     }
 
     if (options.isCategoryMapping || options.isVariationMapping) {
