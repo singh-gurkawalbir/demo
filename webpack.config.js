@@ -82,6 +82,7 @@ const config = {
     }),
     // define LOGROCKET_IDENTIFIER for logrocket
     new webpack.DefinePlugin({
+      RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
     }),
   ],
@@ -101,6 +102,11 @@ const config = {
 module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
   const runOptimizedLocal = argv && argv.runOptimizedLocal;
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER']) {
+    console.log('Custom Environment Variable:', k, '=', process.env[k]);
+  }
 
   if (config.mode === 'production') {
     // replace modules not needed in actual builds with dummy
