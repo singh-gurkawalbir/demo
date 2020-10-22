@@ -238,10 +238,7 @@ export function* auth({ email, password }) {
   }
 }
 
-let LOGROCKET_INITIALIZED = false;
 export function* initializeLogRocket() {
-  if (LOGROCKET_INITIALIZED) return;
-  LOGROCKET_INITIALIZED = true;
   const p = yield select(selectors.userProfile);
 
   // LOGROCKET_IDENTIFIER is defined by webpack
@@ -293,7 +290,7 @@ export function* initializeLogRocket() {
     });
   }
 }
-
+let LOGROCKET_INITIALIZED = false;
 export function* initializeApp() {
   try {
     const resp = yield call(
@@ -312,7 +309,8 @@ export function* initializeApp() {
 
       // LOGROCKET_IDENTIFIER is defined by webpack
       // eslint-disable-next-line no-undef
-      if (LOGROCKET_IDENTIFIER) {
+      if (LOGROCKET_IDENTIFIER && !LOGROCKET_INITIALIZED) {
+        LOGROCKET_INITIALIZED = true;
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
