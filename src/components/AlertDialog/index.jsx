@@ -127,7 +127,7 @@ export default function AlertDialog() {
     selectors.isAuthenticated(state)
   );
 
-  const isUiVersionOld = useSelector(selectors.isUIVersionOld);
+  const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);
 
   const isUserAcceptedAccountTransfer = useSelector(state =>
     selectors.isUserAcceptedAccountTransfer(state)
@@ -141,7 +141,7 @@ export default function AlertDialog() {
     let versionPollingTimer;
 
     // stop polling when version is different
-    if (isAuthenticated && !isUiVersionOld && !isUserAcceptedAccountTransfer) {
+    if (isAuthenticated && !isUiVersionDifferent && !isUserAcceptedAccountTransfer) {
       versionPollingTimer = setTimeout(() => {
         dispatch(actions.app.fetchUiVersion());
       }, Number(process.env.UI_VERSION_PING));
@@ -150,7 +150,7 @@ export default function AlertDialog() {
     return () => {
       clearTimeout(versionPollingTimer);
     };
-  }, [dispatch, isAuthenticated, isUiVersionOld, isUserAcceptedAccountTransfer]);
+  }, [dispatch, isAuthenticated, isUiVersionDifferent, isUserAcceptedAccountTransfer]);
 
   useEffect(() => {
     let warningSessionTimer;
@@ -186,7 +186,7 @@ export default function AlertDialog() {
           )}
         </Dialog>
       )}
-      {!showSessionStatus && isUiVersionOld && <StaleUIVersion />}
+      {!showSessionStatus && isUiVersionDifferent && <StaleUIVersion />}
       {!showSessionStatus && isUserAcceptedAccountTransfer && <UserAcceptedAccountTransfer />}
     </div>
   );

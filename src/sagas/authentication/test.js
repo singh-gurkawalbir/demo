@@ -16,7 +16,6 @@ import {
   getCSRFTokenBackend,
   setLastLoggedInLocalStorage,
   invalidateSession,
-  fetchUIVersion,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS } from '../../utils/constants';
@@ -104,16 +103,15 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
-    const retrievingVersionDetailsEffect = call(fetchUIVersion);
 
     expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
         retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
-        retrievingVersionDetailsEffect,
       ])
     );
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -136,16 +134,15 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
-    const retrievingVersionDetailsEffect = call(fetchUIVersion);
 
     expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
         retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
-        retrievingVersionDetailsEffect,
       ])
     );
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
@@ -177,17 +174,15 @@ describe('initialize all app relevant resources sagas', () => {
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
-    const retrievingVersionDetailsEffect = call(fetchUIVersion);
 
     expect(saga.next().value).toEqual(
       all([
         retrievingOrgDetailsEffect,
         retrievingUserDetailsEffect,
         retrievingAssistantDetailsEffect,
-        retrievingVersionDetailsEffect,
       ])
     );
-
+    expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);

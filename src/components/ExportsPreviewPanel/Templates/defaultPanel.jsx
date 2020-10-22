@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     maxWidth: 680,
     color: theme.palette.text.primary,
+    '& > div': {
+      wordBreak: 'break-word',
+    },
   },
   sampleDataContainerAlign: {
     marginTop: theme.spacing(2),
