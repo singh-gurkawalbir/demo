@@ -290,6 +290,7 @@ export default {
           { label: 'Microsoftdynamics365', value: 'microsoftdynamics365' },
           { label: 'Pitneybowes', value: 'pitneybowes' },
           { label: 'Mysql', value: 'mysql' },
+          { label: 'Oracle', value: 'oracle' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Microsoft SQL', value: 'microsoft sql' },
           { label: 'Snowflake', value: 'snowflake' },
