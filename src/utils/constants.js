@@ -401,7 +401,7 @@ export const SUBMIT_TICKET_URL =
 export const WHATS_NEW_URL =
   `${HELP_CENTER_BASE_URL}/hc/en-us/categories/360002687611`;
 export const ERROR_MANAGEMENT_DOC_URL = `${HELP_CENTER_BASE_URL}/hc/en-us/articles/360048814732`;
-export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake'];
+export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle'];
 export const AS2_URLS_STAGING = [
   {
     label: 'http://api.staging.integrator.io/v1/as2',
