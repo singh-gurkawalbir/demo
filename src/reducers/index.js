@@ -3327,7 +3327,7 @@ selectors.flowJobs = (state, options = {}) => {
           name: cJob._exportId
             ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
             : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId].disabled,
+          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3339,7 +3339,7 @@ selectors.flowJobs = (state, options = {}) => {
         resourceMap.flows &&
         resourceMap.flows[job._flowId] &&
         resourceMap.flows[job._flowId].name,
-      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId].disabled,
+      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {
