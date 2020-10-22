@@ -12,7 +12,7 @@ export default {
       delete newValues['/blobKeyPath'];
     }
 
-    if (newValues['/netsuite_da/operation'] === 'add') {
+    if (newValues['/netsuite_da/operation'] === 'add' && !newValues['/ignoreExisting']) {
       delete newValues['/netsuite_da/internalIdLookup/expression'];
       newValues['/netsuite_da/internalIdLookup'] = undefined;
     }
