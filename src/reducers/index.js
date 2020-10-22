@@ -3325,15 +3325,9 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-<<<<<<< HEAD
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
-          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
-=======
             ? resourceMap?.exports?.[cJob._exportId]?.name
             : resourceMap?.imports?.[cJob._importId]?.name,
           flowDisabled: resourceMap?.flows?.[job._flowId]?.disabled,
->>>>>>> 63f8c4a60... null checks
         };
 
         return { ...cJob, ...additionalChildProps };
