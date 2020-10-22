@@ -25,7 +25,7 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 2, 1.5, 2),
+    padding: theme.spacing(0, 0, 1.5, 2),
     backgroundColor: theme.palette.common.white,
   },
   filterContainer: {
@@ -255,10 +255,6 @@ export default function Filters({
         </div>
 
         <div className={classes.rightActionContainer}>
-
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
           {maxPage > 0 && (
           <>
             <IconButton
@@ -285,6 +281,9 @@ export default function Filters({
             </IconButton>
           </>
           )}
+          <IconTextButton onClick={handleRefreshClick}>
+            <RefreshIcon /> Refresh
+          </IconTextButton>
           {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
         </div>
       </div>
