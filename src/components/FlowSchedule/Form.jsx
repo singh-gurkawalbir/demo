@@ -56,7 +56,6 @@ export default function FlowScheduleForm({
     fieldMeta,
     optionsHandler: fieldMeta.optionsHandler,
   });
-  console.log(formKey, fieldMeta);
 
   return <DynaForm formKey={formKey} fieldMeta={fieldMeta} />;
 }

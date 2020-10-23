@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -105,6 +105,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/* THIS version is deprecated. Please use the V2 version */
 export default function RightDrawer({
   title,
   path,
@@ -140,6 +141,13 @@ export default function RightDrawer({
     // else, just go back in browser history...
     handleBack();
   }, [handleBack, onClose]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.warn('<RightDrawer/> is deprecated. Use the V2 version in the same folder.');
+    }
+  }, []);
 
   let fullPath;
 
