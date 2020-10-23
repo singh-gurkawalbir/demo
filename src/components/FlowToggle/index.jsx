@@ -118,7 +118,7 @@ export default function FlowToggle({
       <div>
         <CeligoSwitch
           disabled={disabled}
-          on={!flow.disabled}
+          on={!flow.disabled ? 'true' : 'false'}
           onChange={enableOrDisableFlow}
           data-test="switchFlowOnOff"
           checked={!flow.disabled}
