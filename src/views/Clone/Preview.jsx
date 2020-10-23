@@ -381,7 +381,7 @@ export default function ClonePreview(props) {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
 
-    if (isIAIntegration) {
+    if (resourceType === 'integrations') {
       dispatch(
         actions.template.installStepsReceived(
           [],

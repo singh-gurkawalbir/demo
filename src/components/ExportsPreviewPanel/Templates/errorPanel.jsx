@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import JsonContent from '../../JsonContent';
+import { safeParse } from '../../../utils/string';
+import { HTTP_STAGES } from '../../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   sampleDataWrapper: {
@@ -8,6 +11,9 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     background: theme.palette.background.paper,
     padding: theme.spacing(1),
+  },
+  sampleDataWrapperAlign: {
+    marginTop: -18,
   },
   sampleDataContainer: {
     minHeight: theme.spacing(20),
@@ -17,17 +23,51 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     maxWidth: 680,
     color: theme.palette.text.primary,
+    '& > div': {
+      wordBreak: 'break-word',
+    },
+  },
+  sampleDataContainerAlign: {
+    marginTop: theme.spacing(2),
+  },
+  error: {
+    position: 'relative',
+    top: theme.spacing(2),
+    color: theme.palette.error.main,
   },
 }));
 
+const DEFAULT_ERROR = 'No data to show - application responded with an error';
 export default function ErrorPanel(props) {
-  const { resourceSampleData } = props;
+  const { resourceSampleData, availablePreviewStages } = props;
   const classes = useStyles();
+  const showDefaultErrorMessage = availablePreviewStages === HTTP_STAGES;
+  const error = useMemo(() => {
+    const sampleDataError = resourceSampleData.error;
+    const errorObj = sampleDataError[0];
+
+    errorObj.message = safeParse(errorObj.message);
+
+    return errorObj;
+  }, [resourceSampleData.error]);
 
   return (
-    <div className={classes.sampleDataWrapper}>
-      <div className={classes.sampleDataContainer}>
-        <JsonContent json={resourceSampleData.error} />
+    <div
+      className={clsx(
+        classes.sampleDataWrapper,
+        classes.sampleDataWrapperAlign
+      )}>
+      <div
+        className={clsx(
+          classes.sampleDataContainer,
+          classes.sampleDataContainerAlign
+        )}>
+        {
+          showDefaultErrorMessage
+            ? <span className={classes.error}> { DEFAULT_ERROR } </span>
+            : <JsonContent json={error} />
+        }
+
       </div>
     </div>
   );

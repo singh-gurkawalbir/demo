@@ -25,9 +25,15 @@ const useStyles = makeStyles(theme => ({
     overflow: 'auto',
     maxWidth: 680,
     color: theme.palette.text.primary,
+    '& > div': {
+      wordBreak: 'break-word',
+    },
   },
   sampleDataContainerAlign: {
     marginTop: theme.spacing(2),
+  },
+  tabbedPanelTabs: {
+    borderBottom: `1px solid ${theme.palette.background.paper2}`,
   },
 }));
 
@@ -76,6 +82,7 @@ export default function TabbedPanel(props) {
           onChange={handleTabChange}
           textColor="primary"
           centered
+          className={classes.tabbedPanelTabs}
           indicatorColor="primary">
           <Tab
             label="Body"

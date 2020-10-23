@@ -25,7 +25,7 @@ import { getSelectedRange } from '../../../utils/flowMetrics';
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 2, 1.5, 2),
+    padding: theme.spacing(0, 0, 1.5, 2),
     backgroundColor: theme.palette.common.white,
   },
   filterContainer: {
@@ -101,7 +101,9 @@ export default function Filters({
   filterKey,
   onActionClick,
   numJobsSelected = 0,
-  disableActions = true,
+  numRetriableJobsSelected = 0,
+  disableRetry = true,
+  disableResolve = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -117,6 +119,7 @@ export default function Filters({
     currentPage = 0,
     dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
+
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
@@ -168,19 +171,19 @@ export default function Filters({
           data-test="retryJobs"
           onChange={e => onActionClick(e.target.value)}
           displayEmpty
-          disabled={disableActions}
+          disabled={disableRetry}
           value="">
           <MenuItem value="" disabled>
             Retry
           </MenuItem>
-          <MenuItem value="retryAll">All jobs</MenuItem>
-          <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
-            {numJobsSelected} selected jobs
+          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![null, undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >All enabled flow jobs</MenuItem>
+          <MenuItem disabled={numRetriableJobsSelected === 0} value="retrySelected">
+            {numRetriableJobsSelected} selected enabled flow jobs
           </MenuItem>
         </CeligoSelect>
 
         <CeligoSelect
-          disabled={disableActions}
+          disabled={disableResolve}
           data-test="resolveJobs"
           className={clsx(classes.filterButton, classes.resolve)}
           onChange={e => onActionClick(e.target.value)}
@@ -255,10 +258,6 @@ export default function Filters({
         </div>
 
         <div className={classes.rightActionContainer}>
-
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
           {maxPage > 0 && (
           <>
             <IconButton
@@ -285,6 +284,9 @@ export default function Filters({
             </IconButton>
           </>
           )}
+          <IconTextButton onClick={handleRefreshClick}>
+            <RefreshIcon /> Refresh
+          </IconTextButton>
           {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
         </div>
       </div>

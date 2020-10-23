@@ -40,7 +40,12 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   baseForm: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
+    paddingTop: theme.spacing(3),
+    '& > div:first-child': {
+      paddingTop: 0,
+    },
   },
   resourceFormWrapper: {
     flexDirection: 'row',

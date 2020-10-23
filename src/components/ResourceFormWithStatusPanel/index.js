@@ -8,8 +8,8 @@ import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
 
 const useStyles = makeStyles(theme => ({
-  removeTopPadding: {
-    paddingTop: '0px !important',
+  removeTopMargin: {
+    marginTop: theme.spacing(-1),
   },
   form: {
     height: props =>
@@ -43,7 +43,7 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
   return (
     <div
       className={clsx(className, {
-        [classes.removeTopPadding]: notificationPanelHeight,
+        [classes.removeTopMargin]: notificationPanelHeight,
       })}>
       <div>
         {['exports', 'imports', 'connections'].includes(resourceType) && (

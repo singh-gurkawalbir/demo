@@ -67,9 +67,8 @@ export default function (state = {}, action) {
       case actionTypes.SAMPLEDATA.RECEIVED_ERROR:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'error';
-        draft[resourceId].error = error;
-        // Resets the Erred Stage
-        delete draft[resourceId][stage];
+        draft[resourceId].error = error.errors;
+        draft[resourceId].data = extractStages(error);
         break;
       case actionTypes.SAMPLEDATA.RESET:
         draft[resourceId] = {};
