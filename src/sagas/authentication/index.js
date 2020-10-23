@@ -116,14 +116,6 @@ export function* retrievingAssistantDetails() {
       export: true,
       import: true,
     });
-    assistantConnectors.push({
-      id: 'channelape',
-      name: 'Channel Ape',
-      type: 'http',
-      assistant: 'channelape',
-      export: false,
-      import: false,
-    });
   }
 
   localStorage.setItem('assistants', JSON.stringify(assistantConnectors));
