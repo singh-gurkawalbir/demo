@@ -632,7 +632,7 @@ describe('tiles', () => {
         ...tilesCollection,
       ])
     );
-    const tiles = selectors.tiles(state);
+    const tiles = selectors.mkTiles()(state);
     const expectedIntegrationPermissions = {
       accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
       connections: {
@@ -1009,7 +1009,7 @@ describe('tiles', () => {
       t.integration.permissions = expectedIntegrationPermissions.manage;
     });
 
-    const tilesForManageUser = selectors.tiles(state);
+    const tilesForManageUser = selectors.mkTiles()(state);
 
     expect(tilesForManageUser).toEqual(expected);
 
@@ -1024,7 +1024,7 @@ describe('tiles', () => {
       // eslint-disable-next-line no-param-reassign
       t.integration.permissions = expectedIntegrationPermissions.monitor;
     });
-    const tilesForMonitorUser = selectors.tiles(stateForMonitor);
+    const tilesForMonitorUser = selectors.mkTiles()(stateForMonitor);
 
     expect(tilesForMonitorUser).toEqual(expected);
 
@@ -1063,7 +1063,7 @@ describe('tiles', () => {
     const expectedForTileLevelAccessUser = expected.filter(
       t => t._integrationId !== 'none'
     );
-    const tilesForTileLevelAccessUser = selectors.tiles(stateForTileAccess);
+    const tilesForTileLevelAccessUser = selectors.mkTiles()(stateForTileAccess);
 
     expect(tilesForTileLevelAccessUser).toEqual(expectedForTileLevelAccessUser);
   });

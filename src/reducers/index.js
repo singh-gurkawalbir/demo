@@ -86,7 +86,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 
-const emptySet = [];
+const emptyArray = [];
 const emptyObject = {};
 const combinedReducers = combineReducers({
   app,
@@ -786,7 +786,7 @@ selectors.flowSupportsSettings = (state, id) => {
 *********************************************************************** */
 
 selectors.flowListWithMetadata = (state, options) => {
-  const flows = selectors.resourceList(state, options).resources || emptySet;
+  const flows = selectors.resourceList(state, options).resources || emptyArray;
   const exports = selectors.resourceList(state, {
     type: 'exports',
   }).resources;
@@ -1022,7 +1022,7 @@ selectors.getAllConnectionIdsUsedInTheFlow = (state, flow, options = {}) => {
   const imports = selectors.resourceList(state, { type: 'imports' }).resources;
 
   if (!flow) {
-    return emptySet;
+    return emptyArray;
   }
 
   const attachedExports =
@@ -1178,7 +1178,7 @@ selectors.integrationAppResourceList = (
   storeId,
   tableConfig
 ) => {
-  if (!state) return { connections: emptySet, flows: emptySet };
+  if (!state) return { connections: emptyArray, flows: emptyArray };
 
   const integrationResource =
     selectors.integrationAppSettings(state, integrationId) || {};
@@ -1341,7 +1341,7 @@ selectors.mappedCategories = (state, integrationId, flowId) => {
       integrationId,
       flowId
     ) || {};
-  let mappedCategories = emptySet;
+  let mappedCategories = emptyArray;
   const { response } = categoryMappingData;
 
   if (response) {
@@ -1412,7 +1412,7 @@ selectors.mappingsForVariation = (state, integrationId, flowId, filters) => {
 
 selectors.mappingsForCategory = (state, integrationId, flowId, filters) => {
   const { sectionId, depth } = filters;
-  let mappings = emptySet;
+  let mappings = emptyArray;
   const { attributes = {}, mappingFilter = 'all' } =
     selectors.categoryMappingFilters(state, integrationId, flowId) || {};
   const recordMappings =
@@ -1730,7 +1730,7 @@ selectors.makeIntegrationAppSectionFlows = () =>
     (_1, _2, _3, _4, options) => options,
     (integration, flows = [], integrationId, section, childId, options = {}) => {
       if (!integration) {
-        return emptySet;
+        return emptyArray;
       }
       const {
         supportsMultiStore,
@@ -2656,114 +2656,104 @@ selectors.suiteScriptLinkedTiles = state => {
   return tiles;
 };
 
-selectors.tiles = state => {
-  const tiles = selectors.resourceList(state, {
-    type: 'tiles',
-  }).resources;
-  let integrations = [];
+selectors.mkTiles = () => {
+  const tilesList = selectors.makeResourceListSelector();
+  const integrationsList = selectors.makeResourceListSelector();
 
-  if (tiles.length > 0) {
-    integrations = selectors.resourceList(state, {
-      type: 'integrations',
-    }).resources;
-  }
+  return createSelector(
+    state => tilesList(state, { type: 'tiles' })?.resources,
+    state => integrationsList(state, { type: 'integrations'})?.resources,
+    state => selectors.publishedConnectors(state),
+    state => selectors.userPermissions(state),
+    (tiles = emptyArray, integrations = emptyArray, published = emptyArray, permissions) => {
+      const hasStandaloneTile = tiles.find(
+        t => t._integrationId === STANDALONE_INTEGRATION.id
+      );
 
-  let published;
-  const hasConnectorTiles = tiles.filter(t => t._connectorId);
+      if (hasStandaloneTile) {
+        integrations = [
+          ...integrations,
+          { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+        ];
+      }
+      integrations = integrations.map(i => {
+        if (
+          [
+            USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+            USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+            USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+          ].includes(permissions.accessLevel)
+        ) {
+          return {
+            ...i,
+            permissions: {
+              accessLevel: permissions.integrations.all.accessLevel,
+              connections: {
+                edit: permissions.integrations.all.connections.edit,
+              },
+            },
+          };
+        }
 
-  if (hasConnectorTiles) {
-    published = selectors.publishedConnectors(state);
-  }
-
-  const permissions = selectors.userPermissions(state);
-  const hasStandaloneTile = tiles.find(
-    t => t._integrationId === STANDALONE_INTEGRATION.id
-  );
-
-  if (hasStandaloneTile) {
-    integrations = [
-      ...integrations,
-      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
-    ];
-  }
-
-  integrations = integrations.map(i => {
-    if (
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(permissions.accessLevel)
-    ) {
-      return {
-        ...i,
-        permissions: {
-          accessLevel: permissions.integrations.all.accessLevel,
-          connections: {
-            edit: permissions.integrations.all.connections.edit,
+        return {
+          ...i,
+          permissions: {
+            accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
+            connections: {
+              edit:
+                (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
+            },
           },
-        },
-      };
-    }
+        };
+      });
 
-    return {
-      ...i,
-      permissions: {
-        accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
-        connections: {
-          edit:
-            (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
-        },
-      },
-    };
-  });
+      let integration;
+      let connector;
+      let status;
 
-  let integration;
-  let connector;
-  let status;
+      return tiles.map(t => {
+        integration = integrations.find(i => i._id === t._integrationId) || {};
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+        if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+          status = TILE_STATUS.UNINSTALL;
+        } else if (
+          integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
+        ) {
+          status = TILE_STATUS.IS_PENDING_SETUP;
+        } else if (t.numError && t.numError > 0) {
+          status = TILE_STATUS.HAS_ERRORS;
+        } else {
+          status = TILE_STATUS.SUCCESS;
+        }
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+        if (t._connectorId) {
+          connector = published.find(i => i._id === t._connectorId) || {
+            user: {},
+          };
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || {
-        user: {},
-      };
+          return {
+            ...t,
+            status,
+            integration: {
+              mode: integration.mode,
+              permissions: integration.permissions,
+            },
+            connector: {
+              owner: connector.user.company || connector.user.name,
+              applications: connector.applications || [],
+            },
+          };
+        }
 
-      return {
-        ...t,
-        status,
-        integration: {
-          mode: integration.mode,
-          permissions: integration.permissions,
-        },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
-      };
-    }
-
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
+        return {
+          ...t,
+          status,
+          integration: {
+            permissions: integration.permissions,
+          },
+        };
+      });
+    });
 };
 // #endregion
 
@@ -4319,7 +4309,7 @@ selectors.isAnyErrorActionInProgress = (state, { flowId, resourceId }) => {
   return isRetryInProgress || isResolveInProgress;
 };
 
-selectors.mkflowResources = () => createSelector(
+selectors.mkFlowResources = () => createSelector(
   state => state?.data?.resources?.flows,
   state => state?.data?.resources?.exports,
   state => state?.data?.resources?.imports,
@@ -4466,12 +4456,10 @@ selectors.suiteScriptIntegratorLinkedConnectionId = (state, account) => {
   return linkedConnectionId;
 };
 
-const emptyArr = [];
-
 selectors.suiteScriptIntegrationAppInstallerData = (state, id) => {
   if (!state) return null;
   const installer = fromSession.suiteScriptIntegrationAppInstallerData(state.session, id);
-  const modifiedSteps = produce(installer.steps || emptyArr, draft => {
+  const modifiedSteps = produce(installer.steps || emptyArray, draft => {
     const unCompletedStep = draft.find(s => !s.completed);
 
     if (unCompletedStep) {
@@ -4670,7 +4658,7 @@ selectors.suiteScriptExtracts = createSelector(
     (state, {ssLinkedConnectionId, integrationId, flowId}) => selectors.suiteScriptFlowSampleData(state, {ssLinkedConnectionId, integrationId, flowId})],
   (flow, flowData) => {
     if (!flowData) {
-      return emptySet;
+      return emptyArray;
     }
     const {data, status} = flowData;
     let formattedFields;
@@ -4854,7 +4842,7 @@ selectors.getSuitescriptMappingSubRecordList = createSelector([
     return [{id: '__parent', name: 'Netsuite'}, ...subRecordList];
   }
 
-  return emptySet;
+  return emptyArray;
 });
 selectors.applicationType = (state, resourceType, id) => {
   const resourceObj = selectors.resource(state, resourceType, id);
@@ -4982,10 +4970,10 @@ selectors.mappingExtracts = createSelector([
 
     return (extractPaths &&
         extractPaths.map(obj => ({ name: obj.id, id: obj.id }))) ||
-        emptySet;
+        emptyArray;
   }
 
-  return emptySet;
+  return emptyArray;
 });
 
 selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {

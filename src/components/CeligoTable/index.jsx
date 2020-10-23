@@ -269,21 +269,19 @@ export default function CeligoTable({
               {(typeof columns === 'function'
                 ? columns(rowData, actionProps)
                 : columns
-              ).map((col, index) =>
-                index === 0 ? (
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    key={col.heading}
-                    align={col.align || 'left'}>
-                    {col.value(rowData, actionProps, history.location)}
-                  </TableCell>
-                ) : (
-                  <TableCell key={col.heading} align={col.align || 'left'}>
-                    {col.value(rowData, actionProps, history.location)}
-                  </TableCell>
-                )
-              )}
+              ).map((col, index) => index === 0 ? (
+                <TableCell
+                  component="th"
+                  scope="row"
+                  key={col.heading}
+                  align={col.align || 'left'}>
+                  {col.value(rowData, actionProps, history.location)}
+                </TableCell>
+              ) : (
+                <TableCell key={col.heading} align={col.align || 'left'}>
+                  {col.value(rowData, actionProps, history.location)}
+                </TableCell>
+              ))}
               {rowActions && (
                 <TableCell className={classes.actionCell}>
                   <ActionMenu

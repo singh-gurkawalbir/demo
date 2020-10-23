@@ -115,7 +115,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
 
   const { startDate, endDate } = range;
   const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);

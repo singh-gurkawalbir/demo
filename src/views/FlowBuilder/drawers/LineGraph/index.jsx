@@ -67,7 +67,7 @@ export default function LineGraphDrawer({ flowId }) {
       return latestJobDetails.data.find(job => job._flowId === flowId);
     }
   }, [flowId, latestJobDetails]);
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const preferences = useSelector(state => selectors.userPreferences(state)?.linegraphs) || {};
   const { rangePreference, resourcePreference } = useMemo(() => {
     const preference = preferences[flowId] || {};
