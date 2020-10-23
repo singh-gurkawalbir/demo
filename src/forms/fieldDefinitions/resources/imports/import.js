@@ -246,6 +246,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Oracle', value: 'oracle' },
           { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },

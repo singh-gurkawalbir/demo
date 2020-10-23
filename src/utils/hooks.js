@@ -80,6 +80,7 @@ export function getSupportedHooksForResource(resource) {
     case 'postgresql':
     case 'mysql':
     case 'mssql':
+    case 'oracle':
     case 'snowflake':
     case 'mongodb':
       unSupportedHooks = [];
