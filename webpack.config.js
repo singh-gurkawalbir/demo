@@ -84,6 +84,7 @@ const config = {
     new webpack.DefinePlugin({
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
+      LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
     }),
   ],
   output: {
@@ -104,7 +105,7 @@ module.exports = (env, argv) => {
   const runOptimizedLocal = argv && argv.runOptimizedLocal;
 
   // eslint-disable-next-line no-restricted-syntax
-  for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER']) {
+  for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER', 'LOGROCKET_IDENTIFIER_EU']) {
     console.log('Custom Environment Variable:', k, '=', process.env[k]);
   }
 
