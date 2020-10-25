@@ -84,7 +84,7 @@ export default function PreviewInfo(props) {
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
 
   const canSelectRecords = useSelector(state =>
-    selectors.canSelectRecordsToPreviewInPreviewPanel(state, resourceId, resourceType)
+    selectors.canSelectRecordsInPreviewPanel(state, resourceId, resourceType)
   );
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
