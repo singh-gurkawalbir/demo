@@ -58,7 +58,7 @@ export function* constructResourceFromFormValues({
   }
 }
 
-function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize }) {
+function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize = 10 }) {
   let body = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -181,6 +181,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
 
     dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
+    // dataForEachStageMap.preview = { data: [processJsonPreviewData(file, options)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
 
     return;
@@ -245,7 +246,7 @@ function* fetchExportPreviewData({
       const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
 
       if (parsedData) {
-        return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
+        return yield put(actions.sampleData.update(resourceId, { data: [[parsedData]] }, 'parse'));
       }
 
       // If no sample data on resource too...

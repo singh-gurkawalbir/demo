@@ -422,6 +422,24 @@ export const processJsonSampleData = (sampleData, options = {}) => {
   return processedSampleData;
 };
 
+export const processJsonPreviewData = (sampleData, options = {}) => {
+  if (!sampleData) return sampleData;
+  const { resourcePath } = options;
+  let processedSampleData = sampleData;
+
+  // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
+  if (resourcePath && resourcePath !== '*') {
+    // Extract sample data at resource
+    // check for array type if yes update with union thing
+    processedSampleData = extractSampleDataAtResourcePath(
+      processedSampleData,
+      options.resourcePath
+    );
+  }
+
+  return processedSampleData;
+};
+
 /*
  * Returns Transformation rules set by flattening xmlJsonData
  */
@@ -523,7 +541,7 @@ export const processOneToManySampleData = (sampleData, resource) => {
 export const wrapExportFileSampleData = records => {
   const page_of_records = [];
 
-  if (!records) {
+  if (!records || typeof records !== 'object') {
     page_of_records.push({ record: {} });
 
     return { page_of_records };

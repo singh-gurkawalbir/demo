@@ -44,7 +44,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
-    return PARSED_STAGE;
+    return PREVIEW_STAGE;
   }
 
   if (!appType) return emptyList;

@@ -79,7 +79,7 @@ const getResourceSampleData = (resourceIdSampleData, stage) => {
     case 'parse':
       return resourceData.parse?.[0] || DEFAULT_VALUE;
     case 'preview':
-      return resourceData.parse;
+      return resourceData.preview || resourceData.parse || DEFAULT_VALUE;
     default:
       return resourceData[stage] || DEFAULT_VALUE;
   }
