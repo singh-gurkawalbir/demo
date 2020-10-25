@@ -152,11 +152,11 @@ export default {
       }
     }
 
-    if (formVal.discardIfEmpty) {
+    if ('discardIfEmpty' in formVal) {
       settings.discardIfEmpty = formVal.discardIfEmpty;
     }
 
-    if (formVal.useAsAnInitializeValue) {
+    if ('useAsAnInitializeValue' in formVal) {
       settings.useAsAnInitializeValue = formVal.useAsAnInitializeValue;
     }
 
