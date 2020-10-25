@@ -6,6 +6,8 @@ import { adaptorTypeMap } from './resource';
 import { isJsonString } from './string';
 import { wrapExportFileSampleData } from './sampleData';
 
+export const DEFAULT_RECORD_SIZE = 10;
+
 // Applications list which include Preview panel as part of the resource drawer
 
 const applicationsWithPreviewPanel = [

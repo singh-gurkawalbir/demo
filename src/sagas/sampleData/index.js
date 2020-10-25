@@ -58,7 +58,7 @@ export function* constructResourceFromFormValues({
   }
 }
 
-function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
+function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize }) {
   let body = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -83,8 +83,8 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   }
 
   // eslint-disable-next-line no-restricted-globals
-  if (body.pageSize && !isNaN(body.pageSize)) {
-    body.test = { limit: parseInt(body.pageSize, 10) };
+  if (recordSize && !isNaN(recordSize)) {
+    body.test = { limit: recordSize };
   }
 
   const path = `/${resourceType}/preview`;
@@ -226,6 +226,7 @@ function* fetchExportPreviewData({
   resourceType,
   values,
   runOffline,
+  recordSize,
 }) {
   const body = yield call(constructResourceFromFormValues, {
     formValues: values,
@@ -273,6 +274,7 @@ function* fetchExportPreviewData({
     resourceType,
     values,
     runOffline,
+    recordSize,
   });
 }
 
@@ -281,8 +283,10 @@ export function* requestExportSampleData({
   resourceType,
   values,
   stage,
-  runOffline,
+  options = {},
 }) {
+  const { runOffline, recordSize } = options;
+
   if (stage) {
     yield call(processRawData, {
       resourceId,
@@ -296,13 +300,15 @@ export function* requestExportSampleData({
       resourceType,
       values,
       runOffline,
+      recordSize,
     });
   }
 }
 
 // TODO @Raghu: Merge this into existing requestSampleData
-function* requestLookupSampleData({ resourceId, flowId, formValues }) {
+function* requestLookupSampleData({ resourceId, flowId, formValues, options = {} }) {
   const resourceType = 'exports';
+  const { recordSize } = options;
   let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
@@ -318,6 +324,10 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   // delete sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
   delete _pageProcessorDoc.sampleData;
+  // add recordSize if passed to limit number of records from preview
+  if (recordSize) {
+    _pageProcessorDoc.test = { limit: recordSize };
+  }
 
   try {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {

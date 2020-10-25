@@ -4,7 +4,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
-import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
+import { getPreviewDataPageSizeInfo, DEFAULT_RECORD_SIZE } from '../../../utils/exportPanel';
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
 import SelectRecords from '../SelectRecords';
 import { selectors } from '../../../reducers';
@@ -80,7 +80,7 @@ export default function PreviewInfo(props) {
     resourceType,
   } = props;
   const classes = useStyles(props);
-  const [recordSize, setRecordSize] = useState('10');
+  const [recordSize, setRecordSize] = useState(`${DEFAULT_RECORD_SIZE}`);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
 
   const canSelectRecords = useSelector(state =>

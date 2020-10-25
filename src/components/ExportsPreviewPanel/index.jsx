@@ -7,6 +7,7 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
+import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -66,21 +67,26 @@ function PreviewInfo({
   );
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
-  const fetchExportPreviewData = useCallback(() => {
+  const fetchExportPreviewData = useCallback(recordSize => {
     // Just a fail safe condition not to request for sample data incase of not exports
     if (resourceType !== 'exports') return;
 
     // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
     if (!flowId || isPageGeneratorExport) {
       dispatch(
-        actions.sampleData.request(resourceId, resourceType, value)
+        actions.sampleData.request(resourceId, resourceType, value, null, {
+          recordSize,
+        })
       );
     } else {
       dispatch(
         actions.sampleData.requestLookupPreview(
           resourceId,
           flowId,
-          value
+          value,
+          {
+            recordSize,
+          }
         )
       );
     }
@@ -100,7 +106,7 @@ function PreviewInfo({
     // Needs a refactor to preview saga for that
     if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
       setIsPreviewDataFetched(true);
-      fetchExportPreviewData();
+      fetchExportPreviewData(DEFAULT_RECORD_SIZE);
     }
   }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 

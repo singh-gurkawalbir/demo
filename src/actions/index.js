@@ -1245,19 +1245,20 @@ const user = {
   },
 };
 const sampleData = {
-  request: (resourceId, resourceType, values, stage, runOffline) =>
+  request: (resourceId, resourceType, values, stage, options = {}) =>
     action(actionTypes.SAMPLEDATA.REQUEST, {
       resourceId,
       resourceType,
       values,
       stage,
-      runOffline,
+      options,
     }),
-  requestLookupPreview: (resourceId, flowId, formValues) =>
+  requestLookupPreview: (resourceId, flowId, formValues, options = {}) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
       resourceId,
       flowId,
       formValues,
+      options,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
