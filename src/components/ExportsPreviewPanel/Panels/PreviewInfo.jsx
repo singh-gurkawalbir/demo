@@ -1,16 +1,20 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
-// import ErrorIcon from '../../../../icons/ErrorIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
+import SelectRecords from '../SelectRecords';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
     minHeight: theme.spacing(10),
     position: 'relative',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     padding: theme.spacing(1),
     marginBottom: theme.spacing(4),
     borderRadius: theme.spacing(0.5),
@@ -58,6 +62,11 @@ const useStyles = makeStyles(theme => ({
   msgSuccess: {
     marginLeft: 4,
   },
+  recordSize: {
+    padding: theme.spacing(0, 1, 0, 1),
+    width: theme.spacing(20),
+    minWidth: theme.spacing(20),
+  },
 }));
 
 export default function PreviewInfo(props) {
@@ -67,9 +76,16 @@ export default function PreviewInfo(props) {
     previewStageDataList,
     panelType,
     disabled,
+    resourceId,
+    resourceType,
   } = props;
   const classes = useStyles(props);
+  const [recordSize, setRecordSize] = useState('10');
+  const [isValidRecordSize, setIsValidRecordSize] = useState(true);
 
+  const canSelectRecords = useSelector(state =>
+    selectors.canSelectRecordsToPreviewInPreviewPanel(state, resourceId, resourceType)
+  );
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
@@ -107,6 +123,18 @@ export default function PreviewInfo(props) {
     }
   }, [panelType, previewStageDataList, resourceSampleData.status]);
 
+  const handlePreview = useCallback(
+    () => {
+      if (!isValidRecordSize) {
+        // show alert
+        // console.log('enter a valid record size');
+      } else {
+        fetchExportPreviewData(parseInt(recordSize, 10));
+      }
+    },
+    [fetchExportPreviewData, isValidRecordSize, recordSize],
+  );
+
   return (
     <div className={classes.previewContainer}>
       <div className={classes.previewData}>
@@ -115,13 +143,23 @@ export default function PreviewInfo(props) {
             variant="outlined"
             color="secondary"
             className={classes.previewBtn}
-            onClick={fetchExportPreviewData}
+            onClick={handlePreview}
             disabled={disabled || resourceSampleData.status === 'requested'}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>
         </div>
-
+        { canSelectRecords &&
+        (
+        <div className={classes.recordSize}>
+          <SelectRecords
+            recordSize={recordSize}
+            isValidRecordSize={isValidRecordSize}
+            setIsValidRecordSize={setIsValidRecordSize}
+            setRecordSize={setRecordSize}
+           />
+        </div>
+        ) }
         <div className={classes.previewDataRight}>
           {sampleDataStatus && <div> {sampleDataStatus}</div>}
           {sampleDataOverview && (

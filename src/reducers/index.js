@@ -5382,3 +5382,8 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
 
   return !integrations.some(integration => !!integration._connectorId);
 };
+
+selectors.canSelectRecordsToPreviewInPreviewPanel = () =>
+// console.log(state, resourceId, resourceType);
+  true;
+

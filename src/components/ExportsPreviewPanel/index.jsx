@@ -45,8 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// const resourceSampleData = {data: 1, status: 'received', error: 1};
-
 function PreviewInfo({
   flowId,
   resourceId,
@@ -113,6 +111,8 @@ function PreviewInfo({
       previewStageDataList={previewStageDataList}
       panelType={panelType}
       disabled={isPreviewDisabled}
+      resourceId={resourceId}
+      resourceType={resourceType}
   />
   );
 }
