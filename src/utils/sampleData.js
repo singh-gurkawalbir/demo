@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
@@ -520,19 +521,28 @@ export const processOneToManySampleData = (sampleData, resource) => {
  * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
  */
 export const wrapExportFileSampleData = records => {
-  // eslint-disable-next-line camelcase
   const page_of_records = [];
 
-  if (!records) return { page_of_records };
+  if (!records) {
+    page_of_records.push({ record: {} });
 
-  if (Array.isArray(records)) {
-    const rows = [];
-
-    records.forEach(record => rows.push(record));
-    page_of_records.push({rows});
-  } else {
-    page_of_records.push({ record: records });
+    return { page_of_records };
   }
+  if (!Array.isArray(records)) {
+    page_of_records.push({ record: records });
+
+    return { page_of_records };
+  }
+  records.forEach(record => {
+    if (Array.isArray(record)) {
+      const rows = [];
+
+      record.forEach(r => rows.push(r));
+      page_of_records.push({rows});
+    } else {
+      page_of_records.push({ record });
+    }
+  });
 
   return { page_of_records };
 };

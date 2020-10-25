@@ -17,17 +17,7 @@ function extractStages(sampleData) {
     stageMap.parse = sampleData;
   } else {
     stagesInSampleData.forEach(stage => {
-      switch (stage.name) {
-        case 'parse':
-          stageMap[stage.name] = stage.data && stage.data[0];
-          break;
-        case 'transform':
-          stageMap[stage.name] =
-            stage.data && stage.data[0] && stage.data[0].data;
-          break;
-        default:
-          stageMap[stage.name] = stage.data;
-      }
+      stageMap[stage.name] = stage.data;
     });
   }
 
@@ -85,7 +75,14 @@ const getResourceSampleData = (resourceIdSampleData, stage) => {
 
   if (!resourceData) return DEFAULT_VALUE;
 
-  return resourceData[stage] || DEFAULT_VALUE;
+  switch (stage) {
+    case 'parse':
+      return resourceData.parse?.[0] || DEFAULT_VALUE;
+    case 'preview':
+      return resourceData.parse;
+    default:
+      return resourceData[stage] || DEFAULT_VALUE;
+  }
 };
 
 const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({

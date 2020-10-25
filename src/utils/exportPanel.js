@@ -28,11 +28,11 @@ const emptyList = [];
 export const HTTP_STAGES = [
   { label: 'HTTP request', value: 'request' },
   { label: 'HTTP response', value: 'raw' },
-  { label: 'Parsed output', value: 'parse' },
+  { label: 'Parsed output', value: 'preview' },
 ];
 
 Object.freeze(HTTP_STAGES);
-
+const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
 const PARSED_STAGE = [{ label: 'Parsed output', value: 'parse' }];
 
 Object.freeze(PARSED_STAGE);
@@ -54,13 +54,13 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return HTTP_STAGES;
     case 'netsuite':
     case 'salesforce':
-      return PARSED_STAGE;
+      return PREVIEW_STAGE;
     case 'rest':
       return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return PARSED_STAGE;
+      return PREVIEW_STAGE;
     default:
       return emptyList;
   }

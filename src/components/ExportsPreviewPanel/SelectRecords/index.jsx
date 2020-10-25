@@ -50,8 +50,8 @@ export default function SelectRecords(props) {
 }
 
 /**
- * 1. Add Dropdown
- * 2. Add conditions where to show/hide it ( Hide FTP for now )
+ * 1. Add Dropdown - done
+ * 2. Add conditions where to show/hide it - done
  * 3. Add preview support for export/lookup
  * 4. update common util to support proper format both editors level and preview panel
  * 5. Tackle FTP related use cases to show proper format
