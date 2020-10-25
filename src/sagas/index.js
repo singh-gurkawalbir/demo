@@ -159,8 +159,8 @@ function* allSagas() {
   ]);
 }
 
-function requestWrapper() {
-  return createRequestInstance({
+export default function* rootSaga() {
+  yield createRequestInstance({
     driver: createDriver(window.fetch, {
       // AbortController Not supported in IE installed this polyfill package
       // that it would resort to
@@ -172,10 +172,6 @@ function requestWrapper() {
     onError: onErrorSaga,
     onAbort: onAbortSaga,
   });
-}
-
-export default function* rootSaga() {
-  yield requestWrapper();
   const t = yield fork(allSagas);
   const {logrocket, logout} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
@@ -186,14 +182,16 @@ export default function* rootSaga() {
     // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
     t.cancel();
     yield call(initializeLogrocket);
-    yield requestWrapper();
-    yield fork(allSagas);
+    // yield requestWrapper();
+    yield spawn(rootSaga);
     // initializeApp must be called(again) after initilizeLogrocket and saga restart
     // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
     // from within sagas/authentication/index.js
     yield call(initializeApp, logrocket.opts);
   }
   if (logout) {
+    // stop the main sagas
+    t.cancel();
     // logout requires also reset the store
     yield put(actions.auth.clearStore());
     // restart the root saga again
