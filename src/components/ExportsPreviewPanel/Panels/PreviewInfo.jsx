@@ -8,6 +8,7 @@ import { getPreviewDataPageSizeInfo, DEFAULT_RECORD_SIZE } from '../../../utils/
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
 import SelectRecords from '../SelectRecords';
 import { selectors } from '../../../reducers';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
@@ -82,6 +83,7 @@ export default function PreviewInfo(props) {
   const classes = useStyles(props);
   const [recordSize, setRecordSize] = useState(`${DEFAULT_RECORD_SIZE}`);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
+  const [enquesnackbar] = useEnqueueSnackbar();
 
   const canSelectRecords = useSelector(state =>
     selectors.canSelectRecordsInPreviewPanel(state, resourceId, resourceType)
@@ -126,13 +128,15 @@ export default function PreviewInfo(props) {
   const handlePreview = useCallback(
     () => {
       if (!isValidRecordSize) {
-        // show alert
-        // console.log('enter a valid record size');
+        enquesnackbar({
+          message: 'Enter a valid record size',
+          variant: 'error',
+        });
       } else {
         fetchExportPreviewData(parseInt(recordSize, 10));
       }
     },
-    [fetchExportPreviewData, isValidRecordSize, recordSize],
+    [fetchExportPreviewData, isValidRecordSize, recordSize, enquesnackbar],
   );
 
   return (

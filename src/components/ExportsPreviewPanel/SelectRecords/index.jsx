@@ -14,7 +14,7 @@ export default function SelectRecords(props) {
 
   const onRecordChange = useCallback((_id, value) => {
     setRecordSize(value);
-  });
+  }, [setRecordSize]);
 
   const recordSizeOptions = useMemo(() => Array.from(Array(10), (val, index) => {
     const stringifiedValue = `${(index + 1) * 10}`;
@@ -23,15 +23,16 @@ export default function SelectRecords(props) {
   }), []);
 
   useEffect(() => {
+    const isValidNumber = /^[0-9]*$/.test(recordSize);
     const size = parseInt(recordSize, 10);
     const sizeLimitExceeds = size < 0 || size > 100;
-    const isValid = !isNaN(size) && !sizeLimitExceeds;
+    const isValid = isValidNumber && !sizeLimitExceeds;
 
     setIsValidRecordSize(isValid);
     if (isValid) {
       setErrorMessage('');
     } else {
-      setErrorMessage(!isNaN(size) ? 'Invalid Size' : 'Max value is 100');
+      setErrorMessage(isValidNumber ? 'Invalid Size' : 'Max value is 100');
     }
   }, [recordSize, setIsValidRecordSize]);
 
