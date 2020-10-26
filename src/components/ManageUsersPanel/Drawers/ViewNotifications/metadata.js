@@ -10,15 +10,6 @@ export default function viewNotificationsMetadata(props) {
   return (
     {
       fieldMap: {
-        connections: {
-          id: 'connections',
-          name: 'connections',
-          type: 'multiselect',
-          valueDelimiter: ',',
-          label: 'Subscribed connections',
-          defaultValue: connectionValues,
-          options: [{ items: connectionOps }],
-        },
         flows: {
           id: 'flows',
           name: 'flows',
@@ -28,6 +19,15 @@ export default function viewNotificationsMetadata(props) {
           defaultValue: flowValues,
           options: [{ items: flowOps }],
           selectAllIdentifier: integrationId,
+        },
+        connections: {
+          id: 'connections',
+          name: 'connections',
+          type: 'multiselect',
+          valueDelimiter: ',',
+          label: 'Subscribed connections',
+          defaultValue: connectionValues,
+          options: [{ items: connectionOps }],
         },
       },
     }
