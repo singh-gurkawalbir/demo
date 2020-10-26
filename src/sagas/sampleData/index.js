@@ -215,7 +215,7 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
     const previewData = processJsonPreviewData(file, options);
 
     dataForEachStageMap.preview = { data: previewFileData(previewData, recordSize) };
-    dataForEachStageMap.parse = { data: processJsonSampleData(file, options) };
+    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
 
     return;
