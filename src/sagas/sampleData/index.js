@@ -156,6 +156,27 @@ function* updateDataForStages({resourceId, dataForEachStageMap }) {
   }
 }
 
+/**
+ * Checks if the constructed body from formValues has same file type as saved resource
+ * and if body has sampleData
+ */
+function* hasSampleDataOnResource({ resourceId, resourceType, body }) {
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+
+  if (!resource || !body.sampleData) return false;
+  const resourceFileType = resource?.file?.type;
+  const bodyFileType = body?.file?.type;
+
+  if (
+    ['filedefinition', 'fixed', 'delimited/edifact'].includes(bodyFileType) &&
+    resourceFileType === 'filedefinition'
+  ) {
+    return true;
+  }
+
+  return bodyFileType === resourceFileType;
+}
+
 function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
   const { file } = values;
@@ -245,19 +266,20 @@ function* fetchExportPreviewData({
 
     if (!fileDetails) {
       // when no file uploaded , try fetching sampleData on resource
+      const hasSampleData = yield call(hasSampleDataOnResource, { resourceId, resourceType, body});
       const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
 
-      if (parsedData) {
+      if (hasSampleData && parsedData) {
         return yield put(actions.sampleData.update(resourceId, { data: [[parsedData]] }, 'parse'));
       }
 
       // If no sample data on resource too...
       // Show empty data representing no data is being passed
-      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+      return yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'parse'));
     }
     if (body.file.output === 'blobKeys') {
       // If the output mode is 'blob' , no data is passed so show empty data
-      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+      return yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'parse'));
     }
     const fileProps = {
       type: fileDetails?.type,
