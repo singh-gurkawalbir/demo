@@ -553,7 +553,11 @@ export const wrapSampleDataWithContext = ({
 
   let resourceType = 'export';
 
-  if (resource?.adaptorType?.includes('Import')) {
+  if (
+    resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+  ) {
     resourceType = 'import';
   }
 
@@ -603,7 +607,7 @@ export const wrapSampleDataWithContext = ({
       };
 
       // add connection object for http exports and imports, only for AFE2
-      if (resource.adaptorType?.includes('HTTP') && connection.http && (resourceType === 'export' || templateVersion === 2)) {
+      if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
         processedData.connection = {
           name: connection.name,
           http: {
