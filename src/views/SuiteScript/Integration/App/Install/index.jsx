@@ -337,7 +337,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
           <RightDrawer
             path="editConnection"
             type="legacy"
-            title="Setup connection"
+            title="Set up connection"
             height="tall"
             width="medium">
             <ResourceForm
