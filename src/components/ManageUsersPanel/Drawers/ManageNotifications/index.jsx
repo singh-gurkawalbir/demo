@@ -60,7 +60,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
 
   const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
 
-  const { flowOps, connectionOps } = useGetNotificationOptions({ flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = notificationsMetadata({
     connectionValues,

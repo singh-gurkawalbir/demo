@@ -48,7 +48,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
 
-  const { flowOps, connectionOps } = useGetNotificationOptions({ flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = {
     fieldMap: {
