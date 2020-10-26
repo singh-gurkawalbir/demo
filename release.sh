@@ -19,3 +19,5 @@ if [[ $LOGROCKET_IDENTIFIER_EU != $LOGROCKET_IDENTIFIER ]]; then
 fi
 # move the source map files into a separate folder
 mkdir -p build/sourcemaps && mv build/*.js.map build/sourcemaps/
+aws s3 cp build/ s3://integrator-staging-ui-resources/react/$1/ --recursive --acl public-read
+aws s3 cp build/index.html s3://integrator-staging-ui-resources/react/index.html --acl public-read

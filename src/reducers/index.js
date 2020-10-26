@@ -3080,7 +3080,7 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
   (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
   (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
     const connections = _connectorId ? integrationAppConnections : diyConnections;
-    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const flows = _connectorId ? integrationAppFlows : diyFlows;
     const connectionValues = connections
       .filter(c => !!notifications.find(n => n._connectionId === c._id))
       .map(c => c._id);
@@ -3092,8 +3092,6 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
     );
 
     if (_integrationId && _integrationId !== 'none') {
-      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
-
       if (allFlowsSelected) flowValues = [_integrationId, ...flows];
     }
 
