@@ -35,7 +35,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
     background: theme.palette.background.default,
   },
   legendIcon: {

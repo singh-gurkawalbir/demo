@@ -6,7 +6,9 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
 import util from '../../../../utils/array';
 import actions from '../../../../actions';
-import RightDrawer from '../../../../components/drawer/Right';
+import RightDrawer from '../../../../components/drawer/Right/V2';
+import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
 import DateRangeSelector from '../../../../components/DateRangeSelector';
 import FlowCharts from '../../../../components/LineGraph/Flow';
 import SelectResource from '../../../../components/LineGraph/SelectResource';
@@ -149,9 +151,13 @@ export default function LineGraphDrawer({ flowId }) {
     [dispatch, flowId, integrationId, preferences, range, selectedResources]
   );
 
-  const action = useMemo(
-    () => (
-      <>
+  return (
+    <RightDrawer
+      height="short"
+      width="full"
+      onClose={handleClose}
+      path="charts">
+      <DrawerHeader title="Dashboard">
         <IconTextButton onClick={handleRefresh}>
           <RefreshIcon /> Refresh
         </IconTextButton>
@@ -169,26 +175,15 @@ export default function LineGraphDrawer({ flowId }) {
           isFlow
           onSave={handleResourcesChange}
         />
-      </>
-    ),
-    [handleRefresh, handleDateRangeChange, customPresets, rangePreference.startDate, rangePreference.endDate, rangePreference.preset, selectedResources, flowResources, handleResourcesChange]
-  );
+      </DrawerHeader>
 
-  return (
-    <RightDrawer
-      anchor="right"
-      title="Dashboard"
-      height="short"
-      width="full"
-      actions={action}
-      variant="permanent"
-      onClose={handleClose}
-      path="charts">
-      <FlowCharts
-        flowId={flowId}
-        selectedResources={selectedResources}
-        range={range}
+      <DrawerContent>
+        <FlowCharts
+          flowId={flowId}
+          selectedResources={selectedResources}
+          range={range}
       />
+      </DrawerContent>
     </RightDrawer>
   );
 }
