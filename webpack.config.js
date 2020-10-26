@@ -88,7 +88,7 @@ const config = {
     }),
   ],
   output: {
-    publicPath: '/',
+    publicPath: process.env.RELEASE_VERSION ? `${process.env.CDN_BASE_URI}react/${process.env.RELEASE_VERSION}/` : '/',
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'build'),
   },
