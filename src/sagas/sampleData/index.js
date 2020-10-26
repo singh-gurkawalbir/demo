@@ -18,6 +18,8 @@ import {
   isAS2Resource,
 } from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
+import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
+
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -58,7 +60,7 @@ export function* constructResourceFromFormValues({
   }
 }
 
-function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize = 10 }) {
+function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize = DEFAULT_RECORD_SIZE }) {
   let body = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,

@@ -7,7 +7,6 @@ import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import { isNewId } from '../../utils/resource';
-import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -106,7 +105,7 @@ function PreviewInfo({
     // Needs a refactor to preview saga for that
     if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
       setIsPreviewDataFetched(true);
-      fetchExportPreviewData(DEFAULT_RECORD_SIZE);
+      fetchExportPreviewData();
     }
   }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 
