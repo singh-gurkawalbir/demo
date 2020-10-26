@@ -52,7 +52,6 @@ function PreviewInfo({
   resourceType,
   resourceSampleData,
   previewStageDataList,
-  panelType,
   isPreviewDisabled,
 }) {
   const value = useSelector(
@@ -114,7 +113,6 @@ function PreviewInfo({
       fetchExportPreviewData={fetchExportPreviewData}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
-      panelType={panelType}
       disabled={isPreviewDisabled}
       resourceId={resourceId}
       resourceType={resourceType}
@@ -173,7 +171,10 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
         isPreviewDisabled={isPreviewDisabled}
-        flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
+        flowId={flowId}
+        resourceId={resourceId}
+        formKey={formKey}
+        resourceType={resourceType}
       />
       <Panels.PreviewBody
         resourceSampleData={resourceSampleData}
