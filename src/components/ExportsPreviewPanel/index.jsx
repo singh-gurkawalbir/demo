@@ -99,6 +99,11 @@ function PreviewInfo({
     }
   }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 
+  useEffect(() =>
+    () => dispatch(actions.sampleData.reset(resourceId)),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
+
   return (
     <Panels.PreviewInfo
       fetchExportPreviewData={fetchExportPreviewData}
