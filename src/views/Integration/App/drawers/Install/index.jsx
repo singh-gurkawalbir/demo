@@ -167,13 +167,16 @@ export default function ConnectorInstallation(props) {
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
   useEffect(() => {
-    if (
-      installSteps.length &&
-      !isSetupComplete &&
-      !installSteps.reduce((result, step) => result || !step.completed, false)
-    ) {
-      dispatch(actions.resource.request('integrations', integrationId));
-      setIsSetupComplete(true);
+    const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
+
+    if (installSteps.length) {
+      if (allStepsCompleted && !isSetupComplete) {
+        dispatch(actions.resource.request('integrations', integrationId));
+        setIsSetupComplete(true);
+      } else if (!allStepsCompleted && isSetupComplete) {
+        // reset local state if some new steps were added
+        setIsSetupComplete(false);
+      }
     }
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
@@ -246,6 +249,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('licenses'));
       dispatch(actions.resource.requestCollection('imports'));
+      dispatch(actions.resource.requestCollection('connections'));
 
       if (mode === 'settings') {
         if (
