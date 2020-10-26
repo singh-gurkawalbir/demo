@@ -163,10 +163,9 @@ export function* retrieveAppInitializationResources() {
     call(retrievingOrgDetails),
     call(retrievingUserDetails),
     call(retrievingAssistantDetails),
-    // change it to this way because logrocket init requires the version to be known at init
-    call(fetchUIVersion),
   ]);
 
+  yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -240,13 +239,14 @@ export function* auth({ email, password }) {
 }
 
 export function* initializeLogRocket() {
-  const version = yield select(selectors.version);
   const p = yield select(selectors.userProfile);
 
   // LOGROCKET_IDENTIFIER is defined by webpack
   // eslint-disable-next-line no-undef
   LogRocket.init(LOGROCKET_IDENTIFIER, {
-    release: version,
+    // RELEASE_VERSION is defined by webpack
+    // eslint-disable-next-line no-undef
+    release: RELEASE_VERSION,
     console: {
       isEnabled: {
         debug: false,
@@ -290,7 +290,7 @@ export function* initializeLogRocket() {
     });
   }
 }
-
+let LOGROCKET_INITIALIZED = false;
 export function* initializeApp() {
   try {
     const resp = yield call(
@@ -309,7 +309,8 @@ export function* initializeApp() {
 
       // LOGROCKET_IDENTIFIER is defined by webpack
       // eslint-disable-next-line no-undef
-      if (LOGROCKET_IDENTIFIER) {
+      if (LOGROCKET_IDENTIFIER && !LOGROCKET_INITIALIZED) {
+        LOGROCKET_INITIALIZED = true;
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());
       }
