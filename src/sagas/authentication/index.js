@@ -22,6 +22,7 @@ import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
+import { getDomain } from '../../utils/resource';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -114,14 +115,6 @@ export function* retrievingAssistantDetails() {
       assistant: 'financialforce',
       export: true,
       import: true,
-    });
-    assistantConnectors.push({
-      id: 'channelape',
-      name: 'Channel Ape',
-      type: 'http',
-      assistant: 'channelape',
-      export: false,
-      import: false,
     });
   }
 
@@ -238,12 +231,15 @@ export function* auth({ email, password }) {
   }
 }
 
+const getLogrocketId = () =>
+  // LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
+  // eslint-disable-next-line no-undef
+  (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
+
 export function* initializeLogRocket() {
   const p = yield select(selectors.userProfile);
 
-  // LOGROCKET_IDENTIFIER is defined by webpack
-  // eslint-disable-next-line no-undef
-  LogRocket.init(LOGROCKET_IDENTIFIER, {
+  LogRocket.init(getLogrocketId(), {
     // RELEASE_VERSION is defined by webpack
     // eslint-disable-next-line no-undef
     release: RELEASE_VERSION,
@@ -307,9 +303,7 @@ export function* initializeApp() {
       yield put(actions.auth.complete());
       yield call(retrieveAppInitializationResources);
 
-      // LOGROCKET_IDENTIFIER is defined by webpack
-      // eslint-disable-next-line no-undef
-      if (LOGROCKET_IDENTIFIER && !LOGROCKET_INITIALIZED) {
+      if (!LOGROCKET_INITIALIZED && getLogrocketId()) {
         LOGROCKET_INITIALIZED = true;
         // stop sagas, init logrocket, and restart sagas
         yield put(actions.auth.abortAllSagasAndInitLR());

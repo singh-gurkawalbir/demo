@@ -510,7 +510,7 @@ export function* retryAll({ flowId, storeId, integrationId }) {
 
         flowIds = allFlows.resources.filter(f => storeFlowIds.includes(f._id) && !f.disabled).map(f => f._id);
       } else {
-        flowIds = allFlows.resources.filter(f => f._integrationId === integrationId && !f.disabled).map(f => f._id);
+        flowIds = allFlows.resources.filter(f => (integrationId === 'none' ? !f._integrationId : (f._integrationId === integrationId)) && !f.disabled).map(f => f._id);
       }
     }
   }

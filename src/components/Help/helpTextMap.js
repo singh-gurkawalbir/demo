@@ -810,8 +810,8 @@ export default {
   'connection.http.rateLimit.failPath': 'Use this field if the service you are connecting to embeds rate limit errors in the HTTP body. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses this path to identify a rate-limited (throttled) response.',
   'connection.http.rateLimit.failValues': 'Use this field only if the rate limit fail path is set. <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> uses these values to identify a rate-limited response.',
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
-  'connection.http.unencrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. This values is stored with AES-256 encryption and other layers of protection to keep your data safe.',
-  'connection.http.encrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
+  'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
+  'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
     'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
@@ -846,6 +846,8 @@ export default {
     'Please provide optional Passphrase. This is used to decrypt the "Key" field. This is necessary only if database server is using client certificate authentication.',
   'connection.rdbms.ssl.cert':
     'Please provide optional cert chain in PEM format.This is necessary only if database server is using client certificate authentication.',
+  'mssql.connection.rdbms.version':
+    'There are many different SQL Server versions. To find out which version you\'re using:</br>1.Connect to the SQL server you want to use.</br>2.Run the Windows command: SELECT @@version;</br>3.See <a href="https://support.microsoft.com/en-us/help/321185/how-to-determine-the-version-edition-and-update-level-of-sql-server-an" >Microsoft’s docs</a> for more information on finding your version.',
   'connection.mongodb.host':
     'Enter the hostname or IP address for your MongoDB instance. For example: mongodb-instance1.com or 172.16.254.1.  By default, integrator.io will connect to port 27017.  If you need to connect to a different port then please append :port to your hostname.  For example:  mongodb-instance1.com:12345 or 172.16.254.1:98765.   If you are connecting to a mongodb cluster then please enter all your hostname:port combinations separated by commas.  For example: mongodb-instance1.com:12345,mongodb-instance2.com:12345,mongodb-instance3.com:12345.',
   'connection.mongodb.database':

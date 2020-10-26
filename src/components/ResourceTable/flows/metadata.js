@@ -1,4 +1,5 @@
 import React from 'react';
+import pick from 'lodash/pick';
 import AuditLogs from '../commonActions/AuditLogs';
 import Clone from '../commonActions/Clone';
 import Download from '../commonActions/Download';
@@ -83,6 +84,8 @@ export default {
     }
 
     if (actionProps.isIntegrationApp) {
+      columns = columns.map(col => pick(col, ['heading', 'align', 'value']));
+
       columns.push(
         {
           heading: 'Settings',

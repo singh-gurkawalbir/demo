@@ -146,9 +146,10 @@ export default function FlowsPanel({ integrationId, childId }) {
     {
       parentId: integrationId,
       storeId: childId,
+      isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
-    }), [childId, integrationId, isUserInErrMgtTwoDotZero]);
+    }), [childId, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (

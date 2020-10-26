@@ -65,6 +65,10 @@ const useStyles = makeStyles(theme => ({
     right: theme.spacing(-0.5),
     top: 0,
   },
+  tagExpire: {
+    bottom: 80,
+    position: 'absolute',
+  },
 }));
 
 function Tile({ tile, history, onMove, onDrop, index }) {
@@ -349,7 +353,8 @@ function Tile({ tile, history, onMove, onDrop, index }) {
               )}
             </Manage>
             )}
-            {tile.tag && <Tag variant={tile.tag} />}
+            {expired && tile.tag && (<Tag variant={tile.tag} className={classes.tagExpire} />)}
+            {!expired && tile.tag && (<Tag variant={tile.tag} />)}
           </FooterActions>
           <Info
             variant={tile._connectorId ? 'Integration app' : numFlowsText}

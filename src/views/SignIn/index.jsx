@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles, Typography, Link } from '@material-ui/core';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
+import { getDomain } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -82,12 +83,14 @@ export default function Signin(props) {
             dialogOpen={false}
             className={classes.signInForm}
           />
+          {getDomain() !== 'eu.integrator.io' && (
           <Typography variant="body2" className={classes.signupLink}>
             Don&apos;t have an account?
             <Link href="/signup" className={classes.link}>
               Sign up
             </Link>
           </Typography>
+          )}
         </div>
       </div>
       <div className={classes.gridImgWrapper} />
