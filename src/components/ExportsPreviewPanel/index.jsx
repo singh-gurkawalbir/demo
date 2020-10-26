@@ -172,7 +172,6 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
       <PreviewInfo
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
-        panelType={panelType}
         isPreviewDisabled={isPreviewDisabled}
         flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
       />

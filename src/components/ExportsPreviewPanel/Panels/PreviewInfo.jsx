@@ -75,7 +75,6 @@ export default function PreviewInfo(props) {
     fetchExportPreviewData,
     resourceSampleData,
     previewStageDataList,
-    panelType,
     disabled,
     resourceId,
     resourceType,
@@ -116,14 +115,18 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      // TODO @Raghu:  Needs to be updated when number of records are handled
+      const records =
+        Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+          ? previewStageDataList.preview
+          : previewStageDataList.parse;
+
       return (
         <Typography variant="body2">
-          {getPreviewDataPageSizeInfo(previewStageDataList[panelType])}
+          {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [panelType, previewStageDataList, resourceSampleData.status]);
+  }, [previewStageDataList, resourceSampleData.status]);
 
   const handlePreview = useCallback(
     () => {

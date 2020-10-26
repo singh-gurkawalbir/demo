@@ -194,8 +194,8 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
     values.editorValues = generateFileParserOptionsFromResource(body);
   }
   const dataForEachStageMap = {
-    rawFile: { data: [{ body: file, type }] },
-    raw: { data: [{ body: file }] },
+    rawFile: { data: { body: file, type } },
+    raw: { data: { body: file } },
   };
   const processorData = deepClone(values.editorValues || {});
 
@@ -204,8 +204,8 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
     const previewData = processJsonPreviewData(file, options);
 
-    dataForEachStageMap.preview = { data: [previewFileData(previewData, recordSize)] };
-    dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
+    dataForEachStageMap.preview = { data: previewFileData(previewData, recordSize) };
+    dataForEachStageMap.parse = { data: processJsonSampleData(file, options) };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
 
     return;
@@ -214,13 +214,13 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
   if (type === 'xlsx') {
     const { result } = yield call(getCsvFromXlsx, file);
 
-    dataForEachStageMap.csv = { data: [{ body: result }] };
+    dataForEachStageMap.csv = { data: { body: result } };
     // save csv content of xlsx file uploaded to be 'data' for the processor call
     processorData.data = result;
   }
 
   if (type === 'csv') {
-    dataForEachStageMap.csv = { data: [{ body: file }] };
+    dataForEachStageMap.csv = { data: { body: file } };
   }
 
   if (type === 'xml') {
@@ -237,8 +237,8 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
   if (processorOutput && processorOutput.data) {
     const previewData = processorOutput.data.data;
 
-    dataForEachStageMap.preview = { data: [previewFileData(previewData, recordSize)] };
-    dataForEachStageMap.parse = { data: [[processJsonSampleData(previewData)]] };
+    dataForEachStageMap.preview = { data: previewFileData(previewData, recordSize) };
+    dataForEachStageMap.parse = { data: [processJsonSampleData(previewData)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
   }
   if (processorOutput && processorOutput.error) {
@@ -275,23 +275,23 @@ function* fetchExportPreviewData({
       const previewRecords = previewFileData(previewData, recordSize);
 
       if (hasSampleData && previewData) {
-        yield put(actions.sampleData.update(resourceId, { data: [previewRecords] }, 'preview'));
+        yield put(actions.sampleData.update(resourceId, { data: previewRecords }, 'preview'));
         const parsedData = parseFilePreviewData({ resource: body, previewData});
 
-        return yield put(actions.sampleData.update(resourceId, { data: [[parsedData]] }, 'parse'));
+        return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
       }
 
       // If no sample data on resource too...
       // Show empty data representing no data is being passed
-      yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'preview'));
+      yield put(actions.sampleData.update(resourceId, { data: undefined }, 'preview'));
 
-      return yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'parse'));
+      return yield put(actions.sampleData.update(resourceId, { data: undefined }, 'parse'));
     }
     if (body.file.output === 'blobKeys') {
       // If the output mode is 'blob' , no data is passed so show empty data
-      yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'preview'));
+      yield put(actions.sampleData.update(resourceId, { data: undefined }, 'preview'));
 
-      return yield put(actions.sampleData.update(resourceId, { data: [[]] }, 'parse'));
+      return yield put(actions.sampleData.update(resourceId, { data: undefined }, 'parse'));
     }
     const fileProps = {
       type: fileDetails?.type,
