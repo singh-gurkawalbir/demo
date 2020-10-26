@@ -1,40 +1,50 @@
 /* eslint-disable no-restricted-globals */
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { DEFAULT_RECORD_SIZE, getRecordSizeOptions } from '../../../utils/exportPanel';
 import DynaSelectWithInput from '../../DynaForm/fields/DynaSelectWithInput';
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
 
-export default function SelectRecords(props) {
-  const {
-    recordSize,
-    isValidRecordSize,
-    setIsValidRecordSize,
-    setRecordSize,
-  } = props;
+export default function SelectRecords({ isValidRecordSize, setIsValidRecordSize, resourceId }) {
+  const dispatch = useDispatch();
+  const sampleDataRecordSize = useSelector(state =>
+    selectors.sampleDataRecordSize(state, resourceId)
+  );
+  const [recordSize, setRecordSize] = useState(`${sampleDataRecordSize || DEFAULT_RECORD_SIZE}`);
   const [errorMessage, setErrorMessage] = useState();
 
+  const patchRecordSize = useCallback(size => {
+    dispatch(actions.sampleData.patch(resourceId, {
+      recordSize: size,
+    }));
+  }, [dispatch, resourceId]);
+
   const onRecordChange = useCallback((_id, value) => {
-    setRecordSize(value);
-  }, [setRecordSize]);
-
-  const recordSizeOptions = useMemo(() => Array.from(Array(10), (val, index) => {
-    const stringifiedValue = `${(index + 1) * 10}`;
-
-    return { label: stringifiedValue, value: stringifiedValue};
-  }), []);
-
-  useEffect(() => {
-    const isValidNumber = /^[0-9]*$/.test(recordSize);
-    const size = parseInt(recordSize, 10);
+    const isValidNumber = /^[0-9]*$/.test(value);
+    const size = parseInt(value, 10);
     const sizeLimitExceeds = size < 0 || size > 100;
     const isValid = isValidNumber && !sizeLimitExceeds;
 
+    setRecordSize(value);
     setIsValidRecordSize(isValid);
     if (isValid) {
       setErrorMessage('');
+      patchRecordSize(size);
     } else {
       setErrorMessage(isValidNumber ? 'Invalid Size' : 'Max value is 100');
     }
-  }, [recordSize, setIsValidRecordSize]);
+  }, [setIsValidRecordSize, patchRecordSize]);
+
+  const recordSizeOptions = useMemo(() => getRecordSizeOptions(), []);
+
+  useEffect(() => {
+    if (!sampleDataRecordSize) {
+      dispatch(actions.sampleData.patch(resourceId, {
+        recordSize: DEFAULT_RECORD_SIZE,
+      }));
+    }
+  }, [sampleDataRecordSize, dispatch, resourceId]);
 
   return (
     <DynaSelectWithInput
@@ -76,6 +86,6 @@ export default function SelectRecords(props) {
   */
 
 /**
-   * Add recordSize as part of sampleData state
-   * move preview data logic for file adaptors inside state - validate
+   * Add recordSize as part of sampleData state - done
+   * Csv grouped data not working parse stage -  add conditions to diff file def preview and other preview responses
    */

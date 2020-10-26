@@ -5,6 +5,7 @@
  */
 import produce from 'immer';
 import { createSelector } from 'reselect';
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
@@ -25,7 +26,7 @@ function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, previewData, processedData, stage, error } = action;
+  const { type, resourceId, previewData, processedData, stage, error, patch } = action;
 
   return produce(state, draft => {
     if (!type || !resourceId) return draft;
@@ -55,6 +56,12 @@ export default function (state = {}, action) {
         break;
       case actionTypes.SAMPLEDATA.RESET:
         draft[resourceId] = {};
+        break;
+      case actionTypes.SAMPLEDATA.PATCH:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+        Object.assign(draft[resourceId], deepClone(patch));
         break;
       default:
     }
@@ -96,4 +103,6 @@ selectors.mkPreviewStageDataList = () => createSelector(
       return acc;
     }, {})
 );
+
+selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize;
 

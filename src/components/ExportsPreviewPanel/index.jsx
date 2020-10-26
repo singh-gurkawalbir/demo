@@ -65,27 +65,18 @@ function PreviewInfo({
   );
   const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
-  const fetchExportPreviewData = useCallback(recordSize => {
+  const fetchExportPreviewData = useCallback(() => {
     // Just a fail safe condition not to request for sample data incase of not exports
     if (resourceType !== 'exports') return;
 
     // Note: If there is no flowId , it is a Standalone export as the resource type other than exports are restricted above
     if (!flowId || isPageGeneratorExport) {
       dispatch(
-        actions.sampleData.request(resourceId, resourceType, value, null, {
-          recordSize,
-        })
+        actions.sampleData.request(resourceId, resourceType, value)
       );
     } else {
       dispatch(
-        actions.sampleData.requestLookupPreview(
-          resourceId,
-          flowId,
-          value,
-          {
-            recordSize,
-          }
-        )
+        actions.sampleData.requestLookupPreview(resourceId, flowId, value)
       );
     }
   }, [

@@ -4,10 +4,11 @@ import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
-import { getPreviewDataPageSizeInfo, DEFAULT_RECORD_SIZE } from '../../../utils/exportPanel';
+import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
 import SelectRecords from '../SelectRecords';
 import { selectors } from '../../../reducers';
+
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -80,10 +81,8 @@ export default function PreviewInfo(props) {
     resourceType,
   } = props;
   const classes = useStyles(props);
-  const [recordSize, setRecordSize] = useState(`${DEFAULT_RECORD_SIZE}`);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
   const [enquesnackbar] = useEnqueueSnackbar();
-
   const canSelectRecords = useSelector(state =>
     selectors.canSelectRecordsInPreviewPanel(state, resourceId, resourceType)
   );
@@ -136,10 +135,10 @@ export default function PreviewInfo(props) {
           variant: 'error',
         });
       } else {
-        fetchExportPreviewData(parseInt(recordSize, 10));
+        fetchExportPreviewData();
       }
     },
-    [fetchExportPreviewData, isValidRecordSize, recordSize, enquesnackbar],
+    [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
   );
 
   return (
@@ -160,10 +159,9 @@ export default function PreviewInfo(props) {
         (
         <div className={classes.recordSize}>
           <SelectRecords
-            recordSize={recordSize}
             isValidRecordSize={isValidRecordSize}
             setIsValidRecordSize={setIsValidRecordSize}
-            setRecordSize={setRecordSize}
+            resourceId={resourceId}
            />
         </div>
         ) }

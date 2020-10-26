@@ -34,6 +34,12 @@ const PARSERS = {
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
 
+function* getSampleDataRecordSize({ resourceId }) {
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
+
+  return recordSize;
+}
+
 export function* constructResourceFromFormValues({
   formValues = {},
   resourceId,
@@ -60,7 +66,7 @@ export function* constructResourceFromFormValues({
   }
 }
 
-function* getPreviewData({ resourceId, resourceType, values, runOffline, recordSize }) {
+function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   let body = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
@@ -83,6 +89,8 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline, recordS
   } else {
     delete body.rawData;
   }
+
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
 
   // eslint-disable-next-line no-restricted-globals
   if (recordSize && !isNaN(recordSize)) {
@@ -177,7 +185,7 @@ function* hasSampleDataOnResource({ resourceId, resourceType, body }) {
   return bodyFileType === resourceFileType;
 }
 
-function* processRawData({ resourceId, resourceType, values = {}, recordSize }) {
+function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
   const { file } = values;
   const body = yield call(constructResourceFromFormValues, {
@@ -186,6 +194,8 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
     resourceType,
   });
   const { file: fileProps} = body || {};
+
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
 
   // If there are no editorValues passed from the editor,
   // parse the resourceBody and construct props to process file content
@@ -254,13 +264,13 @@ function* fetchExportPreviewData({
   resourceType,
   values,
   runOffline,
-  recordSize,
 }) {
   const body = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
     resourceType,
   });
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
@@ -303,7 +313,6 @@ function* fetchExportPreviewData({
       resourceId,
       resourceType,
       values: fileProps,
-      recordSize,
     });
   }
   // For all other adaptors, go make preview api call for the sampleData
@@ -312,7 +321,6 @@ function* fetchExportPreviewData({
     resourceType,
     values,
     runOffline,
-    recordSize,
   });
 }
 
@@ -323,7 +331,7 @@ export function* requestExportSampleData({
   stage,
   options = {},
 }) {
-  const { runOffline, recordSize = DEFAULT_RECORD_SIZE } = options;
+  const { runOffline } = options;
 
   if (stage) {
     yield call(processRawData, {
@@ -331,7 +339,6 @@ export function* requestExportSampleData({
       resourceType,
       values,
       stage,
-      recordSize,
     });
   } else {
     yield call(fetchExportPreviewData, {
@@ -339,15 +346,14 @@ export function* requestExportSampleData({
       resourceType,
       values,
       runOffline,
-      recordSize,
     });
   }
 }
 
 // TODO @Raghu: Merge this into existing requestSampleData
-function* requestLookupSampleData({ resourceId, flowId, formValues, options = {} }) {
+function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   const resourceType = 'exports';
-  const { recordSize = DEFAULT_RECORD_SIZE } = options;
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
   let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,

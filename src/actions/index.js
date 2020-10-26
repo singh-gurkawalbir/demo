@@ -1253,17 +1253,18 @@ const sampleData = {
       stage,
       options,
     }),
-  requestLookupPreview: (resourceId, flowId, formValues, options = {}) =>
+  requestLookupPreview: (resourceId, flowId, formValues) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
       resourceId,
       flowId,
       formValues,
-      options,
     }),
   received: (resourceId, previewData) =>
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  patch: (resourceId, patch) =>
+    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
   reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),
