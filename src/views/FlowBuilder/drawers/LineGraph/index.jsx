@@ -181,8 +181,7 @@ export default function LineGraphDrawer({ flowId }) {
         <FlowCharts
           flowId={flowId}
           selectedResources={selectedResources}
-          range={range}
-      />
+          range={range} />
       </DrawerContent>
     </RightDrawer>
   );
