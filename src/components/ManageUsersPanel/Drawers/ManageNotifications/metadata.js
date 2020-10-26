@@ -10,16 +10,6 @@ export default function notificationsMetadata(props) {
   return (
     {
       fieldMap: {
-        connections: {
-          id: 'connections',
-          helpKey: 'notifications.connections',
-          name: 'connections',
-          type: 'multiselect',
-          valueDelimiter: ',',
-          label: 'Notify user when connection goes offline',
-          defaultValue: connectionValues,
-          options: [{ items: connectionOps }],
-        },
         flows: {
           id: 'flows',
           helpKey: 'notifications.jobErrors',
@@ -30,6 +20,16 @@ export default function notificationsMetadata(props) {
           defaultValue: flowValues,
           options: [{ items: flowOps }],
           selectAllIdentifier: integrationId,
+        },
+        connections: {
+          id: 'connections',
+          helpKey: 'notifications.connections',
+          name: 'connections',
+          type: 'multiselect',
+          valueDelimiter: ',',
+          label: 'Notify user when connection goes offline',
+          defaultValue: connectionValues,
+          options: [{ items: connectionOps }],
         },
       },
     }
