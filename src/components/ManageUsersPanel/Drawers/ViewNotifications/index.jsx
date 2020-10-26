@@ -35,7 +35,7 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
     onClose();
   }
 
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ flows, connections });
 
   const fieldMeta = viewNotificationsMetadata({
     connectionValues,
