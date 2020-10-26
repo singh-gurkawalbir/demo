@@ -47,7 +47,7 @@ export default function UpgradeErrorManagement() {
   const [upgradeRequested, setUpgradeRequested] = useState(false);
   const isMigrationPageAccessible = useSelector(state => {
     const isAccountOwner = selectors.resourcePermissions(state).accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER;
-    const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state) === false;
+    const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
 
     return isAccountOwner && !isUserInErrMgtTwoDotZero;
   });
