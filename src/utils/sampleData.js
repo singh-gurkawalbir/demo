@@ -391,37 +391,11 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   }
 };
 
-/*
- * Handles Sample data of JSON file type
- * Incase of Array content, we merge all objects properties and have a combined object
- * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+/**
+ * processes json data based on resourcePath provided
+ * sampleData = { test: { a: 5, b: 6} } with options = { resourcePath: 'test' }
+ * output: { a: 5, b: 6 }
  */
-export const processJsonSampleData = (sampleData, options = {}) => {
-  if (!sampleData) return sampleData;
-  const { resourcePath } = options;
-  let processedSampleData = sampleData;
-
-  // Handle resource paths other than * as '*' indicates extracting the very next element inside array the way we did above
-  if (resourcePath && resourcePath !== '*') {
-    // Extract sample data at resource
-    // check for array type if yes update with union thing
-    processedSampleData = extractSampleDataAtResourcePath(
-      processedSampleData,
-      options.resourcePath
-    );
-
-    if (Array.isArray(processedSampleData)) {
-      processedSampleData = getUnionObject(processedSampleData);
-    }
-  } else if (Array.isArray(sampleData)) {
-    // If there is no resourcePath, check if the sampleData is an array,
-    // so that we can merge the objects inside
-    processedSampleData = getUnionObject(sampleData);
-  }
-
-  return processedSampleData;
-};
-
 export const processJsonPreviewData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
   const { resourcePath } = options;
@@ -438,6 +412,23 @@ export const processJsonPreviewData = (sampleData, options = {}) => {
   }
 
   return processedSampleData;
+};
+
+/*
+ * Handles Sample data of JSON file type
+ * Incase of Array content, we merge all objects properties and have a combined object
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+ */
+export const processJsonSampleData = (sampleData, options = {}) => {
+  const previewData = processJsonPreviewData(sampleData, options);
+
+  if (Array.isArray(previewData)) {
+    // If there is no resourcePath, check if the sampleData is an array,
+    // so that we can merge the objects inside
+    return getUnionObject(previewData);
+  }
+
+  return previewData;
 };
 
 /*
