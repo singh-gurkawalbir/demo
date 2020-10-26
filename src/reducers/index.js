@@ -3325,9 +3325,9 @@ selectors.flowJobs = (state, options = {}) => {
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
           name: cJob._exportId
-            ? resourceMap?.exports?.[cJob._exportId]?.name
-            : resourceMap?.imports?.[cJob._importId]?.name,
-          flowDisabled: resourceMap?.flows?.[job._flowId]?.disabled,
+            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
+            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
         return { ...cJob, ...additionalChildProps };
@@ -3335,8 +3335,8 @@ selectors.flowJobs = (state, options = {}) => {
     }
 
     const additionalProps = {
-      name: resourceMap?.flows?.[job._flowId]?.name,
-      flowDisabled: resourceMap?.flows?.[job._flowId]?.disabled,
+      name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
+      flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
     };
 
     if (job.doneExporting && job.numPagesGenerated > 0) {
