@@ -347,7 +347,7 @@ export function* requestExportSampleData({
 // TODO @Raghu: Merge this into existing requestSampleData
 function* requestLookupSampleData({ resourceId, flowId, formValues, options = {} }) {
   const resourceType = 'exports';
-  const { recordSize } = options;
+  const { recordSize = DEFAULT_RECORD_SIZE } = options;
   let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
