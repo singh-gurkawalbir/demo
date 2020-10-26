@@ -45,8 +45,6 @@ export default function (state = {}, action) {
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'received';
         draft[resourceId].data = draft[resourceId].data || {};
-        // For all the parsers , data is an array
-        // Only incase of structuredFileParser it is an object
         draft[resourceId].data[stage] = processedData.data;
         break;
       case actionTypes.SAMPLEDATA.RECEIVED_ERROR:
