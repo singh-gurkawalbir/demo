@@ -65,7 +65,7 @@ export default function UpgradeErrorManagement() {
     () => {
       confirmDialog({
         title: 'Confirm upgrade',
-        message: "Just as a reminder, you won't be able to switch the current error management platform",
+        message: "Just as a reminder, you won't be able to switch back to the current error management platform.",
         buttons: [
           {
             label: 'Yes, upgrade',
@@ -148,7 +148,7 @@ export default function UpgradeErrorManagement() {
           </li>
           <li>
             <Typography variant="root">
-              You cannot switch to the current error management version. The two platforms are very different and not compatible.
+              You cannot switch back to the current error management version. The two platforms are very different and not compatible.
             </Typography>
           </li>
           <li>

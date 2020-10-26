@@ -814,6 +814,8 @@ export default {
             toReturn = 'MySQL';
           } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
             toReturn = 'Microsoft SQL';
+          } else if (conn.rdbms && conn.rdbms.type === 'oracle') {
+            toReturn = 'Oracle DB (SQL)';
           } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
             toReturn = 'PostgreSQL';
           } else {
