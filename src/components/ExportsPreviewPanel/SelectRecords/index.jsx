@@ -54,28 +54,28 @@ export default function SelectRecords(props) {
  * 2. Add conditions where to show/hide it - done
  * 3. Add preview support for export/lookup - done
  * 4. update common util to support proper format both editors level and preview panel - done
- * 5. Tackle FTP related use cases to show proper format
+ * 5. Tackle FTP related use cases to show proper format - done ( refactor required )
+ * 6. Refactor sampledata saga and state to support recordSize properly
  */
 
 /**
   * 5. FTP Solution
-  * - csv
-  * - xlsx
-  * - json
-  * - xml
-  * - file definitions
-  *
   * we need to store both parse and preview stages
   * 1. On user upload
-  * - csv
-  * - xlsx
-  * - json - in progress
+  * - csv - verified
+  * - xlsx - verified
+  * - json - verified
   * - xml
-  * - file definitions
+  * - file definitions - revisit
   * 2. on saved sample data
-  * - csv
+  * - csv - verified
   * - xlsx
-  * - json
+  * - json - verified
   * - xml
   * - file definitions
   */
+
+/**
+   * Add recordSize as part of sampleData state
+   * move preview data logic for file adaptors inside state - validate
+   */

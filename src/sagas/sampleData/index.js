@@ -237,7 +237,6 @@ function* processRawData({ resourceId, resourceType, values = {}, recordSize }) 
   if (processorOutput && processorOutput.data) {
     const previewData = processorOutput.data.data;
 
-    console.log(previewData, recordSize);
     dataForEachStageMap.preview = { data: [previewFileData(previewData, recordSize)] };
     dataForEachStageMap.parse = { data: [[processJsonSampleData(previewData)]] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
