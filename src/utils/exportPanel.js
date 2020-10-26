@@ -35,6 +35,11 @@ Object.freeze(HTTP_STAGES);
 const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
 const PARSED_STAGE = [{ label: 'Parsed output', value: 'parse' }];
 
+const FTP_STAGES = [
+  { label: 'Parsed output', value: 'parse' },
+  { label: 'Preview output', value: 'preview' },
+];
+
 Object.freeze(PARSED_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
   const { adaptorType } = resource || {};
@@ -44,7 +49,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
-    return PREVIEW_STAGE;
+    return FTP_STAGES;
   }
 
   if (!appType) return emptyList;
@@ -158,3 +163,12 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
 };
 
 export const getRequestURL = requestData => requestData?.data?.[0]?.url;
+
+export const previewFileData = (previewData, recordSize) => {
+  if (!previewData || !Array.isArray(previewData) || !recordSize) {
+    return previewData;
+  }
+
+  // if preview data is an array
+  return previewData.slice(0, recordSize);
+};
