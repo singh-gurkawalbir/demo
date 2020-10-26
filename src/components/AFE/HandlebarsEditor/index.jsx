@@ -107,7 +107,7 @@ export default function HandlebarsEditor(props) {
       layout={layout}
       templateClassName={templateClassName}
       ruleTitle="Type your handlebars template here"
-      dataTitle="Resources available in your handlebars template"
+      dataTitle="Resources available for your handlebars template"
       resultTitle={autoEvaluate ? 'Evaluated handlebars template' : 'Click preview to evaluate your handlebars template'}
       violations={violations}
       rule={template}
