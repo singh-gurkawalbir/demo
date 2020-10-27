@@ -6,9 +6,8 @@ import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
-import SelectRecords from '../SelectRecords';
+import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
 import { selectors } from '../../../reducers';
-
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
@@ -158,7 +157,7 @@ export default function PreviewInfo(props) {
         { canSelectRecords &&
         (
         <div className={classes.recordSize}>
-          <SelectRecords
+          <SelectPreviewRecordsSize
             isValidRecordSize={isValidRecordSize}
             setIsValidRecordSize={setIsValidRecordSize}
             resourceId={resourceId}

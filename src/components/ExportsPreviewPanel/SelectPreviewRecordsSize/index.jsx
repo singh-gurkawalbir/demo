@@ -6,7 +6,7 @@ import DynaSelectWithInput from '../../DynaForm/fields/DynaSelectWithInput';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 
-export default function SelectRecords({ isValidRecordSize, setIsValidRecordSize, resourceId }) {
+export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValidRecordSize, resourceId }) {
   const dispatch = useDispatch();
   const sampleDataRecordSize = useSelector(state =>
     selectors.sampleDataRecordSize(state, resourceId)
@@ -64,8 +64,8 @@ export default function SelectRecords({ isValidRecordSize, setIsValidRecordSize,
  * 2. Add conditions where to show/hide it - done
  * 3. Add preview support for export/lookup - done
  * 4. update common util to support proper format both editors level and preview panel - done
- * 5. Tackle FTP related use cases to show proper format - done ( refactor required )
- * 6. Refactor sampledata saga and state to support recordSize properly
+ * 5. Tackle FTP related use cases to show proper format - done ( refactor required ) - done
+ * 6. Refactor sampledata saga and state to support recordSize properly - done
  */
 
 /**
@@ -88,4 +88,5 @@ export default function SelectRecords({ isValidRecordSize, setIsValidRecordSize,
 /**
    * Add recordSize as part of sampleData state - done
    * Csv grouped data not working parse stage -  add conditions to diff file def preview and other preview responses
+   * Still above issue persists - verify
    */
