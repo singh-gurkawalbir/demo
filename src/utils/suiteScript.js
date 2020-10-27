@@ -1,5 +1,3 @@
-import trim from './trim';
-
 const flowTypes = {
   REALTIME_EXPORT: 'REALTIME_EXPORT',
   REALTIME_IMPORT: 'REALTIME_IMPORT',
@@ -41,12 +39,12 @@ export const suiteScriptResourceKey = ({
 }) => `${ssLinkedConnectionId}-${resourceType}-${resourceId}`;
 
 export const isJavaFlow = flow =>
-  flow && ((flow.locationQualifier && trim(flow.locationQualifier).length > 0) ||
+  !!(flow && ((flow.locationQualifier && flow.locationQualifier.trim().length > 0) ||
           ([flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) &&
-            !flow.hasConfiguration));
+            !flow.hasConfiguration)));
 
 export const flowType = flow => {
-  if (isJavaFlow(flow)) {
+  if (!flow || isJavaFlow(flow)) {
     return null;
   }
   if ([flowTypes.EXPORT, flowTypes.IMPORT].includes(flow.type)) {
@@ -58,6 +56,9 @@ export const flowType = flow => {
 };
 
 export const flowSupportsMapping = flow => {
+  if (!flow) {
+    return false;
+  }
   let supportsMapping = !!flow.editable;
 
   if (supportsMapping && flow.import) {
@@ -73,6 +74,9 @@ export const flowSupportsMapping = flow => {
 };
 
 export const flowAllowsScheduling = flow => {
+  if (!flow) {
+    return false;
+  }
   let supportsScheduling = !!flow.editable;
 
   if (supportsScheduling) {
@@ -88,11 +92,11 @@ export const flowAllowsScheduling = flow => {
 };
 
 export const isFlowRunnable = flow => {
-  if (!flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export?.type !== 'MY_COMPUTER') {
+  if (flow && !flow.disabled && ![flowTypes.REALTIME_EXPORT, flowTypes.REALTIME_IMPORT].includes(flow.type) && flow.export?.type !== 'MY_COMPUTER') {
     if (flow.version && flow.hasConfiguration) {
       return true;
     }
-    if (flow.locationQualifier) {
+    if (flow.locationQualifier && flow.locationQualifier.trim().length > 0) {
       return true;
     }
   }

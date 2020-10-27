@@ -39,8 +39,8 @@ export default {
     },
     'rdbms.instanceName': { fieldId: 'rdbms.instanceName' },
     'rdbms.port': { fieldId: 'rdbms.port' },
-    'rdbms.oracle.serviceName': {
-      id: 'rdbms.oracle.serviceName',
+    'rdbms.serviceName': {
+      id: 'rdbms.serviceName',
       type: 'text',
       label: 'Service Name',
     },
@@ -94,7 +94,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'rdbms.oracle.serviceName',
+          'rdbms.serviceName',
           'rdbms.oracle.serviceType',
           '_borrowConcurrencyFromConnectionId',
           'rdbms.concurrencyLevel',

@@ -2985,12 +2985,17 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
     resourceType,
     resourceId
   );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
 
   // AFE 2.0 not supported for Native REST Adaptor
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    const restConnection = selectors.resource(state, 'connections', resource._connectionId);
+    return !!connection.isHTTP;
+  }
 
-    return !!restConnection.isHTTP;
+  // BE doesnt support oracle and snowflake adaptor yet
+  // remove this check once same is added in BE
+  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+    return false;
   }
 
   return [
@@ -3080,7 +3085,7 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
   (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
   (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
     const connections = _connectorId ? integrationAppConnections : diyConnections;
-    let flows = _connectorId ? integrationAppFlows : diyFlows;
+    const flows = _connectorId ? integrationAppFlows : diyFlows;
     const connectionValues = connections
       .filter(c => !!notifications.find(n => n._connectionId === c._id))
       .map(c => c._id);
@@ -3092,8 +3097,6 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
     );
 
     if (_integrationId && _integrationId !== 'none') {
-      flows = [{ _id: _integrationId, name: 'All flows' }, ...flows];
-
       if (allFlowsSelected) flowValues = [_integrationId, ...flows];
     }
 
