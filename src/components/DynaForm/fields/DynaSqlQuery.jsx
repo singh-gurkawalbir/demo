@@ -72,7 +72,7 @@ export default function DynaSqlQuery(props) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, {resourceId, resourceType, flowId, fieldName: id});
   });
   const {
     data: sampleData,

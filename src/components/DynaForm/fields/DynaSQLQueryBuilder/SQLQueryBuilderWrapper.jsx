@@ -52,7 +52,7 @@ export default function SQLQueryBuilderWrapper(props) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, {resourceId, resourceType, flowId, fieldName: id});
   });
   const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType }), isEqual);
 
