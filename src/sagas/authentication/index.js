@@ -248,22 +248,14 @@ let LOGROCKET_INITIALIZED = false;
 export function* initializeApp(opts) {
   // Important: Do not start off any async saga actions(esp those making network calls)
   // before logrocket initialization
-  if (getLogrocketId()) {
-    if (!LOGROCKET_INITIALIZED) {
-      LOGROCKET_INITIALIZED = true;
-      // stop sagas, init logrocket, and restart sagas
-      // note the current saga `initializeApp` is killed as well
-      // so that it needs to be called again after logrocket is initialized and sagas restarted
-      // that happens in sagas/index.js
-      yield put(actions.auth.abortAllSagasAndInitLR({opts}));
-    } else {
-      // ensuring we have the users profile for identifyLogRocketSession
-      yield call(
-        getResource,
-        actions.user.profile.request('Initializing application')
-      );
-      yield call(identifyLogRocketSession);
-    }
+  if (!LOGROCKET_INITIALIZED && getLogrocketId()) {
+    LOGROCKET_INITIALIZED = true;
+
+    // stop sagas, init logrocket, and restart sagas
+    // note the current saga `initializeApp` is killed as well
+    // so that it needs to be called again after logrocket is initialized and sagas restarted
+    // that happens in sagas/index.js
+    return yield put(actions.auth.abortAllSagasAndInitLR({opts}));
   }
   try {
     // eslint-disable-next-line no-use-before-define
@@ -275,6 +267,10 @@ export function* initializeApp(opts) {
     }
   } catch (e) {
     yield put(actions.auth.logout());
+  }
+
+  if (getLogrocketId()) {
+    yield call(identifyLogRocketSession);
   }
 }
 
