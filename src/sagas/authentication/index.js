@@ -266,7 +266,7 @@ export function* initializeApp(opts) {
       yield put(actions.app.reload());
     }
   } catch (e) {
-    yield put(actions.auth.logout());
+    return yield put(actions.auth.logout());
   }
 
   if (getLogrocketId()) {
