@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 
@@ -8,12 +9,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerHeader({ children }) {
+export default function DrawerHeader({ children, className }) {
   const classes = useStyles();
 
   return (
     <div
-      className={classes.root}>
+      className={clsx(classes.root, className)}>
       {children}
     </div>
   );

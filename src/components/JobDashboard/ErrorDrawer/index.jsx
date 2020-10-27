@@ -6,7 +6,6 @@ import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right/V2';
 import DrawerHeader from '../../drawer/Right/V2/DrawerHeader';
 import DrawerContent from '../../drawer/Right/V2/DrawerContent';
-
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
