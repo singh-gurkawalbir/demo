@@ -4,7 +4,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
+import { requestExportSampleData } from '../sampleData';
+import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
 import { isNewId } from '../../utils/resource';
 
 export function* requestEditorSampleData({
