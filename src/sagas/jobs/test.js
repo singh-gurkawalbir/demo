@@ -590,7 +590,7 @@ describe('job sagas', () => {
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.RESOLVE_ALL_IN_FLOW_COMMIT,
         {
-          resourceId: dataIn.flowId,
+          resourceId: [dataIn.flowId],
         }
       );
 
@@ -1155,10 +1155,7 @@ describe('job sagas', () => {
       };
 
       expect(saga.next(bulkRetryJob).value).toEqual(
-        put(actions.job.receivedFamily({ job: bulkRetryJob }))
-      );
-      expect(saga.next().value).toEqual(
-        put(actions.job.requestInProgressJobStatus())
+        put(actions.patchFilter('jobs', {refreshAt: bulkRetryJob._id}))
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -1168,7 +1165,7 @@ describe('job sagas', () => {
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT,
         {
-          resourceId: dataIn.flowId,
+          resourceId: [dataIn.flowId],
         }
       );
 
@@ -1178,17 +1175,19 @@ describe('job sagas', () => {
           opts,
         })
       );
-      const bulkRetryJob = {
-        _id: 'brj1',
-        type: JOB_TYPES.BULK_RETRY,
-        status: JOB_STATUS.QUEUED,
-      };
+      const bulkRetryJob = [
+        {
+          statusCode: 202,
+          job: {
+            _id: 'brj1',
+            type: JOB_TYPES.BULK_RETRY,
+            status: JOB_STATUS.QUEUED,
+          },
+        },
+      ];
 
       expect(saga.next(bulkRetryJob).value).toEqual(
-        put(actions.job.receivedFamily({ job: bulkRetryJob }))
-      );
-      expect(saga.next().value).toEqual(
-        put(actions.job.requestInProgressJobStatus())
+        put(actions.patchFilter('jobs', {refreshAt: bulkRetryJob[0].job._id}))
       );
       expect(saga.next().done).toEqual(true);
     });
@@ -1198,7 +1197,7 @@ describe('job sagas', () => {
       const { path, opts } = getRequestOptions(
         actionTypes.JOB.RETRY_ALL_IN_FLOW_COMMIT,
         {
-          resourceId: dataIn.flowId,
+          resourceId: [dataIn.flowId],
         }
       );
 
@@ -1222,7 +1221,8 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(select(selectors.resourceList, { type: 'flows' }));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: []})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1242,7 +1242,8 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(select(selectors.resourceList, { type: 'flows' }));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: []})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1262,7 +1263,8 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(select(selectors.resourceList, { type: 'flows' }));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: []})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1282,7 +1284,8 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(select(selectors.resourceList, { type: 'flows' }));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: []})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1303,7 +1306,7 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId, flowId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: [flowId]})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1323,7 +1326,7 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId, flowId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: [flowId]})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1343,7 +1346,7 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId, flowId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: [flowId]})));
 
         expect(saga.next().value).toEqual(
           take([
@@ -1363,7 +1366,7 @@ describe('job sagas', () => {
         const saga = retryAll({ integrationId, flowId });
 
         expect(saga.next().value).toEqual(put(actions.job.retryAllPending()));
-        expect(saga.next().value).toEqual(put(actions.job.retryAllInit()));
+        expect(saga.next().value).toEqual(put(actions.job.retryAllInit({ flowIds: [flowId]})));
 
         expect(saga.next().value).toEqual(
           take([

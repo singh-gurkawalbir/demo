@@ -27,8 +27,14 @@ export default function DynaReplaceConnection(props) {
     childId = integrationId;
     integrationId = parentIntegration._id;
   }
+  const hasAccess = useSelector(state => selectors.resourcePermissions(
+    state,
+    'integrations',
+    integrationId,
+    'connections'
+  ))?.edit;
   const options = getReplaceConnectionExpression(connection, !!childId, childId, integrationId, connectorId, false);
 
-  return <DynaSelectResource {...props} options={options} />;
+  return <DynaSelectResource {...props} options={options} allowEdit={!!hasAccess} allowNew={!!hasAccess} />;
 }
 

@@ -33,7 +33,7 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
     <div className={classes.root}>
       {token ? (
         <>
-          <Typography variant="caption">
+          <Typography data-private variant="caption">
             {token || <AccessToken count="23" />}
           </Typography>
 

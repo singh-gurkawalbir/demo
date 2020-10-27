@@ -9,7 +9,7 @@ import { commitStagedChanges } from '../resources';
 import mappingUtil from '../../utils/mapping';
 import lookupUtil from '../../utils/lookup';
 import { apiCallWithRetry } from '..';
-import { getResourceSubType, adaptorTypeMap} from '../../utils/resource';
+import { getResourceSubType} from '../../utils/resource';
 import { getImportOperationDetails } from '../../utils/assistant';
 import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
@@ -162,7 +162,7 @@ export function* mappingInit({
   let lookups = [];
   const options = {};
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     const recordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
 
     options.recordType = recordType;
@@ -259,7 +259,7 @@ export function* saveMappings() {
   const importResource = yield select(selectors.resource, 'imports', importId);
   let netsuiteRecordType;
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -296,7 +296,9 @@ export function* saveMappings() {
         subRecordLookups: lookups,
       });
     }
-    mappingPath = '/netsuite_da/mapping';
+    if (importResource.adaptorType === 'NetSuiteDistributedImport') {
+      mappingPath = '/netsuite_da/mapping';
+    }
   }
 
   patch.push({
@@ -314,7 +316,7 @@ export function* saveMappings() {
 
       return true;
     }).map(({isConditionalLookup, ...others}) => ({...others}));
-    const lookupPath = lookupUtil.getLookupPath(adaptorTypeMap[importResource.adaptorType]);
+    const lookupPath = lookupUtil.getLookupPath(importResource.adaptorType);
 
     // TODO: temporary fix Remove check once backend adds lookup support for Snowflake.
     if (lookupPath) {
@@ -358,7 +360,7 @@ export function* previewMappings() {
   let importResource = deepClone(_importRes);
   let netsuiteRecordType;
 
-  if (importResource.netsuite_da) {
+  if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(importResource.adaptorType)) {
     netsuiteRecordType = yield select(selectors.mappingNSRecordType, importId, subRecordMappingId);
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -414,7 +416,7 @@ export function* previewMappings() {
       });
     }
 
-    importResource = importResource.netsuite_da;
+    importResource = importResource.netsuite_da || importResource.netsuite;
 
     if (!subRecordMappingId) {
       importResource.lookups = filteredLookups;

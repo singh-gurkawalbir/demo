@@ -1,9 +1,11 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import * as completers from '../editorSetup/completers';
 import Editor from '../GenericEditor';
+
+const emptyArr = [];
 
 export default function HandlebarsEditor(props) {
   const {
@@ -15,7 +17,7 @@ export default function HandlebarsEditor(props) {
     ruleMode,
     disabled,
     enableAutocomplete,
-    lookups = [],
+    lookups = emptyArr,
     rule,
     editorVersion,
   } = props;
@@ -29,16 +31,16 @@ export default function HandlebarsEditor(props) {
     isSampleDataLoading,
     v1template,
     v2template,
-  } = useSelector(state => selectors.editor(state, editorId));
+  } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
   const violations = useSelector(state =>
-    selectors.editorViolations(state, editorId)
+    selectors.editorViolations(state, editorId), shallowEqual
   );
   const handlebarHelperFunction = useSelector(state =>
-    selectors.editorHelperFunctions(state)
+    selectors.editorHelperFunctions(state), shallowEqual
   );
 
   completers.handleBarsCompleters.setFunctionCompleter(handlebarHelperFunction);
-  const _lookups = Array.isArray(lookups) ? lookups : [];
+  const _lookups = useMemo(() => Array.isArray(lookups) ? lookups : [], [lookups]);
 
   completers.handleBarsCompleters.setLookupCompleter(_lookups);
   useEffect(() => {
@@ -54,17 +56,17 @@ export default function HandlebarsEditor(props) {
       );
     }
   }, [dispatch, editorId, isSampleDataLoading, props.isSampleDataLoading]);
-  const handleRuleChange = rule => {
+  const handleRuleChange = useCallback(newRule => {
     if (editorVersion === 2) {
-      dispatch(actions.editor.patch(editorId, { template: rule, v2template: rule }));
+      dispatch(actions.editor.patch(editorId, { template: newRule, v2template: newRule }));
     } else {
-      dispatch(actions.editor.patch(editorId, { template: rule, v1template: rule }));
+      dispatch(actions.editor.patch(editorId, { template: newRule, v1template: newRule }));
     }
-  };
+  }, [dispatch, editorId, editorVersion]);
 
-  const handleDataChange = data => {
+  const handleDataChange = useCallback(data => {
     dispatch(actions.editor.patch(editorId, { data }));
-  };
+  }, [dispatch, editorId]);
 
   const handleInit = useCallback(() => {
     let template = editorVersion === 2 ? v2template : v1template;
@@ -90,17 +92,6 @@ export default function HandlebarsEditor(props) {
     dispatch(actions.editor.refreshHelperFunctions());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorVersion, dispatch, editorId, props.strict, props.data, props.isSampleDataLoading, rule]);
-  const handlePreview = () => {
-    dispatch(actions.editor.evaluateRequest(editorId));
-  };
-
-  const resultTitle = useMemo(
-    () =>
-      autoEvaluate
-        ? 'Evaluated handlebars template'
-        : 'Click preview to evaluate your handlebars template',
-    [autoEvaluate]
-  );
 
   return (
     <Editor
@@ -108,7 +99,6 @@ export default function HandlebarsEditor(props) {
       editorId={editorId}
       handleInit={handleInit}
       handleRuleChange={handleRuleChange}
-      handlePreview={handlePreview}
       handleDataChange={handleDataChange}
       processor="handlebars"
       ruleMode={ruleMode}
@@ -117,8 +107,8 @@ export default function HandlebarsEditor(props) {
       layout={layout}
       templateClassName={templateClassName}
       ruleTitle="Type your handlebars template here"
-      dataTitle="Resources available in your handlebars template"
-      resultTitle={resultTitle}
+      dataTitle="Resources available for your handlebars template"
+      resultTitle={autoEvaluate ? 'Evaluated handlebars template' : 'Click preview to evaluate your handlebars template'}
       violations={violations}
       rule={template}
       data={data}

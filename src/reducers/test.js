@@ -4132,566 +4132,10 @@ describe('integrationApp Settings reducers', () => {
     });
   });
 
-  describe('integrationAppFlowSettings reducer', () => {
+  describe('integrationAppSectionFlows reducer', () => {
     test('should not throw error for bad params', () => {
-      expect(selectors.integrationAppFlowSettings()).toEqual({});
-      expect(selectors.integrationAppFlowSettings({})).toEqual({
-        fields: undefined,
-        flowSettings: undefined,
-        flows: [],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: false,
-        showMatchRuleEngine: undefined,
-      });
-    });
-
-    test('should return correct section information for multistore connector', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              integrations,
-            },
-          },
-        },
-        'some_action'
-      );
-
-      expect(
-        selectors.integrationAppFlowSettings(
-          state,
-          'integrationId',
-          'CSV',
-          'fb5fb65e'
-        )
-      ).toEqual({
-        fields: undefined,
-        flowSettings: [
-          {
-            _id: '5d9f70b98a71fc911a4068bd',
-            matchingRules: {
-              applyValues: [],
-              creditMemoStatusValues: [],
-              expressionSearchFilters: [],
-              expressionSearchOperators: [],
-              expressionSearchValues: [],
-              transactionStatusValues: [],
-              value: [],
-            },
-            sections: [
-              {
-                title: 'File Import',
-                fields: [
-                  {
-                    label: 'Directory Path:',
-                    type: 'input',
-                    name: 'directoryPath_5d9f70b98a71fc911a4068bd',
-                    required: true,
-                    placeholder:
-                      'Enter FTP folder path, such as Directory/File',
-                    tooltip:
-                      'Please provide the path of the Directory in the FTP server where the files are stored.',
-                  },
-                  {
-                    label: 'File Name Starts With:',
-                    type: 'input',
-                    name: 'fileNameStartsWith_5d9f70b98a71fc911a4068bd',
-                    placeholder: 'Optional',
-                    tooltip:
-                      'Please provide the first few characters of the file name which the Connector should read.',
-                  },
-                  {
-                    label: 'File Name Ends With:',
-                    type: 'input',
-                    name: 'fileNameEndsWith_5d9f70b98a71fc911a4068bd',
-                    placeholder: 'Optional',
-                    tooltip:
-                      'Please provide the last few characters of the file name which the Connector should read.',
-                  },
-                  {
-                    label: 'Sample File:',
-                    type: 'file',
-                    name: 'ftp_sample_file_5d9f70b98a71fc911a4068bd',
-                    value: '',
-                    tooltip:
-                      'Please upload a sample csv file containing records to help us build the mapping definition of the csv file.',
-                  },
-                  {
-                    label: 'Leave File On Server',
-                    type: 'checkbox',
-                    name: 'skipDelete_5d9f70b98a71fc911a4068bd',
-                    value: false,
-                    tooltip:
-                      'Choose this setting if the Connector should leave the files on the FTP server after reading. Else the file will be deleted from the FTP server after reading.',
-                  },
-                  {
-                    label: 'Use Credit Memos',
-                    type: 'checkbox',
-                    name: 'checkbox_credit_memo_5d9f70b98a71fc911a4068bd',
-                    value: false,
-                    tooltip:
-                      'Choose this setting if the Connector should sync credit memos.',
-                  },
-                  {
-                    label: 'Ignore following Customers:',
-                    type: 'textarea',
-                    name: 'textarea_customer_filter_5d9f70b98a71fc911a4068bd',
-                    value: '',
-                    placeholder: 'eg. ACME Inc., S Industries',
-                    tooltip:
-                      'Please enter names of customers (separated by ",") for which payments should be ignored.',
-                  },
-                  {
-                    label: 'NetSuite Invoice Prefix:',
-                    type: 'textarea',
-                    name: 'textarea_ns_invoice_prefix_5d9f70b98a71fc911a4068bd',
-                    value: '',
-                    placeholder: 'eg. INV, IV',
-                    tooltip:
-                      'Please enter list of prefixes (separated by ",") in order of priority used in NetSuite Account.',
-                  },
-                  {
-                    label: 'NetSuite Invoice Identifier',
-                    type: 'select',
-                    name:
-                      'select_ns_invoice_identifier_5d9f70b98a71fc911a4068bd',
-                    options: [['tranid_Invoice #', 'Invoice #']],
-                    value: 'tranid_Invoice #',
-                    supportsRefresh: true,
-                    tooltip:
-                      'Please select the field from the list for which the connector should look for the Invoice number to match the Invoice Id from bank file.',
-                  },
-                  {
-                    label: 'Column delimiter:',
-                    type: 'input',
-                    name: 'columnDelimiter_5d9f70b98a71fc911a4068bd',
-                    placeholder: 'Optional',
-                    tooltip: 'Please provide the column delimiter.',
-                  },
-                  {
-                    label: 'Archive file',
-                    type: 'checkbox',
-                    name: 'archive_file_5d9f70b98a71fc911a4068bd',
-                    value: false,
-                    tooltip:
-                      'Choose this setting if the Connector should archive the files in NetSuite file cabinet.',
-                    dependencies: {
-                      disabled: {
-                        fields: [
-                          {
-                            name:
-                              'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
-                            hidden: true,
-                            required: false,
-                          },
-                        ],
-                      },
-                      enabled: {
-                        fields: [
-                          {
-                            name:
-                              'netsuite_archive_dir_5d9f70b98a71fc911a4068bd',
-                            hidden: false,
-                            required: true,
-                          },
-                        ],
-                      },
-                    },
-                  },
-                ],
-              },
-              {
-                title: 'File Parsing',
-                fields: [
-                  {
-                    label: 'Batch Record',
-                    title: 'Batch Record',
-                    type: 'csvColumnMapper',
-                    maxNumberOfColumns: 50,
-                    name: '_batch_record_5d9f70b98a71fc911a4068bd',
-                    value: [],
-                    tooltip:
-                      'Settings to change the column position of fields in csv file format.',
-                  },
-                  {
-                    label: 'Transaction Record',
-                    title: 'Transaction Record',
-                    type: 'csvColumnMapper',
-                    maxNumberOfColumns: 50,
-                    name: '_transaction_record_5d9f70b98a71fc911a4068bd',
-                    value: [
-                      {
-                        fieldName: 'Transaction Id',
-                        column: '1',
-                      },
-                    ],
-                    tooltip:
-                      'Settings to change the column position of fields in csv file format.',
-                  },
-                  {
-                    label: 'Invoice Record',
-                    title: 'Invoice Record',
-                    type: 'csvColumnMapper',
-                    maxNumberOfColumns: 50,
-                    name: '_invoice_record_5d9f70b98a71fc911a4068bd',
-                    value: [
-                      {
-                        fieldName: 'Invoice number',
-                        column: '19',
-                      },
-                      {
-                        fieldName: 'Invoice Date',
-                        column: '4',
-                      },
-                      {
-                        fieldName: 'Invoice amount',
-                        column: '8',
-                      },
-                    ],
-                    tooltip:
-                      'Settings to change the column position of fields in csv file format.',
-                  },
-                ],
-              },
-              {
-                title: 'Advanced Settings',
-                fields: [
-                  {
-                    label: 'Transaction Filter: Choose an action',
-                    type: 'radio',
-                    name: 'transactionFilterOptions_5d9f70b98a71fc911a4068bd',
-                    properties: {
-                      sectionName: 'Filter Settings',
-                    },
-                    options: [
-                      ['skip', 'Skip'],
-                      ['allow', 'Allow'],
-                      ['default', 'Default'],
-                    ],
-                    tooltip:
-                      'This setting allows you to specify how certain transaction codes will be processed by the connector. A transaction code could be sent by the bank in the remittance file indicating the type of transaction for eg: Debit or Credit. Based on your needs you can choose to skip or process only those transaction codes. You can only choose one action for the transaction codes as described below.\n\nSkip: Choose this option to skip the transaction codes which have been specified in the text box.\n\nAllow: Choose this to only allow the processing of transaction codes specified in the text box. All other incoming transaction codes will be ignored.\n\nDefault: Choose this to process all the incoming transaction codes. This is the default selection.',
-                  },
-                  {
-                    label: 'Enter Transaction Codes',
-                    type: 'input',
-                    name: 'transactionCodes_5d9f70b98a71fc911a4068bd',
-                    placeholder: 'eg. 100,102,104,201-299,305',
-                    tooltip:
-                      "Enter individual transaction code(s) or range(s) separated by a comma. Based on your choice, corresponding transactions will either be skipped or included for processing from the bank file. Use '-' to indicate a code range. For example: 100,102,104,201-299,305",
-                    properties: {
-                      sectionName: 'Filter Settings',
-                    },
-                  },
-                  {
-                    label: 'Default Currency',
-                    type: 'select',
-                    name: 'select_bank_currency_5d9f70b98a71fc911a4068bd',
-                    options: [],
-                    supportsRefresh: true,
-                    tooltip:
-                      'Please enter the currency that should be used for the creation of payment. This is an optional field and should only be specified when the bank will send all the transactions in a pre-defined currency. In the case when the transactions in the bank file will carry currency details, this field need not be populated and the transaction currency from the bank file will be used to create payments. In case the currency is not specified and the bank file doesn’t contain currency details for the transactions, then the payment will be created for the customer’s primary currency.',
-                    properties: {
-                      sectionName: 'Payment Settings',
-                    },
-                  },
-                  {
-                    label: 'Customer Has Priority',
-                    type: 'checkbox',
-                    name: 'checkbox_customer_priority_5d9f70b98a71fc911a4068bd',
-                    tooltip:
-                      'This setting will assume transaction customer to be of higher priority and if the transaction customer is found and ascertained, the invoices will be searched for this customer as we now know the correct customer before the invoice search happens.',
-                    properties: {
-                      sectionName: 'Matching Settings',
-                    },
-                  },
-                  {
-                    label: 'Identify invoice with Amount',
-                    name:
-                      'checkbox_match_invoice_with_amount_5d9f70b98a71fc911a4068bd',
-                    type: 'checkbox',
-                    value: false,
-                    tooltip:
-                      'If there is no match using invoice number, then this enables to find the match using invoice/transaction amount for that customer.',
-                    properties: {
-                      sectionName: 'Matching Settings',
-                    },
-                  },
-                  {
-                    label: 'Skip Zero Amount Transactions',
-                    type: 'checkbox',
-                    name:
-                      'checkbox_skip_zero_amount_transactions_5d9f70b98a71fc911a4068bd',
-                    value: true,
-                    tooltip:
-                      'This setting if checked will filter out any zero amount transactions.\nUnselect this checkbox to create zero amount transactions.',
-                    properties: {
-                      sectionName: 'Payment Settings',
-                    },
-                  },
-                  {
-                    label: "Don't create payment in locked posting period",
-                    type: 'checkbox',
-                    name:
-                      'checkbox_validate_posting_period_5d9f70b98a71fc911a4068bd',
-                    value: true,
-                    tooltip:
-                      'Unselect this check box to create customer payment for Administrator role when posting period is locked.',
-                    properties: {
-                      sectionName: 'Payment Settings',
-                    },
-                  },
-                  {
-                    label: 'Advanced Search for Customers',
-                    type: 'checkbox',
-                    name: 'checkbox_use_fuzzy_search_5d9f70b98a71fc911a4068bd',
-                    value: false,
-                    tooltip:
-                      'CAM employs an optional advanced search algorithm which can improve the match rate by employing fuzzy search on the the file record with the records in NetSuite in case the exact matches are not found. The results returned are approximate matches and certain users may prefer to review the matches thus found.',
-                    dependencies: {
-                      disabled: {
-                        fields: [
-                          {
-                            name:
-                              'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
-                            hidden: true,
-                            required: false,
-                          },
-                        ],
-                      },
-                      enabled: {
-                        fields: [
-                          {
-                            name:
-                              'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
-                            hidden: false,
-                            required: true,
-                          },
-                        ],
-                      },
-                    },
-                    properties: {
-                      sectionName: 'Matching Settings',
-                    },
-                  },
-                  {
-                    label: 'Threshold',
-                    type: 'input',
-                    name:
-                      'fuzzy_config_threshold_value_5d9f70b98a71fc911a4068bd',
-                    value: '0.1',
-                    tooltip:
-                      'This value determines the degree of search results. With 0.1 being highest and 1 being lowest',
-                    properties: {
-                      sectionName: 'Matching Settings',
-                    },
-                  },
-                  {
-                    type: 'subsidiaryMapWidget',
-                    name: 'multisubsidiary_settings_5d9f70b98a71fc911a4068bd',
-                    tooltip:
-                      'Please specify the GL accounts for each of your subsidiaries here. This mapping allows the product to identify the GL account that will be used for a particular subsidiary to create payments, write-offs or customer deposits. The Subsidiary name and Payment account are mandatory fields and must be supplied. You can choose to provide a dummy customer in the corresponding subsidiary to allow the creation of incoming payment in case the customer is not identified during processing, and later once you have identified the customer you can change the value to the correct customer. Please make sure that all your subsidiaries have an entry in this section.',
-                    title: 'Multi-subsidiary Settings',
-                    optionsMap: [
-                      {
-                        id: 'subsidiary',
-                        name: 'Subsidiary',
-                        type: 'select',
-                        options: [],
-                      },
-                      {
-                        id: 'paymentAccount',
-                        name: 'Payment Account',
-                        type: 'select',
-                        options: [],
-                      },
-                      {
-                        id: 'debitAccount',
-                        name: 'Write off Account',
-                        type: 'select',
-                        options: [],
-                      },
-                      {
-                        id: 'depositAccount',
-                        name: 'Customer Deposit Account',
-                        type: 'select',
-                        options: [],
-                      },
-                      {
-                        id: 'dummyCustomer',
-                        name: 'Dummy Customer',
-                        type: 'input',
-                      },
-                    ],
-                    value: [],
-                  },
-                ],
-              },
-            ],
-            showMapping: true,
-            showSchedule: true,
-          },
-        ],
-        flows: [],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: true,
-        showMatchRuleEngine: true,
-      });
-    });
-
-    test('should return correct section information for single store integrationApp', () => {
-      const state = reducer(
-        {
-          data: {
-            resources: {
-              integrations,
-            },
-          },
-        },
-        'some_action'
-      );
-
-      expect(
-        selectors.integrationAppFlowSettings(state, 'integrationId2', 'CSV')
-      ).toEqual({
-        fields: undefined,
-        flowSettings: undefined,
-        flows: [],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: false,
-        showMatchRuleEngine: undefined,
-      });
-      expect(
-        selectors.integrationAppFlowSettings(
-          state,
-          'integrationId2',
-          'OrganizationSync'
-        )
-      ).toEqual({
-        fields: [
-          {
-            label: 'Sync all Zendesk Organizations as NetSuite Customers',
-            name: 'sync_zendesk_organizations_as_netsuite_customsers',
-            tooltip:
-              'If this setting is selected all Zendesk Organizations will be synced as NetSuite Customers.',
-            type: 'checkbox',
-            value: true,
-          },
-        ],
-        flowSettings: [
-          {
-            _id: '5d9b20328a71fc911a4018a4',
-            settings: [
-              {
-                label: 'Execution Context',
-                name: 'executionContext',
-                options: [
-                  ['userevent', 'User Event'],
-                  ['webservices', 'Web Services'],
-                  ['csvimport', 'CSV Import'],
-                  ['scheduled', 'Scheduled'],
-                  ['workflow', 'Work Flow'],
-                  ['userinterface', 'User Interface'],
-                ],
-                type: 'multiselect',
-                value: [
-                  'userevent',
-                  'webservices',
-                  'csvimport',
-                  'userinterface',
-                ],
-              },
-              {
-                label: 'Execution Type',
-                name: 'executionType',
-                options: [
-                  ['edit', 'Edit'],
-                  ['create', 'Create'],
-                  ['xedit', 'xEdit'],
-                ],
-                type: 'multiselect',
-                value: ['edit', 'create', 'xedit'],
-              },
-              {
-                expressionType: 'export',
-                label: 'Qualifier',
-                name: 'qualifier',
-                type: 'expression',
-                value:
-                  '[["isperson","=","F"],"and",["custentity_celigo_znc_zendesk_id","empty",true]]',
-              },
-            ],
-            showMapping: true,
-            showSchedule: false,
-          },
-          {
-            _id: '5d9b20328a71fc911a4018ad',
-            settings: [
-              {
-                label: 'Execution Context',
-                name: 'executionContext',
-                options: [
-                  ['userevent', 'User Event'],
-                  ['webservices', 'Web Services'],
-                  ['csvimport', 'CSV Import'],
-                  ['scheduled', 'Scheduled'],
-                  ['workflow', 'Work Flow'],
-                  ['userinterface', 'User Interface'],
-                ],
-                type: 'multiselect',
-                value: [
-                  'userevent',
-                  'webservices',
-                  'csvimport',
-                  'userinterface',
-                ],
-              },
-              {
-                label: 'Execution Type',
-                name: 'executionType',
-                options: [
-                  ['edit', 'Edit'],
-                  ['create', 'Create'],
-                  ['xedit', 'xEdit'],
-                ],
-                type: 'multiselect',
-                value: ['edit', 'create', 'xedit'],
-              },
-              {
-                expressionType: 'export',
-                label: 'Qualifier',
-                name: 'qualifier',
-                type: 'expression',
-                value:
-                  '[["isperson","=","F"],"and",["custentity_celigo_znc_zendesk_id","empty",false]]',
-              },
-            ],
-            showMapping: true,
-            showSchedule: false,
-          },
-          {
-            _id: '5d9b20328a71fc911a4018a7',
-            showMapping: true,
-            showSchedule: true,
-          },
-          {
-            _id: '5d9b20328a71fc911a4018ac',
-            showMapping: true,
-            showSchedule: true,
-          },
-        ],
-        flows: [],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: true,
-        showMatchRuleEngine: undefined,
-      });
+      expect(selectors.integrationAppSectionFlows()).toEqual([]);
+      expect(selectors.integrationAppSectionFlows({})).toEqual([]);
     });
 
     test('should return all flows when section is not passed to a single store integration App', () => {
@@ -4708,68 +4152,59 @@ describe('integrationApp Settings reducers', () => {
       );
 
       expect(
-        selectors.integrationAppFlowSettings(state, 'integrationId2')
-      ).toEqual({
-        fields: undefined,
-        flowSettings: undefined,
-        flows: [
-          {
-            _id: '5d9b20328a71fc911a4018a4',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018a4',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018ad',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018ad',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018a7',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018a7',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018ac',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018ac',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018a9',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018a9',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018a8',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018a8',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018b2',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018b2',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018b3',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018b3',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018b0',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018b0',
-          },
-          {
-            _id: '5d9b20328a71fc911a4018ba',
-            _integrationId: 'integrationId2',
-            name: '5d9b20328a71fc911a4018ba',
-          },
-        ],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: false,
-        showMatchRuleEngine: undefined,
-      });
+        selectors.integrationAppSectionFlows(state, 'integrationId2')
+      ).toEqual([
+        {
+          _id: '5d9b20328a71fc911a4018a4',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018a4',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018ad',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018ad',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018a7',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018a7',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018ac',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018ac',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018a9',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018a9',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018a8',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018a8',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018b2',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018b2',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018b3',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018b3',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018b0',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018b0',
+        },
+        {
+          _id: '5d9b20328a71fc911a4018ba',
+          _integrationId: 'integrationId2',
+          name: '5d9b20328a71fc911a4018ba',
+        },
+      ]);
     });
 
     test('should return all flows when section and storeId is not passed to a multi store integration App', () => {
@@ -4786,28 +4221,19 @@ describe('integrationApp Settings reducers', () => {
       );
 
       expect(
-        selectors.integrationAppFlowSettings(state, 'integrationId')
-      ).toEqual({
-        fields: undefined,
-        flowSettings: undefined,
-        flows: [
-          {
-            _id: '5d9f70b98a71fc911a4068bd',
-            _integrationId: 'integrationId',
-            name: '5d9f70b98a71fc911a4068bd',
-          },
-          {
-            _id: '5d9f71628a71fc911a4068d9',
-            _integrationId: 'integrationId',
-            name: '5d9f71628a71fc911a4068d9',
-          },
-        ],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: false,
-        showMatchRuleEngine: true,
-      });
+        selectors.integrationAppSectionFlows(state, 'integrationId')
+      ).toEqual([
+        {
+          _id: '5d9f70b98a71fc911a4068bd',
+          _integrationId: 'integrationId',
+          name: '5d9f70b98a71fc911a4068bd',
+        },
+        {
+          _id: '5d9f71628a71fc911a4068d9',
+          _integrationId: 'integrationId',
+          name: '5d9f71628a71fc911a4068d9',
+        },
+      ]);
     });
 
     test('should return all flows of the store when storeId is passed to a multi store integration App', () => {
@@ -4824,28 +4250,19 @@ describe('integrationApp Settings reducers', () => {
       );
 
       expect(
-        selectors.integrationAppFlowSettings(
+        selectors.integrationAppSectionFlows(
           state,
           'integrationId',
           null,
           'fb5fb65e'
         )
-      ).toEqual({
-        fields: undefined,
-        flowSettings: undefined,
-        flows: [
-          {
-            _id: '5d9f70b98a71fc911a4068bd',
-            _integrationId: 'integrationId',
-            name: '5d9f70b98a71fc911a4068bd',
-          },
-        ],
-        hasDescription: false,
-        hasNSInternalIdLookup: false,
-        sections: undefined,
-        showFlowSettings: false,
-        showMatchRuleEngine: true,
-      });
+      ).toEqual([
+        {
+          _id: '5d9f70b98a71fc911a4068bd',
+          _integrationId: 'integrationId',
+          name: '5d9f70b98a71fc911a4068bd',
+        },
+      ]);
     });
   });
 });

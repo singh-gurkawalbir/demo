@@ -65,6 +65,7 @@ const DynaHttpRequestBody = props => {
     arrayIndex,
     supportLookup = true,
     disableEditorV2 = false,
+    enableEditorV2 = false,
     formKey,
   } = props;
   const classes = useStyles();
@@ -155,6 +156,7 @@ const DynaHttpRequestBody = props => {
         resourceId={resourceId}
         resourceType={resourceType}
         disableEditorV2={disableEditorV2}
+        enableEditorV2={enableEditorV2}
         rule={formattedRule}
         path={id}
         />

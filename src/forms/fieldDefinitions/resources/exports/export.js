@@ -43,12 +43,10 @@ export default {
     label: 'Description',
   },
   _connectionId: {
-    type: 'dynareplaceconnection',
+    type: 'replaceconnection',
     resourceType: 'connections',
     label: 'Connection',
     appTypeIsStatic: true,
-    allowEdit: true,
-    allowNew: true,
     skipDefault: true,
     connectionId: r => r?._connectionId,
     connectorId: r => r?._connectorId,
@@ -113,6 +111,7 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',
@@ -291,6 +290,7 @@ export default {
           { label: 'Microsoftdynamics365', value: 'microsoftdynamics365' },
           { label: 'Pitneybowes', value: 'pitneybowes' },
           { label: 'Mysql', value: 'mysql' },
+          { label: 'Oracle', value: 'oracle' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Microsoft SQL', value: 'microsoft sql' },
           { label: 'Snowflake', value: 'snowflake' },

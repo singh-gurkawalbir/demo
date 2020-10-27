@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { makeStyles, Divider } from '@material-ui/core';
+import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { STANDALONE_INTEGRATION } from '../../../../../utils/constants';
@@ -44,6 +44,9 @@ const useStyles = makeStyles(theme => ({
   flowsPanelWithStatus: {
     display: 'flex',
     alignItems: 'flex-start',
+  },
+  content: {
+    padding: theme.spacing(3, 2),
   },
 }));
 
@@ -143,9 +146,10 @@ export default function FlowsPanel({ integrationId, childId }) {
     {
       parentId: integrationId,
       storeId: childId,
+      isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
-    }), [childId, integrationId, isUserInErrMgtTwoDotZero]);
+    }), [childId, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (
@@ -163,9 +167,9 @@ export default function FlowsPanel({ integrationId, childId }) {
         <PanelHeader title="Integration flows" />
         <Divider />
         <div className={classes.content}>
-          <span>
+          <Typography component="span">
             Choose a child from the drop-down to view flows.
-          </span>
+          </Typography>
         </div>
       </div>
     );

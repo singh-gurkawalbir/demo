@@ -32,7 +32,7 @@ export default function LoadingNotification() {
   return (
     <Snackbar open classes={{root: classes.snackbar}} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
       <Paper elevation={2} className={classes.paper}>
-        <Typography variant="body2">
+        <Typography data-public variant="body2">
           {isRetrying ? 'Retrying' : 'Loading'}...
         </Typography>
         <LinearProgress color="primary" className={classes.progressBar} />

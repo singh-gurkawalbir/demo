@@ -9,7 +9,7 @@ import FlowSchedule from '../../../../../components/SuiteScript/FlowSchedule';
 const useStyle = makeStyles(theme => ({
   scheduleContainer: {
     width: '100%',
-    overflowX: 'hidden',
+    // overflowX: 'hidden',
     '& > div:first-child': {
       marginLeft: theme.spacing(-1),
       paddingRight: 0,

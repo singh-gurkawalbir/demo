@@ -640,6 +640,9 @@ export function* getResourceCollection({ resourceType }) {
   if (resourceType === 'marketplacetemplates') {
     path = '/templates/published';
   }
+  if (resourceType === 'notifications') {
+    path = '/notifications?users=all';
+  }
 
   try {
     let collection = yield call(apiCallWithRetry, {
@@ -677,7 +680,36 @@ export function* getResourceCollection({ resourceType }) {
   }
 }
 
-export function* updateNotifications({ notifications }) {
+export function* updateTileNotifications({ resourcesToUpdate, integrationId, storeId, userEmail }) {
+  const { subscribedConnections = [], subscribedFlows = [] } = resourcesToUpdate;
+  const {
+    flows: availableFlows = [],
+    connections: availableConnections = [],
+  } = yield select(selectors.integrationNotificationResources, integrationId, { storeId, userEmail });
+  const notifications = [];
+
+  notifications.push({
+    _integrationId: integrationId,
+    subscribed: subscribedFlows.includes(integrationId),
+    ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
+  });
+
+  availableFlows
+    .filter(f => f._id !== integrationId)
+    .forEach(flow => {
+      notifications.push({
+        _flowId: flow._id,
+        subscribed: subscribedFlows.includes(flow._id),
+        ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
+      });
+    });
+  availableConnections.forEach(connection => {
+    notifications.push({
+      _connectionId: connection._id,
+      subscribed: subscribedConnections.includes(connection._id),
+      ...(userEmail ? { subscribedByUserEmail: userEmail } : {}),
+    });
+  });
   let response;
   const path = '/notifications';
 
@@ -686,7 +718,60 @@ export function* updateNotifications({ notifications }) {
       path,
       opts: {
         body: notifications,
-        method: 'PUT',
+        method: 'put',
+      },
+      message: 'Updating notifications',
+    });
+  } catch (e) {
+    return undefined;
+  }
+
+  if (response) {
+    yield put(actions.resource.requestCollection('notifications'));
+  }
+}
+
+export function* updateFlowNotification({ flowId, isSubscribed }) {
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const integrationId = flow._integrationId || 'none';
+  const { flowValues: subscribedFlows = [] } = yield select(selectors.integrationNotificationResources, integrationId);
+  const isAllFlowsSelectedPreviously = subscribedFlows.find(id => id === integrationId);
+  const notifications = [];
+  let response;
+
+  if (isAllFlowsSelectedPreviously) {
+    if (isSubscribed) {
+      return;
+    }
+    notifications.push({
+      _integrationId: integrationId,
+      subscribed: false,
+    });
+    subscribedFlows
+      .filter(f => f._id !== integrationId && f !== integrationId)
+      .forEach(flow => {
+        notifications.push({
+          _flowId: flow._id,
+          subscribed: flow._id !== flowId,
+        });
+      });
+  } else {
+    notifications.push(
+      {
+        _integrationId: integrationId,
+        subscribed: false,
+      }, {
+        _flowId: flow._id,
+        subscribed: isSubscribed,
+      },
+    );
+  }
+  try {
+    response = yield call(apiCallWithRetry, {
+      path: '/notifications',
+      opts: {
+        body: notifications,
+        method: 'put',
       },
       message: 'Updating notifications',
     });
@@ -897,7 +982,8 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.DOWNLOAD_FILE, downloadFile),
   takeEvery(actionTypes.CONNECTION.REGISTER_REQUEST, requestRegister),
   takeEvery(actionTypes.CONNECTION.REFRESH_STATUS, refreshConnectionStatus),
-  takeEvery(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, updateNotifications),
+  takeEvery(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, updateTileNotifications),
+  takeEvery(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, updateFlowNotification),
   takeEvery(actionTypes.CONNECTION.DEREGISTER_REQUEST, requestDeregister),
   takeEvery(actionTypes.CONNECTION.TRADING_PARTNER_UPDATE, updateTradingPartner),
   takeEvery(actionTypes.CONNECTION.DEBUG_LOGS_REQUEST, requestDebugLogs),

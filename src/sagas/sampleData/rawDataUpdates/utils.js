@@ -33,9 +33,9 @@ export function* saveRawDataOnResource({
   const runKey = yield call(uploadRawData, {
     file: rawData,
   });
-  const profile = yield select(selectors.userProfile);
+  const ownerUserId = yield select(selectors.ownerUserId);
   // rawData is stored in a S3 bucket whose key is the combination of userId and runkey
-  const rawDataKey = profile._id + runKey;
+  const rawDataKey = ownerUserId + runKey;
   const patchSet = [
     {
       op: 'add',

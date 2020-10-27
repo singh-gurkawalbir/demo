@@ -101,7 +101,7 @@ const auth = {
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagasAndInitLR: () => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
   abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
@@ -423,8 +423,10 @@ const resource = {
     },
   },
   notifications: {
-    update: notifications =>
-      action(actionTypes.RESOURCE.UPDATE_NOTIFICATIONS, { notifications }),
+    updateTile: (resourcesToUpdate, integrationId, options = {}) =>
+      action(actionTypes.RESOURCE.UPDATE_TILE_NOTIFICATIONS, { resourcesToUpdate, integrationId, ...options }),
+    updateFlow: (flowId, isSubscribed) =>
+      action(actionTypes.RESOURCE.UPDATE_FLOW_NOTIFICATION, {flowId, isSubscribed }),
   },
 };
 // #endregion
@@ -1581,8 +1583,8 @@ const job = {
     action(actionTypes.JOB.RESOLVE, { jobId, parentJobId }),
   resolveSelected: ({ jobs }) =>
     action(actionTypes.JOB.RESOLVE_SELECTED, { jobs }),
-  resolveAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RESOLVE_ALL, { flowId, integrationId }),
+  resolveAll: ({ flowId, storeId, integrationId, filteredJobsOnly }) =>
+    action(actionTypes.JOB.RESOLVE_ALL, { flowId, storeId, integrationId, filteredJobsOnly }),
   resolveInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RESOLVE_INIT, { parentJobId, childJobId }),
   resolveAllInit: () => action(actionTypes.JOB.RESOLVE_ALL_INIT),
@@ -1597,13 +1599,13 @@ const job = {
     action(actionTypes.JOB.RETRY_FLOW_JOB, { jobId }),
   retryInit: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_INIT, { parentJobId, childJobId }),
-  retryAllInit: () => action(actionTypes.JOB.RETRY_ALL_INIT),
+  retryAllInit: ({ flowIds }) => action(actionTypes.JOB.RETRY_ALL_INIT, { flowIds }),
   retryUndo: ({ parentJobId, childJobId }) =>
     action(actionTypes.JOB.RETRY_UNDO, { parentJobId, childJobId }),
   retryCommit: () => action(actionTypes.JOB.RETRY_COMMIT),
   retryFlowJobCommit: () => action(actionTypes.JOB.RETRY_FLOW_JOB_COMMIT),
-  retryAll: ({ flowId, integrationId }) =>
-    action(actionTypes.JOB.RETRY_ALL, { flowId, integrationId }),
+  retryAll: ({ flowId, storeId, integrationId }) =>
+    action(actionTypes.JOB.RETRY_ALL, { flowId, storeId, integrationId }),
   retryAllUndo: () => action(actionTypes.JOB.RETRY_ALL_UNDO),
   retryAllCommit: () => action(actionTypes.JOB.RETRY_ALL_COMMIT),
   requestRetryObjects: ({ jobId }) =>
@@ -2033,7 +2035,7 @@ const editorSampleData = {
     formValues,
     fieldType,
     requestedTemplateVersion,
-    isV2NotSupported,
+    isEditorV2Supported,
   }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.REQUEST, {
       flowId,
@@ -2043,7 +2045,7 @@ const editorSampleData = {
       formValues,
       fieldType,
       requestedTemplateVersion,
-      isV2NotSupported,
+      isEditorV2Supported,
     }),
   received: ({ flowId, resourceId, fieldType, sampleData, templateVersion }) =>
     action(actionTypes.EDITOR_SAMPLE_DATA.RECEIVED, {

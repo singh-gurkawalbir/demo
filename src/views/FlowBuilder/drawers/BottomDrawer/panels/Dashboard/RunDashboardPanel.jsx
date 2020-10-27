@@ -8,7 +8,6 @@ const useStyles = makeStyles(() => ({
   root: {
     padding: 0,
     overflow: 'hidden',
-    height: '100%',
   },
 }));
 
@@ -21,7 +20,7 @@ export default function RunDashboardPanel({ flowId }) {
   });
 
   return (
-    <div className={classes.root}>
+    <div data-public className={classes.root}>
       <JobDashboard
         integrationId={integrationId}
         flowId={flowId}

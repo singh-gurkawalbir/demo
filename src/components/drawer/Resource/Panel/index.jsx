@@ -40,7 +40,12 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-5px 0 8px rgba(0,0,0,0.2)',
   },
   baseForm: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
+    paddingTop: theme.spacing(3),
+    '& > div:first-child': {
+      paddingTop: 0,
+    },
   },
   resourceFormWrapper: {
     flexDirection: 'row',
@@ -62,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     position: 'relative',
-    background: theme.palette.background.default,
+    background: theme.palette.background.paper,
   },
   titleText: {
     wordBreak: 'break-word',
@@ -255,7 +260,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>
           )}
-          <div className={classes.titleImgBlock}>
+          <div data-public className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
             </Typography>

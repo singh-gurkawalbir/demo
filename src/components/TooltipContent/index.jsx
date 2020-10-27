@@ -20,6 +20,7 @@ function TooltipContent({ children, className }) {
 
   return (
     <Typography
+      data-public
       className={clsx(classes.root, className)}
       component="div"
       variant="body2">

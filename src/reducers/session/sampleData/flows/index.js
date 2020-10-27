@@ -284,27 +284,6 @@ selectors.getFlowDataState = (state, flowId, resourceId) => {
   return (resourceMap[resourceId] && resourceMap[resourceId].data) || {};
 };
 
-selectors.getSampleData = (
-  state,
-  { flowId, resourceId, resourceType, stage }
-) => {
-  // returns input data for that stage to populate
-  const flow = state[flowId];
-  const sampleDataStage = getSampleDataStage(stage, resourceType);
-
-  if (!flow || !sampleDataStage || !resourceId) return;
-  const resourceMap = isPageGeneratorResource(flow, resourceId)
-    ? flow.pageGeneratorsMap
-    : flow.pageProcessorsMap;
-
-  return (
-    resourceMap &&
-    resourceMap[resourceId] &&
-    resourceMap[resourceId][sampleDataStage] &&
-    resourceMap[resourceId][sampleDataStage].data
-  );
-};
-
 selectors.getSampleDataContext = (
   state,
   { flowId, resourceId, resourceType, stage }

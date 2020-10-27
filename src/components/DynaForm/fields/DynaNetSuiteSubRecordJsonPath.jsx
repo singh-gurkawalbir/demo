@@ -13,12 +13,12 @@ export default function DynaNetSuiteSubRecordJsonPath(props) {
   );
   const dispatch = useDispatch();
   const sampleData = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType: 'imports',
       stage: 'flowInput',
-    })
+    }).data
   );
 
   useEffect(() => {

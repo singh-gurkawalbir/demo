@@ -32,7 +32,7 @@ export default function ScheduleCell({flowId, name}) {
         component={Link}
         data-test={`flowSchedule-${name}`}
         to={`${history.location.pathname}/${flowId}/schedule`}>
-        <CalendarIcon />
+        <CalendarIcon color="secondary" />
       </IconButtonWithTooltip>
     </RemoveMargin>
   );

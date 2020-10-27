@@ -185,7 +185,7 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   );
   const handleClose = useCallback(() => {
     history.push(match.url);
-  }, [match.url]);
+  }, [match.url, history]);
 
   return (
     <LoadResources

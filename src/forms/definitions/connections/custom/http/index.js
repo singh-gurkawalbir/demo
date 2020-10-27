@@ -191,8 +191,10 @@ import jiraserver from './jiraserver';
 import gainsight from './gainsight';
 import dotdigital from './dotdigital';
 import checkout from './checkout';
+import channelape from './channelape';
 
 export default {
+  channelape,
   concurexpense,
   bigquery,
   googlemail,

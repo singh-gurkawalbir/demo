@@ -22,6 +22,7 @@ import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources';
 import { ACCOUNT_IDS } from '../../utils/constants';
 import getRoutePath from '../../utils/routePaths';
+import { getDomain } from '../../utils/resource';
 
 export function* retrievingOrgDetails() {
   yield all([
@@ -155,10 +156,9 @@ export function* retrieveAppInitializationResources() {
     call(retrievingOrgDetails),
     call(retrievingUserDetails),
     call(retrievingAssistantDetails),
-    // change it to this way because logrocket init requires the version to be known at init
-    call(fetchUIVersion),
   ]);
 
+  yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
   let calculatedDefaultAShareId = defaultAShareId;
   const hasAcceptedAccounts = yield select(selectors.hasAcceptedAccounts);
@@ -184,61 +184,18 @@ export function* retrieveAppInitializationResources() {
   yield put(actions.auth.defaultAccountSet());
 }
 
-export function* getCSRFTokenBackend() {
-  const { _csrf } = yield call(apiCallWithRetry, {
-    path: getCSRFParams.path,
-    message: 'Requesting CSRF token',
-  });
+const getLogrocketId = () =>
+  // LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
+  // eslint-disable-next-line no-undef
+  (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
-  return _csrf;
-}
-
-export function* setLastLoggedInLocalStorage() {
-  const profile = yield call(
-    getResource,
-    actions.user.profile.request('Retrieving user\'s Profile')
-  );
-
-  localStorage.setItem('latestUser', profile?._id);
-}
-export function* auth({ email, password }) {
-  try {
-    // replace credentials in the request body
-    const _csrf = yield call(getCSRFTokenBackend);
-    const credentialsBody = { email, password, _csrf };
-    const payload = { ...authParams.opts, body: credentialsBody };
-    const apiAuthentications = yield call(apiCallWithRetry, {
-      path: authParams.path,
-      opts: payload,
-      message: 'Authenticating User',
-      hidden: true,
-    });
-    const isExpired = yield select(selectors.isSessionExpired);
-
-    yield call(setCSRFToken, apiAuthentications._csrf);
-
-    yield call(setLastLoggedInLocalStorage);
-    yield put(actions.auth.complete());
-
-    yield call(retrieveAppInitializationResources);
-    if (isExpired) {
-      // remount the component
-      yield put(actions.app.reload());
-    }
-  } catch (error) {
-    yield put(actions.auth.failure('Authentication Failure'));
-    yield put(actions.user.profile.delete());
-  }
-}
-
-export function* initializeLogRocket() {
-  const version = yield select(selectors.version);
+export function* initializeLogrocket() {
   const p = yield select(selectors.userProfile);
 
-  // LOGROCKET_IDENTIFIER is defined by webpack
-  // eslint-disable-next-line no-undef
-  LogRocket.init(LOGROCKET_IDENTIFIER, {
-    release: version,
+  LogRocket.init(getLogrocketId(), {
+    // RELEASE_VERSION is defined by webpack
+    // eslint-disable-next-line no-undef
+    release: RELEASE_VERSION,
     console: {
       isEnabled: {
         debug: false,
@@ -283,7 +240,79 @@ export function* initializeLogRocket() {
   }
 }
 
-export function* initializeApp() {
+let LOGROCKET_INITIALIZED = false;
+export function* initializeApp(opts) {
+  // Important: Do not start off any async saga actions(esp those making network calls)
+  // before logrocket initialization
+  if (!LOGROCKET_INITIALIZED && getLogrocketId()) {
+    LOGROCKET_INITIALIZED = true;
+    // stop sagas, init logrocket, and restart sagas
+    // note the current saga `initializeApp` is killed as well
+    // so that it needs to be called again after logrocket is initialized and sagas restarted
+    // that happens in sagas/index.js
+    yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+  }
+  try {
+    // eslint-disable-next-line no-use-before-define
+    yield call(retrieveAppInitializationResources);
+    // the following is moved from within auth*() to here to keep original impl
+    if (opts?.reload) {
+      // remount the component
+      yield put(actions.app.reload());
+    }
+  } catch (e) {
+    yield put(actions.auth.logout());
+  }
+}
+
+export function* getCSRFTokenBackend() {
+  const { _csrf } = yield call(apiCallWithRetry, {
+    path: getCSRFParams.path,
+    message: 'Requesting CSRF token',
+  });
+
+  return _csrf;
+}
+
+export function* setLastLoggedInLocalStorage() {
+  const profile = yield call(
+    getResource,
+    actions.user.profile.request('Retrieving user\'s Profile')
+  );
+
+  localStorage.setItem('latestUser', profile?._id);
+}
+
+export function* auth({ email, password }) {
+  try {
+    // replace credentials in the request body
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { email, password, _csrf };
+    const payload = { ...authParams.opts, body: credentialsBody };
+    const apiAuthentications = yield call(apiCallWithRetry, {
+      path: authParams.path,
+      opts: payload,
+      message: 'Authenticating User',
+      hidden: true,
+    });
+    const isExpired = yield select(selectors.isSessionExpired);
+
+    yield call(setCSRFToken, apiAuthentications._csrf);
+
+    yield call(setLastLoggedInLocalStorage);
+    yield put(actions.auth.complete());
+
+    // Important: Do not start off any async saga actions(esp those making network calls)
+    // before logrocket initialization
+    yield call(initializeApp, { reload: isExpired });
+    // Important: intializeApp should be the last thing to happen in this function
+  } catch (error) {
+    yield put(actions.auth.failure('Authentication Failure'));
+    yield put(actions.user.profile.delete());
+  }
+}
+
+export function* initializeSession() {
   try {
     const resp = yield call(
       getResource,
@@ -297,14 +326,11 @@ export function* initializeApp() {
       yield call(setLastLoggedInLocalStorage);
 
       yield put(actions.auth.complete());
-      yield call(retrieveAppInitializationResources);
 
-      // LOGROCKET_IDENTIFIER is defined by webpack
-      // eslint-disable-next-line no-undef
-      if (LOGROCKET_IDENTIFIER) {
-        // stop sagas, init logrocket, and restart sagas
-        yield put(actions.auth.abortAllSagasAndInitLR());
-      }
+      // Important: Do not start off any async saga actions(esp those making network calls)
+      // before logrocket initialization
+      yield call(initializeApp);
+    // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid
       yield put(actions.auth.logout({ isExistingSessionInvalid: true }));
@@ -385,7 +411,7 @@ export function* linkWithGoogle({ returnTo }) {
 
 export const authenticationSagas = [
   takeLeading(actionTypes.USER_LOGOUT, invalidateSession),
-  takeEvery(actionTypes.INIT_SESSION, initializeApp),
+  takeEvery(actionTypes.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH_REQUEST, auth),
   takeEvery(actionTypes.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH_SIGNIN_WITH_GOOGLE, signInWithGoogle),

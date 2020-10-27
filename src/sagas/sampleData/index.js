@@ -315,6 +315,9 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
 
     _pageProcessorDoc = { ..._pageProcessorDoc, oneToMany };
   }
+  // delete sampleData property if exists on pageProcessor Doc
+  // as preview call considers sampleData to show instead of fetching
+  delete _pageProcessorDoc.sampleData;
 
   try {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {

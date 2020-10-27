@@ -48,7 +48,10 @@ export default {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
     },
-    'rdbms.version': { fieldId: 'rdbms.version' },
+    'rdbms.version': {
+      fieldId: 'rdbms.version',
+      helpKey: 'mssql.connection.rdbms.version',
+    },
     rdbmsFields: { formId: 'rdbmsFields' },
     'rdbms.instanceName': { fieldId: 'rdbms.instanceName' },
     'rdbms.port': { fieldId: 'rdbms.port' },

@@ -13,13 +13,11 @@ export default {
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
   },
   _connectionId: {
-    type: 'dynareplaceconnection',
+    type: 'replaceconnection',
     resourceType: 'connections',
     label: 'Connection',
     appTypeIsStatic: true,
     allowEdit: true,
-    allowNew: true,
-    skipDefault: true,
     connectionId: r => r?._connectionId,
     defaultValue: r => r?._connectionId,
     integrationId: r => r?._integrationId,
@@ -60,11 +58,12 @@ export default {
   idLockTemplate: {
     type: 'concurrencyidlocktemplate',
     label: 'Concurrency ID lock template',
+    enableEditorV2: true,
   },
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',
@@ -247,6 +246,7 @@ export default {
           { label: 'Mysql', value: 'mysql' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
+          { label: 'Oracle', value: 'oracle' },
           { label: 'Snowflake', value: 'snowflake' },
           { label: 'Greenhouse', value: 'greenhouse' },
           { label: 'Shippo', value: 'shippo' },

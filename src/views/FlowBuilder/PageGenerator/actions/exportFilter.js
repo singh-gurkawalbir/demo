@@ -10,7 +10,7 @@ function ExportFilterDrawer({ flowId, resource, isViewMode, onClose }) {
   const dispatch = useDispatch();
   const resourceId = resource._id;
   const { status: sampleDataStatus, data: sampleData } = useSelector(state =>
-    selectors.getSampleDataWrapper(state, {
+    selectors.sampleDataWrapper(state, {
       flowId,
       resourceId,
       resourceType: 'exports',

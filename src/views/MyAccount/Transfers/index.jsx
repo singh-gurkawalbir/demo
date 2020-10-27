@@ -22,6 +22,9 @@ const useStyles = makeStyles(theme => ({
   heading: {
     paddingLeft: theme.spacing(1),
   },
+  transferTableWrapper: {
+    overflowX: 'auto',
+  },
 }));
 
 export default function Transfers() {
@@ -72,6 +75,7 @@ export default function Transfers() {
             <ResourceTable
               resourceType="transfers"
               resources={transfers}
+              className={classes.transferTableWrapper}
             />
           </>
         )}

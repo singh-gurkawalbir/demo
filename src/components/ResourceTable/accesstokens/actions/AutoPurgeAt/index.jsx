@@ -1,24 +1,10 @@
-import { useState, useEffect } from 'react';
-import moment from 'moment';
-import { getAutoPurgeAtAsString } from './util';
+import React from 'react';
+import CeligoTimeAgo from '../../../../CeligoTimeAgo';
 
 export default function AutoPurgeAt({ accessToken }) {
-  const [autoPurge, setAutoPurge] = useState(null);
+  if (accessToken && accessToken.autoPurgeAt) {
+    return <CeligoTimeAgo date={accessToken.autoPurgeAt} />;
+  }
 
-  useEffect(() => {
-    setAutoPurge(getAutoPurgeAtAsString(accessToken));
-
-    /** Check and update purge status every minute until the token is purged */
-    if (accessToken.autoPurgeAt && moment().diff(accessToken.autoPurgeAt) < 0) {
-      const updateAutoPurgeTimer = setInterval(() => {
-        setAutoPurge(getAutoPurgeAtAsString(accessToken));
-      }, 60 * 1000);
-
-      return () => {
-        clearTimeout(updateAutoPurgeTimer);
-      };
-    }
-  }, [accessToken]);
-
-  return autoPurge;
+  return 'Never';
 }

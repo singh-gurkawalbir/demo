@@ -279,7 +279,7 @@ export default function Editors() {
           classes={{
             paper: classes.drawerPaper,
           }}>
-          <List>
+          <List data-public >
             {editors.map(p => (
               <EditorListItem
                 key={p.name}

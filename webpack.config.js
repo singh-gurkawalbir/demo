@@ -82,11 +82,13 @@ const config = {
     }),
     // define LOGROCKET_IDENTIFIER for logrocket
     new webpack.DefinePlugin({
+      RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
+      LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
     }),
   ],
   output: {
-    publicPath: '/',
+    publicPath: process.env.RELEASE_VERSION ? `${process.env.CDN_BASE_URI}react/${process.env.RELEASE_VERSION}/` : '/',
     filename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'build'),
   },
@@ -101,6 +103,11 @@ const config = {
 module.exports = (env, argv) => {
   config.mode = argv && argv.mode;
   const runOptimizedLocal = argv && argv.runOptimizedLocal;
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const k of ['RELEASE_VERSION', 'LOGROCKET_IDENTIFIER', 'LOGROCKET_IDENTIFIER_EU']) {
+    console.log('Custom Environment Variable:', k, '=', process.env[k]);
+  }
 
   if (config.mode === 'production') {
     // replace modules not needed in actual builds with dummy

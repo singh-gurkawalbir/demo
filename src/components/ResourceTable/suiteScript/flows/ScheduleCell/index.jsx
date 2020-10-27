@@ -26,7 +26,7 @@ export default function ScheduleCell({flow}) {
         data-test={`flowSchedule-${flow.ioFlowName || flow.name || flow._id}`}
         to={`${history.location.pathname}/${flow._id}/schedule`}
         disabled={!allowSchedule}>
-        <CalendarIcon />
+        <CalendarIcon color="secondary" />
       </IconButtonWithTooltip>
     </RemoveMargin>
   );

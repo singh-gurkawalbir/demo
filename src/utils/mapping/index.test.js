@@ -3069,6 +3069,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'S3Import'}, connection: {}, appName: 'Amazon S3'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mysql'}}, appName: 'MySQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'mssql'}}, appName: 'Microsoft SQL'},
+      {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'oracle'}}, appName: 'Oracle DB (SQL)'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
 

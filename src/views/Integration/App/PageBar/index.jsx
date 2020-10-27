@@ -1,4 +1,4 @@
-import { MenuItem } from '@material-ui/core';
+import { MenuItem, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback} from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
@@ -15,7 +15,6 @@ import { selectors } from '../../../../reducers';
 import integrationAppUtil, { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import StatusCircle from '../../../../components/StatusCircle';
-import CeligoSelect from '../../../../components/CeligoSelect';
 
 const useStyles = makeStyles(theme => ({
   tag: {
@@ -141,8 +140,13 @@ export default function PageBar() {
     );
   }, [history, integrationAppName, integrationId]);
 
-  const renderStoreLabel = useCallback(selectedStoreId =>
-    integration.stores?.find(store => store.value === selectedStoreId)?.label,
+  const renderStoreLabel = useCallback(selectedStoreId => {
+    if (selectedStoreId === '') {
+      return `All ${storeLabel}s`;
+    }
+
+    return integration.stores?.find(store => store.value === selectedStoreId)?.label || selectedStoreId;
+  },
   [integration]);
 
   const storeItems = StoreMenuItems({ integration, integrationId });
@@ -179,7 +183,7 @@ export default function PageBar() {
           <AddIcon /> Add {storeLabel}
         </IconTextButton>
         )}
-        <CeligoSelect
+        <Select
           displayEmpty
           data-test={`select${storeLabel}`}
           className={classes.storeSelect}
@@ -191,7 +195,7 @@ export default function PageBar() {
             All {storeLabel}s
           </MenuItem>
           {storeItems}
-        </CeligoSelect>
+        </Select>
       </div>
       )}
     </CeligoPageBar>

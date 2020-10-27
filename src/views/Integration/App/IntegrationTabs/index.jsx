@@ -121,7 +121,7 @@ export default function IntegrationTabsComponent() {
     }
 
     return getAllTabs(isUserInErrMgtTwoDotZero).filter(tab => !filterTabs.includes(tab.path));
-  }, [hasAddOns, showAdminTab]);
+  }, [hasAddOns, isUserInErrMgtTwoDotZero, showAdminTab]);
 
   return (
 
