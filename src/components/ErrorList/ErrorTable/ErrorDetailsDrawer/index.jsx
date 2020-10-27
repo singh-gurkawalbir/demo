@@ -6,7 +6,8 @@ import {
   matchPath,
   useLocation,
 } from 'react-router-dom';
-import RightDrawer from '../../../drawer/Right';
+import RightDrawer from '../../../drawer/Right/V2';
+import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 
@@ -59,9 +60,9 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   return (
     <RightDrawer
       path="details/:errorId/:mode"
-      title="View error details"
       variant="temporary"
       hideBackButton>
+      <DrawerHeader title="View error details" />
       <ErrorDetails
         flowId={flowId}
         resourceId={resourceId}

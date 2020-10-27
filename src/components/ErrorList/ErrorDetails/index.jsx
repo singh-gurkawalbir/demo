@@ -8,13 +8,15 @@ import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
+import DrawerContent from '../../drawer/Right/V2/DrawerContent';
+import DrawerFooter from '../../drawer/Right/V2/DrawerFooter';
+
 import ErrorDetailActions from './ErrorDetailActions';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: `calc(100% - ${50}px)`,
+    height: 'calc(100% - 38px)',
     backgroundColor: 'white',
-    overflow: 'auto',
     color: theme.palette.text.hint,
   },
   tabContent: {
@@ -22,18 +24,7 @@ const useStyles = makeStyles(theme => ({
     border: `1px solid ${theme.palette.secondary.lightest}`,
     borderTop: 'none',
     borderBottom: 'none',
-  },
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    height: '100%',
-  },
-  actions: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 0, 1, 0),
-    display: 'flex',
-    justifyContent: 'space-between',
+    overflow: 'auto',
   },
   tabHeader: {
     border: `1px solid ${theme.palette.secondary.lightest}`,
@@ -89,43 +80,46 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
   );
 
   return (
-    <div className={classes.root}>
-      <div className={classes.detailsContainer}>
-        {(retryId && !isFlowDisabled && !isResolved) ? (
-          <Tabs
-            className={classes.tabHeader}
-            value={recordMode}
-            onChange={handleModeChange}
-            textColor="primary"
-            indicatorColor="primary">
-            <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
-            <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
-          </Tabs>
-        ) : (
-          <Tabs
-            className={classes.tabHeader}
-            value={recordMode}
-            onChange={handleModeChange}
-            textColor="primary"
-            indicatorColor="primary">
+    <>
+      <DrawerContent>
+        <div className={classes.detailsContainer}>
+          {(retryId && !isFlowDisabled && !isResolved) ? (
+            <Tabs
+              className={classes.tabHeader}
+              value={recordMode}
+              onChange={handleModeChange}
+              textColor="primary"
+              indicatorColor="primary">
+              <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
+              <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
+            </Tabs>
+          ) : (
+            <Tabs
+              className={classes.tabHeader}
+              value={recordMode}
+              onChange={handleModeChange}
+              textColor="primary"
+              indicatorColor="primary">
 
-            <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
-          </Tabs>
-        )}
-        <div className={classes.tabContent}>
-          <TabContent
-            flowId={flowId}
-            resourceId={resourceId}
-            retryId={retryId}
-            errorId={errorId}
-            onChange={onRetryDataChange}
-            recordMode={recordMode}
-            isFlowDisabled={isFlowDisabled}
-            isResolved={isResolved}
+              <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
+            </Tabs>
+          )}
+          <div className={classes.tabContent}>
+            <TabContent
+              flowId={flowId}
+              resourceId={resourceId}
+              retryId={retryId}
+              errorId={errorId}
+              onChange={onRetryDataChange}
+              recordMode={recordMode}
+              isFlowDisabled={isFlowDisabled}
+              isResolved={isResolved}
           />
+          </div>
         </div>
-      </div>
-      <div className={classes.actions}>
+      </DrawerContent>
+
+      <DrawerFooter>
         <ErrorDetailActions
           retryData={retryData}
           flowId={flowId}
@@ -135,7 +129,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
           mode={recordMode}
           isResolved={isResolved}
         />
-      </div>
-    </div>
+      </DrawerFooter>
+    </>
   );
 }
