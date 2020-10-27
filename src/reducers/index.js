@@ -2972,7 +2972,7 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, {resourceId, resourceType, flowId, fieldName}) => {
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
   // no AFE1/2 is shown for PG export (with some exceptions)
   const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
 
@@ -2991,10 +2991,6 @@ selectors.isEditorV2Supported = (state, {resourceId, resourceType, flowId, field
     const restConnection = selectors.resource(state, 'connections', resource._connectionId);
 
     return !!restConnection.isHTTP;
-  }
-
-  if (['idLockTemplate', 'dataURITemplate'].includes(fieldName)) {
-    return true;
   }
 
   return [
