@@ -146,7 +146,7 @@ export default {
           'dynamodb.onceExportSortKey',
         ],
       },
-      { collapsed: true, label: 'Advanced', fields: ['skipRetries', 'dataURITemplate'] },
+      { collapsed: true, label: 'Advanced', fields: ['dataURITemplate', 'skipRetries'] },
     ],
   },
 };
