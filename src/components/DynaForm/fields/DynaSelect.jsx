@@ -174,6 +174,7 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     className,
+    rootClassName,
     label,
     skipDefault = false,
     onFieldChange,
@@ -260,7 +261,7 @@ export default function DynaSelect(props) {
     [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
   return (
-    <div className={classes.dynaSelectWrapper}>
+    <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}

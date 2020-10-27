@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { Switch, Route, useRouteMatch, useHistory } from 'react-router-dom';
-import RightDrawer from '../../Right';
+import RightDrawer from '../../Right/V2';
+import DrawerHeader from '../../Right/V2/DrawerHeader';
+import DrawerContent from '../../Right/V2/DrawerContent';
 import Preview from './Preview';
 import Setup from '../common/Setup';
 
@@ -23,18 +25,21 @@ export default function InstallTemplateDrawer() {
       onClose={handleClose}
       hideBackButton={hideBackButton}
       path={rootPath}
-      type="default"
-      title="Install template"
       height="tall"
       width="large">
-      <Switch>
-        <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
-          <Preview />
-        </Route>
-        <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
-          <Setup handleClose={handleClose} />
-        </Route>
-      </Switch>
+
+      <DrawerHeader title="Install template" />
+
+      <DrawerContent>
+        <Switch>
+          <Route path={`${match.url}/${rootPath}/preview/:templateId`}>
+            <Preview />
+          </Route>
+          <Route path={`${match.url}/${rootPath}/setup/:templateId`}>
+            <Setup handleClose={handleClose} />
+          </Route>
+        </Switch>
+      </DrawerContent>
     </RightDrawer>
   );
 }
