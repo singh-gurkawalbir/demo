@@ -58,35 +58,3 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
 />
   );
 }
-
-/**
- * 1. Add Dropdown - done
- * 2. Add conditions where to show/hide it - done
- * 3. Add preview support for export/lookup - done
- * 4. update common util to support proper format both editors level and preview panel - done
- * 5. Tackle FTP related use cases to show proper format - done ( refactor required ) - done
- * 6. Refactor sampledata saga and state to support recordSize properly - done
- */
-
-/**
-  * 5. FTP Solution
-  * we need to store both parse and preview stages
-  * 1. On user upload
-  * - csv - verified
-  * - xlsx - verified
-  * - json - verified
-  * - xml
-  * - file definitions - revisit
-  * 2. on saved sample data
-  * - csv - verified
-  * - xlsx
-  * - json - verified
-  * - xml
-  * - file definitions
-  */
-
-/**
-   * Add recordSize as part of sampleData state - done
-   * Csv grouped data not working parse stage -  add conditions to diff file def preview and other preview responses
-   * Still above issue persists - verify
-   */
