@@ -2474,7 +2474,9 @@ describe('integrationApps reducer test cases', () => {
       });
     });
   });
+});
 
+describe('integrationApps selectors test cases', () => {
   describe('integrationApps uninstaller2.0 selectors', () => {
     describe('uninstall2Data', () => {
       test('should return empty state when no match found.', () => {

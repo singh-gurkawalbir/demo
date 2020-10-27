@@ -40,9 +40,9 @@ export default function reducer(state = {}, action) {
 
         scriptPatches = patch.filter(patch => patch.path === '/content');
 
-        if (formPatches && formPatches.length) {
+        if (formPatches?.length) {
           delete draft[resourceId];
-        } else if (scriptPatches && scriptPatches.length) {
+        } else if (scriptPatches?.length) {
           // We need to iterate over all cached items in the state object
           // and check if any resource with a cached form result uses a 'scriptId'
           // matching the resourceId in the action payload.

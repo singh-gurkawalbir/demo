@@ -59,7 +59,7 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.PACKAGE:
-        if (draft[id] && draft[id].steps) {
+        if (draft[id]?.steps) {
           step = draft[id].steps.find(
             s => s.type === 'package' && s.installerFunction === packageType
           );
@@ -70,7 +70,7 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.SUITESCRIPT.INSTALLER.UPDATE.STEP:
-        if (draft[id] && draft[id].steps) {
+        if (draft[id]?.steps) {
           step = draft[id].steps.find(
             s => !s.completed
           );
