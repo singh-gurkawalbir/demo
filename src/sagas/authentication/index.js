@@ -189,9 +189,20 @@ const getLogrocketId = () =>
   // eslint-disable-next-line no-undef
   (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
-export function* initializeLogrocket() {
+function* identifyLogRocketSession() {
   const p = yield select(selectors.userProfile);
 
+  // identify user with LogRocket
+  if (p?._id) {
+    LogRocket.identify(p._id, {
+      name: p.name,
+      email: p.email,
+      company: p.company,
+      developer: !!p.developer,
+    });
+  }
+}
+export function* initializeLogrocket() {
   LogRocket.init(getLogrocketId(), {
     // RELEASE_VERSION is defined by webpack
     // eslint-disable-next-line no-undef
@@ -229,28 +240,30 @@ export function* initializeLogrocket() {
     },
   });
   setupLogRocketReact(LogRocket);
-  // identify user with LogRocket
-  if (p?._id) {
-    LogRocket.identify(p._id, {
-      name: p.name,
-      email: p.email,
-      company: p.company,
-      developer: !!p.developer,
-    });
-  }
+
+  yield call(identifyLogRocketSession);
 }
 
 let LOGROCKET_INITIALIZED = false;
 export function* initializeApp(opts) {
   // Important: Do not start off any async saga actions(esp those making network calls)
   // before logrocket initialization
-  if (!LOGROCKET_INITIALIZED && getLogrocketId()) {
-    LOGROCKET_INITIALIZED = true;
-    // stop sagas, init logrocket, and restart sagas
-    // note the current saga `initializeApp` is killed as well
-    // so that it needs to be called again after logrocket is initialized and sagas restarted
-    // that happens in sagas/index.js
-    yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+  if (getLogrocketId()) {
+    if (!LOGROCKET_INITIALIZED) {
+      LOGROCKET_INITIALIZED = true;
+      // stop sagas, init logrocket, and restart sagas
+      // note the current saga `initializeApp` is killed as well
+      // so that it needs to be called again after logrocket is initialized and sagas restarted
+      // that happens in sagas/index.js
+      yield put(actions.auth.abortAllSagasAndInitLR({opts}));
+    } else {
+      // ensuring we have the users profile for identifyLogRocketSession
+      yield call(
+        getResource,
+        actions.user.profile.request('Initializing application')
+      );
+      yield call(identifyLogRocketSession);
+    }
   }
   try {
     // eslint-disable-next-line no-use-before-define
