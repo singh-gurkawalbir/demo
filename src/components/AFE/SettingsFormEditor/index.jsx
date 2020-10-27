@@ -115,9 +115,7 @@ export default function SettingsFormEditor({
   return (
     <PanelGrid
       key={editorId}
-      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}
-      height="calc(100vh - 170px)"
-      width="100%">
+      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}>
       <PanelGridItem gridArea="meta">
         <PanelTitle
           title={mode === 'json' ? 'Form definition' : 'Script input'}

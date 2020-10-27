@@ -1,18 +1,19 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  makeStyles,
-  Button,
-} from '@material-ui/core';
+import { makeStyles, Button, Divider } from '@material-ui/core';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
-import RightDrawer from '../../drawer/Right';
+import RightDrawer from '../../drawer/Right/V2';
+import DrawerHeader from '../../drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../drawer/Right/V2/DrawerContent';
+import DrawerFooter from '../../drawer/Right/V2/DrawerFooter';
 import TextToggle from '../../TextToggle';
 import SettingsFormEditor from '.';
 import { isJsonString } from '../../../utils/string';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
+import ButtonGroup from '../../ButtonGroup';
 
 const emptyObj = {};
 
@@ -59,22 +60,19 @@ function toggleData(data, mode) {
 }
 
 const useStyles = makeStyles(theme => ({
-  actionContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
+  spaceBetween: {
+    flex: 1,
   },
-  actionSpacer: {
-    flexGrow: 100,
+  divider: {
+    margin: theme.spacing(0.5, 1, 0),
+    height: 24,
+    width: 1,
   },
-  wrapper: {
-    '& Button': {
-      marginRight: theme.spacing(2),
-    },
-    '& Button:last-child': {
-      marginRight: 0,
-    },
+  footer: {
+    paddingTop: '0 !important',
   },
 }));
+
 const toggleOptions = [
   { label: 'JSON', value: 'json' },
   { label: 'Script', value: 'script' },
@@ -193,36 +191,36 @@ export default function EditorDrawer({
   // if the editor is not yet initialized, then the auto-evaluate flag is undefined
   // so lets default to ON.
   const autoEvaluate = editor.autoEvaluate || editor.autoEvaluate === undefined;
-  const drawerActions = (
-    <>
-      <TextToggle
-        value={editor.mode}
-        onChange={handleModeToggle}
-        exclusive
-        options={toggleOptions}
-      />
-      <div className={classes.actionSpacer} />
-    </>
-  );
 
   return (
     <RightDrawer
       path={path}
       height="tall"
       width="xl"
-      // type="paper"
-      title="Form builder"
       variant="temporary"
-      actions={drawerActions}
       onClose={handleCancelClick}>
-      <SettingsFormEditor
-        editorId={editorId}
-        disabled={disabled}
-        resourceId={resourceId}
-        resourceType={resourceType}
-      />
-      <div className={classes.actionContainer}>
-        <div className={classes.wrapper}>
+
+      <DrawerHeader title="Form builder">
+        <TextToggle
+          value={editor.mode}
+          onChange={handleModeToggle}
+          exclusive
+          options={toggleOptions}
+        />
+        <div className={classes.actionSpacer} />
+      </DrawerHeader>
+
+      <DrawerContent>
+        <SettingsFormEditor
+          editorId={editorId}
+          disabled={disabled}
+          resourceId={resourceId}
+          resourceType={resourceType}
+        />
+      </DrawerContent>
+
+      <DrawerFooter className={classes.footer}>
+        <ButtonGroup>
           {!hideSaveAction && (
           <>
             <EditorSaveButton
@@ -252,16 +250,20 @@ export default function EditorDrawer({
             onClick={handleCancelClick}>
             Cancel
           </Button>
-        </div>
-        <div className={classes.wrapper}>
+        </ButtonGroup>
+        <div className={classes.spaceBetween} />
+        <ButtonGroup>
           {!editor.autoEvaluate && (
-          <Button
-            data-test="previewEditorResult"
-            variant="outlined"
-            onClick={handlePreview}
-            disabled={!!editorViolations}>
-            Preview
-          </Button>
+            <>
+              <Button
+                data-test="previewEditorResult"
+                variant="outlined"
+                onClick={handlePreview}
+                disabled={!!editorViolations}>
+                Preview
+              </Button>
+              <Divider orientation="vertical" varian="middle" className={classes.divider} />
+            </>
           )}
           <DynaCheckbox
             hideLabelSpacing
@@ -270,8 +272,8 @@ export default function EditorDrawer({
             label="Auto preview"
             value={autoEvaluate}
           />
-        </div>
-      </div>
+        </ButtonGroup>
+      </DrawerFooter>
     </RightDrawer>
   );
 }
