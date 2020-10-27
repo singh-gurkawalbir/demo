@@ -2985,12 +2985,17 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
     resourceType,
     resourceId
   );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
 
   // AFE 2.0 not supported for Native REST Adaptor
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    const restConnection = selectors.resource(state, 'connections', resource._connectionId);
+    return !!connection.isHTTP;
+  }
 
-    return !!restConnection.isHTTP;
+  // BE doesnt support oracle and snowflake adaptor yet
+  // remove this check once same is added in BE
+  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+    return false;
   }
 
   return [
