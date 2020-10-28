@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
-import RightDrawer from '../../../drawer/Right';
+import RightDrawer from '../../../drawer/Right/V2';
+import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
+import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
 import { selectors } from '../../../../reducers';
 import viewNotificationsMetadata from './metadata';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -57,7 +59,9 @@ function ViewNotifications({ integrationId, storeId, onClose }) {
 
   return (
     <LoadResources required resources="notifications,flows,connections">
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
     </LoadResources>
   );
 }
@@ -70,10 +74,9 @@ export default function ViewNotificationsDrawer({ integrationId, storeId }) {
   return (
     <RightDrawer
       path=":userEmail/notifications"
-      title="View notifications"
       variant="temporary"
-      width="medium"
-      hideBackButton>
+      width="medium">
+      <DrawerHeader title="View notifications" />
       <ViewNotifications integrationId={integrationId} storeId={storeId} onClose={handleClose} />
     </RightDrawer>
   );
