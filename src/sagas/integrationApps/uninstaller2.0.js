@@ -14,7 +14,7 @@ export function* initUninstall({ id }) {
       message: 'Init uninstall',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'POST', error && error.message, false));
+    yield put(actions.api.failure(path, 'POST', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller2.failed(
         id,
@@ -87,7 +87,7 @@ export function* requestSteps({ id }) {
       message: 'Loading',
     });
   } catch (error) {
-    yield put(actions.api.failure(path, 'GET', error && error.message, false));
+    yield put(actions.api.failure(path, 'GET', error?.message, false));
     yield put(
       actions.integrationApp.uninstaller2.failed(
         id,

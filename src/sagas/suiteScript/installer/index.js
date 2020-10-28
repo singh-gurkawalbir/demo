@@ -20,7 +20,7 @@ export function* getPackageURLs({ ssLinkedConnectionId, connectorId }) {
   const { response } = yield makeRequest({ path});
   // dont do anything if there is error and use the static package urls
 
-  if (response && response.success) {
+  if (response?.success) {
     if (response.data) {
       if (response.data.integratorPackageURL) {
         yield put(
@@ -149,7 +149,7 @@ export function* verifyConnectorBundle({ ssLinkedConnectionId, connectorId, ssNa
   if (Array.isArray(response)) {
     found = response.filter(t => t.isConnector && t.name === ssName);
   }
-  if (found && found.length > 0) {
+  if (found?.length > 0) {
     yield put(
       actions.suiteScript.installer.updateStep(
         connectorId,
