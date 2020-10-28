@@ -3,8 +3,10 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
+  drawerFooter: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    background: theme.palette.common.white,
+    padding: theme.spacing(3),
     display: 'flex',
   },
 }));
@@ -14,7 +16,7 @@ export default function DrawerHeader({ children, className }) {
 
   return (
     <div
-      className={clsx(classes.root, className)}>
+      className={clsx(classes.drawerFooter, className)}>
       {children}
     </div>
   );

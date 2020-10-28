@@ -20,9 +20,6 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
-  drawerPaper_default: {
-    background: theme.palette.background.default,
-  },
   childrenWrapper: {
     display: 'flex',
     height: '100%',
@@ -68,7 +65,6 @@ export default function RightDrawer({
   path,
   width = 'default',
   height = 'short',
-  type = 'legacy',
   children,
   onClose,
   variant = 'persistent',
@@ -116,7 +112,6 @@ export default function RightDrawer({
           classes={{
             paper: clsx(
               classes.drawerPaper,
-              classes[`drawerPaper_${type}`],
               classes[height],
               {
                 [classes.banner]:
