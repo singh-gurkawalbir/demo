@@ -21,7 +21,7 @@ export default {
       );
 
       return {
-        sObjectType: sObjectTypeField?.value,
+        sObjectType: !(sObjectTypeField?.value),
         commMetaPath: sObjectTypeField
           ? `salesforce/metadata/connections/${sObjectTypeField.connectionId}/sObjectTypes/${sObjectTypeField.value}`
           : '',
