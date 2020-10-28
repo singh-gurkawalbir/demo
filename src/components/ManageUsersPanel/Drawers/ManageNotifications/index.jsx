@@ -1,41 +1,27 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles, Button } from '@material-ui/core';
-import RightDrawer from '../../../drawer/Right';
+import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import notificationsMetadata from './metadata';
-import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
-import LoadResources from '../../../LoadResources';
 import actions from '../../../../actions';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import useGetNotificationOptions from '../../../../hooks/useGetNotificationOptions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-
-const useStyles = makeStyles(theme => ({
-  actionContainer: {
-    display: 'flex',
-  },
-  footer: {
-    padding: theme.spacing(1),
-    position: 'absolute',
-    bottom: 120,
-    height: 60,
-    width: '90%',
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-  actionButton: {
-    marginRight: theme.spacing(1),
-  },
-}));
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import LoadResources from '../../../LoadResources';
+import RightDrawer from '../../../drawer/Right/V2';
+import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
+import DrawerFooter from '../../../drawer/Right/V2/DrawerFooter';
+import ButtonGroup from '../../../ButtonGroup';
+import notificationsMetadata from './metadata';
 
 function ManageNotifications({ integrationId, storeId, onClose }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const classes = useStyles();
   const [count, setCount] = useState(0);
   const [saveTriggered, setSaveTriggered] = useState(false);
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -112,30 +98,33 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
 
   return (
     <LoadResources required resources="notifications,flows,connections">
-      <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-      <div className={classes.footer}>
-        <DynaSubmit
-          formKey={formKey}
-          onClick={submitHandler()}
-          color="primary"
-          className={classes.actionButton}
-          data-test="saveFlowSchedule"
-          disabled={disableSave}>
-          {defaultLabels.saveLabel}
-        </DynaSubmit>
-        <DynaSubmit
-          formKey={formKey}
-          onClick={submitHandler(true)}
-          className={classes.actionButton}
-          color="secondary"
-          data-test="saveAndCloseFlowSchedule"
-          disabled={disableSave}>
-          {defaultLabels.saveAndCloseLabel}
-        </DynaSubmit>
-        <Button onClick={onClose} variant="text" color="primary">
-          Cancel
-        </Button>
-      </div>
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            onClick={submitHandler()}
+            color="primary"
+            data-test="saveFlowSchedule"
+            disabled={disableSave}>
+            {defaultLabels.saveLabel}
+          </DynaSubmit>
+          <DynaSubmit
+            formKey={formKey}
+            onClick={submitHandler(true)}
+            color="secondary"
+            data-test="saveAndCloseFlowSchedule"
+            disabled={disableSave}>
+            {defaultLabels.saveAndCloseLabel}
+          </DynaSubmit>
+          <Button onClick={onClose} variant="text" color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
     </LoadResources>
   );
 }
@@ -148,10 +137,10 @@ export default function ManageNotificationsDrawer({ integrationId, storeId }) {
   return (
     <RightDrawer
       path=":userEmail/manageNotifications"
-      title="Manage notifications"
       variant="temporary"
       width="medium"
       hideBackButton>
+      <DrawerHeader title="Manage notifications" />
       <ManageNotifications integrationId={integrationId} storeId={storeId} onClose={handleClose} />
     </RightDrawer>
   );
