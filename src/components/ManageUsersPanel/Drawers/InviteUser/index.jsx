@@ -1,15 +1,15 @@
 import React from 'react';
-import RightDrawer from '../../../drawer/Right';
+import RightDrawer from '../../../drawer/Right/V2';
+import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
 import UserFormWrapper from '../../UserFormWrapper';
 
 export default function InviteUserDrawer() {
   return (
     <RightDrawer
       path="invite"
-      title="Invite user"
       variant="temporary"
-      width="medium"
-      hideBackButton>
+      width="medium">
+      <DrawerHeader title="Invite user" />
       <UserFormWrapper />
     </RightDrawer>
   );

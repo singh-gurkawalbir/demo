@@ -1,30 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { Button } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
-import DynaForm from '../../../DynaForm';
-import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
 } from '../../../../utils/constants';
-import LoadResources from '../../../LoadResources';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import LoadResources from '../../../LoadResources';
 import ButtonGroup from '../../../ButtonGroup';
+import DynaForm from '../../../DynaForm';
+import DynaSubmit from '../../../DynaForm/DynaSubmit';
+import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
+import DrawerFooter from '../../../drawer/Right/V2/DrawerFooter';
 
-const useStyles = makeStyles(theme => ({
-  factionButton: {
-    marginTop: theme.spacing(2),
-    marginLeft: theme.spacing(1),
-  },
-  btnGroupInviteUser: {
-    paddingLeft: theme.spacing(1),
-    position: 'absolute',
-    bottom: 150,
-  },
-}));
 const integrationsFilterConfig = {
   type: 'integrations',
   ignoreEnvironmentFilter: true,
@@ -36,7 +26,6 @@ export default function UserForm({
   onCancelClick,
   disableSave,
 }) {
-  const classes = useStyles();
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
     integrationsFilterConfig
@@ -186,25 +175,29 @@ export default function UserForm({
 
   return (
     <LoadResources required resources="integrations">
-      <DynaForm
-        formKey={formKey}
-        fieldMeta={fieldMeta} />
-      <ButtonGroup className={classes.btnGroupInviteUser}>
-        <DynaSubmit
+      <DrawerContent>
+        <DynaForm
           formKey={formKey}
-          disabled={disableSave}
-          data-test="submitUserForm"
-          onClick={onSaveClick}>
-          {disableSave ? 'Saving...' : 'Save'}
-        </DynaSubmit>
-        <Button
-          data-test="cancelUserForm"
-          onClick={onCancelClick}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </ButtonGroup>
+          fieldMeta={fieldMeta} />
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            data-test="submitUserForm"
+            onClick={onSaveClick}>
+            {disableSave ? 'Saving...' : 'Save'}
+          </DynaSubmit>
+          <Button
+            data-test="cancelUserForm"
+            onClick={onCancelClick}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
     </LoadResources>
   );
 }
