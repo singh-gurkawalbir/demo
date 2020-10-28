@@ -84,6 +84,7 @@ export default function DynaRadio(props) {
             <FormControlLabel
               key={item.value}
               value={item.value}
+              data-test={item.label}
               control={<Radio color="primary" />}
               label={item.label || item.value}
             />
