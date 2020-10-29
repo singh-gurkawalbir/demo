@@ -262,7 +262,7 @@ export default function EditorDrawer({
                 disabled={!!editorViolations}>
                 Preview
               </Button>
-              <Divider orientation="vertical" varian="middle" className={classes.divider} />
+              <Divider orientation="vertical" className={classes.divider} />
             </>
           )}
           <DynaCheckbox

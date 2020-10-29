@@ -11,12 +11,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DrawerHeader({ children, className }) {
+export default function DrawerFooter({ children, className }) {
   const classes = useStyles();
 
   return (
-    <div
-      className={clsx(classes.drawerFooter, className)}>
+    <div className={clsx(classes.drawerFooter, className)}>
       {children}
     </div>
   );
