@@ -152,7 +152,7 @@ export default function TabRedirection({children: componentChildren}) {
   useEffect(() => {
     if (templateUrlName && !templateName) {
       history.push(
-        getRoutePath(`templates/${templateUrlName}/${integrationId}/flows`)
+        getRoutePath(`templates/${templateUrlName}/${integrationId}/${tab || 'flows'}`)
       );
     }
   }, [history, integrationId, templateName, templateUrlName]);
