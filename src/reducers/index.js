@@ -5384,3 +5384,18 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
 
   return !integrations.some(integration => !!integration._connectorId);
 };
+
+/**
+ * User can select number of records in all cases except for realtime adaptors
+ * No need to show when export preview is disabled
+ */
+selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+
+  if (isExportPreviewDisabled) return false;
+  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+
+  if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
+
+  return true;
+};

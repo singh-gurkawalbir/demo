@@ -5,6 +5,7 @@
  */
 import produce from 'immer';
 import { createSelector } from 'reselect';
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 
 const DEFAULT_VALUE = undefined;
@@ -17,17 +18,7 @@ function extractStages(sampleData) {
     stageMap.parse = sampleData;
   } else {
     stagesInSampleData.forEach(stage => {
-      switch (stage.name) {
-        case 'parse':
-          stageMap[stage.name] = stage.data && stage.data[0];
-          break;
-        case 'transform':
-          stageMap[stage.name] =
-            stage.data && stage.data[0] && stage.data[0].data;
-          break;
-        default:
-          stageMap[stage.name] = stage.data;
-      }
+      stageMap[stage.name] = stage.data;
     });
   }
 
@@ -35,7 +26,7 @@ function extractStages(sampleData) {
 }
 
 export default function (state = {}, action) {
-  const { type, resourceId, previewData, processedData, stage, error } = action;
+  const { type, resourceId, previewData, processedData, stage, error, patch } = action;
 
   return produce(state, draft => {
     if (!type || !resourceId) return draft;
@@ -51,18 +42,11 @@ export default function (state = {}, action) {
         draft[resourceId].status = 'received';
         draft[resourceId].data = extractStages(previewData);
         break;
-
       case actionTypes.SAMPLEDATA.UPDATE:
         draft[resourceId] = draft[resourceId] || {};
         draft[resourceId].status = 'received';
         draft[resourceId].data = draft[resourceId].data || {};
-        // For all the parsers , data is an array
-        // Only incase of structuredFileParser it is an object
-        draft[resourceId].data[stage] =
-          processedData.data &&
-          (Array.isArray(processedData.data)
-            ? processedData.data[0]
-            : processedData.data);
+        draft[resourceId].data[stage] = processedData.data;
         break;
       case actionTypes.SAMPLEDATA.RECEIVED_ERROR:
         draft[resourceId] = draft[resourceId] || {};
@@ -72,6 +56,12 @@ export default function (state = {}, action) {
         break;
       case actionTypes.SAMPLEDATA.RESET:
         draft[resourceId] = {};
+        break;
+      case actionTypes.SAMPLEDATA.PATCH:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+        Object.assign(draft[resourceId], deepClone(patch));
         break;
       default:
     }
@@ -85,7 +75,14 @@ const getResourceSampleData = (resourceIdSampleData, stage) => {
 
   if (!resourceData) return DEFAULT_VALUE;
 
-  return resourceData[stage] || DEFAULT_VALUE;
+  switch (stage) {
+    case 'parse':
+      return resourceData.parse?.[0] || DEFAULT_VALUE;
+    case 'preview':
+      return resourceData.preview || resourceData.parse || DEFAULT_VALUE;
+    default:
+      return resourceData[stage] || DEFAULT_VALUE;
+  }
 };
 
 const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
@@ -106,4 +103,6 @@ selectors.mkPreviewStageDataList = () => createSelector(
       return acc;
     }, {})
 );
+
+selectors.sampleDataRecordSize = (state, resourceId) => state?.[resourceId]?.recordSize;
 

@@ -45,8 +45,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// const resourceSampleData = {data: 1, status: 'received', error: 1};
-
 function PreviewInfo({
   flowId,
   resourceId,
@@ -54,7 +52,6 @@ function PreviewInfo({
   resourceType,
   resourceSampleData,
   previewStageDataList,
-  panelType,
   isPreviewDisabled,
 }) {
   const value = useSelector(
@@ -79,11 +76,7 @@ function PreviewInfo({
       );
     } else {
       dispatch(
-        actions.sampleData.requestLookupPreview(
-          resourceId,
-          flowId,
-          value
-        )
+        actions.sampleData.requestLookupPreview(resourceId, flowId, value)
       );
     }
   }, [
@@ -106,13 +99,19 @@ function PreviewInfo({
     }
   }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
 
+  useEffect(() =>
+    () => dispatch(actions.sampleData.reset(resourceId)),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
+
   return (
     <Panels.PreviewInfo
       fetchExportPreviewData={fetchExportPreviewData}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
-      panelType={panelType}
       disabled={isPreviewDisabled}
+      resourceId={resourceId}
+      resourceType={resourceType}
   />
   );
 }
@@ -167,9 +166,11 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
       <PreviewInfo
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
-        panelType={panelType}
         isPreviewDisabled={isPreviewDisabled}
-        flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
+        flowId={flowId}
+        resourceId={resourceId}
+        formKey={formKey}
+        resourceType={resourceType}
       />
       <Panels.PreviewBody
         resourceSampleData={resourceSampleData}
