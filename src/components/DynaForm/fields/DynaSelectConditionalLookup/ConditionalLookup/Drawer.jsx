@@ -15,9 +15,7 @@ export default function ConditionalLookupDrawer(props) {
       title={`${isEdit ? 'Edit' : 'Add'} Lookup`}
       variant="temporary"
       >
-      <ConditionalLookup
-        {...props}
-        />
+      <ConditionalLookup {...props} />
     </RightDrawer>
   );
 }
