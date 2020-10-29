@@ -16,6 +16,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     width: 654,
+    height: `calc(100vh - ${150}px)`,
+    overflowY: 'auto',
     float: 'left',
     marginRight: theme.spacing(3),
     [theme.breakpoints.up('xl')]: {
