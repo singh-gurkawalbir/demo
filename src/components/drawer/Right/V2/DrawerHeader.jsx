@@ -7,7 +7,7 @@ import InfoIconButton from '../../../InfoIconButton';
 import Help from '../../../Help';
 
 const useStyles = makeStyles(theme => ({
-  root: {
+  drawerHeader: {
     display: 'flex',
     alignItems: 'center',
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
@@ -46,7 +46,7 @@ export default function DrawerHeader({
   const showBackButton = !isExact && !hideBackButton;
 
   return (
-    <div data-public className={classes.root}>
+    <div data-public className={classes.drawerHeader}>
       {showBackButton && (
       <IconButton
         size="small"

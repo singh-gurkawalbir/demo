@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import { makeStyles, Drawer, IconButton, Tab, Tabs, useTheme } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import actions from '../../../../actions';
 import CodePanel from '../../../../components/AFE/GenericEditor/CodePanel';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
@@ -23,8 +22,6 @@ import IconTextButton from '../../../../components/IconTextButton';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import RunDashboardActions from './panels/Dashboard/RunDashboardActions';
 import useBottomDrawer from './useBottomDrawer';
-import ReplaceConnection from '../../../../components/ReplaceConnection';
-import RightDrawer from '../../../../components/drawer/Right';
 import Spinner from '../../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -116,13 +113,8 @@ const connectionsFilterConfig = {
   type: 'connections',
 };
 const overrides = { useWorker: false };
-export default function BottomDrawer({
-  flowId,
-  setTabValue,
-  tabValue,
-  integrationId,
-  childId,
-}) {
+
+export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -130,11 +122,6 @@ export default function BottomDrawer({
   const [startY, setStartY] = useState(0);
   const [dragY, setDragY] = useState(0);
   const [drawerHeight, setDrawerHeight] = useBottomDrawer();
-  const [connName, setConnName] = useState('');
-
-  const history = useHistory();
-
-  const match = useRouteMatch();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
     selectors.isAnyFlowConnectionOffline(state, flowId)
@@ -143,11 +130,6 @@ export default function BottomDrawer({
     !!selectors.getInProgressLatestJobs(state, flowId).length
   );
 
-  const parentUrl = match.url;
-
-  const handleClose = useCallback(() => {
-    history.push(parentUrl);
-  }, [history, parentUrl]);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -414,15 +396,6 @@ export default function BottomDrawer({
             )}
         </>
       </Drawer>
-      <RightDrawer
-        path="replaceConnection/:connId"
-        height="tall"
-        title={`Replace connection: ${connName}`}
-        onClose={handleClose}>
-        <ReplaceConnection
-          flowId={flowId} integrationId={integrationId} childId={childId} setConnName={setConnName}
-          onClose={handleClose} />
-      </RightDrawer>
     </div>
   );
 }
