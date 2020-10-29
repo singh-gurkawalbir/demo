@@ -409,13 +409,11 @@ function resourceTransformed(resourceIdState, resourceType) {
   return resourceIdState;
 }
 
-selectors.makeResourceSelector = () =>
-  createSelector(
-    (state, resourceType, id) => selectors.resourceIdState(state, resourceType, id),
-    (_, resourceType) => resourceType,
-    (resourceIdState, resourceType) =>
-      resourceTransformed(resourceIdState, resourceType)
-  );
+selectors.makeResourceSelector = () => createSelector(
+  (state, resourceType, id) => selectors.resourceIdState(state, resourceType, id),
+  (_, resourceType) => resourceType,
+  (resourceIdState, resourceType) => resourceTransformed(resourceIdState, resourceType)
+);
 
 selectors.exportNeedsRouting = (state, id) => {
   if (!state) return false;

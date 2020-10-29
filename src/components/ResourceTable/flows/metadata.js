@@ -33,6 +33,7 @@ export default {
               description={r.description}
               isFree={r.free}
               childId={storeId}
+              actionProps={actionProps}
             />
           );
         },
@@ -54,12 +55,12 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} />,
+        value: r => <CeligoTimeAgo date={r.lastModified} actionProps={actionProps} />,
         orderBy: 'lastModified',
       },
       {
         heading: 'Last run',
-        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} />,
+        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
         orderBy: 'lastExecutedAt',
       },
       {
@@ -108,6 +109,7 @@ export default {
               integrationId={actionProps?.parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
               storeId={actionProps?.storeId}
+              actionProps={actionProps}
             />
           );
         },
@@ -124,6 +126,7 @@ export default {
               isFree={r.free}
               disabled={r.disabled}
               storeId={actionProps.storeId}
+              actionProps={actionProps}
             />
           );
         },

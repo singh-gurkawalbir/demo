@@ -35,6 +35,7 @@ import {
   getFlowReferencesForResource,
   isFreeFlowResource,
   isIntegrationApp,
+  isRealtimeExport,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -614,17 +615,17 @@ selectors.flowDetails = (state, id) => {
 };
 
 selectors.mkFlowDetails = () => {
-  const resource = fromData.makeResourceSelector();
-  const integrationResource = fromData.makeResourceSelector();
+  const resource = selectors.makeResourceSelector();
+  const integrationResource = selectors.makeResourceSelector();
 
   return createSelector(
     (state, id) => resource(state?.data?.resources, 'flows', id),
     (state, id) => {
-      const flow = resource(state?.data?.resources, 'flows', id);
+      const flow = resource(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return null;
 
-      return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
+      return integrationResource(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
     (flow, integration, exports) => {
@@ -652,6 +653,50 @@ selectors.isDataLoader = (state, flowId) => {
   return isSimpleImportFlow(flow, exports);
 };
 
+selectors.mkFlowAttributes = () => createSelector(
+  state => state?.data?.resources?.exports,
+  (_, flows) => flows,
+  (_1, _2, integration) => integration,
+  (exps = emptyArray, flows = emptyArray, integration) => {
+    const out = {};
+    // isDataLoader/isRealtime
+    const exportIdToFlowId = {};
+
+    flows.forEach(flow => {
+      const exportId =
+      flow.pageGenerators && flow.pageGenerators.length
+        ? flow.pageGenerators[0]._exportId
+        : flow._exportId;
+
+      exportIdToFlowId[exportId] = flow._id;
+    });
+    exps.forEach(exp => {
+      if (!exportIdToFlowId[exp._id]) return;
+      const fId = exportIdToFlowId[exp._id];
+
+      if (!out[fId]) out[fId] = {};
+      if (exp.type === 'simple') out[fId].isDataLoader = true;
+      if (isRealtimeExport(exp)) out[fId].isRealtimeExport = true;
+    });
+    // isFlowEnableLocked
+    flows.forEach(flow => {
+      let isLocked = true;
+
+      if (!flow || !flow._connectorId) isLocked = false;
+      if (!integration) isLocked = false;
+      const flowSettings = getIAFlowSettings(integration, flow._id);
+
+      // strange flow setting name to indicate that flows can not be
+      // enabled/disabled by a user...
+      isLocked = flowSettings.disableSlider;
+      if (!out[flow._id]) out[flow._id] = {};
+      out[flow._id].isFlowEnableLocked = isLocked;
+    });
+
+    return out;
+  }
+);
+
 selectors.flowType = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
 
@@ -675,22 +720,6 @@ selectors.flowType = (state, flowId) => {
   return 'Scheduled';
 };
 
-selectors.isFlowEnableLocked = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-
-  if (!flow || !flow._connectorId) return false;
-
-  const integration = selectors.resource(state, 'integrations', flow._integrationId);
-
-  if (!integration) return false;
-
-  const flowSettings = getIAFlowSettings(integration, flow._id);
-
-  // strange flow setting name to indicate that flows can not be
-  // enabled/disabled by a user...
-  return flowSettings.disableSlider;
-};
-
 // // Possible refactor! If we need both canSchedule (flow has ability to schedule),
 // // and if the IA allows for schedule overrides, then we can return a touple...
 // // for the current purpose, we just need to know if a flow allows or doesn't allow
@@ -700,17 +729,17 @@ selectors.mkFlowAllowsScheduling = () => {
   const integrationResource = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, id) => resource(state?.data?.resources, 'flows', id),
+    (state, id) => resource(state, 'flows', id),
     (state, id) => {
-      const flow = resource(state?.data?.resources, 'flows', id);
+      const flow = resource(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return null;
 
-      return integrationResource(state?.data?.resources, 'integrations', flow._integrationId);
+      return integrationResource(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
     (state, id) => {
-      const flow = resource(state?.data?.resources, 'flows', id);
+      const flow = resource(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return false;
 
@@ -2921,8 +2950,8 @@ selectors.resourceDataModified = (
 // fromResources.resourceIdState
 // nothing but state && state.data && state.data.resources && state.data.resources.type
 selectors.makeResourceDataSelector = () => {
-  const cachedStageSelector = fromSession.makeTransformStagedResource();
-  const cachedResourceSelector = fromData.makeResourceSelector();
+  const cachedStageSelector = selectors.makeTransformStagedResource();
+  const cachedResourceSelector = selectors.makeResourceSelector();
 
   return createSelector(
     (state, resourceType, id) => {
@@ -2939,25 +2968,23 @@ selectors.makeResourceDataSelector = () => {
       }
 
       return cachedResourceSelector(
-        fromData.resourceState(state && state.data),
+        state,
         type,
         id
       );
     },
     (state, resourceType, id, scope) =>
       cachedStageSelector(
-        fromSession.stagedState(state && state.session),
+        state,
         id,
         scope
       ),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
 
-    (resourceIdState, stagedIdState, resourceType, id) =>
-      selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+    (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
-
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
@@ -3160,20 +3187,6 @@ selectors.auditLogs = (
 // #endregion
 
 // #region Session metadata selectors
-selectors.makeOptionsFromMetadata = () => {
-  const madeSelector = fromSession.makeOptionsFromMetadata();
-
-  return (state,
-    connectionId,
-    commMetaPath,
-    filterKey,
-  ) => madeSelector(
-    state?.session?.metadata,
-    connectionId,
-    commMetaPath,
-    filterKey,
-  );
-};
 
 selectors.metadataOptionsAndResources = (state, {
   connectionId,
@@ -3971,7 +3984,7 @@ selectors.makeSuiteScriptIAFlowSections = () => {
   const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
   return createSelector(
-    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state, id, ssLinkedConnectionId),
 
     meta => {
       const {sections = []} = meta;
@@ -3989,7 +4002,7 @@ selectors.makeSuiteScriptIASections = () => {
   const cachedIASettingsSelector = selectors.makeSuiteScriptIASettings();
 
   return createSelector(
-    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state?.data?.suiteScript, id, ssLinkedConnectionId),
+    (state, id, ssLinkedConnectionId) => cachedIASettingsSelector(state, id, ssLinkedConnectionId),
 
     metaSections => {
       const {general, sections = [] } = metaSections;
@@ -4115,7 +4128,7 @@ selectors.suiteScriptFlowSettings = (state, id, ssLinkedConnectionId, section) =
 
   const integrationResource =
   // // TODO: deprecate this function and rely on the cached selector
-    selectors.suiteScriptIASettings(state?.data?.suiteScript, id, ssLinkedConnectionId) || emptyObject;
+    selectors.suiteScriptIASettings(state, id, ssLinkedConnectionId) || emptyObject;
   const { sections = []} = integrationResource || {};
   let requiredFlows = [];
   const allSections = sections;
@@ -5259,7 +5272,7 @@ selectors.mkChildIntegration = () => {
     (state, integrationId) => {
       const id = selectors.getChildIntegrationId(state, integrationId);
 
-      return id && resourceSelector(state?.data?.resources, 'integrations', id);
+      return id && resourceSelector(state, 'integrations', id);
     },
     childIntegration => childIntegration
   );

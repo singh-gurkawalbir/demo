@@ -2,6 +2,7 @@
 // import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
@@ -214,6 +215,25 @@ describe('global selectors', () => {
       const cachedResult = resourceData(state, 'exports', 1);
 
       expect(result).toBe(cachedResult);
+    });
+    test('should return the different cached data for different instances', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+      const resourceData1 = selectors.makeResourceDataSelector();
+      const resourceData2 = selectors.makeResourceDataSelector();
+      const r1 = resourceData1(state, 'exports', 1);
+      const r2 = resourceData2(state, 'exports', 1);
+
+      expect(r1).not.toBe(r2);
+      expect(resourceData1(state, 'exports', 1)).toBe(r1);
+      expect(resourceData2(state, 'exports', 1)).toBe(r2);
     });
     test('should void the cache and regenerate the same result when we received the same collection again', () => {
       const exports = [{ _id: 1, name: 'test X' }];
@@ -4291,6 +4311,76 @@ describe('utils', () => {
       genSelectors(to, fr);
       expect(to.method1(state)).toEqual(42);
       expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should work for reselectors', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          mkMethod1: () => createSelector(
+            s => s.m1,
+            v => ({
+              val: v * 2,
+            })
+          ),
+          mkMethodSimpleProxy: a => {
+            // eslint-disable-next-line no-param-reassign
+            a += 1;
+
+            return createSelector(
+              s => s.m1,
+              v => ({
+                a,
+                val: v * 2,
+              }),
+            );
+          },
+        },
+        sub2: {
+          makeMethod2: () => createSelector(
+            s => s.m1,
+            v => ({
+              val: v * 2,
+            })
+          ),
+          makeMethodSimpleProxy: a => {
+            // eslint-disable-next-line no-param-reassign
+            a += 1;
+
+            return createSelector(
+              s => s.m1,
+              v => ({
+                a,
+                val: v * 2,
+              })
+            );
+          },
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.mkMethodSimpleProxy).not.toBeUndefined();
+      expect(to.makeMethodSimpleProxy).not.toBeUndefined();
+      const sel1 = to.mkMethod1();
+      const sel2 = to.mkMethod1();
+
+      expect(sel1(state)).toBe(sel1(state));
+      expect(sel2(state)).toBe(sel2(state));
+      expect(sel1(state)).not.toBe(sel2(state));
+      const sel3 = to.makeMethod2();
+      const sel4 = to.makeMethod2();
+
+      expect(sel3(state)).toBe(sel3(state));
+      expect(sel4(state)).toBe(sel4(state));
+      expect(sel3(state)).not.toBe(sel4(state));
     });
 
     test('should ignore default', () => {
