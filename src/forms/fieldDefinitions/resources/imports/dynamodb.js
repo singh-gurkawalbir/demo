@@ -105,12 +105,10 @@ export default {
     ],
   },
   'dynamodb.expressionAttributeValues': {
-    type: 'editor',
-    label: 'Expression attribute values',
-    mode: 'json',
-    defaultValue: r =>
-      (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      '{ ":p1":"A",":p2":"1"}',
+    type: 'sqlquerybuilder',
+    label: 'Build expression attribute values',
+    hideDefaultData: true,
+    defaultValue: r => r?.dynamodb?.expressionAttributeValues,
     requiredWhen: [
       {
         field: 'dynamodb.conditionExpression',
