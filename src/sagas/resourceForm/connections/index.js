@@ -439,7 +439,7 @@ function* commitAndAuthorizeConnection({ resourceId }) {
   }
 }
 
-function* requestIClients({ connectionId }) {
+export function* requestIClients({ connectionId }) {
   let path;
   const newIAConnDoc = yield call(newIAFrameWorkPayload, {
     resourceId: connectionId,
@@ -456,7 +456,7 @@ function* requestIClients({ connectionId }) {
   }
 
   try {
-    const { iclients } = yield apiCallWithRetry({
+    const { iclients } = yield call(apiCallWithRetry, {
       path,
       opts: {
         method: 'GET',
