@@ -9,10 +9,10 @@ import DynaForm from '../../DynaForm';
 import ButtonGroup from '../../ButtonGroup';
 import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import RightDrawer from '../../drawer/Right/V2';
-import DrawerHeader from '../../drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../drawer/Right/V2/DrawerFooter';
+import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 
 const fieldMeta = {
   fieldMap: {

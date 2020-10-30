@@ -12,8 +12,8 @@ import LoadResources from '../../../LoadResources';
 import ButtonGroup from '../../../ButtonGroup';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
-import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../../drawer/Right/V2/DrawerFooter';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 
 const integrationsFilterConfig = {
   type: 'integrations',

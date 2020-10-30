@@ -2,9 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
-import RightDrawer from '../../../../components/drawer/Right/V2';
-import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
+import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import ErrorList from '../../../../components/ErrorList';
 import ErrorDrawerAction from './ErrorDrawerAction';
 

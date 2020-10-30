@@ -6,8 +6,8 @@ import {
   matchPath,
   useLocation,
 } from 'react-router-dom';
-import RightDrawer from '../../../drawer/Right/V2';
-import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
+import RightDrawer from '../../../drawer/Right';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 

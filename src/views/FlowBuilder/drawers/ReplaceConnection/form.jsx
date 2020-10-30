@@ -11,8 +11,8 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import ResourceDrawer from '../../../../components/drawer/Resource';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
-import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../../../components/drawer/Right/V2/DrawerFooter';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 
 const emptyObj = {};
 

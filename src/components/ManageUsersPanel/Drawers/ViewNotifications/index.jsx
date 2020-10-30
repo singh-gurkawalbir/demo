@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
-import RightDrawer from '../../../drawer/Right/V2';
-import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
-import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
+import RightDrawer from '../../../drawer/Right';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import { selectors } from '../../../../reducers';
 import viewNotificationsMetadata from './metadata';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';

@@ -4,9 +4,9 @@ import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-
 import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
-import RightDrawer from '../../../../components/drawer/Right/V2';
-import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
+import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';

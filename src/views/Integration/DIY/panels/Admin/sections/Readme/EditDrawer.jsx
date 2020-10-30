@@ -8,10 +8,10 @@ import CodeEditor from '../../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../../components/RawHtml';
 import EditorSaveButton from '../../../../../../../components/ResourceFormFactory/Actions/EditorSaveButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
-import RightDrawer from '../../../../../../../components/drawer/Right/V2';
-import DrawerHeader from '../../../../../../../components/drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../../../../../../components/drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../../../../../../components/drawer/Right/V2/DrawerFooter';
+import RightDrawer from '../../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
 import ButtonGroup from '../../../../../../../components/ButtonGroup';
 
 const useStyles = makeStyles(theme => ({

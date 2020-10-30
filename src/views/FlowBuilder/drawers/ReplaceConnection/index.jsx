@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReplaceConnectionForm from './form';
-import RightDrawer from '../../../../components/drawer/Right/V2';
-import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
+import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
 
 export default function ReplaceConnectionDrawer({
   flowId,

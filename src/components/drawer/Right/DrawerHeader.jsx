@@ -1,10 +1,10 @@
 import React from 'react';
 import { makeStyles, IconButton, Typography } from '@material-ui/core';
 import {matchPath, useHistory, useLocation} from 'react-router-dom';
-import CloseIcon from '../../../icons/CloseIcon';
-import BackArrowIcon from '../../../icons/BackArrowIcon';
-import InfoIconButton from '../../../InfoIconButton';
-import Help from '../../../Help';
+import CloseIcon from '../../icons/CloseIcon';
+import BackArrowIcon from '../../icons/BackArrowIcon';
+import InfoIconButton from '../../InfoIconButton';
+import Help from '../../Help';
 
 const useStyles = makeStyles(theme => ({
   drawerHeader: {

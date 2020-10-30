@@ -12,10 +12,10 @@ import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import DynaForm from '../../../DynaForm';
 import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import LoadResources from '../../../LoadResources';
-import RightDrawer from '../../../drawer/Right/V2';
-import DrawerHeader from '../../../drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../../drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../../drawer/Right/V2/DrawerFooter';
+import RightDrawer from '../../../drawer/Right';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../../ButtonGroup';
 import notificationsMetadata from './metadata';
 

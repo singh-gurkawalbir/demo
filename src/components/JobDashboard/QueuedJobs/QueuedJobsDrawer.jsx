@@ -9,9 +9,9 @@ import { NO_PENDING_QUEUED_JOBS } from '../../../utils/messageStore';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
 import { getStatus, getPages } from '../util';
-import RightDrawer from '../../drawer/Right/V2';
-import DrawerHeader from '../../drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../drawer/Right/V2/DrawerContent';
+import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
 

@@ -8,8 +8,8 @@ import EditRetryData from './EditRetryData';
 import ViewErrorDetails from './ViewErrorDetails';
 import { selectors } from '../../../reducers';
 import { safeParse } from '../../../utils/string';
-import DrawerContent from '../../drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../drawer/Right/V2/DrawerFooter';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 
 import ErrorDetailActions from './ErrorDetailActions';
 

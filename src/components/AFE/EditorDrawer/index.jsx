@@ -11,10 +11,10 @@ import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
 import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
-import RightDrawer from '../../drawer/Right/V2';
-import DrawerHeader from '../../drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../drawer/Right/V2/DrawerFooter';
+import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
 
 import DrawerActions from './DrawerActions';
@@ -27,9 +27,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0.5, 1, 0),
     height: 24,
     width: 1,
-  },
-  footer: {
-    paddingTop: '0 !important',
   },
 }));
 
@@ -193,7 +190,7 @@ export default function EditorDrawer(props) {
         }
       </DrawerContent>
 
-      <DrawerFooter className={classes.footer}>
+      <DrawerFooter>
         <ButtonGroup>
           {patchOnSave ? (
             <>

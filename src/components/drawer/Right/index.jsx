@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import {
   useLocation,
@@ -7,14 +7,9 @@ import {
   Switch,
   useHistory,
   useRouteMatch,
-  matchPath,
 } from 'react-router-dom';
-import { makeStyles, IconButton, Typography, Drawer } from '@material-ui/core';
+import { makeStyles, Drawer } from '@material-ui/core';
 import { selectors } from '../../../reducers';
-import CloseIcon from '../../icons/CloseIcon';
-import BackArrowIcon from '../../icons/BackArrowIcon';
-import InfoIconButton from '../../InfoIconButton';
-import Help from '../../Help';
 import getRoutePath from '../../../utils/routePaths';
 
 const bannerHeight = 57;
@@ -25,38 +20,11 @@ const useStyles = makeStyles(theme => ({
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
   },
-  drawerPaper_default: {
-    background: theme.palette.background.default,
-  },
-  titleBar: {
-    display: 'flex',
-    alignItems: 'center',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2, 3),
-    background: theme.palette.common.white,
-    '& > :not(:last-child)': {
-      marginRight: theme.spacing(2),
-    },
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-  },
   childrenWrapper: {
     display: 'flex',
     height: '100%',
     minHeight: '100%',
     flexDirection: 'column',
-  },
-  contentContainer: {
-    padding: theme.spacing(3),
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    overflow: 'auto',
-  },
-  contentContainer_paper: {
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
   },
   small: {
     width: 475,
@@ -84,43 +52,23 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.appBarHeight,
   },
   short: {
-    marginTop: theme.appBarHeight + theme.pageBarHeight,
-    paddingBottom: theme.appBarHeight + theme.pageBarHeight,
+    marginTop: theme.appBarHeight + theme.pageBarHeight - 1,
+    paddingBottom: theme.appBarHeight + theme.pageBarHeight - 1,
   },
   banner: {
     marginTop: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
     paddingBottom: theme.appBarHeight + theme.pageBarHeight + bannerHeight,
   },
-  popperMaxWidthView: {
-    maxWidth: 250,
-    maxHeight: 300,
-    overflowY: 'auto',
-  },
-  helpTextButton: {
-    padding: 0,
-    marginLeft: theme.spacing(1),
-    '& svg': {
-      fontSize: 20,
-    },
-  },
 }));
 
-/* THIS version is deprecated. Please use the V2 version */
 export default function RightDrawer({
-  title,
   path,
   width = 'default',
   height = 'short',
-  type = 'legacy',
-  hideBackButton = false,
   children,
   onClose,
-  infoText,
-  actions,
   variant = 'persistent',
-  helpTitle,
-  helpKey,
-  ...rest
+  ...muiDrawerProps
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -129,25 +77,14 @@ export default function RightDrawer({
   const bannerOpened = useSelector(state => selectors.bannerOpened(state));
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const showBanner = location.pathname.includes(getRoutePath('dashboard')) && bannerOpened;
-  const handleBack = useCallback(() => {
-    // else, just go back in browser history...
-    history.goBack();
-  }, [history]);
   const handleClose = useCallback(() => {
     if (onClose && typeof onClose === 'function') {
       return onClose();
     }
 
     // else, just go back in browser history...
-    handleBack();
-  }, [handleBack, onClose]);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.warn('<RightDrawer/> is deprecated. Use the V2 version in the same folder.');
-    }
-  }, []);
+    history.goBack();
+  }, [history, onClose]);
 
   let fullPath;
 
@@ -160,21 +97,21 @@ export default function RightDrawer({
     return null;
   }
 
-  const { isExact } = matchPath(location.pathname, fullPath) || {};
-  const showBackButton = !isExact && !hideBackButton;
+  const childrenWithProps = React.Children.map(children, child =>
+    React.cloneElement(child, { fullPath, onClose: handleClose })
+  );
 
   return (
     <Switch>
       <Route path={fullPath}>
         <Drawer
-          {...rest}
+          {...muiDrawerProps}
           variant={variant}
           anchor="right"
           open
           classes={{
             paper: clsx(
               classes.drawerPaper,
-              classes[`drawerPaper_${type}`],
               classes[height],
               {
                 [classes.banner]:
@@ -188,44 +125,7 @@ export default function RightDrawer({
           }}
           onClose={handleClose}>
           <div className={classes.childrenWrapper}>
-            <div data-public className={classes.titleBar}>
-              {showBackButton && (
-                <IconButton
-                  size="small"
-                  data-test="backRightDrawer"
-                  aria-label="Close"
-                  onClick={handleBack}>
-                  <BackArrowIcon />
-                </IconButton>
-              )}
-              <Typography variant="h4" className={classes.title}>
-                {title}
-                {helpKey && (
-                  <Help
-                    title={helpTitle}
-                    className={classes.helpTextButton}
-                    helpKey={helpKey}
-                    fieldId={helpKey}
-                />
-                )}
-                {infoText && <InfoIconButton info={infoText} />}
-              </Typography>
-              {actions}
-              <IconButton
-                size="small"
-                data-test="closeRightDrawer"
-                aria-label="Close"
-                onClick={handleClose}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-            <div
-              className={clsx(
-                classes.contentContainer,
-                classes[`contentContainer_${type}`]
-              )}>
-              {children}
-            </div>
+            {childrenWithProps}
           </div>
         </Drawer>
       </Route>

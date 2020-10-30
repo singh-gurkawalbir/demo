@@ -3,10 +3,10 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
-import RightDrawer from '../../../../components/drawer/Right/V2';
-import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
-import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
-import DrawerFooter from '../../../../components/drawer/Right/V2/DrawerFooter';
+import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import FlowScheduleForm from '../../../../components/FlowSchedule/Form';
 import FlowScheduleButtons from '../../../../components/FlowSchedule/Buttons';
 

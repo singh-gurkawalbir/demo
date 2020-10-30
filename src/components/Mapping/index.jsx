@@ -11,12 +11,13 @@ import PreviewPanel from './Preview/Panel';
 import DragContainer from './DragContainer';
 import actions from '../../actions';
 import SettingsDrawer from './Settings';
+import DrawerContent from '../drawer/Right/DrawerContent';
+import DrawerFooter from '../drawer/Right/DrawerFooter';
 
 const useStyles = makeStyles({
   root: {
     height: '100%',
     display: 'flex',
-    width: '100%',
   },
   mappingContainer: {
     flex: '1 1 0',
@@ -36,38 +37,44 @@ const Mapping = props => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <div
-        className={clsx(classes.mappingContainer)}>
-        <TopPanel
-          flowId={flowId}
-          importId={importId}
-          disabled={disabled}
-        />
-        <div className={classes.mappingsBody}>
-          <DragContainer
-            disabled={disabled}
-            importId={importId}
-            flowId={flowId}
-            subRecordMappingId={subRecordMappingId}
+    <>
+      <DrawerContent>
+        <div className={classes.root}>
+          <div className={clsx(classes.mappingContainer)}>
+            <TopPanel
+              flowId={flowId}
+              importId={importId}
+              disabled={disabled}
           />
+            <div className={classes.mappingsBody}>
+              <DragContainer
+                disabled={disabled}
+                importId={importId}
+                flowId={flowId}
+                subRecordMappingId={subRecordMappingId}
+            />
+            </div>
+          </div>
+
+          <PreviewPanel
+            importId={importId}
+            disabled={disabled}
+            subRecordMappingId={subRecordMappingId}
+        />
+          <SettingsDrawer
+            disabled={disabled}
+        />
         </div>
+      </DrawerContent>
+      <DrawerFooter>
         <ButtonPanel
           flowId={flowId}
           importId={importId}
           disabled={disabled}
           onClose={onClose}
            />
-      </div>
-      <PreviewPanel
-        importId={importId}
-        disabled={disabled}
-        subRecordMappingId={subRecordMappingId}
-      />
-      <SettingsDrawer
-        disabled={disabled}
-      />
-    </div>
+      </DrawerFooter>
+    </>
   );
 };
 
