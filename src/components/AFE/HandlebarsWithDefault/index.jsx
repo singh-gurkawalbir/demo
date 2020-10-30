@@ -93,7 +93,8 @@ export default function HandlebarsWithDefaults(props) {
     );
     // get Helper functions when the editor initializes
     dispatch(actions.editor.refreshHelperFunctions());
-  }, [editorVersion, v2template, v1template, rule, dispatch, editorId, props.strict, props.defaultData, props.sampleData, props.isSampleDataLoading, props.lookups, optionalSaveParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorId, props.sampleData, props.defaultData]);
 
   useEffect(() => {
     if (props.lookups) {

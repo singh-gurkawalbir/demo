@@ -5399,3 +5399,15 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
 
   return true;
 };
+
+selectors.getIntegrationUserNameById = (state, userId, flowId) => {
+  const profile = selectors.userProfile(state);
+
+  // If it is logged in user , return its name
+  if (profile._id === userId) return profile.name || profile.email;
+  // else get user name from integration users list
+  const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
+  const usersList = selectors.availableUsersList(state, integrationId);
+
+  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+};

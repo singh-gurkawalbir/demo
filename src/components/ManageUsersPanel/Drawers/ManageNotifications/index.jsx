@@ -73,7 +73,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   const formKey = useFormInitWithPermissions({
     fieldMeta,
     remount: count,
-    integrationId,
+    skipMonitorLevelAccessCheck: true,
   });
 
   const handleSubmit = useCallback(formVal => {
