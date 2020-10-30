@@ -74,7 +74,7 @@ export default {
         heading: 'Schedule',
         align: 'center',
         value: function Schedule(r) {
-          return <ScheduleCell flowId={r._id} name={r.name} />;
+          return <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />;
         },
       },
     ];
@@ -92,7 +92,7 @@ export default {
           heading: 'Settings',
           align: 'center',
           value: function Settings(r) {
-            return <SettingsCell flowId={r._id} name={r.name} />;
+            return <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />;
           },
         }
       );

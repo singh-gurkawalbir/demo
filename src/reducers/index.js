@@ -18,8 +18,6 @@ import user, { selectors as fromUser } from './user';
 import actionTypes from '../actions/types';
 import {
   isSimpleImportFlow,
-  showScheduleIcon,
-  isRealtimeFlow,
   getExportIdsFromFlow,
   getImportIdsFromFlow,
   getUsedActionsMapForResource,
@@ -35,7 +33,9 @@ import {
   getFlowReferencesForResource,
   isFreeFlowResource,
   isIntegrationApp,
-  isRealtimeExport,
+  flowAllowsScheduling,
+  getFlowType,
+  flowSupportsSettings,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -659,38 +659,44 @@ selectors.mkFlowAttributes = () => createSelector(
   (_1, _2, integration) => integration,
   (exps = emptyArray, flows = emptyArray, integration) => {
     const out = {};
-    // isDataLoader/isRealtime
-    const exportIdToFlowId = {};
 
-    flows.forEach(flow => {
-      const exportId =
-      flow.pageGenerators && flow.pageGenerators.length
-        ? flow.pageGenerators[0]._exportId
-        : flow._exportId;
+    if (exps.length < 1) return out;
+    const exportIdToExport = {};
+    const flowExports = {};
+    // eslint-disable-next-line no-use-before-define
+    const isIntegrationV2 = isIntegrationAppVerion2(integration, true);
 
-      exportIdToFlowId[exportId] = flow._id;
-    });
     exps.forEach(exp => {
-      if (!exportIdToFlowId[exp._id]) return;
-      const fId = exportIdToFlowId[exp._id];
-
-      if (!out[fId]) out[fId] = {};
-      if (exp.type === 'simple') out[fId].isDataLoader = true;
-      if (isRealtimeExport(exp)) out[fId].isRealtimeExport = true;
+      exportIdToExport[exp._id] = exp;
     });
-    // isFlowEnableLocked
     flows.forEach(flow => {
+      let flExp = (flow.pageGenerators && flow.pageGenerators.length) ? (flow.pageGenerators.map(pg => pg._exportId)) : [flow._exportId];
+
+      flExp = flExp.map(expId => exportIdToExport[expId]);
+      flowExports[flow._id] = flExp;
+      if (!out[flow._id]) out[flow._id] = {};
+      const o = out[flow._id];
+
+      // isDataLoader
+      o.isDataLoader = !!isSimpleImportFlow(null, null, flExp);
+      // isFlowEnableLocked
+      // moved from previous selector impl
       let isLocked = true;
 
       if (!flow || !flow._connectorId) isLocked = false;
-      if (!integration) isLocked = false;
-      const flowSettings = getIAFlowSettings(integration, flow._id);
-
-      // strange flow setting name to indicate that flows can not be
-      // enabled/disabled by a user...
-      isLocked = flowSettings.disableSlider;
-      if (!out[flow._id]) out[flow._id] = {};
-      out[flow._id].isFlowEnableLocked = isLocked;
+      else if (!integration) isLocked = false;
+      else {
+        // strange flow setting name to indicate that flows can not be
+        // enabled/disabled by a user...
+        isLocked = getIAFlowSettings(integration, flow._id)?.disableSlider;
+      }
+      o.isFlowEnableLocked = isLocked;
+      // allowSchedule
+      o.allowSchedule = flowAllowsScheduling(flow, integration, null, isIntegrationV2, flExp);
+      // flow type
+      o.type = getFlowType(flow, null, flExp);
+      // supports settings
+      o.supportsSettings = flowSupportsSettings(flow, integration);
     });
 
     return out;
@@ -699,25 +705,9 @@ selectors.mkFlowAttributes = () => createSelector(
 
 selectors.flowType = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
-
-  if (!flow) return '';
-
   const exports = state && state.data && state.data.resources.exports;
 
-  if (!exports) return '';
-
-  if (isSimpleImportFlow(flow, exports)) {
-    return 'Data Loader';
-  }
-
-  if (isRealtimeFlow(flow, exports)) {
-    return 'Realtime';
-  }
-
-  // TODO: further refine this logic to differentiate between 'Scheduled'
-  // and 'mixed'. Note that mixed is the case where some exports are scheduled
-  // and others are not.
-  return 'Scheduled';
+  return getFlowType(flow, exports);
 };
 
 // // Possible refactor! If we need both canSchedule (flow has ability to schedule),
@@ -745,17 +735,7 @@ selectors.mkFlowAllowsScheduling = () => {
 
       return selectors.isIntegrationAppVersion2(state, flow._integrationId, true);
     },
-    (flow, integration, allExports, isAppVersion2) => {
-      if (!flow) return false;
-      const isApp = flow._connectorId;
-      const canSchedule = showScheduleIcon(flow, allExports);
-
-      // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
-      if (!isApp || isAppVersion2) return canSchedule;
-      const flowSettings = getIAFlowSettings(integration, flow._id);
-
-      return canSchedule && !!flowSettings.showSchedule;
-    }
+    flowAllowsScheduling
   );
 };
 
@@ -793,21 +773,9 @@ selectors.flowSupportsMapping = (state, id) => {
 
 selectors.flowSupportsSettings = (state, id) => {
   const flow = selectors.resource(state, 'flows', id);
-
-  if (!flow) return false;
-
-  const isApp = flow._connectorId;
-
-  if (!isApp) return false;
-
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
-  const flowSettings = getIAFlowSettings(integration, flow._id);
-
-  return !!(
-    (flowSettings.settings && flowSettings.settings.length) ||
-    (flowSettings.sections && flowSettings.sections.length)
-  );
+  return flowSupportsSettings(flow, integration);
 };
 
 /* End of refactoring of flowDetails selector.. Once all use is refactored of
@@ -1955,11 +1923,7 @@ selectors.isIAV2UninstallComplete = (state, { integrationId }) => {
   return false;
 };
 
-// FIXME: @ashu, we can refactor this later and completely remove
-// the clone check once the functionality is clear and tested for all scenarios
-selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
-  const integration = selectors.resource(state, 'integrations', integrationId);
-
+const isIntegrationAppVerion2 = (integration, skipCloneCheck) => {
   if (!integration) return false;
   let isCloned = false;
 
@@ -1977,6 +1941,14 @@ selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
     isCloned;
 
   return isFrameWork2;
+};
+
+// FIXME: @ashu, we can refactor this later and completely remove
+// the clone check once the functionality is clear and tested for all scenarios
+selectors.isIntegrationAppVersion2 = (state, integrationId, skipCloneCheck) => {
+  const integration = selectors.resource(state, 'integrations', integrationId);
+
+  return isIntegrationAppVerion2(integration, skipCloneCheck);
 };
 
 selectors.integrationAppChildIdOfFlow = (state, integrationId, flowId) => {
