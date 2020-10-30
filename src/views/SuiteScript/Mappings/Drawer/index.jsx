@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import RightDrawer from '../../../../components/drawer/Right';
+import RightDrawer from '../../../../components/drawer/Right/V2';
+import DrawerHeader from '../../../../components/drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/V2/DrawerContent';
 import { selectors } from '../../../../reducers';
 import MappingWrapper from './MappingWrapper';
 
@@ -30,16 +32,16 @@ export default function SuiteScriptMappingDrawer(props) {
       path={['mapping', ':flowId/mapping']}
       height="tall"
       width={showFullWidth ? 'full' : 'large'}
-      title="Import Mapping"
       variant="temporary"
-      // helpKey={}
-      // helpTitle={}
       >
-      <MappingWrapper
-        ssLinkedConnectionId={ssLinkedConnectionId}
-        integrationId={integrationId}
-        flowId={flowId}
-        onClose={handleClose} />
+      <DrawerHeader title="Import Mapping" />
+      <DrawerContent>
+        <MappingWrapper
+          ssLinkedConnectionId={ssLinkedConnectionId}
+          integrationId={integrationId}
+          flowId={flowId}
+          onClose={handleClose} />
+      </DrawerContent>
     </RightDrawer>
   );
 }

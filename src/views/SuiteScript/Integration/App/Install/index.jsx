@@ -8,7 +8,9 @@ import actions from '../../../../../actions';
 import InstallationStep from '../../../../../components/InstallStep';
 import {SUITESCRIPT_CONNECTORS } from '../../../../../utils/constants';
 import openExternalUrl from '../../../../../utils/window';
-import RightDrawer from '../../../../../components/drawer/Right';
+import RightDrawer from '../../../../../components/drawer/Right/V2';
+import DrawerHeader from '../../../../../components/drawer/Right/V2/DrawerHeader';
+import DrawerContent from '../../../../../components/drawer/Right/V2/DrawerContent';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
@@ -336,16 +338,17 @@ export default function SuiteScriptIntegrationAppInstallation() {
           {ssConnection && (
           <RightDrawer
             path="editConnection"
-            type="legacy"
-            title="Setup connection"
             height="tall"
             width="medium">
-            <ResourceForm
-              ssLinkedConnectionId={ssLinkedConnectionId}
-              resourceId={ssConnection._id}
-              resourceType="connections"
-              onSubmitComplete={onSSConnSubmitComplete}
-        />
+            <DrawerHeader title="Setup connection" />
+            <DrawerContent>
+              <ResourceForm
+                ssLinkedConnectionId={ssLinkedConnectionId}
+                resourceId={ssConnection._id}
+                resourceType="connections"
+                onSubmitComplete={onSSConnSubmitComplete}
+            />
+            </DrawerContent>
           </RightDrawer>
           )}
 
