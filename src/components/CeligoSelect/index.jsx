@@ -98,7 +98,6 @@ function CeligoSelect({ className, children, ...props }) {
   const MenuProps = useMemo(() => ({
     PaperProps: {
       style: {
-        maxHeight: 252,
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -110,9 +109,6 @@ function CeligoSelect({ className, children, ...props }) {
     MenuListProps: {
       style: {
         overflowY: 'auto',
-        // '& > div:firstChild': {
-        //   overflow: 'hidden !important',
-        // },
       },
     },
   // eslint-disable-next-line react-hooks/exhaustive-deps
