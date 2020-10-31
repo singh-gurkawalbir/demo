@@ -23,7 +23,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
   const onRecordChange = useCallback((_id, value) => {
     const isValidNumber = /^[0-9]*$/.test(value);
     const size = parseInt(value, 10);
-    const sizeLimitExceeds = size < 0 || size > 100;
+    const sizeLimitExceeds = size < 1 || size > 100;
     const isValid = isValidNumber && !sizeLimitExceeds;
 
     setRecordSize(value);
