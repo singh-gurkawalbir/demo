@@ -1,49 +1,48 @@
 import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
-import { Button, Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
+import { makeStyles, Button, Typography } from '@material-ui/core';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import CodeEditor from '../../../../../../../components/CodeEditor';
 import RawHtml from '../../../../../../../components/RawHtml';
 import EditorSaveButton from '../../../../../../../components/ResourceFormFactory/Actions/EditorSaveButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import RightDrawer from '../../../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../../../components/drawer/Right/DrawerFooter';
+import ButtonGroup from '../../../../../../../components/ButtonGroup';
 
 const useStyles = makeStyles(theme => ({
-  editorContainer: {
-    border: `solid 1px ${theme.palette.secondary.lightest}`,
-    height: '40vh',
-    margin: theme.spacing(2, 0),
-  },
-  actionContainer: {
+  drawerContent: {
     display: 'flex',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    height: '100%',
   },
-  previewContainer: {
+  preview: {
+    margin: theme.spacing(2, 0),
+    padding: theme.spacing(2),
+    overflowY: 'auto',
+    flex: 1,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     borderRadius: 4,
-    backgroundColor: theme.palette.background.default,
-    height: '30vh',
-    padding: theme.spacing(1),
-    margin: theme.spacing(2, 0),
-    overflow: 'auto',
+    backgroundColor: theme.palette.common.white,
   },
-  wrapper: {
-    '& Button': {
-      marginRight: theme.spacing(2),
-    },
-    '& Button:last-child': {
-      marginRight: 0,
-    },
+  editor: {
+    marginBottom: theme.spacing(2),
+    height: '50%',
+    border: `solid 1px ${theme.palette.secondary.lightest}`,
   },
 }));
 
-export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
+export default function ReadmeEditor({ value, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const editorId = `readme-${integrationId}`;
+  const history = useHistory();
+  const editorId = 'readme-editor';
   const { confirmDialog } = useConfirmDialog();
+  const handleClose = history.goBack;
   const data = useSelector(state => selectors.editor(state, editorId).data);
   const handleChange = useCallback(
     data => {
@@ -60,7 +59,7 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
 
   const handleCancelClick = useCallback(() => {
     if (!isEditorDirty) {
-      return onClose();
+      return handleClose();
     }
 
     confirmDialog({
@@ -69,7 +68,7 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
       buttons: [
         {
           label: 'Yes, cancel',
-          onClick: onClose,
+          onClick: handleClose,
         },
         {
           label: 'No, go back',
@@ -77,13 +76,13 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
         },
       ],
     });
-  }, [confirmDialog, isEditorDirty, onClose]);
+  }, [confirmDialog, isEditorDirty, handleClose]);
 
   useEffect(() => {
     dispatch(
       actions.editor.init(editorId, 'readme', {
-        data: readmeValue,
-        _init_data: readmeValue,
+        data: value,
+        _init_data: value,
         integrationId,
       })
     );
@@ -92,19 +91,33 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
   }, []);
 
   return (
-    <>
-      <div className={classes.editorContainer}>
-        <CodeEditor
-          name="readme"
-          value={data}
-          mode="html"
-          onChange={handleChange}
-        />
-      </div>
-      <Typography variant="h4">Preview</Typography>
-      <RawHtml className={classes.previewContainer} html={data} />
-      <div className={classes.actionContainer}>
-        <div className={classes.wrapper}>
+    <RightDrawer
+      path="edit/readme"
+      height="tall"
+      width="xl"
+      variant="temporary"
+      onClose={handleClose}>
+      <DrawerHeader title="Edit readme" />
+
+      <DrawerContent>
+        <div className={classes.drawerContent}>
+          <div className={classes.editor}>
+            <CodeEditor
+              name="readme"
+              value={data}
+              mode="html"
+              onChange={handleChange}
+          />
+          </div>
+          <Typography variant="h4">Preview</Typography>
+          <div className={classes.preview}>
+            <RawHtml className={classes.previewContainer} html={data} />
+          </div>
+        </div>
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
           <EditorSaveButton
             id={editorId}
             variant="outlined"
@@ -119,7 +132,7 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
             color="secondary"
             dataTest="saveAndCloseEditor"
             disabled={!isEditorDirty}
-            onClose={onClose}
+            onClose={handleClose}
             submitButtonLabel="Save & close"
           />
           <Button
@@ -130,8 +143,8 @@ export default function ReadmeEditor({readmeValue, integrationId, onClose }) {
             disabled={!!saveInProgress}>
             Cancel
           </Button>
-        </div>
-      </div>
-    </>
+        </ButtonGroup>
+      </DrawerFooter>
+    </RightDrawer>
   );
 }

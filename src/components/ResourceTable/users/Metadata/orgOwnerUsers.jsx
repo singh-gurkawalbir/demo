@@ -28,11 +28,13 @@ export default {
       },
       {
         headerValue: EnableUserHeader,
+        align: 'center',
         value: (r, { integrationId}) =>
           <EnableUser user={r} integrationId={integrationId} />,
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',
+        align: 'center',
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
       }] : []),
