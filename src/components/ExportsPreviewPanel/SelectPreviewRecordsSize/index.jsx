@@ -51,6 +51,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       isValid={isValidRecordSize}
       id="record-size"
       label="Number of records"
+      helpKey="previewPanelRecords"
       value={recordSize}
       options={recordSizeOptions}
       onFieldChange={onRecordChange}

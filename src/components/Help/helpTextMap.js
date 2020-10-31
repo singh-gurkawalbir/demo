@@ -1,6 +1,7 @@
 import { HELP_CENTER_BASE_URL } from '../../utils/constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
+  previewPanelRecords: 'Define the number of records to return in the preview. You can select a predefined value, of manually enter a custom value between 1 and 100.',
   settingsForm:
     'Use the form builder to expose user friendly custom fields for your raw JSON custom settings.  Your forms can expose any field types that you see elsewhere in the UI.  Forms and custom fields make it much easier for less technical users to work with your custom settings.',
   settings:
