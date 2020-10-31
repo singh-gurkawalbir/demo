@@ -6,7 +6,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
 import Panels from './Panels';
 
 const useStyles = makeStyles(theme => ({
@@ -55,17 +54,17 @@ function PreviewInfo({
   resourceSampleData,
   previewStageDataList,
   isPreviewDisabled,
+  showPreviewData,
+  setShowPreviewData,
 }) {
   const value = useSelector(
     state => selectors.formState(state, formKey)?.value,
     shallowEqual
   );
-
   const dispatch = useDispatch();
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
   );
-  const [isPreviewDataFetched, setIsPreviewDataFetched] = useState(false);
 
   const fetchExportPreviewData = useCallback(() => {
     // Just a fail safe condition not to request for sample data incase of not exports
@@ -90,16 +89,10 @@ function PreviewInfo({
     flowId,
   ]);
 
-  useEffect(() => {
-    // Fetches preview data incase of initial load of an edit export mode
-    // Not fetched for online connections
-    // TODO @Raghu: should we make a offline preview call though connection is offline ?
-    // Needs a refactor to preview saga for that
-    if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
-      setIsPreviewDataFetched(true);
-      fetchExportPreviewData();
-    }
-  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
+  const handlePreview = useCallback(() => {
+    fetchExportPreviewData();
+    setShowPreviewData(true);
+  }, [fetchExportPreviewData, setShowPreviewData]);
 
   useEffect(() =>
     () => dispatch(actions.sampleData.reset(resourceId)),
@@ -108,12 +101,13 @@ function PreviewInfo({
 
   return (
     <Panels.PreviewInfo
-      fetchExportPreviewData={fetchExportPreviewData}
+      fetchExportPreviewData={handlePreview}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
       disabled={isPreviewDisabled}
       resourceId={resourceId}
       resourceType={resourceType}
+      showPreviewData={showPreviewData}
   />
   );
 }
@@ -137,6 +131,9 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
 
     return defaultStage ? defaultStage.value : lastStage.value;
   }, [availablePreviewStages]);
+  // TODO @Raghu: Refactor preview state as it is currently using sample data state
+  // this local state controls view to show sample data only when user requests by clicking preview
+  const [showPreviewData, setShowPreviewData] = useState(false);
   // set the panel type with the default panel
   const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
@@ -173,17 +170,23 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
         resourceId={resourceId}
         formKey={formKey}
         resourceType={resourceType}
+        setShowPreviewData={setShowPreviewData}
+        showPreviewData={showPreviewData}
       />
-      <Panels.PreviewBody
-        resourceSampleData={resourceSampleData}
-        previewStageDataList={previewStageDataList}
-        panelType={panelType}
-        defaultPanel={defaultPanel}
-        availablePreviewStages={availablePreviewStages}
-        handlePanelViewChange={handlePanelViewChange}
-        resourceId={resourceId}
-        resourceType={resourceType}
+      {
+        showPreviewData && (
+        <Panels.PreviewBody
+          resourceSampleData={resourceSampleData}
+          previewStageDataList={previewStageDataList}
+          panelType={panelType}
+          defaultPanel={defaultPanel}
+          availablePreviewStages={availablePreviewStages}
+          handlePanelViewChange={handlePanelViewChange}
+          resourceId={resourceId}
+          resourceType={resourceType}
       />
+        )
+}
     </div>
   );
 }
