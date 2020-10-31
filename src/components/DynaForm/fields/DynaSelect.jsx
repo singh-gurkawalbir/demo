@@ -50,8 +50,11 @@ const useAutoScrollOption = (items, open, setOpen, listRef, id, value, onFieldCh
     };
   }, [search]);
   const keydownListener = useCallback(e => {
+    // enter key
     if (e.keyCode === 13) {
-      onFieldChange(id, items[scrollIndex].value);
+      // scrollIndex -1 means the user hasn't selected anything using the key board based scroll...
+      // so we should just close the options dropdown
+      if (scrollIndex !== -1) { onFieldChange(id, items[scrollIndex].value); }
       setOpen(false);
 
       return;
@@ -60,14 +63,14 @@ const useAutoScrollOption = (items, open, setOpen, listRef, id, value, onFieldCh
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
     }
-
+    // up arrow key
     if (e.keyCode === 38) {
       if (scrollIndex <= 0) { return; }
       setScrollIndex(index => index - 1);
 
       return;
     }
-
+    // down arrow key
     if (e.keyCode === 40) {
       if (scrollIndex >= items.length) { return; }
       setScrollIndex(index => index + 1);

@@ -46,7 +46,6 @@ const defaultRange = {
 export default function LineGraphDrawer({ flowId }) {
   const match = useRouteMatch();
   const { integrationId } = match.params;
-  const parentUrl = match.url;
   const history = useHistory();
   const dispatch = useDispatch();
   const latestJobDetails = useSelector(state => selectors.latestJobMap(state, integrationId));
@@ -106,8 +105,8 @@ export default function LineGraphDrawer({ flowId }) {
   }, [dispatch, integrationId, latestJobDetails]);
 
   const handleClose = useCallback(() => {
-    history.push(parentUrl);
-  }, [history, parentUrl]);
+    history.goBack();
+  }, [history]);
   const handleDateRangeChange = useCallback(
     range => {
       dispatch(actions.flowMetrics.clear(flowId));

@@ -6,7 +6,7 @@ const useStyles = makeStyles(theme => ({
   textToggleContainer: {
     textAlign: 'center',
     position: 'relative',
-    zIndex: 2,
+    zIndex: 1,
   },
   toggleButtons: {
     backgroundColor: theme.palette.background.paper,

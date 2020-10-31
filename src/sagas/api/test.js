@@ -492,10 +492,7 @@ describe('request interceptors...testing the various stages of an api request on
           call(
             sendRequest,
             { request, type: 'API_WATCHER' },
-            {
-              runOnError: true,
-              silent: false,
-            }
+            { dispatchRequestAction: false, runOnError: true }
           )
         );
         expect(saga.next().done).toBe(true);

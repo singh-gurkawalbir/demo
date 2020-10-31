@@ -6,6 +6,8 @@ import { adaptorTypeMap } from './resource';
 import { isJsonString } from './string';
 import { wrapExportFileSampleData } from './sampleData';
 
+export const DEFAULT_RECORD_SIZE = 10;
+
 // Applications list which include Preview panel as part of the resource drawer
 
 const applicationsWithPreviewPanel = [
@@ -26,14 +28,13 @@ const emptyList = [];
 export const HTTP_STAGES = [
   { label: 'HTTP request', value: 'request' },
   { label: 'HTTP response', value: 'raw' },
-  { label: 'Parsed output', value: 'parse' },
+  { label: 'Parsed output', value: 'preview' },
 ];
 
 Object.freeze(HTTP_STAGES);
+const PREVIEW_STAGE = [{ label: 'Parsed output', value: 'preview' }];
 
-const PARSED_STAGE = [{ label: 'Parsed output', value: 'parse' }];
-
-Object.freeze(PARSED_STAGE);
+Object.freeze(PREVIEW_STAGE);
 export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExport }) => {
   const { adaptorType } = resource || {};
   const appType = adaptorTypeMap[adaptorType];
@@ -42,7 +43,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType)) {
-    return PARSED_STAGE;
+    return PREVIEW_STAGE;
   }
 
   if (!appType) return emptyList;
@@ -52,13 +53,13 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
       return HTTP_STAGES;
     case 'netsuite':
     case 'salesforce':
-      return PARSED_STAGE;
+      return PREVIEW_STAGE;
     case 'rest':
       return HTTP_STAGES;
     case 'mongodb':
     case 'dynamodb':
     case 'rdbms':
-      return PARSED_STAGE;
+      return PREVIEW_STAGE;
     default:
       return emptyList;
   }
@@ -156,3 +157,18 @@ export const getBodyHeaderFieldsForPreviewData = (previewData = {}, stage) => {
 };
 
 export const getRequestURL = requestData => requestData?.data?.[0]?.url;
+
+export const previewFileData = (previewData, recordSize) => {
+  if (!previewData || !Array.isArray(previewData) || !recordSize) {
+    return previewData;
+  }
+
+  // if preview data is an array
+  return previewData.slice(0, recordSize);
+};
+
+export const getRecordSizeOptions = () => Array.from(Array(10), (val, index) => {
+  const stringifiedValue = `${(index + 1) * 10}`;
+
+  return { label: stringifiedValue, value: stringifiedValue};
+});

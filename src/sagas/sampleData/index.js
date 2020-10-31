@@ -1,15 +1,13 @@
 import { takeLatest, put, select, call } from 'redux-saga/effects';
-import { deepClone, applyPatch } from 'fast-json-patch';
+import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
-import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
-import { evaluateExternalProcessor } from '../editor';
 import requestRealTimeMetadata from './sampleDataGenerator/realTimeSampleData';
-import requestFileAdaptorSampleData from './sampleDataGenerator/fileAdaptorSampleData';
+import { requestFileAdaptorPreview, parseFilePreviewData } from './sampleDataGenerator/fileAdaptorSampleData';
 import { getCsvFromXlsx } from '../../utils/file';
-import { processJsonSampleData } from '../../utils/sampleData';
+import { processJsonSampleData, processJsonPreviewData } from '../../utils/sampleData';
 import { getFormattedResourceForPreview } from '../../utils/flowData';
 import { pageProcessorPreview } from './utils/previewCalls';
 import {
@@ -18,6 +16,14 @@ import {
   isAS2Resource,
 } from '../../utils/resource';
 import { generateFileParserOptionsFromResource } from './utils/fileParserUtils';
+import { DEFAULT_RECORD_SIZE, previewFileData } from '../../utils/exportPanel';
+import {
+  getSampleDataRecordSize,
+  constructResourceFromFormValues,
+  getProcessorOutput,
+  updateDataForStages,
+  hasSampleDataOnResource,
+} from './utils/exportSampleDataUtils';
 /*
  * Parsers for different file types used for converting into JSON format
  * For XLSX Files , this saga receives converted csv content as input
@@ -31,32 +37,6 @@ const PARSERS = {
   fileDefinitionParser: 'structuredFileParser',
   fileDefinitionGenerator: 'structuredFileGenerator',
 };
-
-export function* constructResourceFromFormValues({
-  formValues = {},
-  resourceId,
-  resourceType,
-}) {
-  const { patchSet } = yield call(createFormValuesPatchSet, {
-    resourceType,
-    resourceId,
-    values: formValues,
-    scope: SCOPES.VALUE,
-  });
-  const { merged } = yield select(
-    selectors.resourceData,
-    resourceType,
-    resourceId,
-    SCOPES.VALUE
-  );
-
-  try {
-    return applyPatch(merged ? deepClone(merged) : {}, deepClone(patchSet))
-      .newDocument;
-  } catch (e) {
-    return {};
-  }
-}
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   let body = yield call(constructResourceFromFormValues, {
@@ -82,9 +62,11 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
     delete body.rawData;
   }
 
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
+
   // eslint-disable-next-line no-restricted-globals
-  if (body.pageSize && !isNaN(body.pageSize)) {
-    body.test = { limit: parseInt(body.pageSize, 10) };
+  if (recordSize && !isNaN(recordSize)) {
+    body.test = { limit: recordSize };
   }
 
   const path = `/${resourceType}/preview`;
@@ -123,37 +105,6 @@ function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
   }
 }
 
-function* getProcessorOutput({ processorData }) {
-  try {
-    const processedData = yield call(evaluateExternalProcessor, {
-      processorData,
-    });
-
-    return { data: processedData };
-  } catch (e) {
-    // Handling Errors with status code between 400 and 500
-    if (e.status >= 400 && e.status < 500) {
-      const parsedError = JSON.parse(e.message);
-
-      return {error: parsedError};
-    }
-  }
-}
-/**
- * Given list of stages mapped with data to be saved against it
- * Triggers action that saves each stage with data on resource's sample data
- */
-function* updateDataForStages({resourceId, dataForEachStageMap }) {
-  const stages = Object.keys(dataForEachStageMap);
-
-  for (let stageIndex = 0; stageIndex < stages.length; stageIndex += 1) {
-    const stage = stages[stageIndex];
-    const stageData = dataForEachStageMap[stage];
-
-    yield put(actions.sampleData.update(resourceId, stageData, stage));
-  }
-}
-
 function* processRawData({ resourceId, resourceType, values = {} }) {
   const { type, formValues } = values;
   const { file } = values;
@@ -164,6 +115,8 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   });
   const { file: fileProps} = body || {};
 
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
+
   // If there are no editorValues passed from the editor,
   // parse the resourceBody and construct props to process file content
   if (!values.editorValues) {
@@ -171,15 +124,17 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
     values.editorValues = generateFileParserOptionsFromResource(body);
   }
   const dataForEachStageMap = {
-    rawFile: { data: [{ body: file, type }] },
-    raw: { data: [{ body: file }] },
+    rawFile: { data: { body: file, type } },
+    raw: { data: { body: file } },
   };
   const processorData = deepClone(values.editorValues || {});
 
   if (type === 'json') {
     // For JSON, no need of processor call, the below util takes care of parsing json file as per options
     const options = { resourcePath: fileProps.json && fileProps.json.resourcePath };
+    const previewData = processJsonPreviewData(file, options);
 
+    dataForEachStageMap.preview = { data: previewFileData(previewData, recordSize) };
     dataForEachStageMap.parse = { data: [processJsonSampleData(file, options)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
 
@@ -189,13 +144,13 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   if (type === 'xlsx') {
     const { result } = yield call(getCsvFromXlsx, file);
 
-    dataForEachStageMap.csv = { data: [{ body: result }] };
+    dataForEachStageMap.csv = { data: { body: result } };
     // save csv content of xlsx file uploaded to be 'data' for the processor call
     processorData.data = result;
   }
 
   if (type === 'csv') {
-    dataForEachStageMap.csv = { data: [{ body: file }] };
+    dataForEachStageMap.csv = { data: { body: file } };
   }
 
   if (type === 'xml') {
@@ -210,7 +165,10 @@ function* processRawData({ resourceId, resourceType, values = {} }) {
   const processorOutput = yield call(getProcessorOutput, { processorData });
 
   if (processorOutput && processorOutput.data) {
-    dataForEachStageMap.parse = processorOutput.data;
+    const previewData = processorOutput.data.data;
+
+    dataForEachStageMap.preview = { data: previewFileData(previewData, recordSize) };
+    dataForEachStageMap.parse = { data: [processJsonSampleData(previewData)] };
     yield call(updateDataForStages, { resourceId, dataForEachStageMap });
   }
   if (processorOutput && processorOutput.error) {
@@ -232,6 +190,7 @@ function* fetchExportPreviewData({
     resourceId,
     resourceType,
   });
+  const recordSize = yield call(getSampleDataRecordSize, { resourceId });
   const isRestCsvExport = yield select(selectors.isRestCsvMediaTypeExport, resourceId);
 
   // If it is a file adaptor/Rest csv export , follows a different approach to fetch sample data
@@ -241,19 +200,28 @@ function* fetchExportPreviewData({
 
     if (!fileDetails) {
       // when no file uploaded , try fetching sampleData on resource
-      const parsedData = yield call(requestFileAdaptorSampleData, { resource: body });
+      const hasSampleData = yield call(hasSampleDataOnResource, { resourceId, resourceType, body});
+      const previewData = yield call(requestFileAdaptorPreview, { resource: body });
+      const previewRecords = previewFileData(previewData, recordSize);
 
-      if (parsedData) {
+      if (hasSampleData && previewData) {
+        yield put(actions.sampleData.update(resourceId, { data: previewRecords }, 'preview'));
+        const parsedData = parseFilePreviewData({ resource: body, previewData});
+
         return yield put(actions.sampleData.update(resourceId, { data: [parsedData] }, 'parse'));
       }
 
       // If no sample data on resource too...
       // Show empty data representing no data is being passed
-      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+      yield put(actions.sampleData.update(resourceId, { data: undefined }, 'preview'));
+
+      return yield put(actions.sampleData.update(resourceId, { data: undefined }, 'parse'));
     }
     if (body.file.output === 'blobKeys') {
       // If the output mode is 'blob' , no data is passed so show empty data
-      return yield put(actions.sampleData.update(resourceId, { data: [] }, 'parse'));
+      yield put(actions.sampleData.update(resourceId, { data: undefined }, 'preview'));
+
+      return yield put(actions.sampleData.update(resourceId, { data: undefined }, 'parse'));
     }
     const fileProps = {
       type: fileDetails?.type,
@@ -281,8 +249,10 @@ export function* requestExportSampleData({
   resourceType,
   values,
   stage,
-  runOffline,
+  options = {},
 }) {
+  const { runOffline } = options;
+
   if (stage) {
     yield call(processRawData, {
       resourceId,
@@ -303,6 +273,7 @@ export function* requestExportSampleData({
 // TODO @Raghu: Merge this into existing requestSampleData
 function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   const resourceType = 'exports';
+  const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
   let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
@@ -318,6 +289,10 @@ function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   // delete sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
   delete _pageProcessorDoc.sampleData;
+  // add recordSize if passed to limit number of records from preview
+  if (recordSize) {
+    _pageProcessorDoc.test = { limit: recordSize };
+  }
 
   try {
     const pageProcessorPreviewData = yield call(pageProcessorPreview, {

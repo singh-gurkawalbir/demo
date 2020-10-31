@@ -93,6 +93,7 @@ const preventEvent = e => {
   // console.log('stop prop');
   e.stopPropagation();
 };
+export const DRAGGABLE_SECTION_DIV_ID = 'draggableSectionDivId';
 
 function TabPanel({ children, value, index, className }) {
   const hidden = value !== index;
@@ -179,6 +180,9 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
   }, []);
 
   const handleMouseDown = useCallback(e => {
+    if (e.target.id !== DRAGGABLE_SECTION_DIV_ID) {
+      return;
+    }
     setIsDragging(true);
     setStartY(e.nativeEvent.clientY);
     setDragY(e.nativeEvent.clientY);
@@ -284,6 +288,7 @@ export default function BottomDrawer({ flowId, setTabValue, tabValue }) {
         anchor="bottom">
         <div
           className={classes.tabBar}
+          id={DRAGGABLE_SECTION_DIV_ID}
           onMouseDown={handleMouseDown}>
           <Tabs
             value={tabValue}
