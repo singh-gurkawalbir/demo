@@ -133,10 +133,15 @@ function Settings({
       }
 
       if (Object.hasOwnProperty.call(formVal, 'settings')) {
+        let value = formVal?.settings;
+
+        if (isJsonString(value)) {
+          value = JSON.parse(value);
+        }
         patchSet.push({
           op: 'replace',
           path: '/settings',
-          value: formVal && formVal.settings,
+          value,
         });
       }
 

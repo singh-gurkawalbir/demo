@@ -12,6 +12,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { JOB_STATUS } from '../../../../../../utils/constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
+import { DRAGGABLE_SECTION_DIV_ID } from '../..';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -146,7 +147,7 @@ export default function RunDashboardActions({ flowId }) {
   }, [handleCancel, handleDownloadDiagnostics, handleDownloadFiles]);
 
   return (
-    <div className={classes.rightActionContainer}>
+    <div id={DRAGGABLE_SECTION_DIV_ID} className={classes.rightActionContainer}>
       <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
       <IconTextButton onClick={handleRefresh} disabled={status === 'requested'}>
         <RefreshIcon /> Refresh
