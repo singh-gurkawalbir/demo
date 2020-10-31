@@ -1,16 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import IconTextButton from '../../IconTextButton';
 import ArrowRightIcon from '../../icons/ArrowRightIcon';
-// import ErrorIcon from '../../../../icons/ErrorIcon';
 import { getPreviewDataPageSizeInfo } from '../../../utils/exportPanel';
 import ErroredMessageComponent from '../../DynaForm/fields/ErroredMessageComponent';
+import SelectPreviewRecordsSize from '../SelectPreviewRecordsSize';
+import { selectors } from '../../../reducers';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   previewContainer: {
     minHeight: theme.spacing(10),
     position: 'relative',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     padding: theme.spacing(1),
     marginBottom: theme.spacing(4),
     borderRadius: theme.spacing(0.5),
@@ -58,6 +63,11 @@ const useStyles = makeStyles(theme => ({
   msgSuccess: {
     marginLeft: 4,
   },
+  recordSize: {
+    padding: theme.spacing(0, 1, 0, 1),
+    width: theme.spacing(20),
+    minWidth: theme.spacing(20),
+  },
 }));
 
 export default function PreviewInfo(props) {
@@ -65,11 +75,16 @@ export default function PreviewInfo(props) {
     fetchExportPreviewData,
     resourceSampleData,
     previewStageDataList,
-    panelType,
     disabled,
+    resourceId,
+    resourceType,
   } = props;
   const classes = useStyles(props);
-
+  const [isValidRecordSize, setIsValidRecordSize] = useState(true);
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const canSelectRecords = useSelector(state =>
+    selectors.canSelectRecordsInPreviewPanel(state, resourceId, resourceType)
+  );
   const sampleDataStatus = useMemo(() => {
     const { status, error } = resourceSampleData;
 
@@ -98,14 +113,32 @@ export default function PreviewInfo(props) {
     }
 
     if (resourceSampleData.status === 'received') {
-      // TODO @Raghu:  Needs to be updated when number of records are handled
+      const records =
+        Object.prototype.hasOwnProperty.call(previewStageDataList, 'preview')
+          ? previewStageDataList.preview
+          : previewStageDataList.parse;
+
       return (
         <Typography variant="body2">
-          {getPreviewDataPageSizeInfo(previewStageDataList[panelType])}
+          {getPreviewDataPageSizeInfo(records)}
         </Typography>
       );
     }
-  }, [panelType, previewStageDataList, resourceSampleData.status]);
+  }, [previewStageDataList, resourceSampleData.status]);
+
+  const handlePreview = useCallback(
+    () => {
+      if (!isValidRecordSize) {
+        enquesnackbar({
+          message: 'Enter a valid record size',
+          variant: 'error',
+        });
+      } else {
+        fetchExportPreviewData();
+      }
+    },
+    [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
+  );
 
   return (
     <div className={classes.previewContainer}>
@@ -115,13 +148,22 @@ export default function PreviewInfo(props) {
             variant="outlined"
             color="secondary"
             className={classes.previewBtn}
-            onClick={fetchExportPreviewData}
+            onClick={handlePreview}
             disabled={disabled || resourceSampleData.status === 'requested'}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>
         </div>
-
+        { canSelectRecords &&
+        (
+        <div className={classes.recordSize}>
+          <SelectPreviewRecordsSize
+            isValidRecordSize={isValidRecordSize}
+            setIsValidRecordSize={setIsValidRecordSize}
+            resourceId={resourceId}
+           />
+        </div>
+        ) }
         <div className={classes.previewDataRight}>
           {sampleDataStatus && <div> {sampleDataStatus}</div>}
           {sampleDataOverview && (

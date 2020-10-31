@@ -42,6 +42,11 @@ function form(state = {}, action) {
       case actionTypes.FORM.UPDATE:
         if (!formKey) break;
 
+        if (!draft[formKey]) {
+          // eslint-disable-next-line no-console
+          return console.warn('Form not intialized ', formKey);
+        }
+
         if (showValidationBeforeTouched !== undefined) {
           draft[
             formKey

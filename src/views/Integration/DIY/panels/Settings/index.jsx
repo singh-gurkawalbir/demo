@@ -84,11 +84,16 @@ export default function CustomSettings({ integrationId: parentIntegrationId, chi
       // dont submit the form if there is validation error
       // REVIEW: @ashu, re-visit once Surya's form PR is merged
       if (formVal?.settings?.__invalid) return;
+      let value = formVal?.settings;
+
+      if (isJsonString(value)) {
+        value = JSON.parse(value);
+      }
       const patchSet = [
         {
           op: 'replace',
           path: '/settings',
-          value: formVal?.settings,
+          value,
         },
       ];
 
