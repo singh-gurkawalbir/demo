@@ -174,22 +174,21 @@ export function* onErrorSaga(error, action) {
 
     // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
     // we already check the retry count onErrorHook for an exit case to prevent it from happening
-    yield call(
+    return yield call(
       sendRequest,
       { request: origReq, type: 'API_WATCHER' },
-      { silent: false, runOnError: true }
+      { dispatchRequestAction: false, runOnError: true }
     );
-  } else {
-    // attempts failed after 'tryCount' attempts
-    // this time yield an error...
-    const errorMessage =
+  }
+  // attempts failed after 'tryCount' attempts
+  // this time yield an error...
+  const errorMessage =
       typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
 
-    yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
-    // the parent saga may need to know if there was an error for
-    // its own "Data story"...
-    yield call(throwExceptionUsingTheResponse, error);
-  }
+  yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
+  // the parent saga may need to know if there was an error for
+  // its own "Data story"...
+  yield call(throwExceptionUsingTheResponse, error);
 
   // not related token error, we pass it like nothing happened
   return { error };
