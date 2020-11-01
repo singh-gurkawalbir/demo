@@ -2,7 +2,7 @@ import { uniqBy } from 'lodash';
 import mappingUtil from '..';
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const wrapTextForSpecialCharsNetsuite = extract => {
+const wrapTextForSpecialCharsNetsuite = (extract, isSS2) => {
   let toReturn = extract;
 
   if (
@@ -11,7 +11,7 @@ const wrapTextForSpecialCharsNetsuite = extract => {
     extract.indexOf('.') === -1 &&
     /\W/.test(extract)
   ) {
-    toReturn = `['${extract}']`;
+    toReturn = isSS2 ? `[${extract}]` : `['${extract}']`;
   }
 
   return toReturn;
@@ -26,6 +26,8 @@ export default {
     resource,
   }) => {
     let toReturn = [];
+    // eslint-disable-next-line camelcase
+    const isSS2 = !!(resource?.netsuite_da?.useSS2Restlets);
     let isItemSubtypeRecord = false;
 
     isItemSubtypeRecord =
@@ -61,6 +63,9 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // Remove [' in the start and  remove '] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
+          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+            // Remove [ in the start and  remove ] in the end in case of SS 2.0 imports
+            tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
           }
 
           if (
@@ -197,6 +202,9 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // if extract starts with [' and ends with ']
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
+          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+          // if extract starts with [ and ends with ] for a SS2.0 import
+            tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2'); // removing [ and ] at begining and end of extract that we added
           } else if (
             /^(\*|0)\.\['.*']$/.test(tempFm.extract) &&
             isGroupedSampleData
@@ -205,6 +213,16 @@ export default {
             // just remove [' and '] in extract *. will be removed in next step and will set useFirstRow accordingly
             tempFm.extract = tempFm.extract.replace(
               /^([*|0]\.)(\[')(.*)('])$/,
+              '$1$3'
+            );
+          } else if (
+            /^(\*|0)\.\[.*]$/.test(tempFm.extract) && isSS2 &&
+            isGroupedSampleData
+          ) {
+            // if import is SS2.0 and  it starts with *.[ and ends with ] or starts with 0.[ and ends with ]
+            // just remove [ and ] in extract *. will be removed in next step and will set useFirstRow accordingly
+            tempFm.extract = tempFm.extract.replace(
+              /^([*|0]\.)(\[)(.*)(])$/,
               '$1$3'
             );
           }
@@ -221,6 +239,9 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // Remove [' in the start and  remove '] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
+          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+            // if SS2.0 then Remove [ in the start and  remove ] in the end
+            tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
           }
 
           if (fm.subRecordMapping && fm.subRecordMapping.recordType) {
@@ -243,11 +264,14 @@ export default {
     isGroupedSampleData,
     generateFields,
     recordType,
+    importResource,
   }) => {
     const initializeValues = [];
     let generateParts;
     const lists = [];
     const fields = [];
+    // eslint-disable-next-line camelcase
+    const isSS2 = !!(importResource?.netsuite_da?.useSS2Restlets);
     let generateListPath;
     let isItemSubtypeRecord = false;
 
@@ -340,16 +364,19 @@ export default {
           // extract is mapped to sublist
           if (!mapping.useFirstRow) {
             mapping.extract = `*.${wrapTextForSpecialCharsNetsuite(
-              mapping.extract.slice(2)
+              mapping.extract.slice(2),
+              isSS2
             )}`;
           } else {
             mapping.extract = `0.${wrapTextForSpecialCharsNetsuite(
-              mapping.extract.slice(2)
+              mapping.extract.slice(2),
+              isSS2
             )}`;
           }
         } else {
           mapping.extract = `${wrapTextForSpecialCharsNetsuite(
-            mapping.extract
+            mapping.extract,
+            isSS2
           )}`;
         }
       }

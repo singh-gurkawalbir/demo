@@ -777,7 +777,7 @@ export default {
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
           { label: 'URL Encoded', value: 'urlencoded' },
-          { label: 'FORM DATA', value: 'form-data' },
+          { label: 'Multipart/form-data', value: 'form-data' },
         ],
       },
     ],
