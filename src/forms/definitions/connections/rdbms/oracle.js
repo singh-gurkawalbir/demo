@@ -17,10 +17,12 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
-      defaultValue: r => (r && r._agentId ? 'onpremise' : ''),
+      defaultValue: 'onpremise',
+      defaultDisabled: true,
       options: [
         {
           items: [
+            { label: 'Cloud', value: 'cloud' },
             { label: 'On-premise', value: 'onpremise' },
           ],
         },
@@ -29,6 +31,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      required: true,
     },
     'rdbms.host': { fieldId: 'rdbms.host' },
     'rdbms.user': {
