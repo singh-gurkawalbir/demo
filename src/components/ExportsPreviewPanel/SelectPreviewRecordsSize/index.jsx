@@ -32,7 +32,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       setErrorMessage('');
       patchRecordSize(size);
     } else {
-      setErrorMessage(isValidNumber ? 'Invalid Size' : 'Max value is 100');
+      setErrorMessage(sizeLimitExceeds ? "Value can't exceed 100." : 'Invalid size.');
     }
   }, [setIsValidRecordSize, patchRecordSize]);
 

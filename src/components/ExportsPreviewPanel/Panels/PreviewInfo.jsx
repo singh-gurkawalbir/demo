@@ -52,6 +52,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     position: 'relative',
     width: '100%',
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
 
   previewBtn: {
@@ -68,8 +69,8 @@ const useStyles = makeStyles(theme => ({
   },
   recordSize: {
     padding: theme.spacing(0, 1, 0, 1),
-    width: theme.spacing(20),
-    minWidth: theme.spacing(20),
+    width: theme.spacing(22),
+    minWidth: theme.spacing(22),
   },
 }));
 
