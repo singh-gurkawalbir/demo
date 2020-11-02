@@ -23,6 +23,9 @@ export function* fetchRequiredMappingData({
 }) {
   const importResource = yield select(selectors.resource, 'imports', importId);
 
+  if (!importResource) {
+    return yield put(actions.mapping.initFailed());
+  }
   const subRecordMappingObj = subRecordMappingId
     ? mappingUtil.getSubRecordRecordTypeAndJsonPath(importResource, subRecordMappingId) : {};
 
@@ -152,7 +155,7 @@ export function* mappingInit({
   const importResource = yield select(selectors.resource, 'imports', importId);
 
   if (!importResource) {
-    return;
+    return yield put(actions.mapping.initFailed());
   }
   const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
   const {data: flowSampleData} = yield select(selectors.getSampleDataContext, {
@@ -263,7 +266,7 @@ export function* saveMappings() {
   const importResource = yield select(selectors.resource, 'imports', importId);
 
   if (!importResource) {
-    return;
+    return yield put(actions.mapping.saveFailed());
   }
   let netsuiteRecordType;
 
@@ -367,7 +370,7 @@ export function* previewMappings() {
   const _importRes = yield select(selectors.resource, 'imports', importId);
 
   if (!_importRes) {
-    return;
+    return yield put(actions.mapping.previewFailed());
   }
   let importResource = deepClone(_importRes);
   let netsuiteRecordType;
