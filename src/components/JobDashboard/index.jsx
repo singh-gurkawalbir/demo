@@ -436,6 +436,7 @@ export default function JobDashboard({
         onActionClick={handleActionClick}
         disableResolve={disableResolve}
         disableRetry={disableRetry}
+        isFlowBuilderView={isFlowBuilderView}
       />
       <JobTable
         classes={classes.jobTable}
