@@ -678,7 +678,7 @@ selectors.mkFlowAttributes = () => createSelector(
       const o = out[flow._id];
 
       // isDataLoader
-      o.isDataLoader = !!isSimpleImportFlow(null, null, flExp);
+      o.isDataLoader = !!isSimpleImportFlow(flow, [], flExp);
       // isFlowEnableLocked
       // moved from previous selector impl
       let isLocked = true;
@@ -692,9 +692,9 @@ selectors.mkFlowAttributes = () => createSelector(
       }
       o.isFlowEnableLocked = isLocked;
       // allowSchedule
-      o.allowSchedule = flowAllowsScheduling(flow, integration, null, isIntegrationV2, flExp);
+      o.allowSchedule = flowAllowsScheduling(flow, integration, [], isIntegrationV2, flExp);
       // flow type
-      o.type = getFlowType(flow, null, flExp);
+      o.type = getFlowType(flow, [], flExp);
       // supports settings
       o.supportsSettings = flowSupportsSettings(flow, integration);
     });
