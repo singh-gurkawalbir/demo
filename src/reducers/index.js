@@ -859,45 +859,48 @@ selectors.resourcesByIds = (state, resourceType, resourceIds) => {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 };
 
-selectors.userAccessLevelOnConnection = (state, connectionId) => {
-  const permissions = selectors.userPermissions(state);
-  let accessLevelOnConnection;
+selectors.mkUserAccessLevelOnConnection = () => createSelector(
+  selectors.userPermissions,
+  state => state?.data?.resources?.integrations,
+  (_, connectionId) => connectionId,
+  (permissions, ioIntegrations = [], connectionId) => {
+    let accessLevelOnConnection;
 
-  if (
-    [
-      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-    ].includes(permissions.accessLevel)
-  ) {
-    accessLevelOnConnection = permissions.accessLevel;
-  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-    const ioIntegrations = selectors.resourceList(state, {
-      type: 'integrations',
-    }).resources;
-    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-      i =>
+    if (
+      [
+        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+      ].includes(permissions.accessLevel)
+    ) {
+      accessLevelOnConnection = permissions.accessLevel;
+    } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+      const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+        i =>
         i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
-    );
+      );
 
-    ioIntegrationsWithConnectionRegistered.forEach(i => {
-      if ((permissions.integrations[i._id] || {}).accessLevel) {
-        if (!accessLevelOnConnection) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
-        } else if (
-          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
-        ) {
-          accessLevelOnConnection = (permissions.integrations[i._id] || {})
-            .accessLevel;
+      ioIntegrationsWithConnectionRegistered.forEach(i => {
+        if ((permissions.integrations[i._id] || {}).accessLevel) {
+          if (!accessLevelOnConnection) {
+            accessLevelOnConnection = (permissions.integrations[i._id] || {})
+              .accessLevel;
+          } else if (
+            accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+          ) {
+            accessLevelOnConnection = (permissions.integrations[i._id] || {})
+              .accessLevel;
+          }
         }
-      }
-    });
-  }
+      });
+    }
 
-  return accessLevelOnConnection;
-};
+    return accessLevelOnConnection;
+  }
+);
+selectors.userAccessLevelOnConnection = selectors.mkUserAccessLevelOnConnection();
+
 selectors.matchingConnectionList = (state, connection = {}, environment, manageOnly) => {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
@@ -2576,13 +2579,12 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.publishedConnectors = state => {
-  const ioConnectors = selectors.resourceList(state, {
-    type: 'published',
-  }).resources;
+selectors.mkPublishedConnectors = () => createSelector(
+  state => state?.data?.resources?.published,
+  (published = []) => published.concat(SUITESCRIPT_CONNECTORS)
+);
 
-  return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
-};
+selectors.publishedConnectors = selectors.mkPublishedConnectors();
 
 selectors.availableConnectionsToRegister = (state, integrationId) => {
   if (!state) {
@@ -2645,126 +2647,127 @@ selectors.suiteScriptLinkedConnections = state => {
   return linkedConnections;
 };
 
-selectors.suiteScriptLinkedTiles = state => {
-  const linkedConnections = selectors.suiteScriptLinkedConnections(state);
-  let tiles = [];
+selectors.mkSuiteScriptLinkedTiles = () => createSelector(
+  selectors.suiteScriptLinkedConnections,
+  state => state?.suiteScript,
+  (linkedConnections, suiteScriptTiles = {}) => {
+    let tiles = [];
 
-  linkedConnections.forEach(connection => {
-    tiles = tiles.concat(selectors.suiteScriptTiles(state, connection._id));
-  });
+    linkedConnections.forEach(connection => {
+      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles);
+    });
 
-  return tiles;
-};
-
-selectors.tiles = state => {
-  const tiles = selectors.resourceList(state, {
-    type: 'tiles',
-  }).resources;
-  let integrations = [];
-
-  if (tiles.length > 0) {
-    integrations = selectors.resourceList(state, {
-      type: 'integrations',
-    }).resources;
+    return tiles;
   }
+);
 
-  let published;
-  const hasConnectorTiles = tiles.filter(t => t._connectorId);
+selectors.suiteScriptLinkedTiles = selectors.mkSuiteScriptLinkedTiles();
 
-  if (hasConnectorTiles) {
-    published = selectors.publishedConnectors(state);
-  }
+selectors.mkTiles = () => createSelector(
+  state => state?.data?.resources?.tiles,
+  state => state?.data?.resources?.integrations,
+  selectors.currentEnvironment,
+  selectors.publishedConnectors,
+  selectors.userPermissions,
+  (allTiles = [], allIntegrations = [], currentEnvironment, published, permissions) => {
+    let integrations = allIntegrations;
+    const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
-  const permissions = selectors.userPermissions(state);
-  const hasStandaloneTile = tiles.find(
-    t => t._integrationId === STANDALONE_INTEGRATION.id
-  );
+    console.log('tiles', tiles);
+    console.log('allTiles', allTiles);
+    console.log('currentEnvironment', currentEnvironment);
+    const hasStandaloneTile = tiles.find(
+      t => t._integrationId === STANDALONE_INTEGRATION.id
+    );
 
-  if (hasStandaloneTile) {
-    integrations = [
-      ...integrations,
-      { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
-    ];
-  }
+    if (hasStandaloneTile) {
+      integrations = [
+        ...integrations,
+        { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+      ];
+    }
 
-  integrations = integrations.map(i => {
-    if (
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(permissions.accessLevel)
-    ) {
+    integrations = integrations.map(i => {
+      if (
+        [
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+          USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        ].includes(permissions.accessLevel)
+      ) {
+        return {
+          ...i,
+          permissions: {
+            accessLevel: permissions.integrations.all.accessLevel,
+            connections: {
+              edit: permissions.integrations.all.connections.edit,
+            },
+          },
+        };
+      }
+
       return {
         ...i,
         permissions: {
-          accessLevel: permissions.integrations.all.accessLevel,
+          accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
           connections: {
-            edit: permissions.integrations.all.connections.edit,
+            edit:
+              (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
           },
         },
       };
-    }
+    });
 
-    return {
-      ...i,
-      permissions: {
-        accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
-        connections: {
-          edit:
-            (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
-        },
-      },
-    };
-  });
+    let integration;
+    let connector;
+    let status;
 
-  let integration;
-  let connector;
-  let status;
+    return tiles.map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-  return tiles.map(t => {
-    integration = integrations.find(i => i._id === t._integrationId) || {};
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
 
-    if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-      status = TILE_STATUS.UNINSTALL;
-    } else if (
-      integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
-    ) {
-      status = TILE_STATUS.IS_PENDING_SETUP;
-    } else if (t.numError && t.numError > 0) {
-      status = TILE_STATUS.HAS_ERRORS;
-    } else {
-      status = TILE_STATUS.SUCCESS;
-    }
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
 
-    if (t._connectorId) {
-      connector = published.find(i => i._id === t._connectorId) || {
-        user: {},
-      };
+        return {
+          ...t,
+          status,
+          integration: {
+            mode: integration.mode,
+            permissions: integration.permissions,
+          },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
+        };
+      }
 
       return {
         ...t,
         status,
         integration: {
-          mode: integration.mode,
           permissions: integration.permissions,
         },
-        connector: {
-          owner: connector.user.company || connector.user.name,
-          applications: connector.applications || [],
-        },
       };
-    }
+    });
+  }
+);
+selectors.tiles = selectors.mkTiles();
 
-    return {
-      ...t,
-      status,
-      integration: {
-        permissions: integration.permissions,
-      },
-    };
-  });
-};
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS
@@ -4179,7 +4182,7 @@ selectors.suiteScriptFlowConnectionList = (
   });
   const connectionIdsInUse = [];
 
-  if (flow?.export._connectionId) {
+  if (flow?.export?._connectionId) {
     connectionIdsInUse.push(flow.export._connectionId);
   }
   if (flow?.import?._connectionId) {
@@ -4992,7 +4995,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
   if (type === 'generate') {
     /** generating generate Label */
     const importResource = selectors.resource(state, 'imports', resourceId);
-    const importConn = selectors.resource(state, 'connections', importResource._connectionId);
+    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
 
     return `Import field (${mappingUtil.getApplicationName(
       importResource,
@@ -5006,7 +5009,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
     if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
       const {_exportId} = flow.pageGenerators[0];
       const exportResource = selectors.resource(state, 'exports', _exportId);
-      const exportConn = selectors.resource(state, 'connections', exportResource._connectionId);
+      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
 
       return `Export field (${mappingUtil.getApplicationName(
         exportResource,
@@ -5032,7 +5035,7 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   (state, importId) => {
     const importResource = selectors.resource(state, 'imports', importId);
 
-    return selectors.resource(state, 'connections', importResource._connectionId);
+    return selectors.resource(state, 'connections', importResource?._connectionId);
   },
   (state, importId) => selectors.getImportSampleData(state, importId, {}).data,
 ], (previewData, isHttpPreview, importResource, importConn, importSampleData) => {
