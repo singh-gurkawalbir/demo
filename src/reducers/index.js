@@ -62,6 +62,7 @@ import {
   isAS2Resource,
   adaptorTypeMap,
   isQueryBuilderSupported,
+  getUserAccessLevelOnConnection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -859,47 +860,45 @@ selectors.resourcesByIds = (state, resourceType, resourceIds) => {
   return resources.filter(r => resourceIds.indexOf(r._id) >= 0);
 };
 
-selectors.mkUserAccessLevelOnConnection = () => createSelector(
-  selectors.userPermissions,
-  state => state?.data?.resources?.integrations,
-  (_, connectionId) => connectionId,
-  (permissions, ioIntegrations = [], connectionId) => {
-    let accessLevelOnConnection;
+selectors.userAccessLevelOnConnection = (state, connectionId) => {
+  const permissions = selectors.userPermissions(state);
+  let accessLevelOnConnection;
 
-    if (
-      [
-        USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-        USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-        USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-      ].includes(permissions.accessLevel)
-    ) {
-      accessLevelOnConnection = permissions.accessLevel;
-    } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
-      const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
-        i =>
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrations = selectors.resourceList(state, {
+      type: 'integrations',
+    }).resources;
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
         i?._registeredConnectionIds &&
         i._registeredConnectionIds.includes(connectionId)
-      );
+    );
 
-      ioIntegrationsWithConnectionRegistered.forEach(i => {
-        if ((permissions.integrations[i._id] || {}).accessLevel) {
-          if (!accessLevelOnConnection) {
-            accessLevelOnConnection = (permissions.integrations[i._id] || {})
-              .accessLevel;
-          } else if (
-            accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
-          ) {
-            accessLevelOnConnection = (permissions.integrations[i._id] || {})
-              .accessLevel;
-          }
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
         }
-      });
-    }
-
-    return accessLevelOnConnection;
+      }
+    });
   }
-);
-selectors.userAccessLevelOnConnection = selectors.mkUserAccessLevelOnConnection();
+
+  return accessLevelOnConnection;
+};
 
 selectors.matchingConnectionList = (state, connection = {}, environment, manageOnly) => {
   if (!environment) {
@@ -2611,41 +2610,44 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
   return availableConnectionsToRegister;
 };
 
-selectors.suiteScriptLinkedConnections = state => {
-  const preferences = selectors.userPreferences(state);
-  const connections = selectors.resourceList(state, {
-    type: 'connections',
-  }).resources;
-  const linkedConnections = [];
-  let connection;
-  let accessLevel;
+selectors.mkSuiteScriptLinkedConnections = () => createSelector(
+  selectors.userPreferences,
+  selectors.userPermissions,
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.integrations,
+  (preferences, permissions, connections = [], integrations = []) => {
+    const linkedConnections = [];
+    let connection;
+    let accessLevel;
 
-  if (
-    !preferences.ssConnectionIds ||
+    if (
+      !preferences.ssConnectionIds ||
     preferences.ssConnectionIds.length === 0
-  ) {
+    ) {
+      return linkedConnections;
+    }
+
+    preferences.ssConnectionIds.forEach(connectionId => {
+      connection = connections.find(c => c._id === connectionId);
+
+      if (connection) {
+        accessLevel = getUserAccessLevelOnConnection(permissions, integrations, connectionId);
+
+        if (accessLevel) {
+          linkedConnections.push({
+            ...connection,
+            permissions: {
+              accessLevel,
+            },
+          });
+        }
+      }
+    });
+
     return linkedConnections;
   }
-
-  preferences.ssConnectionIds.forEach(connectionId => {
-    connection = connections.find(c => c._id === connectionId);
-
-    if (connection) {
-      accessLevel = selectors.userAccessLevelOnConnection(state, connectionId);
-
-      if (accessLevel) {
-        linkedConnections.push({
-          ...connection,
-          permissions: {
-            accessLevel,
-          },
-        });
-      }
-    }
-  });
-
-  return linkedConnections;
-};
+);
+selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnections();
 
 selectors.mkSuiteScriptLinkedTiles = () => createSelector(
   selectors.suiteScriptLinkedConnections,
@@ -2672,10 +2674,6 @@ selectors.mkTiles = () => createSelector(
   (allTiles = [], allIntegrations = [], currentEnvironment, published, permissions) => {
     let integrations = allIntegrations;
     const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
-
-    console.log('tiles', tiles);
-    console.log('allTiles', allTiles);
-    console.log('currentEnvironment', currentEnvironment);
     const hasStandaloneTile = tiles.find(
       t => t._integrationId === STANDALONE_INTEGRATION.id
     );
