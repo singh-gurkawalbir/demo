@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(2),
     marginRight: theme.spacing(0.5),
   },
+  lastRun: {
+    marginRight: theme.spacing(0.5),
+  },
 }));
 
 const FLOW_RUNNING_STATUS = 'In progress';
@@ -71,10 +74,10 @@ export default function LastRun({ flowId }) {
     return (
       <>
         <RefreshIcon className={classes.icon} />
-        Last run: <CeligoTimeAgo date={lastRunStatus} />
+        <span className={classes.lastRun}>Last run:</span> <CeligoTimeAgo date={lastRunStatus} />
       </>
     );
-  }, [lastRunStatus, classes.icon]);
+  }, [lastRunStatus, classes.icon, classes.lastRun]);
 
   if (!lastRunStatus) return null;
 
