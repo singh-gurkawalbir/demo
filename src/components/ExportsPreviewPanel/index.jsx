@@ -8,6 +8,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { isNewId } from '../../utils/resource';
+import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -107,8 +108,12 @@ function PreviewInfo({
     }
   }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
 
+  // on close of the panel, updates record size to default
+  // remove this action, if in future we need to retain record size
   useEffect(() =>
-    () => dispatch(actions.sampleData.reset(resourceId)),
+    () => dispatch(actions.sampleData.patch(resourceId, {
+      recordSize: DEFAULT_RECORD_SIZE,
+    })),
   // eslint-disable-next-line react-hooks/exhaustive-deps
   []);
 

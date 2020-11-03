@@ -64,9 +64,12 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
   );
 };
 
-const calcPageBarSubtitleStyles = makeStyles(({
+const calcPageBarSubtitleStyles = makeStyles(theme => ({
   subtitle: {
     display: 'flex',
+  },
+  celigoTimeAgo: {
+    marginRight: theme.spacing(0.5),
   },
 }));
 const CalcPageBarSubtitle = ({flowId}) => {
@@ -84,7 +87,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
 
   return (
     <div className={classes.subtitle}>
-      Last saved:{' '}
+      <span className={classes.celigoTimeAgo}>Last saved:</span>
       {isNewFlow ? (
         'Never'
       ) : (
