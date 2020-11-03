@@ -8,7 +8,7 @@ const useStyles = makeStyles(() => ({
   editorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
     height: '50vh',
-    width: '65vh',
+    overflowX: 'hidden',
   },
 }));
 
@@ -22,7 +22,9 @@ export default function EditorModal(props) {
   return (
     <ModalDialog
       show
-      handleClose={handleClose}
+      minWidth="sm"
+      maxWidth="md"
+      onClose={handleClose}
       aria-labelledby="form-dialog-title">
       <div>{label}</div>
       <div className={classes.editorContainer}>
