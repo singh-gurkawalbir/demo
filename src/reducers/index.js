@@ -5382,10 +5382,10 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
     type: 'integrations',
   }).resources;
   const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
-  const hasConnectorLicenses = userLicenses.some(license => license.type === 'connector');
+  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
   const hasConnectors = integrations.some(integration => !!integration._connectorId);
 
-  return !(hasConnectors || hasConnectorLicenses);
+  return !(hasConnectors || hasValidConnectorLicenses);
 };
 
 /**
