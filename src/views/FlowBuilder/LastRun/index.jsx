@@ -9,8 +9,6 @@ import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
-    width: 1,
-    height: 25,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: theme.spacing(0, 1, 0, 1),
   },
