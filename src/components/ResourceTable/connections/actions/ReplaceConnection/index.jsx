@@ -21,11 +21,10 @@ export default {
   component: function ReplaceConnections({ rowData = {} }) {
     const { _id: connectionId } = rowData;
     const history = useHistory();
-
     const match = useRouteMatch();
 
     useEffect(() => {
-      history.replace(`${match.url}/replaceConnection/${connectionId}`);
+      history.push(`${match.url}/replaceConnection/${connectionId}`);
     }, [history, connectionId, match.url]);
 
     return null;

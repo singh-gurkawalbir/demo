@@ -96,7 +96,7 @@ export default function DynaSettings(props) {
       );
     }
 
-    return <RawView {...props} saveMode="json" />;
+    return <RawView {...props} />;
   }
 
   if (fieldsOnly) return renderSettings();

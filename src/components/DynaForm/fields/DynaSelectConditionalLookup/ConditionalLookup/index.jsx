@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../../reducers';

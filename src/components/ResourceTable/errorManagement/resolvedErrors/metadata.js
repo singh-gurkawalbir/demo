@@ -41,7 +41,7 @@ export default {
     {
       heading: 'Resolved by',
       width: '15%',
-      value: r => <UserName userId={r.resolvedBy} />,
+      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
     },
     {
       heading: 'Resolved at',

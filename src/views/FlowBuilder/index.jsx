@@ -8,6 +8,7 @@ import MappingDrawerRoute from '../MappingDrawer';
 import BottomDrawer from './drawers/BottomDrawer';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
 import ChartsDrawer from './drawers/LineGraph';
+import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import FlowBuilderBody from './FlowBuilderBody';
@@ -47,27 +48,23 @@ function FlowBuilder() {
   return (
     <LoadResources required resources="imports, exports, flows">
       <Redirection>
-        <ResourceDrawer
-          flowId={flowId}
-          integrationId={integrationId}
-      />
-
+        <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
+        <QueuedJobsDrawer />
+        <ErrorDetailsDrawer flowId={flowId} />
         <SettingsDrawer
           integrationId={integrationId}
           resourceType="flows"
           resourceId={flowId}
+          flowId={flowId} />
+        <ReplaceConnectionDrawer
           flowId={flowId}
-      />
-        <QueuedJobsDrawer />
-
-        <ErrorDetailsDrawer flowId={flowId} />
+          integrationId={integrationId}
+          childId={childId} />
 
         <FBComponent flowId={flowId} integrationId={integrationId} childId={childId} />
-        <MappingDrawerRoute
-          integrationId={integrationId}
-      />
+        <MappingDrawerRoute integrationId={integrationId} />
       </Redirection>
     </LoadResources>
   );

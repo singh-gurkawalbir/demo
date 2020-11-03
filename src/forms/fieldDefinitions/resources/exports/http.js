@@ -25,9 +25,9 @@ export default {
       {
         items: [
           { label: 'XML', value: 'xml' },
-          { label: 'URL ENCODED', value: 'urlencoded' },
+          { label: 'URL Encoded', value: 'urlencoded' },
           { label: 'JSON', value: 'json' },
-          { label: 'FORM DATA', value: 'form-data' },
+          { label: 'Multipart/form-data', value: 'form-data' },
         ],
       },
     ],

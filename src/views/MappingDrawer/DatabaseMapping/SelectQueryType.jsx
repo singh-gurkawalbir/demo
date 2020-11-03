@@ -17,22 +17,14 @@ const useStyles = makeStyles(theme => ({
   text: {
     marginBottom: theme.spacing(3),
   },
-  stepTitle: {
-    margin: theme.spacing(2, 0),
-    fontWeight: 'bold',
-  },
-  divider: {
-    margin: theme.spacing(1, 0),
-  },
 }));
 
 const emptySet = [];
 export default function SelectQueryType() {
   const match = useRouteMatch();
-
+  const classes = useStyles();
   const {importId} = match.params;
 
-  const classes = useStyles();
   const queryTypes = useSelector(
     state => {
       const importResource = selectors.resource(state, 'imports', importId);
