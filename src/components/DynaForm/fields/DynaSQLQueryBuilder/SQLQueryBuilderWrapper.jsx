@@ -8,7 +8,6 @@ import { getDefaultData } from '../../../../utils/sampleData';
 import { getUnionObject } from '../../../../utils/jsonPaths';
 import { getUniqueFieldId } from '../../../../utils/resource';
 import DynaLookupEditor from '../DynaLookupEditor';
-import useFormContext from '../../../Form/FormContext';
 
 export default function SQLQueryBuilderWrapper(props) {
   const {
@@ -31,7 +30,6 @@ export default function SQLQueryBuilderWrapper(props) {
     enableEditorV2,
   } = props;
   const fieldType = getUniqueFieldId(id || fieldId);
-  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
     ? value[querySetPos]
@@ -73,14 +71,14 @@ export default function SQLQueryBuilderWrapper(props) {
           resourceId,
           resourceType,
           stage: stage || 'flowInput',
-          formValues: formContext.value,
+          formKey: props.formKey,
           fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, flowId, resourceId, resourceType, formContext.value, fieldType, isEditorV2Supported]
+    [dispatch, flowId, resourceId, props.formKey, resourceType, fieldType, isEditorV2Supported]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
