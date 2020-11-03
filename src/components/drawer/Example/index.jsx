@@ -13,8 +13,6 @@ const useStyles = makeStyles(
     spaceBetween: { flexGrow: 100 },
   });
 
-const rootPath = 'example';
-
 function RouterWrappedContent() {
   const match = useRouteMatch();
 
@@ -48,7 +46,7 @@ export default function ExampleDrawer() {
   const classes = useStyles();
 
   return (
-    <RightDrawer path={rootPath}>
+    <RightDrawer path="example">
       <DrawerHeader title="Example Drawer">
         <Spinner size={16} /> Refreshing
         <div className={classes.spaceBetween} />

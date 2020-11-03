@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
+import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
@@ -49,6 +50,8 @@ function FlowBuilder() {
     <LoadResources required resources="imports, exports, flows">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
+        <ConfigConnectionDebugger />
+
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
         <QueuedJobsDrawer />

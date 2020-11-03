@@ -8,15 +8,13 @@ import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/connections/metadata';
 import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
 import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
-import {
-  isTradingPartnerSupported,
-  generateNewId,
-} from '../../../../../utils/resource';
+import { isTradingPartnerSupported, generateNewId } from '../../../../../utils/resource';
+import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -140,6 +138,8 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
           }}
         />
       </LoadResources>
+
+      <ConfigConnectionDebugger />
     </div>
   );
 }

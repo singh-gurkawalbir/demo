@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import { generateNewId,
-  isTradingPartnerSupported,
-} from '../../../../../utils/resource';
+import actions from '../../../../../actions';
+import { generateNewId, isTradingPartnerSupported } from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -15,7 +13,7 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
+import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -153,6 +151,8 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           }}
         />
       </LoadResources>
+
+      <ConfigConnectionDebugger />
     </div>
   );
 }

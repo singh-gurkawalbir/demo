@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../../../reducers';
-import ConfigureDebugger from '../../../../ConfigureDebugger';
 import DebugIcon from '../../../../icons/DebugIcon';
 
 export default {
@@ -18,24 +18,15 @@ export default {
 
     return hasAccess;
   },
-  component: function ConfigDebugger({ rowData = {} }) {
-    const { _id: connectionId, name: connectionName, debugDate } = rowData;
-    const [show, setShow] = useState(true);
-    const handleConfigDebuggerClose = useCallback(() => {
-      setShow(false);
+  component: function Edit({rowData}) {
+    const history = useHistory();
+    const match = useRouteMatch();
+
+    useEffect(() => {
+      history.push(`${match.url}/configDebugger/${rowData._id}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return (
-      <>
-        {show && (
-          <ConfigureDebugger
-            id={connectionId}
-            name={connectionName}
-            debugDate={debugDate}
-            onClose={handleConfigDebuggerClose}
-          />
-        )}
-      </>
-    );
+    return null;
   },
 };
