@@ -108,6 +108,8 @@ function PreviewInfo({
     }
   }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
 
+  // on close of the panel, updates record size to default
+  // remove this action, if in future we need to retain record size
   useEffect(() =>
     () => dispatch(actions.sampleData.patch(resourceId, {
       recordSize: DEFAULT_RECORD_SIZE,
