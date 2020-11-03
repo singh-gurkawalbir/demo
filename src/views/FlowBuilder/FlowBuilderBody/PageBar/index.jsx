@@ -93,7 +93,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
       ) : (
         <CeligoTimeAgo date={flow.lastModified} />
       )}
-      {!isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
+      {isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
     </div>
   );
 };

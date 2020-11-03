@@ -259,7 +259,7 @@ export default function MappingRow({
           />
 
           {(isSubRecordMapping || isNotEditable) && (
-            <span className={clsx(classes.lockIcon, {[classes.lockedIcon]: isLookup || isMultiField || isHardCodedValue})}>
+            <span className={classes.lockIcon}>
               <LockIcon />
             </span>
           )}
