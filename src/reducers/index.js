@@ -5370,8 +5370,8 @@ selectors.hasManageIntegrationAccess = (state, integrationId) => {
   const userPermissions = selectors.userPermissions(state);
   const integrationPermissions = userPermissions.integrations;
 
-  if (!integrationId) {
-    return manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel);
+  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
+    return true;
   }
 
   return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);

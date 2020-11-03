@@ -39,11 +39,13 @@ const PARSERS = {
 };
 
 function* getPreviewData({ resourceId, resourceType, values, runOffline }) {
-  let body = yield call(constructResourceFromFormValues, {
+  const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
     formValues: values,
     resourceId,
     resourceType,
-  });
+  }) || {};
+
+  let body = constructedResourceObj;
 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   // Example: "type": "once" should not be sent while previewing
@@ -270,15 +272,16 @@ export function* requestExportSampleData({
   }
 }
 
-// TODO @Raghu: Merge this into existing requestSampleData
 function* requestLookupSampleData({ resourceId, flowId, formValues }) {
   const resourceType = 'exports';
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId) || DEFAULT_RECORD_SIZE;
-  let _pageProcessorDoc = yield call(constructResourceFromFormValues, {
+  const { transform, filter, hooks, ...constructedResourceObj } = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
     resourceType,
-  });
+  }) || {};
+
+  let _pageProcessorDoc = constructedResourceObj;
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
   if (_pageProcessorDoc.oneToMany) {

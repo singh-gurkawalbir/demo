@@ -50,7 +50,7 @@ export default {
     skipDefault: true,
     connectionId: r => r?._connectionId,
     connectorId: r => r?._connectorId,
-    visible: r => r?.adaptorType !== 'WebhookExport',
+    visible: r => r?.adaptorType !== 'WebhookExport' && r?.type !== 'simple',
     defaultValue: r => r?._connectionId,
     integrationId: r => r?._integrationId,
   },
