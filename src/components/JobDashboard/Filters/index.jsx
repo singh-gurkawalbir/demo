@@ -104,6 +104,7 @@ export default function Filters({
   numRetriableJobsSelected = 0,
   disableRetry = true,
   disableResolve = true,
+  isFlowBuilderView = false,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -176,9 +177,11 @@ export default function Filters({
           <MenuItem value="" disabled>
             Retry
           </MenuItem>
-          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![null, undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >All enabled flow jobs</MenuItem>
+          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![null, undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >
+            {isFlowBuilderView ? 'All jobs' : 'All enabled flow jobs'}
+          </MenuItem>
           <MenuItem disabled={numRetriableJobsSelected === 0} value="retrySelected">
-            {numRetriableJobsSelected} selected enabled flow jobs
+            {numRetriableJobsSelected} {isFlowBuilderView ? 'selected jobs' : 'selected enabled flow jobs'}
           </MenuItem>
         </CeligoSelect>
 

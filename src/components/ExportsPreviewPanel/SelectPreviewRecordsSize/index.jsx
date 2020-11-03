@@ -23,7 +23,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
   const onRecordChange = useCallback((_id, value) => {
     const isValidNumber = /^[0-9]*$/.test(value);
     const size = parseInt(value, 10);
-    const sizeLimitExceeds = size < 0 || size > 100;
+    const sizeLimitExceeds = size < 1 || size > 100;
     const isValid = isValidNumber && !sizeLimitExceeds;
 
     setRecordSize(value);
@@ -32,7 +32,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       setErrorMessage('');
       patchRecordSize(size);
     } else {
-      setErrorMessage(isValidNumber ? 'Invalid Size' : 'Max value is 100');
+      setErrorMessage(sizeLimitExceeds ? "Value can't exceed 100." : 'Invalid size.');
     }
   }, [setIsValidRecordSize, patchRecordSize]);
 
@@ -51,6 +51,7 @@ export default function SelectPreviewRecordsSize({ isValidRecordSize, setIsValid
       isValid={isValidRecordSize}
       id="record-size"
       label="Number of records"
+      helpKey="previewPanelRecords"
       value={recordSize}
       options={recordSizeOptions}
       onFieldChange={onRecordChange}

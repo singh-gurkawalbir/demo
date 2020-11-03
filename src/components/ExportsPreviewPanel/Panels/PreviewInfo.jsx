@@ -24,7 +24,10 @@ const useStyles = makeStyles(theme => ({
       content: '""',
       width: 5,
       height: '100%',
-      backgroundColor: props => props.resourceSampleData.status === 'error' ? theme.palette.error.main : theme.palette.success.main,
+      backgroundColor: props =>
+        (props.showPreviewData && props.resourceSampleData.status === 'error')
+          ? theme.palette.error.main
+          : theme.palette.success.main,
       position: 'absolute',
       left: 0,
       top: 0,
@@ -49,6 +52,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     position: 'relative',
     width: '100%',
+    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
   },
 
   previewBtn: {
@@ -65,8 +69,8 @@ const useStyles = makeStyles(theme => ({
   },
   recordSize: {
     padding: theme.spacing(0, 1, 0, 1),
-    width: theme.spacing(20),
-    minWidth: theme.spacing(20),
+    width: theme.spacing(22),
+    minWidth: theme.spacing(22),
   },
 }));
 
@@ -78,6 +82,7 @@ export default function PreviewInfo(props) {
     disabled,
     resourceId,
     resourceType,
+    showPreviewData,
   } = props;
   const classes = useStyles(props);
   const [isValidRecordSize, setIsValidRecordSize] = useState(true);
@@ -139,6 +144,8 @@ export default function PreviewInfo(props) {
     },
     [fetchExportPreviewData, isValidRecordSize, enquesnackbar],
   );
+  const disablePreview = showPreviewData &&
+    (disabled || resourceSampleData.status === 'requested');
 
   return (
     <div className={classes.previewContainer}>
@@ -149,27 +156,32 @@ export default function PreviewInfo(props) {
             color="secondary"
             className={classes.previewBtn}
             onClick={handlePreview}
-            disabled={disabled || resourceSampleData.status === 'requested'}
+            disabled={disablePreview}
             data-test="fetch-preview">
             Preview <ArrowRightIcon />
           </IconTextButton>
         </div>
         { canSelectRecords &&
-        (
-        <div className={classes.recordSize}>
-          <SelectPreviewRecordsSize
-            isValidRecordSize={isValidRecordSize}
-            setIsValidRecordSize={setIsValidRecordSize}
-            resourceId={resourceId}
-           />
-        </div>
-        ) }
-        <div className={classes.previewDataRight}>
-          {sampleDataStatus && <div> {sampleDataStatus}</div>}
-          {sampleDataOverview && (
-            <div className={classes.msgSuccess}>{sampleDataOverview} </div>
+          (
+            <div className={classes.recordSize}>
+              <SelectPreviewRecordsSize
+                isValidRecordSize={isValidRecordSize}
+                setIsValidRecordSize={setIsValidRecordSize}
+                resourceId={resourceId}
+              />
+            </div>
           )}
-        </div>
+        {
+          showPreviewData &&
+          (
+            <div className={classes.previewDataRight}>
+              {sampleDataStatus && <div> {sampleDataStatus}</div>}
+              {sampleDataOverview && (
+              <div className={classes.msgSuccess}>{sampleDataOverview} </div>
+              )}
+            </div>
+          )
+        }
       </div>
     </div>
   );
