@@ -90,6 +90,9 @@ export default {
       newValues['/file/compressionFormat'] = undefined;
     }
 
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
+    }
     delete newValues['/file/compressFiles'];
     delete newValues['/inputMode'];
 
