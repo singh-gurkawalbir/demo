@@ -70,6 +70,9 @@ const useStyles = makeStyles(theme => ({
     top: 6,
     color: theme.palette.text.hint,
   },
+  lockedIcon: {
+    right: 40,
+  },
   deleteBtn: {
     border: 'none',
     width: 0,
@@ -187,11 +190,11 @@ export default function MappingRow({
   [dispatch, extract, generate, mapping, mappingKey]
   );
 
-  const RightIcon = ({title, Icon}) => (
+  const RightIcon = ({title, Icon, className}) => (
     <Tooltip
       title={title}
       placement="bottom">
-      <span className={classes.lockIcon}>
+      <span className={clsx(classes.lockIcon, className)}>
         <Icon />
       </span>
     </Tooltip>
@@ -256,7 +259,7 @@ export default function MappingRow({
           />
 
           {(isSubRecordMapping || isNotEditable) && (
-            <span className={classes.lockIcon}>
+            <span className={clsx(classes.lockIcon, {[classes.lockedIcon]: isLookup || isMultiField || isHardCodedValue})}>
               <LockIcon />
             </span>
           )}
@@ -288,7 +291,7 @@ export default function MappingRow({
                   ? 'Subrecord mapping'
                   : 'This field is required by the application you are importing into'
               }`}
-              Icon={LockIcon} />
+              Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isMultiField || isHardCodedValue})} />
           )}
         </div>
         <div className={classes.actionsMapping}>
