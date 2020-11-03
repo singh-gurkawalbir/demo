@@ -479,7 +479,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
     [, integrationId] = newurl;
   }
 
-  if (integrationId && integrations.find(i => i._id === integrationId)) {
+  if (integrationId && integrations && integrations.find(i => i._id === integrationId)) {
     connectorId = integrations.find(i => i._id === integrationId)._connectorId;
 
     const connectorHelpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);

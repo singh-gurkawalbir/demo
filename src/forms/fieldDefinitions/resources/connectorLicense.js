@@ -17,6 +17,7 @@ export default {
   sandbox: {
     type: 'checkbox',
     label: 'Sandbox',
+    defaultDisabled: r => !isNewId(r._id),
   },
   email: {
     defaultValue: r => r.user && r.user.email,

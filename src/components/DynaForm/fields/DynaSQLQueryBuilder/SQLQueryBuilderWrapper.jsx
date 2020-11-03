@@ -97,7 +97,7 @@ export default function SQLQueryBuilderWrapper(props) {
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
-      return modelMetadata;
+      return sampleData.templateVersion === 2 ? {record: {...modelMetadata}} : {data: {...modelMetadata}};
     }
     let defaultData = {};
     const {data} = sampleData;
@@ -123,6 +123,8 @@ export default function SQLQueryBuilderWrapper(props) {
 
           if (parsedDefaultData.data) {
             onFieldChange('modelMetadata', parsedDefaultData.data);
+          } else if (parsedDefaultData.record) {
+            onFieldChange('modelMetadata', parsedDefaultData.record);
           }
         } catch (e) { // do nothing }
         }

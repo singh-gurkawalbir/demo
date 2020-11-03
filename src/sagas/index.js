@@ -8,6 +8,7 @@ import {
   race,
   delay,
   spawn,
+  fork,
   cancelled,
 } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
@@ -30,7 +31,7 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas, initializeLogRocket } from './authentication';
+import { authenticationSagas, initializeApp, initializeLogrocket } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -117,18 +118,6 @@ export function* apiCallWithRetry(args) {
 }
 
 function* allSagas() {
-  yield createRequestInstance({
-    driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this polyfill package
-      // that it would resort to
-      // TODO: Have to check if it works in an IE explorer
-      AbortController: window.AbortController,
-    }),
-    onRequest: onRequestSaga,
-    onSuccess: onSuccessSaga,
-    onError: onErrorSaga,
-    onAbort: onAbortSaga,
-  });
   yield all([
     ...resourceSagas,
     ...connectorSagas,
@@ -169,20 +158,42 @@ function* allSagas() {
     ...editorSampleData,
   ]);
 }
-// this saga basically restarts the root saga
+
 export default function* rootSaga() {
-  // both logout and logrocket init requires to abort all sagas and start over
+  yield createRequestInstance({
+    driver: createDriver(window.fetch, {
+      // AbortController Not supported in IE installed this polyfill package
+      // that it would resort to
+      // TODO: Have to check if it works in an IE explorer
+      AbortController: window.AbortController,
+    }),
+    onRequest: onRequestSaga,
+    onSuccess: onSuccessSaga,
+    onError: onErrorSaga,
+    onAbort: onAbortSaga,
+  });
+  const t = yield fork(allSagas);
   const {logrocket, logout} = yield race({
-    mainSaga: call(allSagas),
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
     logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
   });
 
-  if (logrocket || logout) {
-    // logrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
-    if (logrocket) yield call(initializeLogRocket);
+  if (logrocket) {
+    // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
+    t.cancel();
+    yield call(initializeLogrocket);
+    // yield requestWrapper();
+    yield spawn(rootSaga);
+    // initializeApp must be called(again) after initilizeLogrocket and saga restart
+    // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
+    // from within sagas/authentication/index.js
+    yield call(initializeApp, logrocket.opts);
+  }
+  if (logout) {
+    // stop the main sagas
+    t.cancel();
     // logout requires also reset the store
-    if (logout) yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore());
     // restart the root saga again
     yield spawn(rootSaga);
   }

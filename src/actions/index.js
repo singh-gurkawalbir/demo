@@ -101,7 +101,7 @@ const auth = {
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
-  abortAllSagasAndInitLR: () => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+  abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
   abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
@@ -1245,13 +1245,13 @@ const user = {
   },
 };
 const sampleData = {
-  request: (resourceId, resourceType, values, stage, runOffline) =>
+  request: (resourceId, resourceType, values, stage, options = {}) =>
     action(actionTypes.SAMPLEDATA.REQUEST, {
       resourceId,
       resourceType,
       values,
       stage,
-      runOffline,
+      options,
     }),
   requestLookupPreview: (resourceId, flowId, formValues) =>
     action(actionTypes.SAMPLEDATA.LOOKUP_REQUEST, {
@@ -1263,6 +1263,8 @@ const sampleData = {
     action(actionTypes.SAMPLEDATA.RECEIVED, { resourceId, previewData }),
   update: (resourceId, processedData, stage) =>
     action(actionTypes.SAMPLEDATA.UPDATE, { resourceId, processedData, stage }),
+  patch: (resourceId, patch) =>
+    action(actionTypes.SAMPLEDATA.PATCH, { resourceId, patch }),
   receivedError: (resourceId, error, stage) =>
     action(actionTypes.SAMPLEDATA.RECEIVED_ERROR, { resourceId, error, stage }),
   reset: resourceId => action(actionTypes.SAMPLEDATA.RESET, { resourceId }),

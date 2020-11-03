@@ -40,7 +40,8 @@ export default function ChipInput(props) {
       {isChipView && (
         <Chip
           {...props}
-          onClick={!disabled && handleTagClick}
+          onClick={disabled ? () => {} : handleTagClick}
+          clickable={!disabled}
           label={tag || 'tag'}
           size="small"
           icon={<EditIcon />}
