@@ -274,6 +274,7 @@ export function* newIAFrameWorkPayload({ resourceId }) {
     selectors.stagedResource,
     resourceId
   );
+  // TO DO: Ashok Needs to refactor this code
 
   if (
     allPatches &&
