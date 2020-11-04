@@ -27,12 +27,12 @@ function OAuthButton(props) {
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const { iClients } = useLoadIClientOnce({
-    connectionId: resource._id,
+    connectionId: resource._id || resourceId,
     disableLoad:
       !resource._connectorId ||
       !(
         ['shopify', 'squareup'].includes(resource.assistant) ||
-        (resource.type === 'salesforce')
+        (resource.type === 'salesforce' && resource.newIA)
       ),
   });
   const handleSaveAndAuthorizeConnection = useCallback(
@@ -48,7 +48,7 @@ function OAuthButton(props) {
         newValues['/http/_iClientId'] =
           iClients && iClients[0] && iClients[0]._id;
       } else if (
-        resource._connectorId &&
+        resource._connectorId && resource.newIA &&
         resource.type === 'salesforce'
       ) {
         newValues['/salesforce/_iClientId'] =
@@ -68,6 +68,7 @@ function OAuthButton(props) {
       resource._connectorId,
       resource.assistant,
       resource.type,
+      resource.newIA,
       resourceId,
     ]
   );

@@ -55,7 +55,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
-    defaultDisabled: r => !!r._connectorId,
+    defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
   application: {
