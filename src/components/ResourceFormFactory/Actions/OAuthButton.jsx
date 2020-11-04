@@ -32,7 +32,7 @@ function OAuthButton(props) {
       !resource._connectorId ||
       !(
         ['shopify', 'squareup'].includes(resource.assistant) ||
-        (resource.type === 'salesforce' && resource.newIA)
+        (resource.type === 'salesforce')
       ),
   });
   const handleSaveAndAuthorizeConnection = useCallback(
@@ -49,7 +49,6 @@ function OAuthButton(props) {
           iClients && iClients[0] && iClients[0]._id;
       } else if (
         resource._connectorId &&
-        resource.newIA &&
         resource.type === 'salesforce'
       ) {
         newValues['/salesforce/_iClientId'] =
@@ -68,7 +67,6 @@ function OAuthButton(props) {
       iClients,
       resource._connectorId,
       resource.assistant,
-      resource.newIA,
       resource.type,
       resourceId,
     ]
