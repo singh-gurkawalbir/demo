@@ -5408,7 +5408,10 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
 
   if (isExportPreviewDisabled) return false;
   const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+  // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
+  // it is realtime incase of new export for realtime adaptors
 
+  if (resource?.resourceType === 'realtime') return false;
   if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
 
   return true;
