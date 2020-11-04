@@ -5,7 +5,7 @@ import LoadResources from '../../../components/LoadResources';
 import DashboardCard from '../DashboardCard';
 import { sortTiles } from '../util';
 import { selectors } from '../../../reducers';
-import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { useSelectorMemo } from '../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -29,6 +29,7 @@ export default function DashboardTiles() {
   const classes = useStyles();
   const tilesOrder = useSelector(
     state => selectors.userPreferences(state)?.dashboard?.tilesOrder);
+
   const tiles = useSelectorMemo(selectors.mkTiles);
   const suiteScriptLinkedTiles = useSelectorMemo(selectors.mkSuiteScriptLinkedTiles);
   const sortedTiles = useMemo(

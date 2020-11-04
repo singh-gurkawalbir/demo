@@ -12,17 +12,28 @@ const formatter = (value, unit, suffix, epochSeconds, nextFormatter) => {
   return nextFormatter();
 };
 
+function LocalDateTime({ date }) {
+  const { dateFormat, timeFormat, timezone } = useSelector(state => {
+    if (!date) return null;
+    const userPref = selectors.userProfilePreferencesProps(state);
+
+    return {
+      dateFormat: userPref.dateFormat,
+      timeFormat: userPref.timeFormat,
+      timezone: userPref.timezone,
+    };
+  }, shallowEqual);
+
+  return useMemo(() => date ? convertUtcToTimezone(date, dateFormat, timeFormat, timezone) : '', [dateFormat, timeFormat, timezone, date]);
+}
+
 export default function CeligoTimeAgo(props) {
-  const { dateFormat, timeFormat, timezone } = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-
-  const lastModifiedInUserFormat = useMemo(() => props.date ? convertUtcToTimezone(props.date, dateFormat, timeFormat, timezone) : '', [dateFormat, timeFormat, timezone, props.date]);
-
   if (!props.date) {
     return null;
   }
 
   return (
-    <Tooltip title={lastModifiedInUserFormat}>
+    <Tooltip title={<LocalDateTime date={props.date} />}>
       <TimeAgo {...props} formatter={formatter} />
     </Tooltip>
   );

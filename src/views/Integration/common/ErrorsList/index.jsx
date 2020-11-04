@@ -15,6 +15,7 @@ import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
+import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -43,7 +44,8 @@ const metadata = {
     },
     {
       heading: 'Flow step',
-      value: r => r.name,
+      value: r => <OverflowWrapper message={r.name} />,
+      width: '35%',
     },
     {
       heading: 'Errors',
@@ -127,7 +129,7 @@ const ErrorsList = ({integrationId, childId}) => {
     'flows',
     flowId
   );
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
 
   const resources = useMemo(() => flowResources

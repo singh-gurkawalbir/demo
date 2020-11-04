@@ -21,6 +21,7 @@ import ErrorsListDrawer from '../../../common/ErrorsList';
 import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import SpinnerWrapper from '../../../../../components/SpinnerWrapper';
 import Spinner from '../../../../../components/Spinner';
+import { getTemplateUrlName } from '../../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -142,6 +143,15 @@ export default function FlowsPanel({ integrationId, childId }) {
     ),
     [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
   );
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
+  const templateName = useSelector(state => {
+    if (!integration || !integration._templateId) return null;
+    const t = selectors.resource(state, 'marketplacetemplates', integration._templateId);
+
+    return getTemplateUrlName(t && t.applications);
+  });
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
   const actionProps = useMemo(() => (
     {
       parentId: integrationId,
@@ -149,7 +159,11 @@ export default function FlowsPanel({ integrationId, childId }) {
       isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
-    }), [childId, integrationId, isIntegrationApp, isUserInErrMgtTwoDotZero]);
+      appName,
+      flowAttributes,
+      integration,
+      templateName,
+    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (

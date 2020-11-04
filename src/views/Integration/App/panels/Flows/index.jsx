@@ -28,6 +28,7 @@ import QueuedJobsDrawer from '../../../../../components/JobDashboard/QueuedJobs/
 import StatusCircle from '../../../../../components/StatusCircle';
 import { getEmptyMessage, isParentViewSelected } from '../../../../../utils/integrationApps';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import { getTemplateUrlName } from '../../../../../utils/template';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -151,6 +152,25 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
+  const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
+  const templateName = useSelector(state => {
+    if (!integration || !integration._templateId) return null;
+    const t = selectors.resource(state, 'marketplacetemplates', integration._templateId);
+
+    return getTemplateUrlName(t && t.applications);
+  });
+  const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
+  const flowAttributes = useSelectorMemo(selectors.mkFlowAttributes, flows, integration);
+  const actionProps = useMemo(() => ({
+    isIntegrationApp: true,
+    storeId,
+    resourceType: 'flows',
+    isUserInErrMgtTwoDotZero,
+    appName,
+    flowAttributes,
+    integration,
+    templateName,
+  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
@@ -202,7 +222,7 @@ function FlowList({ integrationId, storeId }) {
         data={flows}
         filterKey={filterKey}
         {...flowTableMeta}
-        actionProps={{ isIntegrationApp: true, storeId, resourceType: 'flows', isUserInErrMgtTwoDotZero }}
+        actionProps={actionProps}
         />
     </LoadResources>
   );

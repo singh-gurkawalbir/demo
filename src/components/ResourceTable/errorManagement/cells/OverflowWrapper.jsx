@@ -7,6 +7,7 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     overflowY: 'auto',
     maxHeight: 90,
+    wordBreak: 'break-word',
   },
   message: {
     height: '100%',
