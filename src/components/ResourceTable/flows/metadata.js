@@ -55,7 +55,7 @@ export default {
       },
       {
         heading: 'Last updated',
-        value: r => <CeligoTimeAgo date={r.lastModified} actionProps={actionProps} />,
+        value: r => <CeligoTimeAgo date={r.lastModified} />,
         orderBy: 'lastModified',
       },
       {

@@ -35,10 +35,10 @@ export default function StatusCell({
       return latestFlowJobs.find(job => job._flowId === flowId);
     }
   });
-  const isUserInErrMgtTwoDotZero = actionProps?.isUserInErrMgtTwoDotZero;
+  const {isUserInErrMgtTwoDotZero} = actionProps;
 
   if (!job || !isUserInErrMgtTwoDotZero) {
-    return <CeligoTimeAgo date={date} actionProps={actionProps} />;
+    return <CeligoTimeAgo date={date} />;
   }
   if (['completed', 'canceled', 'failed'].includes(job.status)) {
     return <CeligoTimeAgo date={job.lastExecutedAt} />;

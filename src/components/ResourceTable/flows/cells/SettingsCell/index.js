@@ -6,7 +6,7 @@ import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default function SettingsCell({flowId, name, actionProps}) {
   const history = useHistory();
-  const showSettings = actionProps?.flowAttributes?.[flowId]?.supportsSettings;
+  const showSettings = actionProps.flowAttributes[flowId]?.supportsSettings;
 
   if (!showSettings) return null;
 

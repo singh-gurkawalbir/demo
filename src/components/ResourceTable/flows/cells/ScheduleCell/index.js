@@ -7,8 +7,7 @@ import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
 export default function ScheduleCell({flowId, name, actionProps}) {
   const history = useHistory();
-  const allowSchedule = actionProps?.flowAttributes?.[flowId]?.allowSchedule;
-  const type = actionProps?.flowAttributes?.[flowId]?.type;
+  const { allowSchedule, type } = (actionProps.flowAttributes[flowId] || {});
 
   if (!allowSchedule) {
     if (type !== 'Scheduled') {

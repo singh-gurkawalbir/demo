@@ -143,7 +143,6 @@ export default function FlowsPanel({ integrationId, childId }) {
     ),
     [classes.divider, classes.errorStatus, classes.flowsPanelWithStatus, currentTileErrorCount, totalErrors]
   );
-  const userProfilePreferencesProps = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {
     if (!integration || !integration._templateId) return null;
@@ -160,12 +159,11 @@ export default function FlowsPanel({ integrationId, childId }) {
       isIntegrationApp,
       resourceType: 'flows',
       isUserInErrMgtTwoDotZero,
-      userProfilePreferencesProps,
       appName,
       flowAttributes,
       integration,
       templateName,
-    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, userProfilePreferencesProps, appName, flowAttributes, integration, templateName]);
+    }), [integrationId, childId, isIntegrationApp, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
 
   if (!flowErrorCountStatus && isUserInErrMgtTwoDotZero) {
     return (

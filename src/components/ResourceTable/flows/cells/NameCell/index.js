@@ -34,8 +34,8 @@ export default function NameCell({
   actionProps,
 }) {
   const classes = useStyles();
-  const isDataLoader = !!actionProps?.flowAttributes?.[flowId]?.isDataLoader;
-  const appName = actionProps?.appName;
+  const isDataLoader = !!actionProps.flowAttributes[flowId]?.isDataLoader;
+  const {appName} = actionProps;
 
   const flowName = name || `Unnamed (id: ${flowId})`;
   const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {childId, isIntegrationApp, appName, isDataLoader});

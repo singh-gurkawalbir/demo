@@ -615,17 +615,17 @@ selectors.flowDetails = (state, id) => {
 };
 
 selectors.mkFlowDetails = () => {
-  const resource = selectors.makeResourceSelector();
-  const integrationResource = selectors.makeResourceSelector();
+  const resourceSel = selectors.makeResourceSelector();
+  const integrationResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, id) => resource(state?.data?.resources, 'flows', id),
+    (state, id) => resourceSel(state, 'flows', id),
     (state, id) => {
-      const flow = resource(state, 'flows', id);
+      const flow = resourceSel(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return null;
 
-      return integrationResource(state, 'integrations', flow._integrationId);
+      return integrationResourceSel(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
     (flow, integration, exports) => {
@@ -705,7 +705,7 @@ selectors.mkFlowAttributes = () => createSelector(
 
 selectors.flowType = (state, flowId) => {
   const flow = selectors.resource(state, 'flows', flowId);
-  const exports = state && state.data && state.data.resources.exports;
+  const exports = state?.data?.resources?.exports;
 
   return getFlowType(flow, exports);
 };
@@ -715,21 +715,21 @@ selectors.flowType = (state, flowId) => {
 // // for the current purpose, we just need to know if a flow allows or doesn't allow
 // // schedule editing.
 selectors.mkFlowAllowsScheduling = () => {
-  const resource = selectors.makeResourceSelector();
-  const integrationResource = selectors.makeResourceSelector();
+  const resourceSel = selectors.makeResourceSelector();
+  const integrationResourceSel = selectors.makeResourceSelector();
 
   return createSelector(
-    (state, id) => resource(state, 'flows', id),
+    (state, id) => resourceSel(state, 'flows', id),
     (state, id) => {
-      const flow = resource(state, 'flows', id);
+      const flow = resourceSel(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return null;
 
-      return integrationResource(state, 'integrations', flow._integrationId);
+      return integrationResourceSel(state, 'integrations', flow._integrationId);
     },
     state => state?.data?.resources?.exports,
     (state, id) => {
-      const flow = resource(state, 'flows', id);
+      const flow = resourceSel(state, 'flows', id);
 
       if (!flow || !flow._integrationId) return false;
 
@@ -773,6 +773,8 @@ selectors.flowSupportsMapping = (state, id) => {
 
 selectors.flowSupportsSettings = (state, id) => {
   const flow = selectors.resource(state, 'flows', id);
+
+  if (!flow) return false;
   const integration = selectors.resource(state, 'integrations', flow._integrationId);
 
   return flowSupportsSettings(flow, integration);

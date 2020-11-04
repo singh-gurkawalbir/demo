@@ -226,14 +226,14 @@ describe('global selectors', () => {
         actions.resource.receivedCollection('exports', exports)
       );
       state = reducer(state, actions.resource.patchStaged(1, patch));
-      const resourceData1 = selectors.makeResourceDataSelector();
-      const resourceData2 = selectors.makeResourceDataSelector();
-      const r1 = resourceData1(state, 'exports', 1);
-      const r2 = resourceData2(state, 'exports', 1);
+      const resourceDataSel1 = selectors.makeResourceDataSelector();
+      const resourceDataSel2 = selectors.makeResourceDataSelector();
+      const r1 = resourceDataSel1(state, 'exports', 1);
+      const r2 = resourceDataSel2(state, 'exports', 1);
 
       expect(r1).not.toBe(r2);
-      expect(resourceData1(state, 'exports', 1)).toBe(r1);
-      expect(resourceData2(state, 'exports', 1)).toBe(r2);
+      expect(resourceDataSel1(state, 'exports', 1)).toBe(r1);
+      expect(resourceDataSel2(state, 'exports', 1)).toBe(r2);
     });
     test('should void the cache and regenerate the same result when we received the same collection again', () => {
       const exports = [{ _id: 1, name: 'test X' }];
@@ -4283,6 +4283,29 @@ describe('integrationApp Settings reducers', () => {
           name: '5d9f70b98a71fc911a4068bd',
         },
       ]);
+    });
+  });
+
+  describe('mkFlowDetails', () => {
+    test('should work', () => {
+      const state = reducer({
+        data: {
+          resources: {
+            flows: [{
+              _id: 123,
+              name: 'aflow',
+              _integrationId: 456,
+            }],
+            integrations: [{
+              _id: 456,
+              name: 'anintegration',
+            }],
+          },
+        },
+      }, 'a');
+      const sel = selectors.mkFlowDetails();
+
+      expect(sel(state, 123)).not.toBeNull();
     });
   });
 });

@@ -13,8 +13,7 @@ export default function RunCell({
   actionProps,
 }) {
   const history = useHistory();
-  const templateName = actionProps?.templateName;
-  const appName = actionProps?.appName;
+  const { templateName, appName } = actionProps;
   const isUserInErrMgtTwoDotZero = actionProps?.isUserInErrMgtTwoDotZero;
   const handleOnRunStart = useCallback(() => {
     if (isUserInErrMgtTwoDotZero) {

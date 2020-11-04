@@ -152,7 +152,6 @@ function FlowList({ integrationId, storeId }) {
   );
   const section = flowSections.find(s => s.titleId === sectionId);
   const filterKey = `${integrationId}-flows`;
-  const userProfilePreferencesProps = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
   const integration = useSelectorMemo(selectors.makeResourceSelector, 'integrations', integrationId);
   const templateName = useSelector(state => {
     if (!integration || !integration._templateId) return null;
@@ -167,12 +166,11 @@ function FlowList({ integrationId, storeId }) {
     storeId,
     resourceType: 'flows',
     isUserInErrMgtTwoDotZero,
-    userProfilePreferencesProps,
     appName,
     flowAttributes,
     integration,
     templateName,
-  }), [storeId, isUserInErrMgtTwoDotZero, userProfilePreferencesProps, appName, flowAttributes, integration, templateName]);
+  }), [storeId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, templateName]);
 
   useEffect(() => {
     if (!isUserInErrMgtTwoDotZero) return;
