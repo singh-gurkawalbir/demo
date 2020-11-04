@@ -2972,14 +2972,7 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -2987,9 +2980,27 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
   );
   const connection = selectors.resource(state, 'connections', resource._connectionId);
 
-  // AFE 2.0 not supported for Native REST Adaptor
+  // enableEditorV2 is to force fields to show editor when
+  // the whole adaptor is not yet supported (except for native REST)
+  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
+  if (enableEditorV2) {
+    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+      return connection.isHTTP;
+    }
+
+    return true;
+  }
+
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
+  // AFE 2.0 not supported for Native REST Adaptor for any fields
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return !!connection.isHTTP;
+    return connection.isHTTP;
   }
 
   // BE doesnt support oracle and snowflake adaptor yet

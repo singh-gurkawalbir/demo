@@ -22,17 +22,11 @@ const DynaEditorWithFlowSampleData = ({
   const fieldType = getUniqueFieldId(fieldId);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
-    // enableEditorV2 is to force fields to show editor when
-    // the whole adaptor is not yet supported
-    // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-    if (enableEditorV2) {
-      return true;
-    }
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const {
     data: sampleData,
