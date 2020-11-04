@@ -18,7 +18,7 @@ export default {
 
     return hasAccess;
   },
-  component: function Edit({rowData}) {
+  component: function ConfigDebuggerAction({rowData}) {
     const history = useHistory();
     const match = useRouteMatch();
 
