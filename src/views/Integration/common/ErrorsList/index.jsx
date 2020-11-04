@@ -15,6 +15,7 @@ import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
+import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -43,7 +44,8 @@ const metadata = {
     },
     {
       heading: 'Flow step',
-      value: r => r.name,
+      value: r => <OverflowWrapper message={r.name} />,
+      width: '35%',
     },
     {
       heading: 'Errors',
