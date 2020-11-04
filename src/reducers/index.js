@@ -1176,7 +1176,8 @@ selectors.integrationAppResourceList = (
   state,
   integrationId,
   storeId,
-  tableConfig
+  tableConfig,
+  ignoreUnusedConnections
 ) => {
   if (!state) return { connections: emptySet, flows: emptySet };
 
@@ -1232,8 +1233,11 @@ selectors.integrationAppResourceList = (
     imports.push(...getImportIdsFromFlow(state, flow));
   });
 
+  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
+  const allConnections = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
+
   return {
-    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
+    connections: allConnections,
     flows,
     exports,
     imports,
@@ -1263,8 +1267,9 @@ selectors.integrationAppConnectionList = (
   state,
   integrationId,
   storeId,
-  tableConfig
-) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig)
+  tableConfig,
+  ignoreUnusedConnections
+) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig, ignoreUnusedConnections)
   .connections;
 
 selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
@@ -3090,7 +3095,7 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
   selectors.diyFlows,
   selectors.diyConnections,
   (state, _integrationId, options) =>
-    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId, null, true),
   (state, _integrationId, options) =>
   selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
   (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),

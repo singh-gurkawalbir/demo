@@ -27,7 +27,6 @@ export default {
   }) => {
     let toReturn = [];
     // eslint-disable-next-line camelcase
-    const isSS2 = !!(resource?.netsuite_da?.useSS2Restlets);
     let isItemSubtypeRecord = false;
 
     isItemSubtypeRecord =
@@ -63,7 +62,8 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // Remove [' in the start and  remove '] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
-          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+          } else if (/^\[.*]$/.test(tempFm.extract) && /\W/.test(tempFm.extract.replace(/^\[|]$/g, ''))) {
+            // If extract is wrapped with [ and ] and the wrapped content has a special character then
             // Remove [ in the start and  remove ] in the end in case of SS 2.0 imports
             tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
           }
@@ -202,7 +202,8 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // if extract starts with [' and ends with ']
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2'); // removing [' and '] at begining and end of extract that we added
-          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+          } else if (/^\[.*]$/.test(tempFm.extract) && /\W/.test(tempFm.extract.replace(/^\[|]$/g, ''))) {
+            // If extract is wrapped with [ and ] and the wrapped ccontent contains any  special character then
           // if extract starts with [ and ends with ] for a SS2.0 import
             tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2'); // removing [ and ] at begining and end of extract that we added
           } else if (
@@ -216,7 +217,8 @@ export default {
               '$1$3'
             );
           } else if (
-            /^(\*|0)\.\[.*]$/.test(tempFm.extract) && isSS2 &&
+            /^(\*|0)\.\[.*]$/.test(tempFm.extract) &&
+            /\W/.test(tempFm.extract.replace(/^([*|0]\.)(\[)(.*)(])$/, '$3')) &&
             isGroupedSampleData
           ) {
             // if import is SS2.0 and  it starts with *.[ and ends with ] or starts with 0.[ and ends with ]
@@ -239,7 +241,7 @@ export default {
           if (/^\['.*']$/.test(tempFm.extract)) {
             // Remove [' in the start and  remove '] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[')(.*)('])$/, '$2');
-          } else if (isSS2 && /^\[.*]$/.test(tempFm.extract)) {
+          } else if (/^\[.*]$/.test(tempFm.extract) && /\W/.test(tempFm.extract.replace(/^\[|]$/g, ''))) {
             // if SS2.0 then Remove [ in the start and  remove ] in the end
             tempFm.extract = tempFm.extract.replace(/^(\[)(.*)(])$/, '$2');
           }
