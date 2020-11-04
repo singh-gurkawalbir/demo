@@ -28,8 +28,6 @@ const getFieldMeta = defaultValue => ({
       name: 'debugDate',
       type: 'radiogroup',
       label: 'Debug duration',
-      // showOptionsHorizontally: true,
-      // fullWidth: true,
       options: [
         {
           items: [
@@ -89,7 +87,6 @@ function ConfigConnForm() {
   const fieldMeta = getFieldMeta(defaultVal);
 
   useForm({formKey, fieldMeta});
-  console.log(fieldMeta);
 
   return (
     <>
@@ -98,7 +95,7 @@ function ConfigConnForm() {
 
         {minutes > 1 && (
           <Typography variant="body2" className={classes.remaining}>
-            Debug mode is enabled for next {minutes} minutes.
+            Debug mode is enabled for the next {minutes} minutes.
           </Typography>
         )}
       </DrawerContent>
