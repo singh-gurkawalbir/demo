@@ -5,6 +5,8 @@ const {
   getUnionObject,
   getTransformPaths,
   pickFirstObject,
+  wrapSpecialChars,
+  getJSONPathArrayWithSpecialCharactersWrapped,
 } = require('./jsonPaths');
 
 describe('jsonPaths util function test', () => {
@@ -50,7 +52,6 @@ describe('jsonPaths util function test', () => {
         {id: '6', type: 'string'},
         {id: '7', type: 'string'},
       ]);
-      console.log(getJSONPaths([[]]));
       expect(getJSONPaths()).toEqual([]);
       expect(getJSONPaths(null)).toEqual([]);
       expect(getJSONPaths(1)).toEqual([]);
@@ -278,7 +279,6 @@ describe('jsonPaths util function test', () => {
       ];
 
       inputArray.forEach((test, testNo) => {
-        console.log(getJSONPaths(test, null, {wrapSpecialChars: true}));
         expect(getJSONPaths(test, null, {wrapSpecialChars: true})).toEqual(outputArray[testNo]);
       });
     });
@@ -428,7 +428,6 @@ describe('jsonPaths util function test', () => {
       ];
 
       inputArray.forEach((test, testNo) => {
-        console.log('testNo', testNo, getTransformPaths(test));
         expect(getTransformPaths(test)).toEqual(outputArray[testNo]);
       });
     });
@@ -453,13 +452,337 @@ describe('jsonPaths util function test', () => {
     });
 
     test('should return valid object for getUnionObject', () => {
-      console.log(pickFirstObject([[{a: 'a'}, {b: 'b'}, {c: 'c'}]]));
       expect(pickFirstObject([{a: 'a'}, {b: 'b'}, {c: 'c'}])).toEqual({a: 'a', b: 'b', c: 'c'});
       expect(pickFirstObject([{a: 1}, {b: []}, {c: 'c'}])).toEqual({a: 1, b: [], c: 'c'});
       expect(pickFirstObject([{a: 'a', b: 'bb'}, {b: 'b'}, {c: 'c'}])).toEqual({a: 'a', b: 'b', c: 'c'});
       expect(pickFirstObject([{a: 'a', b: 'bb', c: '123'}, {b: 'b'}, {c: 'c'}])).toEqual({a: 'a', b: 'b', c: 'c'});
       expect(pickFirstObject([{a: 'a', b: 'bb', c: '123'}, {b: 'b'}, {c: 'c', e: 'e'}])).toEqual({a: 'a', b: 'b', c: 'c', e: 'e'});
       expect(pickFirstObject([[{a: 'a'}, {b: 'b'}, {c: 'c'}]])).toEqual({a: 'a', b: 'b', c: 'c'});
+    });
+  });
+
+  describe('getJSONPathArrayWithSpecialCharactersWrapped function test', () => {
+    test('should not throw any exception for invalid inputs ', () => {
+      const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
+
+      expect(getJSONPathArrayWithSpecialCharactersWrapped(sampleArray)).toEqual([
+        '0', '1', '2', '3', '4', '5', '6', '7',
+      ]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped()).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped(null)).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped(1)).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped([])).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped([{}])).toEqual(['0']);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped([{}, {}])).toEqual(['0', '1']);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped({})).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped(() => {})).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped(new Date())).toEqual([]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped([null, undefined, 1, 'x'])).toEqual([
+        '0', '1', '2', '3',
+      ]);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped([[]])).toEqual(['0']);
+    });
+
+    test('should return valid paths for getJSONPathArrayWithSpecialCharactersWrapped', () => {
+      const inputArray = [
+        {a: 'yes', b: 'no'},
+        {
+          parent: {
+            child: {
+              grandchild: 'value',
+            },
+          },
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            sublist: [{
+              first: 'first',
+              second: 'second',
+              third: 'third',
+            }],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              sublist2: [{
+                first: 'first',
+                second: 'second',
+                third: 'third',
+              }],
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+      ];
+      const outputArray = [
+        [
+          'a',
+          'b',
+        ],
+        [
+          'parent.child.grandchild',
+        ],
+        [
+          'parent.array',
+          'parent.boolean',
+          'parent.child.boolean',
+          'parent.child.grandchild',
+          'parent.child.number',
+          'parent.number',
+          'parent.sibling',
+          'sibling1',
+        ],
+        [
+          'parent.array',
+          'parent.boolean',
+          'parent.child.boolean',
+          'parent.child.grandchild',
+          'parent.child.number',
+          'parent.child.sublist2[*].first',
+          'parent.child.sublist2[*].second',
+          'parent.child.sublist2[*].third',
+          'parent.number',
+          'parent.sibling',
+          'parent.sublist[*].first',
+          'parent.sublist[*].second',
+          'parent.sublist[*].third',
+          'sibling1',
+        ],
+      ];
+
+      inputArray.forEach((test, testNo) => {
+        expect(getJSONPathArrayWithSpecialCharactersWrapped(test)).toEqual(outputArray[testNo]);
+      });
+    });
+
+    test('should return valid paths for getJSONPathArrayWithSpecialCharactersWrapped with options wrapSpecialChars', () => {
+      const inputArray = [
+        {a: 'yes', b: 'no'},
+        {
+          parent: {
+            child: {
+              grandchild: 'value',
+            },
+          },
+        },
+        {
+          parent: {
+            'child 1': {
+              grandchild: 'value',
+            },
+          },
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+        {
+          parent: {
+            'sibling first': 'sibling',
+            '[number]': 1,
+            boolean: false,
+            array: ['1'],
+            child: {
+              'grand&child': 'value',
+              number: 1,
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+        {
+          parent: {
+            sibling: 'sibling',
+            number: 1,
+            boolean: false,
+            array: ['1'],
+            sublist: [{
+              first: 'first',
+              second: 'second',
+              third: 'third',
+            }],
+            child: {
+              grandchild: 'value',
+              number: 1,
+              sublist2: [{
+                first: 'first',
+                second: 'second',
+                third: 'third',
+              }],
+              boolean: false,
+            },
+          },
+          sibling1: 'sibling1',
+        },
+      ];
+      const outputArray = [
+        [
+          'a',
+          'b',
+        ],
+        [
+          'parent.child.grandchild',
+        ],
+        [
+          'parent.[child 1].grandchild',
+        ],
+        [
+          'parent.array',
+          'parent.boolean',
+          'parent.child.boolean',
+          'parent.child.grandchild',
+          'parent.child.number',
+          'parent.number',
+          'parent.sibling',
+          'sibling1',
+        ],
+        [
+          'parent.[[number\\]]',
+          'parent.[sibling first]',
+          'parent.array',
+          'parent.boolean',
+          'parent.child.[grand&child]',
+          'parent.child.boolean',
+          'parent.child.number',
+          'sibling1',
+        ],
+        [
+          'parent.array',
+          'parent.boolean',
+          'parent.child.boolean',
+          'parent.child.grandchild',
+          'parent.child.number',
+          'parent.child.sublist2[*].first',
+          'parent.child.sublist2[*].second',
+          'parent.child.sublist2[*].third',
+          'parent.number',
+          'parent.sibling',
+          'parent.sublist[*].first',
+          'parent.sublist[*].second',
+          'parent.sublist[*].third',
+          'sibling1',
+        ],
+      ];
+
+      inputArray.forEach((test, testNo) => {
+        expect(getJSONPathArrayWithSpecialCharactersWrapped(test, null, true)).toEqual(outputArray[testNo]);
+      });
+    });
+
+    test('should return valid paths for getJSONPathArrayWithSpecialCharactersWrapped with options skipSort', () => {
+      expect(getJSONPathArrayWithSpecialCharactersWrapped({
+        a: 'a',
+        b: 'b',
+        c: [{d: 'yes'}],
+      }, null, true, true)).toEqual(['a', 'b', 'c[*].d']);
+      expect(getJSONPathArrayWithSpecialCharactersWrapped({
+        a: 'a',
+        c: [{d: 'yes'}],
+        b: 'b',
+      }, null, true, true)).toEqual(['a', 'c[*].d', 'b']);
+    });
+  });
+
+  describe('wrapSpecialChars function test', () => {
+    test('should not throw any exception for invalid inputs ', () => {
+      const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
+
+      expect(sampleArray.map(wrapSpecialChars)).toEqual(sampleArray);
+      expect(wrapSpecialChars()).toEqual({});
+      expect(wrapSpecialChars(null)).toEqual(null);
+      expect(wrapSpecialChars(1)).toEqual(1);
+      expect(wrapSpecialChars([])).toEqual({});
+      expect(wrapSpecialChars({})).toEqual({});
+    });
+
+    test('should wrap all ids with special characters', () => {
+      expect([{id: 'id'}, {id: 'second'}, {id: 'third'}].map(wrapSpecialChars)).toEqual([{id: 'id'}, {id: 'second'}, {id: 'third'}]);
+      expect([
+        {id: 'id one'},
+        {id: 'second '},
+        {id: '[third]'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: '[id one]'},
+        {id: '[second ]'},
+        {id: '[[third\\]]'},
+      ]);
+      expect([
+        {id: 'id[*].one'},
+        {id: 'second[*].fas space'},
+        {id: '[third][*].one'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: 'id[*].one'},
+        {id: 'second[*].[fas space]'},
+        {id: '[[third\\]][*].one'},
+      ]);
+      expect([
+        {id: 'id.one'},
+        {id: 'second.spaced field'},
+        {id: '[third].one'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: 'id.one'},
+        {id: 'second.[spaced field]'},
+        {id: '[[third\\]].one'},
+      ]);
+    });
+
+    test('should not other properties in the object', () => {
+      expect([{id: 'id'}, {id: 'second'}, {id: 'third'}].map(wrapSpecialChars)).toEqual([{id: 'id'}, {id: 'second'}, {id: 'third'}]);
+      expect([
+        {id: 'id one', name: 'first'},
+        {id: 'second ', name: 'second'},
+        {id: '[third]', name: 'third'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: '[id one]', name: 'first'},
+        {id: '[second ]', name: 'second'},
+        {id: '[[third\\]]', name: 'third'},
+      ]);
+      expect([
+        {id: 'id[*].one', label: 'One'},
+        {id: 'second[*].fas space', label: 'two'},
+        {id: '[third][*].one', label: 'three'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: 'id[*].one', label: 'One'},
+        {id: 'second[*].[fas space]', label: 'two'},
+        {id: '[[third\\]][*].one', label: 'three'},
+      ]);
+      expect([
+        {id: 'id.one', text: 'Lorem'},
+        {id: 'second.spaced field', text: 'ipsum'},
+        {id: '[third].one', text: 'dolor'},
+      ].map(wrapSpecialChars)).toEqual([
+        {id: 'id.one', text: 'Lorem'},
+        {id: 'second.[spaced field]', text: 'ipsum'},
+        {id: '[[third\\]].one', text: 'dolor'},
+      ]);
     });
   });
 });
