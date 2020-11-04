@@ -44,6 +44,12 @@ export default {
             path: '/modelMetadata',
             value: parsedDefaultData.data,
           });
+        } else if (parsedDefaultData.record) {
+          patches.push({
+            op: 'replace',
+            path: '/modelMetadata',
+            value: parsedDefaultData.record,
+          });
         }
       } catch (e) {
         // do nothing

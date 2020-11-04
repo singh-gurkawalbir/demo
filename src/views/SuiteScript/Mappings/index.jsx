@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mappingsBody: {
-    height: 'calc(100% - 32px)',
+    height: 'calc(100% - 100px)',
     overflow: 'auto',
     paddingRight: theme.spacing(2),
   },

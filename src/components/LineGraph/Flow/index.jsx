@@ -35,7 +35,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
     background: theme.palette.background.default,
   },
   legendIcon: {
@@ -330,7 +329,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error occured</Typography>;
+    return <Typography>Error occurred</Typography>;
   }
 
   return (

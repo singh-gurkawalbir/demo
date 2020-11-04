@@ -6,8 +6,9 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
 import Panels from './Panels';
+import { isNewId } from '../../utils/resource';
+import { DEFAULT_RECORD_SIZE } from '../../utils/exportPanel';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -16,6 +17,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     width: 654,
+    height: `calc(100vh - ${150}px)`,
+    overflowY: 'auto',
     float: 'left',
     marginRight: theme.spacing(3),
     [theme.breakpoints.up('xl')]: {
@@ -45,8 +48,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-// const resourceSampleData = {data: 1, status: 'received', error: 1};
-
 function PreviewInfo({
   flowId,
   resourceId,
@@ -54,14 +55,14 @@ function PreviewInfo({
   resourceType,
   resourceSampleData,
   previewStageDataList,
-  panelType,
   isPreviewDisabled,
+  showPreviewData,
+  setShowPreviewData,
 }) {
   const value = useSelector(
     state => selectors.formState(state, formKey)?.value,
     shallowEqual
   );
-
   const dispatch = useDispatch();
   const isPageGeneratorExport = useSelector(state =>
     selectors.isPageGenerator(state, flowId, resourceId)
@@ -79,11 +80,7 @@ function PreviewInfo({
       );
     } else {
       dispatch(
-        actions.sampleData.requestLookupPreview(
-          resourceId,
-          flowId,
-          value
-        )
+        actions.sampleData.requestLookupPreview(resourceId, flowId, value)
       );
     }
   }, [
@@ -95,6 +92,11 @@ function PreviewInfo({
     flowId,
   ]);
 
+  const handlePreview = useCallback(() => {
+    fetchExportPreviewData();
+    setShowPreviewData(true);
+  }, [fetchExportPreviewData, setShowPreviewData]);
+
   useEffect(() => {
     // Fetches preview data incase of initial load of an edit export mode
     // Not fetched for online connections
@@ -102,17 +104,28 @@ function PreviewInfo({
     // Needs a refactor to preview saga for that
     if (!isPreviewDisabled && !isPreviewDataFetched && !isNewId(resourceId)) {
       setIsPreviewDataFetched(true);
-      fetchExportPreviewData();
+      handlePreview();
     }
-  }, [resourceId, isPreviewDataFetched, fetchExportPreviewData, isPreviewDisabled]);
+  }, [resourceId, isPreviewDataFetched, handlePreview, isPreviewDisabled]);
+
+  // on close of the panel, updates record size to default
+  // remove this action, if in future we need to retain record size
+  useEffect(() =>
+    () => dispatch(actions.sampleData.patch(resourceId, {
+      recordSize: DEFAULT_RECORD_SIZE,
+    })),
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  []);
 
   return (
     <Panels.PreviewInfo
-      fetchExportPreviewData={fetchExportPreviewData}
+      fetchExportPreviewData={handlePreview}
       resourceSampleData={resourceSampleData}
       previewStageDataList={previewStageDataList}
-      panelType={panelType}
       disabled={isPreviewDisabled}
+      resourceId={resourceId}
+      resourceType={resourceType}
+      showPreviewData={showPreviewData}
   />
   );
 }
@@ -136,6 +149,9 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
 
     return defaultStage ? defaultStage.value : lastStage.value;
   }, [availablePreviewStages]);
+  // TODO @Raghu: Refactor preview state as it is currently using sample data state
+  // this local state controls view to show sample data only when user requests by clicking preview
+  const [showPreviewData, setShowPreviewData] = useState(false);
   // set the panel type with the default panel
   const [panelType, setPanelType] = useState(defaultPanel);
   // get the map of all the stages with their respective sampleData for the stages
@@ -167,20 +183,28 @@ function ExportsPreviewPanel({resourceId, formKey, resourceType, flowId }) {
       <PreviewInfo
         resourceSampleData={resourceSampleData}
         previewStageDataList={previewStageDataList}
-        panelType={panelType}
         isPreviewDisabled={isPreviewDisabled}
-        flowId={flowId} resourceId={resourceId} formKey={formKey} resourceType={resourceType}
-      />
-      <Panels.PreviewBody
-        resourceSampleData={resourceSampleData}
-        previewStageDataList={previewStageDataList}
-        panelType={panelType}
-        defaultPanel={defaultPanel}
-        availablePreviewStages={availablePreviewStages}
-        handlePanelViewChange={handlePanelViewChange}
+        flowId={flowId}
         resourceId={resourceId}
+        formKey={formKey}
         resourceType={resourceType}
+        setShowPreviewData={setShowPreviewData}
+        showPreviewData={showPreviewData}
       />
+      {
+        showPreviewData && (
+        <Panels.PreviewBody
+          resourceSampleData={resourceSampleData}
+          previewStageDataList={previewStageDataList}
+          panelType={panelType}
+          defaultPanel={defaultPanel}
+          availablePreviewStages={availablePreviewStages}
+          handlePanelViewChange={handlePanelViewChange}
+          resourceId={resourceId}
+          resourceType={resourceType}
+      />
+        )
+}
     </div>
   );
 }

@@ -25,9 +25,9 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
 
   return (
     <LoadResources resources="integrations">
-      <div onClick={handleClick}>
+      <span onClick={handleClick}>
         {integrationAppName}
-      </div>
+      </span>
     </LoadResources>
   );
 };

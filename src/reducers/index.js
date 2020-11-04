@@ -2985,12 +2985,17 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
     resourceType,
     resourceId
   );
+  const connection = selectors.resource(state, 'connections', resource._connectionId);
 
   // AFE 2.0 not supported for Native REST Adaptor
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    const restConnection = selectors.resource(state, 'connections', resource._connectionId);
+    return !!connection.isHTTP;
+  }
 
-    return !!restConnection.isHTTP;
+  // BE doesnt support oracle and snowflake adaptor yet
+  // remove this check once same is added in BE
+  if (connection?.rdbms?.type === 'oracle' || connection?.rdbms?.type === 'snowflake') {
+    return false;
   }
 
   return [
@@ -3333,10 +3338,7 @@ selectors.flowJobs = (state, options = {}) => {
     }
 
     const additionalProps = {
-      name:
-        resourceMap.flows &&
-        resourceMap.flows[job._flowId] &&
-        resourceMap.flows[job._flowId].name,
+      name: resourceMap.flows && resourceMap.flows[job._flowId]?.name,
       flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
     };
 
@@ -3597,11 +3599,13 @@ selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
 
   // Incase of new resource (export/lookup), flow doc does not have this resource yet
   // So, get staged resource and determine export/lookup based on isLookup flag
-  const { merged: resource = {} } = selectors.resourceData(
+  const { merged: resource } = selectors.resourceData(
     state,
     'exports',
     resourceId
   );
+
+  if (!resource) return false;
 
   if (isNewId(resourceId)) {
     return !resource.isLookup;
@@ -5366,8 +5370,8 @@ selectors.hasManageIntegrationAccess = (state, integrationId) => {
   const userPermissions = selectors.userPermissions(state);
   const integrationPermissions = userPermissions.integrations;
 
-  if (!integrationId) {
-    return manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel);
+  if (manageIntegrationAccessLevels.includes(integrationPermissions.all?.accessLevel)) {
+    return true;
   }
 
   return manageIntegrationAccessLevels.includes(integrationPermissions[integrationId]?.accessLevel);
@@ -5377,6 +5381,36 @@ selectors.canUserUpgradeToErrMgtTwoDotZero = state => {
   const integrations = selectors.resourceList(state, {
     type: 'integrations',
   }).resources;
+  const userLicenses = fromUser.licenses(selectors.userState(state)) || [];
+  const hasValidConnectorLicenses = userLicenses.some(license => license.type === 'connector' && moment(license.expires) - moment() > 0);
+  const hasConnectors = integrations.some(integration => !!integration._connectorId);
 
-  return !integrations.some(integration => !!integration._connectorId);
+  return !(hasConnectors || hasValidConnectorLicenses);
+};
+
+/**
+ * User can select number of records in all cases except for realtime adaptors
+ * No need to show when export preview is disabled
+ */
+selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => {
+  const isExportPreviewDisabled = selectors.isExportPreviewDisabled(state, resourceId, resourceType);
+
+  if (isExportPreviewDisabled) return false;
+  const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+
+  if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
+
+  return true;
+};
+
+selectors.getIntegrationUserNameById = (state, userId, flowId) => {
+  const profile = selectors.userProfile(state);
+
+  // If it is logged in user , return its name
+  if (profile._id === userId) return profile.name || profile.email;
+  // else get user name from integration users list
+  const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
+  const usersList = selectors.availableUsersList(state, integrationId);
+
+  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
 };

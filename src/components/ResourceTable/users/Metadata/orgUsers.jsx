@@ -22,6 +22,7 @@ export default {
       },
       ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
         heading: 'Notifications',
+        align: 'center',
         value: (r, { integrationId}) =>
           <Notifications user={r} integrationId={integrationId} />,
       }] : []),

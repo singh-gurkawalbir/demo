@@ -36,7 +36,7 @@ middleware.push(LogRocket.reduxMiddleware({
 if (process.env.NODE_ENV === 'development' && process.env.REDUX_LOGGER === 'true') {
   // redux-logger options reference: https://www.npmjs.com/package/redux-logger#options
   const logOptions = {
-    predicate: (getState, action) => !['API_WATCHER', 'API_COMPLETE'].includes(action.type),
+    predicate: (getState, action) => !['API_WATCHER_SUCCESS', 'API_COMPLETE'].includes(action.type),
     diff: true,
     duration: true,
     collapsed: (getState, action, logEntry) => !logEntry.error,

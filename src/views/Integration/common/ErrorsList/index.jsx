@@ -5,6 +5,8 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
+import DrawerHeader from '../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import actions from '../../../../actions';
 import CeligoTable from '../../../../components/CeligoTable';
@@ -13,11 +15,9 @@ import SpinnerWrapper from '../../../../components/SpinnerWrapper';
 import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
+import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-  },
   button: {
     color: theme.palette.primary.main,
     width: '100%',
@@ -44,7 +44,8 @@ const metadata = {
     },
     {
       heading: 'Flow step',
-      value: r => r.name,
+      value: r => <OverflowWrapper message={r.name} />,
+      width: '35%',
     },
     {
       heading: 'Errors',
@@ -120,7 +121,6 @@ const ErrorsList = ({integrationId, childId}) => {
   const dispatch = useDispatch();
 
   const { flowId } = match.params;
-  const classes = useStyles();
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
@@ -167,9 +167,7 @@ const ErrorsList = ({integrationId, childId}) => {
   }
 
   return (
-    <div className={classes.root}>
-      <CeligoTable data={resources} {...metadata} />
-    </div>
+    <CeligoTable data={resources} {...metadata} />
   );
 };
 
@@ -192,18 +190,16 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
       required="true"
       resources="imports, exports, connections">
       <RightDrawer
-        hideBackButton
-        path={[
-          ':flowId/errorsList',
-        ]}
+        path=":flowId/errorsList"
         height="tall"
-        width="default"
         onClose={handleClose}
-        title={`Flow: ${flow.name || flowId}`}
-        variant="temporary"
-      >
+        variant="temporary">
 
-        <ErrorsList integrationId={integrationId} childId={childId} />
+        <DrawerHeader title={`Flow: ${flow.name || flowId}`} />
+
+        <DrawerContent>
+          <ErrorsList integrationId={integrationId} childId={childId} />
+        </DrawerContent>
       </RightDrawer>
     </LoadResources>
   );

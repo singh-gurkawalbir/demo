@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 
   deleteBtn: {
     border: 'none',
-    width: 0,
+    // width: 0,
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,

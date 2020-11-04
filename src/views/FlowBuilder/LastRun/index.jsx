@@ -9,8 +9,6 @@ import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
-    width: 1,
-    height: 25,
     borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
     margin: theme.spacing(0, 1, 0, 1),
   },
@@ -21,6 +19,9 @@ const useStyles = makeStyles(theme => ({
   icon: {
     height: theme.spacing(2),
     width: theme.spacing(2),
+    marginRight: theme.spacing(0.5),
+  },
+  lastRun: {
     marginRight: theme.spacing(0.5),
   },
 }));
@@ -71,10 +72,10 @@ export default function LastRun({ flowId }) {
     return (
       <>
         <RefreshIcon className={classes.icon} />
-        Last run: <CeligoTimeAgo date={lastRunStatus} />
+        <span className={classes.lastRun}>Last run:</span> <CeligoTimeAgo date={lastRunStatus} />
       </>
     );
-  }, [lastRunStatus, classes.icon]);
+  }, [lastRunStatus, classes.icon, classes.lastRun]);
 
   if (!lastRunStatus) return null;
 

@@ -6,7 +6,6 @@ import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import useFormContext from '../../Form/FormContext';
 import { getUniqueFieldId } from '../../../utils/resource';
 
 const DynaEditorWithFlowSampleData = ({
@@ -21,7 +20,6 @@ const DynaEditorWithFlowSampleData = ({
   ...props
 }) => {
   const fieldType = getUniqueFieldId(fieldId);
-  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
     // enableEditorV2 is to force fields to show editor when
@@ -60,14 +58,14 @@ const DynaEditorWithFlowSampleData = ({
           resourceId,
           resourceType,
           stage: 'flowInput',
-          formValues: formContext.value,
+          formKey: props.formKey,
           fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, fieldType, flowId, formContext.value, isEditorV2Supported, resourceId, resourceType]
+    [dispatch, fieldType, flowId, props.formKey, isEditorV2Supported, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
