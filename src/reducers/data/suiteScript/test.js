@@ -102,8 +102,8 @@ describe.skip('tiles selector', () => {
   test('should return [] when the state is empty', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.tiles(state)).toEqual([]);
-    expect(selectors.tiles(state, 'something')).toEqual([]);
+    expect(selectors.mkTiles()(state)).toEqual([]);
+    expect(selectors.mkTiles()(state, 'something')).toEqual([]);
   });
   describe('should return correct results for different connectionIds', () => {
     const state = {
@@ -134,7 +134,7 @@ describe.skip('tiles selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.tiles(newState, 'c1')).toEqual([
+      expect(selectors.mkTiles()(newState, 'c1')).toEqual([
         {
           _integrationId: 'i1',
           name: 'i one',
@@ -158,7 +158,7 @@ describe.skip('tiles selector', () => {
       );
       const newState = reducer(state, tilesReceivedAction);
 
-      expect(selectors.tiles(newState, 'c2')).toEqual([
+      expect(selectors.mkTiles()(newState, 'c2')).toEqual([
         {
           _integrationId: 'i2',
           name: 'i two',
