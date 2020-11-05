@@ -27,7 +27,7 @@ function OAuthButton(props) {
   const [snackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const { iClients } = useLoadIClientOnce({
-    connectionId: resource._id,
+    connectionId: resource._id || resourceId,
     disableLoad:
       !resource._connectorId ||
       !(
@@ -48,8 +48,7 @@ function OAuthButton(props) {
         newValues['/http/_iClientId'] =
           iClients && iClients[0] && iClients[0]._id;
       } else if (
-        resource._connectorId &&
-        resource.newIA &&
+        resource._connectorId && resource.newIA &&
         resource.type === 'salesforce'
       ) {
         newValues['/salesforce/_iClientId'] =
@@ -68,8 +67,8 @@ function OAuthButton(props) {
       iClients,
       resource._connectorId,
       resource.assistant,
-      resource.newIA,
       resource.type,
+      resource.newIA,
       resourceId,
     ]
   );

@@ -43,7 +43,7 @@ export const INTEGRATION_MODES = Object.freeze({
 
 export const UI_FIELD_VALUES = Object.freeze(['/formView']);
 export const SALESFORCE_DA_PACKAGE_URL =
-  'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t1N000002Gl8y';
+  'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv';
 export const NETSUITE_BUNDLE_URL =
   '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';
 export const PERMISSIONS = Object.freeze({
