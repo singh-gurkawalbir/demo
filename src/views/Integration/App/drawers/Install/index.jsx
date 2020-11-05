@@ -383,6 +383,7 @@ export default function ConnectorInstallation(props) {
               _id: newId,
               _integrationId: integrationId,
               _connectorId,
+              installStepConnection: true,
             }),
             SCOPES.VALUE
           )

@@ -47,10 +47,10 @@ export default {
       type: 'text',
       label: 'Service Name',
     },
-    'rdbms.oracle.serviceType': {
-      id: 'rdbms.oracle.serviceType',
+    'rdbms.serverType': {
+      id: 'rdbms.serverType',
       type: 'select',
-      label: 'Service Type',
+      label: 'Server Type',
       options: [
         {
           items: [
@@ -98,7 +98,7 @@ export default {
         label: 'Advanced',
         fields: [
           'rdbms.serviceName',
-          'rdbms.oracle.serviceType',
+          'rdbms.serverType',
           '_borrowConcurrencyFromConnectionId',
           'rdbms.concurrencyLevel',
         ],
