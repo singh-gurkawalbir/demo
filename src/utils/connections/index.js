@@ -9,7 +9,7 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   if (RDBMS_TYPES.includes(connection.type)) {
     expression.push({ 'rdbms.type': connection.type });
-  } else if (!connection.assistant) {
+  } else {
     expression.push({ type: connection.type });
   }
 
