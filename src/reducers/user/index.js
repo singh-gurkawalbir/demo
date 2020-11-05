@@ -224,14 +224,12 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.mkUserPermissions = () => createSelector(
+selectors.userPermissions = createSelector(
   state => selectors.userPreferences(state)?.defaultAShareId,
   state => state?.profile?.allowedToPublish,
   state => state?.org?.accounts,
   (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
 );
-
-selectors.userPermissions = selectors.mkUserPermissions();
 
 selectors.accountOwner = createSelector(
   selectors.userAccessLevel,
