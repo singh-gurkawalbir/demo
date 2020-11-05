@@ -1177,7 +1177,8 @@ selectors.integrationAppResourceList = (
   state,
   integrationId,
   storeId,
-  tableConfig
+  tableConfig,
+  ignoreUnusedConnections
 ) => {
   if (!state) return { connections: emptyArray, flows: emptyArray };
 
@@ -1233,8 +1234,11 @@ selectors.integrationAppResourceList = (
     imports.push(...getImportIdsFromFlow(state, flow));
   });
 
+  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
+  const allConnections = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
+
   return {
-    connections: [...integrationConnections.filter(c => connections.includes(c._id)), ...unUsedConnections],
+    connections: allConnections,
     flows,
     exports,
     imports,
@@ -1264,8 +1268,9 @@ selectors.integrationAppConnectionList = (
   state,
   integrationId,
   storeId,
-  tableConfig
-) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig)
+  tableConfig,
+  ignoreUnusedConnections
+) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig, ignoreUnusedConnections)
   .connections;
 
 selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
@@ -2969,14 +2974,7 @@ selectors.makeResourceDataSelector = () => {
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
 
-selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
-  // no AFE1/2 is shown for PG export (with some exceptions)
-  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
-
-  if (isPageGenerator) {
-    return false;
-  }
-
+selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId, enableEditorV2) => {
   const { merged: resource = {} } = selectors.resourceData(
     state,
     resourceType,
@@ -2984,9 +2982,27 @@ selectors.isEditorV2Supported = (state, resourceId, resourceType, flowId) => {
   );
   const connection = selectors.resource(state, 'connections', resource._connectionId);
 
-  // AFE 2.0 not supported for Native REST Adaptor
+  // enableEditorV2 is to force fields to show editor when
+  // the whole adaptor is not yet supported (except for native REST)
+  // TODO: we will not need all these conditions once all fields/adaptors support AFE2
+  if (enableEditorV2) {
+    if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
+      return connection.isHTTP;
+    }
+
+    return true;
+  }
+
+  // no AFE1/2 is shown for PG export (with some exceptions)
+  const isPageGenerator = selectors.isPageGenerator(state, flowId, resourceId, resourceType);
+
+  if (isPageGenerator) {
+    return false;
+  }
+
+  // AFE 2.0 not supported for Native REST Adaptor for any fields
   if (['RESTImport', 'RESTExport'].includes(resource.adaptorType)) {
-    return !!connection.isHTTP;
+    return connection.isHTTP;
   }
 
   // BE doesnt support oracle and snowflake adaptor yet
@@ -3076,7 +3092,7 @@ selectors.mkIntegrationNotificationResources = () => createSelector(
   selectors.diyFlows,
   selectors.diyConnections,
   (state, _integrationId, options) =>
-    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId),
+    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId, null, true),
   (state, _integrationId, options) =>
   selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
   (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
@@ -5378,7 +5394,10 @@ selectors.canSelectRecordsInPreviewPanel = (state, resourceId, resourceType) => 
 
   if (isExportPreviewDisabled) return false;
   const resource = selectors.resourceData(state, resourceType, resourceId).merged;
+  // TODO @Raghu: merge this as part of isRealTimeOrDistributedResource to handle this resourceType
+  // it is realtime incase of new export for realtime adaptors
 
+  if (resource?.resourceType === 'realtime') return false;
   if (isRealTimeOrDistributedResource(resource, resourceType)) return false;
 
   return true;
