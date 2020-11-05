@@ -357,13 +357,15 @@ describe('apiCallWithRetry saga', () => {
 
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
+
+        expect(saga.next(true).value).toEqual(delay(1));
         const resourceStatusEffect = select(
           selectors.commStatusPerPath,
           path,
           'GET'
         );
 
-        expect(saga.next(true).value).toEqual(resourceStatusEffect);
+        expect(saga.next().value).toEqual(resourceStatusEffect);
         expect(saga.next(COMM_STATES.LOADING).value).toEqual(
           put(actions.api.complete(path, 'GET', 'Request Aborted'))
         );
@@ -398,13 +400,15 @@ describe('apiCallWithRetry saga', () => {
 
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
+        expect(saga.next(true).value).toEqual(delay(1));
+
         const resourceStatusEffect = select(
           selectors.commStatusPerPath,
           path,
           'GET'
         );
 
-        expect(saga.next(true).value).toEqual(resourceStatusEffect);
+        expect(saga.next().value).toEqual(resourceStatusEffect);
         // child saga has completed not necessary to resend the api.complete action
         expect(saga.next(COMM_STATES.SUCCESS).done).toBe(true);
       });
