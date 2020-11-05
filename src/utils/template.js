@@ -39,7 +39,7 @@ export const getApplication = conn => {
 };
 
 export default {
-  getDependentResources: components =>
+  getDependentResources: (components = []) =>
     components.map(component => ({
       resourceType: `${component.model.toLowerCase()}s`,
       id: component._id,

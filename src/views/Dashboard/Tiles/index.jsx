@@ -31,9 +31,7 @@ export default function DashboardTiles() {
     state => selectors.userPreferences(state)?.dashboard?.tilesOrder);
 
   const tiles = useSelectorMemo(selectors.mkTiles);
-  const suiteScriptLinkedTiles = useSelector(state =>
-    selectors.suiteScriptLinkedTiles(state)
-  );
+  const suiteScriptLinkedTiles = useSelectorMemo(selectors.mkSuiteScriptLinkedTiles);
   const sortedTiles = useMemo(
     () =>
       sortTiles(

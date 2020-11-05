@@ -63,6 +63,7 @@ import {
   isAS2Resource,
   adaptorTypeMap,
   isQueryBuilderSupported,
+  getUserAccessLevelOnConnection,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -897,6 +898,7 @@ selectors.userAccessLevelOnConnection = (state, connectionId) => {
 
   return accessLevelOnConnection;
 };
+
 selectors.matchingConnectionList = (state, connection = {}, environment, manageOnly) => {
   if (!environment) {
     // eslint-disable-next-line no-param-reassign
@@ -2584,13 +2586,12 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.publishedConnectors = state => {
-  const ioConnectors = selectors.resourceList(state, {
-    type: 'published',
-  }).resources;
+selectors.mkPublishedConnectors = () => createSelector(
+  state => state?.data?.resources?.published,
+  (published = []) => published.concat(SUITESCRIPT_CONNECTORS)
+);
 
-  return ioConnectors.concat(SUITESCRIPT_CONNECTORS);
-};
+selectors.publishedConnectors = selectors.mkPublishedConnectors();
 
 selectors.availableConnectionsToRegister = (state, integrationId) => {
   if (!state) {
@@ -2617,52 +2618,57 @@ selectors.availableConnectionsToRegister = (state, integrationId) => {
   return availableConnectionsToRegister;
 };
 
-selectors.suiteScriptLinkedConnections = state => {
-  const preferences = selectors.userPreferences(state);
-  const connections = selectors.resourceList(state, {
-    type: 'connections',
-  }).resources;
-  const linkedConnections = [];
-  let connection;
-  let accessLevel;
+selectors.mkSuiteScriptLinkedConnections = () => createSelector(
+  selectors.userPreferences,
+  selectors.userPermissions,
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.integrations,
+  (preferences, permissions, connections = [], integrations = []) => {
+    const linkedConnections = [];
+    let connection;
+    let accessLevel;
 
-  if (
-    !preferences.ssConnectionIds ||
+    if (
+      !preferences.ssConnectionIds ||
     preferences.ssConnectionIds.length === 0
-  ) {
+    ) {
+      return linkedConnections;
+    }
+
+    preferences.ssConnectionIds.forEach(connectionId => {
+      connection = connections.find(c => c._id === connectionId);
+
+      if (connection) {
+        accessLevel = getUserAccessLevelOnConnection(permissions, integrations, connectionId);
+
+        if (accessLevel) {
+          linkedConnections.push({
+            ...connection,
+            permissions: {
+              accessLevel,
+            },
+          });
+        }
+      }
+    });
+
     return linkedConnections;
   }
+);
+selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnections();
 
-  preferences.ssConnectionIds.forEach(connectionId => {
-    connection = connections.find(c => c._id === connectionId);
+selectors.mkSuiteScriptLinkedTiles = () => createSelector(
+  selectors.suiteScriptLinkedConnections,
+  state => state?.suiteScript,
+  (linkedConnections, suiteScriptTiles = {}) => {
+    let tiles = [];
 
-    if (connection) {
-      accessLevel = selectors.userAccessLevelOnConnection(state, connectionId);
+    linkedConnections.forEach(connection => {
+      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles);
+    });
 
-      if (accessLevel) {
-        linkedConnections.push({
-          ...connection,
-          permissions: {
-            accessLevel,
-          },
-        });
-      }
-    }
+    return tiles;
   });
-
-  return linkedConnections;
-};
-
-selectors.suiteScriptLinkedTiles = state => {
-  const linkedConnections = selectors.suiteScriptLinkedConnections(state);
-  let tiles = [];
-
-  linkedConnections.forEach(connection => {
-    tiles = tiles.concat(selectors.suiteScriptTiles(state, connection._id));
-  });
-
-  return tiles;
-};
 
 selectors.mkTiles = () => {
   const tilesList = selectors.makeResourceListSelector();
@@ -4176,7 +4182,7 @@ selectors.suiteScriptFlowConnectionList = (
   });
   const connectionIdsInUse = [];
 
-  if (flow?.export._connectionId) {
+  if (flow?.export?._connectionId) {
     connectionIdsInUse.push(flow.export._connectionId);
   }
   if (flow?.import?._connectionId) {
@@ -4987,7 +4993,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
   if (type === 'generate') {
     /** generating generate Label */
     const importResource = selectors.resource(state, 'imports', resourceId);
-    const importConn = selectors.resource(state, 'connections', importResource._connectionId);
+    const importConn = selectors.resource(state, 'connections', importResource?._connectionId);
 
     return `Import field (${mappingUtil.getApplicationName(
       importResource,
@@ -5001,7 +5007,7 @@ selectors.mappingExtractGenerateLabel = (state, flowId, resourceId, type) => {
     if (flow && flow.pageGenerators && flow.pageGenerators.length && flow.pageGenerators[0]._exportId) {
       const {_exportId} = flow.pageGenerators[0];
       const exportResource = selectors.resource(state, 'exports', _exportId);
-      const exportConn = selectors.resource(state, 'connections', exportResource._connectionId);
+      const exportConn = selectors.resource(state, 'connections', exportResource?._connectionId);
 
       return `Export field (${mappingUtil.getApplicationName(
         exportResource,
@@ -5027,7 +5033,7 @@ selectors.mappingHttpAssistantPreviewData = createSelector([
   (state, importId) => {
     const importResource = selectors.resource(state, 'imports', importId);
 
-    return selectors.resource(state, 'connections', importResource._connectionId);
+    return selectors.resource(state, 'connections', importResource?._connectionId);
   },
   (state, importId) => selectors.getImportSampleData(state, importId, {}).data,
 ], (previewData, isHttpPreview, importResource, importConn, importSampleData) => {

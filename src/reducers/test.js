@@ -629,7 +629,7 @@ describe('tiles', () => {
       {
         user: {
           profile: {},
-          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, environment: 'production' },
           org: {
             accounts: [
               {
