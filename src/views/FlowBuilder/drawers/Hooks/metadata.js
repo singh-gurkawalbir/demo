@@ -6,7 +6,7 @@ import {
   isStacksSupportedForResource,
   isSuiteScriptHooksSupportedForResource,
   getImportSuiteScriptHooksList,
-} from '../../utils/hooks';
+} from '../../../../utils/hooks';
 
 const attachSuiteScriptHooks = (metadata, resourceType, defaultValues, isNSApiVersion2Selected) => {
   const fieldMap = {
