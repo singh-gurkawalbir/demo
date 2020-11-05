@@ -2586,12 +2586,10 @@ selectors.canEditSettingsForm = (state, resourceType, resourceId, integrationId)
   return developer && !viewOnly && visibleForUser;
 };
 
-selectors.mkPublishedConnectors = () => createSelector(
+selectors.publishedConnectors = createSelector(
   state => state?.data?.resources?.published,
   (published = []) => published.concat(SUITESCRIPT_CONNECTORS)
 );
-
-selectors.publishedConnectors = selectors.mkPublishedConnectors();
 
 selectors.availableConnectionsToRegister = (state, integrationId) => {
   if (!state) {
@@ -2657,118 +2655,116 @@ selectors.mkSuiteScriptLinkedConnections = () => createSelector(
 );
 selectors.suiteScriptLinkedConnections = selectors.mkSuiteScriptLinkedConnections();
 
-selectors.mkSuiteScriptLinkedTiles = () => createSelector(
+selectors.suiteScriptLinkedTiles = createSelector(
   selectors.suiteScriptLinkedConnections,
-  state => state?.suiteScript,
+  state => state?.data?.suiteScript,
   (linkedConnections, suiteScriptTiles = {}) => {
     let tiles = [];
 
     linkedConnections.forEach(connection => {
-      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles);
+      tiles = tiles.concat(suiteScriptTiles[connection._id]?.tiles || []);
     });
 
     return tiles;
   });
 
-selectors.mkTiles = () => {
-  const tilesList = selectors.makeResourceListSelector();
-  const integrationsList = selectors.makeResourceListSelector();
+selectors.mkTiles = () => createSelector(
+  state => state?.data?.resources?.tiles,
+  state => state?.data?.resources?.integrations,
+  state => selectors.currentEnvironment(state),
+  state => selectors.publishedConnectors(state),
+  state => selectors.userPermissions(state),
+  (allTiles = emptyArray, integrations = emptyArray, currentEnvironment, published = emptyArray, permissions) => {
+    const tiles = allTiles.filter(t => (!!t.sandbox === (currentEnvironment === 'sandbox')));
 
-  return createSelector(
-    state => tilesList(state, { type: 'tiles' })?.resources,
-    state => integrationsList(state, { type: 'integrations'})?.resources,
-    state => selectors.publishedConnectors(state),
-    state => selectors.userPermissions(state),
-    (tiles = emptyArray, integrations = emptyArray, published = emptyArray, permissions) => {
-      const hasStandaloneTile = tiles.find(
-        t => t._integrationId === STANDALONE_INTEGRATION.id
-      );
+    const hasStandaloneTile = tiles.find(
+      t => t._integrationId === STANDALONE_INTEGRATION.id
+    );
 
-      if (hasStandaloneTile) {
-        integrations = [
-          ...integrations,
-          { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
-        ];
-      }
-      integrations = integrations.map(i => {
-        if (
-          [
-            USER_ACCESS_LEVELS.ACCOUNT_OWNER,
-            USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
-            USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
-          ].includes(permissions.accessLevel)
-        ) {
-          return {
-            ...i,
-            permissions: {
-              accessLevel: permissions.integrations.all.accessLevel,
-              connections: {
-                edit: permissions.integrations.all.connections.edit,
-              },
-            },
-          };
-        }
-
+    if (hasStandaloneTile) {
+      integrations = [
+        ...integrations,
+        { _id: STANDALONE_INTEGRATION.id, name: STANDALONE_INTEGRATION.name },
+      ];
+    }
+    integrations = integrations.map(i => {
+      if (
+        [
+          USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+          USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+          USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+        ].includes(permissions.accessLevel)
+      ) {
         return {
           ...i,
           permissions: {
-            accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
+            accessLevel: permissions.integrations.all.accessLevel,
             connections: {
-              edit:
-                (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
+              edit: permissions.integrations.all.connections.edit,
             },
           },
         };
-      });
+      }
 
-      let integration;
-      let connector;
-      let status;
+      return {
+        ...i,
+        permissions: {
+          accessLevel: (permissions.integrations[i._id] || permissions.integrations.all)?.accessLevel,
+          connections: {
+            edit:
+                (permissions.integrations[i._id] || permissions.integrations.all)?.connections?.edit,
+          },
+        },
+      };
+    });
 
-      return tiles.map(t => {
-        integration = integrations.find(i => i._id === t._integrationId) || {};
+    let integration;
+    let connector;
+    let status;
 
-        if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
-          status = TILE_STATUS.UNINSTALL;
-        } else if (
-          integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
-        ) {
-          status = TILE_STATUS.IS_PENDING_SETUP;
-        } else if (t.numError && t.numError > 0) {
-          status = TILE_STATUS.HAS_ERRORS;
-        } else {
-          status = TILE_STATUS.SUCCESS;
-        }
+    return tiles.map(t => {
+      integration = integrations.find(i => i._id === t._integrationId) || {};
 
-        if (t._connectorId) {
-          connector = published.find(i => i._id === t._connectorId) || {
-            user: {},
-          };
+      if (t._connectorId && integration.mode === INTEGRATION_MODES.UNINSTALL) {
+        status = TILE_STATUS.UNINSTALL;
+      } else if (
+        integration.mode === INTEGRATION_MODES.INSTALL || integration.mode === INTEGRATION_MODES.UNINSTALL
+      ) {
+        status = TILE_STATUS.IS_PENDING_SETUP;
+      } else if (t.numError && t.numError > 0) {
+        status = TILE_STATUS.HAS_ERRORS;
+      } else {
+        status = TILE_STATUS.SUCCESS;
+      }
 
-          return {
-            ...t,
-            status,
-            integration: {
-              mode: integration.mode,
-              permissions: integration.permissions,
-            },
-            connector: {
-              owner: connector.user.company || connector.user.name,
-              applications: connector.applications || [],
-            },
-          };
-        }
+      if (t._connectorId) {
+        connector = published.find(i => i._id === t._connectorId) || {
+          user: {},
+        };
 
         return {
           ...t,
           status,
           integration: {
+            mode: integration.mode,
             permissions: integration.permissions,
           },
+          connector: {
+            owner: connector.user.company || connector.user.name,
+            applications: connector.applications || [],
+          },
         };
-      });
+      }
+
+      return {
+        ...t,
+        status,
+        integration: {
+          permissions: integration.permissions,
+        },
+      };
     });
-};
+  });
 // #endregion
 
 // #region PUBLIC GLOBAL SELECTORS

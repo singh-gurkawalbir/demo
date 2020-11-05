@@ -6,7 +6,7 @@ import moment from 'moment';
 import * as d3 from 'd3';
 import addMonths from 'date-fns/addMonths';
 
-const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
+export const isDate = date => Object.prototype.toString.call(date) === '[object Date]';
 
 export const getLineColor = index => {
   const colorSpectrum = [
@@ -24,7 +24,10 @@ export const getLineColor = index => {
 };
 
 export const getSelectedRange = range => {
-  const {startDate, endDate, preset = 'custom'} = range;
+  if (!range || typeof range !== 'object') {
+    return {};
+  }
+  const { startDate, endDate, preset = 'custom' } = range;
   let start = startDate;
   let end = endDate;
 
