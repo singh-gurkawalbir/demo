@@ -36,9 +36,11 @@ export const stringCompare = (sortProperty, isDescending) => (a, b) => {
 };
 
 export const celigoListCompare = (a, b) => {
+  // If a.id contains "[*]" and b.id doesnot contain "[*]"
   if (/\[\*\]/.test(a.id) && !/\[\*\]/.test(b.id)) {
     return 1;
   }
+  // If a.id doesnt contain "[*]" and b.id contains "[*]"
   if (!/\[\*\]/.test(a.id) && /\[\*\]/.test(b.id)) {
     return -1;
   }
