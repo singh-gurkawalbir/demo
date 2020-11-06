@@ -242,11 +242,11 @@ export default function Panel(props) {
 
   const showPreviewPanel = useSelector(state => {
     const shouldShow = selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+    // isNew is the property we use to infer if this is the first step in resource creation
+    const isFirstStep = isNewId(id) && selectors.resourceFormState(state, resourceType, id).isNew;
 
-    const skipClose = selectors.resourceFormState(state, resourceType, id)?.skipClose;
-
-    // when skipClose is false that indicates the last step in multistep form building process
-    return shouldShow && !skipClose;
+    // we don't show preview panel if it is the first step
+    return shouldShow && !isFirstStep;
   });
 
   return (

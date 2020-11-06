@@ -129,7 +129,7 @@ const ErrorsList = ({integrationId, childId}) => {
     'flows',
     flowId
   );
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
   const { data: errorMap, status } = useSelector(state => selectors.errorMap(state, flowId));
 
   const resources = useMemo(() => flowResources

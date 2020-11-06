@@ -30,6 +30,7 @@ export default function OnOffCell({
   isFree,
   isIntegrationApp,
   storeId,
+  actionProps,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -40,18 +41,9 @@ export default function OnOffCell({
   const onOffInProgress = useSelector(
     state => selectors.isOnOffInProgress(state, flowId).onOffInProgress
   );
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId)
-  );
-  const istwoDotZeroFrameWork = integration && integration.installSteps &&
-  integration.installSteps.length;
-
-  const isDataLoader = useSelector(state =>
-    selectors.isDataLoader(state, flowId)
-  );
-  const isFlowEnableLocked = useSelector(state =>
-    selectors.isFlowEnableLocked(state, flowId)
-  );
+  const istwoDotZeroFrameWork = actionProps.integration?.installSteps?.length;
+  const isDataLoader = !!actionProps.flowAttributes[flowId]?.isDataLoader;
+  const isFlowEnableLocked = !!actionProps.flowAttributes[flowId]?.isFlowEnableLocked;
   const accessLevel = useSelector(
     state =>
       selectors.resourcePermissions(state, 'integrations', integrationId)
