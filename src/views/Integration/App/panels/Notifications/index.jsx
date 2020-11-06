@@ -33,7 +33,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const [count, setCount] = useState(0);
   const classes = useStyles();
 
-  const notificationsConfig = useMemo(() => ({ storeId }), [storeId]);
+  const notificationsConfig = useMemo(() => ({ storeId, ignoreUnusedConnections: true }), [storeId]);
   const notifications = useSelectorMemo(
     selectors.mkIntegrationNotificationResources,
     integrationId,
@@ -44,9 +44,6 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-
-  const flowHash = flowValues.sort().join('');
-  const connHash = connectionValues.sort().join('');
 
   const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
@@ -81,7 +78,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [flowHash, connHash]);
+  }, [flowValues, connectionValues, flows, connections]);
 
   const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};

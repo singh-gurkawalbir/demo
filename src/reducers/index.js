@@ -27,6 +27,7 @@ import {
   getFlowListWithMetadata,
   getNextDataFlows,
   getIAFlowSettings,
+  getIAResources,
   getFlowDetails,
   getFlowResources,
   isImportMappingAvailable,
@@ -1014,6 +1015,7 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
       )
   );
 
+// TODO: @Sravan, delete all references of this
 selectors.getAllConnectionIdsUsedInTheFlow = (state, flow, options = {}) => {
   const exportIds = getExportIdsFromFlow(flow);
   const importIds = getImportIdsFromFlow(flow);
@@ -1173,77 +1175,22 @@ selectors.integrationAppV2ConnectionList = (state, integrationId, childId) => {
   return connections;
 };
 
-selectors.integrationAppResourceList = (
-  state,
-  integrationId,
-  storeId,
-  tableConfig,
-  ignoreUnusedConnections
-) => {
-  if (!state) return { connections: emptyArray, flows: emptyArray };
+selectors.mkIntegrationAppResourceList = () => {
+  const integrationAppSettings = selectors.mkIntegrationAppSettings();
 
-  const integrationResource =
-    selectors.integrationAppSettings(state, integrationId) || {};
-  const { supportsMultiStore, sections } = integrationResource.settings || {};
-  const { resources: integrationConnections } = selectors.resourceList(state, {
-    type: 'connections',
-    filter: { _integrationId: integrationId },
-    ...(tableConfig || {}),
-  });
-
-  if (!supportsMultiStore || !storeId) {
-    return {
-      connections: integrationConnections,
-      flows: selectors.resourceList(state, {
-        type: 'flows',
-        filter: { _integrationId: integrationId },
-      }).resources,
-    };
-  }
-
-  const flows = [];
-  const flowIds = [];
-  const allFlowIds = [];
-  const connections = [];
-  const flowConnections = [];
-  const exports = [];
-  const imports = [];
-  const selectedStore = (sections || []).find(s => s.id === storeId) || {};
-
-  (selectedStore.sections || []).forEach(sec => {
-    flowIds.push(...map(sec.flows, '_id'));
-  });
-  (sections || []).forEach(store => {
-    (store.sections || []).forEach(sec => {
-      allFlowIds.push(...map(sec.flows, '_id'));
-    });
-  });
-  allFlowIds.forEach(fid => {
-    const flow = selectors.resource(state, 'flows', fid) || {};
-
-    flowConnections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
-  });
-  const unUsedConnections = integrationConnections.filter(c => !flowConnections.includes(c._id));
-
-  flowIds.forEach(fid => {
-    const flow = selectors.resource(state, 'flows', fid) || {};
-
-    flows.push({_id: flow._id, name: flow.name});
-    connections.push(...selectors.getAllConnectionIdsUsedInTheFlow(state, flow));
-    exports.push(...getExportIdsFromFlow(state, flow));
-    imports.push(...getImportIdsFromFlow(state, flow));
-  });
-
-  const usedConnections = integrationConnections.filter(c => connections.includes(c._id));
-  const allConnections = ignoreUnusedConnections ? usedConnections : [...usedConnections, ...unUsedConnections];
-
-  return {
-    connections: allConnections,
-    flows,
-    exports,
-    imports,
-  };
+  return createSelector(
+    integrationAppSettings,
+    state => state?.data?.resources?.flows,
+    state => state?.data?.resources?.connections,
+    state => state?.data?.resources?.exports,
+    state => state?.data?.resources?.imports,
+    (_1, integrationId) => integrationId,
+    (_1, _2, storeId) => storeId,
+    (_1, _2, _3, options) => options,
+    (integrationResource, flows = emptyArray, connections = emptyArray, exports = emptyArray, imports = emptyArray, integrationId, storeId, options = emptyObject) => getIAResources(integrationResource, flows, connections, exports, imports, {...options, integrationId, storeId})
+  );
 };
+selectors.integrationAppResourceList = selectors.mkIntegrationAppResourceList();
 
 selectors.mkIntegrationAppStore = () => {
   const integrationSettings = selectors.mkIntegrationAppSettings();
@@ -1264,14 +1211,15 @@ selectors.mkIntegrationAppStore = () => {
   );
 };
 
-selectors.integrationAppConnectionList = (
-  state,
-  integrationId,
-  storeId,
-  tableConfig,
-  ignoreUnusedConnections
-) => selectors.integrationAppResourceList(state, integrationId, storeId, tableConfig, ignoreUnusedConnections)
-  .connections;
+selectors.mkIntegrationAppConnectionList = () => {
+  const integrationAppResourceList = selectors.mkIntegrationAppResourceList();
+
+  return createSelector(
+    integrationAppResourceList,
+    resourceList => resourceList?.connections
+  );
+};
+selectors.integrationAppConnectionList = selectors.mkIntegrationAppConnectionList();
 
 selectors.pendingCategoryMappings = (state, integrationId, flowId) => {
   const { response, mappings, deleted, uiAssistant } =
@@ -3043,81 +2991,77 @@ selectors.resourceFormField = (state, resourceType, resourceId, id) => {
 };
 
 /** Notification related selectors */
-selectors.subscribedNotifications = (state, userEmail) => {
-  const emailIdToFilter = userEmail || selectors.userProfileEmail(state);
-  const notifications = selectors.resourceList(state, {
-    type: 'notifications',
-    filter: {
-      subscribedByUser: subscribedByUser => subscribedByUser.email === emailIdToFilter,
-    },
-  }).resources || [];
 
-  return notifications;
-};
+selectors.mkSubscribedNotifications = () => createSelector(
+  (state, email) => email,
+  selectors.userProfileEmail,
+  state => state?.data?.resources?.notifications,
+  (email, userEmail, allNotifications = emptyArray) => {
+    const emailIdToFilter = email || userEmail;
 
-selectors.diyFlows = (state, _integrationId) => selectors.resourceList(state, {
-  type: 'flows',
-  filter: {
-    $where() {
-      if (!_integrationId || _integrationId === 'none') {
-        return !this._integrationId;
-      }
+    return allNotifications.filter(notification => notification.subscribedByUser.email === emailIdToFilter);
+  }
+);
 
-      return this._integrationId === _integrationId;
-    },
-  },
-}).resources;
-
-selectors.diyConnections = (state, _integrationId) => {
-  const { _registeredConnectionIds = [] } =
-    selectors.resource(state, 'integrations', _integrationId) || {};
-
-  return selectors.resourceList(state, {
-    type: 'connections',
-    filter: {
-      _id: id =>
-        _registeredConnectionIds.includes(id) ||
-          _integrationId === 'none',
-    },
-  }).resources;
-};
-
-selectors.mkIntegrationNotificationResources = () => createSelector(
-  (_1, _integrationId) => _integrationId,
-  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
-  selectors.diyFlows,
-  selectors.diyConnections,
-  (state, _integrationId, options) =>
-    selectors.integrationAppConnectionList(state, _integrationId, options?.storeId, null, true),
-  (state, _integrationId, options) =>
-  selectors.integrationAppResourceList(state, _integrationId, options?.storeId)?.flows,
-  (state, _1, options) => selectors.subscribedNotifications(state, options?.userEmail),
-  (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppConnections, integrationAppFlows, notifications) => {
-    const connections = _connectorId ? integrationAppConnections : diyConnections;
-    const flows = _connectorId ? integrationAppFlows : diyFlows;
-    const connectionValues = connections
-      .filter(c => !!notifications.find(n => n._connectionId === c._id))
-      .map(c => c._id);
-    let flowValues = flows
-      .filter(f => !!notifications.find(n => n._flowId === f._id))
-      .map(f => f._id);
-    const allFlowsSelected = !!notifications.find(
-      n => n._integrationId === _integrationId
-    );
-
-    if (_integrationId && _integrationId !== 'none') {
-      if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+selectors.mkDiyFlows = () => createSelector(
+  state => state?.data?.resources?.flows,
+  (_, _integrationId) => _integrationId,
+  (flows = emptyArray, _integrationId) => flows.filter(f => {
+    if (!_integrationId || _integrationId === 'none') {
+      return !f._integrationId;
     }
 
-    return {
-      connections,
-      flows,
-      connectionValues,
-      flowValues,
-    };
-  }
-
+    return f._integrationId === _integrationId;
+  })
 );
+
+selectors.mkDiyConnections = () => createSelector(
+  state => state?.data?.resources?.connections,
+  (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._registeredConnectionIds,
+  (_, _integrationId) => _integrationId,
+  (connections = emptyArray, registeredConnections = emptyArray, _integrationId) => connections.filter(c => registeredConnections.includes(c._id) || _integrationId === 'none')
+);
+
+selectors.mkIntegrationNotificationResources = () => {
+  const diyConnections = selectors.mkDiyConnections();
+  const diyFlows = selectors.mkDiyFlows();
+  const integrationAppResourceList = selectors.mkIntegrationAppResourceList();
+  const subscribedNotifications = selectors.mkSubscribedNotifications();
+
+  return createSelector(
+    (_1, _integrationId) => _integrationId,
+    (state, _integrationId) => selectors.resource(state, 'integrations', _integrationId)?._connectorId,
+    diyFlows,
+    diyConnections,
+    (state, _integrationId, options) => integrationAppResourceList(state, _integrationId, options?.storeId, options),
+    (state, _1, options) => subscribedNotifications(state, options?.userEmail),
+    (_integrationId, _connectorId, diyFlows, diyConnections, integrationAppResources, notifications = emptyArray) => {
+      const connections = _connectorId ? integrationAppResources?.connections : diyConnections;
+      const flows = _connectorId ? integrationAppResources?.flows : diyFlows;
+      const connectionValues = (connections || [])
+        .filter(c => !!notifications.find(n => n._connectionId === c._id))
+        .map(c => c._id);
+      let flowValues = (flows || [])
+        .filter(f => !!notifications.find(n => n._flowId === f._id))
+        .map(f => f._id);
+      const allFlowsSelected = !!notifications.find(
+        n => n._integrationId === _integrationId
+      );
+
+      if (_integrationId && _integrationId !== 'none') {
+        if (allFlowsSelected) flowValues = [_integrationId, ...flows];
+      }
+
+      return {
+        connections,
+        flows,
+        connectionValues,
+        flowValues,
+      };
+    }
+
+  );
+};
 
 selectors.integrationNotificationResources = selectors.mkIntegrationNotificationResources();
 
