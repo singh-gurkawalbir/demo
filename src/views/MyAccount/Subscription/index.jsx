@@ -6,20 +6,16 @@ import Integrator from './Integrator';
 import Endpoint from './Endpoint';
 
 export default function Subscription() {
-  const license = useSelector(state =>
-    selectors.platformLicense(state)
-  );
+  const licenseType = useSelector(state => selectors.platformLicense(state)?.type);
 
-  return (
-    <>
-      {license?.type === 'diy' && (<DIY />
-      )}
-      {license?.type === 'integrator' && (
-        <Integrator />
-      )}
-      {license?.type === 'endpoint' && (
-        <Endpoint />
-      )}
-    </>
-  );
+  switch (licenseType) {
+    case 'diy':
+      return <DIY />;
+    case 'integrator':
+      return <Integrator />;
+    case 'endpoint':
+      return <Endpoint />;
+    default:
+      return null;
+  }
 }

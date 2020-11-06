@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Drawer} from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import NotificationToaster from '../../../components/NotificationToaster';
 import Progressbar from './Progressbar';
 import LicenceTable from './licenseTable';
@@ -20,16 +18,12 @@ import Spinner from '../../../components/Spinner';
 import SpinnerWrapper from '../../../components/SpinnerWrapper';
 import LoadResources from '../../../components/LoadResources';
 import PanelHeader from '../../../components/PanelHeader';
+import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(3, 0, 0, 2),
     overflowX: 'auto',
-  },
-  transferButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
   },
   wrapper: {
     border: '1px solid',
@@ -94,27 +88,6 @@ const useStyles = makeStyles(theme => ({
   },
   description: {
     marginTop: theme.spacing(2),
-  },
-
-  drawerPaper: {
-    width: 600,
-    padding: theme.spacing(1),
-  },
-
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
-  link: {
-    marginTop: theme.spacing(2),
-    fontSize: theme.spacing(2),
-  },
-
-  footer: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
   },
   subscriptionBox: {
     border: '1px solid',
@@ -239,22 +212,14 @@ export default function Endpoint() {
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
-  const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
   const showMessage = (licenseActionDetails?.tier === 'free' && licenseActionDetails?.expiresInDays < 10) || false;
   const [showExpireMessage, setShowExpireMessage] = useState(showMessage);
   const [needMoreNotification, setNeedMoreNotification] = useState(licenseActionDetails?.tier === 'free' && !showExpireMessage);
 
   const onStartFreeTrialClick = useCallback(() => {
-    setShowStartFreeDialog(true);
-  }, [setShowStartFreeDialog]);
-  const onStartFreeTrialInterestedClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setShowStartFreeDialog(false);
+    history.push(`${match.url}/upgrade`);
+  }, [history, match.url]);
 
-    return dispatch(actions.user.org.accounts.requestTrialLicense());
-  }, [dispatch, setShowStartFreeDialog]);
   const onTrialUpgradeClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -310,9 +275,6 @@ export default function Endpoint() {
     requestLicenseEntitlementUsage();
   }, [requestLicenseEntitlementUsage]);
 
-  const onDrawerClose = useCallback(() => {
-    setShowStartFreeDialog(false);
-  }, []);
   const onCloseExpireMessage = useCallback(() => {
     setShowExpireMessage(false);
   }, []);
@@ -320,7 +282,6 @@ export default function Endpoint() {
     history.push(match?.url);
   }, [history, match?.url]);
 
-  onCloseExpireMessage;
   if (!licenseEntitlementUsage) {
     return (
       <SpinnerWrapper>
@@ -331,46 +292,7 @@ export default function Endpoint() {
 
   return (
     <>
-      <Drawer
-        anchor="right"
-        open={showStartFreeDialog}
-        classes={{
-          paper: classes.drawerPaper,
-        }}>
-        <DrawerTitleBar
-          onClose={onDrawerClose}
-          title="Upgrade your subscription"
-        />
-        <div className={classes.content}>
-          <Typography variant="body1" className={classes.block}>
-            You are currently on the Free Edition of integrator.io, which gives
-            you one active flow at any given time. Upgrade to one of our paid
-            subscriptions and unlock multiple flow activation to fulfill all
-            your integration needs.
-          </Typography>
-
-          <div className={classes.footer}>
-            <div>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={onStartFreeTrialInterestedClick}>
-                YES, I &apos;M INTERESTED
-              </Button>
-            </div>
-            <a
-              className={classes.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-test="learnmore-link"
-              href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-              Learn more about our integrator.io premium packages
-              <span className="arrow-box arrow-right arrow-box-20" />
-            </a>
-          </div>
-        </div>
-      </Drawer>
-
+      <UpgradeDrawer />
       <RightDrawer
         path=":env/:type"
         height="tall"
@@ -460,49 +382,46 @@ export default function Endpoint() {
               </div>
             </div>
           </div>
-          {licenseActionDetails &&
-                licenseActionDetails.subscriptionActions &&
-                licenseActionDetails.subscriptionActions.actions &&
-                licenseActionDetails.subscriptionActions.actions.length > 0 && (
-                  <div>
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'start-free-trial'
-                      ) > -1 && (
-                        <Button
-                          onClick={onStartFreeTrialClick}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Go unlimited for 30days!
-                        </Button>
-                      )}
-                      {(licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-upgrade'
-                      ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'request-subscription'
-                      ) > -1) && (
-                        <Button
-                          onClick={onRequestUpgradeClick}
-                          disabled={upgradeRequested}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Upgrade
-                        </Button>
-                      )}
-                      {licenseActionDetails.subscriptionActions.actions.indexOf(
-                        'add-more-flows'
-                      ) > -1 && (
-                        <Button
-                          onClick={onRequestUpgradeClick}
-                          disabled={upgradeRequested}
-                          className={classes.subscriptionUpgradeBtn}
-                          color="primary"
-                          variant="outlined">
-                          Add more flows
-                        </Button>
-                      )}
-                  </div>
+          {licenseActionDetails?.subscriptionActions?.actions?.length > 0 && (
+          <div>
+            {licenseActionDetails.subscriptionActions.actions.indexOf(
+              'start-free-trial'
+            ) > -1 && (
+            <Button
+              onClick={onStartFreeTrialClick}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Go unlimited for 30 days!
+            </Button>
+            )}
+            {(licenseActionDetails.subscriptionActions.actions.indexOf(
+              'request-upgrade'
+            ) > -1 || licenseActionDetails.subscriptionActions.actions.indexOf(
+              'request-subscription'
+            ) > -1) && (
+            <Button
+              onClick={onRequestUpgradeClick}
+              disabled={upgradeRequested}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Upgrade
+            </Button>
+            )}
+            {licenseActionDetails.subscriptionActions.actions.indexOf(
+              'add-more-flows'
+            ) > -1 && (
+            <Button
+              onClick={onRequestUpgradeClick}
+              disabled={upgradeRequested}
+              className={classes.subscriptionUpgradeBtn}
+              color="primary"
+              variant="outlined">
+              Add more flows
+            </Button>
+            )}
+          </div>
           )}
         </div>
       </div>
