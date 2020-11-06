@@ -58,8 +58,6 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
     onClose();
   }
 
-  const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
-
   const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = notificationsMetadata({
@@ -87,6 +85,8 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
   }, [dispatch, integrationId, storeId, userEmail]);
 
   const handleNotificationUpdate = useCallback(() => {
+    const userName = users.find(user => user.sharedWithUser.email === userEmail).sharedWithUser?.name;
+
     if (saveTriggered) {
       enquesnackbar({
         message: `Notifications for ${userName || userEmail} were successfully updated`,
@@ -94,7 +94,7 @@ function ManageNotifications({ integrationId, storeId, onClose }) {
       });
       setSaveTriggered(false);
     }
-  }, [enquesnackbar, userEmail, userName, saveTriggered]);
+  }, [enquesnackbar, userEmail, users, saveTriggered]);
 
   const { submitHandler, disableSave, defaultLabels} = useSaveStatusIndicator(
     {
