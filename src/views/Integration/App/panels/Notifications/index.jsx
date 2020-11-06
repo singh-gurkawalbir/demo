@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
+import map from 'lodash/map';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -44,11 +45,13 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
+  // TODO: Remove below hashing logic once mkIntegrationNotificationResources is optimised.
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
-
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const connOptionsHash = map(connectionOps, 'value').join('');
+  const flowOptionsHash = map(flowOps, 'value').join('');
 
   const fieldMeta = {
     fieldMap: {
@@ -81,7 +84,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [flowHash, connHash]);
+  }, [flowHash, connHash, connOptionsHash, flowOptionsHash]);
 
   const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = { subscribedConnections: formVal.connections, subscribedFlows: formVal.flows};
@@ -102,7 +105,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
-      <LoadResources required resources="notifications,flows,connections">
+      <LoadResources required resources="notifications,flows,connections,exports,imports">
         <div className={classes.form}>
           <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>

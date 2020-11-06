@@ -11,7 +11,6 @@ import ExitIcon from '../../icons/ExitIcon';
 import SqlQueryBuilderEditorDrawer from '../../AFE/SqlQueryBuilderEditor/Drawer';
 import FieldHelp from '../FieldHelp';
 import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
-import useFormContext from '../../Form/FormContext';
 import { getUniqueFieldId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -61,18 +60,14 @@ export default function DynaSqlQuery(props) {
     enableEditorV2,
   } = props;
   const fieldType = getUniqueFieldId(id);
-  const formContext = useFormContext(props.formKey);
   const handleOpenDrawer = usePushRightDrawer(id);
 
   const isEditorV2Supported = useSelector(state => {
-    if (enableEditorV2) {
-      return true;
-    }
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const {
     data: sampleData,
@@ -98,14 +93,14 @@ export default function DynaSqlQuery(props) {
           resourceId,
           resourceType,
           stage: stage || 'flowInput',
-          formValues: formContext.value,
+          formKey: props.formKey,
           fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, flowId, formContext, fieldType, isEditorV2Supported, resourceId, resourceType]
+    [dispatch, flowId, fieldType, props.formKey, isEditorV2Supported, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {

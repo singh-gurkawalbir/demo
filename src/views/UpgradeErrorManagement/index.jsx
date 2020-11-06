@@ -123,7 +123,7 @@ export default function UpgradeErrorManagement() {
     if (!canUserUpgradeToErrMgtTwoDotZero) {
       // If the account has at least one IA , we redirect him to dashboard showing below notification
       enqueueSnackbar({
-        message: 'The new error management is being rolled out on an opt-in basis (excluding accounts with Integration Apps at present).',
+        message: 'The new error management is being rolled out on an opt-in basis (excluding accounts with Integration Apps or Integration App licenses at present).',
         variant: 'error',
       });
       redirectToDashboard();
