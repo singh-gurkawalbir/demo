@@ -44,7 +44,7 @@ export default function ResourceSetupDrawer(props) {
     if (isAuthorized && !addOrSelect) onSubmitComplete(resourceId, isAuthorized);
   }, [isAuthorized, resourceId, onSubmitComplete, addOrSelect]);
 
-  const title = `Setup ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
+  const title = `Set up ${RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]}`;
 
   const [newId] = useState(generateNewId());
 

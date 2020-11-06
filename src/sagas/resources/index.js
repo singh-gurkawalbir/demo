@@ -195,7 +195,7 @@ export function* commitStagedChanges({resourceType, id, scope, options, context}
   // remove this code and let all docs be built on HTTP adaptor.
   if (
     // if it matches integrations/<id>/connections when creating a connection
-    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connnections'))) &&
+    (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))) &&
     merged.assistant &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {

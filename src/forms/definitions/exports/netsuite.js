@@ -298,6 +298,13 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
+      defaultDisabled: r => {
+        if (!isNewId(r._id)) {
+          return true;
+        }
+
+        return false;
+      },
       options: [
         {
           items: [
