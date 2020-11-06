@@ -13,6 +13,11 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     overflow: 'hidden',
   },
+  htmlMessage: {
+    '& > pre': {
+      whiteSpace: 'pre-wrap',
+    },
+  },
 
 }));
 
@@ -22,7 +27,7 @@ export default function OverflowWrapper({ message, containsHtml }) {
   return (
     <div className={classes.wrapper}>
       <div className={classes.message}>
-        {containsHtml ? <RawHtml html={message} /> : message}
+        {containsHtml ? <RawHtml html={message} className={classes.htmlMessage} /> : message}
       </div>
     </div>
   );
