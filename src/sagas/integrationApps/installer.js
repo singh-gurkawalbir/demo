@@ -158,7 +158,7 @@ export function* installScriptStep({
     return undefined;
   }
 
-  if (!stepCompleteResponse) {
+  if (!stepCompleteResponse || stepCompleteResponse.warnings) {
     const integration = yield select(selectors.resource, 'integrations', id);
 
     if (
