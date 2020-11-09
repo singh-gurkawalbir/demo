@@ -134,34 +134,35 @@ export default function ConnectionDrawer({
   });
 
   return (
-    <RightDrawer
-      path="setConnection"
-      height="tall"
-      width="medium"
-      onClose={handleDrawerClose}>
-      <DrawerHeader
-        title="Please provide NetSuite account ID"
-        infoText="This is used to verify if there is an existing connection already linked to NetSuite."
+    <>
+      <RightDrawer
+        path="setConnection"
+        height="tall"
+        width="medium"
+        onClose={handleDrawerClose}>
+        <DrawerHeader
+          title="Please provide NetSuite account ID"
+          infoText="This is used to verify if there is an existing connection already linked to NetSuite."
       />
-      <DrawerContent>
-        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
-      </DrawerContent>
+        <DrawerContent>
+          <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        </DrawerContent>
 
-      <DrawerFooter>
-        <ButtonGroup>
-          <DynaSubmit
-            formKey={formKey}
-            onClick={handleAccountSubmit}
-            color="primary"
-            variant="outlined">
-            Continue
-          </DynaSubmit>
-          <Button onClick={handleDrawerClose} variant="text" color="primary">
-            Cancel
-          </Button>
-        </ButtonGroup>
-      </DrawerFooter>
-
+        <DrawerFooter>
+          <ButtonGroup>
+            <DynaSubmit
+              formKey={formKey}
+              onClick={handleAccountSubmit}
+              color="primary"
+              variant="outlined">
+              Continue
+            </DynaSubmit>
+            <Button onClick={handleDrawerClose} variant="text" color="primary">
+              Cancel
+            </Button>
+          </ButtonGroup>
+        </DrawerFooter>
+      </RightDrawer>
       {connection && (
         <ResourceSetupDrawer
           resourceId={connection.newId}
@@ -173,6 +174,6 @@ export default function ConnectionDrawer({
           addOrSelect
           />
       )}
-    </RightDrawer>
+    </>
   );
 }
