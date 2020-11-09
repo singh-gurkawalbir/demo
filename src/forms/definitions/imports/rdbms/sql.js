@@ -69,7 +69,7 @@ export default {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
     'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
+    advancedSettings: { formId: 'advancedSettings' },
     'rdbms.query': {
       fieldId: 'rdbms.query',
       required: true,
@@ -154,7 +154,7 @@ export default {
       {
         collapsed: true,
         label: 'Advanced',
-        fields: ['apiIdentifier'],
+        fields: ['advancedSettings'],
       },
     ],
   },

@@ -1,24 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, LinearProgress, Drawer} from '@material-ui/core';
+import { Typography, LinearProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import DrawerTitleBar from '../../../components/drawer/TitleBar';
 import PanelHeader from '../../../components/PanelHeader';
+import UpgradeDrawer from './drawers/Upgrade';
 
 const useStyles = makeStyles(theme => ({
   root: {
     margin: theme.spacing(0, 1, 2, 1),
     overflowX: 'auto',
-  },
-  transferButton: {
-    margin: theme.spacing(1),
-    textAlign: 'center',
-    float: 'right',
   },
   wrapper: {
     border: '1px solid',
@@ -84,49 +80,21 @@ const useStyles = makeStyles(theme => ({
   description: {
     marginTop: theme.spacing(2),
   },
-
-  drawerPaper: {
-    width: 600,
-    padding: theme.spacing(1),
-  },
-
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
-  },
-  link: {
-    marginTop: theme.spacing(2),
-    fontSize: theme.spacing(2),
-  },
-
-  footer: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-  },
   upgradeBlock: {
     marginBottom: 0,
   },
 }));
 
+const capitalize = s => {
+  if (typeof s !== 'string') return '';
+
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 export default function Subscription() {
   const dispatch = useDispatch();
-  const capitalize = s => {
-    if (typeof s !== 'string') return '';
-
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  };
-  const [showStartFreeDialog, setShowStartFreeDialog] = useState(false);
-  const onStartFreeTrialInterestedClick = useCallback(() => {
-    dispatch(
-      actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
-    );
-    setShowStartFreeDialog(false);
-
-    return dispatch(actions.user.org.accounts.requestTrialLicense());
-  }, [dispatch, setShowStartFreeDialog]);
-
+  const match = useRouteMatch();
+  const history = useHistory();
   const [enquesnackbar] = useEnqueueSnackbar();
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
@@ -178,8 +146,8 @@ export default function Subscription() {
   }
 
   const onStartFreeTrialClick = useCallback(() => {
-    setShowStartFreeDialog(true);
-  }, [setShowStartFreeDialog]);
+    history.push(`${match.url}/upgrade`);
+  }, [history, match.url]);
   const onRequestSubscriptionClick = useCallback(() => {
     dispatch(
       actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
@@ -214,54 +182,13 @@ export default function Subscription() {
     }
   }, [enquesnackbar, platformLicenseActionMessage]);
 
-  const onDrawerClose = useCallback(() => {
-    setShowStartFreeDialog(false);
-  }, []);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isUserInErrMgtTwoDotZero(state)
   );
 
   return (
     <>
-      <Drawer
-        anchor="right"
-        open={showStartFreeDialog}
-        classes={{
-          paper: classes.drawerPaper,
-        }}>
-        <DrawerTitleBar
-          onClose={onDrawerClose}
-          title="Upgrade your subscription"
-        />
-        <div className={classes.content}>
-          <Typography variant="body1" className={classes.block}>
-            You are currently on the Free Edition of integrator.io, which gives
-            you one active flow at any given time. Upgrade to one of our paid
-            subscriptions and unlock multiple flow activation to fulfill all
-            your integration needs.
-          </Typography>
-
-          <div className={classes.footer}>
-            <div>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={onStartFreeTrialInterestedClick}>
-                Yes, I&apos;m interested
-              </Button>
-            </div>
-            <a
-              className={classes.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-test="learnmore-link"
-              href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
-              Learn more about our integrator.io premium packages
-              <span className="arrow-box arrow-right arrow-box-20" />
-            </a>
-          </div>
-        </div>
-      </Drawer>
+      <UpgradeDrawer />
       <div className={classes.root}>
         {licenseActionDetails && licenseActionDetails.isNone && (
         <div className={classes.block}>
@@ -415,7 +342,7 @@ export default function Subscription() {
                           onClick={onStartFreeTrialClick}
                           color="primary"
                           variant="outlined">
-                          Go unlimited for 30days!
+                          Go unlimited for 30 days!
                         </Button>
                       )}
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
