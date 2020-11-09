@@ -96,6 +96,13 @@ export default {
         ],
       },
     ],
+    defaultDisabled: r => {
+      if (!isNewId(r._id)) {
+        return true;
+      }
+
+      return false;
+    },
     isNew: r => isNewId(r._id),
     connectionId: r => r?._connectionId,
     resourceType: 'imports',
