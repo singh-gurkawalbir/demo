@@ -5,7 +5,7 @@ import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
 import moment from 'moment';
 import produce from 'immer';
-import { map, isEmpty } from 'lodash';
+import { map, isEmpty, uniq } from 'lodash';
 import app, { selectors as fromApp } from './app';
 import data, { selectors as fromData } from './data';
 import { selectors as fromResources } from './data/resources';
@@ -18,12 +18,11 @@ import user, { selectors as fromUser } from './user';
 import actionTypes from '../actions/types';
 import {
   isSimpleImportFlow,
-  getExportIdsFromFlow,
-  getImportIdsFromFlow,
   getUsedActionsMapForResource,
   isPageGeneratorResource,
   getImportsFromFlow,
   getPageProcessorImportsFromFlow,
+  getAllConnectionIdsUsedInTheFlow,
   getFlowListWithMetadata,
   getNextDataFlows,
   getIAFlowSettings,
@@ -1014,62 +1013,6 @@ selectors.makeMarketPlaceConnectorsSelector = () =>
         sandbox
       )
   );
-
-// TODO: @Sravan, delete all references of this
-selectors.getAllConnectionIdsUsedInTheFlow = (state, flow, options = {}) => {
-  const exportIds = getExportIdsFromFlow(flow);
-  const importIds = getImportIdsFromFlow(flow);
-  const connectionIds = [];
-  const connections = selectors.resourceList(state, { type: 'connections' }).resources;
-  const exports = selectors.resourceList(state, { type: 'exports' }).resources;
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
-
-  if (!flow) {
-    return emptyArray;
-  }
-
-  const attachedExports =
-    exports && exports.filter(e => exportIds.indexOf(e._id) > -1);
-  const attachedImports =
-    imports && imports.filter(i => importIds.indexOf(i._id) > -1);
-
-  attachedExports.forEach(exp => {
-    if (
-      exp &&
-      exp._connectionId &&
-      !connectionIds.includes(exp._connectionId)
-    ) {
-      connectionIds.push(exp._connectionId);
-    }
-  });
-  attachedImports.forEach(imp => {
-    if (
-      imp &&
-      imp._connectionId &&
-      !connectionIds.includes(imp._connectionId)
-    ) {
-      connectionIds.push(imp._connectionId);
-    }
-  });
-
-  const attachedConnections =
-    connections &&
-    connections.filter(conn => connectionIds.indexOf(conn._id) > -1);
-
-  if (!options.ignoreBorrowedConnections) {
-    attachedConnections.forEach(conn => {
-      if (
-        conn &&
-        conn._borrowConcurrencyFromConnectionId &&
-        !connectionIds.includes(conn._borrowConcurrencyFromConnectionId)
-      ) {
-        connectionIds.push(conn._borrowConcurrencyFromConnectionId);
-      }
-    });
-  }
-
-  return connectionIds;
-};
 
 selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
   const { resource: flowResource, properties } = fieldMeta;
@@ -3355,33 +3298,43 @@ selectors.allJobs = (state, { type }) => fromData.allJobs(state.data, { type });
 
 selectors.flowJobConnections = () => createSelector(
   state => state?.data?.resources?.connections,
-  (state, flowId) => {
-    const flow = selectors.resource(state, 'flows', flowId);
+  state => state?.data?.resources?.imports,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.flows,
+  (state, flowId) => flowId,
+  (_1, _2, options) => options,
+  (connections = emptyArray, imports = emptyArray, exports = emptyArray, flows = emptyArray, flowId, options = {}) => {
+    const flow = flows.find(f => f._id === flowId);
+    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports, options);
 
-    const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow, {
-      ignoreBorrowedConnections: true,
-    });
-
-    return connectionIds;
-  },
-  (connections = [], connectionIds) => connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}))
+    return connections.filter(c => connectionIds.includes(c._id)).map(c => ({id: c._id, name: c.name}));
+  }
 );
 
-selectors.getAllConnectionIdsUsedInSelectedFlows = (state, selectedFlows) => {
-  let connectionIdsToRegister = [];
+selectors.mkConnectionIdsUsedInSelectedFlows = () => createSelector(
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  state => state?.data?.resources?.flows,
+  (_, selectedFlows) => selectedFlows,
+  (connections = emptyArray, exports = emptyArray, imports = emptyArray, flows = emptyArray, selectedFlows) => {
+    let connectionIdsToRegister = [];
 
-  if (!selectedFlows) {
-    return connectionIdsToRegister;
+    if (!selectedFlows) {
+      return connectionIdsToRegister;
+    }
+
+    selectedFlows.forEach(flowId => {
+      const flow = flows.find(f => f._id === flowId);
+
+      connectionIdsToRegister = connectionIdsToRegister.concat(
+        getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports)
+      );
+    });
+
+    return uniq(connectionIdsToRegister);
   }
-
-  selectedFlows.forEach(flow => {
-    connectionIdsToRegister = connectionIdsToRegister.concat(
-      selectors.getAllConnectionIdsUsedInTheFlow(state, flow)
-    );
-  });
-
-  return connectionIdsToRegister;
-};
+);
 
 // returns a list of import resources for a given flow,
 // identified by flowId.
@@ -3491,24 +3444,25 @@ selectors.getSalesforceMasterRecordTypeInfo = (state, resourceId) => {
   return { data, status };
 };
 
-selectors.isAnyFlowConnectionOffline = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
+selectors.mkFlowConnectionList = () => createSelector(
+  state => state?.data?.resources?.connections,
+  state => state?.data?.resources?.exports,
+  state => state?.data?.resources?.imports,
+  (state, flowId) => selectors.resource(state, 'flows', flowId),
+  (connections = emptyArray, exports = emptyArray, imports = emptyArray, flow) => {
+    const connectionIds = getAllConnectionIdsUsedInTheFlow(flow, connections, exports, imports);
 
-  if (!flow) return false;
+    return connections.filter(c => connectionIds.includes(c._id));
+  }
+);
 
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
-  const connectionList =
-    selectors.resourcesByIds(state, 'connections', connectionIds) || [];
+selectors.mkIsAnyFlowConnectionOffline = () => {
+  const flowConnections = selectors.mkFlowConnectionList();
 
-  return connectionList.some(c => c.offline);
-};
-
-selectors.flowConnectionList = (state, flowId) => {
-  const flow = selectors.resource(state, 'flows', flowId);
-  const connectionIds = selectors.getAllConnectionIdsUsedInTheFlow(state, flow);
-  const connectionList = selectors.resourcesByIds(state, 'connections', connectionIds);
-
-  return connectionList;
+  return createSelector(
+    (state, flowId) => flowConnections(state, flowId),
+    flowConnections => flowConnections.some(c => c.offline)
+  );
 };
 
 selectors.flowReferencesForResource = (state, resourceType, resourceId) => {
