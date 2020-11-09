@@ -39,16 +39,17 @@ const SqlDataTabPanel = props => {
 
   return (
     <div className={classes.dataWrapper}>
-      <Tabs value={tabValue} onChange={handleTabChange}>
+      <Tabs
+        value={tabValue} onChange={handleTabChange} variant="fullWidth">
         <Tab
-          label="Sample data"
+          label="Resources available for your handlebars template"
           value="sample"
           id="tab-sample"
           aria-controls="tabpanel-sample"
         />
         {showDefaultData && (
           <Tab
-            label="Default data"
+            label="Defaults"
             value="default"
             id="tab-default"
             aria-controls="tabpanel-default"
