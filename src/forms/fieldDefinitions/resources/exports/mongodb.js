@@ -5,9 +5,9 @@ export default {
     required: true,
   },
   'mongodb.filter': {
-    type: 'editor',
-    mode: 'json',
-    label: 'Filter',
+    type: 'sqlquerybuilder',
+    hideDefaultData: true,
+    label: 'Build MongoDB filter',
   },
   'mongodb.projection': {
     type: 'editor',

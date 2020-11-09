@@ -8,7 +8,6 @@ import { getDefaultData } from '../../../../utils/sampleData';
 import { getUnionObject } from '../../../../utils/jsonPaths';
 import { getUniqueFieldId } from '../../../../utils/resource';
 import DynaLookupEditor from '../DynaLookupEditor';
-import useFormContext from '../../../Form/FormContext';
 
 export default function SQLQueryBuilderWrapper(props) {
   const {
@@ -31,7 +30,6 @@ export default function SQLQueryBuilderWrapper(props) {
     enableEditorV2,
   } = props;
   const fieldType = getUniqueFieldId(id || fieldId);
-  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const parsedRule = useMemo(() => typeof querySetPos !== 'undefined' && Array.isArray(value)
     ? value[querySetPos]
@@ -45,14 +43,11 @@ export default function SQLQueryBuilderWrapper(props) {
   });
 
   const isEditorV2Supported = useSelector(state => {
-    if (enableEditorV2) {
-      return true;
-    }
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType }), isEqual);
 
@@ -73,14 +68,14 @@ export default function SQLQueryBuilderWrapper(props) {
           resourceId,
           resourceType,
           stage: stage || 'flowInput',
-          formValues: formContext.value,
+          formKey: props.formKey,
           fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, flowId, resourceId, resourceType, formContext.value, fieldType, isEditorV2Supported]
+    [dispatch, flowId, resourceId, props.formKey, resourceType, fieldType, isEditorV2Supported]
   );
   const handleEditorVersionToggle = useCallback(
     version => {
@@ -97,7 +92,7 @@ export default function SQLQueryBuilderWrapper(props) {
 
   const formattedDefaultData = useMemo(() => {
     if (modelMetadata) {
-      return modelMetadata;
+      return sampleData.templateVersion === 2 ? {record: {...modelMetadata}} : {data: {...modelMetadata}};
     }
     let defaultData = {};
     const {data} = sampleData;
@@ -123,6 +118,8 @@ export default function SQLQueryBuilderWrapper(props) {
 
           if (parsedDefaultData.data) {
             onFieldChange('modelMetadata', parsedDefaultData.data);
+          } else if (parsedDefaultData.record) {
+            onFieldChange('modelMetadata', parsedDefaultData.record);
           }
         } catch (e) { // do nothing }
         }

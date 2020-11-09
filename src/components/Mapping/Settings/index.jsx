@@ -1,6 +1,5 @@
 import isEqual from 'lodash/isEqual';
 import React, { useMemo, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -13,26 +12,17 @@ import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ButtonGroup from '../../ButtonGroup';
 
-const useStyles = makeStyles(theme => ({
-  mappingSettingDynaform: {
-    minHeight: 'calc(100% - 48px)',
-    padding: 0,
-  },
-  mappingSettingsActions: {
-    paddingTop: theme.spacing(2),
-    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-  },
-}));
 const emptySet = [];
 const emptyObject = {};
 
 /**
- *
  * disabled property set to true in case of monitor level access
  */
-
 function MappingSettings({
   disabled,
   mappingKey,
@@ -40,7 +30,6 @@ function MappingSettings({
   ...categoryMappingOpts
 }) {
   const history = useHistory();
-  const classes = useStyles();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
 
   const [enquesnackbar] = useEnqueueSnackbar();
@@ -202,26 +191,28 @@ function MappingSettings({
 
   return (
     <>
-      <DynaForm
-        formKey={formKey}
-        className={classes.mappingSettingDynaform}
-        fieldMeta={fieldMeta} />
-      <ButtonGroup className={classes.mappingSettingsActions}>
-        <DynaSubmit
-          formKey={formKey}
-          disabled={disableSave}
-          id="fieldMappingSettingsSave"
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
-        <Button
-          data-test="fieldMappingSettingsCancel"
-          onClick={hadleClose}
-          variant="text"
-          color="primary">
-          Cancel
-        </Button>
-      </ButtonGroup>
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            id="fieldMappingSettingsSave"
+            onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+          <Button
+            data-test="fieldMappingSettingsCancel"
+            onClick={hadleClose}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
     </>
   );
 }
@@ -242,10 +233,7 @@ function MappingSettingsWrapper(props) {
   }
 
   return (
-    <MappingSettings
-      {...props}
-      mappingKey={mappingKey}
-    />
+    <MappingSettings {...props} mappingKey={mappingKey} />
   );
 }
 function CategoryMappingSettingsWrapper(props) {
@@ -284,9 +272,10 @@ export default function SettingsDrawer(props) {
         'settings/:mappingKey',
         'settings/category/:editorId/:mappingIndex',
       ]}
-      title="Settings"
       height="tall"
     >
+      <DrawerHeader title="Settings" />
+
       <Switch>
         <Route
           path={`${match.url}/settings/category/:editorId/:mappingIndex`}>

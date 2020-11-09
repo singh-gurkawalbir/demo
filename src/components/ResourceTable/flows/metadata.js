@@ -33,6 +33,7 @@ export default {
               description={r.description}
               isFree={r.free}
               childId={storeId}
+              actionProps={actionProps}
             />
           );
         },
@@ -59,7 +60,7 @@ export default {
       },
       {
         heading: 'Last run',
-        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} />,
+        value: r => <StatusCell flowId={r._id} integrationId={r._integrationId || 'none'} date={r.lastExecutedAt} actionProps={actionProps} />,
         orderBy: 'lastExecutedAt',
       },
       {
@@ -73,7 +74,7 @@ export default {
         heading: 'Schedule',
         align: 'center',
         value: function Schedule(r) {
-          return <ScheduleCell flowId={r._id} name={r.name} />;
+          return <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />;
         },
       },
     ];
@@ -91,7 +92,7 @@ export default {
           heading: 'Settings',
           align: 'center',
           value: function Settings(r) {
-            return <SettingsCell flowId={r._id} name={r.name} />;
+            return <SettingsCell flowId={r._id} name={r.name} actionProps={actionProps} />;
           },
         }
       );
@@ -108,6 +109,7 @@ export default {
               integrationId={actionProps?.parentId || r._integrationId}
               isIntegrationApp={!!r._connectorId}
               storeId={actionProps?.storeId}
+              actionProps={actionProps}
             />
           );
         },
@@ -124,6 +126,7 @@ export default {
               isFree={r.free}
               disabled={r.disabled}
               storeId={actionProps.storeId}
+              actionProps={actionProps}
             />
           );
         },

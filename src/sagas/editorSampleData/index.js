@@ -4,7 +4,8 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
-import { constructResourceFromFormValues, requestExportSampleData } from '../sampleData';
+import { requestExportSampleData } from '../sampleData';
+import { constructResourceFromFormValues } from '../sampleData/utils/exportSampleDataUtils';
 import { isNewId } from '../../utils/resource';
 
 export function* requestEditorSampleData({
@@ -13,7 +14,7 @@ export function* requestEditorSampleData({
   resourceType,
   stage = 'flowInput',
   fieldType,
-  formValues,
+  formKey,
   isEditorV2Supported,
   requestedTemplateVersion,
 }) {
@@ -23,6 +24,7 @@ export function* requestEditorSampleData({
     resourceId,
     resourceType
   );
+  const { value: formValues } = yield select(selectors.formState, formKey) || {};
   const resource = yield call(constructResourceFromFormValues, {
     formValues,
     resourceId,
@@ -31,25 +33,14 @@ export function* requestEditorSampleData({
   let sampleData;
 
   if (isPageGenerator && isEditorV2Supported) {
-    const parsedDataContext = yield select(
+    yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
+    const parsedData = yield select(
       selectors.getResourceSampleDataWithStatus,
       resourceId,
       'parse'
     );
 
-    sampleData = parsedDataContext?.data;
-
-    // sample data not loaded yet, request again
-    if (!parsedDataContext?.status || parsedDataContext?.status === 'requested') {
-      yield call(requestExportSampleData, { resourceId, resourceType, values: formValues });
-      const parsedData = yield select(
-        selectors.getResourceSampleDataWithStatus,
-        resourceId,
-        'parse'
-      );
-
-      sampleData = parsedData?.data;
-    }
+    sampleData = parsedData?.data;
   } else {
     const flowSampleData = yield select(selectors.getSampleDataContext, {
       flowId,

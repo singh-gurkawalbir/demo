@@ -2,6 +2,7 @@
 // import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import each from 'jest-each';
 import moment from 'moment';
+import { createSelector } from 'reselect';
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
@@ -214,6 +215,25 @@ describe('global selectors', () => {
       const cachedResult = resourceData(state, 'exports', 1);
 
       expect(result).toBe(cachedResult);
+    });
+    test('should return the different cached data for different instances', () => {
+      const exports = [{ _id: 1, name: 'test X' }];
+      const patch = [{ op: 'replace', path: '/name', value: 'patch X' }];
+      let state;
+
+      state = reducer(
+        undefined,
+        actions.resource.receivedCollection('exports', exports)
+      );
+      state = reducer(state, actions.resource.patchStaged(1, patch));
+      const resourceDataSel1 = selectors.makeResourceDataSelector();
+      const resourceDataSel2 = selectors.makeResourceDataSelector();
+      const r1 = resourceDataSel1(state, 'exports', 1);
+      const r2 = resourceDataSel2(state, 'exports', 1);
+
+      expect(r1).not.toBe(r2);
+      expect(resourceDataSel1(state, 'exports', 1)).toBe(r1);
+      expect(resourceDataSel2(state, 'exports', 1)).toBe(r2);
     });
     test('should void the cache and regenerate the same result when we received the same collection again', () => {
       const exports = [{ _id: 1, name: 'test X' }];
@@ -609,7 +629,7 @@ describe('tiles', () => {
       {
         user: {
           profile: {},
-          preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
+          preferences: { defaultAShareId: ACCOUNT_IDS.OWN, environment: 'production' },
           org: {
             accounts: [
               {
@@ -632,7 +652,7 @@ describe('tiles', () => {
         ...tilesCollection,
       ])
     );
-    const tiles = selectors.tiles(state);
+    const tiles = selectors.mkTiles()(state);
     const expectedIntegrationPermissions = {
       accessLevel: INTEGRATION_ACCESS_LEVELS.OWNER,
       connections: {
@@ -1009,7 +1029,7 @@ describe('tiles', () => {
       t.integration.permissions = expectedIntegrationPermissions.manage;
     });
 
-    const tilesForManageUser = selectors.tiles(state);
+    const tilesForManageUser = selectors.mkTiles()(state);
 
     expect(tilesForManageUser).toEqual(expected);
 
@@ -1024,7 +1044,7 @@ describe('tiles', () => {
       // eslint-disable-next-line no-param-reassign
       t.integration.permissions = expectedIntegrationPermissions.monitor;
     });
-    const tilesForMonitorUser = selectors.tiles(stateForMonitor);
+    const tilesForMonitorUser = selectors.mkTiles()(stateForMonitor);
 
     expect(tilesForMonitorUser).toEqual(expected);
 
@@ -1063,7 +1083,7 @@ describe('tiles', () => {
     const expectedForTileLevelAccessUser = expected.filter(
       t => t._integrationId !== 'none'
     );
-    const tilesForTileLevelAccessUser = selectors.tiles(stateForTileAccess);
+    const tilesForTileLevelAccessUser = selectors.mkTiles()(stateForTileAccess);
 
     expect(tilesForTileLevelAccessUser).toEqual(expectedForTileLevelAccessUser);
   });
@@ -4265,6 +4285,29 @@ describe('integrationApp Settings reducers', () => {
       ]);
     });
   });
+
+  describe('mkFlowDetails', () => {
+    test('should work', () => {
+      const state = reducer({
+        data: {
+          resources: {
+            flows: [{
+              _id: 123,
+              name: 'aflow',
+              _integrationId: 456,
+            }],
+            integrations: [{
+              _id: 456,
+              name: 'anintegration',
+            }],
+          },
+        },
+      }, 'a');
+      const sel = selectors.mkFlowDetails();
+
+      expect(sel(state, 123)).not.toBeNull();
+    });
+  });
 });
 
 describe('utils', () => {
@@ -4291,6 +4334,76 @@ describe('utils', () => {
       genSelectors(to, fr);
       expect(to.method1(state)).toEqual(42);
       expect(to.method2(state)).toEqual(43);
+    });
+
+    test('should work for reselectors', () => {
+      const state = {
+        sub1: {
+          m1: 42,
+        },
+        sub2: {
+          m1: 43,
+        },
+      };
+      const to = {};
+      const fr = {
+        sub1: {
+          mkMethod1: () => createSelector(
+            s => s.m1,
+            v => ({
+              val: v * 2,
+            })
+          ),
+          mkMethodSimpleProxy: a => {
+            // eslint-disable-next-line no-param-reassign
+            a += 1;
+
+            return createSelector(
+              s => s.m1,
+              v => ({
+                a,
+                val: v * 2,
+              }),
+            );
+          },
+        },
+        sub2: {
+          makeMethod2: () => createSelector(
+            s => s.m1,
+            v => ({
+              val: v * 2,
+            })
+          ),
+          makeMethodSimpleProxy: a => {
+            // eslint-disable-next-line no-param-reassign
+            a += 1;
+
+            return createSelector(
+              s => s.m1,
+              v => ({
+                a,
+                val: v * 2,
+              })
+            );
+          },
+        },
+      };
+
+      genSelectors(to, fr);
+      expect(to.mkMethodSimpleProxy).not.toBeUndefined();
+      expect(to.makeMethodSimpleProxy).not.toBeUndefined();
+      const sel1 = to.mkMethod1();
+      const sel2 = to.mkMethod1();
+
+      expect(sel1(state)).toBe(sel1(state));
+      expect(sel2(state)).toBe(sel2(state));
+      expect(sel1(state)).not.toBe(sel2(state));
+      const sel3 = to.makeMethod2();
+      const sel4 = to.makeMethod2();
+
+      expect(sel3(state)).toBe(sel3(state));
+      expect(sel4(state)).toBe(sel4(state));
+      expect(sel3(state)).not.toBe(sel4(state));
     });
 
     test('should ignore default', () => {

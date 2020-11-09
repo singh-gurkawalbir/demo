@@ -1032,7 +1032,7 @@ export default {
         isGroupedSampleData,
         generateFields,
         recordType: netsuiteRecordType,
-        exportResource,
+        importResource,
       });
     }
 

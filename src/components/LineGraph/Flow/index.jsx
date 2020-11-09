@@ -35,7 +35,6 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(2),
     background: theme.palette.background.default,
   },
   legendIcon: {
@@ -115,7 +114,7 @@ const Chart = ({ id, flowId, range, selectedResources }) => {
   let mouseHoverTimer;
   const { data = [] } =
     useSelector(state => selectors.flowMetricsData(state, flowId)) || {};
-  const flowResources = useSelectorMemo(selectors.mkflowResources, flowId);
+  const flowResources = useSelectorMemo(selectors.mkFlowResources, flowId);
 
   const { startDate, endDate } = range;
   const type = useMemo(() => id === 'averageTimeTaken' ? 'att' : 'sei', [id]);
@@ -330,7 +329,7 @@ export default function FlowCharts({ flowId, range, selectedResources }) {
     );
   }
   if (data.status === 'error') {
-    return <Typography>Error occured</Typography>;
+    return <Typography>Error occurred</Typography>;
   }
 
   return (

@@ -38,8 +38,7 @@ export default function ButtonPanel({flowId, importId, disabled, onClose}) {
 
   return (
     <>
-      <ButtonGroup
-        className={classes.importMappingButtonGroup}>
+      <ButtonGroup>
         <MappingSaveButton
           disabled={!!(disabled || saveInProgress)}
           color="primary"

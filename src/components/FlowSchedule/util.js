@@ -7,8 +7,8 @@ const MINUTES = 1;
 const HOURS = 2;
 const DATE = 3;
 const WEEKDAY = 5;
-const PRESET_TAB = '0';
-const ADVANCED_TAB = '1';
+const PRESET_TAB = 'preset';
+const ADVANCED_TAB = 'advanced';
 const MONTH = 4;
 const HOURS_LIST = Array.from(Array(24).keys());
 const getHoursValue = startTime => moment(startTime, 'LT').hours();
@@ -611,20 +611,15 @@ export const getMetadata = ({
       },
     },
     layout: {
-      type: 'box',
-      containers: [
-        {
-          fields: [
-            'timeZone',
-            'activeTab',
-            'frequency',
-            'startTime',
-            'endTime',
-            'daysToRunOn',
-            'dayToRunOn',
-            'schedule',
-          ],
-        },
+      fields: [
+        'timeZone',
+        'activeTab',
+        'frequency',
+        'startTime',
+        'endTime',
+        'daysToRunOn',
+        'dayToRunOn',
+        'schedule',
       ],
     },
     optionsHandler: (fieldId, fields) => {

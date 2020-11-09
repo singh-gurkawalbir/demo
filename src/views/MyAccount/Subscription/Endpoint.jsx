@@ -12,6 +12,8 @@ import NotificationToaster from '../../../components/NotificationToaster';
 import Progressbar from './Progressbar';
 import LicenceTable from './licenseTable';
 import RightDrawer from '../../../components/drawer/Right';
+import DrawerHeader from '../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import CheckMarkIcon from '../../../components/icons/CheckmarkIcon';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import Spinner from '../../../components/Spinner';
@@ -368,13 +370,17 @@ export default function Endpoint() {
           </div>
         </div>
       </Drawer>
+
       <RightDrawer
         path=":env/:type"
         height="tall"
-        title={titleMap[title]}
         onClose={handleClose}>
-        <LicenceTable />
+        <DrawerHeader title={titleMap[title]} />
+        <DrawerContent>
+          <LicenceTable />
+        </DrawerContent>
       </RightDrawer>
+
       {!showExpireMessage && needMoreNotification && (
       <div className={classes.subscriptionNotificationToaster}>
         <NotificationToaster variant="info" size="large" onClose={onCloseNotification}>

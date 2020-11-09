@@ -99,6 +99,7 @@ export default function DynaSalesforceQualifier(props) {
         </FormControl>
       </div>
       <ActionButton
+        disabled={!options?.hasSObjectType}
         data-test={id}
         onClick={handleOpenDrawer}
         className={classes.exitButtonsalsForceQualifier}>

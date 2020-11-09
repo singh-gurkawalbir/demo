@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
@@ -390,12 +391,12 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   }
 };
 
-/*
- * Handles Sample data of JSON file type
- * Incase of Array content, we merge all objects properties and have a combined object
- * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+/**
+ * processes json data based on resourcePath provided
+ * sampleData = { test: { a: 5, b: 6} } with options = { resourcePath: 'test' }
+ * output: { a: 5, b: 6 }
  */
-export const processJsonSampleData = (sampleData, options = {}) => {
+export const processJsonPreviewData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
   const { resourcePath } = options;
   let processedSampleData = sampleData;
@@ -408,17 +409,26 @@ export const processJsonSampleData = (sampleData, options = {}) => {
       processedSampleData,
       options.resourcePath
     );
-
-    if (Array.isArray(processedSampleData)) {
-      processedSampleData = getUnionObject(processedSampleData);
-    }
-  } else if (Array.isArray(sampleData)) {
-    // If there is no resourcePath, check if the sampleData is an array,
-    // so that we can merge the objects inside
-    processedSampleData = getUnionObject(sampleData);
   }
 
   return processedSampleData;
+};
+
+/*
+ * Handles Sample data of JSON file type
+ * Incase of Array content, we merge all objects properties and have a combined object
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+ */
+export const processJsonSampleData = (sampleData, options = {}) => {
+  const previewData = processJsonPreviewData(sampleData, options);
+
+  if (Array.isArray(previewData)) {
+    // If there is no resourcePath, check if the sampleData is an array,
+    // so that we can merge the objects inside
+    return getUnionObject(previewData);
+  }
+
+  return previewData;
 };
 
 /*
@@ -520,19 +530,28 @@ export const processOneToManySampleData = (sampleData, resource) => {
  * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
  */
 export const wrapExportFileSampleData = records => {
-  // eslint-disable-next-line camelcase
   const page_of_records = [];
 
-  if (!records) return { page_of_records };
+  if (!records || typeof records !== 'object') {
+    page_of_records.push({ record: {} });
 
-  if (Array.isArray(records)) {
-    const rows = [];
-
-    records.forEach(record => rows.push(record));
-    page_of_records.push({rows});
-  } else {
-    page_of_records.push({ record: records });
+    return { page_of_records };
   }
+  if (!Array.isArray(records)) {
+    page_of_records.push({ record: records });
+
+    return { page_of_records };
+  }
+  records.forEach(record => {
+    if (Array.isArray(record)) {
+      const rows = [];
+
+      record.forEach(r => rows.push(r));
+      page_of_records.push({rows});
+    } else {
+      page_of_records.push({ record });
+    }
+  });
 
   return { page_of_records };
 };

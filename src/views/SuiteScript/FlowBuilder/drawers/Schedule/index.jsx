@@ -1,30 +1,13 @@
 import React from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../../reducers';
 import RightDrawer from '../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import FlowSchedule from '../../../../../components/SuiteScript/FlowSchedule';
-
-const useStyle = makeStyles(theme => ({
-  scheduleContainer: {
-    width: '100%',
-    // overflowX: 'hidden',
-    '& > div:first-child': {
-      marginLeft: theme.spacing(-1),
-      paddingRight: 0,
-    },
-  },
-  suiteScriptFlowScheduleDrawer: {
-    '& > .MuiPaper-root': {
-      overflow: 'visible',
-    },
-  },
-}));
 
 function RoutingWrapper(props) {
   const history = useHistory();
-  const classes = useStyle();
   const match = useRouteMatch();
   const flowId = props.flowId || match.params.flowId;
   const { ssLinkedConnectionId } = props;
@@ -41,21 +24,17 @@ function RoutingWrapper(props) {
       flow={flow}
       // eslint-disable-next-line react/jsx-handler-names
       onClose={history.goBack}
-      className={classes.scheduleContainer}
     />
   );
 }
 
 export default function ScheduleDrawer(props) {
-  const classes = useStyle();
-
   return (
     <RightDrawer
       path={[':flowId/schedule', 'schedule']}
       width="medium"
-      title="Flow schedule"
-      className={classes.suiteScriptFlowScheduleDrawer}
     >
+      <DrawerHeader title="Flow schedule" />
       <RoutingWrapper {...props} />
     </RightDrawer>
   );

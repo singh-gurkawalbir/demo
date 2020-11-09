@@ -12,6 +12,7 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { JOB_STATUS } from '../../../../../../utils/constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
+import { DRAGGABLE_SECTION_DIV_ID } from '../..';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -90,7 +91,7 @@ export default function RunDashboardActions({ flowId }) {
 
   const handleCancel = useCallback(() => {
     confirmDialog({
-      title: 'Are you sure you want to cancel?',
+      title: 'Confirm cancel run?',
       message:
           'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
       buttons: [
@@ -101,7 +102,7 @@ export default function RunDashboardActions({ flowId }) {
           },
         },
         {
-          label: 'Close',
+          label: 'No, go back',
           color: 'secondary',
         },
       ],
@@ -146,7 +147,7 @@ export default function RunDashboardActions({ flowId }) {
   }, [handleCancel, handleDownloadDiagnostics, handleDownloadFiles]);
 
   return (
-    <div className={classes.rightActionContainer}>
+    <div id={DRAGGABLE_SECTION_DIV_ID} className={classes.rightActionContainer}>
       <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
       <IconTextButton onClick={handleRefresh} disabled={status === 'requested'}>
         <RefreshIcon /> Refresh

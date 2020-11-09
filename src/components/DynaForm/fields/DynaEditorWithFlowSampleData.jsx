@@ -6,7 +6,6 @@ import UrlEditorDrawer from '../../AFE/UrlEditor/Drawer';
 import CsvConfigEditorDrawer from '../../AFE/CsvConfigEditor/Drawer';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import useFormContext from '../../Form/FormContext';
 import { getUniqueFieldId } from '../../../utils/resource';
 
 const DynaEditorWithFlowSampleData = ({
@@ -21,20 +20,13 @@ const DynaEditorWithFlowSampleData = ({
   ...props
 }) => {
   const fieldType = getUniqueFieldId(fieldId);
-  const formContext = useFormContext(props.formKey);
   const dispatch = useDispatch();
   const isEditorV2Supported = useSelector(state => {
-    // enableEditorV2 is to force fields to show editor when
-    // the whole adaptor is not yet supported
-    // TODO: we will not need all these conditions once all fields/adaptors support AFE2
-    if (enableEditorV2) {
-      return true;
-    }
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const {
     data: sampleData,
@@ -60,14 +52,14 @@ const DynaEditorWithFlowSampleData = ({
           resourceId,
           resourceType,
           stage: 'flowInput',
-          formValues: formContext.value,
+          formKey: props.formKey,
           fieldType,
           isEditorV2Supported,
           requestedTemplateVersion: version,
         })
       );
     },
-    [dispatch, fieldType, flowId, formContext.value, isEditorV2Supported, resourceId, resourceType]
+    [dispatch, fieldType, flowId, props.formKey, isEditorV2Supported, resourceId, resourceType]
   );
   const handleEditorVersionToggle = useCallback(
     version => {

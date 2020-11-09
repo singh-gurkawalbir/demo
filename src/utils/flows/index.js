@@ -274,20 +274,24 @@ export function isRealtimeExport(exp) {
   return false;
 }
 
-export function isRealtimeFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isRealtimeFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   return isRealtimeExport(exp);
 }
 
-export function hasBatchExport(flow, exports = []) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function hasBatchExport(flow, exports = [], flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   if (isOldFlowSchema(flow)) {
     return !isRealtimeExport(exp);
   }
 
   if (flow && flow.pageGenerators && flow.pageGenerators.length) {
+    if (flowExports?.length) {
+      return flowExports.some(exp => !isRealtimeExport(exp));
+    }
+
     return flow.pageGenerators.some(pg => {
       const exp = exports.find(exp => exp._id === pg._exportId);
 
@@ -298,8 +302,8 @@ export function hasBatchExport(flow, exports = []) {
   return false;
 }
 
-export function isSimpleImportFlow(flow, exports) {
-  const exp = getFirstExportFromFlow(flow, exports);
+export function isSimpleImportFlow(flow, exports, flowExports) {
+  const exp = (flowExports?.length && flowExports[0]) || getFirstExportFromFlow(flow, exports);
 
   return exp && exp.type === 'simple';
 }
@@ -322,10 +326,49 @@ export function flowbuilderUrl(flowId, integrationId, { childId, isIntegrationAp
   return flowBuilderTo;
 }
 
-export function showScheduleIcon(flow, exports) {
-  if (isSimpleImportFlow(flow, exports)) return false;
+export function showScheduleIcon(flow, exports, flowExports) {
+  if (isSimpleImportFlow(flow, exports, flowExports)) return false;
 
-  return hasBatchExport(flow, exports);
+  return hasBatchExport(flow, exports, flowExports);
+}
+
+export function flowAllowsScheduling(flow, integration, allExports, isAppVersion2, flowExports) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+  const canSchedule = showScheduleIcon(flow, allExports, flowExports);
+
+  // For IA2.0, 'showSchedule' is assumed true for now until we have more clarity
+  if (!isApp || isAppVersion2) return canSchedule;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return canSchedule && !!flowSettings.showSchedule;
+}
+
+export function getFlowType(flow, exports, flowExports) {
+  if (!flow) return '';
+  if (!exports && !flowExports) return '';
+  if (isSimpleImportFlow(flow, exports, flowExports)) return 'Data Loader';
+  if (isRealtimeFlow(flow, exports, flowExports)) return 'Realtime';
+
+  // TODO: further refine this logic to differentiate between 'Scheduled'
+  // and 'mixed'. Note that mixed is the case where some exports are scheduled
+  // and others are not.
+  return 'Scheduled';
+}
+
+export function flowSupportsSettings(flow, integration) {
+  if (!flow) return false;
+  const isApp = flow._connectorId;
+
+  if (!isApp) return false;
+  // eslint-disable-next-line no-use-before-define
+  const flowSettings = getIAFlowSettings(integration, flow._id);
+
+  return !!(
+    (flowSettings.settings && flowSettings.settings.length) ||
+    (flowSettings.sections && flowSettings.sections.length)
+  );
 }
 
 export function isRunnable(flow, exports) {

@@ -71,7 +71,7 @@ function RunFlowLabel({ isRequested, disabled, onRunClick, variant, label}) {
         variant="text"
         data-test="runFlow"
         onClick={onRunClick}>
-        <RunIcon color="secondary" /> {label}
+        <RunIcon /> {label}
       </IconTextButton>
     );
   }

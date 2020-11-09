@@ -10,9 +10,11 @@
   },
   "scripts": {
     "start": "webpack-dev-server --mode=development",
+    "start-optimized": "env NODE_ENV=production webpack-dev-server --mode=production",
+    "start-profiling": "env NODE_ENV=production webpack-dev-server --mode=production --profiling",
     "build": "env NODE_ENV=production webpack --mode=production",
     "release": "./release.sh",
-    "build-analyze": "env NODE_ENV=analyze webpack --mode=production",
+    "build-analyze": "env NODE_ENV=production webpack --mode=production --analyze",
     "lint": "eslint --ext .js --ext .jsx ./src",
     "test": "env NODE_ENV=test jest",
     "coverage": "env NODE_ENV=test jest --coverage",
