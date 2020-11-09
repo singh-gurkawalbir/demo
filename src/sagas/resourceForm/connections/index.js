@@ -267,7 +267,7 @@ export function* requestToken({ resourceId, fieldId, values }) {
   }
 }
 
-function* pingConnection({ resourceId, values }) {
+export function* pingConnection({ resourceId, values }) {
   const connectionPayload = yield call(createPayload, {
     values,
     resourceType: 'connections',
