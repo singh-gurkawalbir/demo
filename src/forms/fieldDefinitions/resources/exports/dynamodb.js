@@ -52,13 +52,11 @@ export default {
       '{ "#n1":"Name","#n2":"Id"}',
   },
   'dynamodb.expressionAttributeValues': {
-    type: 'editor',
-    label: 'Expression attribute values',
-    mode: 'json',
+    type: 'sqlquerybuilder',
+    label: 'Build expression attribute values',
+    hideDefaultData: true,
     required: true,
-    defaultValue: r =>
-      (r && r.dynamodb && r.dynamodb.expressionAttributeValues) ||
-      '{ ":p1":"A",":p2":"1"}',
+    defaultValue: r => r?.dynamodb?.expressionAttributeValues,
   },
   'dynamodb.onceExportPartitionKey': {
     type: 'text',
