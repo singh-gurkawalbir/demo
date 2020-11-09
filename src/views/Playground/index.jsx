@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 // import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import CeligoPageBar from '../../components/CeligoPageBar';
+import examples from './examples';
 
 const useStyles = makeStyles(theme => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    border: 'solid 1px blue',
   },
 }));
 

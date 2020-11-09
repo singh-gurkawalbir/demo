@@ -355,7 +355,7 @@ export default function Endpoint() {
                 variant="outlined"
                 color="primary"
                 onClick={onStartFreeTrialInterestedClick}>
-                YES, I &apos;M INTERESTED
+                Yes, I&apos;m interested
               </Button>
             </div>
             <a
