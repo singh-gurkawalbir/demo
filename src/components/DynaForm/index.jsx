@@ -7,8 +7,8 @@ import { generateSimpleLayout } from '../Form';
 const useStyles = makeStyles(theme => ({
   fieldContainer: {
     maxHeight: '100%',
-    overflowY: 'auto',
-    padding: theme.spacing(1),
+    // overflowY: 'auto',
+    // padding: theme.spacing(1),
     border: 'none',
   },
   details: {

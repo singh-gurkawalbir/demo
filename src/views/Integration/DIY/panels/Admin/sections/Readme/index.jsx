@@ -1,13 +1,11 @@
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../../../reducers';
 import PanelHeader from '../../../../../../../components/PanelHeader';
 import RawHtml from '../../../../../../../components/RawHtml';
-import Editor from './Editor';
-import RightDrawer from '../../../../../../../components/drawer/Right';
+import EditDrawer from './EditDrawer';
 import IconTextButton from '../../../../../../../components/IconTextButton';
 
 const useStyles = makeStyles(theme => ({
@@ -47,10 +45,6 @@ export default function ReadmeSection({ integrationId }) {
     history.push(`${match.url}/edit/readme`);
   }, [history, match.url]);
 
-  const onClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
-
   return (
     <>
       <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
@@ -66,16 +60,8 @@ export default function ReadmeSection({ integrationId }) {
       <div className={classes.root}>
         <RawHtml className={classes.previewContainer} html={readmeValue} />
       </div>
-      <RightDrawer
-        path="edit/readme"
-        height="tall"
-        width="xl"
-        // type="paper"
-        title="Edit readme"
-        variant="temporary"
-        onClose={onClose}>
-        <Editor readmeValue={readmeValue} onClose={onClose} integrationId={integrationId} />
-      </RightDrawer>
+
+      <EditDrawer value={readmeValue} integrationId={integrationId} />
     </>
   );
 }

@@ -17,10 +17,12 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
-      defaultValue: r => (r && r._agentId ? 'onpremise' : ''),
+      defaultValue: 'onpremise',
+      defaultDisabled: true,
       options: [
         {
           items: [
+            { label: 'Cloud', value: 'cloud' },
             { label: 'On-premise', value: 'onpremise' },
           ],
         },
@@ -29,6 +31,7 @@ export default {
     _agentId: {
       fieldId: '_agentId',
       visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
+      required: true,
     },
     'rdbms.host': { fieldId: 'rdbms.host' },
     'rdbms.user': {
@@ -44,10 +47,10 @@ export default {
       type: 'text',
       label: 'Service Name',
     },
-    'rdbms.oracle.serviceType': {
-      id: 'rdbms.oracle.serviceType',
+    'rdbms.serverType': {
+      id: 'rdbms.serverType',
       type: 'select',
-      label: 'Service Type',
+      label: 'Server Type',
       options: [
         {
           items: [
@@ -95,7 +98,7 @@ export default {
         label: 'Advanced',
         fields: [
           'rdbms.serviceName',
-          'rdbms.oracle.serviceType',
+          'rdbms.serverType',
           '_borrowConcurrencyFromConnectionId',
           'rdbms.concurrencyLevel',
         ],

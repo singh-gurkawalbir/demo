@@ -46,11 +46,19 @@ const useStyles = makeStyles(theme => ({
   scriptGridAreas: {
     gridTemplateAreas: '"meta form" "hook settings" "error error"',
   },
-  submitButton: {
-    marginLeft: theme.spacing(1),
-  },
   formPreviewContainer: {
-    maxHeight: 'calc(100% - 54px) !important',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  form: {
+    flex: 1,
+    overflow: 'auto',
+    padding: theme.spacing(2),
+  },
+  testForm: {
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    padding: theme.spacing(1),
   },
 }));
 
@@ -107,9 +115,7 @@ export default function SettingsFormEditor({
   return (
     <PanelGrid
       key={editorId}
-      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}
-      height="calc(100vh - 170px)"
-      width="100%">
+      className={clsx(classes.gridContainer, classes[`${mode}GridAreas`])}>
       <PanelGridItem gridArea="meta">
         <PanelTitle
           title={mode === 'json' ? 'Form definition' : 'Script input'}
@@ -136,21 +142,21 @@ export default function SettingsFormEditor({
       <PanelGridItem gridArea="form">
         <PanelTitle title="Form preview" />
         {result && result.data && status !== 'error' ? (
-          <>
+          <div className={classes.formPreviewContainer}>
             <DynaForm
               formKey={formKey}
-              className={classes.formPreviewContainer}
               fieldMeta={result.data}
-              />
-
-            <DynaSubmit
-              formKey={formKey}
-              className={classes.submitButton}
-              onClick={handleFormPreviewChange}
-              showCustomFormValidations={showCustomFormValidations}>
-              Test form
-            </DynaSubmit>
-          </>
+              className={classes.form}
+            />
+            <div className={classes.testForm}>
+              <DynaSubmit
+                formKey={formKey}
+                onClick={handleFormPreviewChange}
+                showCustomFormValidations={showCustomFormValidations}>
+                Test form
+              </DynaSubmit>
+            </div>
+          </div>
         ) : (
           <Typography>
             A preview of your settings form will appear once you add some valid

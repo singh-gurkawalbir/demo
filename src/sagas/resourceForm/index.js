@@ -274,6 +274,7 @@ export function* newIAFrameWorkPayload({ resourceId }) {
     selectors.stagedResource,
     resourceId
   );
+  // TO DO: Ashok Needs to refactor this code
 
   if (
     allPatches &&
@@ -283,9 +284,11 @@ export function* newIAFrameWorkPayload({ resourceId }) {
     return {
       id: (allPatches.find(item => item.path === '/_integrationId') || {})
         .value,
-      connectionType: (allPatches.find(item => item.path === '/type') || {})
+      connectionType: (allPatches.find(item => item.path === '/type' && item.op === 'replace') || (allPatches.find(item => item.path === '/type')) || {})
         .value,
-      assistant: (allPatches.find(item => item.path === '/assistant') || {})
+      assistant: (allPatches.find(item => item.path === '/assistant' && item.op === 'replace') || (allPatches.find(item => item.path === '/assistant')) || {})
+        .value,
+      installStepConnection: (allPatches.find(item => item.path === '/installStepConnection') || {})
         .value,
     };
   }
@@ -304,7 +307,7 @@ export function* submitFormValues({
     resourceId,
   });
 
-  if (isNewIA) {
+  if (isNewIA?.installStepConnection) {
     // UI will not create a connection in New IA installer. Connection payload will be given to backend.
     // Backend will create a connection and connection id will get back in reponse.
     const connectionPayload = yield call(createPayload, {

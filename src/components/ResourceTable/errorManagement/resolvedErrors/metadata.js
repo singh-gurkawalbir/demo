@@ -21,7 +21,7 @@ export default {
     {
       heading: 'Message',
       width: '30%',
-      value: r => <OverflowWrapper message={r.message} />,
+      value: r => <OverflowWrapper message={r.message} containsHtml />,
     },
     {
       heading: 'Code',
@@ -41,7 +41,7 @@ export default {
     {
       heading: 'Resolved by',
       width: '15%',
-      value: r => <UserName userId={r.resolvedBy} />,
+      value: (r, { flowId }) => <UserName userId={r.resolvedBy} flowId={flowId} />,
     },
     {
       heading: 'Resolved at',

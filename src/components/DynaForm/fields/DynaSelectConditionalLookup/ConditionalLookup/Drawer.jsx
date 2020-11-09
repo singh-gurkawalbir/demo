@@ -2,6 +2,8 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import ConditionalLookup from '.';
 import RightDrawer from '../../../../drawer/Right';
+import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../drawer/Right/DrawerContent';
 
 export default function ConditionalLookupDrawer(props) {
   const history = useHistory();
@@ -12,12 +14,12 @@ export default function ConditionalLookupDrawer(props) {
       path={['conditionalLookup/edit/:lookupName', 'conditionalLookup/add']}
       height="tall"
       width="default"
-      title={`${isEdit ? 'Edit' : 'Add'} Lookup`}
       variant="temporary"
       >
-      <ConditionalLookup
-        {...props}
-        />
+      <DrawerHeader title={`${isEdit ? 'Edit' : 'Add'} Lookup`} />
+      <DrawerContent>
+        <ConditionalLookup {...props} />
+      </DrawerContent>
     </RightDrawer>
   );
 }

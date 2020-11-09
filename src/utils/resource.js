@@ -1,7 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -479,7 +479,7 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
     [, integrationId] = newurl;
   }
 
-  if (integrationId && integrations.find(i => i._id === integrationId)) {
+  if (integrationId && integrations && integrations.find(i => i._id === integrationId)) {
     connectorId = integrations.find(i => i._id === integrationId)._connectorId;
 
     const connectorHelpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
@@ -816,4 +816,40 @@ export const getUniqueFieldId = fieldId => {
     default:
       return fieldId;
   }
+};
+
+export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [], connectionId) => {
+  let accessLevelOnConnection;
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+      i?._registeredConnectionIds &&
+      i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
+  }
+
+  return accessLevelOnConnection;
 };

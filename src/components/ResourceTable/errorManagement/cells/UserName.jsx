@@ -3,19 +3,10 @@ import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import OverflowWrapper from './OverflowWrapper';
 
-export default function UserName({ userId }) {
-  // TODO @Raghu: Add selector to get user name
-  const userName = useSelector(state => {
-    const profile = selectors.userProfile(state);
-
-    // If it is logged in user , return its name
-    if (profile._id === userId) return profile.name || profile.email;
-    // else check for org user's list , and if matches return name else id
-    const sharedUserList = selectors.usersList(state).map(user => user.sharedWithUser);
-    const user = sharedUserList.find(user => user._id === userId);
-
-    return user ? user.name || user.email : userId;
-  });
+export default function UserName({ userId, flowId }) {
+  const userName = useSelector(state =>
+    selectors.getIntegrationUserNameById(state, userId, flowId)
+  );
 
   if (userId === 'autopilot') {
     return 'Autopilot';

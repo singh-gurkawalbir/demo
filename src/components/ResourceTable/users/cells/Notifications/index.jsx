@@ -8,12 +8,14 @@ import AddIcon from '../../../../icons/AddIcon';
 
 export default function Notifications({ user, integrationId, storeId }) {
   const match = useRouteMatch();
-  const userEmail = user.sharedWithUser.email;
+  const userEmail = user.sharedWithUser?.email;
   const canManageNotifications = useSelector(state => {
     const hasManageIntegrationAccess = selectors.hasManageIntegrationAccess(state, integrationId);
     const isActiveUser = !user.disabled && user.accepted;
+    const loggedInUserId = selectors.userProfile(state)?._id;
+    const isLoggedInUser = loggedInUserId === user.sharedWithUser?._id;
 
-    return isActiveUser && hasManageIntegrationAccess;
+    return isLoggedInUser || (isActiveUser && hasManageIntegrationAccess);
   });
 
   const hasNotifications = useSelector(state => {

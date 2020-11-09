@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
+import map from 'lodash/map';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -39,11 +40,13 @@ export default function NotificationsSection({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
+  // TODO: Remove below hashing logic once mkIntegrationNotificationResources is optimised.
   const flowHash = flowValues.sort().join('');
   const connHash = connectionValues.sort().join('');
-
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const connOptionsHash = map(connectionOps, 'value').join('');
+  const flowOptionsHash = map(flowOps, 'value').join('');
 
   const fieldMeta = {
     fieldMap: {
@@ -73,7 +76,7 @@ export default function NotificationsSection({ integrationId, childId }) {
 
   useEffect(() => {
     setCount(count => count + 1);
-  }, [flowHash, connHash]);
+  }, [flowHash, connHash, connOptionsHash, flowOptionsHash]);
 
   const handleSubmit = useCallback(formVal => {
     const resourcesToUpdate = {

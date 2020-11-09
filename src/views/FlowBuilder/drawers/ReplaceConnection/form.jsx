@@ -2,15 +2,17 @@ import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import React, {useCallback, useEffect} from 'react';
-import { selectors } from '../../reducers';
-import DynaForm from '../DynaForm';
-import DynaSubmit from '../DynaForm/DynaSubmit';
-import ButtonGroup from '../ButtonGroup';
-import actions from '../../actions';
-import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
-import ResourceDrawer from '../drawer/Resource';
-import useConfirmDialog from '../ConfirmDialog';
-import { getReplaceConnectionExpression } from '../../utils/connections';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import { getReplaceConnectionExpression } from '../../../../utils/connections';
+import DynaForm from '../../../../components/DynaForm';
+import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
+import ButtonGroup from '../../../../components/ButtonGroup';
+import ResourceDrawer from '../../../../components/drawer/Resource';
+import useConfirmDialog from '../../../../components/ConfirmDialog';
+import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 
 const emptyObj = {};
 
@@ -50,9 +52,6 @@ export default function ReplaceConnection(props) {
         required: true,
       },
     },
-    layout: {
-      fields: ['_connectionId'],
-    },
   };
 
   const formKey = useFormInitWithPermissions({
@@ -81,24 +80,26 @@ export default function ReplaceConnection(props) {
   }, [dispatch, flowId, connection._id, confirmDialog, onClose]);
 
   return (
-    <div>
-      <DynaForm
-        formKey={formKey}
-        fieldMeta={fieldMeta} />
-      <ButtonGroup>
-        <DynaSubmit
-          formKey={formKey}
-          onClick={replace}
-          color="primary"
-          disabled={false}
-          data-test="replaceConnection">
-          Replace
-        </DynaSubmit>
-        <Button onClick={onClose} variant="text" color="primary">
-          Cancel
-        </Button>
-      </ButtonGroup>
+    <>
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            onClick={replace}
+            color="primary"
+            disabled={false}
+            data-test="replaceConnection">
+            Replace
+          </DynaSubmit>
+          <Button onClick={onClose} variant="text" color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
       <ResourceDrawer />
-    </div>
+    </>
   );
 }

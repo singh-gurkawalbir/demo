@@ -24,6 +24,7 @@ export default function StatusCell({
   flowId,
   date,
   integrationId,
+  actionProps,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -34,9 +35,7 @@ export default function StatusCell({
       return latestFlowJobs.find(job => job._flowId === flowId);
     }
   });
-  const isUserInErrMgtTwoDotZero = useSelector(state =>
-    selectors.isOwnerUserInErrMgtTwoDotZero(state)
-  );
+  const {isUserInErrMgtTwoDotZero} = actionProps;
 
   if (!job || !isUserInErrMgtTwoDotZero) {
     return <CeligoTimeAgo date={date} />;

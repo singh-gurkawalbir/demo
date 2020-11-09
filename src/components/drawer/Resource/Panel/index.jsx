@@ -51,6 +51,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     width: '100%',
     padding: theme.spacing(3, 3, 0, 3),
+    overflowY: 'auto',
   },
   exportsPanel: {
     flexDirection: 'row',
@@ -241,11 +242,11 @@ export default function Panel(props) {
 
   const showPreviewPanel = useSelector(state => {
     const shouldShow = selectors.isPreviewPanelAvailableForResource(state, id, resourceType, flowId);
+    // isNew is the property we use to infer if this is the first step in resource creation
+    const isFirstStep = isNewId(id) && selectors.resourceFormState(state, resourceType, id).isNew;
 
-    const skipClose = selectors.resourceFormState(state, resourceType, id)?.skipClose;
-
-    // when skipClose is false that indicates the last step in multistep form building process
-    return shouldShow && !skipClose;
+    // we don't show preview panel if it is the first step
+    return shouldShow && !isFirstStep;
   });
 
   return (
@@ -260,6 +261,7 @@ export default function Panel(props) {
             <Back />
           </IconButton>
           )}
+
           <div data-public className={classes.titleImgBlock}>
             <Typography variant="h4" className={clsx(classes.titleText, {[classes.nestedDrawerTitleText]: isNestedDrawer(location.pathname)})}>
               {title}
@@ -273,6 +275,7 @@ export default function Panel(props) {
             />
             )}
           </div>
+
           <IconButton
             data-test="closeDrawer"
             className={classes.closeButton}
@@ -280,6 +283,7 @@ export default function Panel(props) {
             <Close />
           </IconButton>
         </div>
+
         <LoadResources required resources={requiredResources}>
           <div
             className={clsx({
@@ -310,18 +314,20 @@ export default function Panel(props) {
           />
             )}
           </div>
-          <ResourceFormActionsPanel
-            formKey={newId}
-            isNew={isNew}
-            resourceType={resourceType}
-            resourceId={id}
-            flowId={flowId}
-            integrationId={integrationId}
-            cancelButtonLabel="Cancel"
-            submitButtonLabel={submitButtonLabel}
-            submitButtonColor={submitButtonColor}
-            onCancel={abortAndClose}
+          <div style={{overflowY: 'auto'}}>
+            <ResourceFormActionsPanel
+              formKey={newId}
+              isNew={isNew}
+              resourceType={resourceType}
+              resourceId={id}
+              flowId={flowId}
+              integrationId={integrationId}
+              cancelButtonLabel="Cancel"
+              submitButtonLabel={submitButtonLabel}
+              submitButtonColor={submitButtonColor}
+              onCancel={abortAndClose}
           />
+          </div>
         </LoadResources>
       </div>
     </>

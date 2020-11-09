@@ -66,13 +66,10 @@ export default function FlowStartDateDialog(props) {
     let customStartDate;
 
     if (formVal.deltaType === 'custom') {
-      customStartDate = moment.tz(
-        formVal.startDateCustom,
-        `${preferences.dateFormat} ${preferences.timeFormat}`,
-        formVal.timeZone
-      );
+      customStartDate =
+        moment(formVal.startDateCustom).parseZone(formVal.timeZone);
 
-      customStartDate = customStartDate ? customStartDate.toISOString() : null;
+      customStartDate = customStartDate?.toISOString();
     }
 
     onRun(customStartDate);
