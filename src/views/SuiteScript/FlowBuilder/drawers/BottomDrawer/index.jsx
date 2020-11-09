@@ -100,6 +100,7 @@ export default function BottomDrawer({
   flowId,
   setTabValue,
   tabValue,
+  _flowId, /* Scenario Id on the flow record in NS */
 }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
@@ -192,7 +193,7 @@ export default function BottomDrawer({
         <TabPanel value={tabValue} index={1} classes={classes}>
           <RunDashboardPanel
             ssLinkedConnectionId={ssLinkedConnectionId}
-            flowId={flowId}
+            flowId={_flowId}
           />
         </TabPanel>
       </>

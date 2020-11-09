@@ -340,7 +340,7 @@ export default function SuiteScriptIntegrationAppInstallation() {
             path="editConnection"
             height="tall"
             width="medium">
-            <DrawerHeader title="Setup connection" />
+            <DrawerHeader title="Set up connection" />
             <DrawerContent>
               <ResourceForm
                 ssLinkedConnectionId={ssLinkedConnectionId}

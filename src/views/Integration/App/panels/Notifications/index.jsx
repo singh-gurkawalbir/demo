@@ -44,7 +44,6 @@ export default function NotificationsSection({ integrationId, storeId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-
   const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
 
   const fieldMeta = {
@@ -99,7 +98,7 @@ export default function NotificationsSection({ integrationId, storeId }) {
     <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoTextNotifications} />
 
-      <LoadResources required resources="notifications,flows,connections">
+      <LoadResources required resources="notifications,flows,connections,exports,imports">
         <div className={classes.form}>
           <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
           <DynaSubmit formKey={formKey} onClick={handleSubmit}>
