@@ -21,6 +21,7 @@ import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import ButtonGroup from '../../../../components/ButtonGroup';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
+import LoadResources from '../../../../components/LoadResources';
 
 export default function HooksForm({flowId}) {
   const dispatch = useDispatch();
@@ -146,7 +147,7 @@ export default function HooksForm({flowId}) {
   });
 
   return (
-    <>
+    <LoadResources resources="scripts,stacks">
       <DrawerContent>
         <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
       </DrawerContent>
@@ -173,6 +174,6 @@ export default function HooksForm({flowId}) {
           </Button>
         </ButtonGroup>
       </DrawerFooter>
-    </>
+    </LoadResources>
   );
 }

@@ -42,7 +42,7 @@ export default function UpgradeDrawer() {
           variant="outlined"
           color="primary"
           onClick={onStartFreeTrialInterestedClick}>
-          YES, I &apos;M INTERESTED
+          Yes, I&apos;m interested
         </Button>
         <a
           target="_blank"
