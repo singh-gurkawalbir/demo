@@ -1,16 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import SettingsIcon from '../../../../icons/SettingsIcon';
-import { selectors } from '../../../../../reducers';
 import RemoveMargin from '../RemoveMargin';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 
-export default function SettingsCell({flowId, name}) {
+export default function SettingsCell({flowId, name, actionProps}) {
   const history = useHistory();
-  const showSettings = useSelector(state =>
-    selectors.flowSupportsSettings(state, flowId)
-  );
+  const showSettings = actionProps.flowAttributes[flowId]?.supportsSettings;
 
   if (!showSettings) return null;
 

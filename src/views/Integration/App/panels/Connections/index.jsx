@@ -17,6 +17,7 @@ import {
   isTradingPartnerSupported,
   generateNewId,
 } from '../../../../../utils/resource';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +36,7 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
   const history = useHistory();
   const filterKey = `${integrationId}${`+${storeId}` || ''}+connections`;
   const tableConfig = useSelector(state => selectors.filter(state, filterKey));
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const connections = useSelector(state =>
     selectors.integrationAppConnectionList(
       state,
@@ -115,6 +117,19 @@ export default function ConnectionsPanel({ integrationId, storeId }) {
                     value: applications,
                   },
                 ];
+
+                if (integration?._connectorId) {
+                  patchSet.push({
+                    op: 'add',
+                    path: '/_connectorId',
+                    value: integration._connectorId,
+                  });
+                  patchSet.push({
+                    op: 'add',
+                    path: '/newIA',
+                    value: true,
+                  });
+                }
 
                 dispatch(
                   actions.resource.patchStaged(newId, patchSet, 'value')

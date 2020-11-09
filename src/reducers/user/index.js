@@ -224,18 +224,12 @@ selectors.accountSummary = createSelector(
 );
 // #endregion ACCOUNT
 
-selectors.userPermissions = state => {
-  const { defaultAShareId } = selectors.userPreferences(state);
-  const allowedToPublish =
-    state && state.profile && state.profile.allowedToPublish;
-  const permissions = fromAccounts.permissions(
-    state && state.org && state.org.accounts,
-    defaultAShareId,
-    { allowedToPublish }
-  );
-
-  return permissions;
-};
+selectors.userPermissions = createSelector(
+  state => selectors.userPreferences(state)?.defaultAShareId,
+  state => state?.profile?.allowedToPublish,
+  state => state?.org?.accounts,
+  (defaultAShareId, allowedToPublish, accounts) => fromAccounts.permissions(accounts, defaultAShareId, { allowedToPublish })
+);
 
 selectors.accountOwner = createSelector(
   selectors.userAccessLevel,

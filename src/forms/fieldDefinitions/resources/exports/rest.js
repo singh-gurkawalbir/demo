@@ -119,7 +119,6 @@ export default {
   'rest.nextPageRelativeURI': {
     type: 'text',
     label: 'Next page relative URI',
-    required: true,
     visibleWhenAll: [
       {
         field: 'rest.pagingMethod',

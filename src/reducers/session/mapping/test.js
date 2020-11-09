@@ -618,4 +618,190 @@ describe('Mapping', () => {
 
     expect(expectedState).toEqual(newState);
   });
+  test('should set last touched field correctly', () => {
+    const initialState = {
+      mapping: {
+      },
+    };
+    const expectedState = {
+      mapping: {
+        lastModifiedRowKey: 'abcd',
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.updateLastFieldTouched('abcd'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should delete associated lookup and unset last tocuhed field while deleting particular row ', () => {
+    const initialState = {
+      mapping: {
+        lookups: [
+          {name: 'lookup1', map: {a: 'b'}},
+          {name: 'lookup2', map: {c: 'd'}},
+        ],
+        lastModifiedRowKey: 'key2',
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz', lookupName: 'lookup2'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        lookups: [
+          {name: 'lookup1', map: {a: 'b'}},
+        ],
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.delete('key2'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should delete isKey in case generate changes from sublist to field item ', () => {
+    const initialState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'xyz', isKey: true},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        lastModifiedRowKey: 'key1',
+        mappings: [
+          {key: 'key1', generate: 'abcd', extract: 'xyz'},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchField('generate', 'key1', 'abcd'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should delete useFirstRow in case generate changes from sublist to field item ', () => {
+    const initialState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'xyz', useFirstRow: true},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        lastModifiedRowKey: 'key1',
+        mappings: [
+          {key: 'key1', generate: 'abcd', extract: 'xyz'},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchField('generate', 'key1', 'abcd'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should not update generate in case field is set required', () => {
+    const initialState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'xyz', isRequired: true},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'xyz', isRequired: true },
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchField('generate', 'key1', 'abcd'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should update extract in case field is set required', () => {
+    const initialState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'xyz', isRequired: true},
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        lastModifiedRowKey: 'key1',
+        mappings: [
+          {key: 'key1', generate: 'a[*].abcd', extract: 'abcd', isRequired: true },
+          {key: 'key2', generate: 'xyz2', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchField('extract', 'key1', 'abcd'));
+
+    expect(expectedState).toEqual(newState);
+  });
+
+  test('should add key and value to incompleteGenerates set property', () => {
+    const initialState = {
+      mapping: {
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        incompleteGenerates: [{key: 'key1', value: 'test'}],
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchIncompleteGenerates('key1', 'test'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should update value against key for incompleteGenerates if key is already present', () => {
+    const initialState = {
+      mapping: {
+        incompleteGenerates: [{key: 'key1', value: 'test'}],
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {
+      mapping: {
+        incompleteGenerates: [{key: 'key1', value: 'changed'}],
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const newState = reducer(initialState, actions.mapping.patchIncompleteGenerates('key1', 'changed'));
+
+    expect(expectedState).toEqual(newState);
+  });
+  test('should clear mapping correctly', () => {
+    const initialState = {
+      mapping: {
+        lookups: {},
+        otherProperties: {},
+        mappings: [
+          {key: 'key1', generate: 'xyz1', extract: 'xyz'},
+        ],
+      },
+    };
+    const expectedState = {};
+    const newState = reducer(initialState, actions.mapping.clear());
+
+    expect(expectedState).toEqual(newState);
+  });
 });

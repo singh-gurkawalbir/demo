@@ -43,14 +43,11 @@ export default function SQLQueryBuilderWrapper(props) {
   });
 
   const isEditorV2Supported = useSelector(state => {
-    if (enableEditorV2) {
-      return true;
-    }
     if (disableEditorV2) {
       return false;
     }
 
-    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId);
+    return selectors.isEditorV2Supported(state, resourceId, resourceType, flowId, enableEditorV2);
   });
   const sampleData = useSelector(state => selectors.editorSampleData(state, { flowId, resourceId, fieldType }), isEqual);
 

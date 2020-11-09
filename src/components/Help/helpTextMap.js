@@ -1210,7 +1210,7 @@ export default {
     'This field is used only if the failPath field is set. It indicates to integrator.io what specific values to test for when determining if the requests we made failed for authentication reasons.',
   'export.http.response.errorPath':
     'This optional field is used to help identify where in the body of a failed HTTP response integrator.io can find the error message. If desired, provide the field path to the property/node containing the error message. If no value is given, then the full HTTP response body is used as the description of the failure in the dashboard. If the media-type of the failed response is XML, this value should be an XPATH. Conversely, if the media-type is JSON, then use a JSON path. Note that if failed responses for the application you are integrating with have no body, then a text version of the HTTP status code is used as the reason for failure. An Example of a JSON path would be: "result.error.message" while an XPATH for XML responses would be: "/result/error.message/text()"',
-  'export.rdbms.query': 'Enter a SQL query that retrieves the records you want to export from your source database.',
+  'export.rdbms.query': 'Enter a SQL query that retrieves the records you want to export from your source database.</br><b>Note</b>: For Delta exports, include a comparison to lastExportDateTime or currentExportDateTime in the query, as in the following examples:</br>Oracle SQL</br>SELECT * FROM TABLE_NAME </br>WHERE COLUMN_NAME > TO_TIMESTAMP({{lastExportDateTime}}, \'YYYY-MM-DD"T"HH24:MI:SS.ff3"Z"\')</br>MySQL</br>SELECT * FROM TABLE_NAME </br>WHERE COLUMN_NAME > {{lastExportDateTime}}',
   'snowflake.export.rdbms.query':
     'Build the query command to query the database and retrieves a set of rows.',
   'export.rdbms.once.query':
@@ -2189,7 +2189,7 @@ export default {
   'file.csvParse':
     'The CSV parser helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
-    'This resource can be invoked via an HTTP POST request to this unique url.',
+    'This resource can be invoked via an HTTP request to this unique URL.',
   oneToMany:
     'Select this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow).  For example, if you are processing order records, but for this step in the flow you want to process the line items within the orders as the main records.',
   pathToMany:

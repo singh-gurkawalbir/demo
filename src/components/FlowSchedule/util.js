@@ -611,20 +611,15 @@ export const getMetadata = ({
       },
     },
     layout: {
-      type: 'box',
-      containers: [
-        {
-          fields: [
-            'timeZone',
-            'activeTab',
-            'frequency',
-            'startTime',
-            'endTime',
-            'daysToRunOn',
-            'dayToRunOn',
-            'schedule',
-          ],
-        },
+      fields: [
+        'timeZone',
+        'activeTab',
+        'frequency',
+        'startTime',
+        'endTime',
+        'daysToRunOn',
+        'dayToRunOn',
+        'schedule',
       ],
     },
     optionsHandler: (fieldId, fields) => {
