@@ -21,7 +21,7 @@ export default function ConnectionPanel({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const integrationId = useSelector(state => selectors.resource(state, 'flows', flowId)?._integrationId);
-  const flowConnections = useSelectorMemo(selectors.flowConnectionList, flowId);
+  const flowConnections = useSelectorMemo(selectors.mkFlowConnectionList, flowId);
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
