@@ -2189,7 +2189,7 @@ export default {
   'file.csvParse':
     'The CSV parser helper can be used to visualize and experiment with how <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590834533735000&amp;usg=AFQjCNFu7ZCLXUvr9xFWTLIWM0LeXPlPwg">integrator.io</a> parses CSV files (or any other delimited text files) into the JSON records/rows that then get processed by your flow.',
   apiIdentifier:
-    'This resource can be invoked via an HTTP POST request to this unique url.',
+    'This resource can be invoked via an HTTP request to this unique URL.',
   oneToMany:
     'Select this option if the records being processed contain child records that should instead be treated as the main records (i.e. for this step only in the flow).  For example, if you are processing order records, but for this step in the flow you want to process the line items within the orders as the main records.',
   pathToMany:
