@@ -28,7 +28,9 @@ import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
-import { INSTALL_STEP_TYPES, emptyObject } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, emptyObject,
+  NETSUITE_BUNDLE_URL,
+} from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
@@ -80,6 +82,10 @@ export default function ConnectorInstallation(props) {
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const connections = useSelector(state =>
+    selectors.resourceList(state, { type: 'connections' })
+  ).resources;
+
   const {
     name: integrationName,
     install = [],
@@ -422,7 +428,20 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL || url });
+        let bundleURL = installURL || url;
+
+        if (
+          bundleURL === NETSUITE_BUNDLE_URL
+        ) {
+          const netsuiteConnectionStep = integrationInstallSteps.find(step => step?.sourceConnection?.type === 'netsuite');
+
+          if (netsuiteConnectionStep?._connectionId) {
+            const netsuiteConnection = connections.find(c => c._id === netsuiteConnectionStep._connectionId);
+
+            bundleURL = netsuiteConnection?.netsuite?.dataCenterURLs?.systemDomain + bundleURL;
+          }
+        }
+        openExternalUrl({ url: bundleURL });
       } else {
         if (step.verifying) {
           return false;
