@@ -1,9 +1,18 @@
+import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import TextToggle from '../../../../components/TextToggle';
 import ErrorActionStatus from './ErrorActionStatus';
 
+const useStyles = makeStyles({
+  errorDrawerActionToggle: {
+    '& > button': {
+      whiteSpace: 'nowrap',
+    },
+  },
+});
 export default function ErrorDrawerAction(props) {
+  const classes = useStyles();
   const { flowId, errorType, setErrorType } = props;
   const match = useRouteMatch();
   const { resourceId } = match?.params || {};
@@ -26,6 +35,7 @@ export default function ErrorDrawerAction(props) {
         value={errorType}
         onChange={handleErrorTypeChange}
         exclusive
+        className={classes.errorDrawerActionToggle}
         options={errorTypes}
       />
     </>
