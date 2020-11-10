@@ -43,6 +43,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     paddingBottom: 18,
+    whiteSpace: 'nowrap',
+    marginLeft: theme.spacing(2),
   },
   emptyRow: {
     position: 'relative',
