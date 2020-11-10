@@ -16,6 +16,7 @@ import SettingsFormEditorDrawer from '../../components/AFE/SettingsFormEditor/Dr
 import { safeParse } from '../../utils/string';
 import WorkArea from './WorkArea';
 import EditorListItem from './EditorListItem';
+import ExampleDrawer from '../../components/drawer/Example';
 
 const editors = [
   {
@@ -296,6 +297,7 @@ export default function Editors() {
           <WorkArea rawData={rawData} onChange={setRawData} />
         </main>
       </div>
+      <ExampleDrawer />
     </>
   );
 }
