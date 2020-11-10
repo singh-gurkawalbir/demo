@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
 import { useRouteMatch } from 'react-router-dom';
+import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ResourceDrawer from '../../components/drawer/Resource';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import LoadResources from '../../components/LoadResources';
 import MappingDrawerRoute from '../MappingDrawer';
 import BottomDrawer from './drawers/BottomDrawer';
 import ErrorDetailsDrawer from './drawers/ErrorsDetails';
+import HooksDrawer from './drawers/Hooks';
 import ChartsDrawer from './drawers/LineGraph';
 import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
@@ -49,6 +51,8 @@ function FlowBuilder() {
     <LoadResources required resources="imports, exports, flows">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
+        <ConfigConnectionDebugger />
+        <HooksDrawer flowId={flowId} />
         <ScheduleDrawer flowId={flowId} />
         <ChartsDrawer flowId={flowId} />
         <QueuedJobsDrawer />

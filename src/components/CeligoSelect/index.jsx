@@ -59,23 +59,26 @@ const useStyles = makeStyles(theme => ({
     // },
   },
 }));
+const MenuComponent = React.forwardRef((props, ref) => {
+  const {children, closeBtnClassName, closeSelect, ...others} = props;
 
-const MenuComponent = ({children, closeBtnClassName, closeSelect, ...props}) => (
-  <div {...props}>
-    {children}
-    {closeSelect && (
-    <Button
-      id="select-close"
-      data-test="closeSelect"
-      variant="outlined"
-      color="secondary"
-      onClick={closeSelect}
-      className={closeBtnClassName}>
-      Done
-    </Button>
-    )}
-  </div>
-);
+  return (
+    <div ref={ref} {...others}>
+      {children}
+      {closeSelect && (
+      <Button
+        id="select-close"
+        data-test="closeSelect"
+        variant="outlined"
+        color="secondary"
+        onClick={closeSelect}
+        className={closeBtnClassName}>
+        Done
+      </Button>
+      )}
+    </div>
+  );
+});
 
 function CeligoSelect({ className, children, ...props }) {
   const [open, setOpen] = useState(false);
