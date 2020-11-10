@@ -146,6 +146,48 @@ describe('request IClients saga', () => {
     );
     expect(saga.next().done).toEqual(true);
   });
+  test('should able to verify ping path correctly if itis assistant connection', () => {
+    const saga = requestIClients({ connectionId });
+
+    const pingPath = '/integrations/1234/iclients?type=rest&assistant=shopify';
+    const mockResourceReferences = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
+
+    expect(saga.next().value).toEqual(
+      call(newIAFrameWorkPayload, {
+        resourceId: connectionId,
+      })
+    );
+    const effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(
+      call(apiCallWithRetry, { path: pingPath,
+        opts: {
+          method: 'GET',
+        } })
+    );
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should able to verify ping path correctly if connection has type and does not have assistant', () => {
+    const saga = requestIClients({ connectionId });
+
+    const pingPath = '/integrations/1234/iclients?type=netsuite';
+    const mockResourceReferences = {connectionType: 'netsuite', id: '1234'};
+
+    expect(saga.next().value).toEqual(
+      call(newIAFrameWorkPayload, {
+        resourceId: connectionId,
+      })
+    );
+    const effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(
+      call(apiCallWithRetry, { path: pingPath,
+        opts: {
+          method: 'GET',
+        } })
+    );
+    expect(saga.next().done).toEqual(true);
+  });
   test('should handle api error properly', () => {
     const saga = requestIClients({ connectionId });
 
@@ -163,6 +205,51 @@ describe('request IClients saga', () => {
           method: 'GET',
         } })
     );
+    expect(saga.throw(new Error()).value).toEqual(undefined);
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should handle api error properly if it is assistant connection', () => {
+    const saga = requestIClients({ connectionId });
+    const mockResourceReferences = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
+
+    const pingPath = '/integrations/1234/iclients?type=rest&assistant=shopify';
+
+    expect(saga.next().value).toEqual(
+      call(newIAFrameWorkPayload, {
+        resourceId: connectionId,
+      })
+    );
+    const effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(
+      call(apiCallWithRetry, { path: pingPath,
+        opts: {
+          method: 'GET',
+        } })
+    );
+    expect(saga.throw(new Error()).value).toEqual(undefined);
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should handle api error properly if connection has type and does not have assistant', () => {
+    const saga = requestIClients({ connectionId });
+
+    const pingPath = '/integrations/1234/iclients?type=netsuite';
+    const mockResourceReferences = {connectionType: 'netsuite', id: '1234'};
+
+    expect(saga.next().value).toEqual(
+      call(newIAFrameWorkPayload, {
+        resourceId: connectionId,
+      })
+    );
+    const effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(
+      call(apiCallWithRetry, { path: pingPath,
+        opts: {
+          method: 'GET',
+        } })
+    );
+
     expect(saga.throw(new Error()).value).toEqual(undefined);
     expect(saga.next().done).toEqual(true);
   });
