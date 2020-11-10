@@ -1397,6 +1397,32 @@ const editor = {
   saveFailed: id => action(actionTypes.EDITOR.SAVE_FAILED, { id }),
   saveComplete: id => action(actionTypes.EDITOR.SAVE_COMPLETE, { id }),
 };
+// TODO: parallel AFE refactor actions.
+const _editor = {
+  init: (id, processor, options) =>
+    action(actionTypes._EDITOR.INIT, { id, processor, options }),
+  changeLayout: id => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id }),
+  patch: (id, patch) => action(actionTypes._EDITOR.PATCH, { id, patch }),
+  clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
+  toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
+  sampleDataReceived: (id, sampleData, templateVersion) => action(actionTypes._EDITOR.SAMPLEDATA.RECEIVED, { id, sampleData, templateVersion }),
+  sampleDataFailed: (id, sampleDataError) => action(actionTypes._EDITOR.SAMPLEDATA.FAILED, { id, sampleDataError }),
+  toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
+  updateHelperFunctions: helperFunctions =>
+    action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
+  refreshHelperFunctions: () =>
+    action(actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS),
+  evaluateRequest: id => action(actionTypes._EDITOR.EVALUATE_REQUEST, { id }),
+  validateFailure: (id, violations) =>
+    action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
+  evaluateFailure: (id, error) =>
+    action(actionTypes._EDITOR.EVALUATE_FAILURE, { id, error }),
+  evaluateResponse: (id, result) =>
+    action(actionTypes._EDITOR.EVALUATE_RESPONSE, { id, result }),
+  save: (id, context) => action(actionTypes._EDITOR.SAVE, { id, context }),
+  saveFailed: id => action(actionTypes._EDITOR.SAVE_FAILED, { id }),
+  saveComplete: id => action(actionTypes._EDITOR.SAVE_COMPLETE, { id }),
+};
 // #endregion
 // #region Mapping actions
 const mapping = {
@@ -2086,6 +2112,7 @@ export default {
   patchFilter,
   clearFilter,
   editor,
+  _editor,
   resourceForm,
   resource,
   user,

@@ -15,7 +15,7 @@ import DynaKeyValue from './DynaKeyValue';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
 import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
-import DynaHttpRequestBody from './DynaHttpRequestBody';
+import _DynaHttpRequestBody_ from './DynaHttpRequestBody_new';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse from './editors/DynaCsvParse';
 import DynaRefreshableSelect from './DynaRefreshableSelect';
@@ -149,7 +149,8 @@ export default {
   radiogroup: DynaRadioGroup,
   relativeuri: DynaRelativeUri,
   uri: DynaURI,
-  httprequestbody: DynaHttpRequestBody,
+  // httprequestbody: DynaHttpRequestBody,
+  httprequestbody: _DynaHttpRequestBody_,
   importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
