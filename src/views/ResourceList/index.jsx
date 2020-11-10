@@ -22,6 +22,7 @@ import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
+import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -127,10 +128,13 @@ export default function ResourceList(props) {
          PERMISSIONS[resourceType] &&
          PERMISSIONS[resourceType].view
        }>
-      {// This is where we will be adding all Right drawers to Celigo Table
-      resourceType === 'stacks' && <StackShareDrawer />
-      }
+
+      { /* This is where we will be adding all Right drawers to Celigo Table */}
+      { resourceType === 'stacks' && <StackShareDrawer />}
+      { resourceType === 'connections' && <ConfigConnectionDebugger />}
+
       <ResourceDrawer {...props} />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>

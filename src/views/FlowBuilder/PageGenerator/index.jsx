@@ -363,6 +363,7 @@ const PageGenerator = ({
         actions={generatorActions}
         flowId={flowId}
         resource={resource}
+        resourceType="exports"
         index={index}
         schedule={schedule}
         openErrorCount={openErrorCount}
