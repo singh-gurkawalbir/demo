@@ -139,12 +139,13 @@ export const IAFormStateManager = props => {
     </>
   );
 };
+const integrationAppSectionFlowsOptions = { excludeHiddenFlows: true};
 
 function FlowList({ integrationId, storeId }) {
   const match = useRouteMatch();
   const { sectionId } = match.params;
   const dispatch = useDispatch();
-  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, {excludeHiddenFlows: true});
+  const flows = useSelectorMemo(selectors.makeIntegrationAppSectionFlows, integrationId, sectionId, storeId, integrationAppSectionFlowsOptions);
   const flowSections = useSelectorMemo(selectors.mkIntegrationAppFlowSections, integrationId, storeId);
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
