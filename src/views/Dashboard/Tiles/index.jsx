@@ -32,17 +32,13 @@ export default function DashboardTiles() {
     state => selectors.userPreferences(state)?.dashboard?.tilesOrder);
 
   const tiles = useSelectorMemo(selectors.mkTiles);
-  const suiteScriptLinkedTiles = useSelector(state => {
-    const tiles = selectors.suiteScriptLinkedTiles(state);
+  const ssTiles = useSelector(state => selectors.suiteScriptLinkedTiles(state));
+  const suiteScriptLinkedTiles = useMemo(() => ssTiles.filter(t => {
+    // only fully configured svb tile should be shown on dashboard
+    const isPendingSVB = t._connectorId === 'suitescript-svb-netsuite' && (t.status === TILE_STATUS.IS_PENDING_SETUP || t.status === TILE_STATUS.UNINSTALL);
 
-    return tiles.filter(t => {
-      // only fully configured svb tile should be shown on dashboard
-      const isPendingSVB = t._connectorId === 'suitescript-svb-netsuite' && (t.status === TILE_STATUS.IS_PENDING_SETUP || t.status === TILE_STATUS.UNINSTALL);
-
-      return !isPendingSVB;
-    });
-  }
-  );
+    return !isPendingSVB;
+  }), [ssTiles]);
   const sortedTiles = useMemo(
     () =>
       sortTiles(
