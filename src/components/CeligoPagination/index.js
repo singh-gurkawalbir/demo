@@ -38,7 +38,7 @@ const getPaginationLabel = (page, rowsPerPage, count, hasMore) => {
   return `${start} - ${end < count ? end : count} of ${total}`;
 };
 
-const getDisableNext = (page, rowsPerPage, count, hasMore) => {
+const isDisableNext = (page, rowsPerPage, count, hasMore) => {
   const end = (page + 1) * rowsPerPage;
 
   return (end >= count && !hasMore);
@@ -59,7 +59,7 @@ export default function Pagination(props) {
   const classes = useStyles();
 
   const label = getPaginationLabel(page, rowsPerPage, count, hasMore);
-  const disableNextPage = getDisableNext(page, rowsPerPage, count, hasMore);
+  const disableNextPage = isDisableNext(page, rowsPerPage, count, hasMore);
 
   const handlePrevPage = useCallback(
     event => {

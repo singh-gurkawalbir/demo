@@ -105,7 +105,6 @@ export default function DynaNSSavedSearch(props) {
 
       setSearchType(savedSearch ? 'public' : 'private');
 
-      // TODO:Surya We can get rid of setIsSearchTypeSet as well
       setIsSearchTypeSet(true);
     }
   }, [data, defaultValue, isSearchTypeSet, resourceId, setSearchType]);
