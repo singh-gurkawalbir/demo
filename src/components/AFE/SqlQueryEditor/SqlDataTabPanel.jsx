@@ -78,22 +78,6 @@ export default function SqlDataTabPanel(props) {
             aria-controls="tabpanel-default"
           />
           )}
-          <Tab
-            label="Testing"
-            value="testing"
-            textColorPrimary
-            id="tab-default"
-            className={classes.tabPanelTab}
-            aria-controls="tabpanel-default"
-          />
-          <Tab
-            label="TestingNew"
-            value="testingnew"
-            textColorPrimary
-            id="tab-default"
-            className={classes.tabPanelTab}
-            aria-controls="tabpanel-default"
-          />
         </Tabs>
       </div>
       <div className={classes.content}>
