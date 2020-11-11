@@ -1,14 +1,16 @@
 /* global describe, test, expect */
 
-import { call, put } from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
-import {newIAFrameWorkPayload} from '../index';
+import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
-import { requestIClients, pingAndUpdateConnection, pingConnection, createPayload } from '.';
+import { requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection } from '.';
 import { pingConnectionParams } from '../../api/apiPaths';
+import { commitStagedChanges } from '../../resources';
+import { selectors } from '../../../reducers/index';
 
 describe('ping and update connection saga', () => {
   const connectionId = 'C1';
@@ -253,4 +255,180 @@ describe('request IClients saga', () => {
     expect(saga.throw(new Error()).value).toEqual(undefined);
     expect(saga.next().done).toEqual(true);
   });
+});
+
+describe('Commit and authorize connection saga', () => {
+  const resourceId = 'C1';
+  const resp = {name: 'conn1'};
+  const errorResponse = {error: 'error'};
+
+  test('should able to commit and authorize connection successfully ', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
+    .provide([
+      [matchers.call.fn(commitStagedChanges), resp],
+    ])
+    .call.fn(commitStagedChanges)
+    .call.fn(openOAuthWindowForConnection)
+    .run());
+  test('should not authorize connection if there is any error in response', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
+    .provide([
+      [matchers.call.fn(commitStagedChanges), errorResponse],
+    ])
+    .call.fn(commitStagedChanges)
+    .run());
+});
+
+describe('Save and authorize connection saga', () => {
+  const resourceId = 'C1';
+  const values = {name: 'name'};
+  const conflictResponse = {conflict: 'conflict'};
+  const resp = {name: 'conn2'};
+  const newIAConnDoc = {};
+
+  test('should able to save and authorize connection successfully ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    .provide([
+      [matchers.call.fn(submitFormValues), resp],
+      [select(selectors.createdResourceId), '12345'],
+      [select(selectors.resourceData), resp],
+      [matchers.call.fn(newIAFrameWorkPayload), newIAConnDoc],
+    ])
+    .call.fn(submitFormValues)
+    .call.fn(newIAFrameWorkPayload)
+    .call.fn(openOAuthWindowForConnection)
+    .run());
+  test('should able to save and does not authorize connection if there are any conflicts ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    .provide([
+      [matchers.call.fn(submitFormValues), resp],
+      [select(selectors.createdResourceId), '12345'],
+      [select(selectors.resourceData), conflictResponse],
+      [matchers.call.fn(newIAFrameWorkPayload), newIAConnDoc],
+    ])
+    .call.fn(submitFormValues)
+    .run());
+
+  test('should handle api error properly', () => {
+    const saga = saveAndAuthorizeConnection({ resourceId, values });
+
+    expect(saga.next().value).toEqual(
+      call(submitFormValues, {
+        resourceType: 'connections',
+        resourceId,
+        values,
+      })
+    );
+
+    expect(saga.throw(new Error()).value).toEqual(undefined);
+    expect(saga.next().done).toEqual(true);
+  });
+  test('should able to handle conflicts properly', () => {
+    const saga = saveAndAuthorizeConnection({ resourceId, values });
+    const mockResourceReferences = {conflict: 'conflict'};
+
+    expect(saga.next().value).toEqual(
+      call(submitFormValues, {
+        resourceType: 'connections',
+        resourceId,
+        values,
+      })
+    );
+
+    expect(saga.next().value).toEqual(select(
+      selectors.resourceData,
+      'connections',
+      resourceId
+    ));
+    const effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(undefined);
+  });
+  test('should not open oauth window if it is new IA2.0 installer step', () => {
+    const saga = saveAndAuthorizeConnection({ resourceId, values });
+    const mockResourceReferences = {conn: 'conn1'};
+    const newIAConnDoc = {installStepConnection: true};
+
+    expect(saga.next().value).toEqual(
+      call(submitFormValues, {
+        resourceType: 'connections',
+        resourceId,
+        values,
+      })
+    );
+
+    expect(saga.next().value).toEqual(select(
+      selectors.resourceData,
+      'connections',
+      resourceId
+    ));
+    let effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(call(newIAFrameWorkPayload, {
+      resourceId,
+    }));
+    effect = saga.next(newIAConnDoc).value;
+    expect(effect).toEqual(true);
+  });
+  test('should handle api error in open oauth window', () => {
+    const saga = saveAndAuthorizeConnection({ resourceId, values });
+    const mockResourceReferences = {conn: 'conn1'};
+    const newIAConnDoc = {};
+
+    expect(saga.next().value).toEqual(
+      call(submitFormValues, {
+        resourceType: 'connections',
+        resourceId,
+        values,
+      })
+    );
+
+    expect(saga.next().value).toEqual(select(
+      selectors.resourceData,
+      'connections',
+      resourceId
+    ));
+    let effect = saga.next(mockResourceReferences).value;
+
+    expect(effect).toEqual(call(newIAFrameWorkPayload, {
+      resourceId,
+    }));
+    effect = saga.next(newIAConnDoc).value;
+    expect(effect).toEqual(call(openOAuthWindowForConnection, resourceId));
+    expect(saga.throw(new Error()).value).toEqual(undefined);
+    expect(saga.next().done).toEqual(true);
+  });
+});
+
+describe('Create payload saga', () => {
+  const conn = {master: { _id: 2, name: 'conn', lastModified: new Date().toISOString(), http: {ping: {relativeURI: '/api/v2/users.json'}} }, merged: { _id: 2, name: 'conn', lastModified: new Date().toISOString(), http: {ping: {relativeURI: '/api/v2/users.json'}} }};
+  const resourceId = 2;
+  const values = {name: 'conn'};
+  const patchSet = [{op: 'replace', path: '/name', value: 'ZendeskToday'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'zendesk'}];
+  const patchSetAmazonMws = [{op: 'replace', path: '/name', value: 'AmazonMWS'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'amazonmws'}];
+
+  test('should able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), conn],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .run());
+  test('should able to verify payload for rest assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), conn],
+      [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .returns({name: 'ZendeskToday', assistant: 'zendesk', type: 'rest', rest: {pingRelativeURI: '/api/v3/users.json'}})
+    .run());
+  test('should able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+    .provide([
+      [select(selectors.resourceData), conn],
+      [matchers.call.fn(createFormValuesPatchSet), {patchSet: patchSetAmazonMws}],
+    ])
+    .call.fn(createFormValuesPatchSet)
+    .returns({name: 'AmazonMWS', assistant: 'amazonmws', http: {ping: {relativeURI: '/api/v3/users.json'}}})
+    .run());
+});
+
+describe('Netsuite user roles saga', () => {
+});
+
+describe('Request token saga', () => {
 });

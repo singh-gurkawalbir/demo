@@ -420,7 +420,7 @@ function* saveAndAuthorizeConnectionForm(params) {
   if (cancelSave) yield put(actions.resource.clearStaged(resourceId));
 }
 
-function* commitAndAuthorizeConnection({ resourceId }) {
+export function* commitAndAuthorizeConnection({ resourceId }) {
   const resp = yield call(commitStagedChanges, {
     resourceType: 'connections',
     id: resourceId,
