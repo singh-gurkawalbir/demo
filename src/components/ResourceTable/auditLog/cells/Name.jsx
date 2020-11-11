@@ -14,6 +14,10 @@ export default function NameCell({al, actionProps}) {
   );
 
   if (al.event === 'delete') {
+    if (!al.deletedInfo) {
+      return al._resourceId || '';
+    }
+
     return al.deletedInfo.name;
   }
 
