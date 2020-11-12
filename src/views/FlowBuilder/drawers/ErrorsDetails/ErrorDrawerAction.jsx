@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
