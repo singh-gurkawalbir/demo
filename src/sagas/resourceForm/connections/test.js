@@ -7,10 +7,11 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
-import { requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
+import { requestToken, requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
 import { pingConnectionParams } from '../../api/apiPaths';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
+import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTokenGenerator/functionTransformersMap';
 
 describe('ping and update connection saga', () => {
   const connectionId = 'C1';
@@ -490,4 +491,135 @@ describe('Netsuite user roles saga', () => {
 });
 
 describe('Request token saga', () => {
+  const resourceId = '1234';
+
+  test('should able to verify request token successfully', () => {
+    const fieldId = 'http.auth.token.token';
+    const values = {
+      '/application': 'Pitney Bowes',
+      '/http/sandbox': 'false',
+      '/name': 'New Pitney Bowes Connection'};
+
+    const response = {token: {access_token: '12345'}};
+    const data = { merged: {assistant: 'pitneybowes'}};
+    const saga = requestToken({ resourceId, fieldId, values });
+
+    expect(saga.next().value).toEqual(
+      select(
+        selectors.resourceData,
+        'connections',
+        resourceId
+      )
+    );
+    let effect = saga.next(data).value;
+
+    const { merged: connectionResource } = data;
+    const { assistant } = connectionResource;
+    const { payloadTransformer, responseParser } = functionsTransformerMap[
+      assistant
+    ];
+    const reqPayload = payloadTransformer(values);
+    const fieldsToBeSetWithValues = responseParser(response.token);
+
+    expect(effect).toEqual(call(
+      apiCallWithRetry, {
+        path: `/${assistant}/generate-token`,
+        opts: { body: reqPayload, method: 'POST' },
+        hidden: true,
+      })
+    );
+    effect = saga.next(response).value;
+    expect(effect).toEqual(put(
+      actions.resource.connections.saveToken(
+        resourceId,
+        fieldsToBeSetWithValues,
+      )
+    )
+    );
+  });
+  test('should able to verify request token successfully', () => {
+    const fieldId = 'http.unencrypted.clientId';
+    const values = {
+      '/application': 'Procurify',
+      '/http/sandbox': 'false',
+      '/name': 'Procurify'};
+
+    const response = {token: {data: {client_id: '1234444', client_secret: 'asasas'}}};
+    const data = { merged: {assistant: 'procurify'}};
+    const saga = requestToken({ resourceId, fieldId, values });
+
+    expect(saga.next().value).toEqual(
+      select(
+        selectors.resourceData,
+        'connections',
+        resourceId
+      )
+    );
+    let effect = saga.next(data).value;
+
+    const assistant = 'procurifyauthenticate';
+    const { payloadTransformer, responseParser } = functionsTransformerMap[
+      assistant
+    ];
+    const reqPayload = payloadTransformer(values);
+    const fieldsToBeSetWithValues = responseParser(response.token);
+
+    expect(effect).toEqual(call(
+      apiCallWithRetry, {
+        path: `/${assistant}/generate-token`,
+        opts: { body: reqPayload, method: 'POST' },
+        hidden: true,
+      })
+    );
+    effect = saga.next(response).value;
+    expect(effect).toEqual(put(
+      actions.resource.connections.saveToken(
+        resourceId,
+        fieldsToBeSetWithValues,
+      )
+    )
+    );
+  });
+  test('should handle api error properly', () => {
+    const fieldId = 'http.unencrypted.clientId';
+    const values = {
+      '/application': 'Procurify',
+      '/http/sandbox': 'false',
+      '/name': 'Procurify'};
+
+    const data = { merged: {assistant: 'procurify'}};
+    const saga = requestToken({ resourceId, fieldId, values });
+
+    expect(saga.next().value).toEqual(
+      select(
+        selectors.resourceData,
+        'connections',
+        resourceId
+      )
+    );
+    const effect = saga.next(data).value;
+
+    const assistant = 'procurifyauthenticate';
+    const { payloadTransformer} = functionsTransformerMap[
+      assistant
+    ];
+    const reqPayload = payloadTransformer(values);
+
+    expect(effect).toEqual(call(
+      apiCallWithRetry, {
+        path: `/${assistant}/generate-token`,
+        opts: { body: reqPayload, method: 'POST' },
+        hidden: true,
+      })
+    );
+    const e = {message: '{"errors":[{"message":"Error message"}]}'};
+
+    expect(saga.throw(e).value).toEqual(put(
+      actions.resource.connections.requestTokenFailed(
+        resourceId,
+        inferErrorMessage(e.message)
+      )
+    )
+    );
+  });
 });
