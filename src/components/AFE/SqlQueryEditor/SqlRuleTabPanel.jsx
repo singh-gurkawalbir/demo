@@ -37,16 +37,21 @@ const useStyles = makeStyles(theme => ({
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
-export default function SqlDataTabPanel(props) {
+export default function SqlRuleTabPanel(props) {
   const {
-    sampleData,
-    dataMode,
+    rule,
+    ruleMode,
     defaultData,
-    handleChange,
+    handleRuleChange,
+    handleDataChange,
     showDefaultData,
     disabled,
+    enableAutocomplete,
+    error,
+    ruleTitle,
+    dataMode,
   } = props;
-  const [tabValue, setTabValue] = useState('sample');
+  const [tabValue, setTabValue] = useState('rule');
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
@@ -62,11 +67,11 @@ export default function SqlDataTabPanel(props) {
           textColor="primary"
           indicatorColor="primary">
           <Tab
-            label="Resources available for your handlebars template"
-            value="sample"
-            id="tab-sample"
+            label={ruleTitle}
+            value="rule"
+            id="tab-rule"
             className={clsx(classes.tabPanelTab, classes.resourceTab)}
-            aria-controls="tabpanel-sample"
+            aria-controls="tabpanel-rule"
         />
           {showDefaultData && (
           <Tab
@@ -81,22 +86,22 @@ export default function SqlDataTabPanel(props) {
         </Tabs>
       </div>
       <div className={classes.content}>
-        {tabValue === 'sample' && (
+        {tabValue === 'rule' && (
           <Typography
             component="div"
             role="tabpanel"
-            id="tabpanel-sample"
-            aria-labelledby="tab-sample"
+            id="tabpanel-rule"
+            aria-labelledby="tab-rule"
             className={classes.tabPanel}>
             <CodePanel
-              name="sampleData"
-              value={sampleData}
-              mode={dataMode}
+              name="rule"
+              value={rule}
               readOnly={disabled}
-              onChange={data => {
-                handleChange('sampleData', data);
-              }}
-            />
+              mode={ruleMode}
+              onChange={handleRuleChange}
+              enableAutocomplete={enableAutocomplete}
+              hasError={!!error}
+        />
           </Typography>
         )}
         {tabValue === 'default' && showDefaultData && (
@@ -113,7 +118,7 @@ export default function SqlDataTabPanel(props) {
               mode={dataMode}
               readOnly={disabled}
               onChange={data => {
-                handleChange('defaultData', data);
+                handleDataChange('defaultData', data);
               }}
             />
           </Typography>
@@ -123,8 +128,8 @@ export default function SqlDataTabPanel(props) {
   );
 }
 
-SqlDataTabPanel.propTypes = {
+SqlRuleTabPanel.propTypes = {
   defaultData: string,
-  sampleData: string,
-  handleChange: func.isRequired,
+  rule: string,
+  handleDataChange: func.isRequired,
 };

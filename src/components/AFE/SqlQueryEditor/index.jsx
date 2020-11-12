@@ -7,7 +7,7 @@ import PanelGridItem from '../PanelGridItem';
 import ErrorGridItem from '../ErrorGridItem';
 import WarningGridItem from '../WarningGridItem';
 import CodePanel from '../GenericEditor/CodePanel';
-import SqlDataTabPanel from './SqlDataTabPanel';
+import SqlRuleTabPanel from './SqlRuleTabPanel';
 import layouts from '../layout/defaultDialogLayout';
 import PanelLoader from '../../PanelLoader';
 
@@ -22,6 +22,7 @@ const Editor = props => {
     ruleMode,
     dataMode,
     ruleTitle,
+    dataTitle,
     sampleData,
     defaultData,
     result,
@@ -47,29 +48,33 @@ const Editor = props => {
   return (
     <PanelGrid className={gridTemplate}>
       <PanelGridItem gridArea="rule">
-        <PanelTitle title={ruleTitle} />
-        <CodePanel
-          name="rule"
-          value={rule}
-          readOnly={disabled}
-          mode={ruleMode}
-          onChange={handleRuleChange}
+        <SqlRuleTabPanel
+          showDefaultData={showDefaultData}
+          rule={rule}
+          defaultData={defaultData}
+          ruleMode={ruleMode}
+          handleRuleChange={handleRuleChange}
           enableAutocomplete={enableAutocomplete}
-          hasError={!!error}
+          error={error}
+          ruleTitle={ruleTitle}
+          dataMode={dataMode}
+          handleDataChange={handleDataChange}
         />
       </PanelGridItem>
       <PanelGridItem gridArea="data" key={isSampleDataLoading}>
+        <PanelTitle title={dataTitle} />
         {isSampleDataLoading ? (
           <PanelLoader />
         ) : (
-          <SqlDataTabPanel
-            processor="merge"
-            showDefaultData={showDefaultData}
-            sampleData={sampleData}
-            defaultData={defaultData}
-            dataMode={dataMode}
-            handleChange={handleDataChange}
-        />
+          <CodePanel
+            name="sampleData"
+            value={sampleData}
+            mode={dataMode}
+            readOnly={disabled}
+            onChange={data => {
+              handleDataChange('sampleData', data);
+            }}
+            />
         )}
       </PanelGridItem>
 
