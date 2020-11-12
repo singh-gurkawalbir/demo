@@ -165,8 +165,6 @@ export default function _DynaHttpRequestBody_(props) {
       stage: 'flowInput',
       isEditorV2Supported,
     }));
-    // get Helper functions when the editor initializes
-    dispatch(actions._editor.refreshHelperFunctions());
 
     handleOpenDrawer(id);
   }, [dispatch, id, formattedRule, contentType, formKey, flowId, resourceId, resourceType, isEditorV2Supported, handleOpenDrawer]);

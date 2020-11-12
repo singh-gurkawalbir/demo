@@ -1410,18 +1410,16 @@ const _editor = {
   toggleAutoPreview: (id, autoPreview) => action(actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW, { id, autoPreview }),
   updateHelperFunctions: helperFunctions =>
     action(actionTypes._EDITOR.UPDATE_HELPER_FUNCTIONS, { helperFunctions }),
-  refreshHelperFunctions: () =>
-    action(actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS),
-  evaluateRequest: id => action(actionTypes._EDITOR.EVALUATE_REQUEST, { id }),
+  previewRequest: id => action(actionTypes._EDITOR.PREVIEW.REQUEST, { id }),
+  previewFailed: (id, error) =>
+    action(actionTypes._EDITOR.PREVIEW.FAILED, { id, error }),
+  previewResponse: (id, result) =>
+    action(actionTypes._EDITOR.PREVIEW.RESPONSE, { id, result }),
+  saveRequest: (id, context) => action(actionTypes._EDITOR.SAVE.REQUEST, { id, context }),
+  saveFailed: id => action(actionTypes._EDITOR.SAVE.FAILED, { id }),
+  saveComplete: id => action(actionTypes._EDITOR.SAVE.COMPLETE, { id }),
   validateFailure: (id, violations) =>
     action(actionTypes._EDITOR.VALIDATE_FAILURE, { id, violations }),
-  evaluateFailure: (id, error) =>
-    action(actionTypes._EDITOR.EVALUATE_FAILURE, { id, error }),
-  evaluateResponse: (id, result) =>
-    action(actionTypes._EDITOR.EVALUATE_RESPONSE, { id, result }),
-  save: (id, context) => action(actionTypes._EDITOR.SAVE, { id, context }),
-  saveFailed: id => action(actionTypes._EDITOR.SAVE_FAILED, { id }),
-  saveComplete: id => action(actionTypes._EDITOR.SAVE_COMPLETE, { id }),
 };
 // #endregion
 // #region Mapping actions

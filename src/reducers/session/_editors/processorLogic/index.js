@@ -32,6 +32,7 @@ function getLogic(editor) {
 }
 
 const validate = editor => {
+  if (!editor) return;
   const violations = getLogic(editor).validate(editor);
 
   if (!violations.ruleError && !violations.dataError) {
@@ -42,6 +43,7 @@ const validate = editor => {
 };
 
 const requestOptions = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
   const skipPreview = logic.skipPreview && logic.skipPreview(editor);
   const violations = validate(editor);
@@ -58,6 +60,7 @@ const requestOptions = editor => {
 
 // isDirty checks for changes in editor
 const isDirty = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
 
   // give precedence to dirty method if implemented by editor
@@ -77,12 +80,14 @@ const isDirty = editor => {
   return false;
 };
 const init = processor => {
+  if (!processor) return;
   const logic = getLogic({ processor });
 
   return logic.init;
 };
 
 const processResult = editor => {
+  if (!editor) return;
   const logic = getLogic(editor);
 
   return logic.processResult;

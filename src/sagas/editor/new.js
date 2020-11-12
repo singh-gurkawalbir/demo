@@ -2,7 +2,6 @@ import {
   call,
   put,
   select,
-  takeEvery,
   takeLatest,
   delay,
 } from 'redux-saga/effects';
@@ -27,7 +26,7 @@ export function* invokeProcessor({ processor, body }) {
   return yield call(apiCallWithRetry, { path, opts, hidden: true });
 }
 
-export function* evaluateProcessor({ id }) {
+export function* requestPreview({ id }) {
   const editor = yield select(selectors._editor, id);
   // const reqOpts = processorLogic.requestOptions(editor);
   const reqOpts = yield select(selectors._processorRequestOptions, id);
@@ -72,7 +71,7 @@ export function* evaluateProcessor({ id }) {
           errorMessage.push(`Stack: ${errJSON.stack}`);
         }
 
-        return yield put(actions._editor.evaluateFailure(id, {errorMessage, errorLine}));
+        return yield put(actions._editor.previewFailed(id, {errorMessage, errorLine}));
       }
     }
   }
@@ -84,10 +83,10 @@ export function* evaluateProcessor({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions._editor.evaluateFailure(id, {errorMessage: e.message}));
+    return yield put(actions._editor.previewFailed(id, {errorMessage: e.message}));
   }
 
-  return yield put(actions._editor.evaluateResponse(id, finalResult));
+  return yield put(actions._editor.previewResponse(id, finalResult));
 }
 
 export function* evaluateExternalProcessor({ processorData }) {
@@ -111,7 +110,7 @@ export function* evaluateExternalProcessor({ processorData }) {
   }
 }
 
-export function* saveProcessor({ id, context }) {
+export function* save({ id, context }) {
   const patches = yield select(selectors._editorPatchSet, id);
   const editor = yield select(selectors._editor, id);
 
@@ -125,7 +124,7 @@ export function* saveProcessor({ id, context }) {
 
   // if preview before saving the editor is on, call the evaluateProcessor
   if (editor.previewOnSave) {
-    const evaluateResponse = yield call(evaluateProcessor, { id });
+    const evaluateResponse = yield call(requestPreview, { id });
 
     if (
       evaluateResponse &&
@@ -238,16 +237,12 @@ export function* autoEvaluateProcessor({ id }) {
 
   if (!editor.autoEvaluate) return;
 
-  if (editor.autoEvaluateDelay) {
-    yield delay(editor.autoEvaluateDelay);
-  } else {
-    // editor is configured for autoEvaluate, but no delay.
-    // we WANT a minimum delay to prevent immediate re-renders
-    // while a user is typing.
-    yield delay(1000);
-  }
+  // editor is configured for autoEvaluate
+  // we WANT a minimum delay to prevent immediate re-renders
+  // while a user is typing.
+  yield delay(500);
 
-  return yield call(evaluateProcessor, { id });
+  return yield call(requestPreview, { id });
 }
 
 export function* requestEditorSampleData({
@@ -386,19 +381,6 @@ export function* requestEditorSampleData({
   );
 }
 
-export function* initEditor({ id }) {
-  const editor = yield select(selectors._editor, id);
-
-  if (!editor) return;
-
-  // load sample data only when its not received already
-  if (!editor.initStatus || editor.initStatus === 'requested') {
-    yield call(requestEditorSampleData, {id});
-  }
-
-  return yield call(autoEvaluateProcessor, { id });
-}
-
 export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
@@ -441,16 +423,27 @@ export function* refreshHelperFunctions() {
   yield put(actions._editor.updateHelperFunctions(helperFunctions));
 }
 
+export function* initEditor({ id }) {
+  const editor = yield select(selectors._editor, id);
+
+  if (!editor) return;
+
+  // load sample data only when its not received already
+  if (!editor.initStatus || editor.initStatus === 'requested') {
+    yield call(requestEditorSampleData, {id});
+  }
+
+  // get Helper functions when the editor initializes
+  yield call(refreshHelperFunctions);
+
+  return yield call(autoEvaluateProcessor, { id });
+}
+
 export function* toggleEditorVersion({ id, version }) {
   return yield call(requestEditorSampleData, {id, requestedTemplateVersion: version});
 }
 
 export default [
-  takeEvery(
-    actionTypes._EDITOR.REFRESH_HELPER_FUNCTIONS,
-    refreshHelperFunctions
-  ),
-
   takeLatest(
     [actionTypes._EDITOR.PATCH,
       actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW],
@@ -458,6 +451,6 @@ export default [
   ),
   takeLatest(actionTypes._EDITOR.INIT, initEditor),
   takeLatest(actionTypes._EDITOR.TOGGLE_VERSION, toggleEditorVersion),
-  takeLatest(actionTypes._EDITOR.EVALUATE_REQUEST, evaluateProcessor),
-  takeLatest(actionTypes._EDITOR.SAVE, saveProcessor),
+  takeLatest(actionTypes._EDITOR.PREVIEW.REQUEST, requestPreview),
+  takeLatest(actionTypes._EDITOR.SAVE.REQUEST, save),
 ];

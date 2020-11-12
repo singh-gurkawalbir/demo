@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { useState, useCallback, cloneElement, useEffect, useRef } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -9,7 +10,7 @@ import { preSaveValidate } from '../../../utils/editor';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { selectors } from '../../../reducers';
 import useConfirmDialog from '../../ConfirmDialog';
-import EditorSaveButton from '../../ResourceFormFactory/Actions/EditorSaveButton';
+import _EditorSaveButton from '../../ResourceFormFactory/Actions/_EditorSaveButton';
 import DynaCheckbox from '../../DynaForm/fields/checkbox/DynaCheckbox';
 import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
@@ -63,7 +64,7 @@ export default function EditorDrawer(props) {
 
   const editor = useSelector(state => selectors._editor(state, activeEditorId), shallowEqual);
   const saveInProgress = useSelector(
-    state => selectors._editorPatchStatus(state, activeEditorId).saveInProgress
+    state => selectors._editorSaveStatus(state, activeEditorId).saveInProgress
   );
   const isEditorDirty = useSelector(state =>
     selectors._isEditorDirty(state, activeEditorId)
@@ -72,14 +73,14 @@ export default function EditorDrawer(props) {
   // retain auto preview value across toggle editors
   const autoEvaluate = useRef(false);
   const handleAutoPreviewToggle = useCallback(() => {
-    dispatch(actions._editor.toggleAutoPreview(activeEditorId, !editor.autoEvaluate));
+    dispatch(actions._editor.toggleAutoPreview(activeEditorId));
     autoEvaluate.current = !editor.autoEvaluate;
   }, [dispatch, editor.autoEvaluate, activeEditorId]);
   const editorViolations = useSelector(state =>
     selectors._editorViolations(state, activeEditorId)
   );
   const handlePreview = useCallback(
-    () => dispatch(actions._editor.evaluateRequest(activeEditorId)),
+    () => dispatch(actions._editor.previewRequest(activeEditorId)),
     [dispatch, activeEditorId]
   );
 
@@ -92,6 +93,8 @@ export default function EditorDrawer(props) {
 
   const handleSave = useCallback(
     () => {
+      // TODO: test this for transform editor, we may not need this separate validate logic before save
+      // add this in the processorLogic itself
       if (!preSaveValidate({ editor, enquesnackbar })) {
         return;
       }
@@ -193,7 +196,7 @@ export default function EditorDrawer(props) {
         <ButtonGroup>
           {patchOnSave ? (
             <>
-              <EditorSaveButton
+              <_EditorSaveButton
                 id={activeEditorId}
                 variant="outlined"
                 color="primary"
@@ -202,7 +205,7 @@ export default function EditorDrawer(props) {
                 submitButtonLabel="Save"
                 flowId={flowId}
             />
-              <EditorSaveButton
+              <_EditorSaveButton
                 id={activeEditorId}
                 variant="outlined"
                 color="secondary"

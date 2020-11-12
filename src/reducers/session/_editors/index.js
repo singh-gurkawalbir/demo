@@ -2,7 +2,7 @@ import produce from 'immer';
 import { deepClone } from 'fast-json-patch';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
-import processorPatchSet from '../editors/processorPatchSet';
+// import processorPatchSet from '../editors/processorPatchSet';
 import editorFeaturesMap from './featuresMap';
 
 const emptyObj = {};
@@ -116,7 +116,7 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.EVALUATE_RESPONSE: {
+      case actionTypes._EDITOR.PREVIEW.RESPONSE: {
         draft[id].result = result;
         draft[id].previewStatus = 'received';
         delete draft[id].error;
@@ -131,24 +131,24 @@ export default function reducer(state = {}, action) {
         break;
       }
 
-      case actionTypes._EDITOR.EVALUATE_FAILURE: {
+      case actionTypes._EDITOR.PREVIEW.FAILED: {
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
         draft[id].previewStatus = 'error';
         break;
       }
 
-      case actionTypes._EDITOR.SAVE: {
+      case actionTypes._EDITOR.SAVE.REQUEST: {
         draft[id].saveStatus = 'requested';
         break;
       }
 
-      case actionTypes._EDITOR.SAVE_FAILED: {
+      case actionTypes._EDITOR.SAVE.FAILED: {
         draft[id].saveStatus = 'failed';
         break;
       }
 
-      case actionTypes._EDITOR.SAVE_COMPLETE: {
+      case actionTypes._EDITOR.SAVE.COMPLETE: {
         const editor = draft[id];
 
         editor.saveStatus = 'completed';
@@ -181,46 +181,22 @@ selectors._editor = (state, id) => {
 };
 
 selectors._editorDataVersion = (state, id) => {
-  if (!state) return emptyObj;
+  if (!state) return;
 
   const editor = state[id];
 
-  if (!editor) return undefined;
+  if (!editor) return;
 
   return editor.dataVersion;
 };
 
-selectors._editorViolations = (state, id) => {
-  if (!state) return;
+selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);
 
-  const editor = state[id];
+selectors._isEditorDirty = (state, id) => processorLogic.isDirty(state?.[id]);
 
-  if (!editor) return;
+// selectors._editorPatchSet = (state, id) => processorPatchSet.getPatchSet(state?.[id]);
 
-  return processorLogic.validate(editor);
-};
-
-selectors._isEditorDirty = (state, id) => {
-  if (!state) return;
-
-  const editor = state[id];
-
-  if (!editor) return;
-
-  return processorLogic.isDirty(editor);
-};
-
-selectors._editorPatchSet = (state, id) => {
-  if (!state) return;
-
-  const editor = state[id];
-
-  if (!editor) return;
-
-  return processorPatchSet.getPatchSet(editor);
-};
-
-selectors._editorPatchStatus = (state, id) => {
+selectors._editorSaveStatus = (state, id) => {
   if (!state || !state[id]) {
     return emptyObj;
   }
@@ -234,13 +210,5 @@ selectors._editorPatchStatus = (state, id) => {
   };
 };
 
-selectors._processorRequestOptions = (state, id) => {
-  if (!state || !state[id]) {
-    return emptyObj;
-  }
-
-  const editor = state[id];
-
-  return processorLogic.requestOptions(editor);
-};
+selectors._processorRequestOptions = (state, id) => processorLogic.requestOptions(state?.[id]);
 // #endregion
