@@ -7,7 +7,7 @@ import actions from '../../../actions';
 import { apiCallWithRetry } from '../../index';
 import {newIAFrameWorkPayload, submitFormValues, createFormValuesPatchSet} from '../index';
 import inferErrorMessage from '../../../utils/inferErrorMessage';
-import { requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection } from '.';
+import { requestIClients, pingAndUpdateConnection, pingConnection, createPayload, openOAuthWindowForConnection, commitAndAuthorizeConnection, saveAndAuthorizeConnection, netsuiteUserRoles } from '.';
 import { pingConnectionParams } from '../../api/apiPaths';
 import { commitStagedChanges } from '../../resources';
 import { selectors } from '../../../reducers/index';
@@ -428,6 +428,65 @@ describe('Create payload saga', () => {
 });
 
 describe('Netsuite user roles saga', () => {
+  const connectionId = '1234';
+  const values = {'/name': 'Netsuite', '/application': 'Netsuite'};
+  const resp = {production: {
+    success: true, accounts: [{accont: {type: 'production'}}],
+  }};
+  const unSuccessfulResp = {};
+  const successOnlyEnvs = Object.keys(resp)
+    .filter(env => resp[env].success)
+    .map(env => ({ [env]: resp[env] }))
+    .reduce((acc, env) => ({ ...acc, ...env }), {});
+
+  test('should update netsuite user roles successfully', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), resp],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        successOnlyEnvs
+      )
+    )
+    .run());
+  test('should throw error for invalid credentials', () => expectSaga(netsuiteUserRoles, { connectionId, values })
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), unSuccessfulResp],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        connectionId,
+        'Invalid netsuite credentials provided'
+      )
+    )
+    .run());
+  test('should handle api error properly', () => {
+    const saga = netsuiteUserRoles({ connectionId, values });
+    const { '/netsuite/email': email, '/netsuite/password': password } = values;
+
+    const reqPayload = { email, password };
+
+    expect(saga.next().value).toEqual(
+      call(apiCallWithRetry, {
+        path: '/netsuite/alluserroles',
+        opts: { body: reqPayload, method: 'POST' },
+        hidden: true,
+      })
+    );
+    const e = {message: '{"errors":[{"message":"Error message"}]}'};
+    const errorsJSON = JSON.parse(e.message);
+    const { errors } = errorsJSON;
+
+    expect(saga.throw(e).value).toEqual(put(
+      actions.resource.connections.netsuite.requestUserRolesFailed(
+        connectionId,
+        errors[0].message
+      ))
+    );
+  });
 });
 
 describe('Request token saga', () => {
