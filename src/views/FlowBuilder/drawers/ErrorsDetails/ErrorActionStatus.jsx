@@ -13,6 +13,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0.5, 1),
     borderRadius: 2,
     marginRight: `${theme.spacing(4)}px !important`,
+    whiteSpace: 'nowrap',
   },
 }));
 

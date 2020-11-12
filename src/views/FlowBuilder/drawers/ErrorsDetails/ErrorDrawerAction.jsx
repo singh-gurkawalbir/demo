@@ -27,6 +27,11 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     display: 'flex',
   },
+  errorDrawerActionToggle: {
+    '& > button': {
+      whiteSpace: 'nowrap',
+    },
+  },
 }));
 
 export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
@@ -66,6 +71,7 @@ export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
         value={errorType}
         onChange={handleErrorTypeChange}
         exclusive
+        className={classes.errorDrawerActionToggle}
         options={errorTypes}
       />
     </>
