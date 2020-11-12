@@ -1,3 +1,4 @@
+import { makeStyles } from '@material-ui/core';
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
@@ -26,6 +27,11 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 100,
     alignItems: 'center',
     display: 'flex',
+  },
+  errorDrawerActionToggle: {
+    '& > button': {
+      whiteSpace: 'nowrap',
+    },
   },
 }));
 
@@ -66,6 +72,7 @@ export default function ErrorDrawerAction({ flowId, errorType, setErrorType }) {
         value={errorType}
         onChange={handleErrorTypeChange}
         exclusive
+        className={classes.errorDrawerActionToggle}
         options={errorTypes}
       />
     </>
