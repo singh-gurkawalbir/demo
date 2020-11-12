@@ -56,6 +56,7 @@ export function* run({ flowId, customStartDate, options = {} }) {
     actions.job.receivedFamily({ job: { ...job, ...additionalProps } })
   );
   yield put(actions.job.requestInProgressJobStatus());
+  yield put(actions.flow.runRequested(flowId));
 }
 
 export function* runDataLoader({ flowId, fileContent, fileType, fileName }) {
