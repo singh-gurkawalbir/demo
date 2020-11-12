@@ -277,7 +277,7 @@ export default function EditorDrawer(props) {
           )}
           {!hidePreviewAction && (
           <DynaCheckbox
-            disabled={disabled}
+            disabled={!!saveInProgress}
             hideLabelSpacing
             id="disableAutoPreview"
             onFieldChange={handleAutoPreviewToggle}
