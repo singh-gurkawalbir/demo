@@ -17,25 +17,38 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
   tabPanelTab: {
-    padding: 0,
+    padding: 8,
     '& > span': {
       fontSize: 17,
       fontFamily: 'source sans pro',
+      fontWeight: 'normal',
+      color: theme.palette.text.secondary,
+      justifyContent: 'flex-start',
+      lineHeight: 1,
+    },
+  },
+  tab2: {
+    '& > span': {
+      justifyContent: 'center',
     },
   },
   resourceTab: {
-    flex: '1 1 auto',
-
+    flex: '1 1',
   },
   dataWrapper: {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
   },
+  // TODO: @azhar add the color in common file
   tabsHeader: {
     background: theme.palette.common.white,
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    borderBottom: 'solid 1px rgb(0,0,0,0.3)',
   },
+  customTabIndicator: {
+    backgroundColor: 'transparent',
+  },
+
 }));
 export default function SqlRuleTabPanel(props) {
   const {
@@ -60,12 +73,17 @@ export default function SqlRuleTabPanel(props) {
 
   return (
     <div className={classes.dataWrapper}>
-      <div className={classes.tabsHeader}>
+      <div
+        className={classes.tabsHeader}>
         <Tabs
           value={tabValue} onChange={handleTabChange}
           variant="fullWidth"
           textColor="primary"
-          indicatorColor="primary">
+          indicatorColor="primary"
+          classes={{
+            indicator: clsx({[classes.customTabIndicator]: !showDefaultData}),
+          }}
+          >
           <Tab
             label={ruleTitle}
             value="rule"
@@ -79,7 +97,7 @@ export default function SqlRuleTabPanel(props) {
             value="default"
             textColorPrimary
             id="tab-default"
-            className={classes.tabPanelTab}
+            className={clsx(classes.tabPanelTab, classes.tab2)}
             aria-controls="tabpanel-default"
           />
           )}
