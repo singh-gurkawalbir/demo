@@ -44,8 +44,7 @@ const metadata = {
     },
     {
       heading: 'Flow step',
-      value: r => <OverflowWrapper message={r.name} />,
-      width: '35%',
+      value: r => <OverflowWrapper message={r.name} style={{maxWidth: 238}} />,
     },
     {
       heading: 'Errors',
