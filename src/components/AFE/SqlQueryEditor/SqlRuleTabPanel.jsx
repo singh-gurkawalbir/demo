@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { func, string } from 'prop-types';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import CodePanel from '../GenericEditor/CodePanel';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -15,6 +17,9 @@ const useStyles = makeStyles(theme => ({
   },
   tabPanel: {
     height: '100%',
+  },
+  ruleWrap: {
+    whiteSpace: 'nowrap',
   },
   tabPanelTab: {
     padding: theme.spacing(1),
@@ -65,6 +70,7 @@ export default function SqlRuleTabPanel(props) {
     dataMode,
   } = props;
   const [tabValue, setTabValue] = useState('rule');
+  const drawerOpened = useSelector(state => selectors.drawerOpened(state));
 
   function handleTabChange(event, newValue) {
     setTabValue(newValue);
@@ -88,7 +94,7 @@ export default function SqlRuleTabPanel(props) {
             label={ruleTitle}
             value="rule"
             id="tab-rule"
-            className={clsx(classes.tabPanelTab, classes.resourceTab)}
+            className={clsx(classes.tabPanelTab, classes.resourceTab, {[classes.ruleWrap]: drawerOpened})}
             aria-controls="tabpanel-rule"
         />
           {showDefaultData && (
