@@ -60,7 +60,7 @@ const metadata = {
       },
     },
     {
-      heading: 'Flow step',
+      heading: 'Flow step name',
       value: r => <OverflowWrapper message={r.name} />,
       width: '35%',
     },
