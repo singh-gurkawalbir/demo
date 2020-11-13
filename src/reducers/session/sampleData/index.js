@@ -94,7 +94,7 @@ const getResourceSampleDataWithStatus = (resourceIdSampleData, stage) => ({
 selectors.getResourceSampleDataWithStatus = (state, resourceId, stage) => getResourceSampleDataWithStatus(state?.[resourceId], stage);
 
 selectors.mkPreviewStageDataList = () => createSelector(
-  (state, resourceId) => state?.session?.sampleData?.[resourceId],
+  (state, resourceId) => state?.[resourceId],
   (_1, _2, stages) => stages,
   (resourceIdSampleData, stages) =>
     stages.reduce((acc, stage) => {
