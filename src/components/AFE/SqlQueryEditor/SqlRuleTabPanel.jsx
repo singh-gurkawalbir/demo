@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
   tabPanelTab: {
-    padding: 8,
+    padding: theme.spacing(1),
     '& > span': {
       fontSize: 17,
       fontFamily: 'source sans pro',
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
       lineHeight: 1,
     },
   },
-  tab2: {
+  defaultsTab: {
     '& > span': {
       justifyContent: 'center',
     },
@@ -97,7 +97,7 @@ export default function SqlRuleTabPanel(props) {
             value="default"
             textColorPrimary
             id="tab-default"
-            className={clsx(classes.tabPanelTab, classes.tab2)}
+            className={clsx(classes.tabPanelTab, classes.defaultsTab)}
             aria-controls="tabpanel-default"
           />
           )}
