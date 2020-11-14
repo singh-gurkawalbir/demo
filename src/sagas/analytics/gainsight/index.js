@@ -41,21 +41,24 @@ export function* trackResourceCreatedEvent({ id, resourceType }) {
     return true;
   }
 
-  const eventId = `${resourceTypeSingular.toUpperCase()}_CREATED`;
   /**
    * TODO We need to update this to get the required details for each resource type
    * once https://celigo.atlassian.net/browse/IO-10222 is updated with required details.
    */
   const details = getResourceSubType(resource);
 
-  trackEvent({ eventId, details });
+  gainsight.track(`${resourceTypeSingular.toUpperCase()}_CREATED`, details);
+  // per PM request we are sending flow/conn events under different name in addition
+  if (resourceTypeSingular === 'flow' || resourceTypeSingular === 'connection') {
+    gainsight.track(`CUSTOM_${resourceTypeSingular.toUpperCase()}_CREATED`, details);
+  }
 }
 
 const locationFromMatch = m => {
   if (!m || !m.url) return 'unknown';
-  if (m.url.endsWith('/dashboard')) return 'integration dashboard';
-  if (m.url.includes('/flowBuilder/')) return 'run dashboard';
-  if (m.url.endsWith('/viewErrors')) return 'error drawer';
+  if (m.url.endsWith('/dashboard')) return 'integrationDashboard';
+  if (m.url.includes('/flowBuilder/')) return 'runDashboard';
+  if (m.url.endsWith('/viewErrors')) return 'errorDrawer';
 
   return 'unknown';
 };
@@ -102,7 +105,19 @@ function* getFlowStepInfo(flowId, resourceType, resourceId) {
 function* trackFormSubmit(a) {
   const url = a?.match?.url || '';
 
-  if (!url.includes('/flowBuilder/')) return;
+  let entry;
+
+  if (url.includes('/flowBuilder/')) entry = 'flowBuilder';
+  else if (url.includes('/flows/')) entry = 'flowsList';
+  if (!entry) return;
+
+  let mt;
+
+  if (a.type === actionTypes.MAPPING.SAVE) mt = 'mapping';
+  else if (a.type === actionTypes.RESPONSE_MAPPING.SAVE) mt = 'responseMapping';
+
+  if (!mt && entry !== 'flowBuilder') return;
+
   const flowId = a?.flowId || a?.match?.params?.flowId;
   let { resourceId = '', resourceType } = a;
 
@@ -126,7 +141,8 @@ function* trackFormSubmit(a) {
     gainsight.track('CUSTOM_FLOWMAPPING_EDITED', {
       flowId,
       bubbleConnector,
-      mappingType: a.type === actionTypes.RESPONSE_MAPPING.SAVE ? 'responseMapping' : 'mapping',
+      mappingType: mt,
+      entryPoint: entry,
     });
 
     return;
@@ -210,15 +226,14 @@ function* trackHookSave(a) {
   });
 }
 
-function* trackFlowEnable(a) {
+function* trackFlowEnableDisable(a) {
   if (!a.flowId || a.onOffInProgress) return;
   const {flowId} = a;
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
 
-  if (flow?.disabled) return;
-  gainsight.track('CUSTOM_FLOW_ENABLED', {
-    flowId,
-  });
+  const eventId = (flow?.disabled) ? 'CUSTOM_FLOW_DISABLED' : 'CUSTOM_FLOW_ENABLED';
+
+  gainsight.track(eventId, { flowId });
 }
 
 function trackFlowRun(a) {
@@ -257,7 +272,7 @@ export const gainsightSagas = [
   takeEvery(actionTypes.RESPONSE_MAPPING.SAVE, trackFormSubmit),
   takeEvery(actionTypes.EDITOR.SAVE, trackEditorSave),
   takeEvery(actionTypes.HOOKS.SAVE, trackHookSave),
-  takeEvery(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, trackFlowEnable),
+  takeEvery(actionTypes.FLOW.RECEIVED_ON_OFF_ACTION_STATUS, trackFlowEnableDisable),
   takeEvery(actionTypes.FLOW.RUN_REQUESTED, trackFlowRun),
   takeEvery(actionTypes.CONNECTION.ENABLE_DEBUG, trackConnDebug),
 ];
