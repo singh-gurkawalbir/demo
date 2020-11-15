@@ -1,5 +1,5 @@
-export default function retry(fn, retriesLeft = 5, interval = 100) {
-  const rl = Math.min(10, Math.floor(Number.isNaN(+retriesLeft) ? 0 : +retriesLeft));
+export default function retry(fn, retriesLeft = 10, interval = 200) {
+  const rl = Math.min(20, Math.floor(Number.isNaN(+retriesLeft) ? 0 : +retriesLeft));
 
   return new Promise((resolve, reject) => {
     fn().then(resolve)

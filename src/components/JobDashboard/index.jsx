@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import LoadResources from '../LoadResources';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -30,6 +31,7 @@ export default function JobDashboard({
 }) {
   const filterKey = 'jobs';
   const classes = useStyles();
+  const match = useRouteMatch();
 
   const dispatch = useDispatch();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
@@ -176,7 +178,7 @@ export default function JobDashboard({
     closeSnackbar();
     const filteredJobsOnly = ![undefined, 'all', 'error'].includes(filters.status) || ![null, undefined, 'last30days'].includes(filters.dateRange?.[0]?.preset);
 
-    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, filteredJobsOnly }));
+    dispatch(actions.job.resolveAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, filteredJobsOnly, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToResolve} jobs marked as resolved.`,
       showUndo: true,
@@ -208,18 +210,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [
-    closeSnackbar,
-    dispatch,
-    enqueueSnackbar,
-    filters.flowId,
-    filters.storeId,
-    filters.dateRange,
-    filters.status,
-    flowId,
-    integrationId,
-    jobs,
-  ]);
+  }, [flowId, filters.flowId, filters.status, filters.dateRange, filters.storeId, jobs, closeSnackbar, dispatch, integrationId, match, enqueueSnackbar]);
   const resolveSelectedJobs = useCallback(() => {
     const jobsToResolve = [];
 
@@ -242,7 +233,7 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.resolveSelected({ jobs: jobsToResolve }));
+    dispatch(actions.job.resolveSelected({ jobs: jobsToResolve, match }));
     enqueueSnackbar({
       message: `${numJobsSelected} jobs marked as resolved.`,
       showUndo: true,
@@ -268,7 +259,7 @@ export default function JobDashboard({
         );
       },
     });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, numJobsSelected, selectedJobs]);
+  }, [closeSnackbar, dispatch, enqueueSnackbar, match, numJobsSelected, selectedJobs]);
   const retryAllJobs = useCallback(() => {
     const selectedFlowId = flowId || filters.flowId;
     const numberOfJobsToRetry = jobs
@@ -299,7 +290,7 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.retryAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId }));
+    dispatch(actions.job.retryAll({ flowId: selectedFlowId, storeId: filters.storeId, integrationId, match }));
     enqueueSnackbar({
       message: `${numberOfJobsToRetry} jobs retried.`,
       showUndo: true,
@@ -359,7 +350,7 @@ export default function JobDashboard({
 
     setSelectedJobs({});
     closeSnackbar();
-    dispatch(actions.job.retrySelected({ jobs: jobsToRetry }));
+    dispatch(actions.job.retrySelected({ jobs: jobsToRetry, match }));
     enqueueSnackbar({
       message: `${numRetriableJobsSelected} jobs retried.`,
       showUndo: true,
