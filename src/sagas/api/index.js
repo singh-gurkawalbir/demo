@@ -6,10 +6,6 @@ import {
 } from './apiPaths';
 import { getCSRFToken } from '../../utils/session';
 
-const delay = delay =>
-  new Promise(fulfill => {
-    setTimeout(fulfill, delay);
-  });
 const sessionExpired = {
   message: 'Session Expired',
   status: 401,
