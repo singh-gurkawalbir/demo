@@ -229,6 +229,7 @@ function JobErrorTable({
       dispatch(
         actions.job.retrySelected({
           jobs: jobsToRetry,
+          match,
         })
       );
       enqueueSnackbar({
@@ -275,6 +276,7 @@ function JobErrorTable({
           jobId: job._id,
           flowJobId: job._flowJobId,
           selectedRetryIds,
+          match,
         })
       );
       onCloseClick();
@@ -288,6 +290,7 @@ function JobErrorTable({
       dispatch(
         actions.job.resolveSelected({
           jobs: jobsToResolve,
+          match,
         })
       );
       enqueueSnackbar({
@@ -322,6 +325,7 @@ function JobErrorTable({
           jobId: job._id,
           flowJobId: job._flowJobId,
           selectedErrorIds,
+          match,
         })
       );
     }
