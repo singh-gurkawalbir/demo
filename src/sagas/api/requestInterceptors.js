@@ -3,7 +3,6 @@ import { sendRequest } from 'redux-saga-requests';
 import actions from '../../actions';
 import {
   normalizeUrlAndOptions,
-  introduceNetworkLatency,
   checkToThrowSessionValidationException,
   throwExceptionUsingTheResponse,
   // isUnauthorized,
@@ -72,7 +71,6 @@ export function* onRequestSaga(request) {
   // for development only to slow down local api calls
   // lets built for a good UX that can deal with high latency calls...
 
-  yield call(introduceNetworkLatency);
   // TODO: proxing path so that resourceStatus selector can pick up
   // the right comm call status
   const requestPayload = yield {

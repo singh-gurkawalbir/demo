@@ -91,7 +91,7 @@ function DrawerContent({jobId, flowJobId}) {
       })
     );
     history.goBack(2);
-  }, [dispatch, flowJobId, history, jobId, retryId]);
+  }, [dispatch, flowJobId, history, jobId, match, retryId]);
 
   useEffect(() => {
     if (retryId && !retryData) {

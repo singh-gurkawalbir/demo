@@ -108,9 +108,9 @@ export function* apiCallWithRetry(args) {
       const method = (opts && opts.method) || 'GET';
 
       // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
-      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 1 ms
+      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 0 ms
       // we are forcing the select to compute in the next cycle...thereby we have the state ready
-      yield delay(1);
+      yield delay(0);
       const status = yield select(selectors.commStatusPerPath, path, method);
 
       // only dispatch a completed action when the request state is not completed

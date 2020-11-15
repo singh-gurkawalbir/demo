@@ -93,10 +93,6 @@ export function checkToThrowSessionValidationException(response) {
   }
 }
 
-export async function introduceNetworkLatency() {
-  await delay(process.env.ADD_NETWORK_LATENCY || 0);
-}
-
 export function isCsrfExpired(error) {
   return (
     error.status === 403 &&

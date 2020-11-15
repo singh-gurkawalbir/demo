@@ -358,7 +358,7 @@ describe('apiCallWithRetry saga', () => {
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
 
-        expect(saga.next(true).value).toEqual(delay(1));
+        expect(saga.next(true).value).toEqual(delay(0));
         const resourceStatusEffect = select(
           selectors.commStatusPerPath,
           path,
@@ -400,7 +400,7 @@ describe('apiCallWithRetry saga', () => {
 
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
-        expect(saga.next(true).value).toEqual(delay(1));
+        expect(saga.next(true).value).toEqual(delay(0));
 
         const resourceStatusEffect = select(
           selectors.commStatusPerPath,
