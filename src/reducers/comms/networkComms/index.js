@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
+import { RETRY_COUNT } from '../../../sagas/api/requestInterceptors';
 import commKeyGenerator from '../../../utils/commKeyGenerator';
 
 const initialState = {};
@@ -96,6 +97,11 @@ selectors.isLoading = (state, resourceName) => !!(
     state[resourceName].status === COMM_STATES.LOADING
 );
 
+selectors.reqsHasRetriedTillFailure = state => {
+  if (!state) return false;
+
+  return Object.keys(state).some(key => state[key].retry === RETRY_COUNT);
+};
 selectors.commStatus = (state, resourceName) => state && state[resourceName] && state[resourceName].status;
 
 selectors.requestMessage = (state, resourceName) => (state && state[resourceName] && state[resourceName].message) || '';

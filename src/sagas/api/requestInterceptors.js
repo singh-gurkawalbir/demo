@@ -12,7 +12,7 @@ import { unauthenticateAndDeleteProfile } from '..';
 import { selectors } from '../../reducers';
 import { isJsonString } from '../../utils/string';
 
-const tryCount = 3;
+export const RETRY_COUNT = 3;
 
 function* isCurrentProfileDifferent() {
   const currentProfile = yield select(selectors.userProfile);
@@ -162,7 +162,7 @@ export function* onErrorSaga(error, action) {
 
   const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
-  if (retryCount < tryCount) {
+  if (retryCount < RETRY_COUNT) {
     yield delay(Number(process.env.REATTEMPT_INTERVAL));
     yield put(actions.api.retry(path, method));
 
