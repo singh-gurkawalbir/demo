@@ -203,6 +203,7 @@ export default function EditorDrawer(props) {
       data-test={dataTest}
       title={title}
       variant="temporary"
+      disableClose={!!saveInProgress}
       actions={drawerActions}
       onClose={handleCancelClick} >
       {

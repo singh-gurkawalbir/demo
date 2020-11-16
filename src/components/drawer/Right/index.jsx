@@ -119,6 +119,7 @@ export default function RightDrawer({
   variant = 'persistent',
   helpTitle,
   helpKey,
+  disableClose,
   ...rest
 }) {
   const classes = useStyles();
@@ -205,6 +206,7 @@ export default function RightDrawer({
               {actions}
               <IconButton
                 size="small"
+                disabled={!!disableClose}
                 data-test="closeRightDrawer"
                 aria-label="Close"
                 onClick={handleClose}>

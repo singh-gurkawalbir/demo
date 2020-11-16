@@ -116,11 +116,16 @@ export function getResourceSubType(resource) {
     resourceType = adaptorTypeMap[adaptorType] || type;
   }
 
-  return {
+  const out = {
+    id: resource._id,
     type: resourceType,
     assistant,
     resourceType: inferResourceType(adaptorType),
   };
+
+  if (resource.offline === true) out.offline = true;
+
+  return out;
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
