@@ -61,12 +61,34 @@ import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
+import { APIException } from './api';
 
 export function* unauthenticateAndDeleteProfile() {
   yield put(actions.auth.failure('Authentication Failure'));
   yield put(actions.user.profile.delete());
 }
 
+export function* requestCleanup(path, reqMethod) {
+  // yield cancelled is true when the saga gets cancelled
+  // lets perform some cleanup here by completing any ongoing requests
+  const method = reqMethod || 'GET';
+
+  // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
+  // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 0 ms
+  // we are forcing the select to compute in the next cycle...thereby we have the state ready
+  yield delay(0);
+  const status = yield select(selectors.commStatusPerPath, path, method);
+
+  // only dispatch a completed action when the request state is not completed
+  if (status !== COMM_STATES.SUCCESS) {
+    yield put(actions.api.complete(path, method, 'Request Aborted'));
+  }
+}
+
+export const CANCELLED_REQ = {
+  status: 'Cancelled',
+  message: 'Cancelled request',
+};
 // TODO: decide if we this saga has to have takeLatest
 // api call
 export function* apiCallWithRetry(args) {
@@ -95,28 +117,22 @@ export function* apiCallWithRetry(args) {
       });
     }
 
+    if (timeoutEffect) {
+      yield call(requestCleanup, path, opts?.method);
+
+      throw new APIException(CANCELLED_REQ);
+    }
+
     // logout effect succeeded then the apiResp would be undefined
-    if (timeoutEffect || logout) return null;
+
+    if (logout) { return null; }
 
     const { data } = apiResp.response || {};
 
     return data;
   } finally {
     if (yield cancelled()) {
-      // yield cancelled is true when the saga gets cancelled
-      // lets perform some cleanup here by completing any ongoing requests
-      const method = (opts && opts.method) || 'GET';
-
-      // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
-      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 0 ms
-      // we are forcing the select to compute in the next cycle...thereby we have the state ready
-      yield delay(0);
-      const status = yield select(selectors.commStatusPerPath, path, method);
-
-      // only dispatch a completed action when the request state is not completed
-      if (status !== COMM_STATES.SUCCESS) {
-        yield put(actions.api.complete(path, method, 'Request Aborted'));
-      }
+      yield call(requestCleanup, path, opts?.method);
     }
   }
 }

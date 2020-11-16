@@ -13,7 +13,7 @@ import {
 import { sendRequest } from 'redux-saga-requests';
 import actionsTypes from '../actions/types';
 import actions from '../actions';
-import { apiCallWithRetry } from '.';
+import { apiCallWithRetry, requestCleanup, CANCELLED_REQ } from '.';
 import { APIException } from './api';
 import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
@@ -179,7 +179,7 @@ describe('netsuiteUserRoles', () => {
 
 describe('apiCallWithRetry saga', () => {
   const path = '/somePath';
-  const opts = {};
+  const opts = {method: 'GET'};
   const _400Exception = new APIException({
     status: 400,
     message: 'Session Expired',
@@ -328,6 +328,36 @@ describe('apiCallWithRetry saga', () => {
       expect(saga.next().done).toBe(true);
     });
 
+    test('timed out non-logout requests should perform request cleanup and subsequently throw a timed out exception', () => {
+      const args = { path, opts, hidden: undefined, message: undefined };
+      const saga = apiCallWithRetry(args);
+      const apiRequestAction = {
+        type: 'API_WATCHER',
+        request: { url: path, args },
+      };
+      const raceBetweenApiCallAndLogoutEffect = race({
+        apiResp: call(sendRequest, apiRequestAction, {
+          dispatchRequestAction: false,
+        }),
+        logout: take(actionsTypes.USER_LOGOUT),
+        timeoutEffect: delay(120000),
+      });
+
+      expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
+      // emulate a race with a request timed out
+      const resp = { timeoutEffect: {something: 'something'} };
+
+      expect(saga.next(resp).value).toEqual(call(requestCleanup, path, opts?.method));
+      saga.next(false);
+
+      try {
+        expect(saga.next().done).toBe(true);
+        fail('should have thrown an error');
+      } catch (e) {
+        expect(e).toEqual(CANCELLED_REQ);
+      }
+    });
+
     describe('apiCallWithRetry saga gets canceled by a parent saga ', () => {
       test('should successfully cleanup and complete any incomplete requests when the saga cancels', () => {
         const args = {
@@ -358,17 +388,8 @@ describe('apiCallWithRetry saga', () => {
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
 
-        expect(saga.next(true).value).toEqual(delay(0));
-        const resourceStatusEffect = select(
-          selectors.commStatusPerPath,
-          path,
-          'GET'
-        );
+        expect(saga.next(true).value).toEqual(call(requestCleanup, path, 'GET'));
 
-        expect(saga.next().value).toEqual(resourceStatusEffect);
-        expect(saga.next(COMM_STATES.LOADING).value).toEqual(
-          put(actions.api.complete(path, 'GET', 'Request Aborted'))
-        );
         expect(saga.next().done).toBe(true);
       });
 
@@ -400,17 +421,8 @@ describe('apiCallWithRetry saga', () => {
 
         expect(saga.next().value).toEqual(raceBetweenApiCallAndLogoutEffect);
         expect(saga.next(resp).value).toEqual(cancelled());
-        expect(saga.next(true).value).toEqual(delay(0));
-
-        const resourceStatusEffect = select(
-          selectors.commStatusPerPath,
-          path,
-          'GET'
-        );
-
-        expect(saga.next().value).toEqual(resourceStatusEffect);
-        // child saga has completed not necessary to resend the api.complete action
-        expect(saga.next(COMM_STATES.SUCCESS).done).toBe(true);
+        expect(saga.next(true).value).toEqual(call(requestCleanup, path, 'GET'));
+        expect(saga.next().done).toBe(true);
       });
     });
   });
@@ -438,6 +450,42 @@ describe('apiCallWithRetry saga', () => {
 
       expect(saga.next().value).toEqual('some response');
       expect(saga.next().done).toBe(true);
+    });
+  });
+
+  describe('requestCleanup', () => {
+    const path = '/somePath';
+    const method = 'GET';
+
+    test('should execute an api complete action for any stale loading requests', () => {
+      const saga = requestCleanup(path, method);
+
+      expect(saga.next(true).value).toEqual(delay(0));
+      const resourceStatusEffect = select(
+        selectors.commStatusPerPath,
+        path,
+        'GET'
+      );
+
+      expect(saga.next().value).toEqual(resourceStatusEffect);
+      expect(saga.next(COMM_STATES.LOADING).value).toEqual(
+        put(actions.api.complete(path, method, 'Request Aborted'))
+      );
+      expect(saga.next().done).toBe(true);
+    });
+
+    test('should not execute an api complete action for a successful api request', () => {
+      const saga = requestCleanup(path, method);
+
+      expect(saga.next(true).value).toEqual(delay(0));
+      const resourceStatusEffect = select(
+        selectors.commStatusPerPath,
+        path,
+        'GET'
+      );
+
+      expect(saga.next().value).toEqual(resourceStatusEffect);
+      expect(saga.next(COMM_STATES.SUCCESS).done).toBe(true);
     });
   });
 });
