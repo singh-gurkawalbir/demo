@@ -23,7 +23,7 @@ export default function Editor({ editorId }) {
   // favor custom template over pre-defined layouts.
   const gridTemplate = classes[layout];
 
-  console.log(panels);
+  // console.log(panels);
 
   return (
     <PanelGrid className={gridTemplate}>
