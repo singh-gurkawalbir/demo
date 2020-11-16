@@ -1355,6 +1355,7 @@ const app = {
   fetchUiVersion: () => action(actionTypes.UI_VERSION_FETCH),
   updateUIVersion: version => action(actionTypes.UI_VERSION_UPDATE, {version}),
   reload: () => action(actionTypes.APP_RELOAD),
+  deleteDataState: () => action(actionTypes.APP_DELETE_DATA_STATE),
   errored: () => action(actionTypes.APP_ERRORED),
   clearError: () => action(actionTypes.APP_CLEAR_ERROR),
   userAcceptedAccountTransfer: () => action(actionTypes.USER_ACCEPTED_ACCOUNT_TRANSFER),
