@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import DynaAction from '../../DynaForm/DynaAction';
 import { selectors } from '../../../reducers';
 import { useLoadingSnackbarOnSave } from '.';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const styles = theme => ({
   actionButton: {
@@ -27,14 +28,21 @@ const SaveButton = props => {
     submitButtonColor = 'secondary',
     setDisableSaveOnClick,
   } = props;
+  const { confirmDialog } = useConfirmDialog();
 
   const match = useRouteMatch();
+  const resource = useSelector(state =>
+    selectors.resource(state, resourceType, resourceId)
+  );
 
   const dispatch = useDispatch();
   const saveTerminated = useSelector(state =>
     selectors.resourceFormSaveProcessTerminated(state, resourceType, resourceId)
   );
-  const onSave = useCallback(
+  const onCancel = useCallback(() => {
+    setDisableSaveOnClick(false);
+  }, [setDisableSaveOnClick]);
+  const saveResource = useCallback(
     values => {
       const newValues = { ...values };
 
@@ -52,8 +60,31 @@ const SaveButton = props => {
           flowId
         )
       );
+    }, [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]);
+  const onSave = useCallback(
+    values => {
+      if (resource?._connectionId && values['/_connectionId'] && resource._connectionId !== values['/_connectionId']) {
+        confirmDialog({
+          title: 'Confirm replace',
+          message: 'Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.',
+          onDialogClose: onCancel,
+          buttons: [
+            {
+              label: 'Replace',
+              onClick: () => {
+                saveResource(values);
+              },
+            },
+            {
+              label: 'Cancel',
+              color: 'secondary',
+              onClick: onCancel,
+            },
+          ],
+        });
+      } else { saveResource(values); }
     },
-    [dispatch, flowId, isGenerate, match, resourceId, resourceType, skipCloseOnSave]
+    [confirmDialog, onCancel, resource?._connectionId, saveResource]
   );
   const { handleSubmitForm, disableSave, isSaving } = useLoadingSnackbarOnSave({
     saveTerminated,
