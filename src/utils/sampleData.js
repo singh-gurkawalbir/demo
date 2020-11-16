@@ -1,9 +1,10 @@
+/* eslint-disable camelcase */
 import { isEmpty, each, isArray } from 'lodash';
 import moment from 'moment';
 import deepClone from 'lodash/cloneDeep';
 import jsonUtil from './json';
 import { isFileAdaptor, isBlobTypeResource } from './resource';
-import { extractFieldsFromCsv } from './file';
+import { extractMappingFieldsFromCsv } from './mapping';
 import {
   getFormattedNSSalesOrderMetadataData,
   getFormattedNSCustomerSampleData,
@@ -78,7 +79,7 @@ export function getDefaultData(obj) {
   return _obj;
 }
 
-export function processSampleData(sampleData, resource) {
+export function convertFileDataToJSON(sampleData, resource) {
   if (!resource || !sampleData || isEmpty(sampleData)) return sampleData;
 
   // All file type's sample data logic handled here
@@ -89,10 +90,10 @@ export function processSampleData(sampleData, resource) {
     if (fileType) {
       switch (fileType) {
         case 'csv':
-          return extractFieldsFromCsv(sampleData, csv);
+          return extractMappingFieldsFromCsv(sampleData, csv);
         case 'xlsx':
           // for xlsx files sample data is stored in csv format
-          return extractFieldsFromCsv(sampleData, xlsx);
+          return extractMappingFieldsFromCsv(sampleData, xlsx);
         case 'json':
         case 'filedefinition':
           return sampleData;
@@ -390,12 +391,12 @@ export const extractSampleDataAtResourcePath = (sampleData, resourcePath) => {
   }
 };
 
-/*
- * Handles Sample data of JSON file type
- * Incase of Array content, we merge all objects properties and have a combined object
- * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+/**
+ * processes json data based on resourcePath provided
+ * sampleData = { test: { a: 5, b: 6} } with options = { resourcePath: 'test' }
+ * output: { a: 5, b: 6 }
  */
-export const processJsonSampleData = (sampleData, options = {}) => {
+export const processJsonPreviewData = (sampleData, options = {}) => {
   if (!sampleData) return sampleData;
   const { resourcePath } = options;
   let processedSampleData = sampleData;
@@ -408,17 +409,26 @@ export const processJsonSampleData = (sampleData, options = {}) => {
       processedSampleData,
       options.resourcePath
     );
-
-    if (Array.isArray(processedSampleData)) {
-      processedSampleData = getUnionObject(processedSampleData);
-    }
-  } else if (Array.isArray(sampleData)) {
-    // If there is no resourcePath, check if the sampleData is an array,
-    // so that we can merge the objects inside
-    processedSampleData = getUnionObject(sampleData);
   }
 
   return processedSampleData;
+};
+
+/*
+ * Handles Sample data of JSON file type
+ * Incase of Array content, we merge all objects properties and have a combined object
+ * Ex: [{a: 5, b: 6}, {c: 7}, {a: 6, d: 11}] gets converted to {a: 6, b: 6, c: 7, d: 11}
+ */
+export const processJsonSampleData = (sampleData, options = {}) => {
+  const previewData = processJsonPreviewData(sampleData, options);
+
+  if (Array.isArray(previewData)) {
+    // If there is no resourcePath, check if the sampleData is an array,
+    // so that we can merge the objects inside
+    return getUnionObject(previewData);
+  }
+
+  return previewData;
 };
 
 /*
@@ -511,4 +521,231 @@ export const processOneToManySampleData = (sampleData, resource) => {
   };
 
   return processedSampleData;
+};
+
+/**
+ * This util adds "page_of_records" on records/rows based on the sampleData structure
+ * Ideally, we should be using a BE API for this structure
+ * For the time being this is used for csv/xml export sample data view
+ * TODO: Discuss on this being replaced with API call, once we finalize AFE 2.0 requirements
+ */
+export const wrapExportFileSampleData = records => {
+  const page_of_records = [];
+
+  if (!records || typeof records !== 'object') {
+    page_of_records.push({ record: {} });
+
+    return { page_of_records };
+  }
+  if (!Array.isArray(records)) {
+    page_of_records.push({ record: records });
+
+    return { page_of_records };
+  }
+  records.forEach(record => {
+    if (Array.isArray(record)) {
+      const rows = [];
+
+      record.forEach(r => rows.push(r));
+      page_of_records.push({rows});
+    } else {
+      page_of_records.push({ record });
+    }
+  });
+
+  return { page_of_records };
+};
+
+// this util method will wrap the sample data with correct context fields
+// according to the 'stage' passed. This will be used for all the editors sample data
+export const wrapSampleDataWithContext = ({
+  sampleData,
+  preMapSampleData,
+  postMapSampleData,
+  flow,
+  integration,
+  resource,
+  connection,
+  stage,
+  fieldType}) => {
+  const { status, data, templateVersion } = sampleData || {};
+
+  let resourceType = 'export';
+
+  if (
+    resource &&
+      resource.adaptorType &&
+      resource.adaptorType.includes('Import')
+  ) {
+    resourceType = 'import';
+  }
+
+  if (!status || status === 'requested') {
+    return { status };
+  }
+
+  // standalone resource should not wrap the data
+  // also there is no 'data' variable for these 2 fields for AFE1, return sample data as such
+  if (!flow._id || ((fieldType === 'dataURITemplate' || fieldType === 'idLockTemplate') && templateVersion === 1)) {
+    return { status, data, templateVersion };
+  }
+
+  const isDeltaExport = resource.type === 'delta';
+  const settings = {
+    integration: integration.settings || {},
+    flow: flow.settings || {},
+    [resourceType]: resource.settings || {},
+    connection: connection.settings || {},
+  };
+
+  const resourceIds = {
+    [resourceType === 'import' ? '_importId' : '_exportId']: resource._id,
+    _connectionId: connection._id,
+    _flowId: flow._id,
+    _integrationId: integration._id,
+  };
+  const contextFields = {};
+
+  if (isDeltaExport) {
+    contextFields.lastExportDateTime = moment()
+      .startOf('day')
+      .add(-7, 'd')
+      .toISOString();
+    contextFields.currentExportDateTime = moment()
+      .startOf('day')
+      .add(-24, 'h')
+      .toISOString();
+  }
+
+  switch (stage) {
+    case 'flowInput': {
+      const processedData = {
+        ...data,
+        ...contextFields,
+        settings,
+      };
+
+      // add connection object for http exports and imports, only for AFE2
+      if (resource.adaptorType?.includes('HTTP') && (resourceType === 'export' || templateVersion === 2)) {
+        processedData.connection = {
+          name: connection.name,
+          http: {
+            unencrypted: connection.http.unencrypted,
+            encrypted: connection.http.encrypted,
+          },
+        };
+      }
+      // add paging sub-object for both HTTP and REST API "exports" (i.e. Lookups, Exports -- but NOT transfers).
+      if ((resource.adaptorType?.includes('HTTP') || resource.adaptorType?.includes('REST')) && resourceType === 'export' &&
+      resource.http?.paging) {
+        processedData.export = {
+          http: {
+            paging: {...resource.http.paging},
+          },
+        };
+      }
+
+      return {
+        data: processedData,
+        status,
+        templateVersion,
+      };
+    }
+    case 'transform':
+    case 'sampleResponse':
+    case 'inputFilter':
+      return {
+        status,
+        data: {
+          record: data || {},
+          settings,
+        },
+      };
+    case 'outputFilter':
+      contextFields.pageIndex = 0;
+
+      return {
+        status,
+        data: {
+          record: data || {},
+          ...contextFields,
+          settings,
+        },
+      };
+    case 'preSavePage':
+      contextFields.pageIndex = 0;
+
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          errors: [],
+          ...resourceIds,
+          ...contextFields,
+          settings,
+        },
+      };
+    case 'preMap':
+      return {
+        status,
+        data: {
+          data: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postMap':
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: data ? [data] : [],
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postSubmit':
+      return {
+        status,
+        data: {
+          preMapData: preMapSampleData.data ? [preMapSampleData.data] : [],
+          postMapData: postMapSampleData.data ? [postMapSampleData.data] : [],
+          responseData: [data].map(() => ({
+            statusCode: 200,
+            errors: [{ code: '', message: '', source: '' }],
+            ignored: false,
+            id: '',
+            _json: data || {},
+            dataURI: '',
+          })),
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postAggregate':
+      return {
+        status: 'received',
+        data: {
+          postAggregateData: {
+            success: true,
+            _json: {},
+            code: '',
+            message: '',
+            source: '',
+          },
+          ...resourceIds,
+          settings,
+        },
+      };
+    case 'postResponseMapHook':
+      return {
+        status,
+        data: {
+          postResponseMapData: data || [],
+        },
+      };
+    default:
+      // For all other stages, return basic sampleData
+      return { status, data, templateVersion };
+  }
 };

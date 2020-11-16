@@ -180,7 +180,7 @@ export default {
   layout: {
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
         fields: [

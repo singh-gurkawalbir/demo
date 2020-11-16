@@ -50,7 +50,7 @@ export default (state = {}, action) => {
         draft[id].isComplete = true;
         break;
       case actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UPDATE:
-        if (draft[id] && draft[id].steps) {
+        if (draft[id]?.steps) {
           step = draft[id].steps.find(
             s => !s.completed
           );

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
@@ -11,6 +11,7 @@ import DynaSubmit from '../../../../DynaSubmit';
 import actions from '../../../../../../actions';
 import { getFormFieldMetadata } from './util';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(3, 3, 1, 3),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   subRecordDynaForm: {
     minHeight: 'calc(100% - 56px)',
@@ -73,9 +74,7 @@ function SubRecordDrawer(props) {
       dispatch(actions.metadata.request(connectionId, `netsuite/metadata/suitescript/connections/${connectionId}/recordTypes/${recordType}`));
     }
   }, [connectionId, dispatch, recordType, referenceFields]);
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
+
   const recordTypeLabel = recordTypeObj && recordTypeObj.label;
   const flow = useSelector(state =>
     selectors.suiteScriptResourceData(state,
@@ -98,11 +97,7 @@ function SubRecordDrawer(props) {
   const handleClose = useCallback(() => {
     history.goBack();
   }, [history]);
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+
   const handleSubmit = useCallback(
     formValues => {
       const updatedFormValues = { ...formValues };
@@ -144,6 +139,12 @@ function SubRecordDrawer(props) {
     },
     [flow?.import?.netsuite?.subRecordImports, referenceFieldId, dispatch, connectionId, resourceContext.resourceId, history]
   );
+  const formKey = useFormInitWithPermissions({
+
+    fieldMeta,
+    optionsHandler,
+
+  });
 
   return (
     <Drawer
@@ -161,15 +162,15 @@ function SubRecordDrawer(props) {
       <div className={classes.container}>
         <div className={classes.content}>
           {fieldMeta && (
-            <DynaForm
-              // disabled={disabled}
-              className={classes.subRecordDynaForm}
-              fieldMeta={fieldMeta}
-              optionsHandler={optionsHandler}
-              formState={formState}>
+            <>
+              <DynaForm
+                formKey={formKey}
+                className={classes.subRecordDynaForm}
+                fieldMeta={fieldMeta} />
+
               <DynaSubmit
+                formKey={formKey}
                 data-test="save-subrecord"
-                showCustomFormValidations={showCustomFormValidations}
                 onClick={handleSubmit}>
                 Save
               </DynaSubmit>
@@ -180,7 +181,7 @@ function SubRecordDrawer(props) {
                 onClick={handleClose}>
                 Cancel
               </Button>
-            </DynaForm>
+            </>
           )}
         </div>
       </div>

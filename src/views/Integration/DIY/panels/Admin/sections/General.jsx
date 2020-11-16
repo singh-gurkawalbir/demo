@@ -7,6 +7,7 @@ import actions from '../../../../../../actions';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../../../../../components/PanelHeader';
+import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -92,22 +93,26 @@ export default function GeneralSection({ integrationId }) {
     [dispatch, integrationId]
   );
 
+  const formKey = useFormInitWithPermissions({
+    fieldMeta,
+    disabled: !canEditIntegration,
+    remount: count,
+    resourceType: 'integrations',
+    resourceId: integrationId,
+  });
+
   return (
     <>
       <PanelHeader title="General" />
 
       <div className={classes.form}>
-        <DynaForm
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <DynaSubmit
+          formKey={formKey}
           disabled={!canEditIntegration}
-          fieldMeta={fieldMeta}
-          resourceType="integrations"
-          resourceId={integrationId}
-          key={count}
-          render>
-          <DynaSubmit disabled={!canEditIntegration} onClick={handleSubmit}>
-            Save
-          </DynaSubmit>
-        </DynaForm>
+          onClick={handleSubmit}>
+          Save
+        </DynaSubmit>
       </div>
     </>
   );

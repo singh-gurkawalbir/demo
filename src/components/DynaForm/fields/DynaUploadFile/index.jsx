@@ -1,9 +1,9 @@
-import { FormContext } from 'react-forms-processor/dist';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import FileUploader from './FileUploader';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import useFormContext from '../../../Form/FormContext';
 
 function findRowDelimiter(sampleData) {
   let rowDelimiter;
@@ -30,12 +30,13 @@ function DynaUploadFile(props) {
     maxSize,
     resourceId,
     resourceType,
-    formContext,
     onFieldChange,
+    formKey,
     isIAField,
     placeholder,
     persistData = false,
   } = props;
+  const formContext = useFormContext(formKey);
   const DEFAULT_PLACEHOLDER = placeholder || 'Browse to zip file:';
   const fileId = `${resourceId}-${id}`;
   const dispatch = useDispatch();
@@ -126,10 +127,4 @@ function DynaUploadFile(props) {
   );
 }
 
-const DynaUploadFileWithFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaUploadFile {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaUploadFileWithFormContext;
+export default DynaUploadFile;

@@ -96,14 +96,15 @@ export default function BottomDrawer({
   ssLinkedConnectionId,
   size,
   setSize,
-  flow,
+  flowId,
   setTabValue,
   tabValue,
+  _flowId, /* Scenario Id on the flow record in NS */
 }) {
   const classes = useStyles();
   const drawerOpened = useSelector(state => selectors.drawerOpened(state));
   const isAnyFlowConnectionOffline = useSelector(state =>
-    selectors.isAnyFlowConnectionOffline(state, flow._id)
+    selectors.isAnyFlowConnectionOffline(state, flowId)
   );
   const maxStep = 3; // set maxStep to 4 to allow 100% drawer coverage.
   const handleSizeChange = useCallback(
@@ -187,13 +188,13 @@ export default function BottomDrawer({
         <TabPanel value={tabValue} index={0} classes={classes}>
           <ConnectionPanel
             ssLinkedConnectionId={ssLinkedConnectionId}
-            flow={flow}
+            flowId={flowId}
           />
         </TabPanel>
         <TabPanel value={tabValue} index={1} classes={classes}>
           <RunDashboardPanel
             ssLinkedConnectionId={ssLinkedConnectionId}
-            flow={flow}
+            flowId={_flowId}
           />
         </TabPanel>
       </>

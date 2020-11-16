@@ -7,10 +7,11 @@ import RawHtml from '../RawHtml';
 import Prompt from '../Prompt';
 import ButtonsGroup from '../ButtonGroup';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   message: {
     fontSize: 15,
     lineHeight: '19px',
+    color: theme.palette.secondary.main,
   },
   containerButtons: {
     position: 'relative',
@@ -21,7 +22,7 @@ const useStyles = makeStyles({
     right: 0,
     top: 0,
   },
-});
+}));
 
 export const ConfirmDialog = props => {
   const {
@@ -73,7 +74,7 @@ export const ConfirmDialog = props => {
           {buttons.map(button => (
             <Button
               variant={button.color === 'secondary' ? 'text' : 'outlined'}
-              data-test={button.label}
+              data-test={button.dataTest || button.label}
               key={button.label}
               className={clsx({[classes.btnRight]: buttons.length > 2 && button.label === 'Cancel'})}
               color={button.color === 'secondary' ? '' : 'primary'}

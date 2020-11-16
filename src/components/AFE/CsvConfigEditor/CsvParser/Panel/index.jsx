@@ -5,7 +5,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Input, Chip, MenuItem, ListItemText, Select } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -13,28 +12,8 @@ import CeligoSelect from '../../../../CeligoSelect';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import options from '../../options';
 import DynaSelectWithInput from '../../../../DynaForm/fields/DynaSelectWithInput';
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-const getColumns = result => {
-  if (!result || !result.data || !result.data.length) {
-    return [];
-  }
-
-  const sampleRecord = Array.isArray(result.data[0])
-    ? result.data[0][0]
-    : result.data[0];
-
-  return Object.keys(sampleRecord);
-};
+import DynaMultiSelect from '../../../../DynaForm/fields/DynaMultiSelect';
+import { getFileColumns } from '../../../../../utils/file';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -93,7 +72,7 @@ export default function CsvParsePanel(props) {
     if (!showKeyColumnsOptions) {
       return [];
     }
-    const options = getColumns(result);
+    const options = getFileColumns(result);
 
     if (Array.isArray(keyColumns)) {
       keyColumns.forEach(val => {
@@ -103,7 +82,9 @@ export default function CsvParsePanel(props) {
       });
     }
 
-    return options;
+    const formattedOptions = options.map(val => ({label: val, value: val}));
+
+    return [{ items: formattedOptions }];
   }, [keyColumns, result, showKeyColumnsOptions]);
 
   useEffect(() => {
@@ -206,38 +187,14 @@ export default function CsvParsePanel(props) {
         />
         {multipleRowsPerRecord && allColumns && (
           <FormControl disabled={disabled} className={classes.formControl}>
-            <InputLabel htmlFor="select-multiple-chip" shrink>
-              Key columns
-            </InputLabel>
-            <Select
-              multiple
+            <DynaMultiSelect
+              id="keyColumns"
+              disabled={disabled}
+              label="Key columns"
               value={keyColumns}
-              className={classes.select}
-              data-test="keyColumns"
-              onChange={e => patchEditor('keyColumns', e.target.value)}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={keyColumns => (
-                <div className={classes.chips}>
-                  {keyColumns.map(col => (
-                    <Chip key={col} label={col} className={classes.chip} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}>
-              {allColumns.map(name => (
-                <MenuItem
-                  key={name}
-                  value={name}
-                  data-test={name}
-                  className={classes.menuItems}>
-                  <Checkbox
-                    checked={keyColumns.indexOf(name) !== -1}
-                    color="primary"
-                  />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
+              options={allColumns}
+              isValid
+              onFieldChange={(_id, val) => patchEditor('keyColumns', val)} />
           </FormControl>
         )}
       </FormGroup>

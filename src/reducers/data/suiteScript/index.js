@@ -1,7 +1,8 @@
 import produce from 'immer';
+import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { emptyObject } from '../../../utils/constants';
-import { parseTiles, parseJobs } from './util';
+import { parseTiles, parseJobs, getJobDuration } from './util';
 import { generateUniqueFlowId } from '../../../utils/suiteScript';
 
 const emptyList = [];
@@ -73,6 +74,8 @@ export default (
       case actionTypes.SUITESCRIPT.JOB.RECEIVED:
         {
           const { job } = action;
+
+          job.duration = getJobDuration(job);
           const jobIndex = state.jobs?.findIndex(
             j => j._id === job._id && j.type === job.type
           );
@@ -512,33 +515,35 @@ selectors.suiteScriptResource = (state, { resourceType, id, ssLinkedConnectionId
   // };
 };
 
-selectors.suiteScriptIASettings = (state, id, ssLinkedConnectionId) => {
-  const integration = selectors.suiteScriptResource(state, { resourceType: 'settings', id, ssLinkedConnectionId });
-
-  if (!integration) {
-    return null;
-  }
-
-  return produce(integration, draft => {
-    if (!draft.settings) {
-      draft.settings = emptyObject;
+selectors.makeSuiteScriptIASettings = () => createSelector(
+  (state, id, ssLinkedConnectionId) => selectors.suiteScriptResource(state, { resourceType: 'settings', id, ssLinkedConnectionId }),
+  integration => {
+    if (!integration) {
+      return null;
     }
-    if (draft?.sections?.length) {
-      draft.sections.forEach(section => {
-        if (section?.sections?.length) {
+
+    return produce(integration, draft => {
+      if (!draft.settings) {
+        draft.settings = emptyObject;
+      }
+      if (draft?.sections?.length) {
+        draft.sections.forEach(section => {
+          if (section?.sections?.length) {
           section?.sections.forEach(sect => {
             // eslint-disable-next-line no-param-reassign
             sect.title = sect.title || 'Common';
           });
-        }
-      });
-    }
+          }
+        });
+      }
 
-    if (draft.settings.general) {
-      draft.settings.hasGeneralSettings = true;
-    }
-  });
-};
+      if (draft.settings.general) {
+        draft.settings.hasGeneralSettings = true;
+      }
+    });
+  }
+
+);
 selectors.suiteScriptJobsPagingDetails = state => {
   if (!state || !state.paging || !state.paging.jobs) {
     return emptyObject;

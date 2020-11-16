@@ -52,6 +52,7 @@ export function* installConnector({ connectorId, sandbox, tag }) {
       opts: {
         method: 'POST',
         body: { sandbox, tag },
+        newTemplateInstaller: connector?.framework === 'twoDotZero',
       },
     });
   } catch (e) {

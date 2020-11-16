@@ -8,8 +8,17 @@ export const genSelectors = (selectors, subSelectors) => {
       selectorNameSet.add(k);
       const subSelector = subSelectors[subName];
 
-      // eslint-disable-next-line no-param-reassign
-      selectors[k] = (state, ...args) => subSelector[k](state?.[subName], ...args);
+      if (subSelector[k].length === 0 && (k.startsWith('mk') || k.startsWith('make'))) {
+        // eslint-disable-next-line no-param-reassign
+        selectors[k] = () => {
+          const sel = subSelector[k]();
+
+          return (state, ...args) => sel(state?.[subName], ...args);
+        };
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        selectors[k] = (state, ...args) => subSelector[k](state?.[subName], ...args);
+      }
     });
   });
 };

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
+import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import responseMappingUtil from '../../../utils/responseMapping';
@@ -94,6 +95,7 @@ export default function ResponseMappingDialog(props) {
     disabled = false,
   } = props;
   const classes = useStyles();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const {_id: resourceId, adaptorType} = resource;
   const editorId = `responseMapping-${resourceId}`;
@@ -114,12 +116,12 @@ export default function ResponseMappingDialog(props) {
     ? 'import.response.mapping'
     : 'lookup.response.mapping';
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       stage: 'responseMappingExtract',
       resourceType: 'imports',
-    })
+    }).data
   );
 
   useEffect(() => {
@@ -194,8 +196,8 @@ export default function ResponseMappingDialog(props) {
   }
 
   const patchSave = useCallback(() => {
-    dispatch(actions.responseMapping.save(editorId));
-  }, [dispatch, editorId]);
+    dispatch(actions.responseMapping.save({ id: editorId, match, resourceType: 'imports', resourceId }));
+  }, [dispatch, editorId, match, resourceId]);
   const handleSave = useCallback(() => {
     patchSave();
   }, [patchSave]);

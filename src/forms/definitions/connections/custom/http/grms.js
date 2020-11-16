@@ -55,6 +55,7 @@ export default {
         { field: 'http.encrypted.apiSecret', is: [''] },
       ],
       label: 'Generate token',
+      inputboxLabel: 'Token',
       defaultValue: '',
       required: true,
       helpKey: 'grms.connection.http.auth.token.token',

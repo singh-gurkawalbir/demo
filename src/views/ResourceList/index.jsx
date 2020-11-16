@@ -22,6 +22,7 @@ import { connectorFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
+import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -44,6 +45,19 @@ const resourcesToLoad = resourceType => {
   return resourceType;
 };
 
+const createdResouceLabelFn = (resourceType, resourceName) => {
+  let createResourceLabel = '';
+
+  if (resourceType) {
+    if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
+      createResourceLabel = resourceName;
+    } else {
+      createResourceLabel = resourceName.toLowerCase();
+    }
+  }
+
+  return createResourceLabel;
+};
 export default function ResourceList(props) {
   const location = useLocation();
   const match = useRouteMatch();
@@ -77,15 +91,8 @@ export default function ResourceList(props) {
   );
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
   const resourceName = MODEL_PLURAL_TO_LABEL[resourceType] || '';
-  let createResourceLabel = '';
 
-  if (resourceType) {
-    if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
-      createResourceLabel = resourceName;
-    } else {
-      createResourceLabel = resourceName.toLowerCase();
-    }
-  }
+  const createResourceLabel = createdResouceLabelFn(resourceType, resourceName);
 
   useEffect(() => {
     let int;
@@ -112,6 +119,8 @@ export default function ResourceList(props) {
     };
   }, [dispatch, resourceType]);
 
+  const actionProps = useMemo(() => ({ showTradingPartner }), [showTradingPartner]);
+
   return (
     <CheckPermissions
       permission={
@@ -119,10 +128,13 @@ export default function ResourceList(props) {
          PERMISSIONS[resourceType] &&
          PERMISSIONS[resourceType].view
        }>
-      {// This is where we will be adding all Right drawers to Celigo Table
-      resourceType === 'stacks' && <StackShareDrawer />
-      }
+
+      { /* This is where we will be adding all Right drawers to Celigo Table */}
+      { resourceType === 'stacks' && <StackShareDrawer />}
+      { resourceType === 'connections' && <ConfigConnectionDebugger />}
+
       <ResourceDrawer {...props} />
+
       <CeligoPageBar
         title={`${resourceName}s`}
         infoText={infoText[resourceType]}>
@@ -153,7 +165,7 @@ export default function ResourceList(props) {
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
-              actionProps={{showTradingPartner}}
+              actionProps={actionProps}
             />
           )}
         </LoadResources>

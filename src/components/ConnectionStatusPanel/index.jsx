@@ -13,9 +13,6 @@ import { isNewId } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(1, 0),
-  },
   fixConnectionBtn: {
     color: theme.palette.primary.main,
     fontSize: 15,
@@ -57,8 +54,7 @@ const getStatusVariantAndMessage = ({
   return {};
 };
 
-export default function ConnectionStatusPanel(props) {
-  const { resourceId, resourceType, isFlowBuilderView } = props;
+export default function ConnectionStatusPanel({ className, resourceId, resourceType, isFlowBuilderView }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const location = useLocation();
@@ -76,7 +72,11 @@ export default function ConnectionStatusPanel(props) {
       const commStatus = selectors.testConnectionCommState(state, connectionId)?.commState;
 
       if (resource.type === 'netsuite' && !commStatus) {
-        return selectors.netsuiteUserRoles(state, connectionId)?.status;
+        const {status, hideNotificationMessage} = selectors.netsuiteUserRoles(state, connectionId);
+
+        if (!hideNotificationMessage) {
+          return status;
+        }
       }
 
       return commStatus;
@@ -145,7 +145,7 @@ export default function ConnectionStatusPanel(props) {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={className}>
       <NotificationToaster variant={variant} size="large">
         {resourceType === 'connections' ? (
           <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>

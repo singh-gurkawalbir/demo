@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -11,33 +11,50 @@ import { selectors } from '../../../../../../../reducers';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
+const emptyObject = {};
 const metadata = {
-  columns: [
-    {
-      heading: 'Name',
-      value: function NameWithInfoicon(r) {
-        return (
-          <>
-            {r && r.name}
-            <InfoIconButton info={r.description} size="xs" />
-          </>
-        );
-      },
-    },
-    {
-      heading: 'Installed on',
-      value: r =>
-        r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
-    },
-    {
-      heading: 'Action',
+  columns: (empty, actionProps) => {
+    const { supportsChild, childId, children } = actionProps;
 
-      value: function Installer(r) {
-        return <AddonInstallerButton resource={r} />;
+    let columns = [
+      {
+        heading: 'Name',
+        value: function NameWithInfoicon(r) {
+          return (
+            <>
+              {r && r.name}
+              <InfoIconButton info={r.description} size="xs" />
+            </>
+          );
+        },
       },
-    },
-  ],
+      {
+        heading: 'Child',
+        value: function Store(r) {
+          return children.find(c => c._id === r.childId)?.label || r.childId;
+        },
+      },
+      {
+        heading: 'Installed on',
+        value: r =>
+          r.installedOn ? moment(r.installedOn).format('MMM D, YYYY') : '',
+      },
+      {
+        heading: 'Action',
+        value: function Installer(r) {
+          return <AddonInstallerButton resource={r} />;
+        },
+      },
+    ];
+
+    if (!supportsChild || childId) {
+      columns = columns.filter(c => c.heading !== 'Child');
+    }
+
+    return columns;
+  },
 };
 const useStyles = makeStyles(theme => ({
   header: {
@@ -83,16 +100,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SubscriptionSection({ storeId, integrationId }) {
+export default function SubscriptionSection({ childId, integrationId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  const supportsMultiStore = !!storeId;
-  const version = useSelector(state => {
+  const {
+    supportsChild,
+    version,
+  } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
 
-    return integration && integration.version;
-  });
+    if (integration) {
+      return {
+        supportsChild: !!(integration.initChild && integration.initChild.function),
+        version: integration.version,
+      };
+    }
+
+    return emptyObject;
+  }, shallowEqual);
+  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
@@ -104,8 +131,8 @@ export default function SubscriptionSection({ storeId, integrationId }) {
     addOnState.addOns &&
     addOnState.addOns.addOnLicenses &&
     addOnState.addOns.addOnLicenses.filter(model => {
-      if (supportsMultiStore) {
-        return model.storeId === storeId;
+      if (supportsChild) {
+        return childId ? model.childId === childId : true;
       }
 
       return true;
@@ -239,7 +266,7 @@ export default function SubscriptionSection({ storeId, integrationId }) {
               </Typography>
             </div>
 
-            <CeligoTable data={subscribedAddOns} {...metadata} />
+            <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsChild, children }} />
           </>
         )}
       </div>

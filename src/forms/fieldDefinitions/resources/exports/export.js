@@ -42,6 +42,18 @@ export default {
     type: 'text',
     label: 'Description',
   },
+  _connectionId: {
+    type: 'replaceconnection',
+    resourceType: 'connections',
+    label: 'Connection',
+    appTypeIsStatic: true,
+    skipDefault: true,
+    connectionId: r => r?._connectionId,
+    connectorId: r => r?._connectorId,
+    visible: r => r?.adaptorType !== 'WebhookExport' && r?.type !== 'simple',
+    defaultValue: r => r?._connectionId,
+    integrationId: r => r?._integrationId,
+  },
 
   // UI Specific field
   formView: {
@@ -50,6 +62,10 @@ export default {
     label: 'Form view',
     visible: r => !r?.useTechAdaptorForm,
     defaultValue: r => r && `${r.assistant ? 'false' : 'true'}`,
+  },
+  semiassistantoperationselect: {
+    id: 'semiassistantoperationselect',
+    type: 'semiassistantoperationselect',
   },
   asynchronous: {
     type: 'checkbox',
@@ -95,7 +111,7 @@ export default {
   dataURITemplate: {
     type: 'datauritemplate',
     label: 'Data URI template',
-    editorTitle: 'Build data URI template',
+    enableEditorV2: true,
   },
   oneToMany: {
     type: 'radiogroup',
@@ -274,6 +290,7 @@ export default {
           { label: 'Microsoftdynamics365', value: 'microsoftdynamics365' },
           { label: 'Pitneybowes', value: 'pitneybowes' },
           { label: 'Mysql', value: 'mysql' },
+          { label: 'Oracle', value: 'oracle' },
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Microsoft SQL', value: 'microsoft sql' },
           { label: 'Snowflake', value: 'snowflake' },
@@ -407,7 +424,7 @@ export default {
   // #region delta
   'delta.dateField': {
     type: 'text',
-    label: 'Date field',
+    label: 'Date field(s)',
     required: true,
     visibleWhen: [{ field: 'type', is: ['delta'] }],
   },
@@ -567,9 +584,6 @@ export default {
   sampleData: {
     type: 'sampledata',
     label: 'Sample data',
-  },
-  exportPanel: {
-    type: 'exportpanel',
   },
   skipRetries: {
     type: 'skipRetries',

@@ -28,6 +28,12 @@ export function sortTiles(tiles = [], tilesOrder = []) {
   return tilesWithOrder;
 }
 
+export function isTileStatusConnectionDown(tile) {
+  // offlineConnections does not exist for suitescript tiles
+  // This util is used for IO tiles
+  return !!tile.offlineConnections?.length;
+}
+
 export function tileStatus(tile) {
   const { status, numError } = tile;
   let label;
@@ -41,10 +47,6 @@ export function tileStatus(tile) {
     case TILE_STATUS.UNINSTALL:
       label = 'Continue uninstall';
       variant = 'warning';
-      break;
-    case TILE_STATUS.HAS_OFFLINE_CONNECTIONS:
-      label = 'Connection down';
-      variant = 'error';
       break;
     case TILE_STATUS.HAS_ERRORS:
       label = `${numError} Error${numError > 0 ? 's' : ''}`;

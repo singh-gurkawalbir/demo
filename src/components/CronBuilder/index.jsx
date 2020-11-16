@@ -1,5 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import DynaForm from '../DynaForm';
+import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import useFormContext from '../Form/FormContext';
 
 const isEveryNUnit = val => val?.includes('*') || val?.includes('/');
 
@@ -8,7 +10,7 @@ const isEveryUnit = val => val?.includes('*') && !(val?.includes('/'));
 export default function CronBuilder(props) {
   const { value, onChange, reset, setReset } = props;
   //* (sec) *(min) *(hour) *(week) *(day) *(month)
-  const splitVal = value && value.split(' ');
+  const splitVal = useMemo(() => value && value.split(' '), [value]);
   const meta = useMemo(
     () => ({
       fieldMap: {
@@ -210,13 +212,13 @@ export default function CronBuilder(props) {
           options: [
             {
               items: [
-                { label: 'Sunday', value: '1' },
-                { label: 'Monday', value: '2' },
-                { label: 'Tuesday', value: '3' },
-                { label: 'Wednesday', value: '4' },
-                { label: 'Thursday', value: '5' },
-                { label: 'Friday', value: '6' },
-                { label: 'Saturday', value: '0' },
+                { label: 'Sunday', value: '0' },
+                { label: 'Monday', value: '1' },
+                { label: 'Tuesday', value: '2' },
+                { label: 'Wednesday', value: '3' },
+                { label: 'Thursday', value: '4' },
+                { label: 'Friday', value: '5' },
+                { label: 'Saturday', value: '6' },
               ],
             },
           ],
@@ -316,7 +318,7 @@ export default function CronBuilder(props) {
           const fieldId =
             meta.layout.containers[key].containers[tabHistory[key]].fields[0];
 
-          return { key, value: formValue[fieldId] || splitVal[key + 1] || '*' };
+          return { key, value: formValue?.[fieldId] || splitVal?.[key + 1] || '*' };
         })
         .sort((first, second) => first.key - second.key)
         .reduce((finalRes, curr) => {
@@ -344,13 +346,23 @@ export default function CronBuilder(props) {
     if (reset) setCount(count => count + 1);
   }, [reset, setCount]);
 
+  // TODO:Verify changes
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: meta,
+    remount: count,
+  });
+  const form = useFormContext(formKey);
+
+  useEffect(() => {
+    if (form) onFormChange(form.value);
+  }, [onFormChange, form]);
+
   return (
     <DynaForm
-      key={count}
+      formKey={formKey}
       fieldMeta={meta}
       externalTabState={externalTabState}
       setExternalTabState={setExternalTabState}
-      onChange={onFormChange}
     />
   );
 }

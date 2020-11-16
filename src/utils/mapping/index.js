@@ -11,6 +11,7 @@ import getJSONPaths, {
 } from '../jsonPaths';
 import { isJsonString } from '../string';
 import {applicationsList} from '../../constants/applications';
+import {generateCSVFields} from '../file';
 
 const isCsvOrXlsxResource = resource => {
   const { adaptorType: resourceAdapterType, file } = resource;
@@ -26,7 +27,7 @@ const isCsvOrXlsxResource = resource => {
 };
 
 const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
-const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
+export const checkExtractPathFoundInSampledata = (str, sampleData, wrapped) => {
   if (wrapped) {
     return (
       getJSONPathArrayWithSpecialCharactersWrapped(
@@ -344,6 +345,28 @@ export function unwrapTextForSpecialChars(extract, flowSampleData) {
   return modifiedExtract;
 }
 
+/*
+ * sample csv content
+ * "a,b,c
+ * 1,2,3
+ * 4,5,6"
+ * Extracts headers from the above csv content [a,b,c]
+ * Returns  {'a':'a', 'b':'b': 'c':'c'}
+ */
+export function extractMappingFieldsFromCsv(data = '', options = {}) {
+  if (typeof data !== 'string') return;
+  const fields = generateCSVFields(data, options);
+
+  return fields.reduce((extractFieldObj, field) => {
+    const [value] = field;
+
+    // eslint-disable-next-line no-param-reassign
+    extractFieldObj[value] = value;
+
+    return extractFieldObj;
+  }, {});
+}
+
 export function wrapTextForSpecialChars(extract, flowSampleData) {
   let modifiedExtract = extract;
 
@@ -512,12 +535,12 @@ export default {
       }
     }
   },
-  getDefaultLookupActionValue: (value, lookup) => {
-    if (value && value.lookupName && lookup && !lookup.allowFailures) {
+  getDefaultLookupActionValue: (lookup = {}) => {
+    if (!lookup.allowFailures) {
       return 'disallowFailure';
     }
 
-    if (lookup && lookup.useDefaultOnMultipleMatches) {
+    if (lookup.useDefaultOnMultipleMatches) {
       return 'useDefaultOnMultipleMatches';
     }
 
@@ -791,6 +814,8 @@ export default {
             toReturn = 'MySQL';
           } else if (conn.rdbms && conn.rdbms.type === 'mssql') {
             toReturn = 'Microsoft SQL';
+          } else if (conn.rdbms && conn.rdbms.type === 'oracle') {
+            toReturn = 'Oracle DB (SQL)';
           } else if (conn.rdbms && conn.rdbms.type === 'postgresql') {
             toReturn = 'PostgreSQL';
           } else {
@@ -803,11 +828,18 @@ export default {
 
       case adaptorTypeMap.DynamodbImport:
         return 'DynamoDB';
+      case adaptorTypeMap.WebhookExport:
+        return 'Webhook';
+      case adaptorTypeMap.SimpleExport:
+        return 'File';
       default:
     }
   },
-  getSubRecordRecordTypeAndJsonPath: (resourceObj, subRecordMappingId) => {
-    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+  getSubRecordRecordTypeAndJsonPath: (importResource, subRecordMappingId) => {
+    const rawMapping = mappingUtil.getMappingFromResource({
+      importResource,
+      isFieldMapping: true,
+    });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
       subRecordMappingId
@@ -820,13 +852,16 @@ export default {
     };
   },
   generateSubrecordMappingAndLookup: (
-    resourceObj,
+    importResource,
     subRecordMappingId,
     isGroupedSampleData,
     netsuiteRecordType,
     options = {}
   ) => {
-    const rawMapping = mappingUtil.getMappingFromResource(resourceObj, true);
+    const rawMapping = mappingUtil.getMappingFromResource({
+      importResource,
+      isFieldMapping: true,
+    });
     const subRecordMappingObj = getSubRecordMapping(
       rawMapping,
       subRecordMappingId
@@ -836,7 +871,7 @@ export default {
     const formattedMappings = mappingUtil.getMappingsForApp({
       mappings: subRecordMapping,
       isGroupedSampleData,
-      resource: resourceObj,
+      resource: importResource,
       netsuiteRecordType,
       options,
     });
@@ -855,7 +890,10 @@ export default {
     subRecordMapping,
     subRecordLookups,
   }) => {
-    const mapping = mappingUtil.getMappingFromResource(resource, true);
+    const mapping = mappingUtil.getMappingFromResource({
+      importResource: resource,
+      isFieldMapping: true,
+    });
     const subRecordParent = getSubRecordMapping(mapping, subRecordMappingId);
 
     subRecordParent.mapping = subRecordMapping;
@@ -863,42 +901,28 @@ export default {
 
     return mapping;
   },
-  getMappingFromResource: (
-    resourceObj,
-    getRawMappings,
+  getMappingFromResource: ({
+    importResource,
+    isFieldMapping = false,
     isGroupedSampleData,
     netsuiteRecordType,
     options = {},
-    exportResource
+    exportResource,
+  }
+
   ) => {
-    if (!resourceObj) {
+    if (!importResource) {
       return;
     }
 
     /* TODO: With support for different application being adding up,
       path for mapping to be updated below */
     let mappings = {};
-    const { adaptorType } = resourceObj;
 
-    switch (adaptorTypeMap[adaptorType]) {
-      case adaptorTypeMap.NetSuiteDistributedImport:
-        mappings =
-          (resourceObj.netsuite_da && resourceObj.netsuite_da.mapping) || {};
-        break;
-      case adaptorTypeMap.RESTImport:
-      case adaptorTypeMap.AS2Import:
-      case adaptorTypeMap.FTPImport:
-      case adaptorTypeMap.SalesforceImport:
-      case adaptorTypeMap.HTTPImport:
-      case adaptorTypeMap.WrapperImport:
-      case adaptorTypeMap.S3Import:
-      case adaptorTypeMap.RDBMSImport:
-        mappings = resourceObj.mapping || {};
-        break;
-      case adaptorTypeMap.XMLImport:
-      case adaptorTypeMap.MongodbImport:
-      case adaptorTypeMap.DynamodbImport:
-      default:
+    if (importResource.adaptorType === 'NetSuiteDistributedImport') {
+      mappings = importResource.netsuite_da?.mapping || {};
+    } else {
+      mappings = importResource.mapping || {};
     }
 
     if (options.isCategoryMapping || options.isVariationMapping) {
@@ -916,12 +940,12 @@ export default {
       mappingCopy.lists = [];
     }
 
-    if (getRawMappings) return mappingCopy;
+    if (isFieldMapping) return mappingCopy;
 
     return mappingUtil.getMappingsForApp({
       mappings: mappingCopy,
       isGroupedSampleData,
-      resource: resourceObj,
+      resource: importResource,
       netsuiteRecordType,
       exportResource,
       options,
@@ -1008,14 +1032,14 @@ export default {
         isGroupedSampleData,
         generateFields,
         recordType: netsuiteRecordType,
-        exportResource,
+        importResource,
       });
     }
 
     return mappingUtil.generateMappingFieldsAndList({
       mappings,
       isGroupedSampleData,
-      useFirstRowSupported: importResource.adaptorType === 'SalesforceImport',
+      useFirstRowSupported: importResource.adaptorType !== 'SalesforceImport',
       importResource,
       exportResource,
     });
@@ -1185,8 +1209,8 @@ export default {
           {id: 'celigo_nlobjDetachFromId', name: 'Detach From Internal ID'},
           {id: 'celigo_nlobjDetachedType', name: 'Detached Record Type'},
           {id: 'celigo_nlobjDetachedId', name: 'Detached Internal ID'},
-          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'attributesRole'},
-          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'attributedField'}];
+          {id: 'celigo_nlobjAttachDetachAttributesRole', name: 'Attribute Role'},
+          {id: 'celigo_nlobjAttachDetachAttributesField', name: 'Attribute Field'}];
 
         formattedGenerateFields = formattedGenerateFields.concat(attachdetachFields);
       } else {
@@ -1195,9 +1219,7 @@ export default {
         if (typeof sampleData === 'string' && isJsonString(sampleData)) {
           formattedSampleData = getJSONPaths(JSON.parse(sampleData));
         } else if (typeof sampleData === 'object') {
-          formattedSampleData = Array.isArray(sampleData)
-            ? sampleData
-            : getJSONPaths(sampleData);
+          formattedSampleData = getJSONPaths(sampleData);
         }
 
         formattedGenerateFields =
@@ -1359,18 +1381,18 @@ export default {
   },
   getExtractPaths: (fields, options = {}) => {
     const { jsonPath } = options;
-    let extractPaths = getJSONPaths(pickFirstObject(fields));
+    const extractPaths = getJSONPaths(pickFirstObject(fields));
 
-    if (jsonPath) {
-      extractPaths = extractPaths
-        .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
-        .map(f => ({
-          ...f,
-          id: f.id.replace(`${jsonPath}[*].`, ''),
-        }));
+    if (!jsonPath || jsonPath === '$') {
+      return extractPaths;
     }
 
-    return extractPaths;
+    return extractPaths
+      .filter(f => f.id && f.id.indexOf(`${jsonPath}[*].`) === 0)
+      .map(f => ({
+        ...f,
+        id: f.id.replace(`${jsonPath}[*].`, ''),
+      }));
   },
   isCsvOrXlsxResource,
   shiftSubRecordLast: ({ fields, lists }) => {

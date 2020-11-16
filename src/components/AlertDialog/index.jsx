@@ -8,6 +8,7 @@ import SignInForm from '../../views/SignIn/SigninForm';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import ModalDialog from '../ModalDialog';
+import getRoutePath from '../../utils/routePaths';
 
 const contentWrapper = {
   minWidth: 432,
@@ -15,6 +16,29 @@ const contentWrapper = {
   paddingTop: 24,
 
 };
+
+const LoggedInWithADifferentAccount = () => (
+  <ModalDialog show>
+    <Typography variant="h3">Sign In</Typography>
+    <>
+      <Typography>
+        Please click the following button to resume working
+      </Typography>
+      <br />
+      This may have happened automatically because another user signed in from the same browser. To continue using this account, you will need to sign in again. This is done to protect your account and to ensure the privacy of your information.
+    </>
+    <Button
+      data-test="ok"
+      onClick={() => {
+        window.location.replace(getRoutePath('/dashboard'));
+      }}
+      variant="outlined"
+      color="primary">
+      Sign In
+    </Button>
+  </ModalDialog>
+);
+
 const StaleUIVersion = () => (
   <ModalDialog show>
     <Typography variant="h3">Reload page</Typography>
@@ -78,16 +102,16 @@ const WarningSessionContent = () => {
 };
 
 const ExpiredSessionContent = () => (
-  <>
-    <DialogTitle>
+  <ModalDialog show>
+    <div>
       <Typography>Your session has expired</Typography>
       <br />
       <Typography>Please sign in again</Typography>
-    </DialogTitle>
-    <DialogContent style={contentWrapper}>
+    </div>
+    <div style={contentWrapper}>
       <SignInForm dialogOpen />
-    </DialogContent>
-  </>
+    </div>
+  </ModalDialog>
 );
 
 export default function AlertDialog() {
@@ -103,12 +127,14 @@ export default function AlertDialog() {
     selectors.isAuthenticated(state)
   );
 
-  const isUiVersionDifferent = useSelector(state =>
-    selectors.isUiVersionDifferent(state)
-  );
+  const isUiVersionDifferent = useSelector(selectors.isUiVersionDifferent);
 
   const isUserAcceptedAccountTransfer = useSelector(state =>
     selectors.isUserAcceptedAccountTransfer(state)
+  );
+
+  const isUserLoggedInDifferentTab = useSelector(state =>
+    selectors.isUserLoggedInDifferentTab(state)
   );
 
   useEffect(() => {
@@ -147,6 +173,7 @@ export default function AlertDialog() {
       clearTimeout(expiredSessionTimer);
     };
   }, [dispatch, sessionValidTimestamp]);
+  if (isUserLoggedInDifferentTab) { return <LoggedInWithADifferentAccount />; }
 
   return (
     <div>

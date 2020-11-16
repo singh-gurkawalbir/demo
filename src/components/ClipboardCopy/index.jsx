@@ -27,13 +27,13 @@ export default function ClipboardCopy({ onShowToken, token, showTokenTestAttr })
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Token copied to clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'Token copied to clipboard.' }), [enquesnackbar]);
 
   return (
     <div className={classes.root}>
       {token ? (
         <>
-          <Typography variant="caption">
+          <Typography data-private variant="caption">
             {token || <AccessToken count="23" />}
           </Typography>
 

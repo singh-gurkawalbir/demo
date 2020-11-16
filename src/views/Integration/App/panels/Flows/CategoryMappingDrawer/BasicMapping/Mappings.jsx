@@ -27,19 +27,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     overflowY: 'off',
   },
-  header: {
-    display: 'flex',
-    width: '100%',
-    marginBottom: theme.spacing(2),
-  },
   rowContainer: {
     display: 'block',
     padding: '0px',
-  },
-  child: {
-    '& + div': {
-      width: '100%',
-    },
   },
   childHeader: {
     '& > div': {
@@ -54,10 +44,6 @@ const useStyles = makeStyles(theme => ({
   mappingsBody: {
     height: 'calc(100% - 32px)',
     overflow: 'visible',
-  },
-  childRow: {
-    display: 'flex',
-    position: 'relative',
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -89,7 +75,6 @@ const useStyles = makeStyles(theme => ({
   RequiredIcon: {
     color: theme.palette.error.main,
   },
-
   mappingIcon: {
     color: theme.palette.secondary.lightest,
     fontSize: 38,
@@ -115,12 +100,10 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
-
   mappingActionsCategory: {
     marginTop: theme.spacing(1),
     display: 'flex',
   },
-
   helpTextButtonCategroryMapping: {
     padding: 0,
     marginLeft: theme.spacing(1),
@@ -472,6 +455,7 @@ export default function ImportMapping(props) {
         disabled={disabled}
         integrationId={integrationId}
         flowId={flowId}
+        sectionId={sectionId}
         importId={options.importId}
         editorId={editorId}
       />

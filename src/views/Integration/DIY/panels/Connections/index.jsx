@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
-import { generateNewId,
-  isTradingPartnerSupported,
-} from '../../../../../utils/resource';
+import actions from '../../../../../actions';
+import { generateNewId, isTradingPartnerSupported } from '../../../../../utils/resource';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -15,14 +13,14 @@ import IconTextButton from '../../../../../components/IconTextButton';
 import AddIcon from '../../../../../components/icons/AddIcon';
 import ConnectionsIcon from '../../../../../components/icons/ConnectionsIcon';
 import PanelHeader from '../../../../../components/PanelHeader';
-import actions from '../../../../../actions';
+import ConfigConnectionDebugger from '../../../../../components/drawer/ConfigConnectionDebugger';
 
 const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.common.white,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
 }));
 
@@ -47,6 +45,16 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       'connections'
     )
   );
+  const applications = [];
+
+  if (childId) {
+    connections.forEach(conn => {
+      if (!(applications.includes(conn.type))) {
+        applications.push(conn.assistant || conn.type);
+      }
+    });
+  }
+
   const [tempId, setTempId] = useState(null);
   const newResourceId = useSelector(state =>
     selectors.createdResourceId(state, tempId)
@@ -63,12 +71,12 @@ export default function ConnectionsPanel({ integrationId, childId }) {
   const showTradingPartner = isTradingPartnerSupported({licenseActionDetails, accessLevel, environment});
 
   useEffect(() => {
-    if (newResourceId) {
+    if (permission.register && newResourceId && !isStandalone) {
       dispatch(
         actions.connection.requestRegister([newResourceId], _integrationId)
       );
     }
-  }, [dispatch, _integrationId, newResourceId]);
+  }, [dispatch, _integrationId, newResourceId, isStandalone, permission.register]);
 
   useEffect(() => {
     dispatch(actions.resource.connections.refreshStatus(_integrationId));
@@ -101,17 +109,27 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                 setTempId(newId);
                 history.push(`${location.pathname}/add/connections/${newId}`);
 
-                const patchSet = [
-                  {
-                    op: 'add',
-                    path: '/_integrationId',
-                    value: _integrationId,
-                  },
-                ];
+                if (!isStandalone) {
+                  const patchSet = [
+                    {
+                      op: 'add',
+                      path: '/_integrationId',
+                      value: _integrationId,
+                    },
+                  ];
 
-                dispatch(
-                  actions.resource.patchStaged(newId, patchSet, 'value')
-                );
+                  if (childId) {
+                    patchSet.push({
+                      op: 'add',
+                      path: '/applications',
+                      value: applications,
+                    });
+                  }
+
+                  dispatch(
+                    actions.resource.patchStaged(newId, patchSet, 'value')
+                  );
+                }
               }}>
               <AddIcon /> Create connection
             </IconTextButton>
@@ -133,6 +151,8 @@ export default function ConnectionsPanel({ integrationId, childId }) {
           }}
         />
       </LoadResources>
+
+      <ConfigConnectionDebugger />
     </div>
   );
 }

@@ -53,7 +53,6 @@ const PageProcessor = ({
   isMonitorLevelAccess,
   onDelete,
   openErrorCount,
-  onErrors,
   ...pp
 }) => {
   const pending = !!pp._connectionId;
@@ -73,6 +72,7 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
+  // TODO: move this logic to util function and use "resourceCategory" function
   let blockType = pp.type === 'export' ? 'lookup' : 'import';
 
   if (
@@ -321,7 +321,6 @@ const PageProcessor = ({
           integrationId={integrationId}
           name={name}
           onDelete={onDelete(name)}
-          onErrors={onErrors}
           openErrorCount={openErrorCount}
           isViewMode={isViewMode}
           isMonitorLevelAccess={isMonitorLevelAccess}

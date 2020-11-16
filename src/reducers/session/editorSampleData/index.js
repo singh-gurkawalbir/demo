@@ -30,6 +30,7 @@ export default function reducer(state = {}, action) {
         draft[resourceId][flowId][fieldType] = { status: 'requested' };
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.RECEIVED:
+        if (!draft[resourceId] || !draft[resourceId][flowId]) return;
         draft[resourceId][flowId][fieldType] = {
           data: sampleData,
           templateVersion,
@@ -38,6 +39,14 @@ export default function reducer(state = {}, action) {
 
         break;
       case actionTypes.EDITOR_SAMPLE_DATA.FAILED:
+        if (!draft[resourceId]) {
+          draft[resourceId] = {};
+        }
+
+        if (!draft[resourceId][flowId]) {
+          draft[resourceId][flowId] = {};
+        }
+
         draft[resourceId][flowId][fieldType] = {
           status: 'failed',
         };
@@ -62,7 +71,7 @@ export default function reducer(state = {}, action) {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.getEditorSampleData = (state, { flowId, resourceId, fieldType }) => {
+selectors.editorSampleData = (state, { flowId, resourceId, fieldType }) => {
   if (!state) return emptyObj;
 
   if (

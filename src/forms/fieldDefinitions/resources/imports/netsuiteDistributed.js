@@ -1,12 +1,11 @@
+import { isNewId } from '../../../../utils/resource';
+
 export default {
   'netsuite_da.recordType': {
     label: 'Record type',
     required: true,
     type: 'refreshableselect',
     filterKey: 'suitescript-recordTypes',
-    bundlePath: r => r && `connections/${r._connectionId}/distributed`,
-    bundleUrlHelp:
-      'Important!  Please install our <a target="_blank" href="BUNDLE_URL">integrator.io bundle</a> in your NetSuite account to enable Real-time export capabilities or to use the recommended RESTlet based search engine.',
     commMetaPath: r =>
       r &&
       `netsuite/metadata/suitescript/connections/${r._connectionId}/recordTypes`,
@@ -27,22 +26,30 @@ export default {
     required: false,
     type: 'netsuitesubrecords',
     connectionId: r => r && r._connectionId,
+    visibleWhen: [
+      {
+        field: 'netsuite_da.useSS2Restlets',
+        is: ['false'],
+      },
+    ],
   },
   'netsuite_da.operation': {
-    type: 'radiogroupforresetfields',
+    type: 'netsuiteimportoperation',
     fieldsToReset: [
       { id: 'ignoreExisting', type: 'checkbox' },
       { id: 'ignoreMissing', type: 'checkbox' },
     ],
     label: 'Operation',
     required: true,
+    filterKey: 'suitescript-recordTypes',
+    connectionId: r => r?._connectionId,
     visibleWhen: [
       {
         field: 'inputMode',
         is: ['records'],
       },
     ],
-    options: [
+    selectOptions: [
       {
         items: [
           { label: 'Add', value: 'add' },
@@ -74,6 +81,32 @@ export default {
         ],
       },
     ],
+  },
+  'netsuite_da.useSS2Restlets': {
+    fieldId: 'netsuite_da.useSS2Restlets',
+    type: 'netsuiteapiversion',
+    label: 'NetSuite API version',
+    // eslint-disable-next-line camelcase
+    defaultValue: r => r?.netsuite_da?.useSS2Restlets ? 'true' : 'false',
+    options: [
+      {
+        items: [
+          { label: 'SuiteScript 1.0', value: 'false' },
+          { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+        ],
+      },
+    ],
+    defaultDisabled: r => {
+      if (!isNewId(r._id)) {
+        return true;
+      }
+
+      return false;
+    },
+    isNew: r => isNewId(r._id),
+    connectionId: r => r?._connectionId,
+    resourceType: 'imports',
+    resourceId: r => r?._id,
   },
   'netsuite_da.internalIdLookup.expression': {
     type: 'netsuitelookup',

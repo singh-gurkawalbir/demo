@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: '100%',
     padding: theme.spacing(0, 3, 3, 3),
-    overflowX: 'scroll',
+    overflowX: 'auto',
   },
   listItem: {
     color: theme.palette.text.primary,
@@ -134,7 +134,6 @@ function OfflineConnectionDrawer() {
           </div>
           <div className={classes.content}>
             <ResourceForm
-              editMode={false}
               resourceType="connections"
               resourceId={connectionId}
               onSubmitComplete={handleSubmitComplete}

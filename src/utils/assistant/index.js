@@ -11,6 +11,7 @@ import {
   isArray,
   assign,
   unionBy,
+  isNumber,
 } from 'lodash';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
@@ -120,8 +121,20 @@ export function routeToRegExp(route) {
   return new RegExp(`^${updatedRoute}(?:\\?([\\s\\S]*))?$`);
 }
 
-export function extractParameters(route, fragment) {
-  const params = route.exec(fragment).slice(1);
+export function extractParameters(routeRegex, fragment, route) {
+  const params = routeRegex.exec(fragment).slice(1);
+
+  if (route && route.indexOf('?') > -1) {
+    const qsPart = route.substr(route.indexOf('?') + 1);
+    const qsParamsWithPlaceHolders = (qsPart.match(new RegExp(':_', 'g')) || []).length;
+
+    if (qsParamsWithPlaceHolders > 0 && params[params.length - 2]) {
+      const queryParams = params[params.length - 2].split(/[?&]/);
+
+      params[params.length - 2] = queryParams.shift();
+      params[params.length - 1] = undefined;
+    }
+  }
 
   return params.map((param, i) => {
     // Don't decode the search params.
@@ -142,7 +155,7 @@ export function getMatchingRoute(routes, url) {
     regexpRoute = routeToRegExp(routes[i]);
 
     if (regexpRoute.test(url)) {
-      urlParts = extractParameters(regexpRoute, url);
+      urlParts = extractParameters(regexpRoute, url, routes[i]);
       toReturn = {
         urlMatch: routes[i],
         urlParts,
@@ -1092,6 +1105,7 @@ export function convertToReactFormFields({
       actualFieldIdToGeneratedFieldIdMap[field.id] = fieldId;
 
       let { fieldType } = field;
+      const { type } = field;
 
       fieldDetailsMap[fieldId] = {
         id: field.id,
@@ -1106,8 +1120,14 @@ export function convertToReactFormFields({
         fieldDetailsMap[fieldId].type = 'integer';
       }
 
+      if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
+        if (['array', 'json'].includes(type)) {
+          fieldType = 'editor';
+        }
+      }
+
       if (
-        !['checkbox', 'multiselect', 'select', 'text', 'textarea'].includes(
+        !['checkbox', 'editor', 'multiselect', 'select', 'text', 'textarea'].includes(
           fieldType
         )
       ) {
@@ -1162,8 +1182,21 @@ export function convertToReactFormFields({
         readOnly: !!field.readOnly,
       };
 
+      if (inputType === 'textwithflowsuggestion' && isNumber(fieldDef.defaultValue)) {
+        fieldDef.defaultValue = fieldDef.defaultValue.toString();
+      }
+
+      if (!fieldDef.readOnly && fieldDef.defaultValue === undefined) { // IO-12441
+        fieldDef.defaultValue = '';
+      }
+
       if (fieldDef.readOnly) {
         fieldDef.defaultDisabled = true;
+      }
+
+      if (fieldDef.type === 'editor') {
+        fieldDef.saveMode = 'json';
+        fieldDef.mode = 'json';
       }
 
       if (fieldDef.type === 'textwithflowsuggestion') {
@@ -1301,9 +1334,11 @@ export function updateFormValues({
       });
     } else {
       if (type === 'array') {
+        if (paramLocation !== PARAMETER_LOCATION.BODY) {
         // IO-1776
-        if (value && !isArray(value)) {
-          value = value.split(',');
+          if (value && !isArray(value)) {
+            value = value.split(',');
+          }
         }
       } else if (type === 'csv') {
         if (isArray(value)) {
@@ -1498,7 +1533,10 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
   if (operationDetails.parameters && operationDetails.parameters.length > 0) {
     operationDetails.parameters.forEach((p, index) => {
       if (p.in !== 'query') {
-        if (url1Info && url1Info.urlParts && url1Info.urlParts[index]) {
+        /**
+         * IO-16945, check if the urlMatch has path (:_XYZ) parameters
+         */
+        if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
@@ -1507,7 +1545,7 @@ export function convertFromImport({ importDoc, assistantData, adaptorType }) {
           } else {
             pathParams[p.id] = url1Info.urlParts[index];
           }
-        } else if (url2Info && url2Info.urlParts && url2Info.urlParts[index]) {
+        } else if (url2Info?.urlMatch?.indexOf(':_') > 0 && url2Info?.urlParts && url2Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url2Info.urlParts[index]
               .replace(/{/g, '')
@@ -1662,6 +1700,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
     lookupType,
     ignoreExisting = false,
     ignoreMissing = false,
+    lookups = [],
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
@@ -1685,7 +1724,7 @@ export function convertToImport({ assistantConfig, assistantData }) {
   };
   const importDoc = {
     ...importDefaults[adaptorType],
-    lookups: [],
+    lookups: isArray(lookups) ? lookups : [],
   };
 
   if (adaptorType === 'rest') {

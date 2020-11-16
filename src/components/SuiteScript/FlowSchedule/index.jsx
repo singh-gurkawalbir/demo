@@ -5,6 +5,8 @@ import moment from 'moment';
 import actions from '../../../actions';
 import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import {
   FREQUENCY,
@@ -14,8 +16,10 @@ import {
   getCronExpression,
 } from './util';
 import { selectors } from '../../../reducers';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import ButtonGroup from '../../ButtonGroup';
 
-export default function FlowSchedule({ flow, onClose, className }) {
+export default function FlowSchedule({ flow, onClose }) {
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const isManageLevelUser = useSelector(state => selectors.userHasManageAccessOnSuiteScriptAccount(state, flow.ssLinkedConnectionId));
@@ -107,23 +111,38 @@ export default function FlowSchedule({ flow, onClose, className }) {
     scheduleStartMinute,
   });
 
+  const formKey = useFormInitWithPermissions({
+
+    integrationId: flow._integrationId,
+    resourceType: 'flows',
+    resourceId: flow._id,
+    disabled: !isManageLevelUser,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+
+  });
+
   return (
-    <div className={className}>
-      <DynaForm
-        integrationId={flow._integrationId}
-        resourceType="flows"
-        resourceId={flow._id}
-        disabled={!isManageLevelUser}
-        fieldMeta={fieldMeta}
-        optionsHandler={fieldMeta.optionsHandler}
-      >
-        <DynaSubmit disabled={!isManageLevelUser} onClick={handleSubmit} >
-          Save
-        </DynaSubmit>
-        <Button onClick={onClose} variant="text" >
-          Cancel
-        </Button>
-      </DynaForm>
-    </div>
+    <>
+      <DrawerContent>
+        <DynaForm
+          formKey={formKey}
+          fieldMeta={fieldMeta}
+       />
+      </DrawerContent>
+
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={!isManageLevelUser} onClick={handleSubmit} >
+            Save
+          </DynaSubmit>
+          <Button onClick={onClose} variant="text" >
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
+    </>
   );
 }

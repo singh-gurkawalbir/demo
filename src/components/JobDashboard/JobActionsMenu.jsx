@@ -4,7 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -41,6 +41,7 @@ export default function JobActionsMenu({
   isFlowBuilderView,
 }) {
   const classes = useStyle();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
@@ -105,7 +106,7 @@ export default function JobActionsMenu({
     }
 
     if (job.numError > 0) {
-      if (job.type === JOB_TYPES.FLOW || job.retriable) {
+      if (!job.flowDisabled && (job.type === JOB_TYPES.FLOW || job.retriable)) {
         menuOptions.push({
           label: isFlowJob ? 'Retry all' : 'Retry',
           action: 'retryJob',
@@ -203,7 +204,7 @@ export default function JobActionsMenu({
       confirmDialog({
         title: 'Confirm cancel',
         message:
-          'Are you sure you want to cancel? You have unsaved changes that will be lost if you proceed. Please note that canceling this job will delete all associated data currently queued for processing.',
+          'Are you sure you want to cancel?  Please note that canceling this job will discard all associated data currently queued for processing.',
         buttons: [
           {
             label: 'Yes, cancel',
@@ -260,6 +261,7 @@ export default function JobActionsMenu({
       dispatch(
         actions.job.resolveSelected({
           jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+          match,
         })
       );
       enqueueSnackbar({
@@ -290,18 +292,20 @@ export default function JobActionsMenu({
         dispatch(
           actions.job.retryFlowJob({
             jobId: job._id,
+            match,
           })
         );
       } else {
         dispatch(
           actions.job.retrySelected({
             jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+            match,
           })
         );
       }
 
       enqueueSnackbar({
-        message: `${
+        message: `${job.numError} ${
           job.numError === '1' ? 'error retried.' : 'errors retried.'
         }`,
         action,

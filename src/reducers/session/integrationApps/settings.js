@@ -92,19 +92,19 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE:
         draft[key] = {
           initComplete: true,
-          showFormValidationsBeforeTouch: false,
+          showValidationBeforeTouched: false,
         };
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM
         .SHOW_FORM_VALIDATION_ERRORS:
         if (!draft[key]) draft[key] = {};
-        draft[key].showFormValidationsBeforeTouch = true;
+        draft[key].showValidationBeforeTouched = true;
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.UPDATE:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitFailed;
-
+        draft[key].saveStatus = 'saving';
         draft[key].submitComplete = false;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.ADDON_LICENSES_METADATA:
@@ -170,13 +170,13 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_COMPLETE:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitFailed;
-
+        delete draft[key].saveStatus;
         draft[key].submitComplete = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.SUBMIT_FAILED:
         if (!draft[key]) draft[key] = {};
         delete draft[key].submitComplete;
-
+        delete draft[key].saveStatus;
         draft[key].submitFailed = true;
         break;
       case actionTypes.INTEGRATION_APPS.SETTINGS.FORM.CLEAR:
@@ -283,16 +283,16 @@ export default (state = {}, action) => {
             draft[cKey].mappings[id].staged;
           const formattedMappings =
             staged ||
-            mappingUtil.getMappingFromResource(
-              resourceData,
-              false,
+            mappingUtil.getMappingFromResource({
+              importResource: resourceData,
+              isFieldMapping: false,
               isGroupedSampleData,
               netsuiteRecordType,
-              {
+              options: {
                 ...additionalOptions,
                 isVariationMapping,
-              }
-            );
+              },
+            });
           const initChangeIdentifier =
             (draft[cKey] &&
               draft[cKey].mappings &&

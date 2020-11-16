@@ -28,13 +28,16 @@ import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
-import { INSTALL_STEP_TYPES, emptyObject } from '../../../../../utils/constants';
+import { INSTALL_STEP_TYPES, emptyObject,
+  NETSUITE_BUNDLE_URL,
+} from '../../../../../utils/constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import CloseIcon from '../../../../../components/icons/CloseIcon';
 import IconTextButton from '../../../../../components/IconTextButton';
 import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -70,12 +73,19 @@ const useStyles = makeStyles(theme => ({
 export default function ConnectorInstallation(props) {
   const classes = useStyles();
   const { integrationId } = props.match.params;
+  const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const dispatch = useDispatch();
+
+  const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
+  const connections = useSelector(state =>
+    selectors.resourceList(state, { type: 'connections' })
+  ).resources;
+
   const {
     name: integrationName,
     install = [],
@@ -86,26 +96,18 @@ export default function ConnectorInstallation(props) {
     _connectorId,
     initChild,
     parentId,
-  } = useSelector(state => {
-    const integration = selectors.integrationAppSettings(state, integrationId);
+  } = useMemo(() => integration ? {
+    name: integration.name,
+    initChild: integration.initChild,
+    install: integration.install,
+    mode: integration.mode,
+    stores: integration.stores,
+    supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
+    _connectorId: integration._connectorId,
+    integrationInstallSteps: integration.installSteps,
+    parentId: integration._parentId,
+  } : emptyObject, [integration]);
 
-    if (integration) {
-      return {
-        name: integration.name,
-        initChild: integration.initChild,
-        install: integration.install,
-        mode: integration.mode,
-        stores: integration.stores,
-        supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
-        _connectorId: integration._connectorId,
-        integrationInstallSteps: integration.installSteps,
-        parentId: integration._parentId,
-      };
-    }
-
-    return emptyObject;
-  }, shallowEqual
-  );
   const {
     name: childIntegrationName,
     id: childIntegrationId,
@@ -171,13 +173,16 @@ export default function ConnectorInstallation(props) {
   const isFrameWork2 = integrationInstallSteps.length || isCloned;
 
   useEffect(() => {
-    if (
-      installSteps.length &&
-      !isSetupComplete &&
-      !installSteps.reduce((result, step) => result || !step.completed, false)
-    ) {
-      dispatch(actions.resource.request('integrations', integrationId));
-      setIsSetupComplete(true);
+    const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
+
+    if (installSteps.length) {
+      if (allStepsCompleted && !isSetupComplete) {
+        dispatch(actions.resource.request('integrations', integrationId));
+        setIsSetupComplete(true);
+      } else if (!allStepsCompleted && isSetupComplete) {
+        // reset local state if some new steps were added
+        setIsSetupComplete(false);
+      }
     }
   }, [dispatch, installSteps, integrationId, isSetupComplete]);
 
@@ -214,8 +219,8 @@ export default function ConnectorInstallation(props) {
         dispatch(
           actions.integrationApp.installer.scriptInstallStep(
             integrationId,
-            connection && connection._connectionId,
-            connectionDoc
+             connection?._connectionId || connId,
+             connectionDoc
           )
         );
       } else {
@@ -250,6 +255,7 @@ export default function ConnectorInstallation(props) {
       dispatch(actions.resource.requestCollection('exports'));
       dispatch(actions.resource.requestCollection('licenses'));
       dispatch(actions.resource.requestCollection('imports'));
+      dispatch(actions.resource.requestCollection('connections'));
 
       if (mode === 'settings') {
         if (
@@ -266,9 +272,15 @@ export default function ConnectorInstallation(props) {
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}`)
           );
         } else if (integrationInstallSteps && integrationInstallSteps.length > 0) {
-          props.history.push(
-            getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
-          );
+          if (_connectorId) {
+            props.history.push(
+              getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
+            );
+          } else {
+            props.history.push(
+              getRoutePath(`/integrations/${integrationId}/flows`)
+            );
+          }
         } else {
           props.history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
@@ -278,6 +290,7 @@ export default function ConnectorInstallation(props) {
     }
   }, [dispatch,
     mode,
+    _connectorId,
     integrationAppName,
     integrationId,
     isSetupComplete,
@@ -289,7 +302,7 @@ export default function ConnectorInstallation(props) {
     parentId,
     integrationInstallSteps]);
 
-  if (!installSteps || !_connectorId) {
+  if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
   }
 
@@ -376,6 +389,7 @@ export default function ConnectorInstallation(props) {
               _id: newId,
               _integrationId: integrationId,
               _connectorId,
+              installStepConnection: true,
             }),
             SCOPES.VALUE
           )
@@ -386,7 +400,7 @@ export default function ConnectorInstallation(props) {
         doc: sourceConnection,
         _connectionId,
       });
-    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url) {
+    } else if (isFrameWork2 && !step.isTriggered && !installURL && !url && type !== 'stack') {
       dispatch(
         actions.integrationApp.installer.updateStep(
           integrationId,
@@ -414,7 +428,20 @@ export default function ConnectorInstallation(props) {
             'inProgress'
           )
         );
-        openExternalUrl({ url: installURL || url });
+        let bundleURL = installURL || url;
+
+        if (
+          bundleURL === NETSUITE_BUNDLE_URL
+        ) {
+          const netsuiteConnectionStep = integrationInstallSteps.find(step => step?.sourceConnection?.type === 'netsuite');
+
+          if (netsuiteConnectionStep?._connectionId) {
+            const netsuiteConnection = connections.find(c => c._id === netsuiteConnectionStep._connectionId);
+
+            bundleURL = netsuiteConnection?.netsuite?.dataCenterURLs?.systemDomain + bundleURL;
+          }
+        }
+        openExternalUrl({ url: bundleURL });
       } else {
         if (step.verifying) {
           return false;
@@ -442,6 +469,8 @@ export default function ConnectorInstallation(props) {
         }
       }
       // handle Action step click
+    } else if (type === 'stack') {
+      if (!stackId) setShowStackDialog(generateNewId());
     } else if (!step.isTriggered) {
       dispatch(
         actions.integrationApp.installer.updateStep(
@@ -457,6 +486,19 @@ export default function ConnectorInstallation(props) {
         )
       );
     }
+  };
+  const handleStackSetupDone = stackId => {
+    dispatch(
+      actions.integrationApp.installer.scriptInstallStep(
+        integrationId, '', '', '', stackId,
+      )
+    );
+
+    setShowStackDialog(false);
+  };
+
+  const handleStackClose = () => {
+    setShowStackDialog(false);
   };
 
   const handleHelpUrlClick = e => {
@@ -483,6 +525,7 @@ export default function ConnectorInstallation(props) {
               View help guide
             </IconTextButton>
           )}
+          {_connectorId && (
           <IconTextButton
             data-test="uninstall"
             component={Link}
@@ -492,6 +535,7 @@ export default function ConnectorInstallation(props) {
             <CloseIcon />
             Uninstall
           </IconTextButton>
+          )}
 
         </div>
       </CeligoPageBar>
@@ -510,8 +554,18 @@ export default function ConnectorInstallation(props) {
             connectionType={connection.doc.type}
             onClose={handleClose}
             onSubmitComplete={handleSubmitComplete}
+            addOrSelect={!_connectorId}
           />
         ))}
+      {stackId && (
+        <ResourceSetupDrawer
+          onClose={handleStackClose}
+          addOrSelect
+          resourceId={stackId}
+          resourceType="stacks"
+          onSubmitComplete={handleStackSetupDone}
+        />
+      )}
       {currentStep && currentStep.formMeta && (
         <FormStepDrawer
           integrationId={integrationId}

@@ -9,6 +9,7 @@ import {
   IconButton,
   Typography,
 } from '@material-ui/core';
+import { addDays, startOfDay, endOfDay } from 'date-fns';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ArrowLeftIcon from '../../icons/ArrowLeftIcon';
@@ -18,12 +19,13 @@ import RunFlowButton from '../../RunFlowButton';
 import CeligoSelect from '../../CeligoSelect';
 import IconTextButton from '../../IconTextButton';
 import FlowSelector from '../FlowSelector';
-import DateRangeSelector from './DateRangeFilter';
+import DateRangeSelector from '../../DateRangeSelector';
+import { getSelectedRange } from '../../../utils/flowMetrics';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
-    padding: theme.spacing(0, 2, 1.5, 2),
+    padding: theme.spacing(0, 0, 1.5, 2),
     backgroundColor: theme.palette.common.white,
   },
   filterContainer: {
@@ -79,14 +81,30 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
+const rangeFilters = [
+  {id: 'today', label: 'Today'},
+  {id: 'yesterday', label: 'Yesterday'},
+  {id: 'last7days', label: 'Last 7 Days'},
+  {id: 'last15days', label: 'Last 15 Days'},
+  {id: 'last30days', label: 'Last 30 Days'},
+  {id: 'custom', label: 'Custom'},
+];
+const defaultRange = {
+  startDate: startOfDay(addDays(new Date(), -29)),
+  endDate: endOfDay(new Date()),
+  preset: null,
+};
 
-function Filters({
+export default function Filters({
   integrationId,
   flowId,
   filterKey,
   onActionClick,
   numJobsSelected = 0,
-  disableActions = true,
+  numRetriableJobsSelected = 0,
+  disableRetry = true,
+  disableResolve = true,
+  isFlowBuilderView = false,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -102,6 +120,7 @@ function Filters({
     currentPage = 0,
     dateRange,
   } = useSelector(state => selectors.filter(state, filterKey));
+
   // #endregion
   const { rowsPerPage } = paging;
   const maxPage = Math.ceil(totalJobs / rowsPerPage) - 1;
@@ -124,6 +143,7 @@ function Filters({
     },
     [dispatch, filterKey]
   );
+
   const handlePageChange = useCallback(
     offset => () => {
       patchFilter('currentPage', currentPage + offset);
@@ -132,7 +152,7 @@ function Filters({
   );
 
   const handleDateRangeChange = useCallback(range => {
-    patchFilter('dateRange', range);
+    patchFilter('dateRange', [getSelectedRange(range)]);
   }, [patchFilter]);
 
   const handleRefreshClick = useCallback(() => {
@@ -152,19 +172,21 @@ function Filters({
           data-test="retryJobs"
           onChange={e => onActionClick(e.target.value)}
           displayEmpty
-          disabled={disableActions}
+          disabled={disableRetry}
           value="">
           <MenuItem value="" disabled>
             Retry
           </MenuItem>
-          <MenuItem value="retryAll">All jobs</MenuItem>
-          <MenuItem disabled={numJobsSelected === 0} value="retrySelected">
-            {numJobsSelected} selected jobs
+          <MenuItem value="retryAll" disabled={!['all', 'error'].includes(status) || ![null, undefined, 'last30days'].includes(dateRange?.[0]?.preset)} >
+            {isFlowBuilderView ? 'All jobs' : 'All enabled flow jobs'}
+          </MenuItem>
+          <MenuItem disabled={numRetriableJobsSelected === 0} value="retrySelected">
+            {numRetriableJobsSelected} {isFlowBuilderView ? 'selected jobs' : 'selected enabled flow jobs'}
           </MenuItem>
         </CeligoSelect>
 
         <CeligoSelect
-          disabled={disableActions}
+          disabled={disableResolve}
           data-test="resolveJobs"
           className={clsx(classes.filterButton, classes.resolve)}
           onChange={e => onActionClick(e.target.value)}
@@ -213,7 +235,14 @@ function Filters({
             </MenuItem>
           ))}
         </CeligoSelect>
-        <DateRangeSelector value={dateRange} onSave={handleDateRangeChange} />
+        <DateRangeSelector
+          value={dateRange || defaultRange}
+          clearable
+          customPresets={rangeFilters}
+          clearValue={defaultRange}
+          onSave={handleDateRangeChange}
+          fromDate={startOfDay(addDays(new Date(), -29))}
+          showTime={false} />
         <div className={classes.hideLabel}>
           <FormControlLabel
             data-test="hideEmptyJobsFilter"
@@ -232,10 +261,6 @@ function Filters({
         </div>
 
         <div className={classes.rightActionContainer}>
-
-          <IconTextButton onClick={handleRefreshClick}>
-            <RefreshIcon /> Refresh
-          </IconTextButton>
           {maxPage > 0 && (
           <>
             <IconButton
@@ -262,6 +287,9 @@ function Filters({
             </IconButton>
           </>
           )}
+          <IconTextButton onClick={handleRefreshClick}>
+            <RefreshIcon /> Refresh
+          </IconTextButton>
           {flowId && (<RunFlowButton variant="iconText" flowId={flowId} />)}
         </div>
       </div>
@@ -269,4 +297,3 @@ function Filters({
   );
 }
 
-export default Filters;

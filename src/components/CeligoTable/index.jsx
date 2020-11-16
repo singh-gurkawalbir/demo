@@ -18,6 +18,7 @@ import { selectors } from '../../reducers';
 import ActionMenu from './ActionMenu';
 import CheckboxUnselectedIcon from '../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../icons/CheckboxSelectedIcon';
+import DataRow from './DataRow';
 
 const useStyles = makeStyles(theme => ({
   visuallyHidden: {
@@ -63,16 +64,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const emptyObj = {};
+const emptySet = [];
+
 export default function CeligoTable({
   columns,
+  onRowOver,
+  onRowOut,
   rowActions,
-  data = [],
+  data = emptySet,
   onSelectChange,
   selectableRows,
   isSelectableRow,
   filterKey,
   className,
-  actionProps = {},
+  actionProps = emptyObj,
 }) {
   const history = useHistory();
   const classes = useStyles();
@@ -165,7 +171,7 @@ export default function CeligoTable({
   return (
     <div className={clsx(className)}>
       {selectedAction}
-      <Table className={classes.table}>
+      <Table data-public className={classes.table}>
         <TableHead>
           <TableRow>
             {selectableRows && (
@@ -181,7 +187,7 @@ export default function CeligoTable({
                       <CheckboxSelectedIcon />
                     </span>
                   )}
-                  onChange={event => handleSelectAllChange(event)}
+                  onChange={handleSelectAllChange}
                   checked={isAllSelected}
                   color="primary"
                 />
@@ -232,7 +238,13 @@ export default function CeligoTable({
         </TableHead>
         <TableBody>
           {data.map(rowData => (
-            <TableRow hover key={rowData.key || rowData._id} className={classes.row}>
+            <DataRow
+              key={rowData.key || rowData._id}
+              rowData={rowData}
+              onRowOver={onRowOver}
+              onRowOut={onRowOut}
+              className={classes.row}
+            >
               {selectableRows && (
                 <TableCell>
                   {(isSelectableRow ? !!isSelectableRow(rowData) : true) && (
@@ -257,56 +269,30 @@ export default function CeligoTable({
               {(typeof columns === 'function'
                 ? columns(rowData, actionProps)
                 : columns
-              ).map((col, index) =>
-                index === 0 ? (
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    key={col.heading}
-                    align={col.align || 'left'}>
-                    {col.value(rowData, actionProps, history.location)}
-                  </TableCell>
-                ) : (
-                  <TableCell key={col.heading} align={col.align || 'left'}>
-                    {col.value(rowData, actionProps, history.location)}
-                  </TableCell>
-                )
-              )}
+              ).map((col, index) => index === 0 ? (
+                <TableCell
+                  component="th"
+                  scope="row"
+                  key={col.heading}
+                  align={col.align || 'left'}>
+                  {col.value(rowData, actionProps, history.location)}
+                </TableCell>
+              ) : (
+                <TableCell key={col.heading} align={col.align || 'left'}>
+                  {col.value(rowData, actionProps, history.location)}
+                </TableCell>
+              ))}
               {rowActions && (
                 <TableCell className={classes.actionCell}>
                   <ActionMenu
                     selectAction={handleActionSelected}
-                    // rowActions may or may not be a fn. Sometimes
-                    // the actions are static, other times they are
-                    // determinant on the resource they apply to.
-                    // Check on this later for the scope of refactor
-                    actions={(typeof rowActions === 'function'
-                      ? rowActions(rowData, actionProps)
-                      : rowActions
-                    ).map(({ icon, label, disabledActionText, hasAccess, component: Action }) => ({
-                      icon:
-                        // TODO: @Adi, we can not use this same pattern for Icon as we do for label.
-                        // remember that an Icon is a component, which is a function. So the typeof
-                        // will always be true. here we this inject the Icon component with rowData
-                        // and cause runtime warnings in the console...
-                        // do we need this feature at all? do we have icons that change for some actions?
-                        typeof icon === 'function'
-                          ? icon(rowData, actionProps)
-                          : icon,
-                      disabledActionText,
-                      hasAccess,
-                      rowData,
-                      actionProps,
-                      label:
-                        typeof label === 'function'
-                          ? label(rowData, actionProps)
-                          : label,
-                      component: <Action {...actionProps} rowData={rowData} />,
-                    }))}
+                    actionProps={actionProps}
+                    rowActions={rowActions}
+                    rowData={rowData}
                   />
                 </TableCell>
               )}
-            </TableRow>
+            </DataRow>
           ))}
         </TableBody>
       </Table>

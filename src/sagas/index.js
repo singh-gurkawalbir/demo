@@ -7,6 +7,8 @@ import {
   select,
   race,
   delay,
+  spawn,
+  fork,
   cancelled,
 } from 'redux-saga/effects';
 import { createRequestInstance, sendRequest } from 'redux-saga-requests';
@@ -29,7 +31,7 @@ import {
   onErrorSaga,
   onAbortSaga,
 } from './api/requestInterceptors';
-import { authenticationSagas } from './authentication';
+import { authenticationSagas, initializeApp, initializeLogrocket } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -54,6 +56,8 @@ import { suiteScriptSagas } from './suiteScript';
 import jobErrorsPreviewSagas from './jobErrorsPreview';
 import openErrorsSagas from './errorManagement/openErrors';
 import errorDetailsSagas from './errorManagement/errorDetails';
+import latestIntegrationJobsSagas from './errorManagement/latestJobs/integrations';
+import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorRetrySagas from './errorManagement/retryData';
 import { customSettingsSagas } from './customSettings';
 import exportDataSagas from './exportData';
@@ -80,14 +84,14 @@ export function* apiCallWithRetry(args) {
     if (path !== logoutParams.path) {
       ({ apiResp, logout, timeoutEffect } = yield race({
         apiResp: call(sendRequest, apiRequestAction, {
-          dispatchRequestAction: true,
+          dispatchRequestAction: false,
         }),
         logout: take(actionsTypes.USER_LOGOUT),
         timeoutEffect: delay(timeout),
       }));
     } else {
       apiResp = yield call(sendRequest, apiRequestAction, {
-        dispatchRequestAction: true,
+        dispatchRequestAction: false,
       });
     }
 
@@ -101,8 +105,12 @@ export function* apiCallWithRetry(args) {
     if (yield cancelled()) {
       // yield cancelled is true when the saga gets cancelled
       // lets perform some cleanup here by completing any ongoing requests
-
       const method = (opts && opts.method) || 'GET';
+
+      // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
+      // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 1 ms
+      // we are forcing the select to compute in the next cycle...thereby we have the state ready
+      yield delay(1);
       const status = yield select(selectors.commStatusPerPath, path, method);
 
       // only dispatch a completed action when the request state is not completed
@@ -113,19 +121,7 @@ export function* apiCallWithRetry(args) {
   }
 }
 
-export default function* rootSaga() {
-  yield createRequestInstance({
-    driver: createDriver(window.fetch, {
-      // AbortController Not supported in IE installed this polyfill package
-      // that it would resort to
-      // TODO: Have to check if it works in an IE explorer
-      AbortController: window.AbortController,
-    }),
-    onRequest: onRequestSaga,
-    onSuccess: onSuccessSaga,
-    onError: onErrorSaga,
-    onAbort: onAbortSaga,
-  });
+function* allSagas() {
   yield all([
     ...resourceSagas,
     ...connectorSagas,
@@ -158,9 +154,51 @@ export default function* rootSaga() {
     ...jobErrorsPreviewSagas,
     ...openErrorsSagas,
     ...errorDetailsSagas,
+    ...latestIntegrationJobsSagas,
+    ...latestFlowJobsSagas,
     ...errorRetrySagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...editorSampleData,
   ]);
+}
+
+export default function* rootSaga() {
+  yield createRequestInstance({
+    driver: createDriver(window.fetch, {
+      // AbortController Not supported in IE installed this polyfill package
+      // that it would resort to
+      // TODO: Have to check if it works in an IE explorer
+      AbortController: window.AbortController,
+    }),
+    onRequest: onRequestSaga,
+    onSuccess: onSuccessSaga,
+    onError: onErrorSaga,
+    onAbort: onAbortSaga,
+  });
+  const t = yield fork(allSagas);
+  const {logrocket, logout} = yield race({
+    logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
+    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+  });
+
+  if (logrocket) {
+    // initializeLogrocket init must be done prior to redux-saga-requests fetch wrapping and must be done synchronously
+    t.cancel();
+    yield call(initializeLogrocket);
+    // yield requestWrapper();
+    yield spawn(rootSaga);
+    // initializeApp must be called(again) after initilizeLogrocket and saga restart
+    // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
+    // from within sagas/authentication/index.js
+    yield call(initializeApp, logrocket.opts);
+  }
+  if (logout) {
+    // stop the main sagas
+    t.cancel();
+    // logout requires also reset the store
+    yield put(actions.auth.clearStore());
+    // restart the root saga again
+    yield spawn(rootSaga);
+  }
 }

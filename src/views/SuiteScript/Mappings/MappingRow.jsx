@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'move',
+    cursor: 'grab',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     position: 'relative',
     width: '40%',
+    flex: 1,
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -68,7 +69,7 @@ const useStyles = makeStyles(theme => ({
 
   deleteBtn: {
     border: 'none',
-    width: 0,
+    // width: 0,
   },
   mappingIcon: {
     color: theme.palette.secondary.lightest,
@@ -96,13 +97,14 @@ export default function MappingRow(props) {
     onMove,
     onDrop,
     index,
+    onTouch,
     isDraggable = false,
   } = props;
   const {
     key,
     extract,
     generate,
-    hardCodedValueTmp,
+    hardCodedValue,
   } = mapping || {};
   const classes = useStyles();
   const ref = useRef(null);
@@ -150,6 +152,9 @@ export default function MappingRow(props) {
 
   drag(drop(ref));
 
+  const handleTouch = useCallback(() => {
+    onTouch(key);
+  }, [key, onTouch]);
   const handleBlur = useCallback(
     type => (id, value) => {
       onFieldUpdate(mapping, type, value);
@@ -165,6 +170,8 @@ export default function MappingRow(props) {
     },
     [patchSettings, key]
   );
+
+  const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
 
   // generateFields and extractFields are passed as an array of field names
   return (
@@ -185,10 +192,11 @@ export default function MappingRow(props) {
             id={`fieldMappingExtract-${index}`}
             labelName="name"
             valueName="id"
-            value={extract || hardCodedValueTmp}
+            value={extractValue}
             options={extractFields || emptySet}
             disabled={disabled}
             onBlur={handleBlur('extract')}
+            onTouch={onTouch}
           />
         </div>
         <MappingConnectorIcon className={classes.mappingIcon} />
@@ -204,6 +212,7 @@ export default function MappingRow(props) {
             options={generateFields}
             disabled={disabled}
             onBlur={handleBlur('generate')}
+            onTouch={handleTouch}
           />
         </div>
         <div>

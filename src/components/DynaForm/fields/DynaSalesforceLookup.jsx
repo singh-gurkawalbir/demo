@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
     float: 'right',
     marginLeft: theme.spacing(1),
   },
+  dynaTextFormControl: {
+    width: '100%',
+  },
 }));
 
 export default function DynaSalesforceLookup(props) {
@@ -55,12 +58,12 @@ export default function DynaSalesforceLookup(props) {
   };
 
   const extractFields = useSelector(state =>
-    selectors.getSampleData(state, {
+    selectors.getSampleDataContext(state, {
       flowId,
       resourceId,
       resourceType: 'imports',
       stage: 'importMappingExtract',
-    })
+    }).data
   );
   let formattedExtractFields = [];
 

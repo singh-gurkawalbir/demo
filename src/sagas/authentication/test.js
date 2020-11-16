@@ -8,12 +8,14 @@ import { selectors } from '../../reducers';
 import {
   auth,
   initializeApp,
+  initializeSession,
   retrieveAppInitializationResources,
   retrievingOrgDetails,
   retrievingUserDetails,
   retrievingAssistantDetails,
   validateDefaultASharedIdAndGetOneIfTheExistingIsInvalid,
   getCSRFTokenBackend,
+  setLastLoggedInLocalStorage,
   invalidateSession,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
@@ -110,7 +112,6 @@ describe('initialize all app relevant resources sagas', () => {
         retrievingAssistantDetailsEffect,
       ])
     );
-
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
 
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
@@ -142,8 +143,8 @@ describe('initialize all app relevant resources sagas', () => {
         retrievingAssistantDetailsEffect,
       ])
     );
-
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
+
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
@@ -183,7 +184,6 @@ describe('initialize all app relevant resources sagas', () => {
       ])
     );
     expect(saga.next().value).toEqual(put(actions.app.fetchUiVersion()));
-
     const checkForUserPreferencesEffect = select(selectors.userPreferences);
 
     expect(saga.next().value).toEqual(checkForUserPreferencesEffect);
@@ -256,6 +256,7 @@ describe('auth saga flow', () => {
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.auth.complete()));
@@ -327,11 +328,12 @@ describe('auth saga flow', () => {
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
+
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.auth.complete()));
-    expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
-    expect(saga.next().value).toEqual(put(actions.app.reload()));
+    expect(saga.next().value).toEqual(call(initializeApp, { reload: true }));
   });
   test('shouldnt remount the app when the user is authenticating for the very first time', () => {
     const email = 'someUserEmail';
@@ -368,17 +370,19 @@ describe('auth saga flow', () => {
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
 
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
+
     const effect = saga.next().value;
 
     expect(effect).toEqual(put(actions.auth.complete()));
-    expect(saga.next().value).toEqual(call(retrieveAppInitializationResources));
+    expect(saga.next().value).toEqual(call(initializeApp, { reload: false }));
     expect(saga.next().done).toEqual(true);
   });
 });
 
 describe('initialize app saga', () => {
   test('should set authentication flag true when the user successfuly makes a profile call when there is a valid user session ', () => {
-    const saga = initializeApp();
+    const saga = initializeSession();
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
@@ -395,6 +399,7 @@ describe('initialize app saga', () => {
     const setCSRFEffect = saga.next('someCSRF').value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, 'someCSRF'));
+    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
 
     const authCompletedEffect = saga.next().value;
 
@@ -402,7 +407,7 @@ describe('initialize app saga', () => {
   });
 
   test('should dispatch a user logout when the user does not get a response from the Profile call', () => {
-    const saga = initializeApp();
+    const saga = initializeSession();
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(
@@ -419,7 +424,7 @@ describe('initialize app saga', () => {
   });
 
   test('should dispatch a user logout when the api call has failed', () => {
-    const saga = initializeApp();
+    const saga = initializeSession();
     const getProfileResourceEffect = saga.next().value;
 
     expect(getProfileResourceEffect).toEqual(

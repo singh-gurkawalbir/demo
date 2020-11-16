@@ -9,8 +9,8 @@ import actions from '../../actions';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     padding: '12px',
-    minWidth: '212px',
-    maxWidth: '270px',
+    minWidth: '319px',
+    maxWidth: '319px',
     borderRadius: '4px',
     textAlign: 'left',
     overflow: 'hidden',
@@ -111,7 +111,7 @@ function HelpContent(props) {
   }, []);
 
   return (
-    <div className={classes.wrapper}>
+    <div data-public className={classes.wrapper}>
       <Typography className={classes.title} variant="h6">
         {title}
       </Typography>

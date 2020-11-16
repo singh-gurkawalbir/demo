@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import {makeStyles} from '@material-ui/core/styles';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
 import JobErrorTable from '../JobErrorTable';
 import Spinner from '../../Spinner';
 import RetryDrawer from '../RetryDrawer';
 import SpinnerWrapper from '../../SpinnerWrapper';
+import { JOB_STATUS } from '../../../utils/constants';
+
+const useStyles = makeStyles({
+  wrapperErrorDrawer: {
+    position: 'relative',
+    height: '100%',
+  },
+});
 
 export default function ErrorDrawer({
   height = 'tall',
@@ -20,15 +31,11 @@ export default function ErrorDrawer({
   integrationName,
 }) {
   const dispatch = useDispatch();
-  const [childJobId, setChildJobId] = useState();
-  const [errorCount, setErrorCount] = useState();
-
-  useEffect(() => {
-    setChildJobId(parentJobId ? jobId : undefined);
-  }, [jobId, parentJobId]);
-  useEffect(() => {
-    setErrorCount(childJobId ? numError + numResolved : undefined);
-  }, [childJobId, numError, numResolved]);
+  const classes = useStyles();
+  const [childJobId, setChildJobId] = useState(parentJobId ? jobId : undefined);
+  const [errorCount, setErrorCount] = useState(
+    childJobId ? numError + numResolved : undefined
+  );
   const flowJob = useSelector(state =>
     selectors.flowJob(state, { jobId: parentJobId || jobId, includeAll })
   );
@@ -36,9 +43,20 @@ export default function ErrorDrawer({
     selectors.jobErrors(state, childJobId)
   );
   const flowJobChildrenLoaded = !!(flowJob?.children?.length > 0);
-  const jobWithErrors = flowJob?.children?.find(j =>
-    showResolved ? j.numResolved > 0 : j.numError > 0
-  );
+  let jobWithErrors;
+  let anyChildJobsAreInProgress = false;
+
+  if (flowJobChildrenLoaded) {
+    jobWithErrors = flowJob.children.find(j =>
+      (showResolved ? j.numResolved > 0 : j.numError > 0) && j.errorFile
+    );
+    if (!jobWithErrors) {
+      anyChildJobsAreInProgress = flowJob.children.filter(j =>
+        [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(j.status)
+      ).length > 0;
+    }
+  }
+
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -64,17 +82,23 @@ export default function ErrorDrawer({
   useEffect(() => {
     if (!childJobId && flowJobChildrenLoaded) {
       if (jobWithErrors) {
-        setErrorCount(jobWithErrors.numError + jobWithErrors.numResolved);
         setChildJobId(jobWithErrors._id);
+        setErrorCount(jobWithErrors.numError + jobWithErrors.numResolved);
       }
     }
   }, [dispatch, childJobId, flowJobChildrenLoaded, jobWithErrors, showResolved]);
+
+  useEffect(() => {
+    if (anyChildJobsAreInProgress) {
+      dispatch(actions.job.requestInProgressJobStatus());
+    }
+  }, [anyChildJobsAreInProgress, dispatch]);
   let job;
 
   if (childJobId) {
     job = flowJob?.children?.find(j => j._id === childJobId);
   }
-  const updatedIntegrationName = integrationName === null ? 'Standalone Flows' : `${integrationName}`;
+  const updatedIntegrationName = integrationName === null ? 'Standalone flows' : `${integrationName}`;
   let title = ` ${updatedIntegrationName} > ${flowJob?.name}`;
 
   if (job?.name) title += ` > ${job.name}`;
@@ -84,27 +108,34 @@ export default function ErrorDrawer({
       path="viewErrors"
       height={height}
       width="full"
-      // type="paper"
-      title={title}
       variant="temporary"
       helpKey="jobErrors.helpSummary"
       helpTitle="Job errors"
       onClose={handleClose}>
-      {!job ? (
-        <SpinnerWrapper>
-          <Spinner />
-        </SpinnerWrapper>
-      ) : (
-        <>
-          <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
-          <JobErrorTable
-            jobErrors={jobErrors}
-            errorCount={errorCount}
-            job={job}
-            onCloseClick={onClose}
+      <DrawerHeader title={title} />
+      <DrawerContent>
+        <div className={classes.wrapperErrorDrawer}>
+          {(!flowJobChildrenLoaded || anyChildJobsAreInProgress) && (
+            <SpinnerWrapper>
+              <Spinner /> <span>{anyChildJobsAreInProgress ? 'Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed.' : 'Loading child jobs...'}</span>
+            </SpinnerWrapper>
+          )}
+          {(flowJobChildrenLoaded && !anyChildJobsAreInProgress && !jobWithErrors) && (
+            <span>No jobs with errors</span>
+          )}
+          {job && (
+            <>
+              <RetryDrawer jobId={job._id} flowJobId={job._flowJobId} height={height} />
+              <JobErrorTable
+                jobErrors={jobErrors}
+                errorCount={errorCount}
+                job={job}
+                onCloseClick={onClose}
           />
-        </>
-      )}
+            </>
+          )}
+        </div>
+      </DrawerContent>
     </RightDrawer>
   );
 }

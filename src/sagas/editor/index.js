@@ -5,6 +5,8 @@ import {
   takeEvery,
   takeLatest,
   delay,
+  take,
+  race,
 } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -52,16 +54,24 @@ export function* evaluateProcessor({ id }) {
         const errJSON = JSON.parse(e.message);
         // Receiving errors in different formats from BE, for now added below check
         // Can remove this once backend bug gets fixed (Id: IO-17172)
-        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message}`];
+        const errorMessage = [`Message: ${errJSON.message || errJSON.errors?.[0]?.message || JSON.stringify(errJSON)}`];
+        let errorLine;
 
         if (errJSON.location) {
           errorMessage.push(`Location: ${errJSON.location}`);
+          try {
+            if (/<anonymous>:(\d+)/.test(errJSON.location)) {
+              errorLine = parseInt(/<anonymous>:(\d+)/.exec(errJSON.location)[1], 10);
+            }
+          } catch (e) {
+            // do nothing
+          }
         }
         if (errJSON.stack) {
           errorMessage.push(`Stack: ${errJSON.stack}`);
         }
 
-        return yield put(actions.editor.evaluateFailure(id, errorMessage));
+        return yield put(actions.editor.evaluateFailure(id, {errorMessage, errorLine}));
       }
     }
   }
@@ -73,7 +83,7 @@ export function* evaluateProcessor({ id }) {
 
     finalResult = processResult ? processResult(editor, result) : result;
   } catch (e) {
-    return yield put(actions.editor.evaluateFailure(id, e.message));
+    return yield put(actions.editor.evaluateFailure(id, {errorMessage: e.message}));
   }
 
   return yield put(actions.editor.evaluateResponse(id, finalResult));
@@ -239,6 +249,18 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(evaluateProcessor, { id });
 }
 
+function* autoEvaluateProcessorWithCancel(params) {
+  const {id } = params;
+
+  yield race({
+    editorEval: call(autoEvaluateProcessor, params),
+    cancelEditorEval: take(action =>
+      action.type === actionTypes.EDITOR.CLEAR &&
+      action.id === id
+    ),
+  });
+}
+
 export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
@@ -283,14 +305,14 @@ export function* refreshHelperFunctions() {
 
 export default [
   takeEvery(
-    actionTypes.EDITOR_REFRESH_HELPER_FUNCTIONS,
+    actionTypes.EDITOR.REFRESH_HELPER_FUNCTIONS,
     refreshHelperFunctions
   ),
 
   takeLatest(
-    [actionTypes.EDITOR_INIT, actionTypes.EDITOR_PATCH],
-    autoEvaluateProcessor
+    [actionTypes.EDITOR.INIT, actionTypes.EDITOR.PATCH],
+    autoEvaluateProcessorWithCancel
   ),
-  takeLatest(actionTypes.EDITOR_EVALUATE_REQUEST, evaluateProcessor),
-  takeLatest(actionTypes.EDITOR_SAVE, saveProcessor),
+  takeLatest(actionTypes.EDITOR.EVALUATE_REQUEST, evaluateProcessor),
+  takeLatest(actionTypes.EDITOR.SAVE, saveProcessor),
 ];

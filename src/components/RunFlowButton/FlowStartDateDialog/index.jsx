@@ -9,6 +9,8 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import flowStartDateMetadata from './metadata';
 import Spinner from '../../Spinner';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
+import ButtonGroup from '../../ButtonGroup';
 
 export default function FlowStartDateDialog(props) {
   const { flowId, onClose, disabled, onRun } = props;
@@ -64,19 +66,26 @@ export default function FlowStartDateDialog(props) {
     let customStartDate;
 
     if (formVal.deltaType === 'custom') {
-      customStartDate = moment.tz(
-        formVal.startDateCustom,
-        `${preferences.dateFormat} ${preferences.timeFormat}`,
-        formVal.timeZone
-      );
+      customStartDate =
+        moment(formVal.startDateCustom).parseZone(formVal.timeZone);
 
-      customStartDate = customStartDate ? customStartDate.toISOString() : null;
+      customStartDate = customStartDate?.toISOString();
     }
 
     onRun(customStartDate);
 
     onClose();
   };
+
+  const fieldMeta = flowStartDateMetadata.getMetadata({
+    timeZone,
+    startDate: lastExportDateTime,
+    format: `${preferences.dateFormat} ${preferences.timeFormat}`,
+  });
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+  });
 
   if (!selectorStatus) {
     return <Spinner size={24} color="primary" />;
@@ -86,18 +95,14 @@ export default function FlowStartDateDialog(props) {
     onClose();
   }
 
-  const fieldMeta = flowStartDateMetadata.getMetadata({
-    timeZone,
-    startDate: lastExportDateTime,
-    format: `${preferences.dateFormat} ${preferences.timeFormat}`,
-  });
-
   return (
     <ModalDialog show onClose={onClose}>
       <div>Delta flow</div>
       <div>
-        <DynaForm disabled={disabled} fieldMeta={fieldMeta}>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+        <ButtonGroup>
           <DynaSubmit
+            formKey={formKey}
             skipDisableButtonForFormTouched
             data-test="submit"
             onClick={handleSubmit}>
@@ -106,7 +111,7 @@ export default function FlowStartDateDialog(props) {
           <Button data-test="close" onClick={cancelDialog}>
             Cancel
           </Button>
-        </DynaForm>
+        </ButtonGroup>
       </div>
     </ModalDialog>
   );

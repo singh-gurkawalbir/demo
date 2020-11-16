@@ -2,6 +2,7 @@ import { withStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import {selectors} from '../../reducers';
@@ -25,6 +26,7 @@ const MappingSaveButton = ({
 }) => {
   const [saveTrigerred, setSaveTriggered] = useState(false);
   const [disableSaveOnClick, setDisableSaveOnClick] = useState(false);
+  const match = useRouteMatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const { validationErrMsg } = useSelector(state =>
     selectors.mapping(state)
@@ -44,9 +46,9 @@ const MappingSaveButton = ({
     }
   }, [onClose, saveCompleted, saveTerminated, saveTrigerred]);
   const onSave = useCallback(() => {
-    dispatch(actions.mapping.save());
+    dispatch(actions.mapping.save({ match }));
     setSaveTriggered(true);
-  }, [dispatch]);
+  }, [dispatch, match]);
   const { handleSubmitForm, disableSave } = useLoadingSnackbarOnSave({
     saveTerminated,
     onSave,

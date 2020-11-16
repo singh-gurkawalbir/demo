@@ -34,12 +34,14 @@ const useStyles = makeStyles(theme => ({
   closeButtonTitleBar: {
     position: 'absolute',
     right: theme.spacing(2),
-    top: theme.spacing(2),
-    padding: 0,
+    padding: 4,
     '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.background.paper2,
     },
+  },
+  arrowLeft: {
+    padding: 0,
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -61,7 +63,7 @@ export default function DrawerTitleBar({
   }, [history, onClose]);
 
   return (
-    <div className={classes.titleBar}>
+    <div data-public className={classes.titleBar}>
       {backToParent && (
         <IconButton
           data-test="back"
@@ -85,7 +87,7 @@ export default function DrawerTitleBar({
         )}
       </div>
       <IconButton
-        data-test="closeFlowSchedule"
+        data-test="closeRightDrawer"
         aria-label="Close"
         className={classes.closeButtonTitleBar}
         onClick={handleClick}>

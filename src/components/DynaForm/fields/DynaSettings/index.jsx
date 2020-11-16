@@ -42,7 +42,6 @@ export default function DynaSettings(props) {
   const { resourceType, resourceId } = resourceContext;
   const [isCollapsed, setIsCollapsed] = useState(collapsed);
   const integrationId = useIntegration(resourceType, resourceId);
-
   const allowFormEdit = useSelector(state =>
     selectors.canEditSettingsForm(state, resourceType, resourceId, integrationId)
   );
@@ -65,6 +64,10 @@ export default function DynaSettings(props) {
     },
     [id, onFieldChange]
   );
+
+  // TODO: @Surya revisit this implementation of settings form
+  // directly register field states
+
   const handleExpandClick = useCallback(() => {
     // HACK! to overcome event bubbling.
     // We don't want child views affecting the panel state.
@@ -85,15 +88,15 @@ export default function DynaSettings(props) {
     if (hasSettingsForm) {
       return (
         <FormView
+          onFormChange={handleSettingFormChange}
           resourceId={resourceId}
           resourceType={resourceType}
           disabled={disabled}
-          onFormChange={handleSettingFormChange}
       />
       );
     }
 
-    return <RawView {...props} saveMode="json" />;
+    return <RawView {...props} />;
   }
 
   if (fieldsOnly) return renderSettings();

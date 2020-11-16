@@ -184,8 +184,17 @@ import concurall from './concurall';
 import g2 from './g2';
 import myobadvanced from './myobadvanced';
 import lexbizz from './lexbizz';
+import microsoftdynamics365financeandoperation from './microsoftdynamics365financeandoperation';
+import precisely from './precisely';
+import shipengine from './shipengine';
+import jiraserver from './jiraserver';
+import gainsight from './gainsight';
+import dotdigital from './dotdigital';
+import checkout from './checkout';
+import channelape from './channelape';
 
 export default {
+  channelape,
   concurexpense,
   bigquery,
   googlemail,
@@ -371,4 +380,11 @@ export default {
   g2,
   myobadvanced,
   lexbizz,
+  microsoftdynamics365financeandoperation,
+  precisely,
+  shipengine,
+  jiraserver,
+  gainsight,
+  dotdigital,
+  checkout,
 };

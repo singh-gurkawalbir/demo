@@ -86,6 +86,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(5),
   },
+  code: {
+    wordBreak: 'break-word',
+  },
 }));
 
 function JobErrorTable({
@@ -226,10 +229,11 @@ function JobErrorTable({
       dispatch(
         actions.job.retrySelected({
           jobs: jobsToRetry,
+          match,
         })
       );
       enqueueSnackbar({
-        message: `${
+        message: `${job.numError} ${
           job.numError === '1' ? 'error retried.' : 'errors retried.'
         }`,
         showUndo: true,
@@ -272,6 +276,7 @@ function JobErrorTable({
           jobId: job._id,
           flowJobId: job._flowJobId,
           selectedRetryIds,
+          match,
         })
       );
       onCloseClick();
@@ -285,6 +290,7 @@ function JobErrorTable({
       dispatch(
         actions.job.resolveSelected({
           jobs: jobsToResolve,
+          match,
         })
       );
       enqueueSnackbar({
@@ -319,6 +325,7 @@ function JobErrorTable({
           jobId: job._id,
           flowJobId: job._flowJobId,
           selectedErrorIds,
+          match,
         })
       );
     }
@@ -426,11 +433,11 @@ function JobErrorTable({
   return (
     <>
       {jobErrorsPreview && jobErrorsPreview.status === 'requested' && (
-        <div className={classes.spinner}>
+        <div data-public className={classes.spinner}>
           <Spinner size={20} /> <span>Uploading...</span>
         </div>
       )}
-      <ul className={classes.statusWrapper}>
+      <ul data-public className={classes.statusWrapper}>
         <li>
           Success: <span className={classes.success}>{job.numSuccess}</span>
         </li>
@@ -455,7 +462,7 @@ function JobErrorTable({
       </ul>
       {errorCount < 1000 && jobErrorsInCurrentPage.length === 0 ? (
         <SpinnerWrapper>
-          <Spinner />
+          <Spinner /> <span>Loading job errors</span>
         </SpinnerWrapper>
       ) : (
         <>
@@ -466,8 +473,8 @@ function JobErrorTable({
               color="secondary"
               className={classes.btnErrorTable}
               onClick={handleRetryClick}
-              disabled={isJobInProgress || !hasRetriableErrors}>
-              {numSelectedRetriableErrors > 0
+              disabled={isJobInProgress || !hasRetriableErrors || job.flowDisabled}>
+              { !job.flowDisabled && numSelectedRetriableErrors > 0
                 ? `Retry ${numSelectedRetriableErrors} error${numSelectedRetriableErrors === 1 ? '' : 's'}`
                 : `${isJobInProgress ? 'Retrying' : 'Retry all'}`}
             </Button>
@@ -576,15 +583,18 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Source',
-                    value: r => r.source,
+                    width: '15%',
+                    value: r => r.source && (<span className={classes.code}>{r.source}</span>),
                   },
                   {
                     heading: 'Code',
-                    align: 'center',
-                    value: r => r.code,
+                    align: 'left',
+                    width: '15%',
+                    value: r => r.code && (<span className={classes.code}>{r.code}</span>),
                   },
                   {
                     heading: 'Message',
+                    width: '30%',
                     value: r => (
                       <JobErrorMessage
                         message={r.message}
@@ -595,6 +605,7 @@ function JobErrorTable({
                   },
                   {
                     heading: 'Time',
+                    width: '15%',
                     value: r => <DateTimeDisplay dateTime={r.createdAt} />,
                   },
                   {

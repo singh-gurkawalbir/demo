@@ -60,7 +60,7 @@ describe('all modal sagas', () => {
           actions.api.complete(
             changePasswordParams.path,
             changePasswordParams.opts.method,
-            'Success!! Changed user password',
+            'Password changed.',
           ),
         ),
       );
@@ -116,7 +116,7 @@ describe('all modal sagas', () => {
           actions.api.complete(
             changeEmailParams.path,
             changeEmailParams.opts.method,
-            'Success!! Sent user change Email setup to you email',
+            'Verification link sent to new email address.',
           ),
         ),
       );
@@ -713,6 +713,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
+            hidden: true,
           }),
         );
         expect(saga.next({}).value).toEqual(
@@ -733,6 +734,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Deleting User',
+            hidden: true,
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);
@@ -816,6 +818,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
+            hidden: true,
           }),
         );
         expect(saga.next().done).toEqual(true);
@@ -833,6 +836,7 @@ describe('all modal sagas', () => {
             path,
             opts,
             message: 'Requesting account transfer',
+            hidden: true,
           }),
         );
         expect(saga.throw(new Error()).value).toEqual(true);

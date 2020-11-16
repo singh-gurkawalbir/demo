@@ -13,6 +13,10 @@ export default {
         field: 'file.type',
         is: ['csv', 'json', 'xlsx', 'xml'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.batchSize': {
@@ -102,15 +106,23 @@ export default {
         field: 'file.type',
         is: ['json'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.xml.resourcePath': {
     label: 'Resource path',
     type: 'text',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xml'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
     required: true,
@@ -118,10 +130,14 @@ export default {
   'file.fileDefinition.resourcePath': {
     label: 'Resource path',
     type: 'text',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
@@ -130,10 +146,14 @@ export default {
     label: 'EDI x12 format',
     required: true,
     format: 'edi',
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['filedefinition'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
   },
@@ -147,6 +167,10 @@ export default {
         field: 'file.type',
         is: ['fixed'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'edifact.format': {
@@ -159,6 +183,10 @@ export default {
         field: 'file.type',
         is: ['delimited/edifact'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.filedefinition.rules': {
@@ -169,6 +197,10 @@ export default {
       {
         field: 'file.type',
         is: ['filedefinition', 'fixed', 'delimited/edifact'],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
     ],
     refreshOptionsOnChangesTo: [
@@ -202,6 +234,10 @@ export default {
         field: 'file.type',
         is: ['csv'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.xlsx.hasHeaderRow': {
@@ -209,22 +245,31 @@ export default {
     label: 'File has header',
     defaultValue: r =>
       !!(r && r.file && r.file.xlsx && r.file.xlsx.hasHeaderRow),
-    visibleWhen: [
+    visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xlsx'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
   },
   'file.xlsx.rowsPerRecord': {
-    type: 'checkbox',
+    type: 'checkboxforresetfields',
     label: 'Multiple rows per record',
     visibleWhenAll: [
       {
         field: 'file.type',
         is: ['xlsx'],
       },
+      {
+        field: 'outputMode',
+        is: ['records'],
+      },
     ],
+    fieldsToReset: [{ id: 'file.xlsx.keyColumns', value: [] }],
     defaultValue: r => !!(r && r.file && r.file.xlsx && r.file.xlsx.keyColumns),
   },
   'file.xlsx.keyColumns': {
@@ -238,6 +283,10 @@ export default {
       {
         field: 'file.xlsx.rowsPerRecord',
         is: [true],
+      },
+      {
+        field: 'outputMode',
+        is: ['records'],
       },
       {
         field: 'file.type',

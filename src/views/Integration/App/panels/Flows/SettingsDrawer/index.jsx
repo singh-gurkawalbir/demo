@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2, 3),
     '& + div': {
       margin: theme.spacing(0, 3),
+      paddingLeft: 0,
     },
     '& > * div.MuiTabs-vertical': {
       marginTop: theme.spacing(-2),
@@ -125,7 +126,7 @@ export default function SettingsDrawerRoute(props) {
   const match = useRouteMatch();
 
   return (
-    <Route exact path={`${match.url}/:flowId/settings`}>
+    <Route path={`${match.url}/:flowId/settings`}>
       <LoadResources required resources="exports,imports,flows,connections">
         <SettingsDrawer {...props} parentUrl={match.url} />
       </LoadResources>

@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import FormContext from 'react-forms-processor/dist/components/FormContext';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
@@ -21,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(2, 3),
+    background: theme.palette.background.default,
   },
 }));
 
@@ -78,7 +78,7 @@ const SalesforceProductOptions = ({value,
       label="Salesforce item Field" />
 );
 
-function DynaSuiteScriptTable(props) {
+export default function DynaSuiteScriptTable(props) {
   const {
     id,
     _integrationId: integrationId,
@@ -185,15 +185,5 @@ function DynaSuiteScriptTable(props) {
         disableDeleteRows={disabled}
       />
     </>
-  );
-}
-
-export default function DynaSuiteScriptTableWrapped(props) {
-  return (
-    <FormContext.Consumer >
-      {form => (
-        <DynaSuiteScriptTable {...props} registerField={form.registerField} />
-      )}
-    </FormContext.Consumer>
   );
 }

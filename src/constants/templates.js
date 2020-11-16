@@ -43,6 +43,7 @@ const templates = [
   { label: 'Paychex', value: 'paychex' },
   { label: 'Propack', value: 'propack' },
   { label: 'Salesforce', value: 'salesforce' },
+  { label: 'Salesforce.org', value: 'salesforce.org' },
   { label: 'ServiceNow', value: 'servicenow' },
   { label: 'ShipStation', value: 'shipstation' },
   { label: 'Shipwire', value: 'shipwire' },

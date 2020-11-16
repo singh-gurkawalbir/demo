@@ -31,14 +31,14 @@ const getLabel = (items, value) => {
 const optionSearch = search => ({label, optionSearch}) => search && (
   (typeof optionSearch === 'string' && optionSearch.toLowerCase().startsWith(search.toLowerCase())) ||
  (typeof label === 'string' && label.toLowerCase().startsWith(search.toLowerCase())));
-const useAutoScrollOption = (items, open, listRef, value) => {
+const useAutoScrollOption = (items, open, setOpen, listRef, id, value, onFieldChange) => {
   const label = getLabel(items, value) || '';
   const [search, setSearch] = useState(label);
-  const [scrolIndex, setScrolIndex] = useState(-1);
+  const [scrollIndex, setScrollIndex] = useState(-1);
 
   useEffect(() => {
     setSearch(label);
-    setScrolIndex(-1);
+    setScrollIndex(-1);
   }, [open, label]);
 
   useEffect(() => {
@@ -50,31 +50,44 @@ const useAutoScrollOption = (items, open, listRef, value) => {
     };
   }, [search]);
   const keydownListener = useCallback(e => {
+    // enter key
+    if (e.keyCode === 13) {
+      // scrollIndex -1 means the user hasn't selected anything using the key board based scroll...
+      // so we should just close the options dropdown
+      if (scrollIndex !== -1) { onFieldChange(id, items[scrollIndex].value); }
+      setOpen(false);
+
+      return;
+    }
+
     if (e.keyCode < 32 || e.keyCode > 90) {
       return;
     }
+    // up arrow key
     if (e.keyCode === 38) {
-      if (scrolIndex <= 0) { return; }
-      setScrolIndex(index => index - 1);
+      if (scrollIndex <= 0) { return; }
+      setScrollIndex(index => index - 1);
 
       return;
     }
+    // down arrow key
     if (e.keyCode === 40) {
-      if (scrolIndex >= items.length) { return; }
-      setScrolIndex(index => index + 1);
+      if (scrollIndex >= items.length) { return; }
+      setScrollIndex(index => index + 1);
 
       return;
     }
+
     if (e.key) {
       setSearch(str => str + e.key);
     }
-  }, [items.length, scrolIndex]);
+  }, [onFieldChange, id, items, scrollIndex, setOpen]);
 
   useEffect(() => {
     const matchingIndex = items.findIndex(optionSearch(search));
 
     if (matchingIndex > 0) {
-      setScrolIndex(matchingIndex);
+      setScrollIndex(matchingIndex);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
@@ -88,17 +101,17 @@ const useAutoScrollOption = (items, open, listRef, value) => {
   }, [keydownListener, open]);
 
   useEffect(() => {
-    if (scrolIndex > 0) {
-      if (scrolIndex + NO_OF_OPTIONS / 2 < items.length) {
-        listRef?.current?.scrollToItem(scrolIndex + (NO_OF_OPTIONS / 2));
+    if (scrollIndex > 0) {
+      if (scrollIndex + NO_OF_OPTIONS / 2 < items.length) {
+        listRef?.current?.scrollToItem(scrollIndex + (NO_OF_OPTIONS / 2));
       } else {
-        listRef?.current?.scrollToItem(scrolIndex);
+        listRef?.current?.scrollToItem(scrollIndex);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrolIndex]);
+  }, [scrollIndex]);
 
-  return scrolIndex;
+  return scrollIndex;
 };
 
 const useStyles = makeStyles(theme => ({
@@ -138,6 +151,7 @@ const Row = ({ index, style, data }) => {
       })}
       style={style}
       selected={value === finalTextValue}
+
       onClick={() => {
         if (value !== undefined) {
           onFieldChange(id, value);
@@ -163,9 +177,12 @@ export default function DynaSelect(props) {
     placeholder,
     required,
     className,
+    rootClassName,
     label,
+    skipDefault = false,
     onFieldChange,
     skipSort,
+    dataTest,
   } = props;
 
   const listRef = React.createRef();
@@ -216,12 +233,14 @@ export default function DynaSelect(props) {
       value: '',
     };
 
-    items = [defaultItem, ...items];
+    if (!skipDefault) {
+      items = [defaultItem, ...items];
+    }
 
     return items;
-  }, [isSubHeader, skipSort, options, placeholder]);
+  }, [options, isSubHeader, skipSort, placeholder, skipDefault]);
 
-  const matchMenuIndex = useAutoScrollOption(items, open, listRef, value);
+  const matchMenuIndex = useAutoScrollOption(items, open, setOpen, listRef, id, value, onFieldChange);
   let finalTextValue;
 
   if (value === undefined || value === null) {
@@ -242,10 +261,10 @@ export default function DynaSelect(props) {
   );
   const rowProps = useMemo(() => ({ classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, id }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [classes, finalTextValue, id, items, matchMenuIndex]);
+    [classes, finalTextValue, id, items, matchMenuIndex, onFieldChange]);
 
   return (
-    <div className={classes.dynaSelectWrapper}>
+    <div className={clsx(classes.dynaSelectWrapper, rootClassName)}>
       <div className={classes.fieldWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
           {label}
@@ -258,7 +277,7 @@ export default function DynaSelect(props) {
         required={required}
         className={classes.dynaSelectWrapper}>
         <CeligoSelect
-          data-test={id}
+          data-test={dataTest || id}
           value={finalTextValue}
           disableUnderline
           displayEmpty

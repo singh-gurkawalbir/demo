@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
@@ -10,16 +10,19 @@ import DynaForm from '../../DynaForm';
 import DynaSubmit from '../../DynaForm/DynaSubmit';
 import ApplicationMappingSettings from './application';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import RightDrawer from '../../drawer/Right';
+import DrawerHeader from '../../drawer/Right/DrawerHeader';
+import DrawerContent from '../../drawer/Right/DrawerContent';
+import DrawerFooter from '../../drawer/Right/DrawerFooter';
+import ButtonGroup from '../../ButtonGroup';
 
-const emptySet = {};
+const emptySet = [];
 const emptyObject = {};
 
 /**
- *
  * disabled property set to true in case of monitor level access
  */
-
 function MappingSettings({
   disabled,
   mappingKey,
@@ -28,9 +31,6 @@ function MappingSettings({
 }) {
   const history = useHistory();
   const { sectionId, editorId, integrationId, mappingIndex} = categoryMappingOpts;
-  const [formState, setFormState] = useState({
-    showFormValidationsBeforeTouch: false,
-  });
 
   const [enquesnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
@@ -183,34 +183,37 @@ function MappingSettings({
     [enquesnackbar, extract, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
   );
 
-  const showCustomFormValidations = useCallback(() => {
-    setFormState({
-      showFormValidationsBeforeTouch: true,
-    });
-  }, []);
+  const formKey = useFormInitWithPermissions({
+    disabled,
+    fieldMeta,
+    optionsHandler: fieldMeta.optionsHandler,
+  });
 
   return (
-    <DynaForm
-      disabled={disabled}
-      fieldMeta={fieldMeta}
-      optionsHandler={fieldMeta.optionsHandler}
-      formState={formState}>
-      <DynaSubmit
-        disabled={disableSave}
-        id="fieldMappingSettingsSave"
-        showCustomFormValidations={showCustomFormValidations}
-        onClick={handleSubmit}>
-        Save
-      </DynaSubmit>
-      <Button
-        data-test="fieldMappingSettingsCancel"
-        onClick={hadleClose}
-        variant="text"
-        color="primary">
-        Cancel
-      </Button>
-    </DynaForm>
+    <>
+      <DrawerContent>
+        <DynaForm formKey={formKey} fieldMeta={fieldMeta} />
+      </DrawerContent>
 
+      <DrawerFooter>
+        <ButtonGroup>
+          <DynaSubmit
+            formKey={formKey}
+            disabled={disableSave}
+            id="fieldMappingSettingsSave"
+            onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+          <Button
+            data-test="fieldMappingSettingsCancel"
+            onClick={hadleClose}
+            variant="text"
+            color="primary">
+            Cancel
+          </Button>
+        </ButtonGroup>
+      </DrawerFooter>
+    </>
   );
 }
 
@@ -230,10 +233,7 @@ function MappingSettingsWrapper(props) {
   }
 
   return (
-    <MappingSettings
-      {...props}
-      mappingKey={mappingKey}
-    />
+    <MappingSettings {...props} mappingKey={mappingKey} />
   );
 }
 function CategoryMappingSettingsWrapper(props) {
@@ -272,9 +272,10 @@ export default function SettingsDrawer(props) {
         'settings/:mappingKey',
         'settings/category/:editorId/:mappingIndex',
       ]}
-      title="Settings"
       height="tall"
     >
+      <DrawerHeader title="Settings" />
+
       <Switch>
         <Route
           path={`${match.url}/settings/category/:editorId/:mappingIndex`}>

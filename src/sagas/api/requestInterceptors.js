@@ -15,9 +15,42 @@ import { isJsonString } from '../../utils/string';
 
 const tryCount = 3;
 
+function* isCurrentProfileDifferent() {
+  const currentProfile = yield select(selectors.userProfile);
+  const currentUserId = currentProfile?._id;
+  // for browsers without this local state variable skip the check
+
+  const latestUserId = localStorage.getItem('latestUser');
+
+  if (!latestUserId || !currentUserId) { return false; }
+
+  // only when its defined do you attempt to compare
+  return currentUserId !== latestUserId;
+}
+
+export function* isCurrentUserAndLatestUserTheSame() {
+  // check the current userProfile is different from the latest user profile
+  const isProfileDiff = yield call(isCurrentProfileDifferent);
+  const isUserAuthenticated = yield select(selectors.isAuthenticated);
+
+  // When user is not authenticated we have to skip these
+  // checks for network calls during authentication process
+  if (isProfileDiff && isUserAuthenticated) {
+    yield put(actions.auth.userAlreadyLoggedIn());
+
+    return false;
+  }
+
+  return true;
+}
 export function* onRequestSaga(request) {
   const { path, opts = {}, message = path, hidden = false } = request.args;
   const method = (opts && opts.method) || 'GET';
+
+  const shouldMakeRequest = yield call(isCurrentUserAndLatestUserTheSame);
+
+  if (!shouldMakeRequest) { return null; }
+
   const { retryCount = 0 } = yield select(selectors.resourceStatus, path, method);
 
   // check if you are retrying ...if you are not retrying make a brand new request
@@ -141,22 +174,21 @@ export function* onErrorSaga(error, action) {
 
     // runOnError is defaulted to false to prevent an infinite calls to onErrorHook
     // we already check the retry count onErrorHook for an exit case to prevent it from happening
-    yield call(
+    return yield call(
       sendRequest,
       { request: origReq, type: 'API_WATCHER' },
-      { silent: false, runOnError: true }
+      { dispatchRequestAction: false, runOnError: true }
     );
-  } else {
-    // attempts failed after 'tryCount' attempts
-    // this time yield an error...
-    const errorMessage =
+  }
+  // attempts failed after 'tryCount' attempts
+  // this time yield an error...
+  const errorMessage =
       typeof error.data === 'object' ? JSON.stringify(error.data) : error.data;
 
-    yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
-    // the parent saga may need to know if there was an error for
-    // its own "Data story"...
-    yield call(throwExceptionUsingTheResponse, error);
-  }
+  yield put(actions.api.failure(path, method, errorMessage, origReq?.args?.hidden));
+  // the parent saga may need to know if there was an error for
+  // its own "Data story"...
+  yield call(throwExceptionUsingTheResponse, error);
 
   // not related token error, we pass it like nothing happened
   return { error };

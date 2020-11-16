@@ -11,64 +11,70 @@ import PreviewPanel from './Preview/Panel';
 import DragContainer from './DragContainer';
 import actions from '../../actions';
 import SettingsDrawer from './Settings';
+import DrawerContent from '../drawer/Right/DrawerContent';
+import DrawerFooter from '../drawer/Right/DrawerFooter';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   root: {
     height: '100%',
     display: 'flex',
-    width: '100%',
   },
   mappingContainer: {
-    height: 'calc(100vh - 180px)',
-    padding: theme.spacing(1, 0, 3),
-    marginBottom: theme.spacing(1),
-    maxWidth: '100%',
     flex: '1 1 0',
+    width: 'calc(100% + 24px)',
+    overflow: 'hidden',
+    flexDirection: 'column',
+    display: 'flex',
+    marginLeft: -24,
   },
   mappingsBody: {
-    height: 'calc(100% - 54px)',
+    height: '100%',
     overflow: 'auto',
-    marginBottom: theme.spacing(2),
-    paddingRight: theme.spacing(2),
   },
-}));
+});
 const Mapping = props => {
   const {flowId, importId, subRecordMappingId, disabled, onClose} = props;
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <div
-        className={clsx(classes.mappingContainer)}>
-        <TopPanel
-          flowId={flowId}
-          importId={importId}
-          disabled={disabled}
-        />
-        <div className={classes.mappingsBody}>
-          <DragContainer
-            disabled={disabled}
-            importId={importId}
-            flowId={flowId}
-            subRecordMappingId={subRecordMappingId}
+    <>
+      <DrawerContent>
+        <div className={classes.root}>
+          <div className={clsx(classes.mappingContainer)}>
+            <TopPanel
+              flowId={flowId}
+              importId={importId}
+              disabled={disabled}
           />
+            <div className={classes.mappingsBody}>
+              <DragContainer
+                disabled={disabled}
+                importId={importId}
+                flowId={flowId}
+                subRecordMappingId={subRecordMappingId}
+            />
+            </div>
+          </div>
+
+          <PreviewPanel
+            importId={importId}
+            disabled={disabled}
+            subRecordMappingId={subRecordMappingId}
+        />
+          <SettingsDrawer
+            disabled={disabled}
+        />
         </div>
+      </DrawerContent>
+      <DrawerFooter>
         <ButtonPanel
           flowId={flowId}
           importId={importId}
           disabled={disabled}
           onClose={onClose}
            />
-      </div>
-      <PreviewPanel
-        importId={importId}
-        disabled={disabled}
-        subRecordMappingId={subRecordMappingId}
-      />
-      <SettingsDrawer
-        disabled={disabled}
-      />
-    </div>
+      </DrawerFooter>
+    </>
   );
 };
 

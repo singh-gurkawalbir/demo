@@ -7,7 +7,6 @@ import usePushRightDrawer from '../../../hooks/usePushRightDrawer';
 /**
  * DynaQuery is being used to Define Query under Database Lookup
  */
-const defaultQueryValue = 'select * from locations where id={{data.id}}';
 
 export default function DynaQuery(props) {
   const { id, onFieldChange, sampleData = {}, disabled, value, label } = props;
@@ -25,10 +24,10 @@ export default function DynaQuery(props) {
     <>
       <DynaText {...props} disabled multiline />
       <SqlQueryBuilderEditorDrawer
-        title="Lookups"
+        title={label}
         dataTest="lookupQuery"
         id={`lookupQueryBuilder-${id}`}
-        rule={value || defaultQueryValue}
+        rule={value}
         sampleData={sampleData}
         onSave={handleSave}
         disabled={disabled}
@@ -40,7 +39,7 @@ export default function DynaQuery(props) {
         variant="outlined"
         color="secondary"
         onClick={handleOpenDrawer}>
-        Define {label}
+        Launch
       </Button>
     </>
   );

@@ -1,3 +1,7 @@
+// DO NOT DELETE
+// This file is unused right now but we might need
+// this logic later when a sample template needs to be shown
+// for query builders
 import { times } from 'lodash';
 
 const getSampleSQLTemplate = (sampleData, eFields, isInsert) => {
@@ -30,27 +34,16 @@ const getSampleSQLTemplate = (sampleData, eFields, isInsert) => {
 const getSampleSnowflakeTemplate = (sampleData, eFields, isInsert) => {
   let toReturn = '';
 
-  if (eFields && eFields.length > 0 && Array.isArray(sampleData)) {
-    if (isInsert) {
-      toReturn = `${'Insert into Employee(id) Values({{data.0.'}${
-        eFields[0].id
-      }}})`;
-    } else {
-      toReturn = `${'merge into target_table using source_table on target_table.id = source_table.{{data.0.'}${
-        eFields[0].id
-      }}} when matched then 
-      update set target_table.description = source_table.{{data.0.${eFields[0].id}}}`;
-    }
-  } else if (eFields && eFields.length > 0) {
+  if (eFields && eFields.length > 0) {
     if (isInsert) {
       toReturn = `${'Insert into Employee(id) Values({{data.'}${
         eFields[0].id
       }}})`;
     } else {
-      toReturn = `${'merge into target_table using source_table on target_table.id = source_table.{{data.'}${
+      toReturn = `${'MERGE into target_table using source_table on target_table.id = source_table.{{data.0.'}${
         eFields[0].id
       }}} when matched then 
-      update set target_table.description = source_table.{{data.${eFields[0].id}}}`;
+      update set target_table.description = source_table.{{data.0.${eFields[0].id}}}`;
     }
   }
 

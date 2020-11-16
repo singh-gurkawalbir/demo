@@ -1,9 +1,7 @@
 import { values, keyBy } from 'lodash';
 import shortid from 'shortid';
-import getRoutePath from './routePaths';
-import { RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../constants/resource';
 import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL } from './constants';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS } from './constants';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -28,61 +26,13 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   apis: 'My API',
 });
 
-/**
- * @param resourceDetails Details about the resource.
- * @param resourceDetails.type The type of the resource.
- * @param resourceDetails.id The id of the resource.
- * @param resourceDetails._integrationId _integrationId of the resource.
- */
-export default function getExistingResourcePagePath(resourceDetails = {}) {
-  let { type } = resourceDetails;
-  const { id, _integrationId } = resourceDetails;
-  let path;
-
-  if (type) {
-    if (RESOURCE_TYPE_SINGULAR_TO_PLURAL[type]) {
-      type = RESOURCE_TYPE_SINGULAR_TO_PLURAL[type];
-    }
-
-    const routeMap = {
-      accesstokens: 'tokens',
-    };
-
-    switch (type) {
-      case 'exports':
-      case 'imports':
-      case 'stacks':
-        path = `/${type}/edit/${type}/${id}`;
-        break;
-
-      case 'accesstokens':
-      case 'connections':
-        path = `/${routeMap[type] || type}?_id=${id}`;
-        break;
-
-      case 'flows':
-        path = `/integrations/${_integrationId ||
-          'none'}/settings/${type}/${id}/edit`;
-        break;
-
-      case 'integrations':
-        path = `/${type}/${id}/flows`;
-        break;
-
-      default:
-        path = undefined;
-    }
-  }
-
-  return getRoutePath(path);
-}
-
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
   mongodb: 'Mongodb',
   postgresql: 'RDBMS',
   mysql: 'RDBMS',
   mssql: 'RDBMS',
+  oracle: 'RDBMS',
   snowflake: 'RDBMS',
   netsuite: 'NetSuite',
   ftp: 'FTP',
@@ -122,6 +72,7 @@ export const adaptorTypeMap = {
   WebhookExport: 'webhook',
   DynamodbImport: 'dynamodb',
   DynamodbExport: 'dynamodb',
+  SimpleExport: 'file',
 };
 
 export const multiStepSaveResourceTypes = [
@@ -165,11 +116,16 @@ export function getResourceSubType(resource) {
     resourceType = adaptorTypeMap[adaptorType] || type;
   }
 
-  return {
+  const out = {
+    id: resource._id,
     type: resourceType,
     assistant,
     resourceType: inferResourceType(adaptorType),
   };
+
+  if (resource.offline === true) out.offline = true;
+
+  return out;
 }
 
 export function getResourceSubTypeFromAdaptorType(adaptorType) {
@@ -314,13 +270,16 @@ export function salesforceExportSelectOptions(data, fieldName) {
 /*
  * Given a resource, returns true if it is File Export / Import
  * FTP / S3 / DataLoader
+ * Note: DataLoader has an adaptorType 'SimpleExport' added recently
+ * Update this util once we make changes through out the application replacing type with adaptorType
  */
 export function isFileAdaptor(resource) {
   if (!resource) return false;
 
-  return resource.adaptorType
-    ? ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType])
-    : resource.type === 'simple';
+  return (
+    ['ftp', 's3'].includes(adaptorTypeMap[resource.adaptorType]) ||
+      resource.type === 'simple'
+  );
 }
 
 export const generateNewId = () => `new-${shortid.generate()}`;
@@ -343,6 +302,41 @@ export function isRealTimeOrDistributedResource(
   // For Imports Nestuite and Salesforce are Distributed Imports
   // Update If added any later
   return ['netsuite', 'salesforce'].includes(adaptorTypeMap[adaptorType]);
+}
+
+export function resourceCategory(resource = {}, isLookup, isImport) {
+  // eslint-disable-next-line no-nested-ternary
+  let blockType = isImport ? 'Import' : isLookup ? 'Lookup' : 'Export';
+
+  if (!isImport && !isLookup) {
+    blockType = isRealTimeOrDistributedResource(resource)
+      ? 'Listener'
+      : 'Export';
+  }
+
+  if (resource.adaptorType === 'SimpleExport') {
+    blockType = 'Data Loader';
+  }
+
+  if (
+    (['RESTExport', 'HTTPExport', 'NetSuiteExport', 'SalesforceExport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.type === 'blob') ||
+    ['FTPExport', 'S3Export'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  } else if (
+    (['RESTImport', 'HTTPImport', 'NetSuiteImport', 'SalesforceImport'].indexOf(
+      resource.adaptorType
+    ) >= 0 &&
+      resource.blobKeyPath) ||
+    ['FTPImport', 'S3Import'].indexOf(resource.adaptorType) >= 0
+  ) {
+    blockType = 'Transfer';
+  }
+
+  return blockType;
 }
 
 // All resources with type 'blob' is a Blob export and with 'blobKeyPath' is a blob import
@@ -490,11 +484,13 @@ export const getHelpUrl = (integrations, marketplaceConnectors) => {
     [, integrationId] = newurl;
   }
 
-  if (integrationId && integrations.find(i => i._id === integrationId)) {
+  if (integrationId && integrations && integrations.find(i => i._id === integrationId)) {
     connectorId = integrations.find(i => i._id === integrationId)._connectorId;
 
-    if (getHelpUrlForConnector(connectorId, marketplaceConnectors)) {
-      helpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
+    const connectorHelpUrl = getHelpUrlForConnector(connectorId, marketplaceConnectors);
+
+    if (connectorHelpUrl) {
+      helpUrl = connectorHelpUrl;
     }
     // Link https://celigosuccess.zendesk.com/hc/en-us/categories/203820768 seems to be broken recently.So we set https://celigosuccess.zendesk.com/hc/en-us as a default url in integration context.
     // else if (connectorId) {
@@ -601,6 +597,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
       mapping.fields = mapping.fields
         .map(fld => {
           if (subrecordsMap[fld.generate]) {
+            if (!fld.subRecordMapping) {
+              // eslint-disable-next-line no-param-reassign
+              fld.subRecordMapping = {};
+            }
             // eslint-disable-next-line no-param-reassign
             fld.subRecordMapping.recordType =
               subrecordsMap[fld.generate].recordType;
@@ -630,6 +630,10 @@ export const updateMappingsBasedOnNetSuiteSubrecords = (
               const fieldId = `${list.generate}[*].${fld.generate}`;
 
               if (subrecordsMap[fieldId]) {
+                if (!fld.subRecordMapping) {
+                  // eslint-disable-next-line no-param-reassign
+                  fld.subRecordMapping = {};
+                }
                 // eslint-disable-next-line no-param-reassign
                 fld.subRecordMapping.recordType =
                   subrecordsMap[fieldId].recordType;
@@ -775,3 +779,82 @@ export function isTradingPartnerSupported({environment, licenseActionDetails, ac
 export function isNetSuiteBatchExport(exportRes) {
   return ((exportRes.netsuite && exportRes.netsuite.type === 'search') || (exportRes.netsuite && exportRes.netsuite.restlet && exportRes.netsuite.restlet.searchId !== undefined));
 }
+export const isQueryBuilderSupported = (importResource = {}) => {
+  const {adaptorType} = importResource;
+
+  if (['MongoDbImport', 'DynamodbImport'].includes(adaptorType)) {
+    return true;
+  }
+  if (adaptorType === 'RDBMSImport' && !importResource.rdbms.queryType.find(q => ['BULK INSERT', 'MERGE'].includes(q))) {
+    return true;
+  }
+
+  return false;
+};
+
+export const getUniqueFieldId = fieldId => {
+  if (!fieldId) { return ''; }
+
+  // some field types have same field ids
+  switch (fieldId) {
+    case 'rdbms.queryInsert':
+      return 'rdbms.query.1';
+    case 'rdbms.queryUpdate':
+      return 'rdbms.query.0';
+    case 'http.bodyCreate':
+      return 'http.body.1';
+    case 'http.bodyUpdate':
+      return 'http.body.0';
+    case 'http.relativeURIUpdate':
+      return 'http.relativeURI.0';
+    case 'http.relativeURICreate':
+      return 'http.relativeURI.1';
+    case 'rest.relativeURIUpdate':
+      return 'rest.relativeURI.0';
+    case 'rest.relativeURICreate':
+      return 'rest.relativeURI.1';
+    case 'rest.bodyUpdate':
+      return 'rest.body.0';
+    case 'rest.bodyCreate':
+      return 'rest.body.1';
+
+    default:
+      return fieldId;
+  }
+};
+
+export const getUserAccessLevelOnConnection = (permissions, ioIntegrations = [], connectionId) => {
+  let accessLevelOnConnection;
+
+  if (
+    [
+      USER_ACCESS_LEVELS.ACCOUNT_OWNER,
+      USER_ACCESS_LEVELS.ACCOUNT_MANAGE,
+      USER_ACCESS_LEVELS.ACCOUNT_MONITOR,
+    ].includes(permissions.accessLevel)
+  ) {
+    accessLevelOnConnection = permissions.accessLevel;
+  } else if (USER_ACCESS_LEVELS.TILE === permissions.accessLevel) {
+    const ioIntegrationsWithConnectionRegistered = ioIntegrations.filter(
+      i =>
+      i?._registeredConnectionIds &&
+      i._registeredConnectionIds.includes(connectionId)
+    );
+
+    ioIntegrationsWithConnectionRegistered.forEach(i => {
+      if ((permissions.integrations[i._id] || {}).accessLevel) {
+        if (!accessLevelOnConnection) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        } else if (
+          accessLevelOnConnection === INTEGRATION_ACCESS_LEVELS.MONITOR
+        ) {
+          accessLevelOnConnection = (permissions.integrations[i._id] || {})
+            .accessLevel;
+        }
+      }
+    });
+  }
+
+  return accessLevelOnConnection;
+};

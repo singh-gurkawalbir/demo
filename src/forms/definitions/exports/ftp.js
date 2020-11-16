@@ -109,6 +109,10 @@ export default {
       newValues['/file/compressionFormat'] = undefined;
     }
 
+    if (!newValues['/file/encoding']) {
+      newValues['/file/encoding'] = undefined;
+    }
+
     delete newValues['/file/decompressFiles'];
 
     return {
@@ -181,6 +185,7 @@ export default {
           ],
         },
       ],
+      visible: r => !(r && r.isLookup),
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -191,6 +196,14 @@ export default {
 
       defaultValue: r => {
         const isNew = isNewId(r._id);
+
+        if (r && r.isLookup) {
+          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
+            return 'records';
+          }
+
+          return 'blob';
+        }
 
         // if its create
         if (isNew) return 'records';
@@ -209,12 +222,6 @@ export default {
       fieldId: 'uploadFile',
       refreshOptionsOnChangesTo: 'file.type',
       placeholder: 'Sample file (that would be parsed)',
-      visibleWhen: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     'file.csv': { fieldId: 'file.csv',
       uploadSampleDataFieldName: 'uploadFile',
@@ -228,21 +235,9 @@ export default {
           is: ['csv'],
         },
       ] },
-    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
       disabledWhenAll: r => {
         if (isNewId(r._id)) {
           return [{ field: 'uploadfile', is: [''] }];
@@ -251,13 +246,7 @@ export default {
         return [];
       },
     },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
@@ -274,34 +263,10 @@ export default {
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
-    'edix12.format': { fieldId: 'edix12.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'fixed.format': { fieldId: 'fixed.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'edifact.format': { fieldId: 'edifact.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
       refreshOptionsOnChangesTo: [
@@ -369,73 +334,62 @@ export default {
     },
     apiIdentifier: { fieldId: 'apiIdentifier' },
     exportOneToMany: { formId: 'exportOneToMany' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
     'file.batchSize': {
       fieldId: 'file.batchSize',
     },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'General',
-            fields: ['common', 'outputMode'],
-          },
-          {
-            collapsed: true,
-            label: 'How would you like to parse files?',
-            fields: [
-              'file.type',
-              'uploadFile',
-              'file.json.resourcePath',
-              'file.xlsx.hasHeaderRow',
-              'file.xlsx.rowsPerRecord',
-              'file.xlsx.keyColumns',
-              'edix12.format',
-              'fixed.format',
-              'edifact.format',
-              'file.filedefinition.rules'],
-            type: 'indent',
-            containers: [{fields: [
-              'parsers',
-              'file.csv',
-            ]}],
-          },
-          {
-            collapsed: true,
-            label: 'Where would you like to transfer from?',
-            fields: [
-              'ftp.directoryPath',
-              'ftp.fileNameStartsWith',
-              'ftp.fileNameEndsWith',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: [
-              'file.decompressFiles',
-              'file.compressionFormat',
-              'file.skipDelete',
-              'fileMetadata',
-              'ftp.backupDirectoryPath',
-              'file.encoding',
-              'pageSize',
-              'dataURITemplate',
-              'skipRetries',
-              'apiIdentifier',
-              'file.batchSize'],
-          },
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'outputMode'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: [
+          'file.type',
+          'uploadFile',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+          'edix12.format',
+          'fixed.format',
+          'edifact.format',
+          'file.filedefinition.rules'],
+        type: 'indent',
+        containers: [{fields: [
+          'parsers',
+          'file.csv',
+        ]}],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like to transfer from?',
+        fields: [
+          'ftp.directoryPath',
+          'ftp.fileNameStartsWith',
+          'ftp.fileNameEndsWith',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'file.decompressFiles',
+          'file.compressionFormat',
+          'file.skipDelete',
+          'fileMetadata',
+          'ftp.backupDirectoryPath',
+          'file.encoding',
+          'pageSize',
+          'dataURITemplate',
+          'skipRetries',
+          'apiIdentifier',
+          'file.batchSize'],
       },
     ],
   },

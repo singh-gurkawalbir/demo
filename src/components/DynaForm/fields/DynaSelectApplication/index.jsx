@@ -11,6 +11,8 @@ import AppPill from './AppPill';
 import ErroredMessageComponent from '../ErroredMessageComponent';
 import SearchIcon from '../../../icons/SearchIcon';
 import actions from '../../../../actions';
+import useFormContext from '../../../Form/FormContext';
+import { isNewId } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   optionRoot: {
@@ -49,8 +51,25 @@ const useStyles = makeStyles(theme => ({
     flexWrap: 'wrap',
     marginBottom: theme.spacing(2),
   },
+  formControl: {
+    width: '100%',
+  },
 }));
 
+export const isLoadingANewConnectionForm = ({fieldMeta, operation, resourceType, resourceId }) => {
+  // if its new resourceId and its of connections resourceType having a single field
+  // its probably a new connections resource form
+  const isNew = isNewId(resourceId);
+
+  if (fieldMeta?.fieldMap &&
+     Object.keys(fieldMeta?.fieldMap)?.length === 1 &&
+     isNew &&
+      operation === 'add' && resourceType === 'connections') {
+    return true;
+  }
+
+  return false;
+};
 export default function SelectApplication(props) {
   const {
     disabled,
@@ -66,7 +85,7 @@ export default function SelectApplication(props) {
     value = isMulti ? [] : '',
     placeholder,
     onFieldChange,
-    proceedOnChange,
+    formKey,
   } = props;
   const match = useRouteMatch();
   const classes = useStyles();
@@ -75,6 +94,15 @@ export default function SelectApplication(props) {
   const isDataLoader = useSelector(state =>
     selectors.isDataLoader(state, flowId)
   );
+  const data = useSelector(state =>
+    selectors.resourceData(state, resourceType, resourceId)
+  );
+  const connectorApplications = data?.merged?.applications;
+
+  const {fieldMeta} = useFormContext(formKey);
+  const { operation } = match.params;
+  const proceedOnChange = isLoadingANewConnectionForm({fieldMeta, operation, resourceType, resourceId});
+
   const groupedApps = useMemo(
     () =>
       groupApplications(resourceType, {
@@ -83,6 +111,12 @@ export default function SelectApplication(props) {
       }),
     [appType, fieldOptions, isDataLoader, resourceType]
   );
+
+  if (connectorApplications) {
+    groupedApps.forEach((groupedApp, i) => {
+      groupedApps[i].connectors = groupedApp.connectors.filter(connector => connectorApplications.includes(connector.assistant || connector.type));
+    });
+  }
 
   // Custom styles for Select Control
   const customStyles = {

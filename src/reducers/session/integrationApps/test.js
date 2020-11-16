@@ -2134,7 +2134,7 @@ describe('integrationApps reducer test cases', () => {
           installer: {},
           settings: {
             '1-2': { submitComplete: true },
-            'integrationId-flowId': { submitComplete: false },
+            'integrationId-flowId': { submitComplete: false, saveStatus: 'saving' },
           },
           uninstaller: {},
           uninstaller2: {},
@@ -2159,7 +2159,7 @@ describe('integrationApps reducer test cases', () => {
           addStore: {},
           installer: {},
           settings: {
-            'integrationId-flowId': { submitComplete: false },
+            'integrationId-flowId': { submitComplete: false, saveStatus: 'saving' },
           },
           uninstaller: {},
           uninstaller2: {},
@@ -2474,7 +2474,9 @@ describe('integrationApps reducer test cases', () => {
       });
     });
   });
+});
 
+describe('integrationApps selectors test cases', () => {
   describe('integrationApps uninstaller2.0 selectors', () => {
     describe('uninstall2Data', () => {
       test('should return empty state when no match found.', () => {

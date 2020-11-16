@@ -228,6 +228,10 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
   let paths = [];
   let type;
 
+  if (!sampleData || typeof sampleData !== 'object') {
+    return paths;
+  }
+
   Object.keys(sampleData).forEach(property => {
     if (property in sampleData) {
       // do stuff
@@ -301,6 +305,10 @@ export function getJSONPathArrayWithSpecialCharactersWrapped(
  * ]
  */
 export function wrapSpecialChars(item = {}) {
+  if (typeof item !== 'object' || item === null) {
+    return item;
+  }
+
   let { id } = item;
 
   if (/\W/.test(id)) {

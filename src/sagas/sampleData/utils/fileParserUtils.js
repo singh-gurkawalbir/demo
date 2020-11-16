@@ -1,7 +1,7 @@
 import { call } from 'redux-saga/effects';
 import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
-import { processJsonSampleData } from '../../../utils/sampleData';
+import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
 
 /*
  * Below sagas are Parser sagas for resource sample data
@@ -96,7 +96,7 @@ export function* parseFileData({ sampleData, resource }) {
  * Given Sample data and fileDefinitionId , parses based on saved rules and returns JSON
  * @output: { data: parsedSampleData}
  */
-export function* parseFileDefinition({ sampleData, resource }) {
+export function* parseFileDefinition({ sampleData, resource, mode = 'parse' }) {
   const { file = {} } = resource;
   const { _fileDefinitionId, resourcePath } = file.fileDefinition || {};
 
@@ -125,9 +125,12 @@ export function* parseFileDefinition({ sampleData, resource }) {
       parsedFileDefinitionData.data
     ) {
       const { data: sampleData } = parsedFileDefinitionData || {};
-      const parsedSampleData = processJsonSampleData(sampleData, {
+      const parsedSampleData = mode === 'parse' ? processJsonSampleData(sampleData, {
         resourcePath,
-      });
+      })
+        : processJsonPreviewData(sampleData, {
+          resourcePath,
+        });
 
       return { data: parsedSampleData };
     }

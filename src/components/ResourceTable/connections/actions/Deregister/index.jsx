@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import CloseIcon from '../../../../icons/CloseIcon';
@@ -8,14 +8,14 @@ import useConfirmDialog from '../../../../ConfirmDialog';
 export default {
   label: 'Deregister connection',
   icon: CloseIcon,
-  hasAccess: ({ state, integrationId }) => {
+  useHasAccess: ({ integrationId }) => {
     const isStandalone = integrationId === 'none';
-    const hasAccess = selectors.resourcePermissions(
+    const hasAccess = useSelector(state => selectors.resourcePermissions(
       state,
       'integrations',
       integrationId,
       'connections'
-    ).edit;
+    ))?.edit;
 
     return hasAccess && !isStandalone;
   },

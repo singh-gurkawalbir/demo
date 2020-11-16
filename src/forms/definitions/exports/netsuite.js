@@ -69,7 +69,7 @@ export default {
     if (netsuiteType === 'restlet') {
       newValues['/type'] = newValues['/restlet/type'];
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
-      newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'];
+      newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'] && Array.isArray(newValues['/restlet/delta/dateField']) ? newValues['/restlet/delta/dateField'].join(',') : newValues['/restlet/delta/dateField'];
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
@@ -114,6 +114,8 @@ export default {
       newValues['/type'] = 'blob';
       delete newValues['/netsuite/type'];
     }
+
+    newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
 
     try {
       newValues['/netsuite/distributed/qualifier'] = JSON.parse(
@@ -190,7 +192,6 @@ export default {
       name: 'apiType',
       type: 'radiogroup',
       label: 'NetSuite API type',
-      required: true,
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -292,6 +293,33 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    'netsuite.restlet.useSS2Restlets': {
+      fieldId: 'netsuite.restlet.useSS2Restlets',
+      type: 'netsuiteapiversion',
+      label: 'NetSuite API version',
+      defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
+      defaultDisabled: r => {
+        if (!isNewId(r._id)) {
+          return true;
+        }
+
+        return false;
+      },
+      options: [
+        {
+          items: [
+            { label: 'SuiteScript 1.0', value: 'false' },
+            { label: 'SuiteScript 2.0 (beta)', value: 'true' },
+          ],
+        },
+      ],
+      visibleWhenAll: [{ field: 'netsuite.api.type', is: ['restlet'] }, { field: 'netsuite.execution.type', is: ['scheduled'] },
+        { field: 'outputMode', is: ['records'] }],
+      isNew: r => isNewId(r._id),
+      connectionId: r => r?._connectionId,
+      resourceType: 'exports',
+      resourceId: r => r?._id,
+    },
     'netsuite.restlet.criteria': {
       fieldId: 'netsuite.restlet.criteria',
       disabledWhen: [
@@ -325,9 +353,6 @@ export default {
     },
     common: { formId: 'common' },
     settings: { fieldId: 'settings' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
     'delta.dateField': {
       id: 'delta.dateField',
       label: 'Date field',
@@ -433,14 +458,15 @@ export default {
     },
     'restlet.delta.dateField': {
       id: 'restlet.delta.dateField',
-      label: 'Date field',
+      label: 'Date field(s)',
       type: 'refreshableselect',
+      multiselect: true,
       helpKey: 'export.delta.dateField',
       filterKey: 'suitescript-dateField',
       required: true,
       placeholder: 'Please select a date field',
       connectionId: r => r && r._connectionId,
-      defaultValue: r => r && r.delta && r.delta.dateField,
+      defaultValue: r => r && r.delta && r.delta.dateField && r.delta.dateField.split(','),
       refreshOptionsOnChangesTo: ['netsuite.restlet.recordType'],
       visibleWhenAll: [
         { field: 'netsuite.restlet.recordType', isNot: [''] },
@@ -489,64 +515,77 @@ export default {
     },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
+        collapsed: true,
+        label: 'General',
+        fields: [
+          'common',
+          'outputMode',
+          'exportOneToMany',
+          'netsuite.execution.type',
+        ],
+      },
+      {
+        collapsed: true,
+        label: r => {
+          if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
+            return 'What would you like to transfer?';
+          }
+          if (
+            r.resourceType === 'realtime' ||
+                r.type === 'distributed'
+          ) {
+            return 'Configure real-time export in source application';
+          }
+
+          return 'What would you like to export?';
+        },
+        fields: [
+          'distributed',
+          'restlet',
+          'search',
+          'netsuite.skipGrouping',
+          'blob',
+          'netsuite.restlet.criteria',
+          'netsuite.webservices.criteria',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Configure export type',
+        fields: [
+          'type',
+          'delta.dateField',
+          'delta.lagOffset',
+          'once.booleanField',
+          'restlet.type',
+          'restlet.delta.dateField',
+          'restlet.delta.lagOffset',
+          'restlet.once.booleanField',
+        ],
+      },
+      {
+        collapsed: true,
+        label: 'Advanced',
         containers: [
           {
-            collapsed: true,
-            label: 'General',
-            fields: [
-              'common',
-              'outputMode',
-              'exportOneToMany',
-              'netsuite.execution.type',
-            ],
-          },
-          {
-            collapsed: true,
-            label: r => {
-              if (r.resourceType === 'lookupFiles' || r.type === 'blob') {
-                return 'What would you like to transfer?';
-              }
-              if (
-                r.resourceType === 'realtime' ||
-                r.type === 'distributed'
-              ) {
-                return 'Configure real-time export in source application';
-              }
-
-              return 'What would you like to export?';
-            },
             fields: [
               'netsuite.api.type',
-              'distributed',
-              'restlet',
-              'search',
-              'netsuite.skipGrouping',
-              'blob',
-              'netsuite.restlet.criteria',
-              'netsuite.webservices.criteria',
             ],
           },
           {
-            collapsed: true,
-            label: 'Configure export type',
-            fields: [
-              'type',
-              'delta.dateField',
-              'delta.lagOffset',
-              'once.booleanField',
-              'restlet.type',
-              'restlet.delta.dateField',
-              'restlet.delta.lagOffset',
-              'restlet.once.booleanField',
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'netsuite.restlet.useSS2Restlets',
+                ],
+              },
             ],
           },
           {
-            collapsed: true,
-            label: 'Advanced',
             fields: [
               'netsuite.blob.purgeFileAfterExport',
               'dataURITemplate',
@@ -559,9 +598,6 @@ export default {
             ],
           },
         ],
-      },
-      {
-        fields: ['exportPanel'],
       },
     ],
   },

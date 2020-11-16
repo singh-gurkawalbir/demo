@@ -15,6 +15,8 @@ export default function reducer(state = {}, action) {
     formValues,
     skipClose = false,
     initData,
+    bundleUrl,
+    bundleVersion,
   } = action;
   const key = `${resourceType}-${resourceId}`;
   const stateCopy = { ...state, [key]: { ...state[key] } };
@@ -46,7 +48,7 @@ export default function reducer(state = {}, action) {
           initComplete: true,
           fieldMeta,
           flowId,
-          showFormValidationsBeforeTouch: false,
+          showValidationBeforeTouched: false,
         },
       };
     case actionTypes.RESOURCE_FORM.INIT_FAILED:
@@ -62,26 +64,6 @@ export default function reducer(state = {}, action) {
       stateCopy[key] && delete stateCopy[key].initData;
 
       return stateCopy;
-
-    case actionTypes.RESOURCE_FORM.SHOW_FORM_VALIDATION_ERRORS:
-      // only after form successfully intializes does it make sense to show validations
-      // if there is no form state it does not make sense to create a state and tie this property
-
-      // commenting below as some resources (eg integration) might not be initialized
-      // if (!state[key] || !state[key].initComplete) return state;
-
-      return {
-        ...state,
-        // Are there any issues with storing fn pointers here?
-        // if the state is not serializable, will we recover properly from
-        // refreshing session? Doing this makes the submit resource saga
-        // easier as we dont need to lookup the preSave handler...
-        [key]: {
-          ...state[key],
-          showFormValidationsBeforeTouch: true,
-        },
-      };
-
     case actionTypes.RESOURCE_FORM.SUBMIT:
       return {
         ...state,
@@ -92,6 +74,26 @@ export default function reducer(state = {}, action) {
           submitFailed: false,
           formValues: undefined,
           skipClose,
+        },
+      };
+
+    case actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          bundleVersion,
+          bundleUrl,
+          showBundleInstallNotification: true,
+        },
+      };
+
+    case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
+      return {
+        ...state,
+        [key]: {
+          ...state[key],
+          showBundleInstallNotification: false,
         },
       };
 

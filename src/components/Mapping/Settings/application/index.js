@@ -65,6 +65,7 @@ export default {
   getMetaData: params => {
     const {
       value,
+      isCategoryMapping,
       importResource,
     } = params;
     const {adaptorType} = importResource;
@@ -93,6 +94,10 @@ export default {
       }
 
       default:
+    }
+
+    if (isCategoryMapping) {
+      fieldMeta = netsuiteMappingSettings.getMetaData(params);
     }
 
     const { isNotEditable } = value;
@@ -147,15 +152,15 @@ export default {
       }
     }
 
-    if (formVal.discardIfEmpty) {
+    if ('discardIfEmpty' in formVal) {
       settings.discardIfEmpty = formVal.discardIfEmpty;
     }
 
-    if (formVal.useAsAnInitializeValue) {
+    if ('useAsAnInitializeValue' in formVal) {
       settings.useAsAnInitializeValue = formVal.useAsAnInitializeValue;
     }
 
-    if (formVal.immutable) {
+    if ('immutable' in formVal) {
       settings.immutable = formVal.immutable;
     }
 

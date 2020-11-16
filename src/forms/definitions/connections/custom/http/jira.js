@@ -22,10 +22,6 @@ export default {
   preSave: formValues => {
     const newValues = { ...formValues };
 
-    if (newValues['/mode'] === 'cloud') {
-      newValues['/_agentId'] = undefined;
-    }
-    delete newValues['/mode'];
     newValues['/type'] = 'http';
     newValues['/assistant'] = 'jira';
     newValues['/http/auth/type'] = 'basic';
@@ -37,25 +33,6 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    mode: {
-      id: 'mode',
-      type: 'radiogroup',
-      label: 'Mode',
-      defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
-      options: [
-        {
-          items: [
-            { label: 'Cloud', value: 'cloud' },
-            { label: 'On-premise', value: 'onpremise' },
-          ],
-        },
-      ],
-      visible: r => !(r?._connectorId),
-    },
-    _agentId: {
-      fieldId: '_agentId',
-      visibleWhen: [{ field: 'mode', is: ['onpremise'] }],
-    },
     'http.baseURI': {
       fieldId: 'http.baseURI',
       helpKey: 'jira.connection.http.baseURI',
@@ -77,7 +54,7 @@ export default {
   layout: {
     type: 'collapse',
     containers: [
-      { collapsed: true, label: 'General', fields: ['name', 'application', 'mode', '_agentId'] },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
         fields: ['http.baseURI',

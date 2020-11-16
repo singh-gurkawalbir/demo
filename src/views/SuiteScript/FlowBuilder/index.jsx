@@ -360,11 +360,12 @@ function FlowBuilder() {
             {/* CANVAS END */}
             <BottomDrawer
               ssLinkedConnectionId={ssLinkedConnectionId}
-              flow={flow}
+              flowId={flowId}
               size={bottomDrawerSize}
               setSize={setBottomDrawerSize}
               tabValue={tabValue}
               setTabValue={setTabValue}
+              _flowId={flow?._flowId} /* Scenario Id on the flow record in NS */
             />
           </div>
         </div>

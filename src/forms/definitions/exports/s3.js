@@ -181,6 +181,7 @@ export default {
           ],
         },
       ],
+      visible: r => !(r && r.isLookup),
       defaultDisabled: r => {
         const isNew = isNewId(r._id);
 
@@ -191,6 +192,14 @@ export default {
 
       defaultValue: r => {
         const isNew = isNewId(r._id);
+
+        if (r && r.isLookup) {
+          if (r?.resourceType === 'lookupRecords' || r?.file?.type) {
+            return 'records';
+          }
+
+          return 'blob';
+        }
 
         // if its create
         if (isNew) return 'records';
@@ -226,12 +235,6 @@ export default {
     'file.xlsx.hasHeaderRow': { fieldId: 'file.xlsx.hasHeaderRow' },
     'file.xlsx.rowsPerRecord': {
       fieldId: 'file.xlsx.rowsPerRecord',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
       disabledWhenAll: r => {
         if (isNewId(r._id)) {
           return [{ field: 'uploadfile', is: [''] }];
@@ -240,13 +243,7 @@ export default {
         return [];
       },
     },
-    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'file.xlsx.keyColumns': { fieldId: 'file.xlsx.keyColumns' },
     parsers: {
       fieldId: 'parsers',
       uploadSampleDataFieldName: 'uploadFile',
@@ -263,42 +260,12 @@ export default {
     },
     'file.json.resourcePath': {
       fieldId: 'file.json.resourcePath',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
-    'edix12.format': { fieldId: 'edix12.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'fixed.format': { fieldId: 'fixed.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
-    'edifact.format': { fieldId: 'edifact.format',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ] },
+    'edix12.format': { fieldId: 'edix12.format' },
+    'fixed.format': { fieldId: 'fixed.format' },
+    'edifact.format': { fieldId: 'edifact.format' },
     'file.filedefinition.rules': {
       fieldId: 'file.filedefinition.rules',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
       refreshOptionsOnChangesTo: [
         'edix12.format',
         'fixed.format',
@@ -310,12 +277,6 @@ export default {
     },
     'file.fileDefinition.resourcePath': {
       fieldId: 'file.fileDefinition.resourcePath',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
     },
     fileMetadata: {
       id: 'fileMetadata',
@@ -369,70 +330,59 @@ export default {
       fieldId: 'skipRetries',
     },
     apiIdentifier: { fieldId: 'apiIdentifier' },
-    exportPanel: {
-      fieldId: 'exportPanel',
-    },
   },
   layout: {
-    type: 'column',
+    type: 'collapse',
     containers: [
       {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'General',
-            fields: ['common', 'outputMode'],
-          },
-          {
-            collapsed: true,
-            label: 'How would you like to parse files?',
-            fields: [
-              'file.type',
-              'uploadFile',
-              'file.json.resourcePath',
-              'file.xlsx.hasHeaderRow',
-              'file.xlsx.rowsPerRecord',
-              'file.xlsx.keyColumns',
-              'edix12.format',
-              'fixed.format',
-              'edifact.format',
-              'file.filedefinition.rules'],
-            type: 'indent',
-            containers: [{fields: [
-              'parsers',
-              'file.csv',
-            ]}],
-          },
-          {
-            collapsed: true,
-            label: 'Where would you like to transfer from?',
-            fields: [
-              's3.region',
-              's3.bucket',
-              's3.keyStartsWith',
-              's3.keyEndsWith',
-            ],
-          },
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: [
-              'file.decompressFiles',
-              'file.compressionFormat',
-              'file.skipDelete',
-              'fileMetadata',
-              's3.backupBucket',
-              'file.encoding',
-              'pageSize',
-              'dataURITemplate',
-              'skipRetries',
-              'apiIdentifier'],
-          },
+        collapsed: true,
+        label: 'General',
+        fields: ['common', 'outputMode'],
+      },
+      {
+        collapsed: true,
+        label: 'How would you like to parse files?',
+        fields: [
+          'file.type',
+          'uploadFile',
+          'file.json.resourcePath',
+          'file.xlsx.hasHeaderRow',
+          'file.xlsx.rowsPerRecord',
+          'file.xlsx.keyColumns',
+          'edix12.format',
+          'fixed.format',
+          'edifact.format',
+          'file.filedefinition.rules'],
+        type: 'indent',
+        containers: [{fields: [
+          'parsers',
+          'file.csv',
+        ]}],
+      },
+      {
+        collapsed: true,
+        label: 'Where would you like to transfer from?',
+        fields: [
+          's3.region',
+          's3.bucket',
+          's3.keyStartsWith',
+          's3.keyEndsWith',
         ],
       },
       {
-        fields: ['exportPanel'],
+        collapsed: true,
+        label: 'Advanced',
+        fields: [
+          'file.decompressFiles',
+          'file.compressionFormat',
+          'file.skipDelete',
+          'fileMetadata',
+          's3.backupBucket',
+          'file.encoding',
+          'pageSize',
+          'dataURITemplate',
+          'skipRetries',
+          'apiIdentifier'],
       },
     ],
   },

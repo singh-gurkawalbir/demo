@@ -3,7 +3,6 @@ import Typography from '@material-ui/core/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { deepClone } from 'fast-json-patch';
-import { FormContext } from 'react-forms-processor/dist';
 import {v4} from 'uuid';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
@@ -12,12 +11,14 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
 import { getWebhookUrl } from '../../../utils/resource';
+import useFormContext from '../../Form/FormContext';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import WarningIcon from '../../icons/WarningIcon';
 
 const useStyles = makeStyles(theme => ({
   dynaWebhookTokenWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
   dynaWebhookTokenField: {
     flex: 1,
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function DynaWebhookTokenGenerator(props) {
+export default function DynaWebhookTokenGenerator(props) {
   const {
     onFieldChange,
     resourceId,
@@ -40,10 +41,11 @@ function DynaWebhookTokenGenerator(props) {
     value,
     buttonLabel,
     setFieldIds = [],
-    formContext,
     name,
+    formKey,
     provider: webHookProvider,
   } = props;
+  const formContext = useFormContext(formKey);
   const { value: formValues } = formContext;
   const classes = useStyles();
   const [token, setToken] = useState(null);
@@ -54,7 +56,7 @@ function DynaWebhookTokenGenerator(props) {
   );
   const [enquesnackbar] = useEnqueueSnackbar();
   const handleCopy = useCallback(() =>
-    enquesnackbar({ message: 'Token copied to clipboard' }), [enquesnackbar]);
+    enquesnackbar({ message: 'Token copied to clipboard.' }), [enquesnackbar]);
   const handleGenerateClick = useCallback(() => {
     const tokenValue = v4().replace(/-/g, '');
 
@@ -158,11 +160,3 @@ function DynaWebhookTokenGenerator(props) {
     </>
   );
 }
-
-const DynaWebhookTokenGeneratorFormContext = props => (
-  <FormContext.Consumer {...props}>
-    {form => <DynaWebhookTokenGenerator {...props} formContext={form} />}
-  </FormContext.Consumer>
-);
-
-export default DynaWebhookTokenGeneratorFormContext;

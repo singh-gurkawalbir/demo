@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { isEmpty } from 'lodash';
+import { isEmpty, isArray, isObject } from 'lodash';
 import ModalDialog from '../../../ModalDialog';
 import DynaForm from '../..';
 import DynaSubmit from '../../DynaSubmit';
@@ -11,6 +11,7 @@ import {
   PARAMETER_LOCATION,
 } from '../../../../utils/assistant';
 import ErroredMessageComponent from '../ErroredMessageComponent';
+import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
 
 const useStyles = makeStyles({
@@ -26,6 +27,13 @@ const useStyles = makeStyles({
   configureLabelWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
+  },
+  searchParamForm: {
+    overflow: 'visible !important',
+    padding: '0px !important',
+  },
+  searchParamModalContent: {
+    overflow: 'visible !important',
   },
 });
 const SearchParamsModal = props => {
@@ -56,29 +64,58 @@ const SearchParamsModal = props => {
     onClose();
   }
 
+  const validationHandler = field => {
+    if (field?.id && fieldDetailsMap[field.id]) {
+      if (field.value) {
+        if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
+          if (fieldDetailsMap[field.id].type === 'array') {
+            if (!isArray(field.value)) {
+              return 'Must be an array.';
+            }
+          } else if (fieldDetailsMap[field.id].type === 'json') {
+            if (!isObject(field.value) || isArray(field.value)) {
+              return 'Must be an object.';
+            }
+          }
+        }
+      }
+    }
+  };
+
+  const formKey = useFormInitWithPermissions({
+    fieldMeta: {
+      fieldMap,
+      layout,
+    },
+    validationHandler,
+  });
+  const classes = useStyles();
+
   return (
-    <ModalDialog show onClose={onClose}>
+    <ModalDialog show onClose={onClose} className={classes.searchParamModalContent}>
       <>
         <span>Search parameters</span>
       </>
-      <>
+      <div>
         <DynaForm
+          formKey={formKey}
+          className={classes.searchParamForm}
           fieldMeta={{
             fieldMap,
             layout,
-          }}>
-          <div>
-            <DynaSubmit onClick={onSaveClick}>Save</DynaSubmit>
-            <Button
-              data-test="cancelSearchParams"
-              onClick={onClose}
-              variant="text"
-              color="primary">
-              Cancel
-            </Button>
-          </div>
-        </DynaForm>
-      </>
+          }} />
+      </div>
+      <div>
+        <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
+        <Button
+          data-test="cancelSearchParams"
+          onClick={onClose}
+          variant="text"
+          color="primary">
+          Cancel
+        </Button>
+      </div>
+
     </ModalDialog>
   );
 };
@@ -114,7 +151,7 @@ export default function DynaAssistantSearchParams(props) {
       <div className={classes.dynaAssSearchParamsWrapper}>
         <div className={classes.configureLabelWrapper}>
           <FormLabel className={classes.dynaAssistantFormLabel}>
-            Configure search parameters
+            {label}
           </FormLabel>
           {/* {Todo (shiva): we need helpText for the component} */}
           <FieldHelp {...props} helpText="Configure search parameters" />

@@ -5,11 +5,13 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Typography } from '@material-ui/core';
 import actions from '../../../../../../../actions';
 import LoadSuiteScriptResources from '../../../../../../../components/SuiteScript/LoadResources';
-import { ActionsFactory } from '../../../../../../../components/SuiteScript/ResourceFormFactory';
 import { integrationSettingsToDynaFormMetadata } from '../../../../../../../forms/utils';
 import { selectors } from '../../../../../../../reducers';
 import Loader from '../../../../../../../components/Loader';
 import Spinner from '../../../../../../../components/Spinner';
+import { ActionsPanel } from '../../../../../../Integration/App/panels/Flows';
+import { FormStateManager } from '../../../../../../../components/ResourceFormFactory';
+import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMemo';
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -37,13 +39,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SavingMask = () => (
+export const SavingMask = () => (
   <Loader open>
     <Typography variant="h4">Saving...</Typography>
     <Spinner color="primary" />
   </Loader>
 );
 
+const SettingsForm = props => {
+  const {formKey, fieldMeta, ...rest} = props;
+
+  return (
+    <>
+      <FormStateManager {...props} formKey={formKey} />
+      <ActionsPanel
+        {...fieldMeta}
+        actionProps={{...rest, formKey }}
+  />
+    </>
+  );
+};
 export const SuiteScriptForm = props => {
   const dispatch = useDispatch();
 
@@ -71,21 +86,18 @@ export const SuiteScriptForm = props => {
   return (
     <>
       {status === 'saving' && <SavingMask />}
-      <ActionsFactory
+      <SettingsForm
         key={count}
         {...props}
     />
     </>
   );
 };
-
 export default function ConfigureSettings({ ssLinkedConnectionId, integrationId, sectionId, id, integrationAppName}) {
   const classes = useStyles();
-  const section = useSelector(state => {
-    const sections = selectors.suiteScriptIASections(state, integrationId, ssLinkedConnectionId);
+  const sections = useSelectorMemo(selectors.makeSuiteScriptIASections, integrationId, ssLinkedConnectionId);
 
-    return sections.find(s => s.titleId === sectionId);
-  }, shallowEqual);
+  const section = sections.find(s => s.titleId === sectionId);
 
   const translatedMeta = useMemo(
     () => integrationSettingsToDynaFormMetadata(

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { isNaN } from 'lodash';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
@@ -17,9 +18,29 @@ export default function DynaRefreshableStaticMap(props) {
     filterKey,
     commMetaPath,
     disableFetch,
+    preferMapValueAsNum = false,
+    onFieldChange,
     options = {},
   } = props;
-  const optionsMap = [
+
+  const handleFieldChange = useCallback((id, val) => {
+    if (preferMapValueAsNum) {
+      const formattedValue = val.map(item => {
+        const formattedItem = {...item};
+        const currVal = formattedItem[valueName];
+
+        formattedItem[valueName] = isNaN(parseInt(currVal, 10)) ? currVal : parseInt(currVal, 10);
+
+        return formattedItem;
+      });
+
+      onFieldChange(id, formattedValue);
+    } else {
+      onFieldChange(id, val);
+    }
+  }, [onFieldChange, preferMapValueAsNum, valueName]);
+
+  const optionsMap = useMemo(() => ([
     {
       id: keyName,
       label: keyLabel,
@@ -36,17 +57,17 @@ export default function DynaRefreshableStaticMap(props) {
       options: [],
       supportsRefresh: true,
     },
-  ];
-  let computedValue;
+  ]), [keyLabel, keyName, valueLabel, valueName]);
+  const computedValue = useMemo(() => {
+    if (map && !value) {
+      return Object.keys(map || {}).map(key => ({
+        [keyName]: key,
+        [valueName]: map[key],
+      }));
+    }
 
-  if (map && !value) {
-    computedValue = Object.keys(map || {}).map(key => ({
-      [keyName]: key,
-      [valueName]: map[key],
-    }));
-  } else {
-    computedValue = value;
-  }
+    return value;
+  }, [keyName, map, value, valueName]);
 
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const dispatch = useDispatch();
@@ -101,7 +122,8 @@ export default function DynaRefreshableStaticMap(props) {
     dispatch(
       actions.metadata.refresh(
         connectionId,
-        options.commMetaPath || commMetaPath
+        options.commMetaPath || commMetaPath,
+        {refreshCache: true}
       )
     );
   };
@@ -114,6 +136,7 @@ export default function DynaRefreshableStaticMap(props) {
       shouldReset={!!metadata}
       optionsMap={optionsMap}
       value={computedValue}
+      onFieldChange={handleFieldChange}
       handleRefreshClickHandler={handleRefreshClick}
     />
   );

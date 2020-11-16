@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
   dynaURIWrapper: {
     flexDirection: 'row !important',
+    display: 'flex',
   },
 }));
 
@@ -29,7 +30,9 @@ export default function DynaURI(props) {
     resourceType,
     flowId,
     description,
+    formKey,
     disableEditorV2 = false,
+    enableEditorV2 = false,
   } = props;
   const classes = useStyles();
   const handleOpenDrawer = usePushRightDrawer(id);
@@ -46,6 +49,7 @@ export default function DynaURI(props) {
     <>
       <div>
         <DynaEditorWithFlowSampleData
+          formKey={formKey}
           title={editorTitle}
           fieldId={id}
           onSave={handleSave}
@@ -56,6 +60,7 @@ export default function DynaURI(props) {
           disableEditorV2={disableEditorV2}
           rule={value}
           path={id}
+          enableEditorV2={enableEditorV2}
           />
       </div>
 

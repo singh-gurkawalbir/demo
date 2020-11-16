@@ -19,6 +19,9 @@ export default {
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
         expression.push({ type: ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type });
+        if (r.assistant) {
+          expression.push({ assistant: r.assistant });
+        }
 
         if (r.type === 'netsuite') {
           expression.push({
@@ -52,7 +55,7 @@ export default {
   name: {
     type: 'text',
     label: 'Name',
-    defaultDisabled: r => !!r._connectorId,
+    defaultDisabled: r => !!r._connectorId && !isNewId(r._id),
     required: true,
   },
   application: {
@@ -206,6 +209,7 @@ export default {
           { label: 'Microsoftdynamics365', value: 'microsoftdynamics365' },
           { label: 'Pitneybowes', value: 'pitneybowes' },
           { label: 'Mysql', value: 'mysql' },
+          { label: 'Oracle', value: 'oracle'},
           { label: 'Postgresql', value: 'postgresql' },
           { label: 'Mssql', value: 'mssql' },
           { label: 'Snowflake', value: 'snowflake' },
@@ -773,6 +777,7 @@ export default {
           { label: 'XML', value: 'xml' },
           { label: 'JSON', value: 'json' },
           { label: 'URL Encoded', value: 'urlencoded' },
+          { label: 'Multipart/form-data', value: 'form-data' },
         ],
       },
     ],
@@ -780,6 +785,7 @@ export default {
   'http.successMediaType': {
     type: 'select',
     label: 'Success media type',
+    helpKey: 'connection.http.successMediaType',
     options: [
       {
         items: [
@@ -793,6 +799,7 @@ export default {
   'http.errorMediaType': {
     type: 'select',
     label: 'Error media type',
+    helpKey: 'connection.http.errorMediaType',
     options: [
       {
         items: [
@@ -999,7 +1006,7 @@ export default {
   'http.auth.oauth.accessTokenBody': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Access token body',
+    label: 'Build access token body',
   },
   'http._iClientId': {
     label: 'IClient',
@@ -1072,7 +1079,7 @@ export default {
   'http.auth.token.revoke.body': {
     type: 'httprequestbody',
     contentType: 'json',
-    label: 'Revoke token body',
+    label: 'Build revoke token body',
   },
   'http.auth.token.revoke.headers': {
     type: 'keyvalue',
@@ -1249,11 +1256,11 @@ export default {
   },
   'http.rateLimits': {
     type: 'labeltitle',
-    label: 'Non-standard API rate limiter',
+    label: 'Nonstandard API rate limiter',
   },
   'http.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate limit errors',
+    label: 'HTTP status code for rate-limit errors',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1262,16 +1269,16 @@ export default {
   },
   'http.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate limit errors in HTTP response body',
+    label: 'Path to rate-limit errors in HTTP response body',
   },
   'http.rateLimit.failValues': {
     type: 'text',
-    label: 'Rate limit error values',
+    label: 'Rate-limit error values',
     delimiter: ',',
   },
   'http.rateLimit.limit': {
     type: 'text',
-    label: 'Wait time in between HTTP requests',
+    label: 'Wait time between HTTP requests',
     validWhen: [
       {
         matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
@@ -1289,7 +1296,6 @@ export default {
   'http.unencrypted': {
     type: 'editor',
     mode: 'json',
-    required: true,
     label: 'Unencrypted',
   },
   'http.encrypted': {
@@ -1429,6 +1435,7 @@ export default {
   },
   'ftp.pgpEncryptKey': {
     type: 'text',
+    multiline: true,
     label: 'PGP public key',
     requiredWhen: [
       {
@@ -1461,6 +1468,7 @@ export default {
   'ftp.pgpDecryptKey': {
     type: 'text',
     label: 'PGP private key',
+    multiline: true,
     requiredWhen: [
       {
         field: 'ftp.pgpEncryptKey',
@@ -1824,7 +1832,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failStatusCode': {
     type: 'text',
-    label: 'HTTP status code for rate limit errors',
+    label: 'HTTP status code for rate-limit errors',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1839,7 +1847,7 @@ export default {
   },
   'as2.partnerStationInfo.rateLimit.failPath': {
     type: 'text',
-    label: 'Path to rate limit errors in HTTP response body',
+    label: 'Path to rate-limit errors in HTTP response body',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',
@@ -1856,11 +1864,11 @@ export default {
         is: [true],
       },
     ],
-    label: 'Rate limit error values',
+    label: 'Rate-limit error values',
   },
   'as2.partnerStationInfo.rateLimit.limit': {
     type: 'text',
-    label: 'Wait time in between HTTP requests',
+    label: 'Wait time between HTTP requests',
     visibleWhen: [
       {
         field: 'configureApiRateLimits',

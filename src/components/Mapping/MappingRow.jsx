@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,14 +10,16 @@ import actions from '../../actions';
 import DynaTypeableSelect from '../DynaForm/fields/DynaTypeableSelect';
 import GripperIcon from '../icons/GripperIcon';
 import LockIcon from '../icons/LockIcon';
-import MappingConnectorIcon from '../icons/MappingConnectorIcon';
+import LookupIcon from '../icons/LookupLetterIcon';
+import MultiFieldIcon from '../icons/MultiFieldIcon';
+import HardCodedIcon from '../icons/HardCodedIcon';
 import ActionButton from '../ActionButton';
 import TrashIcon from '../icons/TrashIcon';
 import MappingSettingsButton from './Settings/SettingsButton';
 
 const useStyles = makeStyles(theme => ({
   childHeader: {
-    width: '46%',
+    // width: '46%',
     '& > div': {
       width: '100%',
     },
@@ -29,7 +31,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
   },
   dragRow: {
-    cursor: 'move',
     '& > div[class*="dragIcon"]': {
       visibility: 'hidden',
     },
@@ -40,12 +41,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   dragIcon: {
+    cursor: 'move',
     background: 'none',
   },
   mapField: {
     display: 'flex',
     position: 'relative',
-    width: '40%',
+    // width: '40%',
+    flex: 1,
   },
   disableChildRow: {
     cursor: 'not-allowed',
@@ -58,24 +61,47 @@ const useStyles = makeStyles(theme => ({
       pointerEvents: 'none',
     },
   },
+  hide: {
+    display: 'none',
+  },
   lockIcon: {
     position: 'absolute',
     right: 10,
     top: 6,
     color: theme.palette.text.hint,
   },
+  lockedIcon: {
+    right: 40,
+  },
   deleteBtn: {
     border: 'none',
     width: 0,
   },
   mappingIcon: {
-    color: theme.palette.secondary.lightest,
-    fontSize: 38,
+    background: theme.palette.secondary.lightest,
+    width: 16,
+    height: 1,
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actionsMapping: {
+    display: 'flex',
+    minWidth: 36,
+    maxWidth: 64,
+  },
+  deleteMappingRow: {
+    width: theme.spacing(4),
+    marginRight: theme.spacing(1),
+
+  },
+  rowContainer: {
+    '&:hover': {
+
+    },
   },
 }));
 const emptyObject = {};
 export default function MappingRow({
-  id,
   disabled,
   onMove,
   index,
@@ -99,18 +125,18 @@ export default function MappingRow({
     extract,
     generate,
     hardCodedValue,
+    lookupName,
   } = mapping;
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [isActive, setIsActive] = useState(false);
   const ref = useRef(null);
   const generateFields = useSelector(state =>
     selectors.mappingGenerates(state, importId, subRecordMappingId)
   );
-
   const extractFields = useSelector(state =>
     selectors.mappingExtracts(state, importId, flowId, subRecordMappingId)
   );
-  const lastModifiedRowKey = useSelector(state => selectors.mapping(state).lastModifiedRowKey);
 
   const [, drop] = useDrop({
     accept: 'MAPPING',
@@ -132,26 +158,25 @@ export default function MappingRow({
       item.index = hoverIndex;
     },
   });
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     item: { type: 'MAPPING', index, key: mappingKey },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
     }),
-
     canDrag: isDraggable,
   });
   const opacity = isDragging ? 0.2 : 1;
 
-  drag(drop(ref));
+  drop(preview(ref));
 
   const handleBlur = useCallback((field, value) => {
     // check if value changes or user entered something in new row
     if ((!mappingKey && value) || (mappingKey && mapping[field] !== value)) {
       if (mappingKey && value === '') {
         if (
-          (field === 'extract' && generate === '') ||
+          (field === 'extract' && !generate) ||
             (field === 'generate' &&
-              extract === '' &&
+              !extract &&
               !('hardCodedValue' in mapping))
         ) {
           dispatch(actions.mapping.delete(mappingKey));
@@ -160,39 +185,60 @@ export default function MappingRow({
         }
       }
       dispatch(actions.mapping.patchField(field, mappingKey, value));
-
-      return;
-    }
-
-    if (lastModifiedRowKey !== mappingKey) {
-      const _lastModifiedRowKey = mappingKey === undefined ? 'new' : mappingKey;
-
-      dispatch(actions.mapping.updateLastFieldTouched(_lastModifiedRowKey));
     }
   },
-  [dispatch, extract, generate, lastModifiedRowKey, mapping, mappingKey]
+  [dispatch, extract, generate, mapping, mappingKey]
   );
+
+  const RightIcon = ({title, Icon, className}) => (
+    <Tooltip
+      title={title}
+      placement="bottom">
+      <span className={clsx(classes.lockIcon, className)}>
+        <Icon />
+      </span>
+    </Tooltip>
+  );
+
   const handleExtractBlur = useCallback((_id, value) => {
     handleBlur('extract', value);
   }, [handleBlur]);
+
   const handleGenerateBlur = useCallback((_id, value) => {
     handleBlur('generate', value);
   }, [handleBlur]);
+
+  const handleFieldTouch = useCallback(() => {
+    dispatch(actions.mapping.updateLastFieldTouched(mappingKey));
+  }, [dispatch, mappingKey]);
 
   const handleDeleteClick = useCallback(() => {
     dispatch(actions.mapping.delete(mappingKey));
   }, [dispatch, mappingKey]);
 
+  const handleOnMouseEnter = useCallback(() => {
+    setIsActive(true);
+  }, []);
+  const handleOnMouseLeave = useCallback(() => {
+    setIsActive(false);
+  }, []);
+
+  const handlebarRegex = /(\{\{[\s]*.*?[\s]*\}\})/i;
+  const isLookup = !!lookupName;
+  const isMultiField = handlebarRegex.test(extract);
+  const isHardCodedValue = !!hardCodedValue;
   const extractValue = extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const disableDelete = !mappingKey || isRequired || isNotEditable || disabled;
 
   return (
     <div
       ref={ref}
+      onMouseEnter={handleOnMouseEnter}
+      onMouseLeave={handleOnMouseLeave}
       style={{ opacity }}
-      className={classes.rowContainer}
-      key={id}>
+      className={classes.rowContainer}>
       <div className={clsx(classes.innerRow, { [classes.dragRow]: !disabled })}>
-        <div className={classes.dragIcon}>
+        <div className={classes.dragIcon} ref={drag}>
           <GripperIcon />
         </div>
         <div
@@ -209,7 +255,7 @@ export default function MappingRow({
             options={extractFields}
             disabled={isSubRecordMapping || isNotEditable || disabled}
             onBlur={handleExtractBlur}
-            triggerBlurOnTouch
+            onTouch={handleFieldTouch}
           />
 
           {(isSubRecordMapping || isNotEditable) && (
@@ -218,7 +264,7 @@ export default function MappingRow({
             </span>
           )}
         </div>
-        <MappingConnectorIcon className={classes.mappingIcon} />
+        <span className={classes.mappingIcon} />
         <div
           className={clsx(classes.childHeader, classes.mapField, {
             [classes.disableChildRow]:
@@ -233,48 +279,51 @@ export default function MappingRow({
             options={generateFields}
             disabled={isSubRecordMapping || isRequired || disabled}
             onBlur={handleGenerateBlur}
-            triggerBlurOnTouch
+            onTouch={handleFieldTouch}
           />
+          {isLookup && <RightIcon title="Lookup" Icon={LookupIcon} />}
+          {isMultiField && <RightIcon title="Multi-field" Icon={MultiFieldIcon} />}
+          {isHardCodedValue && <RightIcon title="Hard-coded" Icon={HardCodedIcon} />}
           {(isSubRecordMapping || isRequired) && (
-            <Tooltip
+            <RightIcon
               title={`${
                 isSubRecordMapping
                   ? 'Subrecord mapping'
                   : 'This field is required by the application you are importing into'
               }`}
-              placement="top">
-              <span className={classes.lockIcon}>
-                <LockIcon />
-              </span>
-            </Tooltip>
+              Icon={LockIcon} className={clsx({[classes.lockedIcon]: isLookup || isMultiField || isHardCodedValue})} />
           )}
         </div>
-        <div
-          className={clsx({
-            [classes.disableChildRow]: isSubRecordMapping,
-          })}>
-          <MappingSettingsButton
-            dataTest={`fieldMappingSettings-${index}`}
-            mappingKey={mappingKey}
-            disabled={disabled}
-            subRecordMappingId={subRecordMappingId}
-            importId={importId}
-            flowId={flowId}
+        <div className={classes.actionsMapping}>
+          <div
+            className={clsx({
+              [classes.disableChildRow]: isSubRecordMapping,
+            })}>
+            <MappingSettingsButton
+              dataTest={`fieldMappingSettings-${index}`}
+              mappingKey={mappingKey}
+              disabled={disabled}
+              subRecordMappingId={subRecordMappingId}
+              importId={importId}
+              flowId={flowId}
           />
-        </div>
-        <div
-          key="delete_button"
-          className={clsx({
-            [classes.disableChildRow]: isSubRecordMapping,
-          })}>
-          <ActionButton
-            data-test={`fieldMappingRemove-${index}`}
-            aria-label="delete"
-            disabled={isRequired || isNotEditable || disabled}
-            onClick={handleDeleteClick}
-            className={classes.deleteBtn}>
-            <TrashIcon />
-          </ActionButton>
+          </div>
+          <div
+            key="delete_button"
+            className={clsx(classes.deleteMappingRow, {
+              [classes.disableChildRow]: isSubRecordMapping,
+            })}>
+            <ActionButton
+              data-test={`fieldMappingRemove-${index}`}
+              aria-label="delete"
+              disabled={disableDelete}
+              onClick={handleDeleteClick}
+              className={clsx(classes.deleteBtn, {
+                [classes.hide]: !isActive,
+              })}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
         </div>
       </div>
     </div>

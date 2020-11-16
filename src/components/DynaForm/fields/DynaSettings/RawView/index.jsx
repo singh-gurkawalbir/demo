@@ -25,6 +25,7 @@ export default function RawView(props) {
       className={classes.rawViewWrapper}
       editorClassName={classes.editor}
       mode="json"
+      skipJsonParse
     />
   );
 }

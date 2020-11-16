@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import RefreshIcon from '../../../../../../components/icons/RefreshIcon';
 import CancelIcon from '../../../../../../components/icons/CancelIcon';
@@ -12,27 +12,27 @@ import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import { JOB_STATUS } from '../../../../../../utils/constants';
 import EllipsisActionMenu from '../../../../../../components/EllipsisActionMenu';
 import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/JobFilesDownloadDialog';
+import { DRAGGABLE_SECTION_DIV_ID } from '../..';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
     flexGrow: 1,
     display: 'flex',
     justifyContent: 'flex-end',
-    margin: theme.spacing(1),
+    margin: theme.spacing(0, 1),
   },
 }));
+const emptySet = [];
+
 export default function RunDashboardActions({ flowId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
   const [showDownloadFilesDialog, setShowDownloadFilesDialog] = useState(false);
-  const areFlowJobsLoading = useSelector(state => {
-    const {merged: flow = {}} = selectors.resourceData(state, 'flows', flowId);
 
-    return selectors.areFlowJobsLoading(state, { integrationId: flow._integrationId || 'none', flowId });
-  });
-
-  const latestJobs = useSelector(state => selectors.latestFlowJobs(state));
+  const {data: latestJobs = emptySet, status} = useSelector(
+    state => selectors.latestFlowJobsList(state, flowId),
+    shallowEqual);
   const cancellableJobIds = useMemo(() => {
     const jobIdsToCancel = latestJobs
       .filter(job => [JOB_STATUS.RUNNING, JOB_STATUS.QUEUED].includes(job.status))
@@ -68,7 +68,7 @@ export default function RunDashboardActions({ flowId }) {
     {
       Icon: CancelIcon,
       action: 'cancel',
-      label: 'Cancel',
+      label: 'Cancel run',
       disabled: !validDashboardActions.includes('cancel'),
     },
     {
@@ -77,38 +77,37 @@ export default function RunDashboardActions({ flowId }) {
       label: 'Download diagnostics',
       disabled: !validDashboardActions.includes('downloadDiagnostics'),
     },
-    {
-      Icon: DownloadIntegrationIcon,
-      action: 'downloadFiles',
-      label: 'Download files',
-      disabled: !validDashboardActions.includes('downloadFiles'),
-    },
+    ...(
+      validDashboardActions.includes('downloadFiles') ? [{
+        Icon: DownloadIntegrationIcon,
+        action: 'downloadFiles',
+        label: 'Download files',
+      }] : []),
   ], [validDashboardActions]);
 
   const handleRefresh = useCallback(() => {
-    dispatch(actions.job.clear());
-  }, [dispatch]);
+    dispatch(actions.errorManager.latestFlowJobs.request({ flowId, refresh: true }));
+  }, [dispatch, flowId]);
 
   const handleCancel = useCallback(() => {
     confirmDialog({
-      title: 'Are you sure you want to cancel?',
+      title: 'Confirm cancel run?',
       message:
           'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
       buttons: [
         {
           label: 'Cancel run',
           onClick: () => {
-            cancellableJobIds
-              .forEach(jobId => dispatch(actions.job.cancel({ jobId })));
+            dispatch(actions.errorManager.latestFlowJobs.cancelLatestJobs({flowId, jobIds: cancellableJobIds }));
           },
         },
         {
-          label: 'Close',
+          label: 'No, go back',
           color: 'secondary',
         },
       ],
     });
-  }, [dispatch, confirmDialog, cancellableJobIds]);
+  }, [dispatch, confirmDialog, cancellableJobIds, flowId]);
 
   const handleDownloadDiagnostics = useCallback(() => {
     latestJobs
@@ -148,9 +147,9 @@ export default function RunDashboardActions({ flowId }) {
   }, [handleCancel, handleDownloadDiagnostics, handleDownloadFiles]);
 
   return (
-    <div className={classes.rightActionContainer}>
+    <div id={DRAGGABLE_SECTION_DIV_ID} className={classes.rightActionContainer}>
       <RunFlowButton variant="iconText" flowId={flowId} label="Run" />
-      <IconTextButton onClick={handleRefresh} disabled={areFlowJobsLoading}>
+      <IconTextButton onClick={handleRefresh} disabled={status === 'requested'}>
         <RefreshIcon /> Refresh
       </IconTextButton>
       <EllipsisActionMenu actionsMenu={dashboardActionsMenu} onAction={handleAction} />

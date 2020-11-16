@@ -11,6 +11,15 @@ const useStyles = makeStyles({
     overflow: 'hidden',
     maxWidth: 500,
     paddingLeft: 12,
+    wordBreak: 'break-word',
+    '& > * ': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+    },
+    '& > * *': {
+      whiteSpace: 'pre-wrap',
+      wordBreak: 'break-word',
+    },
   },
 });
 
