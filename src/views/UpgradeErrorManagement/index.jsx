@@ -69,6 +69,7 @@ export default function UpgradeErrorManagement() {
         buttons: [
           {
             label: 'Yes, upgrade',
+            dataTest: 'EM2.0_Confirm_Upgrade',
             onClick: () => {
               dispatch(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
               setUpgradeRequested(true);

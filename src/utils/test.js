@@ -177,7 +177,7 @@ describe('retry util', () => {
       c += 1;
 
       return Promise.reject(new Error('fail'));
-    }).then(() => {
+    }, 5).then(() => {
       // should not reach here
       throw new Error('unreachable');
     }).catch(ex => {

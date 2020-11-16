@@ -30,12 +30,6 @@ const useStyles = makeStyles(theme => ({
   fileDefinitionBtn: {
     marginRight: theme.spacing(0.5),
   },
-  fileDefinitionLabel: {
-    marginBottom: 0,
-    marginRight: 12,
-    maxWidth: '50%',
-    wordBreak: 'break-word',
-  },
 }));
 
 /**
@@ -182,18 +176,24 @@ function DynaFileDefinitionEditor(props) {
             disabled={disabled}
             path={id}
             />
+          <div>
 
-          <FormLabel className={classes.fileDefinitionLabel}>
-            {label}:
-          </FormLabel>
-          <Button
-            variant="outlined"
-            color="secondary"
-            className={classes.fileDefinitionBtn}
-            onClick={handleOpenDrawer}>
-            Launch
-          </Button>
-          <FieldHelp {...props} />
+            <div>
+              <FormLabel>
+                {label}
+              </FormLabel>
+              <FieldHelp {...props} />
+            </div>
+
+            <Button
+              variant="outlined"
+              color="secondary"
+              className={classes.fileDefinitionBtn}
+              onClick={handleOpenDrawer}>
+              Launch
+            </Button>
+          </div>
+
         </LoadResources>
       </div>
     </>

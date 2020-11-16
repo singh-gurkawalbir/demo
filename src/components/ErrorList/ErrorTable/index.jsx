@@ -43,6 +43,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     paddingBottom: 18,
+    whiteSpace: 'nowrap',
+    marginLeft: theme.spacing(2),
   },
   emptyRow: {
     position: 'relative',
@@ -83,11 +85,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 const defaultOpenErrorsFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey'],
+  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId'],
 };
 
 const defaultResolvedErrorsFilter = {
-  searchBy: ['message', 'source', 'code', 'occurredAt', 'resolvedBy'],
+  searchBy: ['message', 'source', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
 };
 
 const rowsPerPageOptions = [10, 25, 50];

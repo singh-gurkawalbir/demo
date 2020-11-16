@@ -9,6 +9,10 @@ import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
 
 export function* run({ flowId, customStartDate, options = {} }) {
+  // per PM request to track the run request
+  // also note the both FLOW.RUN and DATALOADER_RUN goes through this code path eventuall
+  // hence the tracker is here and not in the two places above respectively
+  yield put(actions.flow.runRequested(flowId));
   const { path, opts } = getRequestOptions(actionTypes.FLOW.RUN, {
     resourceId: flowId,
   });

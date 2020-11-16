@@ -1523,10 +1523,12 @@ selectors.mkIntegrationAppFlowSections = () => {
         flowSections = sections;
       }
 
-      return flowSections.map(sec => ({
-        ...sec,
-        titleId: getTitleIdFromSection(sec),
-      }));
+      return flowSections
+        .filter(sec => !!sec.title)
+        .map(sec => ({
+          ...sec,
+          titleId: getTitleIdFromSection(sec),
+        }));
     });
 };
 
@@ -1656,14 +1658,14 @@ selectors.makeIntegrationAppSectionFlows = () =>
         allSections.find(
           sec =>
             getTitleIdFromSection(sec) === section
-        ) || {};
+        );
 
       if (!section) {
         allSections.forEach(sec => {
           sectionFlows = options.excludeHiddenFlows ? sec.flows.filter(f => !f.hidden) : sec.flows;
           requiredFlows.push(...map(sectionFlows, '_id'));
         });
-      } else {
+      } else if (selectedSection) {
         sectionFlows = options.excludeHiddenFlows ? selectedSection.flows.filter(f => !f.hidden) : selectedSection.flows;
         requiredFlows = map(sectionFlows, '_id');
       }
