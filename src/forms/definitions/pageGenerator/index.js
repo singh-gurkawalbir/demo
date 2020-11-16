@@ -197,9 +197,10 @@ export default {
             .includes(appField.value));
       const adaptorTypePrefix = appTypeToAdaptorType[app.type];
 
-      if (!adaptorTypePrefix) return;
       // Lookups are not shown in PG suggestions
       const expression = [{ isLookup: { $exists: false } }];
+
+      if (!adaptorTypePrefix) return { filter: {$and: expression}};
 
       if (isWebhook) {
         expression.push({

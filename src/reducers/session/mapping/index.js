@@ -49,6 +49,11 @@ export default (state = {}, action) => {
           lookupsCopy: deepClone(lookups),
         };
         break;
+      case actionTypes.MAPPING.INIT_FAILED:
+        draft.mapping = {
+          status: 'error',
+        };
+        break;
       case actionTypes.MAPPING.UPDATE_LAST_TOUCHED_FIELD:
         draft.mapping.lastModifiedRowKey = key || 'new';
         break;
