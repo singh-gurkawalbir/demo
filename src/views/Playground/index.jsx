@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Button, FormControl, makeStyles, MenuItem, Tooltip, Typography } from '@material-ui/core';
+// import actions from '../../actions';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import examples from './examples';
 import editors from './editorMetadata';
 import CeligoSelect from '../../components/CeligoSelect';
+import Editor from '../../components/AFE2/Editor';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,9 +25,11 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
 }));
+const editorId = 'playground';
 
 export default function Editors() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [activeType, setActiveType] = useState();
   const [exampleKey, setExampleKey] = useState();
   const activeEditor = editors.find(e => e.type === activeType);
@@ -36,6 +41,18 @@ export default function Editors() {
   };
 
   // console.log(activeType, exampleKey, activeExample);
+  useEffect(() => {
+    // dispatch(actions.editor.init({
+    //   editorId,
+    //   rule: activeExample.rule,
+    //   data: activeExample.data,
+    //   type: activeExample.type,
+    //   // whatever other props are needed. Note if the data is supplied,
+    //   // no need to pass props which are used to obtain sample data.
+    // }));
+    // every time a user selects a new example, we run this effect to
+    // reset the initial state of the editor.
+  }, [activeExample, dispatch]);
 
   return (
     <>
@@ -72,8 +89,8 @@ export default function Editors() {
                 </CeligoSelect>
               </FormControl>
             )}
-          {exampleKey && (
-            <pre>{activeExample?.data}</pre>
+          {activeExample && (
+            <Editor id={editorId} />
           )}
         </main>
       </div>
