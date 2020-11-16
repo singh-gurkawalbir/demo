@@ -144,7 +144,7 @@ function ConnectionLoadingChip(props) {
     </div>
   ) : (
     <div className={classes.connectionStatusWrapper}>
-      <StatusCircle size="small" variant="info" />
+      <StatusCircle size="small" variant="success" />
       online
     </div>
   );

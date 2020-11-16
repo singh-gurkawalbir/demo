@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import {selectors} from '../../reducers';
@@ -101,6 +101,9 @@ export default function MappingWrapper(props) {
     };
   }, [dispatch, flowId, importId, subRecordMappingId]);
 
+  if (mappingStatus === 'error') {
+    return (<Typography>Failed to load mapping.</Typography>);
+  }
   if (mappingStatus !== 'received') {
     return (
       <SpinnerWrapper>

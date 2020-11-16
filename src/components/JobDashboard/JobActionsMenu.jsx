@@ -4,7 +4,7 @@ import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { JOB_STATUS, JOB_TYPES } from '../../utils/constants';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -41,6 +41,7 @@ export default function JobActionsMenu({
   isFlowBuilderView,
 }) {
   const classes = useStyle();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
   const history = useHistory();
   const [enqueueSnackbar, closeSnackbar] = useEnqueueSnackbar();
@@ -260,6 +261,7 @@ export default function JobActionsMenu({
       dispatch(
         actions.job.resolveSelected({
           jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+          match,
         })
       );
       enqueueSnackbar({
@@ -290,12 +292,14 @@ export default function JobActionsMenu({
         dispatch(
           actions.job.retryFlowJob({
             jobId: job._id,
+            match,
           })
         );
       } else {
         dispatch(
           actions.job.retrySelected({
             jobs: [{ _id: job._id, _flowJobId: job._flowJobId }],
+            match,
           })
         );
       }
