@@ -1405,6 +1405,7 @@ const mapping = {
     action(actionTypes.MAPPING.INIT, {flowId, importId, subRecordMappingId}),
   initComplete: (options = {}) =>
     action(actionTypes.MAPPING.INIT_COMPLETE, {...options}),
+  initFailed: () => action(actionTypes.MAPPING.INIT_FAILED, {}),
   patchField: (field, key, value) =>
     action(actionTypes.MAPPING.PATCH_FIELD, { field, key, value }),
   patchGenerateThroughAssistant: value =>
