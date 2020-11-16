@@ -1,5 +1,6 @@
 /* global describe, test, expect */
 import { call, put, delay, fork, take} from 'redux-saga/effects';
+import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../actions';
 import { displayToken, generateToken, resourcesReceived, accessTokensUpdated, checkAndRemovePurgedTokens} from '.';
 import { apiCallWithRetry } from '..';
@@ -132,15 +133,12 @@ describe('generateToken saga', () => {
   });
 });
 describe('resourcesReceived saga', () => {
-  test('should able to update collection successfully', () => {
-    const saga = resourcesReceived({ resourceType: 'accesstokens' });
+  // here i need
 
-    expect(saga.next().value).toEqual(
-      put(actions.accessToken.updatedCollection())
-    );
+  test('should able to update collection successfully', () => expectSaga(resourcesReceived, { resourceType: 'accesstokens' })
 
-    expect(saga.next().done).toEqual(true);
-  });
+    .put(actions.accessToken.updatedCollection())
+    .run());
   test('should able to skip update collection if resource type is not accesstokens', () => {
     const saga = resourcesReceived({ resourceType: 'connections' });
 
