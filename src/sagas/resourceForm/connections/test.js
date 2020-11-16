@@ -21,7 +21,7 @@ describe('ping and update connection saga', () => {
 
     const pingPath = `/connections/${connectionId}/ping`;
     const connectionResourcePath = `/connections/${connectionId}`;
-    const mockResourceReferences =
+    const mockConnectionResource =
       { name: 'connection1', id: 1};
 
     expect(saga.next().value).toEqual(
@@ -30,10 +30,10 @@ describe('ping and update connection saga', () => {
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, { path: connectionResourcePath, hidden: true })
     );
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(mockConnectionResource).value;
 
     expect(effect).toEqual(
-      put(actions.resource.received('connections', mockResourceReferences))
+      put(actions.resource.received('connections', mockConnectionResource))
     );
     expect(saga.next().done).toEqual(true);
   });

@@ -20,6 +20,20 @@ describe('Connection token', () => {
       1234: {},
     });
   });
+  test('should clear token of perticular id when we receive clear token action', () => {
+    const resourceId = '1234';
+    const resourceIdNew = '12345';
+    const requestReducer = reducer(
+      undefined,
+      actions.resource.connections.requestToken(resourceIdNew));
+    const requestReducerNew = reducer(
+      requestReducer,
+      actions.resource.connections.clearToken(resourceId));
+
+    expect(requestReducerNew).toEqual({
+      12345: {status: 'loading'}, 1234: {},
+    });
+  });
   test('should set isLoading flag when token request is sent', () => {
     const resourceId = '1234';
     const requestReducer = reducer(
