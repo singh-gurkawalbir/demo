@@ -1,42 +1,41 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 export default (state = {}, action) => {
   const { type, resourceId, fieldsToBeSetWithValues, message } = action;
-  const newState = { ...state };
 
-  switch (type) {
-    case actionTypes.TOKEN.CLEAR:
-      newState[resourceId] = {};
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.TOKEN.CLEAR:
+        draft[resourceId] = {};
+        break;
+      case actionTypes.TOKEN.REQUEST:
+        if (!draft[resourceId]) { draft[resourceId] = {}; }
+        draft[resourceId] = { status: 'loading' };
+        break;
+      case actionTypes.TOKEN.RECEIVED:
+        if (!draft[resourceId]) draft[resourceId] = {};
+        draft[resourceId] = {
+          ...draft[resourceId],
+          fieldsToBeSetWithValues,
+          status: 'received',
+        };
 
-      return newState;
+        break;
+      case actionTypes.TOKEN.FAILED:
+        if (!draft[resourceId]) draft[resourceId] = {};
+        delete draft[resourceId].token;
+        draft[resourceId] = {
+          ...draft[resourceId],
+          message,
+          status: 'failed',
+        };
 
-    case actionTypes.TOKEN.REQUEST:
-      newState[resourceId] = { status: 'loading' };
-
-      return newState;
-    case actionTypes.TOKEN.RECEIVED:
-      if (!newState[resourceId]) newState[resourceId] = {};
-      newState[resourceId] = {
-        ...newState[resourceId],
-        fieldsToBeSetWithValues,
-        status: 'received',
-      };
-
-      return newState;
-    case actionTypes.TOKEN.FAILED:
-      if (!newState[resourceId]) newState[resourceId] = {};
-      delete newState[resourceId].token;
-      newState[resourceId] = {
-        ...newState[resourceId],
-        message,
-        status: 'failed',
-      };
-
-      return newState;
-
-    default:
-      return state;
-  }
+        break;
+      default:
+        break;
+    }
+  });
 };
 
 // #region PUBLIC SELECTORS

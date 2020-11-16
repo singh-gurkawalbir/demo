@@ -80,7 +80,7 @@ describe('preview saga', () => {
 describe('create saga', () => {
   const data = { _transferId: 'j1', something: 'some thing' };
 
-  test('should able to create trasfer successfully', () => {
+  test('should able to create transfer successfully', () => {
     const transferResponse = { _transferId: 'j1', something: 'some thing' };
 
     return expectSaga(create, { data })

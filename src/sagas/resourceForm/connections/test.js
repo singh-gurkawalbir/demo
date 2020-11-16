@@ -432,7 +432,7 @@ describe('Netsuite user roles saga', () => {
   const connectionId = '1234';
   const values = {'/name': 'Netsuite', '/application': 'Netsuite'};
   const resp = {production: {
-    success: true, accounts: [{accont: {type: 'production'}}],
+    success: true, accounts: [{account: {type: 'production'}}],
   }};
   const unSuccessfulResp = {};
   const successOnlyEnvs = Object.keys(resp)
