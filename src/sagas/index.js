@@ -216,5 +216,12 @@ export default function* rootSaga() {
     yield put(actions.auth.clearStore());
     // restart the root saga again
     yield spawn(rootSaga);
+
+    // this action originates from switching accounts...
+    // when switching accounts we would like to kill all outstanding
+    // api requests than restart the saga and subsequently reinitilialize session
+    if (logout?.reInit) {
+      yield put(actions.auth.initSession());
+    }
   }
 }

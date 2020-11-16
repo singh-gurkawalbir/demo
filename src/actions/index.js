@@ -102,7 +102,7 @@ const auth = {
   userAlreadyLoggedIn: () => action(actionTypes.AUTH_USER_ALREADY_LOGGED_IN),
   clearStore: () => action(actionTypes.CLEAR_STORE),
   abortAllSagasAndInitLR: opts => action(actionTypes.ABORT_ALL_SAGAS_AND_INIT_LR, opts),
-  abortAllSagasAndReset: () => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET),
+  abortAllSagasAndReset: reInit => action(actionTypes.ABORT_ALL_SAGAS_AND_RESET, {reInit}),
   initSession: () => action(actionTypes.INIT_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.USER_CHANGE_PASSWORD, { updatedPassword }),
