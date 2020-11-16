@@ -16,6 +16,7 @@ import Spinner from '../../../../components/Spinner';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import OverflowWrapper from '../../../../components/ResourceTable/errorManagement/cells/OverflowWrapper';
+import ResourceButton from '../../../FlowBuilder/ResourceButton';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -43,7 +44,22 @@ const metadata = {
       },
     },
     {
-      heading: 'Flow step',
+      heading: 'Type',
+      value: function Application(r) {
+        const { merged: doc } = useSelectorMemo(selectors.makeResourceDataSelector, r.type, r.id);
+        const category = resourceCategory(doc, r.isLookup, r.type === 'imports');
+        const handleClick = useCallback(() => {}, []);
+
+        return (
+          <ResourceButton
+            onClick={handleClick}
+            variant={category}
+      />
+        );
+      },
+    },
+    {
+      heading: 'Flow step name',
       value: r => <OverflowWrapper message={r.name} style={{maxWidth: 238}} />,
     },
     {
@@ -78,38 +94,6 @@ const metadata = {
         return (
           <div className={classes.button} onClick={handleErrorClick}>{count > 9999 ? '9999+' : count} errors</div >
         );
-      },
-    },
-    {
-      heading: 'Sources',
-      value: function Source(r) {
-        const { merged: exportDoc } = useSelectorMemo(
-          selectors.makeResourceDataSelector,
-          'exports',
-          r.id
-        );
-
-        if (!exportDoc?._id || r.isLookup) {
-          return null;
-        }
-
-        return resourceCategory(exportDoc);
-      },
-    },
-    {
-      heading: 'Destination & Lookups',
-      value: function Destination(r) {
-        const { merged: importDoc } = useSelectorMemo(
-          selectors.makeResourceDataSelector,
-          r.isLookup ? 'exports' : 'imports',
-          r.id
-        );
-
-        if (!importDoc?._id) {
-          return null;
-        }
-
-        return resourceCategory(importDoc, r.isLookup, !r.isLookup);
       },
     },
   ],
