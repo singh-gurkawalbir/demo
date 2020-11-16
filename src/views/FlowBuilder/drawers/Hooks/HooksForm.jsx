@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import actions from '../../../../actions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
@@ -25,6 +25,7 @@ import LoadResources from '../../../../components/LoadResources';
 
 export default function HooksForm({flowId}) {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const history = useHistory();
   const handleClose = history.goBack;
   const { resourceType, resourceId } = useParams();
@@ -47,8 +48,9 @@ export default function HooksForm({flowId}) {
 
       dispatch(actions.resource.patchStaged(resourceId, patchSet, 'value'));
       dispatch(actions.resource.commitStaged(resourceType, resourceId, 'value', null, { flowId }));
+      dispatch(actions.hooks.save({ resourceType, resourceId, flowId, match }));
     },
-    [resource, dispatch, resourceId, resourceType, flowId]
+    [resource, dispatch, resourceId, resourceType, flowId, match]
   );
 
   const fieldMeta = useMemo(() =>
