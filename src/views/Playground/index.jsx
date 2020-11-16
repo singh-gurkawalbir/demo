@@ -7,10 +7,10 @@ import examples from './examples';
 import editors from './editorMetadata';
 import CeligoSelect from '../../components/CeligoSelect';
 import Editor from '../../components/AFE2/Editor';
+import EditorPreviewButton from '../../components/AFE2/EditorPreviewButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    // border: 'solid 1px blue',
     display: 'flex',
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
   },
@@ -21,8 +21,18 @@ const useStyles = makeStyles(theme => ({
     borderRightWidth: 1,
   },
   content: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: theme.spacing(3),
     flexGrow: 1,
+  },
+  selectExample: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingBottom: theme.spacing(1),
+  },
+  buttons: {
+    alignSelf: 'flex-end',
   },
 }));
 const editorId = 'playground';
@@ -69,29 +79,37 @@ export default function Editors() {
           ))}
         </div>
         <main className={classes.content}>
-          <Typography variant="h4">{activeEditor?.label} Examples</Typography>
-          {!activeEditor
-            ? (
-              <Typography>
-                Get started by selecting an editor on the left.
-              </Typography>
-            ) : (
-              <FormControl>
-                <CeligoSelect
-                  placeholder="Select example"
-                  value={exampleKey}
-                  onChange={e => setExampleKey(e.target.value)}>
-                  {examples[activeType].map(e => (
-                    <MenuItem key={e.key} value={e.key}>
-                      {e.name}
-                    </MenuItem>
-                  ))}
-                </CeligoSelect>
-              </FormControl>
-            )}
+          <div className={classes.selectExample}>
+            <Typography variant="h4">{activeEditor?.label} Examples</Typography>
+            {!activeEditor
+              ? (
+                <Typography>
+                  Get started by selecting an editor on the left.
+                </Typography>
+              ) : (
+                <FormControl>
+                  <CeligoSelect
+                    placeholder="Select example"
+                    value={exampleKey}
+                    onChange={e => setExampleKey(e.target.value)}>
+                    {examples[activeType].map(e => (
+                      <MenuItem key={e.key} value={e.key}>
+                        {e.name}
+                      </MenuItem>
+                    ))}
+                  </CeligoSelect>
+                </FormControl>
+              )}
+          </div>
           {activeExample && (
-            <Editor id={editorId} />
+            <>
+              <Editor editorId={editorId} />
+              <div className={classes.buttons}>
+                <EditorPreviewButton editorId={editorId} />
+              </div>
+            </>
           )}
+
         </main>
       </div>
     </>
