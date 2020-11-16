@@ -488,6 +488,11 @@ describe('Netsuite user roles saga', () => {
       ))
     );
   });
+  test('should return directly when there is no connection Id and form values', () => {
+    const saga = netsuiteUserRoles({ connectionId: undefined, values: undefined });
+
+    expect(saga.next().done).toEqual(true);
+  });
 });
 
 describe('Request token saga', () => {
