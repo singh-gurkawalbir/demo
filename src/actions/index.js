@@ -1554,11 +1554,12 @@ const accessToken = {
   updatedCollection: () => action(actionTypes.ACCESSTOKEN_UPDATED_COLLECTION),
 };
 const job = {
-  requestCollection: ({ integrationId, flowId, filters }) =>
+  requestCollection: ({ integrationId, flowId, filters, options }) =>
     action(actionTypes.JOB.REQUEST_COLLECTION, {
       integrationId,
       flowId,
       filters,
+      options,
     }),
   receivedCollection: ({ collection }) =>
     action(actionTypes.JOB.RECEIVED_COLLECTION, {
