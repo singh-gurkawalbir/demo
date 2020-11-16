@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
 }));
-const defaultData = {};
+const defaultData = [];
 const defaultFilters = [];
 
 export default function FilterPanel({

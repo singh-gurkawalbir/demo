@@ -5,6 +5,8 @@ import {
   takeEvery,
   takeLatest,
   delay,
+  take,
+  race,
 } from 'redux-saga/effects';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
@@ -247,6 +249,18 @@ export function* autoEvaluateProcessor({ id }) {
   return yield call(evaluateProcessor, { id });
 }
 
+function* autoEvaluateProcessorWithCancel(params) {
+  const {id } = params;
+
+  yield race({
+    editorEval: call(autoEvaluateProcessor, params),
+    cancelEditorEval: take(action =>
+      action.type === actionTypes.EDITOR.CLEAR &&
+      action.id === id
+    ),
+  });
+}
+
 export function* refreshHelperFunctions() {
   const localStorageData = JSON.parse(localStorage.getItem('helperFunctions'));
   let { updateTime, helperFunctions } = localStorageData || {};
@@ -297,7 +311,7 @@ export default [
 
   takeLatest(
     [actionTypes.EDITOR.INIT, actionTypes.EDITOR.PATCH],
-    autoEvaluateProcessor
+    autoEvaluateProcessorWithCancel
   ),
   takeLatest(actionTypes.EDITOR.EVALUATE_REQUEST, evaluateProcessor),
   takeLatest(actionTypes.EDITOR.SAVE, saveProcessor),

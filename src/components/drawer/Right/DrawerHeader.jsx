@@ -38,6 +38,7 @@ export default function DrawerHeader({
   hideBackButton = false,
   fullPath, // forwarded from parent (RightDrawer)
   onClose, // forwarded from parent (RightDrawer)
+  disableClose,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -75,6 +76,7 @@ export default function DrawerHeader({
 
       <IconButton
         size="small"
+        disabled={!!disableClose}
         data-test="closeRightDrawer"
         aria-label="Close"
         onClick={onClose}>
