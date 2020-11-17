@@ -302,6 +302,7 @@ describe('job sagas', () => {
       const dataIn = {
         integrationId: 'i1',
         filters: { some: 'thing' },
+        options: {},
       };
       const saga = getJobCollection(dataIn);
 
