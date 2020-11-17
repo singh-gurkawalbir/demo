@@ -6,7 +6,8 @@ export default {
       newValues['/salesforce/sObjectType'] =
         newValues['/salesforce/blobsObjectType'];
       newValues['/salesforce/operation'] =
-        newValues['/salesforce/blobOperation'];
+        newValues['/salesforce/blobsObjectType'] !== 'contentVersion'
+          ? newValues['/salesforce/blobOperation'] : newValues['/salesforce/blobContentVersionOperation'];
     } else if (newValues['/salesforce/api'] === 'compositerecord') {
       newValues['/salesforce/operation'] =
         newValues['/salesforce/compositeOperation'];
@@ -157,6 +158,7 @@ export default {
     'salesforce.idLookup.extract': { fieldId: 'salesforce.idLookup.extract' },
     'salesforce.blobsObjectType': { fieldId: 'salesforce.blobsObjectType' },
     'salesforce.blobOperation': { fieldId: 'salesforce.blobOperation' },
+    'salesforce.blobContentVersionOperation': {fieldId: 'salesforce.blobContentVersionOperation'},
     'salesforce.attachment.isPrivate': {
       fieldId: 'salesforce.attachment.isPrivate',
     },
@@ -229,6 +231,7 @@ export default {
           'salesforce.operation',
           'salesforce.blobsObjectType',
           'salesforce.blobOperation',
+          'salesforce.blobContentVersionOperation',
           'salesforce.attachment.id',
           'salesforce.attachment.name',
           'salesforce.attachment.parentId',
