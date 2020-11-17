@@ -40,8 +40,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isFlowDisabled, isResolved }) => {
-  if (!retryId || recordMode === 'view' || isFlowDisabled || isResolved) {
+const TabContent = ({ retryId, errorId, flowId, resourceId, recordMode, onChange, isResolved }) => {
+  if (!retryId || recordMode === 'view' || isResolved) {
     return (
       <ViewErrorDetails
         errorId={errorId}
@@ -91,14 +91,14 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
   return (
     <div className={classes.root}>
       <div className={classes.detailsContainer}>
-        {(retryId && !isFlowDisabled && !isResolved) ? (
+        {(retryId && !isResolved) ? (
           <Tabs
             className={classes.tabHeader}
             value={recordMode}
             onChange={handleModeChange}
             textColor="primary"
             indicatorColor="primary">
-            <Tab label="Edit retry data" value="edit" id="tab-2" aria-controls="tab-2" />
+            <Tab label={isFlowDisabled ? 'Retry data' : 'Edit retry data'} value="edit" id="tab-2" aria-controls="tab-2" />
             <Tab label="Error fields" value="view" id="tab-1" aria-controls="tab-1" />
           </Tabs>
         ) : (
@@ -120,7 +120,6 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose }
             errorId={errorId}
             onChange={onRetryDataChange}
             recordMode={recordMode}
-            isFlowDisabled={isFlowDisabled}
             isResolved={isResolved}
           />
         </div>
