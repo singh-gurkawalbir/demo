@@ -321,16 +321,7 @@ export default function JobDashboard({
         });
       },
     });
-  }, [
-    closeSnackbar,
-    dispatch,
-    enqueueSnackbar,
-    filters.flowId,
-    filters.storeId,
-    flowId,
-    integrationId,
-    jobs,
-  ]);
+  }, [closeSnackbar, dispatch, enqueueSnackbar, filters.flowId, filters.storeId, flowId, integrationId, jobs, match]);
   const retrySelectedJobs = useCallback(() => {
     const jobsToRetry = [];
 
@@ -381,7 +372,7 @@ export default function JobDashboard({
         );
       },
     });
-  }, [closeSnackbar, dispatch, enqueueSnackbar, numRetriableJobsSelected, selectedJobs]);
+  }, [closeSnackbar, dispatch, enqueueSnackbar, match, numRetriableJobsSelected, selectedJobs]);
   const handleActionClick = useCallback(
     action => {
       if (action === 'resolveAll') {
