@@ -1,6 +1,6 @@
 export default {
   key: 'csvParse2',
-  type: 'csvparse',
+  type: 'csvParse',
   name: ' Multiline order from CSV text file',
   data: `order id, item id, description, quantity, cost, total
 1, 1a, Shoes, 2, 19.99, 43.46

@@ -49,7 +49,7 @@ const meta = {
 
 export default {
   key: 'form-column',
-  mode: 'json',
+  type: 'formBuilder',
   name: 'Multi-column form',
   data: JSON.stringify(meta, null, 2),
 };

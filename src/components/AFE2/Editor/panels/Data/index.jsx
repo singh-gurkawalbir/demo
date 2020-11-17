@@ -6,7 +6,8 @@ import CodePanel from '../Code';
 
 export default function DataPanel({ editorId, mode, readOnly }) {
   const dispatch = useDispatch();
-  const value = useSelector(state => selectors.editor.data?.(state, editorId));
+  const editor = useSelector(state => selectors.editor(state, editorId));
+  const { data } = editor;
   const { errorLine, hasError} = useSelector(state => selectors.editor.dataErrors?.(state, editorId) || {});
   const handleChange = value => {
     dispatch(actions.editor.patchData(value));
@@ -14,7 +15,7 @@ export default function DataPanel({ editorId, mode, readOnly }) {
 
   return (
     <CodePanel
-      value={value}
+      value={data}
       mode={mode}
       readOnly={readOnly}
       onChange={handleChange}

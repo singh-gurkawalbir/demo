@@ -15,7 +15,7 @@ export default [
     description: 'Converts XML into JSON',
   },
   {
-    type: 'settingsForm',
+    type: 'formBuilder',
     label: 'Form builder',
     description: 'Construct a form from metadata',
   },
