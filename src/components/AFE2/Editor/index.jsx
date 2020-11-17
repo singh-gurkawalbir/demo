@@ -24,7 +24,7 @@ export default function Editor({ editorId }) {
   const classes = useStyles();
   let editor = useSelector(state => selectors.editor(state, editorId));
 
-  editor = { type: 'formBuilder', mode: 'script' };
+  editor = { type: 'formBuilder', mode: 'json' };
   const {type} = editor;
   const {layout, panels} = editorMetadata[type];
   const gridTemplate = classes[resolveValue(layout, editor)];
@@ -33,7 +33,7 @@ export default function Editor({ editorId }) {
 
   return (
     <PanelGrid className={gridTemplate}>
-      {panels.map(p => (
+      {resolveValue(panels, editor).map(p => (
         <PanelGridItem key={p.area} gridArea={p.area}>
           <PanelTitle title={resolveValue(p.title, editor)} />
           <p.Panel editorId={editorId} {...p.props} />
