@@ -1,8 +1,9 @@
-/* global describe, test, expect */
-import { call, select } from 'redux-saga/effects';
+/* global describe, test */
+
+import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { throwError } from 'redux-saga-test-plan/providers';
+import { throwError, dynamic } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { getResource } from '../resources';
@@ -13,36 +14,25 @@ import {
   createComponents,
   verifyBundleOrPackageInstall,
 } from '.';
+import templateUtil from '../../utils/template';
 
 describe('generateZip sagas', () => {
   const integrationId = '123';
-  const path = `/integrations/${integrationId}/template`;
   const response = { signedURL: 'something' };
 
-  test('should succeed on successful api call', () => {
-    const saga = generateZip({ integrationId });
-    const callEffect = saga.next().value;
+  test('should succeed on successful api call', () =>
+    expectSaga(generateZip, { integrationId })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .run());
 
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        message: 'Generating zip',
-      })
-    );
-    expect(saga.next(response).done).toBe(true);
-  });
   test('should return undefined if api call fails', () => {
-    const saga = generateZip({ integrationId });
-    const callEffect = saga.next().value;
+    const error = new Error('error');
 
-    expect(callEffect).toEqual(
-      call(apiCallWithRetry, {
-        path,
-        message: 'Generating zip',
-      })
-    );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    return expectSaga(generateZip, { integrationId })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .run();
   });
 });
 
@@ -92,28 +82,36 @@ describe('createComponents sagas', () => {
       name: 'dummy',
     };
     const userPreferences = { environment: 'something' };
-    const testComponents = [];
-    const outputResource = {
-      name: 'dummy',
-      _id: 'dummy',
-      _integrationId: 'dummy',
-    };
-    const dependentResource = {
-      resourceType: 'something',
-      id: '111',
-    };
+    const components = [
+      {
+        model: 'something',
+        _id: '111',
+      },
+      {
+        model: 'something',
+        _id: '222',
+      },
+    ];
+    const dependentResources = templateUtil.getDependentResources(components) || [];
+    const provideResource = ({ args: [dependentResource]}, next) => (
+      dependentResource.id ? { ...dependentResource, _integrationId: 'dummy' } : next()
+    );
 
-    return expectSaga(createComponents, { templateId, runKey })
+    const saga = expectSaga(createComponents, { templateId, runKey })
       .provide([
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
         [select(selectors.userPreferences), userPreferences],
-        [call(getResource, dependentResource), outputResource],
-        [matchers.call.fn(apiCallWithRetry), testComponents],
+        [matchers.call.fn(apiCallWithRetry), components],
+        [matchers.call.fn(getResource), dynamic(provideResource)],
       ])
-      .call.fn(apiCallWithRetry)
-      .put(actions.template.createdComponents(testComponents, templateId))
-      .run();
+      .call.fn(apiCallWithRetry);
+
+    dependentResources.map(dependentResource => (
+      saga.call(getResource, dependentResource)
+    ));
+
+    return saga.put(actions.template.createdComponents(components, templateId)).run();
   });
   test('should dispatch receivedIntegrationClonedStatus if template is an integration on successfull api call', () => {
     const templateData = {
@@ -124,17 +122,8 @@ describe('createComponents sagas', () => {
       name: 'dummy',
     };
     const userPreferences = { environment: 'something' };
-    const testComponents = {
+    const components = {
       _integrationId: 'something',
-    };
-    const outputResource = {
-      name: 'dummy',
-      _id: 'dummy',
-      _integrationId: 'dummy',
-    };
-    const dependentResource = {
-      resourceType: 'something',
-      id: '111',
     };
 
     return expectSaga(createComponents, { templateId, runKey })
@@ -142,8 +131,7 @@ describe('createComponents sagas', () => {
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
         [select(selectors.userPreferences), userPreferences],
-        [call(getResource, dependentResource), outputResource],
-        [matchers.call.fn(apiCallWithRetry), testComponents],
+        [matchers.call.fn(apiCallWithRetry), components],
       ])
       .call.fn(apiCallWithRetry)
       .put(actions.resource.requestCollection('integrations'))
@@ -151,7 +139,7 @@ describe('createComponents sagas', () => {
       .put(
         actions.integrationApp.clone.receivedIntegrationClonedStatus(
           templateId,
-          testComponents._integrationId,
+          components._integrationId,
           ''
         )
       )
