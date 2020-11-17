@@ -139,8 +139,6 @@ export default function DynaXmlParse({
     [resourcePath],
   );
   const options = useMemo(() => getInitOptions(value), [getInitOptions, value]);
-
-  console.log('value', value?.[0]?.rules);
   const [form, setForm] = useState(getForm(options, resourceId));
   const [currentOptions, setCurrentOptions] = useState(options);
   const data = useSelector(state =>
