@@ -159,12 +159,12 @@ export const IAFormStateManager = props => {
   return (
     <>
       <FormStateManager {...allProps} formKey={formKey} />
-      {fieldMeta?.actions?.length && (
+      {!!fieldMeta?.actions?.length && (
       <ActionsPanel
         {...fieldMeta}
         actionProps={allActionProps}
       />
-    )}
+      )}
     </>
   );
 };
