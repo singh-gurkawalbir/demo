@@ -74,7 +74,7 @@ export function* requestCleanup(path, reqMethod) {
   const method = reqMethod || 'GET';
 
   // deliberately delay the sampling of the state so that we capture the cancelled saga state accurately
-  // the select seems to be executed in the same cycle as the canceled sagas actions...by intoducing a delay of 0 ms
+  // the select seems to be executed in the same cycle as the canceled sagas actions...by introducing a delay of 0 ms
   // we are forcing the select to compute in the next cycle...thereby we have the state ready
   yield delay(0);
   const status = yield select(selectors.commStatusPerPath, path, method);
@@ -193,9 +193,9 @@ export default function* rootSaga() {
     onAbort: onAbortSaga,
   });
   const t = yield fork(allSagas);
-  const {logrocket, logout} = yield race({
+  const {logrocket, resetApp} = yield race({
     logrocket: take(actionsTypes.ABORT_ALL_SAGAS_AND_INIT_LR),
-    logout: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
+    resetApp: take(actionsTypes.ABORT_ALL_SAGAS_AND_RESET),
   });
 
   if (logrocket) {
@@ -209,7 +209,7 @@ export default function* rootSaga() {
     // from within sagas/authentication/index.js
     yield call(initializeApp, logrocket.opts);
   }
-  if (logout) {
+  if (resetApp) {
     // stop the main sagas
     t.cancel();
     // logout requires also reset the store
@@ -220,7 +220,7 @@ export default function* rootSaga() {
     // this action originates from switching accounts...
     // when switching accounts we would like to kill all outstanding
     // api requests than restart the saga and subsequently reinitilialize session
-    if (logout?.reInit) {
+    if (resetApp?.reInit) {
       yield put(actions.auth.initSession());
     }
   }
