@@ -70,7 +70,6 @@ export default function _DynaHttpRequestBody_(props) {
     disableEditorV2 = false,
     enableEditorV2 = false,
     formKey,
-    layout,
     disabled,
   } = props;
   const classes = useStyles();
@@ -99,10 +98,7 @@ export default function _DynaHttpRequestBody_(props) {
   });
   const contentType = options.contentType || props.contentType || connectionMediaType;
 
-  const formattedRule = useMemo(
-    () => (Array.isArray(value) ? value[arrayIndex] : value),
-    [arrayIndex, value]
-  );
+  const formattedRule = Array.isArray(value) ? value[arrayIndex] : value;
   const lookups =
     useMemo(() => supportLookup &&
     resourceType === 'imports' &&
@@ -174,21 +170,17 @@ export default function _DynaHttpRequestBody_(props) {
       <_AFE2EditorDrawer_
         flowId={flowId}
         title={label}
-        onFieldChange={onFieldChange}
         onSave={handleSave}
         action={action}
         path={id}
         id={id}
         disabled={disabled}
-        showVersionToggle={isEditorV2Supported}
-        editorVersion={editorDataVersion}
-        layout={layout || 'compact'}>
+        editorVersion={editorDataVersion}>
         <_HandlebarsEditor_
           lookups={lookups}
           disabled={disabled}
           ruleMode="handlebars"
           dataMode="json"
-          layout={layout || 'compact'}
           enableAutocomplete
           />
       </_AFE2EditorDrawer_>

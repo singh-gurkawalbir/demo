@@ -39,7 +39,6 @@ const EditorToggleAction = ({ disabled, editorVersion, onVersionToggle }) => {
 
 export default function _AFE2EditorDrawer_(props) {
   const {
-    showVersionToggle,
     onVersionToggle,
     editorVersion,
     onClose,
@@ -47,7 +46,7 @@ export default function _AFE2EditorDrawer_(props) {
     disabled,
   } = props;
   const dispatch = useDispatch();
-  const { v1Rule, v2Rule } = useSelector(state => selectors._editor(state, id));
+  const { v1Rule, v2Rule, isEditorV2Supported } = useSelector(state => selectors._editor(state, id));
 
   const handleVersionToggle = useCallback(
     newVersion => {
@@ -75,7 +74,7 @@ export default function _AFE2EditorDrawer_(props) {
   );
 
   const editorToggleAction = useMemo(() => {
-    if (showVersionToggle) {
+    if (isEditorV2Supported) {
       return (
         <EditorToggleAction
           editorVersion={editorVersion}
@@ -84,7 +83,7 @@ export default function _AFE2EditorDrawer_(props) {
         />
       );
     }
-  }, [editorVersion, handleVersionToggle, disabled, showVersionToggle]);
+  }, [editorVersion, handleVersionToggle, disabled, isEditorV2Supported]);
 
   return <EditorDrawer toggleAction={editorToggleAction} onClose={handleCloseEditor} {...props} />;
 }

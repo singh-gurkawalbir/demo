@@ -23,6 +23,7 @@ export default function reducer(state = {}, action) {
     templateVersion,
     autoPreview,
     sampleDataError,
+    newLayout,
   } = action;
 
   return produce(state, draft => {
@@ -31,7 +32,7 @@ export default function reducer(state = {}, action) {
         draft.helperFunctions = helperFunctions;
         break;
       case actionTypes._EDITOR.INIT: {
-        const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
+        // const initChangeIdentifier = draft[id]?.initChangeIdentifier || 0;
         const init = processorLogic.init(processor);
         const {rule} = options || {};
         const optionsCopy = deepClone(options);
@@ -45,19 +46,19 @@ export default function reducer(state = {}, action) {
           v2Rule = rule;
         }
 
-        let dirty = rule;
+        let originalRule = rule;
 
         if (typeof rule === 'object') {
-          dirty = deepClone(rule);
+          originalRule = deepClone(rule);
         }
 
         draft[id] = {
           processor,
-          ...deepClone(formattedInitOptions),
-          ...deepClone(editorFeaturesMap[processor]),
-          dirty,
+          ...formattedInitOptions,
+          ...deepClone(editorFeaturesMap[processor]), // TODO: check later if features get mutated. if not, remove deepClone
+          originalRule,
           lastChange: Date.now(),
-          initChangeIdentifier: initChangeIdentifier + 1,
+          // initChangeIdentifier: initChangeIdentifier + 1,
           initStatus: 'requested',
           v1Rule,
           v2Rule,
@@ -66,11 +67,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.CHANGE_LAYOUT: {
-        // TODO: find out where this is used
-        const initChangeIdentifier =
-          draft[id]?.initChangeIdentifier || 0;
-
-        draft[id].initChangeIdentifier = initChangeIdentifier + 1;
+        draft[id].layout = newLayout;
         break;
       }
 
@@ -100,6 +97,7 @@ export default function reducer(state = {}, action) {
       }
 
       case actionTypes._EDITOR.TOGGLE_AUTO_PREVIEW: {
+        // TODO: change evaluate to preview
         draft[id].autoEvaluate = autoPreview || !draft[id].autoEvaluate;
         if (draft[id].autoEvaluate) {
           draft[id].previewStatus = 'requested';
@@ -152,12 +150,12 @@ export default function reducer(state = {}, action) {
         const editor = draft[id];
 
         editor.saveStatus = 'completed';
-        let dirty = editor.rule;
+        let originalRule = editor.rule;
 
-        if (typeof dirty === 'object') {
-          dirty = deepClone(editor.rule);
+        if (typeof originalRule === 'object') {
+          originalRule = deepClone(editor.rule);
         }
-        editor.dirty = dirty;
+        editor.originalRule = originalRule;
 
         break;
       }
@@ -188,6 +186,16 @@ selectors._editorDataVersion = (state, id) => {
   if (!editor) return;
 
   return editor.dataVersion;
+};
+
+selectors._editorLayout = (state, id) => {
+  if (!state) return;
+
+  const editor = state[id];
+
+  if (!editor) return;
+
+  return editor.layout;
 };
 
 selectors._editorViolations = (state, id) => processorLogic.validate(state?.[id]);

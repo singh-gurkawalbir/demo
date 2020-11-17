@@ -68,12 +68,12 @@ const isDirty = editor => {
     return logic.dirty(editor);
   }
 
-  // If there is no dirty prop , return undefined
+  // If there is no originalRule , return undefined
   // as we return a boolean only incase of rule is passed - refer @editorDrawer disableSave property
-  if (!editor.dirty) {
+  if (!editor.originalRule) {
     return;
   }
-  if (!isEqual(editor.dirty, editor.rule)) {
+  if (!isEqual(editor.originalRule, editor.rule)) {
     return true;
   }
 

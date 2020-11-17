@@ -10,7 +10,6 @@ const emptyArr = [];
 export default function _HandlebarsEditor_(props) {
   const {
     editorId,
-    layout,
     templateClassName,
     dataMode,
     ruleMode,
@@ -28,6 +27,7 @@ export default function _HandlebarsEditor_(props) {
     initStatus,
     resultMode,
     dataVersion,
+    layout,
   } = useSelector(state => selectors._editor(state, editorId), shallowEqual);
   const violations = useSelector(state =>
     selectors._editorViolations(state, editorId), shallowEqual

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-pascal-case */
-import React, { useState, useCallback, cloneElement, useEffect, useRef } from 'react';
+import React, { useCallback, cloneElement, useEffect, useRef } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -59,7 +59,6 @@ export default function EditorDrawer(props) {
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
 
-  const [layout, setLayout] = useState(props.layout || 'compact');
   const activeEditorId = activeEditorIndex ? `${id}-${activeEditorIndex}` : id;
 
   const editor = useSelector(state => selectors._editor(state, activeEditorId), shallowEqual);
@@ -68,6 +67,9 @@ export default function EditorDrawer(props) {
   );
   const isEditorDirty = useSelector(state =>
     selectors._isEditorDirty(state, activeEditorId)
+  );
+  const editorLayout = useSelector(
+    state => selectors._editorLayout(state, activeEditorId)
   );
 
   // retain auto preview value across toggle editors
@@ -117,15 +119,11 @@ export default function EditorDrawer(props) {
     handleClose();
   }, [editor, enquesnackbar, saveEditor, handleClose]);
 
-  const patchEditorLayoutChange = useCallback(() => {
-    dispatch(actions._editor.changeLayout(activeEditorId));
-  }, [dispatch, activeEditorId]);
   const handleLayoutChange = useCallback(
     (event, newLayout) => {
-      patchEditorLayoutChange();
-      newLayout && setLayout(newLayout);
+      dispatch(actions._editor.changeLayout(activeEditorId, newLayout));
     },
-    [patchEditorLayoutChange, setLayout]
+    [activeEditorId, dispatch]
   );
   const handleCancelClick = useCallback(() => {
     if (isEditorDirty) {
@@ -177,7 +175,7 @@ export default function EditorDrawer(props) {
           action={action}
           toggleAction={toggleAction}
           showLayoutOptions={showLayoutOptions}
-          layout={layout}
+          layout={editorLayout}
           handleLayoutChange={handleLayoutChange}
           helpKey={helpKey}
           helpTitle={helpTitle || title}
@@ -187,7 +185,7 @@ export default function EditorDrawer(props) {
       <DrawerContent>
         {
           cloneElement(children?.length ? children[activeEditorIndex] : children, {
-            layout,
+            layout: editorLayout,
             editorId: activeEditorId})
         }
       </DrawerContent>

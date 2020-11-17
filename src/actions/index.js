@@ -1402,7 +1402,7 @@ const editor = {
 const _editor = {
   init: (id, processor, options) =>
     action(actionTypes._EDITOR.INIT, { id, processor, options }),
-  changeLayout: id => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id }),
+  changeLayout: (id, newLayout) => action(actionTypes._EDITOR.CHANGE_LAYOUT, { id, newLayout }),
   patch: (id, patch) => action(actionTypes._EDITOR.PATCH, { id, patch }),
   clear: id => action(actionTypes._EDITOR.CLEAR, { id }),
   toggleVersion: (id, version) => action(actionTypes._EDITOR.TOGGLE_VERSION, { id, version }),
