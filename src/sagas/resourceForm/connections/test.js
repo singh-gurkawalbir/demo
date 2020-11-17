@@ -16,7 +16,7 @@ import functionsTransformerMap from '../../../components/DynaForm/fields/DynaTok
 describe('ping and update connection saga', () => {
   const connectionId = 'C1';
 
-  test('should able to ping and update connection successfully', () => {
+  test('should be able to ping and update connection successfully', () => {
     const saga = pingAndUpdateConnection({ connectionId });
 
     const pingPath = `/connections/${connectionId}/ping`;
@@ -58,7 +58,7 @@ describe('ping connection saga', () => {
 
   const values = {name: 'conn1'};
 
-  test('should able to ping connection successfully ', () => {
+  test('should be able to ping connection successfully ', () => {
     const connectionPayload = { name: 'new Connection' };
     const response = {status: 'success'};
 
@@ -78,7 +78,7 @@ describe('ping connection saga', () => {
       .run();
   });
 
-  test('should able to throw error message if any', () => {
+  test('should be able to throw error message if any', () => {
     const connectionPayload = { name: 'new Connection' };
     const resp = {errors: ['Errors']};
 
@@ -130,10 +130,10 @@ describe('ping connection saga', () => {
 describe('request IClients saga', () => {
   const connectionId = 'C1';
 
-  test('should able to to get IClients successfully', () => {
+  test('should be able to to get IClients successfully', () => {
     const saga = requestIClients({ connectionId });
 
-    const pingPath = `/connections/${connectionId}/iclients`;
+    const path = `/connections/${connectionId}/iclients`;
 
     expect(saga.next().value).toEqual(
       call(newIAFrameWorkPayload, {
@@ -142,49 +142,49 @@ describe('request IClients saga', () => {
     );
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path: pingPath,
+      call(apiCallWithRetry, { path,
         opts: {
           method: 'GET',
         } })
     );
     expect(saga.next().done).toEqual(true);
   });
-  test('should able to verify ping path correctly if itis assistant connection', () => {
+  test('should be able to to get IClients correctly if it is assistant connection', () => {
     const saga = requestIClients({ connectionId });
 
-    const pingPath = '/integrations/1234/iclients?type=rest&assistant=shopify';
-    const mockResourceReferences = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
+    const path = '/integrations/1234/iclients?type=rest&assistant=shopify';
+    const connectionResource = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
 
     expect(saga.next().value).toEqual(
       call(newIAFrameWorkPayload, {
         resourceId: connectionId,
       })
     );
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(
-      call(apiCallWithRetry, { path: pingPath,
+      call(apiCallWithRetry, { path,
         opts: {
           method: 'GET',
         } })
     );
     expect(saga.next().done).toEqual(true);
   });
-  test('should able to verify ping path correctly if connection has type and does not have assistant', () => {
+  test('should be able to to get IClients correctly if connection has type and does not have assistant', () => {
     const saga = requestIClients({ connectionId });
 
-    const pingPath = '/integrations/1234/iclients?type=netsuite';
-    const mockResourceReferences = {connectionType: 'netsuite', id: '1234'};
+    const path = '/integrations/1234/iclients?type=netsuite';
+    const connectionResource = {connectionType: 'netsuite', id: '1234'};
 
     expect(saga.next().value).toEqual(
       call(newIAFrameWorkPayload, {
         resourceId: connectionId,
       })
     );
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(
-      call(apiCallWithRetry, { path: pingPath,
+      call(apiCallWithRetry, { path,
         opts: {
           method: 'GET',
         } })
@@ -194,7 +194,7 @@ describe('request IClients saga', () => {
   test('should handle api error properly', () => {
     const saga = requestIClients({ connectionId });
 
-    const pingPath = `/connections/${connectionId}/iclients`;
+    const path = `/connections/${connectionId}/iclients`;
 
     expect(saga.next().value).toEqual(
       call(newIAFrameWorkPayload, {
@@ -203,7 +203,7 @@ describe('request IClients saga', () => {
     );
 
     expect(saga.next().value).toEqual(
-      call(apiCallWithRetry, { path: pingPath,
+      call(apiCallWithRetry, { path,
         opts: {
           method: 'GET',
         } })
@@ -213,7 +213,7 @@ describe('request IClients saga', () => {
   });
   test('should handle api error properly if it is assistant connection', () => {
     const saga = requestIClients({ connectionId });
-    const mockResourceReferences = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
+    const connectionResource = {connectionType: 'rest', assistant: 'shopify', id: '1234'};
 
     const pingPath = '/integrations/1234/iclients?type=rest&assistant=shopify';
 
@@ -222,7 +222,7 @@ describe('request IClients saga', () => {
         resourceId: connectionId,
       })
     );
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(
       call(apiCallWithRetry, { path: pingPath,
@@ -237,14 +237,14 @@ describe('request IClients saga', () => {
     const saga = requestIClients({ connectionId });
 
     const pingPath = '/integrations/1234/iclients?type=netsuite';
-    const mockResourceReferences = {connectionType: 'netsuite', id: '1234'};
+    const connectionResource = {connectionType: 'netsuite', id: '1234'};
 
     expect(saga.next().value).toEqual(
       call(newIAFrameWorkPayload, {
         resourceId: connectionId,
       })
     );
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(
       call(apiCallWithRetry, { path: pingPath,
@@ -263,7 +263,7 @@ describe('Commit and authorize connection saga', () => {
   const resp = {name: 'conn1'};
   const errorResponse = {error: 'error'};
 
-  test('should able to commit and authorize connection successfully ', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
+  test('should be able to commit and authorize connection successfully ', () => expectSaga(commitAndAuthorizeConnection, { resourceId })
     .provide([
       [matchers.call.fn(commitStagedChanges), resp],
     ])
@@ -285,7 +285,7 @@ describe('Save and authorize connection saga', () => {
   const resp = {name: 'conn2'};
   const newIAConnDoc = {};
 
-  test('should able to save and authorize connection successfully ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+  test('should be able to save and authorize connection successfully ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
     .provide([
       [matchers.call.fn(submitFormValues), resp],
       [select(selectors.createdResourceId), '12345'],
@@ -296,7 +296,7 @@ describe('Save and authorize connection saga', () => {
     .call.fn(newIAFrameWorkPayload)
     .call.fn(openOAuthWindowForConnection)
     .run());
-  test('should able to save and does not authorize connection if there are any conflicts ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+  test('should be able to save and does not authorize connection if there are any conflicts ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
     .provide([
       [matchers.call.fn(submitFormValues), resp],
       [select(selectors.createdResourceId), '12345'],
@@ -320,9 +320,9 @@ describe('Save and authorize connection saga', () => {
     expect(saga.throw(new Error()).value).toEqual(undefined);
     expect(saga.next().done).toEqual(true);
   });
-  test('should able to handle conflicts properly', () => {
+  test('should be able to handle conflicts properly', () => {
     const saga = saveAndAuthorizeConnection({ resourceId, values });
-    const mockResourceReferences = {conflict: 'conflict'};
+    const conflictResponse = {conflict: 'conflict'};
 
     expect(saga.next().value).toEqual(
       call(submitFormValues, {
@@ -337,13 +337,13 @@ describe('Save and authorize connection saga', () => {
       'connections',
       resourceId
     ));
-    const effect = saga.next(mockResourceReferences).value;
+    const effect = saga.next(conflictResponse).value;
 
     expect(effect).toEqual(undefined);
   });
   test('should not open oauth window if it is new IA2.0 installer step', () => {
     const saga = saveAndAuthorizeConnection({ resourceId, values });
-    const mockResourceReferences = {conn: 'conn1'};
+    const connectionResource = {conn: 'conn1'};
     const newIAConnDoc = {installStepConnection: true};
 
     expect(saga.next().value).toEqual(
@@ -359,7 +359,7 @@ describe('Save and authorize connection saga', () => {
       'connections',
       resourceId
     ));
-    let effect = saga.next(mockResourceReferences).value;
+    let effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(call(newIAFrameWorkPayload, {
       resourceId,
@@ -369,7 +369,7 @@ describe('Save and authorize connection saga', () => {
   });
   test('should handle api error in open oauth window', () => {
     const saga = saveAndAuthorizeConnection({ resourceId, values });
-    const mockResourceReferences = {conn: 'conn1'};
+    const connectionResource = {conn: 'conn1'};
     const newIAConnDoc = {};
 
     expect(saga.next().value).toEqual(
@@ -385,7 +385,7 @@ describe('Save and authorize connection saga', () => {
       'connections',
       resourceId
     ));
-    let effect = saga.next(mockResourceReferences).value;
+    let effect = saga.next(connectionResource).value;
 
     expect(effect).toEqual(call(newIAFrameWorkPayload, {
       resourceId,
@@ -404,13 +404,13 @@ describe('Create payload saga', () => {
   const patchSet = [{op: 'replace', path: '/name', value: 'ZendeskToday'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'zendesk'}];
   const patchSetAmazonMws = [{op: 'replace', path: '/name', value: 'AmazonMWS'}, {op: 'add', path: '/http', value: {}}, {op: 'add', path: '/http/ping', value: {}}, {op: 'replace', path: '/http/ping/relativeURI', value: '/api/v3/users.json'}, {op: 'replace', path: '/assistant', value: 'amazonmws'}];
 
-  test('should able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
+  test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
     ])
     .call.fn(createFormValuesPatchSet)
     .run());
-  test('should able to verify payload for rest assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+  test('should be able to verify payload for rest assistants successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
       [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
@@ -418,7 +418,7 @@ describe('Create payload saga', () => {
     .call.fn(createFormValuesPatchSet)
     .returns({name: 'ZendeskToday', assistant: 'zendesk', type: 'rest', rest: {pingRelativeURI: '/api/v3/users.json'}})
     .run());
-  test('should able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+  test('should be able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
       [matchers.call.fn(createFormValuesPatchSet), {patchSet: patchSetAmazonMws}],
@@ -449,6 +449,18 @@ describe('Netsuite user roles saga', () => {
       actions.resource.connections.netsuite.receivedUserRoles(
         connectionId,
         successOnlyEnvs
+      )
+    )
+    .run());
+  test('should update netsuite user roles successfully when we get only connection Id', () => expectSaga(netsuiteUserRoles, { connectionId})
+    .provide([
+      [matchers.call.fn(apiCallWithRetry), resp],
+    ])
+    .call.fn(apiCallWithRetry)
+    .put(
+      actions.resource.connections.netsuite.receivedUserRoles(
+        connectionId,
+        resp
       )
     )
     .run());
@@ -498,7 +510,7 @@ describe('Netsuite user roles saga', () => {
 describe('Request token saga', () => {
   const resourceId = '1234';
 
-  test('should able to verify request token successfully', () => {
+  test('should be able to verify request token successfully', () => {
     const fieldId = 'http.auth.token.token';
     const values = {
       '/application': 'Pitney Bowes',
@@ -542,7 +554,7 @@ describe('Request token saga', () => {
     )
     );
   });
-  test('should able to verify request token successfully', () => {
+  test('should be able to verify request token successfully', () => {
     const fieldId = 'http.unencrypted.clientId';
     const values = {
       '/application': 'Procurify',

@@ -3,17 +3,19 @@
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
+const defaultState = {transfer: {}};
+
 describe('Transfers', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
+    const state = reducer(defaultState, { type: 'RANDOM_ACTION' });
 
-    expect(state).toEqual({});
+    expect(state).toEqual(defaultState);
   });
 
   test('should update preview response when we receive transfer preview received event', () => {
     const response = {exports: [{_id: 'id1', name: 'exp1'}], flows: [{_id: 'id2', name: 'flow1'}, {_id: 'id3', name: 'flow3'}]};
     const requestReducer = reducer(
-      undefined,
+      defaultState,
       actions.transfer.receivedPreview({response}));
 
     expect(requestReducer).toEqual({
@@ -23,7 +25,7 @@ describe('Transfers', () => {
   test('should update preview error when we receive transfer preview received event', () => {
     const error = 'error';
     const requestReducer = reducer(
-      undefined,
+      defaultState,
       actions.transfer.receivedPreview({error}));
 
     expect(requestReducer).toEqual({
@@ -33,7 +35,7 @@ describe('Transfers', () => {
   test('should clear preview when we receive clear preview event', () => {
     const response = {exports: [{_id: 'id1', name: 'exp1'}], flows: [{_id: 'id2', name: 'flow1'}, {_id: 'id3', name: 'flow3'}]};
     const requestReducer = reducer(
-      undefined,
+      defaultState,
       actions.transfer.receivedPreview({response}));
     const requestReducer2 = reducer(
       requestReducer,
@@ -49,12 +51,12 @@ describe('Get transfer preview data', () => {
     expect(selectors.getTransferPreviewData(undefined)).toEqual(null);
     expect(selectors.getTransferPreviewData({})).toEqual(null);
   });
-  test('should return true if token status is loading', () => {
+  test('should get valid preview data', () => {
     const response = {exports: [{_id: 'id1', name: 'exp1'}], flows: [{_id: 'id2', name: 'flow1'}, {_id: 'id3', name: 'flow3'}]};
     const expectedResponse = [{_id: 'id1', name: 'exp1', type: 'exports'}, {_id: 'id2', name: 'flow1', type: 'flows'}, {_id: 'id3', name: 'flow3', type: 'flows'}];
 
     const state = reducer(
-      undefined,
+      defaultState,
       actions.transfer.receivedPreview({response}));
 
     expect(selectors.getTransferPreviewData(state)).toEqual({response: expectedResponse});

@@ -5,9 +5,10 @@ import actions from '../../../actions';
 
 describe('Connection token', () => {
   test('should return initial state when action is not matched', () => {
-    const state = reducer(undefined, { type: 'RANDOM_ACTION' });
+    const defaultState = {1234: { status: 'loading' }};
+    const state = reducer(defaultState, { type: 'RANDOM_ACTION' });
 
-    expect(state).toEqual({});
+    expect(state).toEqual(defaultState);
   });
 
   test('should clear token when we receive clear token action', () => {
@@ -46,7 +47,7 @@ describe('Connection token', () => {
   });
   test('should update state correctly when token received', () => {
     const resourceId = '1234';
-    const fieldsToBeSetWithValues = ['/http/token/token'];
+    const fieldsToBeSetWithValues = {'http.auth.token.token': 'asbabsbasbas'};
     const requestReducer = reducer(
       undefined,
       actions.resource.connections.saveToken(
@@ -55,20 +56,21 @@ describe('Connection token', () => {
       ));
 
     expect(requestReducer).toEqual({
-      1234: {fieldsToBeSetWithValues: ['/http/token/token'], status: 'received'},
+      1234: {fieldsToBeSetWithValues: {'http.auth.token.token': 'asbabsbasbas'}, status: 'received'},
     });
   });
   test('should update state correctly when we recieve action token failed', () => {
     const resourceId = '1234';
+    const message = 'error Message';
     const requestReducer = reducer(
       undefined,
       actions.resource.connections.requestTokenFailed(
         resourceId,
-        'error Message'
+        message
       ));
 
     expect(requestReducer).toEqual({
-      1234: { status: 'failed', message: 'error Message' },
+      1234: { status: 'failed', message},
     });
   });
 });
@@ -80,7 +82,7 @@ describe('connection tokens', () => {
 
   test('should return correct url if token exists', () => {
     const resourceId = '1234';
-    const fieldsToBeSetWithValues = ['/http/token/token'];
+    const fieldsToBeSetWithValues = {'http.auth.token.token': 'asbabsbasbas'};
     const state = reducer(
       undefined,
       actions.resource.connections.saveToken(
@@ -89,7 +91,7 @@ describe('connection tokens', () => {
       ));
 
     expect(selectors.connectionTokens(state, resourceId)).toEqual(
-      {fieldsToBeSetWithValues: ['/http/token/token'], status: 'received' }
+      {fieldsToBeSetWithValues: {'http.auth.token.token': 'asbabsbasbas'}, status: 'received' }
     );
   });
 });
