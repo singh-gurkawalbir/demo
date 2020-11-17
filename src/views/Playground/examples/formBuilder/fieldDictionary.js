@@ -149,6 +149,7 @@ const sampleData = {
 export default {
   key: 'form-field-dictionary',
   type: 'formBuilder',
-  name: 'Form field dictionary',
+  name: 'Field dictionary',
+  description: 'Sample form demonstrating available fields',
   data: JSON.stringify(sampleData, null, 2),
 };

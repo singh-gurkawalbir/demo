@@ -50,6 +50,7 @@ const meta = {
 export default {
   key: 'form-collapse',
   type: 'formBuilder',
-  name: 'Collapsible form',
+  name: 'Collapsible',
+  description: 'Example of adding a collapsible section',
   data: JSON.stringify(meta, null, 2),
 };

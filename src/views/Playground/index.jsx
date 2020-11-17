@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     height: `calc(100% - ${theme.pageBarHeight + theme.appBarHeight}px)`,
   },
   editorList: {
-    width: 250,
+    width: 280,
     padding: theme.spacing(3),
     border: `solid 0 ${theme.palette.secondary.lightest}`,
     borderRightWidth: 1,
@@ -78,8 +78,8 @@ export default function Editors() {
           <div className={classes.title}>
             {activeEditor ? (
               <>
-                <Typography variant="h4">{activeEditor.label} Editor</Typography>
-                <Typography variant="h5">{activeExample.name}</Typography>
+                <Typography variant="h4">{activeEditor.label}</Typography>
+                <Typography variant="h5">{activeExample.description || activeExample.name}</Typography>
               </>
             ) : (
               <Typography>

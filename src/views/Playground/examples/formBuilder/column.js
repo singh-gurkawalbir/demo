@@ -50,6 +50,7 @@ const meta = {
 export default {
   key: 'form-column',
   type: 'formBuilder',
-  name: 'Multi-column form',
+  name: 'Multi-column',
+  description: 'Example of a form spanning columns',
   data: JSON.stringify(meta, null, 2),
 };
